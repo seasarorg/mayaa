@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="Shift_JIS"?>
 <m:maya xmlns:m="http://www.seasar.org/maya"
-			xmlns:c="http://java.sun.com/jsp/jstl/core">
+			xmlns:c="http://java.sun.com/jstl/core_rt">
 
 	<c:forEach m:id="loop" begin="1" end="5" var="i" m:rendered="true"/>
 	<c:forEach m:id="loop2" begin="1" end="5" var="j" m:rendered="true"/>

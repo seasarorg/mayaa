@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!NOTATION maya.conf_1_0 PUBLIC
+        "-//The Seasar Project//DTD Maya Config 1.0//EN">
+
+<!ELEMENT service (description?, source?, engine?, expression?, specificationBuilder?, templateBuilder?) >
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT source (description?, entry*, parameter*)>
+
+<!ELEMENT entry (description?, parameter*)>
+<!ATTLIST entry class CDATA #REQUIRED>
+
+<!ELEMENT engine (description?, pageContext?, specification?, errorHandler?, parameter*)>
+<!ATTLIST engine checkTimestamp (true | false) "true">
+<!ATTLIST engine outputWhitespace (true | false) "true">
+<!ATTLIST engine suffixSeparator CDATA #IMPLIED>
+<!ATTLIST engine reportUnresolvedID (true | false) "true">
+
+<!ELEMENT pageContext (description?)>
+<!ATTLIST pageContext errorPageURL CDATA #IMPLIED>
+<!ATTLIST pageContext bufferSize CDATA #IMPLIED>
+<!ATTLIST pageContext needSession (true | false) "true">
+<!ATTLIST pageContext autoFlush (true | false) "true">
+
+<!ELEMENT specification (description?)>
+<!ATTLIST specification path CDATA #IMPLIED>
+
+<!ELEMENT errorHandler (description?, parameter*)>
+<!ATTLIST errorHandler class CDATA #REQUIRED>
+
+<!ELEMENT expression (description?, resolver*)>
+
+<!ELEMENT resolver (description?, parameter*)>
+<!ATTLIST resolver class CDATA #REQUIRED>
+
+<!ELEMENT specificationBuilder (description?, parameter*)>
+
+<!ELEMENT templateBuilder (description?, resolver*, library?, parameter*)>
+
+<!ELEMENT library (description?, scanner*, parameter*)>
+
+<!ELEMENT scanner (description?, parameter*)>
+<!ATTLIST scanner class CDATA #REQUIRED>
+
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>

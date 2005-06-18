@@ -1,0 +1,87 @@
+/*
+ * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * 
+ * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
+ * not use this file except in compliance with the License which accompanies
+ * this distribution, and is available at
+ * 
+ *     http://www.seasar.org/SEASAR-LICENSE.TXT
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.seasar.maya.impl.builder.specification;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.seasar.maya.builder.specification.InjectionChain;
+import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.IDNotResolvedException;
+import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.EngineSetting;
+
+/**
+ * @author Masataka Kurihara (Gluegent, Inc.)
+ */
+public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL {
+
+    private String getID(SpecificationNode node) {
+	    if(node == null) {
+	        throw new IllegalArgumentException();
+	    }
+    	NodeAttribute attr = node.getAttribute(QM_ID);
+    	if(attr != null) {
+    		return attr.getValue();
+    	}
+		attr = node.getAttribute(QX_ID);
+		if(attr != null) {
+			return attr.getValue();
+		}
+		attr = node.getAttribute(QH_ID);
+		if(attr != null) {
+			return attr.getValue();
+		}
+		return null;
+    }
+	
+    public SpecificationNode getNode(
+            Template template, SpecificationNode original, InjectionChain chain) {
+        if(template == null || original == null || chain == null) {
+            throw new IllegalArgumentException();
+        }
+        String id = getID(original);
+        if(StringUtil.hasValue(id)) {
+            Map namespaces = new HashMap();
+            namespaces.put("m", URI_MAYA);
+            String xpathExpr = "/m:maya/*[@m:id='" + id + "']"; 
+            Iterator it = template.selectChildNodes(xpathExpr, namespaces, true);
+	        if(it.hasNext()) {
+	            SpecificationNode injected = (SpecificationNode)it.next();
+	            if(QM_IGNORE.equals(injected.getQName())) {
+	                return chain.getNode(template, original);
+	            }
+	            return injected.copyTo();
+	        }
+	        EngineSetting setting = EngineUtil.getEngine(template).getEngineSetting();
+            if(setting.isReportUnresolvedID()) { 
+		        throw new IDNotResolvedException(template, original, id);
+            }
+        }
+        return chain.getNode(template, original);
+    }
+
+    public void putParameter(String name, String value) {
+        throw new UnsupportedOperationException();
+    }
+    
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<maya xmlns:m="http://www.seasar.org/maya"
+			xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ignore mayaID="dummy"/>
+
+	<c:out m:id="message" value="こんにちは" m:rendered="true"/>
+
+</maya>

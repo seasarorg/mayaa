@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<maya xmlns:m="http://www.seasar.org/maya"
+		xmlns:c="http://www.seasar.org/maya/jstl/core"
+		class="org.seasar.maya.sample.TimeModel"
+		scope="application"
+		beforeRender="${ beforeTime() }"
+		afterRender="${ afterTime() }" >
+
+	<c:out m:id="message" value="${ time }"/>
+
+</maya>

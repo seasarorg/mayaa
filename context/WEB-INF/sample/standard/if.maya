@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<maya xmlns:m="http://www.seasar.org/maya"
+			xmlns:c="http://www.seasar.org/maya/jstl/core">
+
+	<c:if m:id="ifID" test="${ false }"/>
+
+</maya>

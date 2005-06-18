@@ -1,0 +1,57 @@
+<html xmlns:m="http://www.seasar.org/maya"
+		xmlns:fmt="http://www.seasar.org/maya/jstl/fmt">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=Shift_JIS">
+		<title>Maya samples</title>
+		<link rel="stylesheet" href="/base.css" type="text/css">
+	</head>
+	<body>
+	<div class="header">
+		<h1>Maya Samples</h1>
+	</div>
+
+	<div class="container">
+		<div class="sidebar"><span>
+			<h2>メニュー</h2>
+			<ul>
+				<li><a href="../index.html">戻る</a></li>
+			</ul>
+		</span></div>
+
+		<div class="main">
+			<h2>JSTL formatDate native processor</h2>
+
+			<h3>設定ファイル利用</h3>
+			<div class="box">
+				<span id="message">テンプレート上のダミーデータ</span>
+			</div>
+
+			<h3>テンプレート上</h3>
+			<div class="box">
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }">テンプレート上のダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="date" fmt:dateStyle="SHORT">テンプレート上のダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="time" fmt:timeStyle="SHORT">テンプレート上のダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both">テンプレート上のダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:dateStyle="SHORT" fmt:timeStyle="LONG">テンプレート上のダミーデータ</span><br />
+			</div>
+
+			<div class="box">
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:pattern="yyyy-MM-dd HH:mm:ss.SSS">テンプレート上のダミーデータ</span><br />
+			</div>
+
+			<div class="box">
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:dateStyle="FULL" fmt:timeStyle="FULL" fmt:var="myDate" fmt:scope="AT_END">テンプレート上のダミーデータ</span>${ myDate }<br />
+			</div>
+
+			<div class="box">
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:dateStyle="FULL" fmt:timeStyle="FULL" fmt:timeZone="GMT">テンプレート上のダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:dateStyle="FULL" fmt:timeStyle="FULL" fmt:timeZone="${ @java.util.TimeZone@getTimeZone('PST') }">テンプレート上のダミーデータ</span><br />
+			</div>
+		</div>
+
+		<div class="footer">
+			&copy;The Seasar Project.
+		</div>
+	</div>
+	</body>
+</html>

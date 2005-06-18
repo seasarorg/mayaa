@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE library
+	PUBLIC "-//The Seasar Project//DTD Maya Library Definition 1.0//EN"
+	"http://maya.seasar.org/dtd/mld_1_0.dtd">
+<library uri="http://www.seasar.org/maya/jstl/core">
+
+	<description>The native JSTL core processors</description>
+
+	<processor name="out"
+			class="org.seasar.maya.standard.engine.processor.jstl.core.OutProcessor">
+		<property name="value"/>
+		<property name="default"/>
+		<property name="escapeXml"/>
+	</processor>
+
+	<processor name="if"
+			class="org.seasar.maya.standard.engine.processor.jstl.core.IfProcessor">
+		<property name="test" required="true" expectedType="java.lang.Boolean"/>
+		<property name="var"/>
+		<property name="scope"/>
+	</processor>
+
+</library>

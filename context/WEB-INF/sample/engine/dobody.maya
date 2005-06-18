@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<maya xmlns:m="http://www.seasar.org/maya" 
+		xmlns:c="http://www.seasar.org/maya/jstl/core">
+
+	<c:out m:id="message" value="${ null }" m:rendered="true">
+		<c:out value="${ null }">
+			<doBody/>
+		</c:out>
+		<c:out value="ごきげんいかが？"/>
+	</c:out>
+
+</maya>

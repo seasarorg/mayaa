@@ -1,0 +1,85 @@
+<html xmlns:m="http://www.seasar.org/maya"
+		 xmlns:c="http://java.sun.com/jsp/jstl/core"
+		 xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=Shift_JIS">
+		<title>JSTL Format with Maya - Maya sample</title>
+		<link rel="stylesheet" href="/base.css" type="text/css">
+		<link rel="stylesheet" href="jstl.css" type="text/css">
+	</head>
+	<body>
+	<div class="header">
+		<h1>Maya Samples</h1>
+	</div>
+
+	<div class="container">
+		<div><a href="jstl.html">戻る</a></div>
+
+		<h1>JSTL Format with Maya</h1>
+
+		<!-- ---------------------------------------------------- -->
+		<div class="sample">
+		<h2><code>formatNumber</code></h2>
+			<h3>記述</h3>
+			<code>
+				&lt;span m:inject="fmt:formatNumber"&gt;1234567.890&lt;/span&gt;&lt;br /&gt;<br />
+				&lt;span m:inject="fmt:formatNumber" fmt:value="&#36;{ 1234567.890 }"&gt;ダミーデータ&lt;/span&gt;&lt;br /&gt;<br />
+				整形: &lt;span m:inject="fmt:formatNumber" fmt:pattern="正#,##0.00;負#,##0.00"&gt;123.789&lt;/span&gt;&lt;br /&gt;<br />
+				整形: &lt;span m:inject="fmt:formatNumber" fmt:pattern="正#,##0.00;負#,##0.00"&gt;-123.789&lt;/span&gt;&lt;br /&gt;<br />
+				区切り: &lt;span m:inject="fmt:formatNumber" fmt:groupingUsed="false"&gt;1234567.890&lt;/span&gt;&lt;br /&gt;<br />
+				通貨: &lt;span m:inject="fmt:formatNumber" fmt:type="CURRENCY" fmt:currencySymbol="$"&gt;1234567.890&lt;/span&gt;&lt;br /&gt;<br />
+				少数桁: &lt;span m:inject="fmt:formatNumber" fmt:maxFractionDigits="1"&gt;1234567.890&lt;/span&gt;&lt;br /&gt;<br />
+				整数桁: &lt;span m:inject="fmt:formatNumber" fmt:maxIntegerDigits="3"&gt;1234567.890&lt;/span&gt;&lt;br /&gt;<br />
+				整数桁: &lt;span m:inject="fmt:formatNumber" fmt:minIntegerDigits="3"&gt;12.3&lt;/span&gt;&lt;br /&gt;<br />
+				変数: &lt;span m:inject="fmt:formatNumber" fmt:value="${ 1234567.890 }" fmt:var="number" fmt:scope="AT_END"&gt;ダミーデータ&lt;/span&gt;<br />
+				&lt;span m:inject="c:out" fmt:value="$#36;{ number }" /&gt;&lt;br /&gt;
+			</code>
+			<h3>説明</h3>
+			<p>数値をフォーマットするためのカスタムタグ。</p>
+			<h3>実行結果</h3>
+				<span m:inject="fmt:formatNumber">1234567.890</span><br />
+				<span m:inject="fmt:formatNumber" fmt:value="${ 1234567.890 }">ダミーデータ</span><br />
+				整形: <span m:inject="fmt:formatNumber" fmt:pattern="正#,##0.00;負#,##0.00">123.789</span><br />
+				整形: <span m:inject="fmt:formatNumber" fmt:pattern="正#,##0.00;負#,##0.00">-123.789</span><br />
+				区切り: <span m:inject="fmt:formatNumber" fmt:groupingUsed="false">1234567.890</span><br />
+				通貨: <span m:inject="fmt:formatNumber" fmt:type="CURRENCY" fmt:currencySymbol="$">1234567.890</span><br />
+				少数桁: <span m:inject="fmt:formatNumber" fmt:maxFractionDigits="1">1234567.890</span><br />
+				整数桁: <span m:inject="fmt:formatNumber" fmt:maxIntegerDigits="4">1234567.890</span><br />
+				整数桁: <span m:inject="fmt:formatNumber" fmt:minIntegerDigits="4">12.3</span><br />
+				変数: <span m:inject="fmt:formatNumber" fmt:value="${ 1234567.890 }" fmt:var="number" fmt:scope="AT_END">ダミーデータ</span>
+				<span m:inject="c:out" c:value="${ number }" /><br />
+		</div>
+
+		<!-- ---------------------------------------------------- -->
+		<div class="sample">
+		<h2><code>formatDate</code></h2>
+			<h3>記述</h3>
+			<code>
+				&lt;span m:inject="fmt:formatDate"<div class="indent">fmt:value="$#36;{ new java.util.Date() }"&gt;ダミーデータ&lt;/span&gt;&lt;br /&gt;</div>
+				&lt;span m:inject="fmt:formatDate"<div class="indent">fmt:value="$#36;{ null }"&gt;ダミーデータ&lt;/span&gt;&lt;br /&gt;</div>
+				整形: &lt;span m:inject="fmt:formatDate"<div class="indent">fmt:value="$#36;{ new java.util.Date() }" fmt:type="date"&gt;&lt;/span&gt;&lt;br /&gt;</div>
+				整形: &lt;span m:inject="fmt:formatDate" fmt:value="$#36;{ new java.util.Date() }"<div class="indent">fmt:type="time" fmt:timeStyle="short"&gt;&lt;/span&gt;&lt;br /&gt;</div>
+				整形: &lt;span m:inject="fmt:formatDate" fmt:value="$#36;{ new java.util.Date() }"<div class="indent">fmt:type="both" fmt:dateStyle="full" fmt:timeStyle="full"&gt;&lt;/span&gt;&lt;br /&gt;</div>
+				整形: &lt;span m:inject="fmt:formatDate" fmt:value="$#36;{ new java.util.Date() }"<div class="indent">fmt:type="both" fmt:pattern="yyyy-MM-dd HH:mm:ss"&gt;&lt;/span&gt;&lt;br /&gt;</div>
+				変数: &lt;span m:inject="fmt:formatDate" fmt:value="$#36;{ new java.util.Date() }"<div class="indent">fmt:type="both" fmt:pattern="yyyy-MM-dd HH:mm:ss" fmt:var="today" fmt:scope="AT_END"&gt;&lt;/span&gt;<br />
+				&lt;span m:inject="c:out" fmt:value="$#36;{ today }" /&gt;&lt;br /&gt;</div>
+			</code>
+			<h3>説明</h3>
+			<p>数値をフォーマットするためのカスタムタグ。</p>
+			<h3>実行結果</h3>
+				<span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }">ダミーデータ</span><br />
+				<span m:inject="fmt:formatDate" fmt:value="${ null }">ダミーデータ</span><br />
+				整形: <span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="date"></span><br />
+				整形: <span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="time" fmt:timeStyle="short"></span><br />
+				整形: <span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:dateStyle="full" fmt:timeStyle="full"></span><br />
+				整形: <span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:pattern="yyyy-MM-dd HH:mm:ss"></span><br />
+				変数: <span m:inject="fmt:formatDate" fmt:value="${ new java.util.Date() }" fmt:type="both" fmt:pattern="yyyy-MM-dd HH:mm:ss" fmt:var="today" fmt:scope="AT_END"></span>
+				<span m:inject="c:out" c:value="${ today }" /><br />
+		</div>
+	</div>
+
+	<div class="footer">
+		&copy;The Seasar Project.
+	</div>
+	</body>
+</html>

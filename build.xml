@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maya" default="distro" basedir=".">
+
+	<property file="project.properties"/>
+	
+	<property name="maya.distro.src" value="maya-src-${maya.ver}.zip"/>
+	<property name="maya.distro.bin" value="maya-bin-${maya.ver}.zip"/>
+	
+	<property name="maya.jar.core" value="maya-${maya.ver}.jar"/>
+	<property name="maya.jar.standard" value="maya-standard-${maya.ver}.jar"/>
+	<property name="maya.jar.component" value="maya-component-${maya.ver}.jar"/>
+	<property name="maya.jar.sample" value="maya-sample-${maya.ver}.jar"/>
+
+	<property name="maya.packages" value="org.seasar.maya.*"/>
+	
+	<property name="folder.src.api"  value="src-api"/>
+	<property name="folder.src.impl"  value="src-impl"/>
+	<property name="folder.src.standard"  value="src-standard"/>
+	<property name="folder.src.component"  value="src-component"/>
+	<property name="folder.src.test"  value="src-test"/>
+	<property name="folder.src.sample"  value="src-sample"/>
+	
+	<property name="folder.context" value="context"/>
+	<property name="folder.webinf" value="${folder.context}/WEB-INF"/>
+	<property name="folder.mld" value="${folder.webinf}/mld"/>
+	<property name="folder.classes" value="${folder.webinf}/classes"/>
+	<property name="folder.lib" value="${folder.webinf}/lib"/>
+	<property name="folder.javadoc" value="${folder.context}/javadoc"/>
+
+	<fileset id="classpath" dir=".">
+		<include name="${folder.webinf}/lib/*.jar"/>
+		<include name="${folder.webinf}/lib-servlet/*.jar"/>
+		<exclude name="${folder.webinf}/lib/maya-*.jar"/>
+	</fileset>
+	
+	<target name="cleanbuild">
+		<delete dir="${folder.classes}" verbose="${maya.verbose}"/>
+		<mkdir dir="${folder.classes}"/>
+	</target>
+	
+	<target name="compile" depends="cleanbuild">
+		<javac
+			destdir="${folder.classes}"
+			debug="${maya.debug}"
+			verbose="${maya.verbose}">
+			<src>
+				<dirset dir=".">
+					<include name="${folder.src.api}"/>
+					<include name="${folder.src.impl}"/>
+					<include name="${folder.src.standard}"/>
+					<include name="${folder.src.component}"/>
+					<include name="${folder.src.sample}"/>
+				</dirset>
+			</src>
+			<classpath>
+				<fileset refid="classpath"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="copy" depends="cleanbuild">
+		<copy todir="${folder.classes}" verbose="${maya.verbose}">
+			<fileset dir="${folder.src.api}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="**/CVS"/>
+				<exclude name="**/CVS/**/*"/>
+			</fileset>
+			<fileset dir="${folder.src.impl}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="**/CVS"/>
+				<exclude name="**/CVS/**/*"/>
+			</fileset>
+			<fileset dir="${folder.src.standard}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="**/CVS"/>
+				<exclude name="**/CVS/**/*"/>
+			</fileset>
+			<fileset dir="${folder.src.component}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="**/CVS"/>
+				<exclude name="**/CVS/**/*"/>
+			</fileset>
+			<fileset dir="${folder.src.sample}">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+				<exclude name="**/.cvsignore"/>
+				<exclude name="**/CVS"/>
+				<exclude name="**/CVS/**/*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="javabuild" depends="compile, copy"/>
+	
+	<target name="cleanjar">
+		<delete verbose="${maya.verbose}">
+			<fileset dir=".">
+				<include name="${folder.lib}/maya-*.jar"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="mayajar" depends="cleanjar, javabuild">
+		<jar jarfile="${folder.lib}/${maya.jar.core}">
+			<fileset dir="${folder.classes}">
+				<include name="org/seasar/maya/**/*.class"/>
+				<include name="org/seasar/maya/**/*.dtd"/>
+				<include name="org/seasar/maya/**/*.lst"/>
+				<exclude name="org/seasar/maya/**/CVS"/>
+				<exclude name="org/seasar/maya/**/CVS/**/*"/>
+				<exclude name="org/seasar/maya/standard"/>
+				<exclude name="org/seasar/maya/standard/**/*"/>
+				<exclude name="org/seasar/maya/component"/>
+				<exclude name="org/seasar/maya/component/**/*"/>
+				<exclude name="org/seasar/maya/sample"/>
+				<exclude name="org/seasar/maya/sample/**/*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Title" value="Maya API and Impl"/>
+				<attribute name="Version" value="${maya.ver}"/>
+			</manifest>
+			<metainf dir="${folder.mld}" includes="maya.mld"/>
+		</jar>
+	</target>
+
+	<target name="standardjar" depends="cleanjar, javabuild">
+		<jar jarfile="${folder.lib}/${maya.jar.standard}">
+			<fileset dir="${folder.classes}">
+				<include name="org/seasar/maya/standard/**/*.class"/>
+				<include name="org/seasar/maya/standard/**/*.dtd"/>
+				<include name="org/seasar/maya/standard/**/*.xsd"/>
+				<exclude name="org/seasar/maya/standard/**/CVS"/>
+				<exclude name="org/seasar/maya/standard/**/CVS/**/*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Title" value="Maya Standard"/>
+				<attribute name="Version" value="${maya.ver}"/>
+			</manifest>
+			<metainf dir="${folder.mld}" includes="standard.mld"/>
+			<metainf dir="${folder.mld}" includes="jstl-core.mld"/>
+			<metainf dir="${folder.mld}" includes="jstl-fmt.mld"/>
+		</jar>
+	</target>
+
+	<target name="componentjar" depends="cleanjar, javabuild">
+		<jar jarfile="${folder.lib}/${maya.jar.component}">
+			<fileset dir="${folder.classes}">
+				<include name="org/seasar/maya/component/**/*.class"/>
+				<exclude name="org/seasar/maya/component/**/CVS"/>
+				<exclude name="org/seasar/maya/component/**/CVS/**/*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Title" value="Maya Component"/>
+				<attribute name="Version" value="${maya.ver}"/>
+			</manifest>
+			<metainf dir="${folder.context}" includes="WEB-INF/*.lst"/>
+			<metainf dir="${folder.mld}" includes="component.mld"/>
+		</jar>
+	</target>
+	
+	<target name="samplejar" depends="cleanjar, javabuild">
+		<jar jarfile="${folder.lib}/${maya.jar.sample}">
+			<fileset dir="${folder.classes}">
+				<include name="org/seasar/maya/sample/**/*.class"/>
+				<exclude name="org/seasar/maya/sample/**/CVS"/>
+				<exclude name="org/seasar/maya/sample/**/CVS/**/*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Title" value="Maya Sample"/>
+				<attribute name="Version" value="${maya.ver}"/>
+			</manifest>
+			<metainf dir="${folder.classes}" includes="maya-sample.tld"/>
+		</jar>
+	</target>
+	
+	<target name="cleandoc">
+		<delete dir="${folder.javadoc}" verbose="${maya.verbose}"/>
+		<mkdir dir="${folder.javadoc}"/>
+	</target>
+
+	<target name="javadoc" depends="cleandoc, compile">
+        <javadoc
+        	charset="Shift_JIS"
+        	destdir="${folder.javadoc}"
+        	access="protected"
+        	source="1.4"
+        	use="false"
+        	notree="true"
+        	nonavbar="false"
+        	noindex="true"
+        	splitindex="false"
+        	author="true"
+        	version="true"
+        	nodeprecatedlist="false"
+        	nodeprecated="false"
+        	packagenames="${maya.packages}"
+        	sourcepath="${folder.src.api}"
+        	doctitle="Maya ${maya.ver} Specification"
+        	verbose="${maya.verbose}">
+        	<classpath>
+	        	<fileset refid="classpath"/>
+       		</classpath>
+       	</javadoc>
+    </target>
+
+	<target name="make" depends="mayajar, standardjar, componentjar, samplejar, javadoc"/>
+	
+	<target name="distro" depends="make">
+		<zip destfile="../${maya.distro.bin}">
+			<fileset dir=".">
+				<include name="${folder.context}/resource/*"/>
+				<include name="${folder.webinf}/web.xml.sample"/>
+				<include name="${folder.webinf}/default.maya"/>
+				<include name="${folder.webinf}/maya.conf"/>
+				<include name="${folder.webinf}/error/*"/>
+				<include name="${folder.webinf}/lib/*"/>
+				<exclude name="${folder.webinf}/lib/maya-sample-*.jar"/>
+				<exclude name="${folder.webinf}/lib/jstl-*.jar"/>
+				<exclude name="${folder.webinf}/lib/standard-*.jar"/>
+				<exclude name="/**/.cvsignore"/>
+				<exclude name="/**/CVS"/>
+				<exclude name="/**/CVS/**/*"/>
+			</fileset>		
+		</zip>
+		<zip destfile="../${maya.distro.src}">
+			<fileset dir="../">
+				<include name="maya/**/*"/>
+				<exclude name="maya/.*"/>
+				<exclude name="maya/${folder.webinf}/debug"/>
+				<exclude name="maya/${folder.webinf}/debug/**/*"/>
+				<exclude name="maya/${folder.webinf}/lib/maya-*.jar"/>
+				<exclude name="maya/${folder.javadoc}"/>
+				<exclude name="maya/${folder.javadoc}/**/*"/>
+				<exclude name="maya/${folder.classes}"/>
+				<exclude name="maya/${folder.classes}/**/*"/>
+				<exclude name="maya/**/.cvsignore"/>
+				<exclude name="maya/**/CVS"/>
+				<exclude name="maya/**/CVS/**/*"/>
+			</fileset>		
+		</zip>
+	</target>
+	
+</project>

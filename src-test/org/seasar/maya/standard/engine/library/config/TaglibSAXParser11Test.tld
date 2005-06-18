@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+    <tlibversion>1.0</tlibversion>
+    <jspversion>1.1</jspversion>
+    <shortname>test</shortname>
+    <uri>http://www.seasar.org/maya/test11</uri>
+    <info>Test description</info>
+
+    <tag>
+        <name>tagname</name>
+        <tagclass>org.apache.taglibs.standard.tag.rt.core.OutTag</tagclass>
+        <teiclass>org.apache.taglibs.standard.tei.ForEachTEI</teiclass>
+        <bodycontent>JSP</bodycontent>
+        <info>TaglibSAXParserTest</info>
+
+        <attribute>
+            <name>attributeName</name>
+            <required>yes</required>
+            <rtexprvalue>no</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>attributeName2</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>tagname2</name>
+        <tagclass>org.apache.taglibs.standard.tag.rt.core.OutTag</tagclass>
+        <bodycontent>empty</bodycontent>
+    </tag>
+</taglib>

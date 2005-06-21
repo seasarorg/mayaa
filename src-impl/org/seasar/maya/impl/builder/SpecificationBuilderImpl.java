@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.builder;
 
+import java.io.Serializable;
+
 import org.apache.xerces.parsers.SAXParser;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
@@ -40,6 +42,10 @@ public class SpecificationBuilderImpl
 
     private XMLReaderPool _xmlReaderPool;
 
+    public XMLReaderPool getXmlReaderPool() {
+        return _xmlReaderPool;
+    }
+    
     public SpecificationBuilderImpl() {
         _xmlReaderPool = new XMLReaderPool();
     }
@@ -114,7 +120,7 @@ public class SpecificationBuilderImpl
         }
     }
 
-    private class XMLReaderPool extends AbstractSoftReferencePool {
+    private class XMLReaderPool extends AbstractSoftReferencePool implements Serializable {
 
         protected Object createObject() {
             return createXMLReader();
@@ -133,5 +139,4 @@ public class SpecificationBuilderImpl
     	}
     	
     }
-
 }

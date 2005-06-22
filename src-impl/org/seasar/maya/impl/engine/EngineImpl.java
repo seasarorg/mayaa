@@ -169,7 +169,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     }
    
 	public void doService(PageContext context, String pageName, 
-			String requestedSuffix, String extension) throws IOException {
+			String requestedSuffix, String extension) {
         if(context == null || StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
@@ -177,13 +177,20 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         Page page = getPage(pageName, extension);
         page.doPageRender(context, requestedSuffix);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, context);
-        context.getOut().flush();
+        try {
+            context.getOut().flush();
+        } catch(IOException e) {
+            throw new IORuntimeException(e);
+        }
 	}
     
-	private void prepareRequest(HttpServletResponse httpResponse) {
-        httpResponse.addHeader("Pragma", "no-cache");
-        httpResponse.addHeader("Cache-Control", "no-cache");
-        httpResponse.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+	protected void prepareRequest(ServletResponse response) {
+        if(response instanceof HttpServletResponse) {
+            HttpServletResponse httpResponse = (HttpServletResponse)response;
+            httpResponse.addHeader("Pragma", "no-cache");
+            httpResponse.addHeader("Cache-Control", "no-cache");
+            httpResponse.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+        }
 	}
 	
     public String getWelcomeFileName() {
@@ -192,17 +199,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         }
         return "index.html";
     }
-    
-	private String getRequestPath(HttpServletRequest httpRequest) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
-        String pathInfo = httpRequest.getPathInfo();
-        buffer.append(StringUtil.preparePath(pathInfo));
-        if(pathInfo.endsWith("/")) {
-            buffer.append(StringUtil.preparePath(getWelcomeFileName()));
-        }
-        return buffer.toString();
-	}
 
     private PageContext getPageContext(
     		ServletRequest request, ServletResponse response) {
@@ -242,69 +238,68 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     		releasePageContext(context);
     	}
 	}
+    
+	protected String getRequestedPath(ServletRequest request) {
+        if(request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest)request;
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
+	        String pathInfo = httpRequest.getPathInfo();
+	        buffer.append(StringUtil.preparePath(pathInfo));
+	        if(pathInfo.endsWith("/")) {
+	            buffer.append(StringUtil.preparePath(getWelcomeFileName()));
+	        }
+	        return buffer.toString();
+        }
+        throw new IllegalStateException();
+	}
 	
-    public void doService(ServletRequest request, ServletResponse response) 
-    		throws IOException {
+    public void doService(ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
-        if(response instanceof HttpServletResponse) {
-            HttpServletResponse httpResponse = (HttpServletResponse)response;
-            prepareRequest(httpResponse);
-        }
-        if(request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-            EngineSetting setting = getEngineSetting();
-            String[] requestedPageInfo = 
-                getRequestedPageInfo(setting, getRequestPath(httpRequest));
+        prepareRequest(response);
+        EngineSetting setting = getEngineSetting();
+        String path = getRequestedPath(request);
+        String[] requestedPageInfo = getRequestedPageInfo(setting, path);
+        try {
+            PageContext context = getPageContext(request, response);
             try {
-                PageContext context = getPageContext(request, response);
-	            try {
-	            	doService(context, requestedPageInfo[0], 
-	            	        requestedPageInfo[1], requestedPageInfo[2]);
-		        } finally {
-		            releasePageContext(context);
-		        }
-            } catch(IOException e) {
-            	throw e;
-            } catch(Throwable t) {
-            	handleError(request, response, t);
-            }
-        } else {
-            throw new IllegalStateException();
+            	doService(context, requestedPageInfo[0], 
+            	        requestedPageInfo[1], requestedPageInfo[2]);
+	        } finally {
+	            releasePageContext(context);
+	        }
+        } catch(Throwable t) {
+        	handleError(request, response, t);
         }
     }
     
-	public void doResourceService(ServletRequest request, ServletResponse response)
-			throws IOException {
+	public void doResourceService(ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
-        if(request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
-			buffer.append(StringUtil.preparePath(httpRequest.getPathInfo()));
-			String path = PREFIX_PAGE + buffer.toString();
-			ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-	        SourceFactory factory = provider.getSourceFactory();
-			SourceDescriptor source = factory.createSourceDescriptor(path);
-			InputStream stream = source.getInputStream();
-			if(stream != null) {
+        String path = PREFIX_PAGE + getRequestedPath(request);
+		ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        SourceFactory factory = provider.getSourceFactory();
+		SourceDescriptor source = factory.createSourceDescriptor(path);
+		InputStream stream = source.getInputStream();
+		if(stream != null) {
+		    try {
 				Writer out = response.getWriter();
 				for(int i = stream.read(); i != -1; i = stream.read()) {
 					out.write(i);
 				}
 				out.flush();
-			} else {
-		        if(response instanceof HttpServletResponse) {
-		            HttpServletResponse httpResponse = (HttpServletResponse)response;
-		            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		        }
-			}
-        } else {
-            throw new IllegalStateException();
-        }
+		    } catch(IOException e) {
+		        throw new IORuntimeException(e);
+		    }
+		} else {
+	        if(response instanceof HttpServletResponse) {
+	            HttpServletResponse httpResponse = (HttpServletResponse)response;
+	            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	        }
+		}
 	}
 
 }

@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.standard.engine.error;
 
-import java.io.IOException;
-
 import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.engine.Engine;
@@ -52,7 +50,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
         }
     }
     
-    public void doErrorHandle(PageContext context, Throwable t) throws IOException {
+    public void doErrorHandle(PageContext context, Throwable t) {
         if(t == null || context == null) {
             throw new IllegalArgumentException();
         }
@@ -66,8 +64,6 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 	String pageName = getPageName(throwableClass);
 		            engine.doService(context, pageName, "", "html");
 		            break;
-                } catch(IOException e) {
-                	throw e;
                 } catch(PageNotFoundException ignore) {
                 }
             }

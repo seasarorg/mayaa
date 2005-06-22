@@ -15,11 +15,15 @@
  */
 package org.seasar.maya.impl.engine.error;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.impl.engine.IORuntimeException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -31,11 +35,17 @@ public class JspContextErrorHandler  implements ErrorHandler {
     public void putParameter(String name, String value) {
     }
     
-    public void doErrorHandle(PageContext context, Throwable t) throws Throwable {
+    public void doErrorHandle(PageContext context, Throwable t) {
         if(t == null || context == null) {
             throw new IllegalArgumentException();
         }
-        context.handlePageException(t);
+        try {
+            context.handlePageException(t);
+        } catch (ServletException e) {
+            throw new IORuntimeException(e);
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
+        }
         if(LOG.isTraceEnabled()) {
             LOG.trace(t);
         }

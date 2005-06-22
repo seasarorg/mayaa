@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.engine;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.ServletRequest;
@@ -65,10 +64,8 @@ public interface Engine extends Parameterizable, Specification, Serializable {
 	 * サーブレットから呼び出される、サービスメソッド。
 	 * @param request HTTPリクエスト
 	 * @param response HTTPレスポンス
-	 * @throws IOException レスポンス書き出し時の例外。
 	 */
-    void doService(ServletRequest request, ServletResponse response)
-    		throws IOException;
+    void doService(ServletRequest request, ServletResponse response);
 
     /**
      * フォワードを行う際のサービスメソッド。
@@ -76,19 +73,16 @@ public interface Engine extends Parameterizable, Specification, Serializable {
      * @param pageName ページ名。「/WEB-INF」フォルダを含むことができる。
      * @param requestedSuffix リクエストで強制するページ接尾辞。nullでもよい。
      * @param extension ページ拡張子。
-	 * @throws IOException レスポンス書き出し時の例外。
      */
     void doService(PageContext context, String pageName, 
-    		String requestedSuffix, String extension) throws IOException;
+    		String requestedSuffix, String extension);
 
     
     /**
      * リソースのサービスを行う。リクエストに応じて、該当リソースをそのまま返す。
 	 * @param request HTTPリクエスト
 	 * @param response HTTPレスポンス
-	 * @throws IOException レスポンス書き出し時の例外。
      */
-    void doResourceService(ServletRequest request, ServletResponse response)
-    		throws IOException;
+    void doResourceService(ServletRequest request, ServletResponse response);
     
 }

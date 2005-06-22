@@ -13,23 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.engine.error;
-
-import javax.servlet.jsp.PageContext;
-
-import org.seasar.maya.provider.Parameterizable;
+package org.seasar.maya.impl.engine;
 
 /**
- * エラー処理のためのハンドラ。リクエストの最後、エラー画面の出力などを行う。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ErrorHandler extends Parameterizable {
+public class IORuntimeException extends RuntimeException {
 
-    /**
-     * エラー処理メソッド。
-     * @param context カレントコンテキスト。
-     * @param t 処理対象のThrowable。
-     */
-    void doErrorHandle(PageContext context, Throwable t);
-
+    public IORuntimeException(Exception e) {
+        super(e.getMessage(), e);
+    }
+    
 }

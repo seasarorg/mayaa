@@ -15,12 +15,20 @@
  */
 package org.seasar.maya.impl.engine;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IORuntimeException extends RuntimeException {
+public class ServletIOException extends RuntimeException {
 
-    public IORuntimeException(Exception e) {
+    public ServletIOException(ServletException e) {
+        super(e.getMessage(), e);
+    }
+
+    public ServletIOException(IOException e) {
         super(e.getMessage(), e);
     }
     

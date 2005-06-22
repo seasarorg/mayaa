@@ -180,7 +180,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         try {
             context.getOut().flush();
         } catch(IOException e) {
-            throw new IORuntimeException(e);
+            throw new ServletIOException(e);
         }
 	}
     
@@ -292,7 +292,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 				}
 				out.flush();
 		    } catch(IOException e) {
-		        throw new IORuntimeException(e);
+		        throw new ServletIOException(e);
 		    }
 		} else {
 	        if(response instanceof HttpServletResponse) {

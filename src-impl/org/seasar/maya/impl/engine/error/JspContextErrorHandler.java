@@ -23,7 +23,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.impl.engine.IORuntimeException;
+import org.seasar.maya.impl.engine.ServletIOException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -42,9 +42,9 @@ public class JspContextErrorHandler  implements ErrorHandler {
         try {
             context.handlePageException(t);
         } catch (ServletException e) {
-            throw new IORuntimeException(e);
+            throw new ServletIOException(e);
         } catch (IOException e) {
-            throw new IORuntimeException(e);
+            throw new ServletIOException(e);
         }
         if(LOG.isTraceEnabled()) {
             LOG.trace(t);

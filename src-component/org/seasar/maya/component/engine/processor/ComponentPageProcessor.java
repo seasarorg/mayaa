@@ -121,7 +121,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return Tag.EVAL_PAGE;
     }
     
-	protected void writeStartElement(PageContext context) {
+	protected int writeStartElement(PageContext context) {
         synchronized(this) {
             if(_page == null) {
                 _page = preparePage();
@@ -132,10 +132,10 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         StartComponentProcessor start = findStart(template);
         if(start != null) {
             template.doTemplateRender(context, start);
-        } else {
-	        // TODO 適切な例外型に変更（p:startComponentが無かったとき）
-	        throw new IllegalStateException();
+            return Tag.SKIP_BODY;
         }
+        // TODO 適切な例外型に変更（p:startComponentが無かったとき）
+        throw new IllegalStateException();
     }
     
 	protected void writeEndElement(PageContext context) {

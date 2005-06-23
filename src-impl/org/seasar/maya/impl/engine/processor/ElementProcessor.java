@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
@@ -103,7 +104,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
     }
     
-    protected void writeStartElement(PageContext context) {
+    protected int writeStartElement(PageContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
@@ -136,6 +137,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(">");
         }
         write(context, buffer);
+        return Tag.EVAL_BODY_INCLUDE;
     }
     
     protected void writeEndElement(PageContext context) {

@@ -18,7 +18,7 @@ package org.seasar.maya.component.engine.processor;
 import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 
 /**
  * 「p:endComponent」プロセッサ。他のテンプレートに埋め込まれている
@@ -26,7 +26,7 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  * 所属テンプレートがダイレクトに利用されている場合には、自分の子を描画する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EndComponentProcessor extends TemplateProcessorSupport {
+public class EndComponentProcessor extends DoBodyProcessor {
     
     /**
      * 親をさかのぼって、p:componentPageを探す。

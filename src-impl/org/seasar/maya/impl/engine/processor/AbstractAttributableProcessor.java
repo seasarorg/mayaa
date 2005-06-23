@@ -81,7 +81,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return info._processtimeProperties;
     }
     
-    protected abstract void writeStartElement(PageContext context);
+    protected abstract int writeStartElement(PageContext context);
     
     protected abstract void writeEndElement(PageContext context);
     
@@ -89,8 +89,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         if(_childEvaluation) {
             return BodyTag.EVAL_BODY_BUFFERED;
         }
-        writeStartElement(context);
-        return Tag.EVAL_BODY_INCLUDE;
+        return writeStartElement(context);
     }
     
     public int doEndProcess(PageContext context) {

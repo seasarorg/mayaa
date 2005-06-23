@@ -18,24 +18,5 @@ package org.seasar.maya.engine.specification;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeNamespace extends NodeObject {
-
-    /**
-     * 宣言されているノードの取得。
-     * @return 宣言ノード。
-     */
-    Namespaceable getNamespaceable();
-
-    /**
-     * プレフィックス文字列の取得。
-     * @return プレフィックス文字列。
-     */
-    String getPrefix();
-    
-    /**
-     * 名前空間URIの取得。
-     * @return 名前空間URI。
-     */
-    String getNamespaceURI();
-    
+public interface NodeObject {
 }

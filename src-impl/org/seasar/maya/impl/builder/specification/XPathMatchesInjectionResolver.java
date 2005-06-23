@@ -22,15 +22,20 @@ import java.util.Map;
 import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_IMPL {
+
+    private final CheckXPathCopyToFilter _xpathFilter = new CheckXPathCopyToFilter(); 
     
 	private Map getNamespaceMap(SpecificationNode node) {
 		Map namespaces  = new HashMap();
@@ -48,7 +53,7 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
         }
         Map namespaces = new HashMap();
         namespaces.put("m", URI_MAYA);
-        String xpathExpr = "/m:maya/*[string-length(@m:xpath) > 0]";
+        String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
         for(Iterator it = template.selectChildNodes(xpathExpr, namespaces, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
             String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
@@ -56,7 +61,7 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
                 if(QM_IGNORE.equals(injected)) {
                     return chain.getNode(template, original);
                 }
-                return injected.copyTo();
+                return injected.copyTo(_xpathFilter);
             }
         }
         return chain.getNode(template, original);
@@ -65,5 +70,18 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
-
+    
+    private class CheckXPathCopyToFilter implements CopyToFilter {
+        
+        public boolean accept(NodeObject test) {
+            if(test instanceof SpecificationNode) {
+                SpecificationNode node = (SpecificationNode)test;
+                String xpath = SpecificationUtil.getAttributeValue(node, QM_XPATH);
+                return StringUtil.isEmpty(xpath);
+            }
+            return true;
+        }
+        
+    }
+    
 }

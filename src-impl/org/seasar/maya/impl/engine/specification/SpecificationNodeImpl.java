@@ -30,8 +30,10 @@ import org.jaxen.XPathFunctionContext;
 import org.jaxen.pattern.Pattern;
 import org.jaxen.pattern.PatternParser;
 import org.jaxen.saxpath.SAXPathException;
+import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -192,22 +194,42 @@ public class SpecificationNodeImpl extends QNameableImpl
             throw new RuntimeException(e);
         }
     }
-    
-    public SpecificationNode copyTo() {
+
+    public SpecificationNode copyTo(CopyToFilter filter) {
         SpecificationNodeImpl copy = new SpecificationNodeImpl(getQName(), getLocator());
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
-            copy.addAttribute(attr.getQName(), attr.getValue());
+            if(filter.accept(attr)) {
+                copy.addAttribute(attr.getQName(), attr.getValue());
+            }
         }
         for(Iterator it = iterateChildNode(); it.hasNext(); ) {
             SpecificationNode node = (SpecificationNode)it.next();
-            copy.addChildNode(node.copyTo());
+            if(filter.accept(node)) {
+                copy.addChildNode(node.copyTo(filter));
+            }
         }
         for(Iterator it = iterateNamespace(); it.hasNext(); ) {
             NodeNamespace ns = (NodeNamespace)it.next();
-            copy.addNamespace(ns.getPrefix(), ns.getNamespaceURI());
+            if(filter.accept(ns)) {
+                copy.addNamespace(ns.getPrefix(), ns.getNamespaceURI());
+            }
         }
         return copy;
     }
+    
+    public SpecificationNode copyTo() {
+        return copyTo(FILTER_ALL);
+    }
 
+    private static CopyToFilter FILTER_ALL = new AllCopyToFilter();
+    
+    private static class AllCopyToFilter implements CopyToFilter {
+        
+        public boolean accept(NodeObject test) {
+            return true;
+        }
+        
+    }
+    
 }

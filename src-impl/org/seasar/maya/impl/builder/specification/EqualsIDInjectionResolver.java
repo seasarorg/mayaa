@@ -22,7 +22,9 @@ import java.util.Map;
 import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.IDNotResolvedException;
@@ -34,6 +36,8 @@ import org.seasar.maya.provider.EngineSetting;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL {
+    
+    private final CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
 
     private String getID(SpecificationNode node) {
 	    if(node == null) {
@@ -63,14 +67,14 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
         if(StringUtil.hasValue(id)) {
             Map namespaces = new HashMap();
             namespaces.put("m", URI_MAYA);
-            String xpathExpr = "/m:maya/*[@m:id='" + id + "']"; 
+            String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
             Iterator it = template.selectChildNodes(xpathExpr, namespaces, true);
 	        if(it.hasNext()) {
 	            SpecificationNode injected = (SpecificationNode)it.next();
 	            if(QM_IGNORE.equals(injected.getQName())) {
 	                return chain.getNode(template, original);
 	            }
-	            return injected.copyTo();
+	            return injected.copyTo(_idFilter);
 	        }
 	        EngineSetting setting = EngineUtil.getEngine(template).getEngineSetting();
             if(setting.isReportUnresolvedID()) { 
@@ -82,6 +86,19 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
+    }
+    
+    private class CheckIDCopyToFilter implements CopyToFilter {
+   
+        public boolean accept(NodeObject test) {
+            if(test instanceof SpecificationNode) {
+                SpecificationNode node = (SpecificationNode)test;
+                NodeAttribute attr = node.getAttribute(QM_ID);
+                return attr == null;
+            }
+            return true;
+        }
+        
     }
     
 }

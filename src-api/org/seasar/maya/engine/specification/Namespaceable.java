@@ -20,7 +20,7 @@ import java.util.Iterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Namespaceable {
+public interface Namespaceable extends NodeObject {
 
     /**
      * –¼‘O‹óŠÔƒ‚ƒfƒ‹‚Ì’Ç‰ÁB

@@ -90,5 +90,12 @@ public interface SpecificationNode extends QNameable {
      * @return 自分のコピー。
      */
     SpecificationNode copyTo();
-    
+
+    /**
+     * フィルタ付きで自分のコピーを生成して返す。ただし、親ノードは設定されていない。
+     * @param filter コピー時フィルタ。
+     * @return 自分のコピー。
+     */
+    SpecificationNode copyTo(CopyToFilter filter);
+
 }

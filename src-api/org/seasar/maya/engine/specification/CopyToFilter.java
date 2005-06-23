@@ -18,24 +18,14 @@ package org.seasar.maya.engine.specification;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeNamespace extends NodeObject {
+public interface CopyToFilter {
 
     /**
-     * 宣言されているノードの取得。
-     * @return 宣言ノード。
+     * 子のノードオブジェクト（SpecificationNode、NodeAttribute、NodeNamespace）を
+     * コピーするかどうかを返すフィルタ。trueだとコピー。
+     * @param node テストするノードオブジェクト。
+     * @return コピーするかどうか。
      */
-    Namespaceable getNamespaceable();
+    boolean accept(NodeObject test);
 
-    /**
-     * プレフィックス文字列の取得。
-     * @return プレフィックス文字列。
-     */
-    String getPrefix();
-    
-    /**
-     * 名前空間URIの取得。
-     * @return 名前空間URI。
-     */
-    String getNamespaceURI();
-    
 }

@@ -54,7 +54,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	private TemplateProcessor getConnectPoint(TemplateProcessor processor) {
 	    if(processor instanceof ElementProcessor &&
 	            ((ElementProcessor)processor).isDuplicated()) {
-	        processor = processor.getChildProcessor(0);
+	        // m:rendered="true"のとき、duplicatedなelementを剥き取る。
+	        return getConnectPoint(processor.getChildProcessor(0));
 	    }
 	    for(int i = 0; i < processor.getChildProcessorSize(); i++) {
 	        TemplateProcessor child = processor.getChildProcessor(i);
@@ -64,7 +65,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 			        // .maya上のノードにボディテキストがあるとき
 		            return null;
 		        }
-	        } else if(child instanceof AttributeProcessor) {
+	        } else if(child instanceof AttributeProcessor == false) {
 	            // .maya上のノードに改行や空白のm:charactersもしくは、
 	            // m:attribute以外のネストした子ノードがあるとき
 	            return null;

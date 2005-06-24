@@ -129,11 +129,6 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
 	        Class propertyType = ObjectUtil.getPropertyType(processor, _name);
-//++
-	        if(propertyType == null) {
-	            System.out.println(_name);
-	        }
-//--
 	        Object propertyValue;
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	        	Class clazz = ObjectUtil.loadClass(_expectedType);

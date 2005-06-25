@@ -35,6 +35,8 @@ import org.seasar.maya.impl.engine.specification.SpecificationXPathTest;
 import org.seasar.maya.impl.source.JavaSourceDescriptorTest;
 import org.seasar.maya.impl.source.MetaInfCacheTest;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptorTest;
+import org.seasar.maya.impl.util.MessageUtilTest;
+import org.seasar.maya.impl.util.StringUtilTest;
 import org.seasar.maya.standard.builder.library.scanner.TLDLibraryScannerTest;
 
 /**
@@ -77,6 +79,10 @@ public class MayaAllTests extends TestSuite {
         suite.addTestSuite(NamespaceableImplTest.class);
         suite.addTestSuite(SpecificationNodeImplTest.class);
         suite.addTestSuite(SpecificationXPathTest.class);
+        
+        // org.seasar.maya.impl.util
+        suite.addTestSuite(MessageUtilTest.class);
+        suite.addTestSuite(StringUtilTest.class);
         
         // org.seasar.maya.standard.builder.library.scanner
         suite.addTestSuite(TLDLibraryScannerTest.class);

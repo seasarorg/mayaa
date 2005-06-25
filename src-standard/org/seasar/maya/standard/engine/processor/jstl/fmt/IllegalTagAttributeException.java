@@ -18,12 +18,13 @@
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * ネイティブ JSTL タグにセットした属性が不正な例外。
  * @author suga
  */
-public class IllegalTagAttributeException extends RuntimeException {
+public class IllegalTagAttributeException extends MayaException {
     /** 属性が見つからなかったテンプレート */
     private Template _template;
     /** 対象のタグの名前 */

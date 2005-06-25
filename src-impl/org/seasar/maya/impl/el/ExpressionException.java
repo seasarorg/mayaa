@@ -15,17 +15,19 @@
  */
 package org.seasar.maya.impl.el;
 
+import org.seasar.maya.impl.MayaException;
+
 /**
  * 式関連例外の基本的な例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionException extends RuntimeException {
+public class ExpressionException extends MayaException {
     
     protected ExpressionException() {
     }
 
     public ExpressionException(Exception e) {
-        super(e.getMessage(), e);
+        super(e);
     }
     
 }

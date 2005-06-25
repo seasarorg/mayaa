@@ -24,19 +24,15 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class MayaException extends RuntimeException {
 
-    private int _index;
-    
-    public MayaException(int index) {
-        _index = index;
+    public MayaException() {
     }
 
-    public MayaException(Throwable cause, int index) {
+    public MayaException(Throwable cause) {
         super(cause);
-        _index = index;
     }
     
     public String getMessage() {
-        String message = MessageUtil.getMessage(getClass(), _index);
+        String message = MessageUtil.getMessage(getClass(), 0);
         if(StringUtil.isEmpty(message)) {
             Throwable cause = getCause();
             if(cause != null) {

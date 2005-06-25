@@ -17,12 +17,13 @@ package org.seasar.maya.impl.builder;
 
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * テンプレート上に記述したノードが解決されなかったときの例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NodeNotResolvedException extends RuntimeException {
+public class NodeNotResolvedException extends MayaException {
 
 	private Template _template;
 	private SpecificationNode _specificationNode;
@@ -34,7 +35,6 @@ public class NodeNotResolvedException extends RuntimeException {
 	 */
 	public NodeNotResolvedException(
 	        Template template, SpecificationNode specificationNode) {
-	    super(String.valueOf(specificationNode));
 	    _template = template;
 	    _specificationNode = specificationNode;
     }

@@ -19,17 +19,19 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.seasar.maya.impl.MayaException;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServletIOException extends RuntimeException {
+public class ServletIOException extends MayaException {
 
     public ServletIOException(ServletException e) {
-        super(e.getMessage(), e);
+        super(e);
     }
 
     public ServletIOException(IOException e) {
-        super(e.getMessage(), e);
+        super(e);
     }
     
 }

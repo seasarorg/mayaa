@@ -17,13 +17,14 @@ package org.seasar.maya.impl.builder;
 
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.MayaException;
 import org.xml.sax.Locator;
 
 /**
  * テンプレートビルド時の基本的な例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationBuildException extends RuntimeException {
+public class SpecificationBuildException extends MayaException {
     
 	private Specification _specification;
 	private Locator _locator;

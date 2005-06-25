@@ -125,7 +125,10 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             SpecificationNode injected, TemplateProcessor processor) {
         for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            property.setProcessorProperty(injected, processor);
+            Object prop = property.getProcessorProperty(injected, processor);
+            if(prop != null) {
+                ObjectUtil.setProperty(processor, property.getName(), prop);
+            }
         }
     }
     

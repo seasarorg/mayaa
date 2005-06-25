@@ -23,7 +23,9 @@ import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagVariableInfo;
 
+import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
@@ -90,5 +92,18 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
         processor.setTagVariableInfo(_tagVariableInfo);
         return processor;
     }
+    
+    protected void settingProperties(
+            SpecificationNode injected, TemplateProcessor processor) {
+        for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
+            PropertyDefinition property = (PropertyDefinition)it.next();
+            Object prop = property.getProcessorProperty(injected, processor);
+            if(prop != null) {
+    	        JspCustomTagProcessor jspProcessor = (JspCustomTagProcessor)processor;
+    	        jspProcessor.addProcessorProperty((ProcessorProperty)prop);
+            }
+        }
+    }
+
     
 }

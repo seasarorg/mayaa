@@ -123,24 +123,22 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         return value;
     }
     
-    public void setProcessorProperty(SpecificationNode injected, 
+    public Object getProcessorProperty(SpecificationNode injected, 
             TemplateProcessor processor) {
         QName qName = getQName(injected);
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
 	        Class propertyType = ObjectUtil.getPropertyType(processor, _name);
-	        Object propertyValue;
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	        	Class clazz = ObjectUtil.loadClass(_expectedType);
 	            CompiledExpression expression  = 
 	                ExpressionUtil.parseExpression(stringValue, clazz);
 	            String prefix = getPrefix(injected, qName);
-	            propertyValue = new ProcessorPropertyImpl(qName, prefix, expression);
-	        } else {
-	            propertyValue = stringValue;
+	            return new ProcessorPropertyImpl(qName, prefix, expression);
 	        }
-	        ObjectUtil.setProperty(processor, _name, propertyValue);
+	        return stringValue;
         }
+        return null;
     }
     
 }

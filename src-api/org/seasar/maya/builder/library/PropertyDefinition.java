@@ -57,11 +57,11 @@ public interface PropertyDefinition {
     String getDefaultValue();
 
     /**
-     * プロセッサにプロパティオブジェクトを設定する。
+     * プロセッサにプロパティオブジェクトを取得する。
      * @param injected インジェクションするノード。
      * @param processor プロパティ設定先のプロセッサ。
      * @return プロパティオブジェクト。
      */
-    void setProcessorProperty(SpecificationNode injected, TemplateProcessor processor);
+    Object getProcessorProperty(SpecificationNode injected, TemplateProcessor processor);
     
 }

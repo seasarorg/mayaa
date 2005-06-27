@@ -39,7 +39,6 @@ public class ProcessorTagHandler extends TagHandler {
         String name = attributes.getValue("name");
         String className = attributes.getValue("class");
         if(StringUtil.isEmpty(name) || StringUtil.isEmpty(className)) {
-            // TODO ÉçÉOèoóÕÅB
             invalidate();
         } else {
 	        _processorDefinition = new ProcessorDefinitionImpl();

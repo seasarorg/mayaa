@@ -101,8 +101,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             TemplateProcessor child = resolveInjectedNode(template, stack, childNode);
             if(child instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
-                    // TODO 適切な例外に変更（m:doBodyが複数みつかったとき）
-                    throw new IllegalStateException();
+                    throw new TooManyDoBodyException(template, childNode);
                 }
                 connectionPoint = child;
             }

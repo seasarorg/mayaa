@@ -82,7 +82,6 @@ public class TagTagHandler extends TagHandler {
                 _processor.setTagClass(clazz);
             } catch (RuntimeException e) {
                 if(LOG.isErrorEnabled()) {
-                    // TODO 適切なメッセージ出力にする。
                     LOG.error(e.getMessage());
                 }
                 _parent.invalidate();
@@ -106,7 +105,6 @@ public class TagTagHandler extends TagHandler {
                 _processor.setTEI(tei);
             } catch (RuntimeException e) {
                 if(LOG.isErrorEnabled()) {
-                    // TODO 適切なメッセージ出力にする。
                     LOG.error(e.getMessage());
                 }
                 _parent.invalidate();

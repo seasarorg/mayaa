@@ -134,8 +134,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
             template.doTemplateRender(context, start);
             return Tag.SKIP_BODY;
         }
-        // TODO 適切な例外型に変更（p:startComponentが無かったとき）
-        throw new IllegalStateException();
+        throw new StartComponentNotFoundException(template);
     }
     
 	protected void writeEndElement(PageContext context) {

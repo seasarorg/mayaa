@@ -117,8 +117,7 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
             }
         }
         if(value == null && _required) {
-            // TODO 適切な例外型にする（required="true"なのに、テンプレートに該当属性がない）。
-            throw new IllegalStateException(qName + " not found on " + injected);
+            throw new NoRequiredPropertyException(injected, qName);
         }
         return value;
     }

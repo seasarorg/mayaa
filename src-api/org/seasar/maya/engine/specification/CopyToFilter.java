@@ -23,7 +23,7 @@ public interface CopyToFilter {
     /**
      * 子のノードオブジェクト（SpecificationNode、NodeAttribute、NodeNamespace）を
      * コピーするかどうかを返すフィルタ。trueだとコピー。
-     * @param node テストするノードオブジェクト。
+     * @param test テストするノードオブジェクト。
      * @return コピーするかどうか。
      */
     boolean accept(NodeObject test);

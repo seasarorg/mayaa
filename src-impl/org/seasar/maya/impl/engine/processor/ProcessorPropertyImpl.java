@@ -20,6 +20,7 @@ import javax.servlet.jsp.PageContext;
 import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.impl.el.PropertyNotWritableException;
 import org.seasar.maya.impl.util.ExpressionUtil;
 
 /**
@@ -74,8 +75,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
             CompiledExpression expression = (CompiledExpression)_value;
             ExpressionUtil.expressSetValue(context, expression, value);
         } else {
-            // TODO 適切な例外に変える（リードオンリーなプロパティ）。
-            throw new IllegalStateException();
+            throw new PropertyNotWritableException(value, getQName().getLocalName());
         }
     }
     

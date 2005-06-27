@@ -33,6 +33,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.error.JspContextErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -92,8 +93,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
             _welcomeFileName = value;
             return;
         }
-        // TODO 適切な例外型への変更（対応していないカスタマイズ内容） 
-        throw new IllegalStateException();
+        throw new UnsupportedParameterException(name);
     }
     
     public String getKey() {

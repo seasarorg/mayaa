@@ -89,14 +89,12 @@ public final class XmlUtil {
 	        String localName, Class defaultValue, Class expectedType) {
         Class clazz = XmlUtil.getClassValue(attr, localName, defaultValue);
         if(clazz == null) {
-            // TODO 適切な例外型へ変更（ノードにclass属性が無く、defaultValueもnull）
-            throw new IllegalArgumentException();
+            throw new NoTypeValueException();
         }
         if(expectedType.isAssignableFrom(clazz)) {
             return ObjectUtil.newInstance(clazz);
         }
-        // TODO 適切な例外型へ変更（class属性値が非expectedType）
-        throw new IllegalArgumentException();
+        throw new IllegalTypeException(expectedType, clazz);
 	}
 
 }

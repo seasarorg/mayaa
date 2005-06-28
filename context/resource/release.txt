@@ -71,6 +71,21 @@ WEBƒRƒ“ƒeƒi‹N“®ƒvƒ‰ƒOƒCƒ““™‚É‚ÄŠm”F‚Å‚«‚Ü‚·B‚Ü‚½AƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“ƒ‹[ƒgƒ
 -ComponentPageProcessor‚ªƒeƒ“ƒvƒŒ[ƒgƒ{ƒfƒB‚ð2“xo—Í‚µ‚Ä‚µ‚Ü‚¤ê‡‚ª‚ ‚é
  ƒoƒO‚É‚Â‚¢‚ÄC³‚µ‚Ü‚µ‚½B
 
+-SVNƒŠƒ|ƒWƒgƒŠ‚ÉˆÚ“®‚µ‚Ü‚µ‚½Bhttps://www.seasar.org/svn/sandbox/maya/trunk
+ ‚ªƒŠƒ|ƒWƒgƒŠURL‚Æ‚È‚è‚Ü‚·B
+
+-id‚É‚æ‚éƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚ðs‚¤Û‚ÉA/maya/*[@m:id='message']‚Ì‚æ‚¤‚ÉA2‘w–Ú‚Ì‚Ý‚Ì
+ id‚ðŒŸõ‚·‚éXPath‚©‚çA/maya//*[@m:id='message']‚Æn‘w–Ú‚Ìid‚àŒŸõ‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½B
+ 
+-PropertyDefinition‚ÌƒT[ƒrƒXƒƒ\ƒbƒh‚ð•ÏX‚µ‚Ü‚µ‚½BƒvƒƒpƒeƒBÝ’è‚ðPropertyDefinition
+ ‚ÉˆÏ÷‚·‚é‚æ‚¤‚ÉÝŒv‚³‚ê‚Ä‚¢‚½‚à‚Ì‚ðAPropertyDefinition‚Í‚ ‚­‚Ü‚Åƒtƒ@ƒNƒgƒŠ‚Æ‚µ‚Ä“®ì‚µA
+ ProcessorDefinition“à‚ÅÝ’èˆ—‚ðs‚¤‚æ‚¤‚É‚µ‚Ü‚µ‚½B 
+
+-“ÆŽ©‚Ì—áŠO‚ÌŠî’ê‚ðMayaException‚Æ‚µ‚Ü‚µ‚½B‚±‚ÌMayaException‚ÍA
+ “¯ˆêƒpƒbƒP[ƒW‚É‚ ‚émessage.properties‚æ‚èAŠ®‘SCüŒ^–¼‚ðƒL[‚É
+ ƒƒbƒZ[ƒW‚ðŽæ“¾‚·‚é‹@”\‚Ì‚Ý‚ªŽÀ‘•‚³‚ê‚Ä‚¢‚Ü‚·B
+
+
 -----------------------------------------------------------------------
 •ÏX“_ 0.9.5 -> 0.9.6
 

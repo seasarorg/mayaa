@@ -56,4 +56,12 @@ public class StringUtilTest extends TestCase {
                 StringUtil.resolveEntity("foo&lt;bar&gt;baz"));
     }
     
+    public void testEscapeEntity() {
+        assertEquals("&amp;", StringUtil.escapeEntity("&"));
+        assertEquals("&lt;", StringUtil.escapeEntity("<"));
+        assertEquals("&gt;", StringUtil.escapeEntity(">"));
+        assertEquals("&quot;", StringUtil.escapeEntity("\""));
+        assertEquals("&apos;", StringUtil.escapeEntity("'"));
+    }
+    
 }

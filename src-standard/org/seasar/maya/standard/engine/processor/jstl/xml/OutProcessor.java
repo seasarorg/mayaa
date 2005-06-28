@@ -58,10 +58,9 @@ public class OutProcessor extends org.seasar.maya.standard.engine.processor.jstl
             String attributeName = docVarName.substring(scopeSeparaterIndex+1);
             int    scopeNumber   = AttributeScopeUtil.convertScopeStringToInt(scopeName);
             return (Document)context.getAttribute(attributeName,scopeNumber);
-        }else{
-            String attributeName = docVarName;
-            return (Document)context.getAttribute(attributeName);
         }
+        String attributeName = docVarName;
+        return (Document)context.getAttribute(attributeName);
     }
     private String getDocumentVariantName(String select){
         int firstSeparateIndex  = select.indexOf('/');

@@ -87,7 +87,7 @@ public class SpecificationUtil implements CONST_IMPL {
         } else if("page".equalsIgnoreCase(value)) {
             scope = PageContext.PAGE_SCOPE;
         } else {
-            throw new IllegalStateException();
+            throw new IllegalArgumentException();
         }
         return scope;
     }

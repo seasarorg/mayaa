@@ -100,4 +100,13 @@ public final class StringUtil {
         return buffer.toString();
     }
     
+    public static String escapeEntity(String blockString) {
+        blockString = blockString.replaceAll("&", "&amp;");
+        blockString = blockString.replaceAll("<", "&lt;");
+        blockString = blockString.replaceAll(">", "&gt;");
+        blockString = blockString.replaceAll("\"", "&quot;");
+        blockString = blockString.replaceAll("'", "&apos;");
+        return blockString;
+    }
+    
 }

@@ -39,25 +39,25 @@ public class MessageUtil {
         Properties properties =  (Properties)_propFiles.get(key);
         if(properties == null) {
             SourceDescriptor source = new JavaSourceDescriptor("message.properties", clazz);
+            properties = new Properties();
+            _propFiles.put(key, properties);
             if(source.exists()) {
-	            properties = new Properties();
 	            try {
 	                properties.load(source.getInputStream());
 	            } catch (IOException e) {
 	                throw new ServletIOException(e);
 	            }
-	            _propFiles.put(key, properties);
             }
         }
         StringBuffer propertyName = new StringBuffer(clazz.getName());
         if(index > 0) {
             propertyName.append(".").append(index); 
         }
-        if(properties == null) {
-            // TODO メッセージファイルが無い場合
-            return "";
+        String message = properties.getProperty(propertyName.toString());
+        if(StringUtil.isEmpty(message)) {
+        	message = "!" + clazz.getName() +  "!";
         }
-        return properties.getProperty(propertyName.toString());
+        return message;
     }
     
 }

@@ -35,4 +35,9 @@ public class MessageUtilTest extends TestCase {
         assertEquals("test message 2", message2);
     }
     
+    public void testNoPropertiesFile() {
+    	String message = MessageUtil.getMessage(Object.class, 0);
+    	assertEquals("!java.lang.Object!", message);
+    }
+    
 }

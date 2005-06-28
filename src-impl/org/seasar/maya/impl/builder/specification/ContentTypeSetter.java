@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.builder.specification;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
@@ -32,8 +30,6 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
 
-	private static final Log LOG = LogFactory.getLog(ContentTypeSetter.class);
-	
     private void setContentType(Template template, SpecificationNode specificationNode,
             QName httpEquivName, QName contentName) {
         NodeAttribute equiv = specificationNode.getAttribute(httpEquivName);
@@ -46,9 +42,6 @@ public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
         		    throw new IllegalStateException();
         		}
         		maya.addAttribute(QM_CONTENT_TYPE, value);
-                if(LOG.isTraceEnabled()) {
-                	LOG.trace("contentType setting " + value);
-                }
             }
         }
     }

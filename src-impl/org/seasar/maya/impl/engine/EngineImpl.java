@@ -246,7 +246,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 	        buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
 	        String pathInfo = httpRequest.getPathInfo();
 	        buffer.append(StringUtil.preparePath(pathInfo));
-	        if(pathInfo.endsWith("/")) {
+	        if(buffer.toString().endsWith("/")) {
 	            buffer.append(StringUtil.preparePath(getWelcomeFileName()));
 	        }
 	        return buffer.toString();

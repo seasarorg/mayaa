@@ -53,6 +53,10 @@ public class MessageUtil {
         if(index > 0) {
             propertyName.append(".").append(index); 
         }
+        if(properties == null) {
+            // TODO メッセージファイルが無い場合
+            return "";
+        }
         return properties.getProperty(propertyName.toString());
     }
     

@@ -180,7 +180,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         try {
             context.getOut().flush();
         } catch(IOException e) {
-            throw new ServletIOException(e);
+            throw new RuntimeException(e);
         }
 	}
     
@@ -267,6 +267,9 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
             try {
             	doService(context, requestedPageInfo[0], 
             	        requestedPageInfo[1], requestedPageInfo[2]);
+            } catch(Throwable t) {
+	            context.getOut().clearBuffer();
+                throw t;
 	        } finally {
 	            releasePageContext(context);
 	        }
@@ -292,7 +295,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 				}
 				out.flush();
 		    } catch(IOException e) {
-		        throw new ServletIOException(e);
+		        throw new RuntimeException(e);
 		    }
 		} else {
 	        if(response instanceof HttpServletResponse) {

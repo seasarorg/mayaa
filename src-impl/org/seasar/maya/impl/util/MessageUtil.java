@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.seasar.maya.impl.engine.ServletIOException;
 import org.seasar.maya.impl.source.JavaSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -45,7 +44,7 @@ public class MessageUtil {
 	            try {
 	                properties.load(source.getInputStream());
 	            } catch (IOException e) {
-	                throw new ServletIOException(e);
+	                throw new RuntimeException(e);
 	            }
             }
         }

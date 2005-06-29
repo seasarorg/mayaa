@@ -134,6 +134,7 @@
 	<target name="standardjar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.standard}">
 			<fileset dir="${folder.classes}">
+				<include name="javax/servlet/jsp/el/*.class"/>
 				<include name="org/seasar/maya/standard/**/*.class"/>
 				<include name="org/seasar/maya/standard/**/*.dtd"/>
 				<include name="org/seasar/maya/standard/**/*.xsd"/>

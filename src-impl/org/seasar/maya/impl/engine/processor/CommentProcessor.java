@@ -26,7 +26,9 @@ import javax.servlet.jsp.tagext.Tag;
  */
 public class CommentProcessor extends CharactersProcessor {
     
-    public int doStartProcess(PageContext context) {
+	private static final long serialVersionUID = -5176372123366627130L;
+
+	public int doStartProcess(PageContext context) {
     	if(context == null) {
     		throw new IllegalArgumentException();
     	}

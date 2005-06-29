@@ -26,7 +26,9 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ComplexExpression implements CompiledExpression {
 
-    private String _expression;
+ 	private static final long serialVersionUID = -7356099026354564155L;
+
+ 	private String _expression;
     private Class _expectedType;
     private CompiledExpression[] _compiled;
     

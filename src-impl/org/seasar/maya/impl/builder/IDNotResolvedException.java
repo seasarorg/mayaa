@@ -24,7 +24,9 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public class IDNotResolvedException extends NodeNotResolvedException {
 
-    private String _mayaID;
+	private static final long serialVersionUID = 4245540599314570281L;
+
+	private String _mayaID;
     
     /**
 	 * @param template テンプレートファイルもしくは、埋め込みページ。

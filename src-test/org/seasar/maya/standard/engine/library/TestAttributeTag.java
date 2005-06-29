@@ -24,7 +24,9 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class TestAttributeTag extends TagSupport {
 
-    public TestAttributeTag() {
+	private static final long serialVersionUID = 5869391007151195282L;
+
+	public TestAttributeTag() {
     }
 
     /** attribute テスト用属性 */

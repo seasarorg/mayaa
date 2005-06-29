@@ -45,7 +45,9 @@ import org.seasar.maya.source.factory.SourceFactory;
 public class PageImpl extends SpecificationImpl
         implements Page, Serializable, CONST_IMPL {
 
-    private Engine _engine;
+	private static final long serialVersionUID = -8688634709901129128L;
+
+	private Engine _engine;
     private String _pageName;
     private String _extension;
 

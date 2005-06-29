@@ -32,7 +32,9 @@ import org.seasar.maya.impl.el.ConversionException;
 public class Ognl2CompiledExpression 
 		extends AbstractCompiledExpression {
     
-    public static final String PAGE_CONTEXT = "pageContext";
+	private static final long serialVersionUID = 4817887080438766198L;
+
+	public static final String PAGE_CONTEXT = "pageContext";
     public static final Object ROOT = new Object();
 
     private Object _exp;

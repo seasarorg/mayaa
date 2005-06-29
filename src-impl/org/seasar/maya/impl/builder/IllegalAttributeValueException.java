@@ -24,6 +24,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public class IllegalAttributeValueException extends NodeNotResolvedException {
 
+	private static final long serialVersionUID = -530046431089771029L;
+
 	private String _attributeName;
 	private String _attributeValue;
 	

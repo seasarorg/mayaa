@@ -27,7 +27,9 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  */
 public class AttributeProcessor extends TemplateProcessorSupport {
 
-    private ProcessorProperty _value;
+	private static final long serialVersionUID = -3985340947416654455L;
+
+	private ProcessorProperty _value;
     
     private AbstractAttributableProcessor findParentAttributable() {
         for(TemplateProcessor parent = getParentProcessor();

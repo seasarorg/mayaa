@@ -23,7 +23,8 @@ import org.seasar.maya.impl.MayaException;
  */
 public class StartComponentNotFoundException extends MayaException {
 
-    private Template _template;
+	private static final long serialVersionUID = -8123490579795977124L;
+	private Template _template;
     
     public StartComponentNotFoundException(Template template) {
         _template = template;

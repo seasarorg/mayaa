@@ -22,4 +22,6 @@ import org.seasar.maya.impl.MayaException;
  */
 public class NoTypeValueException extends MayaException {
 
+	private static final long serialVersionUID = -7529751328645602630L;
+
 }

@@ -25,6 +25,8 @@ import org.seasar.maya.impl.MayaException;
  */
 public class NodeNotResolvedException extends MayaException {
 
+	private static final long serialVersionUID = 4560512867759109674L;
+
 	private Template _template;
 	private SpecificationNode _specificationNode;
 	

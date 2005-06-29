@@ -25,7 +25,9 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class TestTraceTag extends TagSupport {
 
-    public TestTraceTag() {
+	private static final long serialVersionUID = 966637310768857442L;
+
+	public TestTraceTag() {
     }
 
     /**

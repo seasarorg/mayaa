@@ -28,7 +28,9 @@ import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
  */
 public class EndComponentProcessor extends DoBodyProcessor {
     
-    /**
+	private static final long serialVersionUID = -6288170474466334557L;
+
+	/**
      * 親をさかのぼって、p:componentPageを探す。
      * @return 見つかったp:componentPageもしくはnull。
      */

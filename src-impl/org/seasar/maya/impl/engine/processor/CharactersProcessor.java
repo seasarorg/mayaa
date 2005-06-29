@@ -30,6 +30,8 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  */
 public class CharactersProcessor extends TemplateProcessorSupport {
     
+	private static final long serialVersionUID = 2054159396651833214L;
+
 	private ProcessorProperty _text;
     
     public void setText(ProcessorProperty text) {

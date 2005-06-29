@@ -21,7 +21,9 @@ package org.seasar.maya.impl.el;
  */
 public class ConversionException extends ExpressionException {
 
-    private Class _expectedType;
+	private static final long serialVersionUID = -485430528770416298L;
+
+	private Class _expectedType;
     private Object _expressed;
     
     /**

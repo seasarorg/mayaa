@@ -40,7 +40,9 @@ import org.xml.sax.XMLReader;
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
 		implements TemplateBuilder, CONST_IMPL {
 
-    private TemplateProcessorInjecter _injecter;
+	private static final long serialVersionUID = 4578697145887676787L;
+
+	private TemplateProcessorInjecter _injecter;
     private CompositeInjectionResolver _injectionResolver;
     private CompositeInjectionResolver _userInjectionResolver;
     private LibraryManager _libraryManager; 

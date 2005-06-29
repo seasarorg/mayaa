@@ -6,7 +6,9 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 public class IteratorCheckTag extends TagSupport {
-    IteratorHolder _iterator;
+
+	private static final long serialVersionUID = -7617701771687855189L;
+	IteratorHolder _iterator;
 
     public IteratorCheckTag() {
         super();

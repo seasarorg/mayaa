@@ -26,7 +26,9 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class LiteralExpression  implements CompiledExpression {
 
-    private String _expression;
+	private static final long serialVersionUID = -3791475287481727514L;
+
+	private String _expression;
     private Class _expectedType;
     
     public LiteralExpression(String expression, Class expectedType) {

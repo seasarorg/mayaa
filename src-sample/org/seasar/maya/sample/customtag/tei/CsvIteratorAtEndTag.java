@@ -7,7 +7,10 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 public class CsvIteratorAtEndTag extends BodyTagSupport {
-    public CsvIteratorAtEndTag() {
+
+	private static final long serialVersionUID = -4710252010388942825L;
+
+	public CsvIteratorAtEndTag() {
         super();
     }
 

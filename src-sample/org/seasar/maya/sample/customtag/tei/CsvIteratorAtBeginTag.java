@@ -6,7 +6,10 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 public class CsvIteratorAtBeginTag extends TagSupport {
-    public CsvIteratorAtBeginTag() {
+
+	private static final long serialVersionUID = 7471100957997196076L;
+
+	public CsvIteratorAtBeginTag() {
         super();
     }
 

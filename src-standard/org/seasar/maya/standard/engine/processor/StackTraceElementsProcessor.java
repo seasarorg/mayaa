@@ -27,7 +27,9 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
  */
 public class StackTraceElementsProcessor extends AbstractIteratorProcessor {
     
-    public void setThrowable(ProcessorProperty throwable) {
+	private static final long serialVersionUID = 2403694362873136701L;
+
+	public void setThrowable(ProcessorProperty throwable) {
     	if(throwable == null) {
     		throw new IllegalArgumentException();
     	}

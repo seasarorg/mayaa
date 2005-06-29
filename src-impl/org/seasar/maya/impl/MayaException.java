@@ -24,7 +24,9 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class MayaException extends RuntimeException {
 
-    public MayaException() {
+	private static final long serialVersionUID = -9103534239273385474L;
+
+	public MayaException() {
     }
 
     public MayaException(Throwable cause) {

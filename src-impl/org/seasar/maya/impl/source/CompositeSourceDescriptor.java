@@ -30,7 +30,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class CompositeSourceDescriptor implements SourceDescriptor {
 
-    private static final Date TIME_ZERO = new Date(0);
+	private static final long serialVersionUID = -6124718310228340001L;
+	private static final Date TIME_ZERO = new Date(0);
     private List _descriptors;
     private String _protocol;
     private String _systemID;

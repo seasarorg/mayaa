@@ -36,7 +36,9 @@ import org.seasar.maya.impl.util.StringUtil;
 public class ElementProcessor extends AbstractAttributableProcessor
 		implements InformalPropertyAcceptable, CONST_IMPL {
 
-    private QName _qName;
+	private static final long serialVersionUID = 923306412062075314L;
+
+	private QName _qName;
     private String _prefix;
     private boolean _duplicated;
 

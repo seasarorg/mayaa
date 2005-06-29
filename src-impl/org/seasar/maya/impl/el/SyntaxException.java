@@ -21,7 +21,9 @@ package org.seasar.maya.impl.el;
  */
 public class SyntaxException extends ExpressionException {
 
-    private String _expression;
+	private static final long serialVersionUID = 4167069503212250014L;
+
+	private String _expression;
     
     /**
      * @param expression ®•¶š—ñB

@@ -33,7 +33,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class ServletSourceDescriptor implements SourceDescriptor {
 
-    private ServletContext _context;
+	private static final long serialVersionUID = -2775274363708858237L;
+	private ServletContext _context;
     private String _protocol;
     private String _root;
     private String _systemID;

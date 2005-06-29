@@ -27,7 +27,9 @@ import org.jaxen.XPath;
  */
 public class SpecificationXPath extends BaseXPath {
 
-    public static XPath createXPath(String xpathExpr, Map namespaces) {
+	private static final long serialVersionUID = -4676164886549672326L;
+
+	public static XPath createXPath(String xpathExpr, Map namespaces) {
         try {
             XPath xpath = new SpecificationXPath(xpathExpr);
             if(namespaces != null) {

@@ -51,6 +51,8 @@ import org.seasar.maya.source.factory.SourceFactory;
  */
 public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL {
     
+	private static final long serialVersionUID = 1428444571422324206L;
+
 	private DummyServlet _dummyServlet;
     private EngineSetting _engineSetting;
     private ErrorHandler _errorHandler;

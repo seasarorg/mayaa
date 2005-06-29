@@ -21,7 +21,9 @@ package org.seasar.maya.impl.el;
  */
 public class PropertyNotWritableException extends ExpressionException {
     
-    private Object _target;
+	private static final long serialVersionUID = -4086709979130925980L;
+
+	private Object _target;
     private Object _property;
     
     /**

@@ -29,7 +29,9 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
     
-    private String _target;
+	private static final long serialVersionUID = 6717263251948534639L;
+
+	private String _target;
     private String _data;
     
     public void setTarget(String target) {

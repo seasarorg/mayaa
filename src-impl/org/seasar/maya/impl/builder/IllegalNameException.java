@@ -24,6 +24,8 @@ import org.xml.sax.Locator;
  */
 public class IllegalNameException extends SpecificationBuildException {
 
+	private static final long serialVersionUID = 2431120366863355234L;
+
 	private String _qName;
 	
 	/**

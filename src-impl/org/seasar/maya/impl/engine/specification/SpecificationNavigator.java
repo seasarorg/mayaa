@@ -42,7 +42,8 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 public class SpecificationNavigator extends DefaultNavigator
 		implements NamedAccessNavigator, CONST_IMPL {
 
-    private static final Navigator _instance = new SpecificationNavigator();
+	private static final long serialVersionUID = -8845415744894196361L;
+	private static final Navigator _instance = new SpecificationNavigator();
 
     public static Navigator getInstance() {
         return _instance;

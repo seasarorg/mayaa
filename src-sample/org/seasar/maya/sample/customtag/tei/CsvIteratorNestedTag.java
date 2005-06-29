@@ -6,7 +6,10 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 public class CsvIteratorNestedTag extends TagSupport {
-    public CsvIteratorNestedTag() {
+
+	private static final long serialVersionUID = -2581842395447865159L;
+
+	public CsvIteratorNestedTag() {
         super();
     }
 

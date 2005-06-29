@@ -25,7 +25,9 @@ import org.xml.sax.Locator;
  */
 public class PrefixMappingNotFoundException extends SpecificationBuildException {
 
-    private String _prefix;
+	private static final long serialVersionUID = -9114023056056051237L;
+
+	private String _prefix;
     
     public PrefixMappingNotFoundException(
     		Specification specification, SpecificationNode node, String prefix) {

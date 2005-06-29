@@ -29,7 +29,9 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class DOCTYPEProcessor extends TemplateProcessorSupport {
     
-    private String _name;
+	private static final long serialVersionUID = 8518993579074245108L;
+
+	private String _name;
     private String _publicID;
     private String _systemID;
 

@@ -53,7 +53,8 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
 public class TemplateImpl extends SpecificationImpl
 		implements Template, CONST_IMPL {
 
-    private static final NodeNamespace NS_HTML = new NodeNamespaceImpl("", URI_HTML);
+	private static final long serialVersionUID = -5368325487192629078L;
+	private static final NodeNamespace NS_HTML = new NodeNamespaceImpl("", URI_HTML);
     
     private String _suffix ;
     private TemplateProcessor _parentNode;

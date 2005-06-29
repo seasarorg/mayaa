@@ -40,7 +40,9 @@ import org.xml.sax.ext.LexicalHandler;
 public class SpecificationBuilderImpl 
 		implements SpecificationBuilder, CONST_IMPL {
 
-    private XMLReaderPool _xmlReaderPool;
+	private static final long serialVersionUID = 7852577574830768959L;
+
+	private XMLReaderPool _xmlReaderPool;
 
     public XMLReaderPool getXmlReaderPool() {
         return _xmlReaderPool;
@@ -122,7 +124,9 @@ public class SpecificationBuilderImpl
 
     private class XMLReaderPool extends AbstractSoftReferencePool implements Serializable {
 
-        protected Object createObject() {
+		private static final long serialVersionUID = -1131927232092623848L;
+
+		protected Object createObject() {
             return createXMLReader();
         }
         

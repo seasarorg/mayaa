@@ -21,6 +21,8 @@ package org.seasar.maya.impl.el;
  */
 public class UnbalancedBraceException extends ExpressionException {
 
+	private static final long serialVersionUID = 9098125536269480736L;
+
 	private String _expression;
 	private int _offset;
 	

@@ -23,6 +23,8 @@ import org.seasar.maya.impl.MayaException;
  */
 public class PageNotFoundException extends MayaException {
 
+	private static final long serialVersionUID = 3750171533372115950L;
+
 	private String _pageName;
     
     /**

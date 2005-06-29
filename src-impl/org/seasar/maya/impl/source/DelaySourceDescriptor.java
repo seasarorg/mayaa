@@ -29,7 +29,9 @@ import org.seasar.maya.source.factory.SourceFactory;
  */
 public class DelaySourceDescriptor extends NullSourceDescriptor {
 
-    private String _path;
+	private static final long serialVersionUID = 8798364851381291687L;
+
+	private String _path;
     private SourceDescriptor _source;
     
     public DelaySourceDescriptor(String path) {

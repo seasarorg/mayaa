@@ -30,7 +30,8 @@ public class ELException
   // Member variables
   //-------------------------------------
 
-  private Throwable mRootCause;
+	private static final long serialVersionUID = 5595669992540309972L;
+	private Throwable mRootCause;
 
   //-------------------------------------
   /**

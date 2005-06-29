@@ -29,7 +29,9 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
     
-    private Class _neighbor;
+	private static final long serialVersionUID = -4924522601395047024L;
+
+	private Class _neighbor;
     private String _className;
     private InputStream _inputStream;
 

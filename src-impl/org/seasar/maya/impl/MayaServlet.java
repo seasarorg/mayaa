@@ -34,6 +34,8 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
  */
 public class MayaServlet extends HttpServlet implements CONST_IMPL {
 
+	private static final long serialVersionUID = 5182757427194256698L;
+
 	private static boolean _inithialized;
 
     private Engine _engine;

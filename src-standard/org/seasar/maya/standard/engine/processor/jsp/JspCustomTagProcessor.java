@@ -53,7 +53,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         implements ChildEvaluationProcessor, TryCatchFinallyProcessor, 
 				CONST_IMPL {
     
-    private Class _tagClass;
+	private static final long serialVersionUID = -4416320364576454337L;
+	private Class _tagClass;
     private TagExtraInfo _tei;
     private List _variableInfo;
     private List _properties;

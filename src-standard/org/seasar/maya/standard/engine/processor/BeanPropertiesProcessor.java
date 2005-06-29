@@ -33,7 +33,8 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class BeanPropertiesProcessor extends AbstractIteratorProcessor {
     
-    private String _ignore;
+	private static final long serialVersionUID = 8758394579418426008L;
+	private String _ignore;
     
     public void setBean(ProcessorProperty bean) {
     	if(bean == null) {

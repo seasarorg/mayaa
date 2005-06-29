@@ -23,7 +23,9 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public class TooManyDoBodyException extends SpecificationBuildException {
 
-    public TooManyDoBodyException(Specification specification, SpecificationNode node) {
+	private static final long serialVersionUID = 5164593430185077800L;
+
+	public TooManyDoBodyException(Specification specification, SpecificationNode node) {
         super(specification, node);
     }
     

@@ -31,7 +31,9 @@ import org.seasar.maya.engine.Template;
  */
 public class TemplateProcessorSupport implements TemplateProcessor {
 
-    private TemplateProcessor _parent;
+	private static final long serialVersionUID = -3521980479718620027L;
+
+	private TemplateProcessor _parent;
     private int _index;
     private List _children = new ArrayList();
 

@@ -21,7 +21,9 @@ package org.seasar.maya.impl.el;
  */
 public class PropertyNotFoundException extends ExpressionException {
     
-    private Object _target;
+	private static final long serialVersionUID = -5888901658424559272L;
+
+	private Object _target;
     private Object _property;
     
     /**

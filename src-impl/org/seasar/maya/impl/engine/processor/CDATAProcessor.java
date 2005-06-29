@@ -28,7 +28,9 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  */
 public class CDATAProcessor extends TemplateProcessorSupport {
     
-    public int doStartProcess(PageContext context) {
+	private static final long serialVersionUID = -4267623139201513906L;
+
+	public int doStartProcess(PageContext context) {
     	if(context == null) {
     		throw new IllegalArgumentException();
     	}

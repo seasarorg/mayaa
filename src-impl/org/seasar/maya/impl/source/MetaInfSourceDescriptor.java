@@ -32,6 +32,7 @@ import org.seasar.maya.source.SourceDescriptor;
 public class MetaInfSourceDescriptor 
 		implements SourceDescriptor, CONST_IMPL {
     
+	private static final long serialVersionUID = 8839712576913816936L;
 	private static MetaInfCache _metaInfCache;
 
 	protected static MetaInfCache getMetaInfCache() {

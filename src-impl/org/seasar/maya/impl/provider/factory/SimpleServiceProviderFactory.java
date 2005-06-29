@@ -34,7 +34,9 @@ import org.seasar.maya.source.factory.SourceEntry;
 public class SimpleServiceProviderFactory extends ServiceProviderFactory
 		implements CONST_IMPL {
 
-    protected static final String KEY_SERVICE = ServiceProvider.class.getName();
+	private static final long serialVersionUID = 3581634661222113559L;
+
+	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
     protected static final String KEY_MODEL = ModelProvider.class.getName();
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {

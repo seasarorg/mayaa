@@ -22,4 +22,7 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class StartComponentProcessor extends TemplateProcessorSupport {
+
+	private static final long serialVersionUID = 4309532215454978747L;
+
 }

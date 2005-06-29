@@ -27,7 +27,9 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class NullSourceDescriptor implements SourceDescriptor {
 
-    public boolean exists() {
+	private static final long serialVersionUID = -6864473214459610814L;
+
+	public boolean exists() {
         return false;
     }
 

@@ -39,7 +39,8 @@ import org.seasar.maya.source.factory.SourceFactory;
 public class ComponentPageProcessor extends AbstractAttributableProcessor
 		implements CONST_COMPONENT {
 
-    private String _path;
+	private static final long serialVersionUID = -1240398725406503403L;
+	private String _path;
     private String _namespaceURI;
     private Page _page;
     

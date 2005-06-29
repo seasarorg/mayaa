@@ -21,7 +21,9 @@ package org.seasar.maya.impl.el;
  */
 public class MethodNotFoundException extends ExpressionException {
     
-    private Object _target;
+	private static final long serialVersionUID = 4537067179221129429L;
+
+	private Object _target;
     private String _methodName;
     private Object[] _args;
     private boolean _staticCall;

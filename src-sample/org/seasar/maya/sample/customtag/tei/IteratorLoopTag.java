@@ -7,7 +7,9 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 public class IteratorLoopTag extends BodyTagSupport {
-    IteratorHolder _iterator;
+
+	private static final long serialVersionUID = 1507210707192060469L;
+	IteratorHolder _iterator;
 
     public IteratorLoopTag() {
         super();

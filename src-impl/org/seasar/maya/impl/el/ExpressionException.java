@@ -23,7 +23,9 @@ import org.seasar.maya.impl.MayaException;
  */
 public class ExpressionException extends MayaException {
     
-    protected ExpressionException() {
+	private static final long serialVersionUID = -1469436031110451569L;
+
+	protected ExpressionException() {
     }
 
     public ExpressionException(Exception e) {

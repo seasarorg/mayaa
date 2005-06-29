@@ -22,4 +22,7 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DoBodyProcessor extends TemplateProcessorSupport {
+
+	private static final long serialVersionUID = -5462533588574819934L;
+
 }

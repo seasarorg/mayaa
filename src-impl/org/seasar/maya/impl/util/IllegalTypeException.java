@@ -22,7 +22,8 @@ import org.seasar.maya.impl.MayaException;
  */
 public class IllegalTypeException extends MayaException {
 
-    private Class _expectedType;
+	private static final long serialVersionUID = -5744177696584258746L;
+	private Class _expectedType;
     private Class _value;
     
     public IllegalTypeException(Class expectedType, Class value) {

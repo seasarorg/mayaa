@@ -24,7 +24,9 @@ import org.seasar.maya.impl.MayaException;
  */
 public class NoRequiredPropertyException extends MayaException {
 
-    private SpecificationNode _injected;
+	private static final long serialVersionUID = -8388715165180536210L;
+
+	private SpecificationNode _injected;
     private QName _qName; 
     
     public NoRequiredPropertyException(SpecificationNode injected, QName qName) {

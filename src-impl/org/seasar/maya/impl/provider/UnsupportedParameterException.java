@@ -22,7 +22,9 @@ import org.seasar.maya.impl.MayaException;
  */
 public class UnsupportedParameterException extends MayaException {
 
-    private String _parameterName;
+	private static final long serialVersionUID = -8882890207890109562L;
+
+	private String _parameterName;
     
     public UnsupportedParameterException(String parameterName) {
         _parameterName = parameterName;

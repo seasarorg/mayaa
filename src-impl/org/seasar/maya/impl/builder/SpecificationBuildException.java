@@ -26,6 +26,8 @@ import org.xml.sax.Locator;
  */
 public class SpecificationBuildException extends MayaException {
     
+	private static final long serialVersionUID = -5042681474924383369L;
+
 	private Specification _specification;
 	private Locator _locator;
 	

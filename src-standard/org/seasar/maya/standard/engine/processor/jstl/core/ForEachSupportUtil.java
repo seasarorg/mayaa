@@ -69,10 +69,10 @@ public class ForEachSupportUtil{
 		}; 
 	}
 	    
-	public static ReadOnlyList toForEachList(final java.util.Enumeration enum){
+	public static ReadOnlyList toForEachList(final java.util.Enumeration enumValue){
 		final List list = new LinkedList();
-		while( enum.hasMoreElements() ){
-			list.add(enum.nextElement());
+		while( enumValue.hasMoreElements() ){
+			list.add(enumValue.nextElement());
 		}
 		return new ReadOnlyList() {
 			public Object get(int index) {

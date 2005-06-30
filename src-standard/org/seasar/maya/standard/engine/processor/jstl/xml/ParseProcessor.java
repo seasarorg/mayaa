@@ -24,7 +24,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.standard.alert.AlertThrowerFactory;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 import org.w3c.dom.Document;

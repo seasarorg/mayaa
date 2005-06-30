@@ -51,14 +51,11 @@ public class ParseProcessor extends TemplateProcessorSupport {
             DocumentBuilder builder = factory.newDocumentBuilder();
             doc = builder.parse(_resourceXml);
         } catch (ParserConfigurationException e) {
-            AlertThrowerFactory.getAlertThrower().throwAlert("XML parse exception",e);
-            return Tag.EVAL_PAGE;
+            throw new RuntimeException("XML parse exception",e);
         } catch (SAXException e) {
-            AlertThrowerFactory.getAlertThrower().throwAlert("XML parse exception",e);
-            return Tag.EVAL_PAGE;
+            throw new RuntimeException("XML parse exception",e);
         } catch (IOException e) {
-            AlertThrowerFactory.getAlertThrower().throwAlert("XML parse exception",e);
-            return Tag.EVAL_PAGE;
+            throw new RuntimeException("XML parse exception",e);
         }
         AttributeValue var = AttributeValueFactory.create(_var,_scope);
         var.setValue(context,doc);

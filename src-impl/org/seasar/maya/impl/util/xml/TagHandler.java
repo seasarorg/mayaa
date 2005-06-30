@@ -27,7 +27,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class TagHandler {
     
-    protected static AttributesImpl NULL_ATTR = new AttributesImpl();
+    protected static final AttributesImpl NULL_ATTR = new AttributesImpl();
     private static TagHandler NULL_HANDLER = new TagHandler();
     
     private Map _children = new HashMap();

@@ -1,4 +1,4 @@
-package org.seasar.maya.standard.engine.processor.jstl.xml;
+package org.seasar.maya.standard.engine.processor.jstl;
 
 import javax.servlet.jsp.PageContext;
 
@@ -8,9 +8,13 @@ import org.seasar.maya.engine.specification.QName;
 /**
  * @author maruo_syunsuke
  */
-public class ProcessorPropertyDummy implements ProcessorProperty {
+public class ProcessorPropertyString implements ProcessorProperty {
 
     private Object _value ; 
+    
+    public ProcessorPropertyString(String str) {
+        _value = str ;
+    }
     
     public QName getQName() {
         return null;
@@ -29,11 +33,10 @@ public class ProcessorPropertyDummy implements ProcessorProperty {
     }
 
     public Object getValue(PageContext context) {
-        return _value;
+        return _value.toString();
     }
 
     public void setValue(PageContext context, Object value) {
         _value = value ;
     }
-
 }

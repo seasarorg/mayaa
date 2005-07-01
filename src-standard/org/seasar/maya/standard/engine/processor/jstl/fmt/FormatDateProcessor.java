@@ -103,7 +103,7 @@ public class FormatDateProcessor extends TemplateProcessorSupport
 
     public void setScope(String scope) {
         if (scope != null) {
-            ScopeType scopeType = ScopeType.getByName(scope);
+            ContextScopeType scopeType = ContextScopeType.getByName(scope);
             _scopeString = scopeType.getName();
             _scope = scopeType.getValue();
         }

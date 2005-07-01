@@ -1,14 +1,12 @@
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
@@ -61,9 +59,10 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         NumberFormat format   = getFormat(locale);
         Number       number   = null;
         boolean isIntegerOnly = ObjectUtil.booleanValue(_integerOnly.getLiteral(),false);
-        
+
         try {
-            number = format.parse(obj.toString());
+            Object target = (_value != null) ? _value.getValue(context) : obj;
+            number = format.parse(target.toString());
             if( isIntegerOnly ){
                 number = new Integer( number.intValue() );
             }

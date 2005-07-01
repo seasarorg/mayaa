@@ -7,7 +7,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 import org.seasar.maya.standard.engine.processor.jstl.ProcessorPropertyString;

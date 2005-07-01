@@ -130,7 +130,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
 
     public void setScope(String scope) {
       if (scope != null) {
-			ScopeType scopeType = ScopeType.getByName(scope);
+			ContextScopeType scopeType = ContextScopeType.getByName(scope);
 			_scope = scopeType.getValue();
 		}
     }

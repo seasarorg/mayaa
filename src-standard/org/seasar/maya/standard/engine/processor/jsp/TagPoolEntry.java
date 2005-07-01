@@ -26,12 +26,8 @@ import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
  * @author higa (original)
  */
 public class TagPoolEntry {
-
-    /** カスタムタグのクラス */
-    private Class _tagClass;
-
     /** カスタムタグのプール */
-    private JspCustomTagPool _jspCustomTagPool = new JspCustomTagPool();
+    private JspCustomTagPool _jspCustomTagPool;
 
     /**
      * コンストラクタ.
@@ -41,7 +37,7 @@ public class TagPoolEntry {
         if(tagClass == null) {
             throw new IllegalArgumentException();
         }
-        _tagClass = tagClass;
+        _jspCustomTagPool = new JspCustomTagPool(tagClass);
     }
 
     /**
@@ -63,20 +59,30 @@ public class TagPoolEntry {
 
     /** カスタムタグのプール */
     private class JspCustomTagPool extends AbstractSoftReferencePool {
-        
+        /** カスタムタグのクラス */
+        private Class _tagClass;
+
+        /**
+         * コンストラクタ.
+         * @param tagClass カスタムタグのクラス。
+         */
+        protected JspCustomTagPool(Class tagClass) {
+            _tagClass = tagClass;
+        }
+
         protected Object createObject() {
             return ObjectUtil.newInstance(_tagClass);
         }
-        
+
         protected boolean validateObject(Object object) {
             return object instanceof Tag;
         }
         
-        private Tag borrowTag() {
+        Tag borrowTag() {
             return (Tag)borrowObject();
         }
         
-        private void returnTag(Tag tag) {
+        void returnTag(Tag tag) {
             returnObject(tag);
         }
         

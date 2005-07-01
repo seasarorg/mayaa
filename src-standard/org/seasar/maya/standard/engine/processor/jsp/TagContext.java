@@ -65,7 +65,7 @@ public class TagContext {
     
     /**
      * クラス名を指定してカスタムタグを取得する。
-     * @param tagClassName カスタムタグのクラス名。
+     * @param tagClass カスタムタグのクラス名。
      * @param attributesKey 属性の組み合わせ識別キー
      * @return カスタムタグのインスタンス。
      */

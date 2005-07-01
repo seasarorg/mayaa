@@ -27,7 +27,7 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
 /**
  * テンプレート中に、JSP風に直接プロセッサQNameを記述した場合の解決を行うレゾルバ。
  * <pre>
- * &lt;html xmlns:c="http://www.seasar.org/maya/jstl/core"&gt;
+ * &lt;html xmlns:c="http://maya.seasar.org/jstl/core"&gt;
  *   &lt;body&gt;
  *     &lt;p&gt;&lt;c:out c:value="${ greeting }"&gt;&lt;/p&gt;
  *   &lt;/body&gt;

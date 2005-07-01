@@ -35,7 +35,7 @@ public interface CONST_IMPL {
     /**
 	 * テンプレートや設定XMLに記述するエンジンの仕様化された名前空間URI。
 	 */
-    String URI_MAYA = "http://www.seasar.org/maya";
+    String URI_MAYA = "http://maya.seasar.org";
 
     /**
      * テンプレートで記述を省略されたノードの名前空間となるHTMLのURI。
@@ -57,8 +57,8 @@ public interface CONST_IMPL {
 	  */
     String ATTR_INJECT = "inject";
 
-    String PUBLIC_MLD10 = "-//The Seasar Project//DTD Maya Library Definition 1.0//EN";
-    String PUBLIC_CONF10 = "-//The Seasar Project//DTD Maya Config 1.0//EN";
+    String PUBLIC_MLD10 = "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
+    String PUBLIC_CONF10 = "-//The Seasar Foundation//DTD Maya Config 1.0//EN";
     
     String PROTOCOL_JAVA = "java";
     String PROTOCOL_PAGE = "page";

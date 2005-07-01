@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE library
-	PUBLIC "-//The Seasar Project//DTD Maya Library Definition 1.0//EN"
+	PUBLIC "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN"
 	"http://maya.seasar.org/dtd/mld_1_0.dtd">
 <library uri="URI_LIBRARY">
 	<processor name="NAME_PROCESSOR"

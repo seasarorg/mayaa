@@ -21,7 +21,7 @@ package org.seasar.maya.standard;
  */
 public interface CONST_STANDARD {
 
-    String URI_JSTL_CORE= "http://www.seasar.org/maya/jstl/core";
-    String URI_JSTL_FMT = "http://www.seasar.org/maya/jstl/fmt";
+    String URI_JSTL_CORE= "http://maya.seasar.org/jstl/core";
+    String URI_JSTL_FMT = "http://maya.seasar.org/jstl/fmt";
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="Shift_JIS"?>
-<m:maya xmlns:m="http://www.seasar.org/maya"
-			xmlns:fmt="http://www.seasar.org/maya/jstl/fmt">
+<m:maya xmlns:m="http://maya.seasar.org"
+			xmlns:fmt="http://maya.seasar.org/jstl/fmt">
 
 	<fmt:formatNumber m:id="number" value="123456789" groupingUsed="true"
 			type="CURRENCY" currencySymbol="$"/>

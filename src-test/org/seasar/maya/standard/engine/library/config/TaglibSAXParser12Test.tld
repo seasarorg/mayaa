@@ -6,7 +6,7 @@
     <tlib-version>1.0</tlib-version>
     <jsp-version>1.2</jsp-version>
     <short-name>test</short-name>
-    <uri>http://www.seasar.org/maya/test12</uri>
+    <uri>http://maya.seasar.org/test12</uri>
     <display-name>Test display-name</display-name>
     <description>Test description</description>
 

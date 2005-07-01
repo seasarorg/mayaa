@@ -25,11 +25,11 @@ public class QName {
     private String _localName;
     
     /**
-     * デフォルトの名前空間（http://www.seasar.org/maya）のQName。 
+     * デフォルトの名前空間（http://maya.seasar.org）のQName。 
      * @param localName ローカル名。
      */
     public QName(String localName) {
-        this("http://www.seasar.org/maya", localName);
+        this("http://maya.seasar.org", localName);
     }
     
     /**

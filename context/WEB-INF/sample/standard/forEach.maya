@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="Shift_JIS"?>
-<m:maya xmlns:x="/" xmlns:m="http://www.seasar.org/maya"
+<m:maya xmlns:m="http://maya.seasar.org"
 			xmlns:c="http://java.sun.com/jstl/core_rt"
-			xmlns:mc="http://www.seasar.org/maya/jstl/core">
+			xmlns:mc="http://maya.seasar.org/jstl/core">
 
 	<mc:forEach m:id="loop" begin="1" end="5" var="i" m:rendered="true"/>
 	<mc:forEach m:id="loop2" items="1,2,3,4,5" var="i" m:rendered="true"/>
 
 	<mc:out m:id="message" value="こんにちは ${ i } 回目" m:rendered="true"/>
 
-	<x:menu.html m:id="menu"/>
 </m:maya>

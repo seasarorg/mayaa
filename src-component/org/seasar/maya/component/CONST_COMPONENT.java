@@ -23,7 +23,7 @@ import org.seasar.maya.impl.CONST_IMPL;
  */
 public interface CONST_COMPONENT {
 
-    String URI_COMPONENT = "http://www.seasar.org/maya/component";
+    String URI_COMPONENT = "http://maya.seasar.org/component";
     String PREFIX_PAGE = CONST_IMPL.PREFIX_PAGE;
     
     /*

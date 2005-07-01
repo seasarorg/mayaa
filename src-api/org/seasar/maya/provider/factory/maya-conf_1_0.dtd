@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!NOTATION maya.conf_1_0 PUBLIC
-        "-//The Seasar Project//DTD Maya Config 1.0//EN">
+        "-//The Seasar Foundation//DTD Maya Config 1.0//EN">
 
 <!ELEMENT service (description?, source?, engine?, expression?, specificationBuilder?, templateBuilder?) >
 

@@ -18,7 +18,6 @@ import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 
 public class ParseNumberProcessor extends AbstractBodyProcessor {
-    private ProcessorProperty _value ;
     private ProcessorProperty _type ;
     private ProcessorProperty _parseLocale ;
     private ProcessorProperty _integerOnly ;
@@ -46,10 +45,6 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         _type = type;
     }
 
-    public void setValue(ProcessorProperty value) {
-        _value = value;
-    }
-
     public void setVar(ProcessorProperty var) {
         _var = var;
     }
@@ -58,11 +53,11 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         Locale       locale   = getLocale(context);
         NumberFormat format   = getFormat(locale);
         Number       number   = null;
-        boolean isIntegerOnly = ObjectUtil.booleanValue(_integerOnly.getLiteral(),false);
+        boolean isIntegerOnly = ObjectUtil.booleanValue(
+                                _integerOnly.getLiteral(),false);
 
         try {
-            Object target = (_value != null) ? _value.getValue(context) : obj;
-            number = format.parse(target.toString());
+            number = format.parse(obj.toString());
             if( isIntegerOnly ){
                 number = new Integer( number.intValue() );
             }
@@ -77,7 +72,9 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
                 throw new RuntimeException(e);
             }
         }else{
-            AttributeValue attributeValue = AttributeValueFactory.create(_var.getLiteral(),_scope.getLiteral());
+            AttributeValue attributeValue 
+                    = AttributeValueFactory.create(
+                            _var.getLiteral(),_scope.getLiteral());
             attributeValue.setValue(context,number);
         }
         return Tag.SKIP_BODY;

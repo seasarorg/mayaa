@@ -27,7 +27,9 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  * ボディーの情報のあるタグの処理をおこなう。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractBodyTextProcessor extends TemplateProcessorSupport implements ChildEvaluationProcessor {
+public abstract class AbstractBodyTextProcessor 
+                        extends TemplateProcessorSupport 
+                        implements ChildEvaluationProcessor {
 
     private boolean _childEvaluation = true;
 

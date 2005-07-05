@@ -28,31 +28,26 @@ import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
  */
 public class SetAttributeProcessor extends AbstractBodyProcessor {
 
-    private String _var;
+    private ProcessorProperty _var;
     private int _scope = PageContext.PAGE_SCOPE;
     
-    public void setVar(String var) {
-        if(StringUtil.isEmpty(var)) {
-            throw new IllegalArgumentException();
-        }
-        _var = var;
-    }
-    
-    public void setValue(ProcessorProperty value) {
-        super.setValue(value);
-    }
-    
-    public void setScope(String scope) {
-        _scope = SpecificationUtil.getScopeFromString(scope);
-    }
-    
     public int process(PageContext context, Object obj) {
-        if(StringUtil.isEmpty(_var) || _scope < PageContext.PAGE_SCOPE || 
+        String varName = _var.getValue(context).toString();
+        if(StringUtil.isEmpty(varName) || _scope < PageContext.PAGE_SCOPE || 
                 PageContext.APPLICATION_SCOPE < _scope) {
             throw new IllegalStateException();
         }
-        context.setAttribute(_var, obj, _scope);
+        context.setAttribute(varName, obj, _scope);
         return Tag.EVAL_PAGE;
     }
 
+    public void setVar(ProcessorProperty var) {
+        _var = var;
+    }
+    public void setValue(ProcessorProperty value) {
+        super.setValue(value);
+    }
+    public void setScope(String scope) {
+        _scope = SpecificationUtil.getScopeFromString(scope);
+    }
 }

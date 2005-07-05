@@ -47,9 +47,6 @@ public class SetPropertyProcessor extends AbstractBodyProcessor {
     }
     
     public void setValue(ProcessorProperty value) {
-    	if(value == null) {
-            throw new IllegalArgumentException();
-    	}
         super.setValue(value);
     }
     

@@ -1,19 +1,19 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
- * 
- * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
- * not use this file except in compliance with the License which accompanies
- * this distribution, and is available at
- * 
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ *
+ * Licensed under the Seasar Software License, v1.1 (aka "the License");
+ * you may not use this file except in compliance with the License which
+ * accompanies this distribution, and is available at
+ *
  *     http://www.seasar.org/SEASAR-LICENSE.TXT
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-package org.seasar.maya.test.util.servlet;
+package org.seasar.maya.impl.cycle.servlet;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -30,6 +30,8 @@ import javax.servlet.ServletException;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.source.JavaSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
@@ -39,15 +41,20 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TestServletContext implements ServletContext {
+public class MockServletContext implements ServletContext {
 
+    private static final Log LOG = LogFactory.getLog(MockServletContext.class);
+    
     private String _contextName;
     private TestCase _test;
     private Map _attributes;
     
-    public TestServletContext(TestCase test, String contextName) {
-        if(test == null || StringUtil.isEmpty(contextName)) {
+    public MockServletContext(TestCase test, String contextName) {
+        if(test == null) {
             throw new IllegalArgumentException();
+        }
+        if(StringUtil.isEmpty(contextName)) {
+            contextName = test.getName();
         }
         _test = test;
         _contextName = contextName;
@@ -55,7 +62,7 @@ public class TestServletContext implements ServletContext {
     }
     
     public ServletContext getContext(String contextName) {
-        return new TestServletContext(_test, contextName);
+        return new MockServletContext(_test, contextName);
     }
     
     public Object getAttribute(String name) {
@@ -122,7 +129,7 @@ public class TestServletContext implements ServletContext {
     }
     
     public String getServerInfo() {
-        return "Maya test context";
+        return "MockServletContext";
     }
     
     public int getMajorVersion() {
@@ -134,14 +141,15 @@ public class TestServletContext implements ServletContext {
     }
     
     public void log(String msg, Throwable t) {
-        System.out.println(msg);
-        if(t != null) {
-            t.printStackTrace(System.err);
+        if(LOG.isDebugEnabled()) {
+            LOG.debug(msg, t);
         }
     }
     
     public void log(String msg) {
-        System.out.println(msg);
+        if(LOG.isDebugEnabled()) {
+            LOG.debug(msg);
+        }
     }
 
     /**

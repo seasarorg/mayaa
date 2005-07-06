@@ -21,6 +21,15 @@ import junit.framework.TestSuite;
 import org.seasar.maya.engine.processor.TemplateProcessorSupportTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDHanderTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScannerTest;
+import org.seasar.maya.impl.cycle.ServiceCycleImplTest;
+import org.seasar.maya.impl.cycle.mock.MockApplicationTest;
+import org.seasar.maya.impl.cycle.mock.MockRequestTest;
+import org.seasar.maya.impl.cycle.mock.MockResponseTest;
+import org.seasar.maya.impl.cycle.mock.MockSessionTest;
+import org.seasar.maya.impl.cycle.web.WebApplicationTest;
+import org.seasar.maya.impl.cycle.web.WebRequestTest;
+import org.seasar.maya.impl.cycle.web.WebResponseTest;
+import org.seasar.maya.impl.cycle.web.WebSessionTest;
 import org.seasar.maya.impl.el.ExpressionBlockIteratorTest;
 import org.seasar.maya.impl.el.ExpressionBlockTest;
 import org.seasar.maya.impl.el.ognl2.Ognl2CompiledExpressionTest;
@@ -55,6 +64,21 @@ public class MayaAllTests extends TestSuite {
         
         // org.seasar.maya.impl.builder.library
         suite.addTestSuite(MLDLibraryScannerTest.class);
+        
+        // org.seasar.maya.impl.cycle
+        suite.addTestSuite(ServiceCycleImplTest.class);
+        
+        // org.seasar.maya.impl.cycle.mock
+        suite.addTestSuite(MockApplicationTest.class);
+        suite.addTestSuite(MockSessionTest.class);
+        suite.addTestSuite(MockRequestTest.class);
+        suite.addTestSuite(MockResponseTest.class);
+        
+        // org.seasar.maya.impl.cycle.web
+        suite.addTestSuite(WebApplicationTest.class);
+        suite.addTestSuite(WebSessionTest.class);
+        suite.addTestSuite(WebRequestTest.class);
+        suite.addTestSuite(WebResponseTest.class);
         
         // org.seasar.maya.impl.el
         suite.addTestSuite(ExpressionBlockTest.class);

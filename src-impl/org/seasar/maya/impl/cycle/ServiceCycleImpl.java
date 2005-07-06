@@ -107,8 +107,8 @@ public class ServiceCycleImpl implements ServiceCycle {
         attr.setAttribute(name, attribute);
     }
     
-    private AttributeScope getAttributeScope(String scope) {
-        if(_scopes != null) {
+    protected AttributeScope getAttributeScope(String scope) {
+        if(_scopes == null) {
             throw new IllegalStateException();
         }
         if(SCOPE_IMPLICIT.equals(scope) ||
@@ -130,6 +130,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         if(_scopes == null) {
             _scopes = new HashMap();
+            _scopes.put(SCOPE_PAGE, this);
         }
         _scopes.put(name, attr);
     }
@@ -139,7 +140,7 @@ public class ServiceCycleImpl implements ServiceCycle {
             throw new IllegalArgumentException();
         }
         if(_attributes != null) {
-            _attributes.get(name);
+            return _attributes.get(name);
         }
         return null;
     }
@@ -148,7 +149,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_attributes != null) {
+        if(_attributes == null) {
             _attributes = new HashMap();
         }
         if(attribute != null) {

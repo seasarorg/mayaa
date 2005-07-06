@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.mock;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ public class MockRequest implements Request {
     private Locale _locale;
     private Map _parameters = new HashMap();
     private Map _attributes = new HashMap();
+    private String _path;
     
     public Object getUnderlyingObject() {
         return null;
@@ -50,22 +52,63 @@ public class MockRequest implements Request {
         }
         _locale = locale;
     }
+    
+    public Iterator iterateParameterNames() {
+        return _parameters.keySet().iterator();
+    }
+    
+    public Map getParameterMap() {
+        return _parameters;
+    }
+
+    public String[] getParameterValues(String name) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        return (String[])_parameters.get(name);
+    }
 
     public String getParameter(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        return (String)_parameters.get(name);
+        String values[] = getParameterValues(name);
+        if(values != null && values.length > 0) {
+            return values[0];
+        }
+        return null; 
     }
 
-    public Map getParameterMap() {
-        return _parameters;
+    public void setParameter(String name, String value) {
+        if(StringUtil.isEmpty(name) || value == null) {
+            throw new IllegalArgumentException();
+        }
+        String[] values = (String[])_parameters.get(name);
+        if(values == null) {
+            _parameters.put(name, new String[] { value });
+        } else {
+            int len = values.length;
+            String[] newValues = new String[len + 1];
+            System.arraycopy(values, 0, newValues, 0, len);
+            newValues[len] = value;
+            _parameters.put(name, newValues);
+        }
     }
-
+    
     public String getPath() {
-        return null;
+        if(_path == null) {
+            throw new IllegalStateException();
+        }
+        return _path;
     }
 
+    public void setPath(String path) {
+        if(path == null) {
+            throw new IllegalArgumentException();
+        }
+        _path = StringUtil.preparePath(path);
+    }
+    
     public String getScopeName() {
         return ServiceCycle.SCOPE_REQUEST;
     }

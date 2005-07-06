@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,14 +57,24 @@ public class WebRequest implements Request {
         return _httpServletRequest.getLocale();
     }
 
-    public String getParameter(String name) {
+    public Iterator iterateParameterNames() {
         check();
-        return _httpServletRequest.getParameter(name);
+        return _httpServletRequest.getParameterMap().keySet().iterator();
     }
-
+    
     public Map getParameterMap() {
         check();
         return _httpServletRequest.getParameterMap();
+    }
+    
+    public String[] getParameterValues(String name) {
+        check();
+        return _httpServletRequest.getParameterValues(name);
+    }
+    
+    public String getParameter(String name) {
+        check();
+        return _httpServletRequest.getParameter(name);
     }
 
     public String getPath() {

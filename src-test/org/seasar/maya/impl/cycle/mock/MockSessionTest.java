@@ -13,28 +13,30 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.impl.cycle.mock;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Request extends Serializable, AttributeScope, Underlyable {
-    
-    String getPath();
-    
-    Iterator iterateParameterNames();
-    
-    Map getParameterMap();
+public class MockSessionTest extends TestCase {
 
-    String[] getParameterValues(String name);
-
-    String getParameter(String name);
-
-    Locale getLocale();
+    public MockSessionTest(String name) {
+        super(name);
+    }
+    
+    public void testGetScopeName() {
+        MockSession session = new MockSession();
+        assertEquals("session", session.getScopeName());
+    }
+    
+    public void testGetAttribute() {
+        MockSession session = new MockSession();
+        session.setAttribute("test", "test attr");
+        assertEquals("test attr", session.getAttribute("test"));
+        session.setAttribute("test", null);
+        assertNull(session.getAttribute("test"));
+    }
     
 }

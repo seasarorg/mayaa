@@ -48,7 +48,7 @@ public class MockApplication implements Application {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(attribute == null) {
+        if(attribute != null) {
             _attributes.put(name, attribute);
         } else {
             _attributes.remove(name);

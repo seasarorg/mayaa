@@ -15,6 +15,9 @@
  */
 package org.seasar.maya.impl.cycle.mock;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import junit.framework.TestCase;
 
 /**
@@ -24,6 +27,26 @@ public class MockResponseTest extends TestCase {
 
     public MockResponseTest(String name) {
         super(name);
+    }
+    
+    public void testGetMimeType() {
+        MockResponse response = new MockResponse();
+        response.setMimeTypeToUnderlyingObject("text/html");
+        assertEquals("text/html", response.getMimeType());
+    }
+    
+    public void testWriteToUnderlyingObject() {
+        MockResponse response = new MockResponse();
+        response.writeToUnderlyingObject("<html></html>", "Shift_JIS");
+        assertEquals("Shift_JIS", response.getEncoding());
+        assertEquals("<html></html>", response.getBufferedText());
+    }
+
+    public void testGetOutputStream() throws IOException {
+        MockResponse response = new MockResponse();
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        writer.write("<html></html>");
+        assertEquals("<html></html>", response.getBufferedText());
     }
     
 }

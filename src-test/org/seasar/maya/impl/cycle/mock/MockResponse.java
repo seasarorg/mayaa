@@ -30,6 +30,10 @@ public class MockResponse extends AbstractResponse {
     private String _mimeType;
     private String _encoding;
     
+    public String getBufferedText() {
+        return _underlyingBuffer.toString();
+    }
+    
     public Object getUnderlyingObject() {
         return _underlyingBuffer;
     }

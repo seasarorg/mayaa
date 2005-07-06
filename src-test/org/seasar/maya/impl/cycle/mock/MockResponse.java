@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.mock;
 
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 import org.seasar.maya.impl.cycle.AbstractResponse;
@@ -26,54 +27,30 @@ public class MockResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -8914260934763222285L;
 
+    private ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
     private StringBuffer _underlyingBuffer = new StringBuffer();
-    private String _mimeType;
-    private String _encoding;
-    
-    public String getBufferedText() {
+
+    public String getResult() {
         return _underlyingBuffer.toString();
     }
     
-    public Object getUnderlyingObject() {
-        return _underlyingBuffer;
+    public byte[] getStreamResult() {
+        return _outputStream.toByteArray();
     }
-
-    public String getMimeType() {
-        return _mimeType;
+    
+    public Object getUnderlyingObject() {
+        return null;
     }
     
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
-        _mimeType = mimeType;
-    }
-
-    public String getEncoding() {
-        return _encoding;
     }
     
-    protected void writeToUnderlyingObject(String text, String encoding) {
-        _encoding = encoding;
+    protected void writeToUnderlyingObject(String text) {
         _underlyingBuffer.append(text);
     }
 
     public OutputStream getOutputStream() {
-        return new MockOutputStream(_underlyingBuffer);
-    }
-
-    private class MockOutputStream extends OutputStream {
-
-        private StringBuffer _buffer;
-        
-        private MockOutputStream(StringBuffer buffer) {
-            if(buffer == null) {
-                throw new IllegalArgumentException();
-            }
-            _buffer = buffer;
-        }
-        
-        public void write(int b) {
-            _buffer.append(b);
-        }
-        
+        return _outputStream;
     }
     
 }

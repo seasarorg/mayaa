@@ -29,24 +29,26 @@ public class MockResponseTest extends TestCase {
         super(name);
     }
     
-    public void testGetMimeType() {
-        MockResponse response = new MockResponse();
-        response.setMimeTypeToUnderlyingObject("text/html");
-        assertEquals("text/html", response.getMimeType());
-    }
-    
     public void testWriteToUnderlyingObject() {
         MockResponse response = new MockResponse();
-        response.writeToUnderlyingObject("<html></html>", "Shift_JIS");
-        assertEquals("Shift_JIS", response.getEncoding());
-        assertEquals("<html></html>", response.getBufferedText());
+        response.writeToUnderlyingObject("<html></html>");
+        assertEquals("<html></html>", response.getResult());
     }
 
     public void testGetOutputStream() throws IOException {
         MockResponse response = new MockResponse();
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.write("<html></html>");
-        assertEquals("<html></html>", response.getBufferedText());
+        writer.flush();
+        assertEquals("<html></html>", new String(response.getStreamResult()));
+    }
+ 
+    public void testWriteOut() {
+        MockResponse response = new MockResponse();
+        response.write("<html></html>");
+        assertEquals("", response.getResult());
+        response.writeOut();
+        assertEquals("<html></html>", response.getResult());
     }
     
 }

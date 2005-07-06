@@ -26,4 +26,8 @@ public class WebResponseTest extends TestCase {
         super(name);
     }
     
+    public void test() {
+        
+    }
+    
 }

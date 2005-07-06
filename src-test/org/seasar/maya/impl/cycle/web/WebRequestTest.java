@@ -25,5 +25,9 @@ public class WebRequestTest extends TestCase {
     public WebRequestTest(String name) {
         super(name);
     }
-    
+
+    public void test() {
+        
+    }
+
 }

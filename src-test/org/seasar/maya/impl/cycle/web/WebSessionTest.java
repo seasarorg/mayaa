@@ -25,5 +25,9 @@ public class WebSessionTest extends TestCase {
     public WebSessionTest(String name) {
         super(name);
     }
+
+    public void test() {
+        
+    }
     
 }

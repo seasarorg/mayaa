@@ -27,9 +27,13 @@ public abstract class AbstractResponse implements Response {
 
     private String _encoding = "UTF-8";
     private Stack _stack;
-    private StringBuffer _buffer = new StringBuffer();
 
-    private String getCharacterEncoding(String contentType) {
+    public AbstractResponse() {
+        _stack = new Stack();
+        _stack.push(new StringBuffer());
+    }
+    
+    private String parseCharacterEncoding(String contentType) {
         if (StringUtil.hasValue(contentType)) {
             String lower = contentType.toLowerCase();
             int startPos = lower.indexOf("charset");
@@ -48,15 +52,8 @@ public abstract class AbstractResponse implements Response {
         return "UTF-8";
     }
     
-    private boolean isStacked() {
-        return _stack != null && _stack.size() > 0;
-    }
-    
     private StringBuffer getCurrentBuffer() {
-        if(isStacked()) {
-            return (StringBuffer)_stack.peek();
-        }
-        return _buffer;
+        return (StringBuffer)_stack.peek();
     }
 
     protected abstract void setMimeTypeToUnderlyingObject(String mimeType);
@@ -65,7 +62,7 @@ public abstract class AbstractResponse implements Response {
         if(StringUtil.isEmpty(mimeType)) {
             throw new IllegalArgumentException();
         }
-        _encoding = getCharacterEncoding(mimeType);
+        _encoding = parseCharacterEncoding(mimeType);
         setMimeTypeToUnderlyingObject(mimeType);
     }
     
@@ -78,14 +75,11 @@ public abstract class AbstractResponse implements Response {
     }
 
     public void pushBuffer() {
-        if(_stack == null) {
-            _stack = new Stack();
-        }
         _stack.push(new StringBuffer());
     }
 
     public String popBuffer() {
-        if(isStacked()) {
+        if(_stack.size() > 1) {
             return _stack.pop().toString();
         }
         throw new IllegalStateException();
@@ -94,19 +88,19 @@ public abstract class AbstractResponse implements Response {
     public void write(String text) {
         getCurrentBuffer().append(text);
     }
+    
+    protected String getEncoding() {
+        return _encoding;
+    }
 
-    protected abstract void writeToUnderlyingObject(String text, String encoding);
+    protected abstract void writeToUnderlyingObject(String text);
     
     public void writeOut() {
-        if(isStacked()) {
-            String text = popBuffer();
-            if(isStacked()) {
-                getCurrentBuffer().append(text);
-            } else {
-                _buffer.append(text);
-            }
+        if(_stack.size() == 1) {
+            writeToUnderlyingObject(_stack.peek().toString());
         } else {
-            writeToUnderlyingObject(_buffer.toString(), _encoding);
+            String text = popBuffer();
+            getCurrentBuffer().append(text);
         }
     }
 

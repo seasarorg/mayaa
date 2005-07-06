@@ -87,6 +87,26 @@ public class ServiceCycleImpl implements ServiceCycle {
         _response = response;
     }
     
+    public String getScopeName() {
+        return SCOPE_PAGE;
+    }
+    
+    public Object getAttribute(String name, String scope) {
+        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
+            throw new IllegalArgumentException();
+        }
+        AttributeScope attr = getAttributeScope(scope);
+        return attr.getAttribute(name);
+    }
+
+    public void setAttribute(String name, Object attribute, String scope) {
+        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
+            throw new IllegalArgumentException();
+        }
+        AttributeScope attr = getAttributeScope(scope);
+        attr.setAttribute(name, attribute);
+    }
+    
     private AttributeScope getAttributeScope(String scope) {
         if(_scopes != null) {
             throw new IllegalStateException();
@@ -112,22 +132,6 @@ public class ServiceCycleImpl implements ServiceCycle {
             _scopes = new HashMap();
         }
         _scopes.put(name, attr);
-    }
-    
-    public Object getAttribute(String name, String scope) {
-        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
-            throw new IllegalArgumentException();
-        }
-        AttributeScope attr = getAttributeScope(scope);
-        return attr.getAttribute(name);
-    }
-
-    public void setAttribute(String name, Object attribute, String scope) {
-        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
-            throw new IllegalArgumentException();
-        }
-        AttributeScope attr = getAttributeScope(scope);
-        attr.setAttribute(name, attribute);
     }
 
     public Object getAttribute(String name) {

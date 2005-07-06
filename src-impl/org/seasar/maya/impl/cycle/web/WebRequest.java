@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -71,6 +72,10 @@ public class WebRequest implements Request {
         buffer.append(StringUtil.preparePath(_httpServletRequest.getServletPath()));
         buffer.append(StringUtil.preparePath(_httpServletRequest.getPathInfo()));
         return buffer.toString();
+    }
+    
+    public String getScopeName() {
+        return ServiceCycle.SCOPE_REQUEST;
     }
     
     public Object getAttribute(String name) {

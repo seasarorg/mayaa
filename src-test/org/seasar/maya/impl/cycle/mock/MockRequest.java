@@ -13,74 +13,79 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.web;
+package org.seasar.maya.impl.cycle.mock;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
+import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebSession implements Session {
+public class MockRequest implements Request {
 
-    private static final long serialVersionUID = -3211729351966533995L;
-
-    private HttpServletRequest _httpServletRequest;
-    private HttpSession _session;
+    private static final long serialVersionUID = 514052742599144710L;
+    private Locale _locale;
+    private Map _parameters = new HashMap();
+    private Map _attributes = new HashMap();
     
-    private void check() {
-        if(_httpServletRequest == null) {
+    public Object getUnderlyingObject() {
+        return null;
+    }
+    
+    public Locale getLocale() {
+        if(_locale == null) {
             throw new IllegalStateException();
         }
+        return _locale;
     }
 
-    public Object getUnderlyingObject() {
-        check();
-        if(_session != null) {
-            return _session;
-        }
-        return _httpServletRequest.getSession(true);
-    }
-    
-    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
-        if(httpServletRequest == null) {
+    public void setLocale(Locale locale) {
+        if(locale == null) {
             throw new IllegalArgumentException();
         }
-        _httpServletRequest = httpServletRequest;
+        _locale = locale;
     }
-    
-    public String getScopeName() {
-        return ServiceCycle.SCOPE_SESSION;
-    }
-    
-    public Object getAttribute(String name) {
-        check();
+
+    public String getParameter(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_session != null) {
-            return _session.getAttribute(name);
-        }
+        return (String)_parameters.get(name);
+    }
+
+    public Map getParameterMap() {
+        return _parameters;
+    }
+
+    public String getPath() {
         return null;
     }
 
-    public void setAttribute(String name, Object attribute) {
-        check();
+    public String getScopeName() {
+        return ServiceCycle.SCOPE_REQUEST;
+    }
+
+    public Object getAttribute(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_session == null) {
-            _session = _httpServletRequest.getSession(true);
-        }
-        if(attribute != null) {
-            _session.setAttribute(name, attribute);
-        } else {
-            _session.removeAttribute(name);
-        }
+        return _attributes.get(name);
     }
 
+    public void setAttribute(String name, Object attribute) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(attribute != null) {
+            _attributes.put(name, attribute);
+        } else {
+            _attributes.remove(name);
+        }
+    }
+    
 }

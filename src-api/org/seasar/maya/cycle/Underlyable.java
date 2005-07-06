@@ -15,6 +15,9 @@
  */
 package org.seasar.maya.cycle;
 
+/**
+ * @author Masataka Kurihara (Gluegent, Inc.)
+ */
 public interface Underlyable {
     
     Object getUnderlyingObject();

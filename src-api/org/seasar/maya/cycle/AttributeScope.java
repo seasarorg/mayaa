@@ -15,8 +15,13 @@
  */
 package org.seasar.maya.cycle;
 
+/**
+ * @author Masataka Kurihara (Gluegent, Inc.)
+ */
 public interface AttributeScope {
 
+    String getScopeName();
+    
     Object getAttribute(String name);
     
     void setAttribute(String name, Object attribute);

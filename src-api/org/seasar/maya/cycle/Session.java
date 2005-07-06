@@ -15,6 +15,11 @@
  */
 package org.seasar.maya.cycle;
 
-public interface Session extends AttributeScope, Underlyable {
+import java.io.Serializable;
+
+/**
+ * @author Masataka Kurihara (Gluegent, Inc.)
+ */
+public interface Session extends Serializable, AttributeScope, Underlyable {
 
 }

@@ -13,15 +13,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.cycle;
 
-/**
- * @author Masataka Kurihara (Gluegent, Inc.)
- */
-public interface AttributeScope {
-
-    Object getAttribute(String name);
-
-    void setAttribute(String name, Object attribute);
+public interface Underlyable {
+    
+    Object getUnderlyingObject();
     
 }

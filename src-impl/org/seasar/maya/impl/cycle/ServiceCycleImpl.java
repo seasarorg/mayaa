@@ -18,9 +18,12 @@ package org.seasar.maya.impl.cycle;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -30,19 +33,51 @@ public class ServiceCycleImpl implements ServiceCycle {
 
     private static final long serialVersionUID = -5197949674556232436L;
 
+    private Application _application;
+    private Session _session;
     private Request _request;
     private Response _response;
     private Map _scopes;
+    private Map _attributes;
+    
+    public Application getApplication() {
+        return _application;
+    }
+    
+    public void setApplication(Application application) {
+        if(application == null) {
+            throw new IllegalArgumentException();
+        }
+        _application = application;
+        putAttributeScope(SCOPE_APPLICATION, application);
+    }
+    
+    public Session getSession() {
+        return _session;
+    }
+    
+    public void setSession(Session session) {
+        if(session == null) {
+            throw new IllegalArgumentException();
+        }
+        _session = session;
+        putAttributeScope(SCOPE_SESSION, session);
+    }
+    
+    public Request getRequest() {
+        return _request;
+    }
     
     public void setRequest(Request request) {
         if(request == null) {
             throw new IllegalArgumentException();
         }
         _request = request;
+        putAttributeScope(SCOPE_REQUEST, request);
     }
     
-    public Request getRequest() {
-        return _request;
+    public Response getResponse() {
+        return _response;
     }
 
     public void setResponse(Response response) {
@@ -52,8 +87,21 @@ public class ServiceCycleImpl implements ServiceCycle {
         _response = response;
     }
     
-    public Response getResponse() {
-        return _response;
+    private AttributeScope getAttributeScope(String scope) {
+        if(_scopes != null) {
+            throw new IllegalStateException();
+        }
+        if(SCOPE_IMPLICIT.equals(scope) ||
+                SCOPE_APPLICATION.equals(scope) ||
+                SCOPE_SESSION.equals(scope) || 
+                SCOPE_REQUEST.equals(scope) ||
+                SCOPE_PAGE.equals(scope)) {
+            AttributeScope attr = (AttributeScope)_scopes.get(scope);
+            if(attr != null) {
+                return attr;
+            }
+        }
+        throw new IllegalArgumentException();
     }
     
     public void putAttributeScope(String name, AttributeScope attr) {
@@ -64,24 +112,6 @@ public class ServiceCycleImpl implements ServiceCycle {
             _scopes = new HashMap();
         }
         _scopes.put(name, attr);
-    }
-    
-    private AttributeScope getAttributeScope(String scope) {
-        if(_scopes != null) {
-            throw new IllegalStateException();
-        }
-        if(SCOPE_APPLICATION.equals(scope) ||
-                SCOPE_COOKIE.equals(scope) ||
-                SCOPE_SESSION.equals(scope) || 
-                SCOPE_REQUEST.equals(scope) ||
-                SCOPE_PAGE.equals(scope) ||
-                SCOPE_IMPLICIT.equals(scope)) {
-            AttributeScope attr = (AttributeScope)_scopes.get(scope);
-            if(attr != null) {
-                return attr;
-            }
-        }
-        throw new IllegalArgumentException();
     }
     
     public Object getAttribute(String name, String scope) {
@@ -98,6 +128,30 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         AttributeScope attr = getAttributeScope(scope);
         attr.setAttribute(name, attribute);
+    }
+
+    public Object getAttribute(String name) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributes != null) {
+            _attributes.get(name);
+        }
+        return null;
+    }
+
+    public void setAttribute(String name, Object attribute) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributes != null) {
+            _attributes = new HashMap();
+        }
+        if(attribute != null) {
+            _attributes.put(name, attribute);
+        } else {
+            _attributes.remove(name);
+        }
     }
     
 }

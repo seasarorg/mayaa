@@ -20,14 +20,17 @@ import java.io.Serializable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceCycle extends Serializable {
+public interface ServiceCycle extends Serializable, AttributeScope {
 
     String SCOPE_IMPLICIT = "implicit";
-    String SCOPE_PAGE = "page";
-    String SCOPE_REQUEST = "request";
-    String SCOPE_SESSION = "session";
-    String SCOPE_COOKIE = "cookie";
     String SCOPE_APPLICATION = "application";
+    String SCOPE_SESSION = "session";
+    String SCOPE_REQUEST = "request";
+    String SCOPE_PAGE = "page";
+    
+    Application getApplication();
+    
+    Session getSession();
     
     Request getRequest();
     

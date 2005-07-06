@@ -13,42 +13,66 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.cycle.web;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageAttribute implements AttributeScope {
+public class WebSession implements Session {
 
-    private Map _attributes;
+    private HttpServletRequest _httpServletRequest;
+    private HttpSession _session;
+    
+    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
+        if(httpServletRequest == null) {
+            throw new IllegalArgumentException();
+        }
+        _httpServletRequest = httpServletRequest;
+    }
+    
+    private void checkRequest() {
+        if(_httpServletRequest == null) {
+            throw new IllegalStateException();
+        }
+    }
+
+    public Object getUnderlyingObject() {
+        if(_session != null) {
+            return _session;
+        }
+        return _httpServletRequest.getSession(true);
+    }
     
     public Object getAttribute(String name) {
+        checkRequest();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_attributes != null) {
-            _attributes.get(name);
+        if(_session != null) {
+            return _session.getAttribute(name);
         }
         return null;
     }
 
     public void setAttribute(String name, Object attribute) {
+        checkRequest();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_attributes != null) {
-            _attributes = new HashMap();
+        if(_session == null) {
+            _session = _httpServletRequest.getSession(true);
         }
         if(attribute != null) {
-            _attributes.put(name, attribute);
+            _session.setAttribute(name, attribute);
         } else {
-            _attributes.remove(name);
+            _session.removeAttribute(name);
         }
     }
-    
+
 }

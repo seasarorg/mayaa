@@ -21,9 +21,7 @@ import java.io.Serializable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Response extends Serializable  {
-
-    Object getUnderlyingObject();
+public interface Response extends Serializable, Underlyable  {
     
     void setMimeType(String mimeType);
     

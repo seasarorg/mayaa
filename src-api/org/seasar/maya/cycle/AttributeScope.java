@@ -15,21 +15,10 @@
  */
 package org.seasar.maya.cycle;
 
-import java.io.Serializable;
-import java.util.Locale;
-import java.util.Map;
+public interface AttributeScope {
 
-/**
- * @author Masataka Kurihara (Gluegent, Inc.)
- */
-public interface Request extends Serializable, AttributeScope, Underlyable {
+    Object getAttribute(String name);
     
-    String getPath();
-    
-    String getParameter(String name);
-    
-    Map getParameterMap();
+    void setAttribute(String name, Object attribute);
 
-    Locale getLocale();
-    
 }

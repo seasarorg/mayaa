@@ -34,26 +34,26 @@ public class WebResponse extends AbstractResponse {
 
     private HttpServletResponse _httpServletResponse;
 
-    public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
-        if(httpServletResponse == null) {
-            throw new IllegalArgumentException();
-        }
-        _httpServletResponse = httpServletResponse;
-    }
-
-    private void checkResponse() {
+    private void check() {
         if(_httpServletResponse == null) {
             throw new IllegalStateException();
         }
     }
     
     public Object getUnderlyingObject() {
-        checkResponse();
+        check();
         return _httpServletResponse;
+    }
+
+    public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+        if(httpServletResponse == null) {
+            throw new IllegalArgumentException();
+        }
+        _httpServletResponse = httpServletResponse;
     }
     
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
-        checkResponse();
+        check();
         if(StringUtil.isEmpty(mimeType)) {
             throw new IllegalArgumentException();
         }
@@ -61,7 +61,7 @@ public class WebResponse extends AbstractResponse {
     }
 
     protected void writeToUnderlyingObject(String text, String encoding) {
-        checkResponse();
+        check();
         try {
             Writer writer = new OutputStreamWriter(
                     _httpServletResponse.getOutputStream(), encoding);
@@ -72,7 +72,7 @@ public class WebResponse extends AbstractResponse {
     }
 
     public OutputStream getOutputStream() {
-        checkResponse();
+        check();
         try {
             return _httpServletResponse.getOutputStream();
         } catch (IOException e) {

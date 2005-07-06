@@ -17,32 +17,51 @@ package org.seasar.maya.impl.cycle.web;
 
 import javax.servlet.ServletContext;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ApplicationAttribute implements AttributeScope {
+public class WebApplication implements Application {
 
+    private ServletContext _servletContext;
+
+    private void check() {
+        if(_servletContext == null) {
+            throw new IllegalStateException();
+        }
+    }
+
+    public Object getUnderlyingObject() {
+        check();
+        return _servletContext;
+    }
+    
+    public void setServletContext(ServletContext servletContext) {
+        if(servletContext == null) {
+            throw new IllegalArgumentException();
+        }
+        _servletContext = servletContext;
+    }
+    
     public Object getAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        ServletContext context = ServiceProviderFactory.getServiceProvider().getServletContext();
-        return context.getAttribute(name);
+        return _servletContext.getAttribute(name);
     }
 
     public void setAttribute(String name, Object attribute) {
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        ServletContext context = ServiceProviderFactory.getServiceProvider().getServletContext();
         if(attribute != null) {
-            context.setAttribute(name, attribute);
+            _servletContext.setAttribute(name, attribute);
         } else {
-            context.removeAttribute(name);
+            _servletContext.removeAttribute(name);
         }
     }
     

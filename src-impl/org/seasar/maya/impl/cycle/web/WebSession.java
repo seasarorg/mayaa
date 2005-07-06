@@ -29,6 +29,20 @@ public class WebSession implements Session {
     private HttpServletRequest _httpServletRequest;
     private HttpSession _session;
     
+    private void check() {
+        if(_httpServletRequest == null) {
+            throw new IllegalStateException();
+        }
+    }
+
+    public Object getUnderlyingObject() {
+        check();
+        if(_session != null) {
+            return _session;
+        }
+        return _httpServletRequest.getSession(true);
+    }
+    
     public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
         if(httpServletRequest == null) {
             throw new IllegalArgumentException();
@@ -36,21 +50,8 @@ public class WebSession implements Session {
         _httpServletRequest = httpServletRequest;
     }
     
-    private void checkRequest() {
-        if(_httpServletRequest == null) {
-            throw new IllegalStateException();
-        }
-    }
-
-    public Object getUnderlyingObject() {
-        if(_session != null) {
-            return _session;
-        }
-        return _httpServletRequest.getSession(true);
-    }
-    
     public Object getAttribute(String name) {
-        checkRequest();
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
@@ -61,7 +62,7 @@ public class WebSession implements Session {
     }
 
     public void setAttribute(String name, Object attribute) {
-        checkRequest();
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }

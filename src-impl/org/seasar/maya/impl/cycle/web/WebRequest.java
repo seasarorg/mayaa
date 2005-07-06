@@ -32,6 +32,17 @@ public class WebRequest implements Request {
 
     private HttpServletRequest _httpServletRequest;
     
+    private void check() {
+        if(_httpServletRequest == null) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    public Object getUnderlyingObject() {
+        check();
+        return _httpServletRequest;
+    }
+    
     public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
         if(httpServletRequest == null) {
             throw new IllegalArgumentException();
@@ -39,34 +50,23 @@ public class WebRequest implements Request {
         _httpServletRequest = httpServletRequest;
     }
     
-    private void checkRequest() {
-        if(_httpServletRequest == null) {
-            throw new IllegalStateException();
-        }
-    }
-    
-    public Object getUnderlyingObject() {
-        checkRequest();
-        return _httpServletRequest;
-    }
-    
     public Locale getLocale() {
-        checkRequest();
+        check();
         return _httpServletRequest.getLocale();
     }
 
     public String getParameter(String name) {
-        checkRequest();
+        check();
         return _httpServletRequest.getParameter(name);
     }
 
     public Map getParameterMap() {
-        checkRequest();
+        check();
         return _httpServletRequest.getParameterMap();
     }
 
     public String getPath() {
-        checkRequest();
+        check();
         StringBuffer buffer = new StringBuffer();
         buffer.append(StringUtil.preparePath(_httpServletRequest.getServletPath()));
         buffer.append(StringUtil.preparePath(_httpServletRequest.getPathInfo()));
@@ -74,7 +74,7 @@ public class WebRequest implements Request {
     }
     
     public Object getAttribute(String name) {
-        checkRequest();
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
@@ -82,7 +82,7 @@ public class WebRequest implements Request {
     }
 
     public void setAttribute(String name, Object attribute) {
-        checkRequest();
+        check();
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }

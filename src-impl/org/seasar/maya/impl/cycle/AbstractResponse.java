@@ -30,6 +30,7 @@ public abstract class AbstractResponse implements Response {
 
     public AbstractResponse() {
         _stack = new Stack();
+        // TODO Stack‚ÉOutputStream‚à‚µ‚­‚ÍWriter‚ğ‚Â‚Ş‚æ‚¤‚É‚·‚éB
         _stack.push(new StringBuffer());
     }
     

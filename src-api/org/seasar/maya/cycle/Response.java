@@ -29,6 +29,7 @@ public interface Response extends Serializable, Underlyable  {
     
     String getBufferedText();
     
+    // TODO JspWriterをホストできるように引数を変更。
     void write(String text);
 
     void writeOut();

@@ -53,12 +53,13 @@ public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
     protected void prepareLoadedSource() {
         if(_neighbor != null) {
             _inputStream = _neighbor.getResourceAsStream(_className);
-        } else {
+        }
+        if (_inputStream == null) {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             _inputStream = loader.getResourceAsStream(_className);
         }
     }
-    
+
     public String getPath() {
         return  PROTOCOL_JAVA + ":/" + _className;
     }

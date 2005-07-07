@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * TODO エンコーディング対応する。OutputStreamWriterを利用検討。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CycleWriter extends Writer {

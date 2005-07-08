@@ -66,6 +66,7 @@ public class WebResponse extends AbstractResponse {
             Writer writer = new OutputStreamWriter(
                     _httpServletResponse.getOutputStream(), getEncoding());
             writer.write(text);
+            writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

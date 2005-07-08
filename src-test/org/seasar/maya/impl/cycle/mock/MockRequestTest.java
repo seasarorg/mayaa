@@ -58,8 +58,8 @@ public class MockRequestTest extends TestCase {
 
     public void testIterateParameterNames() {
         MockRequest request = new MockRequest();
-        request.setParameter("test1", "");
-        request.setParameter("test2", "");
+        request.addParameter("test1", "");
+        request.addParameter("test2", "");
         Iterator it = request.iterateParameterNames();
         it.next();
         it.next();
@@ -75,8 +75,8 @@ public class MockRequestTest extends TestCase {
     
     public void testGetParameters() {
         MockRequest request = new MockRequest();
-        request.setParameter("test", "test param 0");
-        request.setParameter("test", "test param 1");
+        request.addParameter("test", "test param 0");
+        request.addParameter("test", "test param 1");
         String[] params = request.getParameterValues("test");
         assertNotNull(params);
         assertEquals(2, params.length);
@@ -86,7 +86,7 @@ public class MockRequestTest extends TestCase {
     
     public void testGetParameter() {
         MockRequest request = new MockRequest();
-        request.setParameter("test", "test param");
+        request.addParameter("test", "test param");
         assertEquals("test param", request.getParameter("test"));
     }
     

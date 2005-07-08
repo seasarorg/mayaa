@@ -15,6 +15,13 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
+import org.seasar.maya.impl.cycle.servlet.MockServletContext;
+
 import junit.framework.TestCase;
 
 /**
@@ -22,12 +29,71 @@ import junit.framework.TestCase;
  */
 public class WebRequestTest extends TestCase {
 
+    private MockServletContext _servletContext;
+    private MockHttpServletRequest _httpServletRequest;
+    private WebRequest _request;
+     
     public WebRequestTest(String name) {
         super(name);
     }
+    
+    protected void setUp() {
+        _servletContext = new MockServletContext(this, "context");
+        _httpServletRequest = new MockHttpServletRequest(_servletContext);
+        _request = new WebRequest();
+        _request.setHttpServletRequest(_httpServletRequest);
+    }
 
-    public void test() {
-        
+    public void testGetScopeName() {
+        assertEquals("request", _request.getScopeName());
+    }
+    
+    public void testGetAttribute() {
+        _request.setAttribute("test", "test attr");
+        assertEquals("test attr", _request.getAttribute("test"));
+        _request.setAttribute("test", null);
+        assertNull(_request.getAttribute("test"));
+    }
+    
+    public void testGetLocale() {
+        Locale locale = new Locale("ja_JP");
+        _httpServletRequest.setLocale(locale);
+        assertEquals(locale, _request.getLocale());
+    }
+    
+    public void testGetPath() {
+        _httpServletRequest.setPathInfo("/index.html");
+        assertEquals("/index.html", _request.getPath());
+    }
+
+    public void testIterateParameterNames() {
+        _httpServletRequest.addParameter("test1", "");
+        _httpServletRequest.addParameter("test2", "");
+        Iterator it = _request.iterateParameterNames();
+        it.next();
+        it.next();
+        assertFalse(it.hasNext());
+    }
+    
+    public void testGetParameterMap() {
+        Map params = _request.getParameterMap();
+        assertNotNull(params);
+        assertEquals(0, params.size());
+    }
+    
+    public void testGetParameters() {
+        _httpServletRequest.addParameter("test", "test param 0");
+        _httpServletRequest.addParameter("test", "test param 1");
+        String[] params = _request.getParameterValues("test");
+        assertNotNull(params);
+        assertEquals(2, params.length);
+        assertEquals("test param 0", params[0]);
+        assertEquals("test param 1", params[1]);
+    }
+    
+    public void testGetParameter() {
+        _httpServletRequest.addParameter("test", "test param");
+        assertEquals("test param", _request.getParameter("test"));
     }
 
 }

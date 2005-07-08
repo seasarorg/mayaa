@@ -43,7 +43,7 @@ public class MockResponseTest extends TestCase {
         assertEquals("<html></html>", new String(response.getResult()));
     }
  
-    public void testWriteOut() {
+    public void testFlush() {
         MockResponse response = new MockResponse();
         response.write("<html></html>");
         assertEquals("", new String(response.getResult()));

@@ -79,7 +79,7 @@ public class MockRequest implements Request {
         return null; 
     }
 
-    public void setParameter(String name, String value) {
+    public void addParameter(String name, String value) {
         if(StringUtil.isEmpty(name) || value == null) {
             throw new IllegalArgumentException();
         }

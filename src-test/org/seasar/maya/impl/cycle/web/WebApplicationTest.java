@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import org.seasar.maya.impl.cycle.servlet.MockServletContext;
+
 import junit.framework.TestCase;
 
 /**
@@ -22,12 +24,28 @@ import junit.framework.TestCase;
  */
 public class WebApplicationTest extends TestCase {
 
+    private MockServletContext _servletContext;
+    private WebApplication _application;
+    
     public WebApplicationTest(String name) {
         super(name);
     }
     
-    public void test() {
-        
+    protected void setUp() {
+        _servletContext = new MockServletContext(this, "context");
+        _application = new WebApplication();
+        _application.setServletContext(_servletContext);
+    }
+    
+    public void testGetScopeName() {
+        assertEquals("application", _application.getScopeName());
+    }
+    
+    public void testGetAttribute() {
+        _application.setAttribute("test", "test attr");
+        assertEquals("test attr", _application.getAttribute("test"));
+        _application.setAttribute("test", null);
+        assertNull(_application.getAttribute("test"));
     }
     
 }

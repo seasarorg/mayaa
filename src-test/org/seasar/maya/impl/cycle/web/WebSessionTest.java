@@ -15,6 +15,9 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
+import org.seasar.maya.impl.cycle.servlet.MockServletContext;
+
 import junit.framework.TestCase;
 
 /**
@@ -22,12 +25,30 @@ import junit.framework.TestCase;
  */
 public class WebSessionTest extends TestCase {
 
+    private MockServletContext _servletContext;
+    private MockHttpServletRequest _httpServletRequest;
+    private WebSession _session;
+    
     public WebSessionTest(String name) {
         super(name);
     }
 
-    public void test() {
-        
+    protected void setUp() {
+        _servletContext = new MockServletContext(this, "context");
+        _httpServletRequest = new MockHttpServletRequest(_servletContext);
+        _session = new WebSession();
+        _session.setHttpServletRequest(_httpServletRequest);
+    }
+    
+    public void testGetScopeName() {
+        assertEquals("session", _session.getScopeName());
+    }
+    
+    public void testGetAttribute() {
+        _session.setAttribute("test", "test attr");
+        assertEquals("test attr", _session.getAttribute("test"));
+        _session.setAttribute("test", null);
+        assertNull(_session.getAttribute("test"));
     }
     
 }

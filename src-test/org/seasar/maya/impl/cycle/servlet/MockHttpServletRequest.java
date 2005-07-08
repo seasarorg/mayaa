@@ -35,11 +35,10 @@ public class MockHttpServletRequest extends MockServletRequest
     private String _path;
     private HttpSession _session;
     
-    public MockHttpServletRequest(ServletContext servletContext, String path) {
+    public MockHttpServletRequest(ServletContext servletContext) {
         if(servletContext == null) {
             throw new IllegalArgumentException();
         }
-        _path = StringUtil.preparePath(path);
         _servletContext = servletContext;
     }
 
@@ -60,6 +59,10 @@ public class MockHttpServletRequest extends MockServletRequest
 
     public String getServletPath() {
         return "";
+    }
+    
+    public void setPathInfo(String path) {
+        _path = StringUtil.preparePath(path);
     }
 
     public String getPathInfo() {

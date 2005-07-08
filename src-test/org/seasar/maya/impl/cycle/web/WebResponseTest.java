@@ -15,6 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
+
 import junit.framework.TestCase;
 
 /**
@@ -22,12 +27,36 @@ import junit.framework.TestCase;
  */
 public class WebResponseTest extends TestCase {
 
+    private MockHttpServletResponse _httpServletResponse;
+    private WebResponse _response;
+    
     public WebResponseTest(String name) {
         super(name);
     }
+
+    protected void setUp() {
+        _httpServletResponse = new MockHttpServletResponse();
+        _response =  new WebResponse();
+        _response.setHttpServletResponse(_httpServletResponse);
+    }
     
-    public void test() {
-        
+    public void testWriteToUnderlyingObject() {
+        _response.writeToUnderlyingObject("<html></html>");
+        assertEquals("<html></html>", new String(_httpServletResponse.getBuffer()));
+    }
+
+    public void testGetOutputStream() throws IOException {
+        PrintWriter writer = new PrintWriter(_response.getUnderlyingOutputStream());
+        writer.write("<html></html>");
+        writer.flush();
+        assertEquals("<html></html>", new String(_httpServletResponse.getBuffer()));
+    }
+ 
+    public void testFlush() {
+        _response.write("<html></html>");
+        assertEquals("", new String(_httpServletResponse.getBuffer()));
+        _response.flush();
+        assertEquals("<html></html>", new String(_httpServletResponse.getBuffer()));
     }
     
 }

@@ -84,12 +84,14 @@ public interface Response extends Serializable, Underlyable  {
 
     /**
      * バッファをスタックに積む。
+     * TODO Writerを返す -> PageContextの実装のため
      */
     void pushBuffer();
     
     /**
      * 最上位のスタックバッファを取り除く。
      * @return 取り除いたスタックバッファに書き出されていた内容。
+     * TODO Writerを返す -> PageContextの実装のため
      */
     String popBuffer();
     

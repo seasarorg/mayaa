@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle;
 
+import java.io.IOException;
 import java.util.Stack;
 
 import org.seasar.maya.cycle.Response;
@@ -30,8 +31,7 @@ public abstract class AbstractResponse implements Response {
 
     public AbstractResponse() {
         _stack = new Stack();
-        // TODO Stack‚ÉOutputStream‚à‚µ‚­‚ÍWriter‚ð‚Â‚Þ‚æ‚¤‚É‚·‚éB
-        _stack.push(new StringBuffer());
+        _stack.push(new CycleWriter());
     }
     
     private String parseCharacterEncoding(String contentType) {
@@ -53,8 +53,8 @@ public abstract class AbstractResponse implements Response {
         return "UTF-8";
     }
     
-    private StringBuffer getCurrentBuffer() {
-        return (StringBuffer)_stack.peek();
+    private CycleWriter getCurrentBuffer() {
+        return (CycleWriter)_stack.peek();
     }
 
     protected abstract void setMimeTypeToUnderlyingObject(String mimeType);
@@ -68,26 +68,55 @@ public abstract class AbstractResponse implements Response {
     }
     
     public void clearBuffer() {
-        getCurrentBuffer().setLength(0);
+        getCurrentBuffer().clearBuffer();
     }
 
-    public String getBufferedText() {
-        return getCurrentBuffer().toString();
+    public String getBuffer() {
+        return new String(getCurrentBuffer().getBuffer());
     }
 
     public void pushBuffer() {
-        _stack.push(new StringBuffer());
+        _stack.push(new CycleWriter());
     }
 
     public String popBuffer() {
         if(_stack.size() > 1) {
-            return _stack.pop().toString();
+            CycleWriter writer = (CycleWriter)_stack.pop();
+            return new String(writer.getBuffer());
         }
         throw new IllegalStateException();
     }
 
-    public void write(String text) {
-        getCurrentBuffer().append(text);
+    public void write(char[] cbuf) {
+        write(cbuf, 0, cbuf.length);
+    }
+
+    public void write(char[] cbuf, int off, int len) {
+        try {
+            getCurrentBuffer().write(cbuf, off, len);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void write(int b) {
+        try {
+            getCurrentBuffer().write(b);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void write(String str) {
+        write(str, 0, str.length());
+    }
+
+    public void write(String str, int off, int len) {
+        try {
+            getCurrentBuffer().write(str, off, len);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     protected String getEncoding() {
@@ -96,12 +125,17 @@ public abstract class AbstractResponse implements Response {
 
     protected abstract void writeToUnderlyingObject(String text);
     
-    public void writeOut() {
+    public void flush() {
         if(_stack.size() == 1) {
-            writeToUnderlyingObject(_stack.peek().toString());
+            CycleWriter writer = (CycleWriter)_stack.peek();
+            writeToUnderlyingObject(new String(writer.getBuffer()));
         } else {
             String text = popBuffer();
-            getCurrentBuffer().append(text);
+            try {
+                getCurrentBuffer().write(text);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

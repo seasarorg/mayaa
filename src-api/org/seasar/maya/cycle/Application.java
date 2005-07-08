@@ -16,6 +16,7 @@
 package org.seasar.maya.cycle;
 
 /**
+ * WEBアプリケーション全体で共有されるスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Application extends AttributeScope, Underlyable {

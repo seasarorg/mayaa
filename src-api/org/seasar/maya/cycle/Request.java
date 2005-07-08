@@ -21,20 +21,50 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * リクエストレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Request extends Serializable, AttributeScope, Underlyable {
     
+    /**
+     * リクエストされたURIパスを取得する。
+     * @return リクエストURI。
+     */
     String getPath();
     
+    /**
+     * リクエストのクエリパラメータの名前一覧。
+     * @return クエリパラメータ名（String）を保持するイテレータ。
+     */
     Iterator iterateParameterNames();
     
+    /**
+     * リクエストのクエリパラメータを保持するMap。エントリはString[]型となる。
+     * @return クエリパラメータのMap。
+     */
     Map getParameterMap();
 
+    /**
+     * 指定名のリクエストのクエリパラメータ値を返す。
+     * 該当するクエリパラメータ名が無い場合はnullを返す。
+     * @param name 指定クエリパラメータ名。
+     * @return 指定クエリパラメータ値。
+     */
     String[] getParameterValues(String name);
 
+    /**
+     * 指定名のリクエストのクエリパラメータ値を返す。
+     * 該当するクエリパラメータ名が無い場合はnullを返す。
+     * getParameterValues()[0]と同じ結果を返す。
+     * @param name 指定クエリパラメータ名。
+     * @return 指定クエリパラメータ値。
+     */
     String getParameter(String name);
 
+    /**
+     * リクエストのロケールを返す。
+     * @return リクエストロケール。
+     */
     Locale getLocale();
     
 }

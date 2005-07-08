@@ -22,6 +22,7 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupportTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDHanderTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScannerTest;
 import org.seasar.maya.impl.cycle.AbstractResponseTest;
+import org.seasar.maya.impl.cycle.CycleWriterTest;
 import org.seasar.maya.impl.cycle.ServiceCycleImplTest;
 import org.seasar.maya.impl.cycle.mock.MockApplicationTest;
 import org.seasar.maya.impl.cycle.mock.MockRequestTest;
@@ -67,6 +68,7 @@ public class MayaAllTests extends TestSuite {
         suite.addTestSuite(MLDLibraryScannerTest.class);
         
         // org.seasar.maya.impl.cycle
+        suite.addTestSuite(CycleWriterTest.class);
         suite.addTestSuite(ServiceCycleImplTest.class);
         suite.addTestSuite(AbstractResponseTest.class);
         

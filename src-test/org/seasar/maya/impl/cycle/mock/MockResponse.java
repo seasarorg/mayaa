@@ -15,10 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.mock;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.seasar.maya.impl.cycle.AbstractResponse;
+import org.seasar.maya.impl.cycle.CycleWriter;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -27,30 +28,29 @@ public class MockResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -8914260934763222285L;
 
-    private ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
-    private StringBuffer _underlyingBuffer = new StringBuffer();
+    private CycleWriter _cycleWriter = new CycleWriter();
 
-    public String getResult() {
-        return _underlyingBuffer.toString();
-    }
-    
-    public byte[] getStreamResult() {
-        return _outputStream.toByteArray();
+    public byte[] getResult() {
+        return _cycleWriter.getBuffer();
     }
     
     public Object getUnderlyingObject() {
-        return null;
+        return _cycleWriter;
     }
     
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
     }
     
     protected void writeToUnderlyingObject(String text) {
-        _underlyingBuffer.append(text);
+        try {
+            _cycleWriter.write(text);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public OutputStream getOutputStream() {
-        return _outputStream;
+    public OutputStream getUnderlyingOutputStream() {
+        return _cycleWriter.getOutputStream();
     }
     
 }

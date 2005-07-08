@@ -32,23 +32,23 @@ public class MockResponseTest extends TestCase {
     public void testWriteToUnderlyingObject() {
         MockResponse response = new MockResponse();
         response.writeToUnderlyingObject("<html></html>");
-        assertEquals("<html></html>", response.getResult());
+        assertEquals("<html></html>", new String(response.getResult()));
     }
 
     public void testGetOutputStream() throws IOException {
         MockResponse response = new MockResponse();
-        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        PrintWriter writer = new PrintWriter(response.getUnderlyingOutputStream());
         writer.write("<html></html>");
         writer.flush();
-        assertEquals("<html></html>", new String(response.getStreamResult()));
+        assertEquals("<html></html>", new String(response.getResult()));
     }
  
     public void testWriteOut() {
         MockResponse response = new MockResponse();
         response.write("<html></html>");
-        assertEquals("", response.getResult());
-        response.writeOut();
-        assertEquals("<html></html>", response.getResult());
+        assertEquals("", new String(response.getResult()));
+        response.flush();
+        assertEquals("<html></html>", new String(response.getResult()));
     }
     
 }

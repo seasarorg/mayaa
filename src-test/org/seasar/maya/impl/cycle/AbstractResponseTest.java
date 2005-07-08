@@ -37,14 +37,14 @@ public class AbstractResponseTest extends TestCase {
     public void testWrite() {
         AbstractResponse response = new MockResponse();
         response.write("<html></html>");
-        assertEquals("<html></html>", response.getBufferedText());
+        assertEquals("<html></html>", response.getBuffer());
     }
     
     public void testClearBuffer() {
         AbstractResponse response = new MockResponse();
         response.write("<html></html>");
         response.clearBuffer();
-        assertEquals("", response.getBufferedText());
+        assertEquals("", response.getBuffer());
     }
     
     public void testPushBuffer1() {
@@ -52,9 +52,9 @@ public class AbstractResponseTest extends TestCase {
         response.write("<html>");
         response.pushBuffer();
         response.write("<body></body>");
-        response.writeOut();
+        response.flush();
         response.write("</html>");
-        assertEquals("<html><body></body></html>", response.getBufferedText());
+        assertEquals("<html><body></body></html>", response.getBuffer());
     }
 
     public void testPushBuffer2() {
@@ -64,7 +64,7 @@ public class AbstractResponseTest extends TestCase {
         response.write("<body></body>");
         response.popBuffer();
         response.write("</html>");
-        assertEquals("<html></html>", response.getBufferedText());
+        assertEquals("<html></html>", response.getBuffer());
     }
     
 }

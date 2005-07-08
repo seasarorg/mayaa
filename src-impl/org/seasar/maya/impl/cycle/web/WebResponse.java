@@ -71,7 +71,7 @@ public class WebResponse extends AbstractResponse {
         }
     }
 
-    public OutputStream getOutputStream() {
+    public OutputStream getUnderlyingOutputStream() {
         check();
         try {
             return _httpServletResponse.getOutputStream();

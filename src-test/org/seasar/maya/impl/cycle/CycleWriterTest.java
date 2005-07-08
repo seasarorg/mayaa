@@ -13,18 +13,32 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.impl.cycle;
+
+import java.io.IOException;
+
+import junit.framework.TestCase;
 
 /**
- * 実サービスオブジェクトのProxyインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Underlyable {
+public class CycleWriterTest extends TestCase {
+
+    public CycleWriterTest(String name) {
+        super(name);
+    }
+
+    public void testGetBuffer() throws IOException {
+        CycleWriter writer = new CycleWriter();
+        writer.write("test string");
+        assertEquals("test string", new String(writer.getBuffer()));
+    }
     
-    /**
-     * ホストする実サービスオブジェクトの取得メソッド。
-     * @return 実サービスオブジェクト。
-     */
-    Object getUnderlyingObject();
+    public void testClearBuffer() throws IOException {
+        CycleWriter writer = new CycleWriter();
+        writer.write("test string");
+        writer.clearBuffer();
+        assertEquals("", new String(writer.getBuffer()));
+    }
     
 }

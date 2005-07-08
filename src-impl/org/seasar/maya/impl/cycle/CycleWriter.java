@@ -17,23 +17,16 @@ package org.seasar.maya.impl.cycle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 
 /**
- * TODO エンコーディング対応する。OutputStreamWriterを利用検討。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CycleWriter extends Writer {
 
-	private ByteArrayOutputStream _outputStream;
+	private ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
 	
-	public CycleWriter(ByteArrayOutputStream outputStream) {
-		if(outputStream == null) {
-			throw new IllegalArgumentException();
-		}
-		_outputStream = outputStream;
-	}
-
 	public void clearBuffer() {
 		_outputStream.reset();
 	}
@@ -55,5 +48,9 @@ public class CycleWriter extends Writer {
 			_outputStream.write(cbuf[i]);
 		}
 	}
+    
+    public OutputStream getOutputStream() {
+        return _outputStream;
+    }
 	
 }

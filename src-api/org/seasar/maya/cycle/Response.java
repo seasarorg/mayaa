@@ -19,25 +19,84 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
+ * レスポンスのインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Response extends Serializable, Underlyable  {
     
+    /**
+     * コンテンツタイプの指定を行う。
+     * @param mimeType コンテンツタイプ。MIME型およびエンコーディング情報。
+     */
     void setMimeType(String mimeType);
     
+    /**
+     * 書き出しバッファのクリアを行う。
+     */
     void clearBuffer();
     
-    String getBufferedText();
+    /**
+     * 書き出しバッファの内容を取得する。
+     * @return バッファ内容。
+     */
+    String getBuffer();
     
-    // TODO JspWriterをホストできるように引数を変更。
-    void write(String text);
+    /**
+     * バッファへの書き出し。
+     * @param b 書き出し値。
+     */
+    void write(int b);
+    
+    /**
+     * バッファへの書き出し。
+     * @param cbuf 書き出し値。
+     */
+    void write(char cbuf[]);
+    
+    /**
+     * バッファへの書き出し。
+     * @param cbuf 書き出し値。
+     * @param off cbufの書き出しオフセット。
+     * @param len cbufの書き出し長。
+     */
+    void write(char cbuf[], int off, int len);
+    
+    /**
+     * バッファへの書き出し。
+     * @param str 書き出し値。
+     */
+    void write(String str);
 
-    void writeOut();
+    /**
+     * バッファへの書き出し。
+     * @param str 書き出し値。
+     * @param off strの書き出しオフセット。
+     * @param len strの書き出し長。
+     */
+    void write(String str, int off, int len);
+    
+    /**
+     * バッファのフラッシュ。カレントバッファがスタックに積まれている場合は、
+     * ひとつ上位のバッファに書き出す。ルートのバッファである場合には、
+     * 実際の出力ストリームに書き出す。
+     */
+    void flush();
 
+    /**
+     * バッファをスタックに積む。
+     */
     void pushBuffer();
     
+    /**
+     * 最上位のスタックバッファを取り除く。
+     * @return 取り除いたスタックバッファに書き出されていた内容。
+     */
     String popBuffer();
     
-    OutputStream getOutputStream();
+    /**
+     * 実際の出力ストリームの取得。
+     * @return 
+     */
+    OutputStream getUnderlyingOutputStream();
     
 }

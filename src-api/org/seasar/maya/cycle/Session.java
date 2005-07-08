@@ -18,6 +18,7 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 
 /**
+ * セッションレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Session extends Serializable, AttributeScope, Underlyable {

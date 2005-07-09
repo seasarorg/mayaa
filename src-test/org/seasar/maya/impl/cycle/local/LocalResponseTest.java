@@ -31,7 +31,7 @@ public class LocalResponseTest extends TestCase {
     
     public void testWriteToUnderlyingObject() {
         LocalResponse response = new LocalResponse();
-        response.writeToUnderlyingObject("<html></html>");
+        response.writeToUnderlyingObject("<html></html>".getBytes());
         assertEquals("<html></html>", new String(response.getResult()));
     }
 

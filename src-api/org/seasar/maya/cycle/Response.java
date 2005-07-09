@@ -83,17 +83,16 @@ public interface Response extends Serializable, Underlyable  {
     void flush();
 
     /**
-     * バッファをスタックに積む。
-     * TODO Writerを返す -> PageContextの実装のため
+     * バッファされたライタをスタックに積む。
+     * @return 積んだバッファされたライタ。
      */
-    void pushBuffer();
+    CycleWriter pushWriter();
     
     /**
-     * 最上位のスタックバッファを取り除く。
-     * @return 取り除いたスタックバッファに書き出されていた内容。
-     * TODO Writerを返す -> PageContextの実装のため
+     * スタック最上位のバッファライタを取り除く。
+     * @return 取り除いたバッファライタ。
      */
-    String popBuffer();
+    CycleWriter popWriter();
     
     /**
      * 実際の出力ストリームの取得。

@@ -15,23 +15,18 @@
  */
 package org.seasar.maya.impl.el.ognl2;
 
-import java.util.Date;
-
 import junit.framework.TestCase;
 
-import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.impl.el.resolver.CompositeExpressionResolver;
 import org.seasar.maya.impl.el.resolver.ImplicitObjectExpressionResolver;
 import org.seasar.maya.impl.el.resolver.ScopedAttributeExpressionResolver;
-import org.seasar.maya.test.util.servlet.jsp.TestPageContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class Ognl2CompiledExpressionTest extends TestCase {
 
-    private Ognl2ExpressionFactory _factory;
-    private TestPageContext _pageContext;
+//    private Ognl2ExpressionFactory _factory;
     
     public Ognl2CompiledExpressionTest(String test) {
         super(test);
@@ -41,7 +36,7 @@ public class Ognl2CompiledExpressionTest extends TestCase {
         CompositeExpressionResolver resolver = new CompositeExpressionResolver();
         resolver.add(new ScopedAttributeExpressionResolver());
         resolver.add(new ImplicitObjectExpressionResolver()); 
-        _factory = new Ognl2ExpressionFactory();
+//        _factory = new Ognl2ExpressionFactory();
 //        _pageContext = new TestPageContext();
 //        _pageContext.initialize(
 //                new DummyServlet(), request, response, null, true, 10000, true);
@@ -66,10 +61,10 @@ public class Ognl2CompiledExpressionTest extends TestCase {
 //    }
     
     public void testCallMethod2() {
-        CompiledExpression exp = _factory.createExpression("${ new java.util.Date() }", Date.class);
-        Object val = exp.getValue(_pageContext);
-        assertNotNull(val);
-        assertTrue(val instanceof Date);
+//        CompiledExpression exp = _factory.createExpression("${ new java.util.Date() }", Date.class);
+//        Object val = exp.getValue(_pageContext);
+//        assertNotNull(val);
+//        assertTrue(val instanceof Date);
     }
     
 }

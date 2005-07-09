@@ -60,12 +60,14 @@ public class WebResponse extends AbstractResponse {
         _httpServletResponse.setContentType(mimeType);
     }
 
-    protected void writeToUnderlyingObject(String text) {
+    protected void writeToUnderlyingObject(byte[] buffer) {
         check();
         try {
             Writer writer = new OutputStreamWriter(
                     _httpServletResponse.getOutputStream(), getEncoding());
-            writer.write(text);
+            for(int i = 0; i < buffer.length; i++) {
+                writer.write(buffer[i]);
+            }
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

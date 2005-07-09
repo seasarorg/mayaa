@@ -24,10 +24,10 @@ import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScannerTest;
 import org.seasar.maya.impl.cycle.AbstractResponseTest;
 import org.seasar.maya.impl.cycle.CycleWriterTest;
 import org.seasar.maya.impl.cycle.ServiceCycleImplTest;
-import org.seasar.maya.impl.cycle.mock.MockApplicationTest;
-import org.seasar.maya.impl.cycle.mock.MockRequestTest;
-import org.seasar.maya.impl.cycle.mock.MockResponseTest;
-import org.seasar.maya.impl.cycle.mock.MockSessionTest;
+import org.seasar.maya.impl.cycle.local.LocalApplicationTest;
+import org.seasar.maya.impl.cycle.local.LocalRequestTest;
+import org.seasar.maya.impl.cycle.local.LocalResponseTest;
+import org.seasar.maya.impl.cycle.local.LocalSessionTest;
 import org.seasar.maya.impl.cycle.web.WebApplicationTest;
 import org.seasar.maya.impl.cycle.web.WebRequestTest;
 import org.seasar.maya.impl.cycle.web.WebResponseTest;
@@ -72,11 +72,11 @@ public class MayaAllTests extends TestSuite {
         suite.addTestSuite(ServiceCycleImplTest.class);
         suite.addTestSuite(AbstractResponseTest.class);
         
-        // org.seasar.maya.impl.cycle.mock
-        suite.addTestSuite(MockApplicationTest.class);
-        suite.addTestSuite(MockSessionTest.class);
-        suite.addTestSuite(MockRequestTest.class);
-        suite.addTestSuite(MockResponseTest.class);
+        // org.seasar.maya.impl.cycle.local
+        suite.addTestSuite(LocalApplicationTest.class);
+        suite.addTestSuite(LocalSessionTest.class);
+        suite.addTestSuite(LocalRequestTest.class);
+        suite.addTestSuite(LocalResponseTest.class);
         
         // org.seasar.maya.impl.cycle.web
         suite.addTestSuite(WebApplicationTest.class);

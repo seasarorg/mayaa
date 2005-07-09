@@ -44,6 +44,9 @@ public class CycleWriter extends Writer {
 	}
 
 	public void write(char[] cbuf, int off, int len) throws IOException {
+        if (len == 0) {
+            return;
+        }
 		for(int i = off; i < len; i++) {
 			_outputStream.write(cbuf[i]);
 		}

@@ -16,10 +16,10 @@
 package org.seasar.maya.impl.cycle;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.cycle.mock.MockApplication;
-import org.seasar.maya.impl.cycle.mock.MockRequest;
-import org.seasar.maya.impl.cycle.mock.MockResponse;
-import org.seasar.maya.impl.cycle.mock.MockSession;
+import org.seasar.maya.impl.cycle.local.LocalApplication;
+import org.seasar.maya.impl.cycle.local.LocalRequest;
+import org.seasar.maya.impl.cycle.local.LocalResponse;
+import org.seasar.maya.impl.cycle.local.LocalSession;
 
 import junit.framework.TestCase;
 
@@ -36,10 +36,10 @@ public class ServiceCycleImplTest extends TestCase {
     
     protected void setUp() {
         _cycle = new ServiceCycleImpl();
-        _cycle.setApplication(new MockApplication());
-        _cycle.setSession(new MockSession());
-        _cycle.setRequest(new MockRequest());
-        _cycle.setResponse(new MockResponse());
+        _cycle.setApplication(new LocalApplication());
+        _cycle.setSession(new LocalSession());
+        _cycle.setRequest(new LocalRequest());
+        _cycle.setResponse(new LocalResponse());
     }
     
     public void testGetApplication() {

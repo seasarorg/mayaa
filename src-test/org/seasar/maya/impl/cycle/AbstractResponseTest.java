@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import org.seasar.maya.impl.cycle.mock.MockResponse;
+import org.seasar.maya.impl.cycle.local.LocalResponse;
 
 import junit.framework.TestCase;
 
@@ -29,26 +29,26 @@ public class AbstractResponseTest extends TestCase {
     }
     
     public void testSetMimeType() {
-        AbstractResponse response = new MockResponse();
+        AbstractResponse response = new LocalResponse();
         response.setMimeType("text/html; charset=Shift_JIS");
         assertEquals("Shift_JIS", response.getEncoding());
     }
     
     public void testWrite() {
-        AbstractResponse response = new MockResponse();
+        AbstractResponse response = new LocalResponse();
         response.write("<html></html>");
         assertEquals("<html></html>", response.getBuffer());
     }
     
     public void testClearBuffer() {
-        AbstractResponse response = new MockResponse();
+        AbstractResponse response = new LocalResponse();
         response.write("<html></html>");
         response.clearBuffer();
         assertEquals("", response.getBuffer());
     }
     
     public void testPushBuffer1() {
-        AbstractResponse response = new MockResponse();
+        AbstractResponse response = new LocalResponse();
         response.write("<html>");
         response.pushBuffer();
         response.write("<body></body>");
@@ -58,7 +58,7 @@ public class AbstractResponseTest extends TestCase {
     }
 
     public void testPushBuffer2() {
-        AbstractResponse response = new MockResponse();
+        AbstractResponse response = new LocalResponse();
         response.write("<html>");
         response.pushBuffer();
         response.write("<body></body>");

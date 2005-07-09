@@ -66,14 +66,18 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
     public void initialize(Servlet servlet, ServletRequest request,
             ServletResponse response, String errorPageURL,
             boolean needsSession, int bufferSize, boolean autoFlush) {
+        // Can't call.
         throw new IllegalStateException();
     }
     
     public void release() {
+        // Can't call.
+        throw new IllegalStateException();
     }
 
     public JspWriter getOut() {
-        return null;
+        Response response = _cycle.getResponse();
+        return new CycleJspWriter(response.getWriter());
     }
 
     public JspWriter popBody() {
@@ -96,7 +100,7 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
 //        getServletContext().getRequestDispatcher(path).forward(_request, _response);
     }
 
-    public void include(String url) throws ServletException, IOException {
+    public void include(String relativeUrlPath) throws ServletException, IOException {
     }
 
     public void handlePageException(Exception e) throws ServletException, IOException {
@@ -135,7 +139,8 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
         }
         return (Exception) throwable;
     }
-    
+
+    // Underlying object -----------------------------------------------
     public ServletRequest getRequest() {
     	Request request = _cycle.getRequest();
     	Object obj = request.getUnderlyingObject();
@@ -177,6 +182,10 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
             return (ServletContext)obj;
         }
         throw new IllegalStateException();
+    }
+
+    public Object getPage() {
+        return null;
     }
 
     // Attributes ------------------------------------------------------------
@@ -245,11 +254,8 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
         }
         return 0;
     }
-
-	public Object getPage() {
-		return null;
-	}
     
+    // support class -----------------------------------------------------
     private class CycleServletConfig implements ServletConfig {
 
         public String getInitParameter(String name) {

@@ -53,10 +53,6 @@ public abstract class AbstractResponse implements Response {
         }
         return "UTF-8";
     }
-    
-    private CycleWriter getCurrentBuffer() {
-        return (CycleWriter)_stack.peek();
-    }
 
     protected abstract void setMimeTypeToUnderlyingObject(String mimeType);
     
@@ -68,16 +64,20 @@ public abstract class AbstractResponse implements Response {
         setMimeTypeToUnderlyingObject(mimeType);
     }
     
+    public CycleWriter getWriter() {
+        return (CycleWriter)_stack.peek();
+    }
+    
     public void clearBuffer() {
-        getCurrentBuffer().clearBuffer();
+        getWriter().clearBuffer();
     }
 
     public String getBuffer() {
-        return new String(getCurrentBuffer().getBuffer());
+        return new String(getWriter().getBuffer());
     }
 
     public CycleWriter pushWriter() {
-        CycleWriter writer = new CycleWriter(getCurrentBuffer()); 
+        CycleWriter writer = new CycleWriter(getWriter()); 
         _stack.push(writer);
         return writer;
     }
@@ -95,7 +95,7 @@ public abstract class AbstractResponse implements Response {
 
     public void write(char[] cbuf, int off, int len) {
         try {
-            getCurrentBuffer().write(cbuf, off, len);
+            getWriter().write(cbuf, off, len);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +103,7 @@ public abstract class AbstractResponse implements Response {
 
     public void write(int b) {
         try {
-            getCurrentBuffer().write(b);
+            getWriter().write(b);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -115,7 +115,7 @@ public abstract class AbstractResponse implements Response {
 
     public void write(String str, int off, int len) {
         try {
-            getCurrentBuffer().write(str, off, len);
+            getWriter().write(str, off, len);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -133,7 +133,7 @@ public abstract class AbstractResponse implements Response {
             writeToUnderlyingObject(writer.getBuffer());
         } else {
             try {
-                getCurrentBuffer().flush();
+                getWriter().flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

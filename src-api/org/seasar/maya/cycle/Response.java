@@ -83,6 +83,12 @@ public interface Response extends Serializable, Underlyable  {
     void flush();
 
     /**
+     * バッファされたライタを取得する。
+     * @return バッファされたライタ。
+     */
+    CycleWriter getWriter();
+    
+    /**
      * バッファされたライタをスタックに積む。
      * @return 積んだバッファされたライタ。
      */

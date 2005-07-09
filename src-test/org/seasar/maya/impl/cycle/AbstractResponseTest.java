@@ -15,7 +15,8 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import org.seasar.maya.impl.cycle.local.LocalResponse;
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
+import org.seasar.maya.impl.cycle.web.WebResponse;
 
 import junit.framework.TestCase;
 
@@ -24,48 +25,51 @@ import junit.framework.TestCase;
  */
 public class AbstractResponseTest extends TestCase {
 
+    private AbstractResponse _response;
+    
     public AbstractResponseTest(String name) {
         super(name);
     }
     
+    public void setUp() {
+        WebResponse response = new WebResponse();
+        response.setHttpServletResponse(new MockHttpServletResponse());
+        _response = response;
+    }
+    
     public void testSetMimeType() {
-        AbstractResponse response = new LocalResponse();
-        response.setMimeType("text/html; charset=Shift_JIS");
-        assertEquals("Shift_JIS", response.getEncoding());
+        _response.setMimeType("text/html; charset=Shift_JIS");
+        assertEquals("Shift_JIS", _response.getEncoding());
     }
     
     public void testWrite() {
-        AbstractResponse response = new LocalResponse();
-        response.write("<html></html>");
-        assertEquals("<html></html>", response.getBuffer());
+        _response.write("<html></html>");
+        assertEquals("<html></html>", _response.getBuffer());
     }
     
     public void testClearBuffer() {
-        AbstractResponse response = new LocalResponse();
-        response.write("<html></html>");
-        response.clearBuffer();
-        assertEquals("", response.getBuffer());
+        _response.write("<html></html>");
+        _response.clearBuffer();
+        assertEquals("", _response.getBuffer());
     }
     
     public void testPushWriter1() {
-        AbstractResponse response = new LocalResponse();
-        response.write("<html>");
-        response.pushWriter();
-        response.write("<body></body>");
-        response.flush();
-        response.popWriter();
-        response.write("</html>");
-        assertEquals("<html><body></body></html>", response.getBuffer());
+        _response.write("<html>");
+        _response.pushWriter();
+        _response.write("<body></body>");
+        _response.flush();
+        _response.popWriter();
+        _response.write("</html>");
+        assertEquals("<html><body></body></html>", _response.getBuffer());
     }
 
     public void testPushWriter2() {
-        AbstractResponse response = new LocalResponse();
-        response.write("<html>");
-        response.pushWriter();
-        response.write("<body></body>");
-        response.popWriter();
-        response.write("</html>");
-        assertEquals("<html></html>", response.getBuffer());
+        _response.write("<html>");
+        _response.pushWriter();
+        _response.write("<body></body>");
+        _response.popWriter();
+        _response.write("</html>");
+        assertEquals("<html></html>", _response.getBuffer());
     }
     
 }

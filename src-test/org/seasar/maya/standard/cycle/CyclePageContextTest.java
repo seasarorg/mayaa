@@ -15,13 +15,18 @@
  */
 package org.seasar.maya.standard.cycle;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.impl.cycle.ServiceCycleImpl;
-import org.seasar.maya.impl.cycle.local.LocalApplication;
-import org.seasar.maya.impl.cycle.local.LocalRequest;
-import org.seasar.maya.impl.cycle.local.LocalResponse;
-import org.seasar.maya.impl.cycle.local.LocalSession;
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
+import org.seasar.maya.impl.cycle.servlet.MockServletContext;
+import org.seasar.maya.impl.cycle.web.WebApplication;
+import org.seasar.maya.impl.cycle.web.WebRequest;
+import org.seasar.maya.impl.cycle.web.WebResponse;
+import org.seasar.maya.impl.cycle.web.WebSession;
 
 import junit.framework.TestCase;
 
@@ -38,11 +43,21 @@ public class CyclePageContextTest extends TestCase {
     }
     
     protected void setUp() {
+        ServletContext servletContext = new MockServletContext(this, "context");
+        HttpServletRequest httpServletRequest = new MockHttpServletRequest(servletContext);
+        WebApplication application = new WebApplication();
+        application.setServletContext(servletContext);
+        WebSession session = new WebSession();
+        session.setHttpServletRequest(httpServletRequest);
+        WebRequest request = new WebRequest();
+        request.setHttpServletRequest(httpServletRequest);
+        WebResponse response = new WebResponse();
+        response.setHttpServletResponse(new MockHttpServletResponse());
         _cycle = new ServiceCycleImpl();
-        _cycle.setApplication(new LocalApplication());
-        _cycle.setSession(new LocalSession());
-        _cycle.setRequest(new LocalRequest());
-        _cycle.setResponse(new LocalResponse());
+        _cycle.setApplication(application);
+        _cycle.setSession(session);
+        _cycle.setRequest(request);
+        _cycle.setResponse(response);
         _pageContext = new CyclePageContext(_cycle, null);
     }
     

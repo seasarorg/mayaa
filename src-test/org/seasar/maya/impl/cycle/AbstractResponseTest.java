@@ -47,22 +47,23 @@ public class AbstractResponseTest extends TestCase {
         assertEquals("", response.getBuffer());
     }
     
-    public void testPushBuffer1() {
+    public void testPushWriter1() {
         AbstractResponse response = new LocalResponse();
         response.write("<html>");
-        response.pushBuffer();
+        response.pushWriter();
         response.write("<body></body>");
         response.flush();
+        response.popWriter();
         response.write("</html>");
         assertEquals("<html><body></body></html>", response.getBuffer());
     }
 
-    public void testPushBuffer2() {
+    public void testPushWriter2() {
         AbstractResponse response = new LocalResponse();
         response.write("<html>");
-        response.pushBuffer();
+        response.pushWriter();
         response.write("<body></body>");
-        response.popBuffer();
+        response.popWriter();
         response.write("</html>");
         assertEquals("<html></html>", response.getBuffer());
     }

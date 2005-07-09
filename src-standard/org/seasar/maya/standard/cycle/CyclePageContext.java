@@ -16,7 +16,6 @@
 package org.seasar.maya.standard.cycle;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Enumeration;
 
 import javax.servlet.Servlet;
@@ -36,11 +35,8 @@ import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.test.util.servlet.jsp.tagext.TestBodyContent;
 
 /**
- * TODO Cycle対応実装（今のところ、既存からコピペしただけ）
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CyclePageContext extends PageContext {
@@ -54,16 +50,18 @@ public class CyclePageContext extends PageContext {
     private Servlet _servlet;
     private String _errorPageURL;
 
-    public CyclePageContext(ServiceCycle cycle) {
+    public CyclePageContext(ServiceCycle cycle, String errorPageURL) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         _cycle = cycle;
+        _errorPageURL = errorPageURL;
     }
 
     public void initialize(Servlet servlet, ServletRequest request,
             ServletResponse response, String errorPageURL,
             boolean needsSession, int bufferSize, boolean autoFlush) {
+        throw new IllegalStateException();
     }
     
     public void release() {
@@ -74,19 +72,13 @@ public class CyclePageContext extends PageContext {
     }
 
     public JspWriter popBody() {
-    	return null;
+        Response response = _cycle.getResponse();
+    	return new CycleJspWriter(response.popWriter());
     }
 
     public BodyContent pushBody() {
-        return (BodyContent)pushBody(null);
-    }
-
-    private JspWriter pushBody(Writer writer) {
-        TestBodyContent bodyContent = new TestBodyContent(null);
-//        _bodyContentStack.push(bodyContent);
-//        bodyContent.setWriter(writer);
-//        _out = bodyContent;
-        return bodyContent;
+        Response response = _cycle.getResponse();
+        return new CycleBodyContent(response.pushWriter());
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
@@ -128,15 +120,12 @@ public class CyclePageContext extends PageContext {
     }
 
     public Exception getException() {
-//        if(_request == null) {
-//            throw new IllegalStateException();
-//        }
-//        Throwable throwable = (Throwable)_request.getAttribute(EXCEPTION);
-//        if(throwable != null && !(throwable instanceof Exception)) {
-//            throwable = new JspException(throwable);
-//        }
-//        return (Exception) throwable;
-    	return null;
+        Request request = _cycle.getRequest();
+        Throwable throwable = (Throwable)request.getAttribute(EXCEPTION);
+        if(throwable != null && !(throwable instanceof Exception)) {
+            throwable = new Exception(throwable);
+        }
+        return (Exception) throwable;
     }
     
     public ServletRequest getRequest() {
@@ -145,7 +134,7 @@ public class CyclePageContext extends PageContext {
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;
     	}
-    	// TODO MockRequest
+        // TODO return not null
     	return null;
     }
     
@@ -155,7 +144,7 @@ public class CyclePageContext extends PageContext {
     	if(obj instanceof ServletResponse) {
     		return (ServletResponse)obj;
     	}
-    	// TODO MockResponse
+        // TODO return not null
     	return null;
     }
     
@@ -179,7 +168,7 @@ public class CyclePageContext extends PageContext {
     	if(obj instanceof HttpSession) {
             return (HttpSession)obj;
         }
-    	// TODO MockSession
+        // TODO return not null
         return null;
     }
 

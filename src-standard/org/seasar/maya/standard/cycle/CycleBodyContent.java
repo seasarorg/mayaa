@@ -15,111 +15,83 @@
  */
 package org.seasar.maya.standard.cycle;
 
-import java.io.CharArrayReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.test.util.servlet.jsp.TestJspWriter;
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.standard.CONST_STANDARD;
 
 /**
- * TODO Cycle対応実装（今のところ、既存からコピペしただけ）
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleBodyContent extends BodyContent implements CONST_IMPL {
-
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+public class CycleBodyContent extends BodyContent implements CONST_STANDARD {
     
-    private TestJspWriter _out;
-    private Writer _writer;
+    private CycleWriter _writer;
     
-    public CycleBodyContent(JspWriter enclosingWriter) {
-        super(enclosingWriter);
-        _out = new TestJspWriter(UNBOUNDED_BUFFER, false);
-        _out.setOut(enclosingWriter);
-    }
-
-    /**
-     * JSP2.0からの非JspContext#pushBody(Writer)対応。
-     * @param writer JspContext#pushBody(Writer)から渡されるWriter。 
-     */
-    public void setWriter(Writer writer) {
+    public CycleBodyContent(CycleWriter writer) {
+        super(null);
+        if(writer == null) {
+            throw new IllegalArgumentException();
+        }
         _writer = writer;
     }
-    
+
+    public void clearBody() {
+        _writer.clearBuffer();
+    }
+
+    public JspWriter getEnclosingWriter() {
+        return new CycleJspWriter(_writer.getEnclosingWriter());
+    }
+
     public int getBufferSize() {
-        if(_writer == null) {
-            return _out.getBufferSize();
-        }
         return NO_BUFFER;
     }
 
     public Reader getReader() {
-        if(_writer == null) {
-            return new CharArrayReader(_out.getBuffer());
-        }
-        return null;
+        return new InputStreamReader(new ByteArrayInputStream(_writer.getBuffer()));
     } 
     
     public String getString() {
-        if(_writer == null) {
-            return new String(_out.getBuffer());
-        }
-        return null;
+        return new String(_writer.getBuffer());
     }
 
     public void clear() throws IOException {
-        if(_writer == null) {
-            _out.clear();
-        }
+        _writer.clearBuffer();
     }
     
     public void clearBuffer() throws IOException {
-        if(_writer == null) {
-            _out.clearBuffer();
-        }
+        _writer.clearBuffer();
     }
     
     public void close() throws IOException {
-        if(_writer == null) {
-            _out.close();
-        } else {
-            _writer.close();
-        }
     }
     
     public int getRemaining() {
-        if(_writer == null) {
-            return _out.getRemaining();
-        }
         return NO_BUFFER;
     }
 
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if(_writer == null) {
-            _out.write(cbuf, off, len);
-        } else {
-            _writer.write(cbuf, off, len);
+        if(len == 0) {
+            return;
         }
+        _writer.write(cbuf, off, len);
     }
     
     public void writeOut(Writer out) throws IOException {
-        if(_writer == null) {
-	        char[] buffer = _out.getBuffer();
-	        out.write(buffer);
-        }
+        out.write(getString());
     }
 
     public void newLine() throws IOException {
         write(LINE_SEPARATOR);
     }
 
-    // 以下、printのバリエーション。write(String)を利用する。---------------------------------
     public void print(boolean b) throws IOException {
         write(Boolean.toString(b));
     }
@@ -156,7 +128,6 @@ public class CycleBodyContent extends BodyContent implements CONST_IMPL {
         write(s);
     }
 
-    // 以下、printlnのバリエーション。print(xxx)とnewLine()を利用する。----------------------
     public void println() throws IOException {
         newLine();
     }

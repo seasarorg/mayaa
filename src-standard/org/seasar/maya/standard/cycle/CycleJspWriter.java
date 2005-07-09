@@ -16,171 +16,51 @@
 package org.seasar.maya.standard.cycle;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.jsp.JspWriter;
 
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.standard.CONST_STANDARD;
 
 /**
- * TODO Cycle対応実装（今のところ、既存からコピペしただけ）
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleJspWriter extends JspWriter implements CONST_IMPL {
-
-    private static final int UNBOUNDED_BUFFER_SIZE = 512;
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+public class CycleJspWriter extends JspWriter implements CONST_STANDARD  {
     
-    private boolean _initOut;
-    private Writer _out;
-    private char[] _buffer;
-    private int _bufferUsedSize;
-    private boolean _flushed;
-    private boolean _closed;
-    private boolean _unbound;
-
-    public CycleJspWriter(int bufferSize, boolean autoFlush) {
-        super(bufferSize, autoFlush);
-        if(bufferSize == DEFAULT_BUFFER) {
-            bufferSize = UNBOUNDED_BUFFER_SIZE;
-        } else if(bufferSize == UNBOUNDED_BUFFER) {
-            bufferSize = UNBOUNDED_BUFFER_SIZE;
-            _unbound = true;
-        } else if(bufferSize < UNBOUNDED_BUFFER) {
-            // Buffer size < -2
+    private CycleWriter _writer;
+    
+    public CycleJspWriter(CycleWriter writer) {
+        super(DEFAULT_BUFFER, false);
+        if(writer == null) {
             throw new IllegalArgumentException();
         }
-        _buffer = new char[bufferSize];
-        _bufferUsedSize = 0;
-    }
-    
-    private boolean notUseBuffer() {
-        return getBufferSize() == 0; 
-    }
-
-    private void flushBuffer() throws IOException {
-        if (notUseBuffer()) {
-            return;
-        }
-        checkWriter();
-        _flushed = true;
-        if (_bufferUsedSize == 0) {
-            return;
-        }
-        _out.write(_buffer, 0, _bufferUsedSize);
-        _bufferUsedSize = 0;
-    }
-
-    private void checkWriter() throws IOException {
-        if (_out == null || _closed) {
-            // Stream closed
-            throw new IOException();
-        }
-    }
-    
-    public char[] getBuffer() {
-        return _buffer;
-    }
-    
-    public boolean isInitOut() {
-        return _initOut;
-    }
-    
-    public void setOut(Writer out) {
-        if(out == null) {
-            throw new IllegalArgumentException();
-        }
-        _out = out;
-        _initOut = true;
+        _writer = writer;
     }
 
     public void write(char cbuf[], int off, int len) throws IOException {
-        if (len == 0) {
+        if(len == 0) {
             return;
         }
-        if (notUseBuffer()) {
-            _out.write(cbuf, off, len);
-        } else { 
-	        if (off < 0 || off > cbuf.length || len < 0 || (off + len) > cbuf.length) {
-	            throw new IndexOutOfBoundsException();
-	        }
-	        if (len >= getBufferSize()) {
-	            if (autoFlush) {
-	                flushBuffer();
-	            } else if(_unbound) {
-	                bufferSize = len + UNBOUNDED_BUFFER_SIZE; 
-	                char[] newBuffer = new char[bufferSize];
-	                System.arraycopy(_buffer, 0, newBuffer, 0, _bufferUsedSize);
-	                _buffer = newBuffer;
-	            } else {
-	                //buffer overflow
-	                throw new IOException();
-	            }
-	            _out.write(cbuf, off, len);
-	        } else {
-		        int currentPos = off;
-		        final int endPos = off + len;
-		        while (currentPos < endPos) {
-		            int deltaSize = Math.min(getRemaining(), endPos - currentPos);
-		            System.arraycopy(cbuf, currentPos, _buffer, _bufferUsedSize, deltaSize);
-		            currentPos += deltaSize;
-		            _bufferUsedSize += deltaSize;
-		            if (_bufferUsedSize >= getBufferSize()) {
-		                if (autoFlush) {
-		                    flushBuffer();
-		                } else if(_unbound) {
-			                bufferSize += UNBOUNDED_BUFFER_SIZE;
-			                char[] newBuffer = new char[bufferSize];
-			                System.arraycopy(_buffer, 0, newBuffer, 0, _bufferUsedSize);
-			                _buffer = newBuffer;
-		                } else {
-			                //buffer overflow
-			                throw new IOException();
-		                }
-		            }
-		        }
-	        }
-    	}
+        _writer.write(cbuf, off, len);
     }
 
     public final void clear() throws IOException {
-        if (notUseBuffer() && !_closed) {
-            throw new IllegalStateException();
-        }
-        if (_flushed) {
-            throw new IOException();
-        }
-        checkWriter();
-        _bufferUsedSize = 0;
+        _writer.clearBuffer();
     }
 
     public void clearBuffer() throws IOException {
-        if (notUseBuffer()) {
-            throw new IllegalStateException();
-        }
-        checkWriter();
-        _bufferUsedSize = 0;
+        _writer.clearBuffer();
     }
 
     public void close() throws IOException {
-        if (_out != null && !_closed) {
-            flush();
-            _out.close();
-            _out = null;
-            _closed = true;
-        }
     }
 
     public void flush() throws IOException {
-        flushBuffer();
-        if (!_closed) {
-            _out.flush();
-        }
+        _writer.flush();
     }
 
     public int getRemaining() {
-        return getBufferSize() - _bufferUsedSize;
+        return 0;
     }
 
     public void newLine() throws IOException {

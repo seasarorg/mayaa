@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -89,6 +90,10 @@ public class WebRequest implements Request {
         return ServiceCycle.SCOPE_REQUEST;
     }
     
+    public Iterator iterateAttributeNames() {
+        return EnumerationIterator.getInstance(_httpServletRequest.getAttributeNames());
+    }
+
     public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {

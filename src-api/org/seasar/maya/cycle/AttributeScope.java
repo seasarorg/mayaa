@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.cycle;
 
+import java.util.Iterator;
+
 /**
  * 名前つきでオブジェクトを保存できる「スコープ」概念インターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,6 +28,12 @@ public interface AttributeScope {
      * @return スコープ名。
      */
     String getScopeName();
+    
+    /**
+     * このスコープに保存されている名前をイテレートする。
+     * @return 名前（String）の入ったイテレータ。
+     */
+    Iterator iterateAttributeNames();
     
     /**
      * このスコープ中から指定された名前に対応したオブジェクトを返す。

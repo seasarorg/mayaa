@@ -70,7 +70,7 @@ public class MockServletContext implements ServletContext {
     }
     
     public Enumeration getAttributeNames() {
-        return new IteratorEnumeration(_attributes.keySet().iterator());
+        return IteratorEnumeration.getInstance(_attributes.keySet().iterator());
     }
 
     public void setAttribute(String name, Object value) {

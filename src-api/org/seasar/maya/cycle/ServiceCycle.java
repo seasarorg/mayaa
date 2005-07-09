@@ -16,6 +16,7 @@
 package org.seasar.maya.cycle;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
@@ -52,6 +53,13 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * @return レスポンス。
      */
     Response getResponse();
+    
+    /**
+     * 指定スコープ中に保存されている名前をイテレートする。
+     * @param scope 指定スコープ名。
+     * @return 名前（String）の入ったイテレータ。
+     */
+    Iterator iterateAttributeNames(String scope);
     
     /**
      * 指定スコープ中より指定名のオブジェクトを取得する。

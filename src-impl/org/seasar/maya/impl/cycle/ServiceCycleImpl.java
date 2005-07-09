@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.maya.cycle.Application;
@@ -90,6 +91,14 @@ public class ServiceCycleImpl implements ServiceCycle {
     public String getScopeName() {
         return SCOPE_PAGE;
     }
+
+    public Iterator iterateAttributeNames(String scope) {
+        if(StringUtil.isEmpty(scope)) {
+            throw new IllegalArgumentException();
+        }
+        AttributeScope attr = getAttributeScope(scope);
+        return attr.iterateAttributeNames();
+    }
     
     public Object getAttribute(String name, String scope) {
         if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
@@ -123,7 +132,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         throw new IllegalArgumentException();
     }
-    
+
     public void putAttributeScope(String name, AttributeScope attr) {
         if(StringUtil.isEmpty(name) || attr == null) {
             throw new IllegalArgumentException();
@@ -133,6 +142,10 @@ public class ServiceCycleImpl implements ServiceCycle {
             _scopes.put(SCOPE_PAGE, this);
         }
         _scopes.put(name, attr);
+    }
+    
+    public Iterator iterateAttributeNames() {
+        return _attributes.keySet().iterator();
     }
 
     public Object getAttribute(String name) {

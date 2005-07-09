@@ -15,11 +15,14 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.Iterator;
+
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -50,6 +53,11 @@ public class WebApplication implements Application {
         return ServiceCycle.SCOPE_APPLICATION;
     }
     
+    public Iterator iterateAttributeNames() {
+        check();
+        return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
+    }
+
     public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {

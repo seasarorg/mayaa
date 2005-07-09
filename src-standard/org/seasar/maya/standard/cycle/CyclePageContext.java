@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -30,24 +30,29 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.collection.IteratorEnumeration;
+import org.seasar.maya.impl.util.collection.NullEnumeration;
+import org.seasar.maya.standard.CONST_STANDARD;
+import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CyclePageContext extends PageContext {
+public class CyclePageContext extends PageContext implements CONST_STANDARD {
     
     private static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
     private static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
     private static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
     private static final String ERROR_SERVLET_NAME = "javax.servlet.error.servlet_name";
-    
+
+    private ServletConfig _config;
 	private ServiceCycle _cycle;
-    private Servlet _servlet;
     private String _errorPageURL;
 
     public CyclePageContext(ServiceCycle cycle, String errorPageURL) {
@@ -89,6 +94,9 @@ public class CyclePageContext extends PageContext {
 //        }
 //        String path = getAbsolutePathRelativeToContext(relativeUrlPath);
 //        getServletContext().getRequestDispatcher(path).forward(_request, _response);
+    }
+
+    public void include(String url) throws ServletException, IOException {
     }
 
     public void handlePageException(Exception e) throws ServletException, IOException {
@@ -134,8 +142,7 @@ public class CyclePageContext extends PageContext {
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;
     	}
-        // TODO return not null
-    	return null;
+        throw new IllegalStateException();
     }
     
     public ServletResponse getResponse() {
@@ -144,42 +151,42 @@ public class CyclePageContext extends PageContext {
     	if(obj instanceof ServletResponse) {
     		return (ServletResponse)obj;
     	}
-        // TODO return not null
-    	return null;
-    }
-    
-    public ServletConfig getServletConfig() {
-        if(_servlet == null) {
-            throw new IllegalStateException();
-        }
-        return _servlet.getServletConfig();
-    }
-    
-    public ServletContext getServletContext() {
-        if(_servlet == null) {
-            throw new IllegalStateException();
-        }
-        return _servlet.getServletConfig().getServletContext();
+        throw new IllegalStateException();
     }
     
     public HttpSession getSession() {
-    	Session session = _cycle.getSession();
-    	Object obj = session.getUnderlyingObject();
-    	if(obj instanceof HttpSession) {
+        Session session = _cycle.getSession();
+        Object obj = session.getUnderlyingObject();
+        if(obj instanceof HttpSession) {
             return (HttpSession)obj;
         }
-        // TODO return not null
-        return null;
+        throw new IllegalStateException();
+    }
+    
+    public ServletConfig getServletConfig() {
+        if(_config == null) {
+            _config = new CycleServletConfig();
+        }
+        return _config;
+    }
+    
+    public ServletContext getServletContext() {
+        Application application = _cycle.getApplication();
+        Object obj = application.getUnderlyingObject();
+        if(obj instanceof ServletContext) {
+            return (ServletContext)obj;
+        }
+        throw new IllegalStateException();
     }
 
     // Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
-//        for(int i = PAGE_SCOPE; i < scopes.length; i++) {
-//            Object ret = scopes[i].getAttribute(name);
-//            if(ret != null) {
-//                return ret;
-//            }
-//        }
+        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
+            Object ret = _cycle.getAttribute(name, CYCLE_SCOPES[i]);
+            if(ret != null) {
+                return ret;
+            }
+        }
         return null;
     }
 
@@ -187,7 +194,7 @@ public class CyclePageContext extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = "";
+        String scopeName = JspUtil.getScopeFromInt(scope);
         return _cycle.getAttribute(name, scopeName);
     }
 
@@ -199,7 +206,7 @@ public class CyclePageContext extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = "";
+        String scopeName = JspUtil.getScopeFromInt(scope);
         _cycle.setAttribute(name, null, scopeName);
     }
 
@@ -207,16 +214,16 @@ public class CyclePageContext extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-//        for(int i = PAGE_SCOPE; i < APPLICATION_SCOPE; i++) {
-//            scopes[i].removeAttribute(name);
-//        }
+        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
+            _cycle.setAttribute(name, null, CYCLE_SCOPES[i]);
+        }
     }
 
     public void setAttribute(String name, Object value, int scope) {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = "";
+        String scopeName = JspUtil.getScopeFromInt(scope);
         _cycle.setAttribute(name, value, scopeName);
     }
 
@@ -225,35 +232,42 @@ public class CyclePageContext extends PageContext {
     }
 
     public Enumeration getAttributeNamesInScope(int scope) {
-//        checkScope(scope);
-//        return scopes[scope].getAttributeNames();
-    	return null;
+        String scopeName = JspUtil.getScopeFromInt(scope);
+        return IteratorEnumeration.getInstance(_cycle.iterateAttributeNames(scopeName));
     }
 
     public int getAttributesScope(String name) {
-//        for(int i = PAGE_SCOPE; i < scopes.length; i++) {
-//            Object ret = scopes[i].getAttribute(name);
-//            if(ret != null) {
-//                return i;
-//            }
-//        }
+        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
+            Object ret = _cycle.getAttribute(name, CYCLE_SCOPES[i]);
+            if(ret != null) {
+                return JSP_SCOPES[i];
+            }
+        }
         return 0;
     }
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.jsp.PageContext#getPage()
-	 */
 	public Object getPage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+    
+    private class CycleServletConfig implements ServletConfig {
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.jsp.PageContext#include(java.lang.String)
-	 */
-	public void include(String arg0) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-	}
+        public String getInitParameter(String name) {
+            return null;
+        }
+        
+        public Enumeration getInitParameterNames() {
+            return NullEnumeration.getInstance();
+        }
+        
+        public ServletContext getServletContext() {
+            return getServletContext();
+        }
+        
+        public String getServletName() {
+            return "Internal dummy servlet";
+        }
+    
+    }
     
 }

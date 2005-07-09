@@ -42,7 +42,7 @@ public class MockServletRequest implements ServletRequest {
     }
 
     public Enumeration getParameterNames() {
-        return new IteratorEnumeration(_parameters.keySet().iterator());
+        return IteratorEnumeration.getInstance(_parameters.keySet().iterator());
     }
 
     public String[] getParameterValues(String name) {
@@ -80,7 +80,7 @@ public class MockServletRequest implements ServletRequest {
     }
 
     public Enumeration getAttributeNames() {
-        return new IteratorEnumeration(_attributes.keySet().iterator());
+        return IteratorEnumeration.getInstance(_attributes.keySet().iterator());
     }
     
     public Object getAttribute(String name) {

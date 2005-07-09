@@ -46,7 +46,7 @@ public class MockHttpSession implements HttpSession {
     }
 
     public Enumeration getAttributeNames() {
-        return new IteratorEnumeration(_attributes.keySet().iterator());
+        return IteratorEnumeration.getInstance(_attributes.keySet().iterator());
     }
 
     public Object getAttribute(String name) {

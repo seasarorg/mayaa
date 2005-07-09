@@ -21,37 +21,41 @@ import java.util.Iterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IteratorEnumeration implements Enumeration {
+public class EnumerationIterator implements Iterator {
 
-    private Iterator _iterator;
+    private Enumeration _enumration;
     
-    public static Enumeration getInstance(Iterator iterator) {
-        if(iterator == null) {
+    public static Iterator getInstance(Enumeration enumration) {
+        if(enumration == null) {
             throw new IllegalArgumentException();
         }
-        if(iterator instanceof EnumerationIterator) {
-            return ((EnumerationIterator)iterator).getInternalEnumeration();
+        if(enumration instanceof IteratorEnumeration) {
+            return ((IteratorEnumeration)enumration).getInternalIterator();
         }
-        return new IteratorEnumeration(iterator);
+        return new EnumerationIterator(enumration);
     }
     
-    private IteratorEnumeration(Iterator iterator) {
-        if(iterator == null) {
+    private EnumerationIterator(Enumeration enumration) {
+        if(enumration == null) {
             throw new IllegalArgumentException();
         }
-        _iterator = iterator;
+        _enumration = enumration;
     }
     
-    public Iterator getInternalIterator() {
-        return _iterator;
+    public Enumeration getInternalEnumeration() {
+        return _enumration;
     }
     
-    public boolean hasMoreElements() {
-        return _iterator.hasNext();
+    public boolean hasNext() {
+        return _enumration.hasMoreElements();
     }
-    
-    public Object nextElement() {
-        return _iterator.next();
+
+    public Object next() {
+        return _enumration.nextElement();
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException();
     }
     
 }

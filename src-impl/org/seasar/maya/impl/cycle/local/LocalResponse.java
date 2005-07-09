@@ -18,8 +18,8 @@ package org.seasar.maya.impl.cycle.local;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.impl.cycle.AbstractResponse;
-import org.seasar.maya.impl.cycle.CycleWriter;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -28,7 +28,7 @@ public class LocalResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -8914260934763222285L;
 
-    private CycleWriter _cycleWriter = new CycleWriter();
+    private CycleWriter _cycleWriter = new CycleWriter(null);
 
     public byte[] getResult() {
         return _cycleWriter.getBuffer();
@@ -41,9 +41,11 @@ public class LocalResponse extends AbstractResponse {
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
     }
     
-    protected void writeToUnderlyingObject(String text) {
+    protected void writeToUnderlyingObject(byte[] buffer) {
         try {
-            _cycleWriter.write(text);
+            for(int i = 0; i < buffer.length; i++) {
+                _cycleWriter.write(buffer[i]);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -19,40 +19,33 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
 	private static final int DEFAULT_STEP_START_VALUE = 1;
     private static final int DEFAULT_INDEX_START_VALUE = 0;
     
-    private int _index ;
-    private int _step  ;
-    private int _end   ;
-	
-    // tag status params 
-    private AttributeValue  _var		= null ;
+    private ProcessorProperty	_varParameter 	= null ;
+    private ProcessorProperty	_beginParameter = null ;
+    private ProcessorProperty	_endParameter	= null ;
+    private ProcessorProperty	_stepParameter	= null ;
     
-    private ProcessorProperty	_varParameter 		= null ;// OPTIONAL
-    private ProcessorProperty	_beginParameter 	= null ;// OPTIONAL
-    private ProcessorProperty	_endParameter		= null ;// OPTIONAL
-    private ProcessorProperty	_stepParameter		= null ;// OPTIONAL
+    private static final String LOCAL_INDEX = "LOCAL_INDEX" ;
+    private static final String LOCAL_VAR   = "LOCAL_VAR" ;
+    private static final String LOCAL_STEP  = "LOCAL_STEP" ;
+    private static final String LOCAL_START = "LOCAL_START" ;
+    private static final String LOCAL_END   = "LOCAL_END" ;
     
     protected boolean nextArrayItem(PageContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
-
-        if( _end >= _index ) {
-	        setCurrentObjectToVarValue(context);
-	        _index += _step ;
+        
+        if( getEndValue(context) >= getIndexValue(context) ) {
+	        getVarAttribute(context).setValue(context, getCurrentItem(context));
+	        setIndexValue( context, getIndexValue(context) + getStepValue(context) );
 	        return true;
         }
-        _var.remove(context);
+        getVarAttribute(context).remove(context);
         return false;
     }
-
-    protected void setCurrentObjectToVarValue(PageContext context) {
-	    setVarValue(context,new Integer( _index ));
-	}
-
-    protected void setVarValue(PageContext context, Object value) {
-        _var.setValue( context,value );
+    protected Object getCurrentItem(PageContext context){
+        return new Integer(getIndexValue(context));
     }
-
     private String getKey() {
         return getClass().getName() + "@" + hashCode();
     }
@@ -67,12 +60,13 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
 
 	private void initParameter(PageContext context) {
-	    _var   = AttributeValueFactory.create( (String)_varParameter.getValue(context));
-	    _index = initBeginParameter(context);
-	    _step  = initStepParameter(context);
-	    _end   = initEndParameter(context);
+	    AttributeValue varAttribute = AttributeValueFactory.create( (String)_varParameter.getValue(context));
+        setVarAttribute(context, varAttribute);
+        setIndexValue( context, initBeginParameter(context) );
+	    setStepValue( context, initStepParameter(context) );
+        setEndValue( context, initEndParameter(context) );
         
-	    setVarValue(context,new Integer( _index ));
+        varAttribute.setValue(context,new Integer( getIndexValue(context) ));
 	}
 
 	protected int initBeginParameter(PageContext context) {
@@ -143,9 +137,46 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return true;
     }
     
-    protected int getIndexValue(){
-        return _index;
+    // Local Value
+    protected int getIntValue(String name,PageContext context){
+        Integer indexObject = (Integer)ProcessorLocalValueUtil.getObject(context,this,name);
+        return indexObject.intValue();
     }
+    protected void setIntValue(String name, PageContext context,int value){
+        ProcessorLocalValueUtil.setObject(context,this,name,new Integer(value));
+    }
+    protected int getIndexValue(PageContext context){
+        return getIntValue(LOCAL_INDEX,context);
+    }
+    protected void setIndexValue(PageContext context,int index){
+        setIntValue(LOCAL_INDEX,context,index);
+    }
+    protected int getStepValue(PageContext context){
+        return getIntValue(LOCAL_STEP,context);
+    }
+    protected void setStepValue(PageContext context,int step){
+        setIntValue(LOCAL_STEP,context,step);
+    }
+    protected int getSartValue(PageContext context){
+        return getIntValue(LOCAL_START,context);
+    }
+    protected void setStartValue(PageContext context,int step){
+        setIntValue(LOCAL_START,context,step);
+    }
+    protected int getEndValue(PageContext context){
+        return getIntValue(LOCAL_END,context);
+    }
+    protected void setEndValue(PageContext context,int step){
+        setIntValue(LOCAL_END,context,step);
+    }
+    protected AttributeValue getVarAttribute(PageContext context){
+        String varName = (String)ProcessorLocalValueUtil.getObject(context,this,LOCAL_VAR);
+        return AttributeValueFactory.create(varName);
+    }
+    protected void setVarAttribute(PageContext context,AttributeValue value){
+        ProcessorLocalValueUtil.setObject(context,this,LOCAL_VAR,value.getName());
+    }
+    
     ////
     public void setBeginParameter(ProcessorProperty beginParameter) {
         _beginParameter = beginParameter;
@@ -155,9 +186,6 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
     public void setStepParameter(ProcessorProperty stepParameter) {
         _stepParameter = stepParameter;
-    }
-    public void setVar(AttributeValue var) {
-        _var = var;
     }
     public void setVarParameter(ProcessorProperty varParameter) {
         _varParameter = varParameter;

@@ -26,52 +26,23 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
  * @version $Revision: 1.1 $ $Date: 2005/06/07 00:30:46 $
  * @author maruo_syunsuke
  */
-public class ForTokensProcessor extends ForLoopProcessor {
+public class ForTokensProcessor extends ForEachProcessor {
     private ProcessorProperty 	_item ;
     private ProcessorProperty 	_delims ;
-	private ReadOnlyList 		_readOnlyList = null ;
 
-    public int doStartProcess(PageContext context) {
-        _readOnlyList = ForEachSupportUtil.toForEachList(
-                (String)_item.getValue(context),
-                (String)_delims.getValue(context) 
+    protected ReadOnlyList initReadOnlyList(PageContext context) {
+        return ForEachSupportUtil.toForEachList(
+            (String)_item.getValue(context),
+            (String)_delims.getValue(context) 
         );
-        return super.doStartProcess(context);
     }
     
-    protected int initEndParameter(PageContext context) {
-        Integer endValue = getEndParameterValue(context);
-        if( endValue != null ){
-            int end = endValue.intValue();
-            if( end >  getDefaultEndValue() ){
-                return getDefaultEndValue() ;
-            }
-            return end ;
-        }
-        return getDefaultEndValue();
-    }
-    
-    private int getDefaultEndValue() {
-        return _readOnlyList.size() - 1;
-    }
-
-    protected void setCurrentObjectToVarValue(PageContext context) {
-        setVarValue(context,getCurrentObject());
-	}
-    
-    private Object getCurrentObject() {
-        return _readOnlyList.get(getIndexValue());
-    }
-
     ////
     public void setDelims(ProcessorProperty delims) {
         _delims = delims;
     }
     public void setItem(ProcessorProperty item) {
         _item = item;
-    }
-    public void setReadOnlyList(ReadOnlyList readOnlyList) {
-        _readOnlyList = readOnlyList;
     }
 }
 

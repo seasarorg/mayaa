@@ -148,8 +148,9 @@ public class TemplateImpl extends SpecificationImpl
         if(context == null || current == null) {
             throw new IllegalArgumentException();
         }
+        
         int ret = Tag.EVAL_PAGE;
-        try {
+        try { 
             int startRet = current.doStartProcess(context);
             if(startRet == Tag.SKIP_PAGE) {
                 return Tag.SKIP_PAGE;

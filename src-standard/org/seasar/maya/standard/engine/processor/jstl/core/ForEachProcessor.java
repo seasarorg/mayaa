@@ -22,13 +22,23 @@ import javax.servlet.jsp.PageContext;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
 public class ForEachProcessor extends ForLoopProcessor {
+    private static final String LOCAL_LIST = "LOCAL_LIST" ;
     private ProcessorProperty 	_expressionValue ;
-	private ReadOnlyList 		_readOnlyList 	= null ;
 
     public int doStartProcess(PageContext context) {
-        _readOnlyList = ForEachSupportUtil.toForEachList(
-                _expressionValue.getValue(context));
+        setReadOnlyList(context,initReadOnlyList(context));
         return super.doStartProcess(context);
+    }
+    protected ReadOnlyList initReadOnlyList(PageContext context) {
+        return ForEachSupportUtil.toForEachList(
+                _expressionValue.getValue(context));
+    }
+    protected ReadOnlyList getReadOnlyList(PageContext context){
+        ReadOnlyList varName = (ReadOnlyList)ProcessorLocalValueUtil.getObject(context,this,LOCAL_LIST);
+        return varName;
+    }
+    protected void setReadOnlyList(PageContext context,ReadOnlyList value){
+        ProcessorLocalValueUtil.setObject(context,this,LOCAL_LIST,value);
     }
     
     protected int initEndParameter(PageContext context) {
@@ -36,17 +46,17 @@ public class ForEachProcessor extends ForLoopProcessor {
         int end = 0 ;
         if( endValue != null ){
             end = endValue.intValue();
-            if( end >= _readOnlyList.size() ){
-                end = _readOnlyList.size() -1 ;
+            if( end >= getReadOnlyList(context).size() ){
+                end = getReadOnlyList(context).size() -1 ;
             }
         }else{
-            end = _readOnlyList.size() - 1;
+            end = getReadOnlyList(context).size() - 1;
         }
         return end ;
     }
     
-    protected void setCurrentObjectToVarValue(PageContext context) {
-        setVarValue(context,_readOnlyList.get(getIndexValue()));
+    protected Object getCurrentItem(PageContext context) {
+        return getReadOnlyList(context).get(getIndexValue(context));
 	}
     
     ////

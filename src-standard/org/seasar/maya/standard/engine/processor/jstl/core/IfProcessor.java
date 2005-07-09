@@ -31,18 +31,19 @@ import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 public class IfProcessor extends TemplateProcessorSupport {
 
     private ProcessorProperty _test;
-    private String            _var;
-    private int               _scope;
+    private ProcessorProperty _var;
+    private ProcessorProperty _scope;
     
     public int doStartProcess(PageContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
-        boolean test = ObjectUtil.booleanValue(_test.getValue(context), false);
-        Boolean bool = new Boolean(test);
-        AttributeValue val = AttributeValueFactory.create(_var, _scope);
-        val.setValue(context, bool);
-        if (test) {
+        boolean testValue  = ObjectUtil.booleanValue(_test.getValue(context), false);
+        int scopeIndex     = SpecificationUtil.getScopeFromString(_scope.getLiteral());
+        String variantName = _var.getLiteral();
+        AttributeValue val = AttributeValueFactory.create(variantName, scopeIndex);
+        val.setValue(context, new Boolean(testValue));
+        if ( testValue ) {
             return Tag.EVAL_BODY_INCLUDE;
         }
         return Tag.SKIP_BODY;
@@ -55,11 +56,11 @@ public class IfProcessor extends TemplateProcessorSupport {
         _test = test;
     }
     
-    public void setVar(String var) {
+    public void setVar(ProcessorProperty var) {
         _var = var;
     }
     
-    public void setScope(String scope) {
-    	_scope = SpecificationUtil.getScopeFromString(scope);
+    public void setScope(ProcessorProperty scope) {
+        _scope = scope;
     }
 }

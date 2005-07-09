@@ -49,6 +49,7 @@ import org.seasar.maya.impl.source.MetaInfSourceDescriptorTest;
 import org.seasar.maya.impl.util.MessageUtilTest;
 import org.seasar.maya.impl.util.StringUtilTest;
 import org.seasar.maya.standard.builder.library.scanner.TLDLibraryScannerTest;
+import org.seasar.maya.standard.cycle.CyclePageContextTest;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -114,6 +115,9 @@ public class MayaAllTests extends TestSuite {
         
         // org.seasar.maya.standard.builder.library.scanner
         suite.addTestSuite(TLDLibraryScannerTest.class);
+        
+        // org.seasar.maya.standard.cycle
+        suite.addTestSuite(CyclePageContextTest.class);
         
         return suite;
     }

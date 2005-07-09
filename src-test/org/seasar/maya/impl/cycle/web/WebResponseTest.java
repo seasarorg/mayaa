@@ -41,7 +41,7 @@ public class WebResponseTest extends TestCase {
     }
     
     public void testWriteToUnderlyingObject() {
-        _response.writeToUnderlyingObject("<html></html>");
+        _response.writeToUnderlyingObject("<html></html>".getBytes());
         assertEquals("<html></html>", new String(_httpServletResponse.getBuffer()));
     }
 

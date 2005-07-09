@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle;
 import java.io.IOException;
 import java.util.Stack;
 
+import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -31,7 +32,7 @@ public abstract class AbstractResponse implements Response {
 
     public AbstractResponse() {
         _stack = new Stack();
-        _stack.push(new CycleWriter());
+        _stack.push(new CycleWriter(null));
     }
     
     private String parseCharacterEncoding(String contentType) {
@@ -75,14 +76,15 @@ public abstract class AbstractResponse implements Response {
         return new String(getCurrentBuffer().getBuffer());
     }
 
-    public void pushBuffer() {
-        _stack.push(new CycleWriter());
+    public CycleWriter pushWriter() {
+        CycleWriter writer = new CycleWriter(getCurrentBuffer()); 
+        _stack.push(writer);
+        return writer;
     }
 
-    public String popBuffer() {
+    public CycleWriter popWriter() {
         if(_stack.size() > 1) {
-            CycleWriter writer = (CycleWriter)_stack.pop();
-            return new String(writer.getBuffer());
+            return (CycleWriter)_stack.pop();
         }
         throw new IllegalStateException();
     }
@@ -123,16 +125,15 @@ public abstract class AbstractResponse implements Response {
         return _encoding;
     }
 
-    protected abstract void writeToUnderlyingObject(String text);
+    protected abstract void writeToUnderlyingObject(byte[] buffer);
     
     public void flush() {
         if(_stack.size() == 1) {
             CycleWriter writer = (CycleWriter)_stack.peek();
-            writeToUnderlyingObject(new String(writer.getBuffer()));
+            writeToUnderlyingObject(writer.getBuffer());
         } else {
-            String text = popBuffer();
             try {
-                getCurrentBuffer().write(text);
+                getCurrentBuffer().flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

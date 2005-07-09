@@ -21,7 +21,6 @@ package org.seasar.maya.standard;
  */
 public interface CONST_STANDARD {
 
-    String URI_JSTL_CORE= "http://maya.seasar.org/jstl/core";
-    String URI_JSTL_FMT = "http://maya.seasar.org/jstl/fmt";
-
+    String LINE_SEPARATOR = System.getProperty("line.separator");
+    
 }

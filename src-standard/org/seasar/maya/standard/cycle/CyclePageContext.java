@@ -91,16 +91,11 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
-//        try {
-//            _out.clear();
-//        } catch(IOException e) {
-//            throw new IllegalStateException();
-//        }
-//        String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-//        getServletContext().getRequestDispatcher(path).forward(_request, _response);
+    	_cycle.forward(relativeUrlPath);
     }
 
     public void include(String relativeUrlPath) throws ServletException, IOException {
+    	_cycle.include(relativeUrlPath);
     }
 
     public void handlePageException(Exception e) throws ServletException, IOException {

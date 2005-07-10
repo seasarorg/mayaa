@@ -171,5 +171,15 @@ public class ServiceCycleImpl implements ServiceCycle {
             _attributes.remove(name);
         }
     }
+
+	public void forward(String relativeUrlPath) {
+		// TODO implementing
+		throw new UnsupportedOperationException();
+	}
+
+	public void include(String relativeUrlPath) {
+		// TODO implementing
+		throw new UnsupportedOperationException();
+	}
     
 }

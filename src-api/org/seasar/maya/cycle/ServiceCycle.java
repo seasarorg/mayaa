@@ -78,4 +78,16 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      */
     void setAttribute(String name, Object attribute, String scope);
     
+    /**
+     * フォワードを行う。
+     * @param relativeUrlPath パス文字列。
+     */
+    void forward(String relativeUrlPath);
+    
+    /**
+     * インクルードを行う。
+     * @param relativeUrlPath パス文字列。
+     */
+    void include(String relativeUrlPath);
+    
 }

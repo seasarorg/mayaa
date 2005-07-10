@@ -67,7 +67,7 @@ public class CycleJspWriter extends JspWriter implements CONST_STANDARD  {
         write(LINE_SEPARATOR);
     }
 
-    // 以下、printのバリエーション。write(String)を利用する。---------------------------------
+    // ----------------------------------------------------------
     public void print(boolean b) throws IOException {
         write(Boolean.toString(b));
     }
@@ -104,7 +104,7 @@ public class CycleJspWriter extends JspWriter implements CONST_STANDARD  {
         write(s);
     }
 
-    // 以下、printlnのバリエーション。print(xxx)とnewLine()を利用する。----------------------
+    // ----------------------------------------------------------
     public void println() throws IOException {
         newLine();
     }

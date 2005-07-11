@@ -97,7 +97,7 @@ public class WebRequest implements Request {
     public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return null;
         }
         return _httpServletRequest.getAttribute(name);
     }
@@ -105,7 +105,7 @@ public class WebRequest implements Request {
     public void setAttribute(String name, Object attribute) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return;
         }
         if(attribute != null) {
             _httpServletRequest.setAttribute(name, attribute);

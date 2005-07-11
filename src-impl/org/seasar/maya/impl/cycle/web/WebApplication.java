@@ -61,7 +61,7 @@ public class WebApplication implements Application {
     public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return null;
         }
         return _servletContext.getAttribute(name);
     }
@@ -69,7 +69,7 @@ public class WebApplication implements Application {
     public void setAttribute(String name, Object attribute) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return;
         }
         if(attribute != null) {
             _servletContext.setAttribute(name, attribute);

@@ -67,7 +67,7 @@ public class WebSession implements Session {
     public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return null;
         }
         if(_session != null) {
             return _session.getAttribute(name);
@@ -78,7 +78,7 @@ public class WebSession implements Session {
     public void setAttribute(String name, Object attribute) {
         check();
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return;
         }
         if(_session == null) {
             _session = _httpServletRequest.getSession(true);

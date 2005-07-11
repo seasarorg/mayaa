@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -21,70 +21,40 @@ import java.io.Writer;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
-import org.cyberneko.html.HTMLEntities;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.standard.engine.processor.AbstractBodyTextProcessor;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 
 /**
  * @author maruo_syunsuke
  */
-public class OutProcessor extends AbstractBodyTextProcessor {
+public class OutProcessor extends AbstractBodyProcessor {
 
-    private ProcessorProperty _value ;
-    private ProcessorProperty _defaultValue ;
+    private static final long serialVersionUID = 3988388279125884492L;
+
+    private boolean _hasValue;
     private ProcessorProperty _escapeXml;
 
-    protected int process(PageContext context,String bodyString) {
-        Writer out = context.getOut();
-        String outputString = getOutputString(context,bodyString);
-        try {
-            out.write(escapeXml(context, outputString));
-            return Tag.EVAL_PAGE;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    // MLD property (dynamic, required)
+    public void setValue(ProcessorProperty value) {
+        if(value == null) {
+            throw new IllegalArgumentException();
         }
+        _hasValue = true;
+        super.setValue(value);
     }
-
-    private String getOutputString(PageContext context, String bodyString) {
-        if( _value != null ){
-            return _value.getValue(context).toString() ;
-        }
-        if( _defaultValue != null ){
-            return _defaultValue.getLiteral();
-        }
-        if( bodyString != null ){
-            return bodyString ;
-        }
-        return "" ;
+    
+    // MLD property (dynamic)
+    public void setDefault(ProcessorProperty defaultValue) {
+        super.setDefault(defaultValue);
     }
-
-    private String escapeXml(PageContext context, Object obj) {
-        String plainString = String.valueOf(obj);
-        if(isEscape(context)) {
-            return buildEscapeString(plainString);
-        }
-        return plainString;
+    
+    // MLD property (dynamic)
+    public void setEscapeXml(ProcessorProperty escapeXml) {
+        _escapeXml = escapeXml;
     }
-
-    private String buildEscapeString(String srcString) {
-        String buffer = "" ;
-        for(int i = 0; i < srcString.length(); i++) {
-            char partCharOfSrcString = srcString.charAt(i);
-            buffer += convertCharToEscapedString(partCharOfSrcString);
-        }
-        return buffer;
-    }
-    private String convertCharToEscapedString(char srcChar){
-        String name = HTMLEntities.get(srcChar);
-        if(name != null) {
-            return "&" + name + ";";
-        }
-        return String.valueOf(srcChar);
-    }
-    private boolean isEscape(PageContext context) {
-        return getBoolean(context, _escapeXml);
-    }
+    
     private boolean getBoolean(PageContext context, ProcessorProperty value) {
         if(value == null) {
             return false;
@@ -92,14 +62,26 @@ public class OutProcessor extends AbstractBodyTextProcessor {
         Object obj = value.getValue(context);
         return ObjectUtil.booleanValue(obj, false);
     }
+    
+    private String escapeXml(PageContext context, Object obj) {
+        String plainString = String.valueOf(obj);
+        if(getBoolean(context, _escapeXml)) {
+            return StringUtil.escapeEntity(plainString);
+        }
+        return plainString;
+    }
 
-    public void setValue(ProcessorProperty value) {
-        _value = value ;
+    protected int process(PageContext context, Object obj) {
+        if(_hasValue == false) {
+            throw new IllegalStateException();
+        }
+        Writer out = context.getOut();
+        try {
+            out.write(escapeXml(context, obj));
+            return Tag.EVAL_PAGE;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public void setDefault(ProcessorProperty defaultValue) {
-        _defaultValue = defaultValue ;
-    }
-    public void setEscapeXml(ProcessorProperty escapeXml) {
-        _escapeXml = escapeXml;
-    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -21,34 +21,22 @@ import javax.servlet.jsp.tagext.Tag;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
+import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * @author maruo_syunsuke
  */
 public class IfProcessor extends TemplateProcessorSupport {
 
-    private ProcessorProperty _test;
-    private ProcessorProperty _var;
-    private ProcessorProperty _scope;
+    private static final long serialVersionUID = -6997783269188138513L;
     
-    public int doStartProcess(PageContext context) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        boolean testValue  = ObjectUtil.booleanValue(_test.getValue(context), false);
-        int scopeIndex     = SpecificationUtil.getScopeFromString(_scope.getLiteral());
-        String variantName = _var.getLiteral();
-        AttributeValue val = AttributeValueFactory.create(variantName, scopeIndex);
-        val.setValue(context, new Boolean(testValue));
-        if ( testValue ) {
-            return Tag.EVAL_BODY_INCLUDE;
-        }
-        return Tag.SKIP_BODY;
-    }
+    private ProcessorProperty _test;
+    private String _var;
+    private int _scope;
 
+    // MLD property (dynamic, required)
     public void setTest(ProcessorProperty test) {
         if(test == null) {
             throw new IllegalArgumentException();
@@ -56,11 +44,32 @@ public class IfProcessor extends TemplateProcessorSupport {
         _test = test;
     }
     
-    public void setVar(ProcessorProperty var) {
+    // MLD property (static)
+    public void setVar(String var) {
         _var = var;
     }
     
-    public void setScope(ProcessorProperty scope) {
-        _scope = scope;
+    // MLD property (static)
+    public void setScope(String scope) {
+        _scope = JspUtil.getScopeFromString(scope);
     }
+    
+    public int doStartProcess(PageContext context) {
+        if(context == null) {
+            throw new IllegalArgumentException();
+        }
+        boolean test = ObjectUtil.booleanValue(_test.getValue(context), false);
+        Boolean bool = new Boolean(test);
+        //++ FIXME ServiceCycle導入後はコメントアウトコードに代える。
+        AttributeValue val = AttributeValueFactory.create(_var, _scope);
+        val.setValue(context, bool);
+        // cycle.setAttribute(_var, _scope);
+        // ServiceCycle#setAttribute()の引数はAttributeValueの趣旨を汲んで、nullも可能にした。
+        //--
+        if (test) {
+            return Tag.EVAL_BODY_INCLUDE;
+        }
+        return Tag.SKIP_BODY;
+    }
+
 }

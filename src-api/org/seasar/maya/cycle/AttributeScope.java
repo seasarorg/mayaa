@@ -37,7 +37,7 @@ public interface AttributeScope {
     
     /**
      * このスコープ中から指定された名前に対応したオブジェクトを返す。
-     * 該当オブジェクトが無い場合には、nullを返す。
+     * 名前文字列がnullもしくはゼロ長もしくは該当オブジェクトが無い場合には、nullを返す。
      * @param name 指定オブジェクト名。
      * @return 指定オブジェクト。
      */
@@ -45,7 +45,7 @@ public interface AttributeScope {
     
     /**
      * このスコープ中に、指定名でオブジェクトを保存する。
-     * @param name 指定名。空白文字列だと例外。
+     * @param name 指定名。空白文字列だと何もしない。
      * @param attribute 指定オブジェクト。nullの場合は、スコープより削除される。
      */
     void setAttribute(String name, Object attribute);

@@ -94,23 +94,29 @@ public class ServiceCycleImpl implements ServiceCycle {
 
     public Iterator iterateAttributeNames(String scope) {
         if(StringUtil.isEmpty(scope)) {
-            throw new IllegalArgumentException();
+            scope = SCOPE_PAGE;
         }
         AttributeScope attr = getAttributeScope(scope);
         return attr.iterateAttributeNames();
     }
     
     public Object getAttribute(String name, String scope) {
-        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
-            throw new IllegalArgumentException();
+        if(StringUtil.isEmpty(name)) {
+            return null;
+        }
+        if(StringUtil.isEmpty(scope)) {
+            scope = SCOPE_PAGE;
         }
         AttributeScope attr = getAttributeScope(scope);
         return attr.getAttribute(name);
     }
 
     public void setAttribute(String name, Object attribute, String scope) {
-        if(StringUtil.isEmpty(name) || StringUtil.isEmpty(scope)) {
-            throw new IllegalArgumentException();
+        if(StringUtil.isEmpty(name)) {
+            return;
+        }
+        if(StringUtil.isEmpty(scope)) {
+            scope = SCOPE_PAGE;
         }
         AttributeScope attr = getAttributeScope(scope);
         attr.setAttribute(name, attribute);
@@ -150,7 +156,7 @@ public class ServiceCycleImpl implements ServiceCycle {
 
     public Object getAttribute(String name) {
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return null;
         }
         if(_attributes != null) {
             return _attributes.get(name);
@@ -160,7 +166,7 @@ public class ServiceCycleImpl implements ServiceCycle {
 
     public void setAttribute(String name, Object attribute) {
         if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            return;
         }
         if(_attributes == null) {
             _attributes = new HashMap();

@@ -57,7 +57,7 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     /**
      * 指定スコープ中に保存されている名前をイテレートする。
      * @param scope 指定スコープ名。
-     * @return 名前（String）の入ったイテレータ。
+     * @return 名前（String）の入ったイテレータ。nullもしくは空白文字列のときは"page"スコープ。
      */
     Iterator iterateAttributeNames(String scope);
     
@@ -66,7 +66,7 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * 該当するものが無い場合、nullを返す。
      * @param name 指定オブジェクト名。
      * @param scope 指定スコープ名。
-     * @return 該当オブジェクトもしくはnull。
+     * @return 該当オブジェクトもしくはnull。nullもしくは空白文字列のときは"page"スコープ。
      */
     Object getAttribute(String name, String scope);
     
@@ -74,7 +74,7 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * 指定スコープ中に、名前を指定してオブジェクトを保存する。
      * @param name 指定オブジェクト名。
      * @param attribute 保存オブジェクト。
-     * @param scope 指定スコープ名。
+     * @param scope 指定スコープ名。nullもしくは空白文字列のときは"page"スコープ。
      */
     void setAttribute(String name, Object attribute, String scope);
     

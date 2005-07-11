@@ -2,24 +2,24 @@
 <project name="maya" default="distro" basedir=".">
 
 	<property file="project.properties"/>
-	
+
 	<property name="maya.distro.src" value="maya-src-${maya.ver}.zip"/>
 	<property name="maya.distro.bin" value="maya-bin-${maya.ver}.zip"/>
-	
+
 	<property name="maya.jar.core" value="maya-${maya.ver}.jar"/>
 	<property name="maya.jar.standard" value="maya-standard-${maya.ver}.jar"/>
 	<property name="maya.jar.component" value="maya-component-${maya.ver}.jar"/>
 	<property name="maya.jar.sample" value="maya-sample-${maya.ver}.jar"/>
 
 	<property name="maya.packages" value="org.seasar.maya.*"/>
-	
+
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.src.standard"  value="src-standard"/>
 	<property name="folder.src.component"  value="src-component"/>
 	<property name="folder.src.test"  value="src-test"/>
 	<property name="folder.src.sample"  value="src-sample"/>
-	
+
 	<property name="folder.context" value="context"/>
 	<property name="folder.webinf" value="${folder.context}/WEB-INF"/>
 	<property name="folder.mld" value="${folder.webinf}/mld"/>
@@ -32,12 +32,12 @@
 		<include name="${folder.webinf}/lib-servlet/*.jar"/>
 		<exclude name="${folder.webinf}/lib/maya-*.jar"/>
 	</fileset>
-	
+
 	<target name="cleanbuild">
 		<delete dir="${folder.classes}" verbose="${maya.verbose}"/>
 		<mkdir dir="${folder.classes}"/>
 	</target>
-	
+
 	<target name="compile" depends="cleanbuild">
 		<javac
 			destdir="${folder.classes}"
@@ -99,7 +99,7 @@
 	</target>
 
 	<target name="javabuild" depends="compile, copy"/>
-	
+
 	<target name="cleanjar">
 		<delete verbose="${maya.verbose}">
 			<fileset dir=".">
@@ -107,7 +107,7 @@
 			</fileset>
 		</delete>
 	</target>
-	
+
 	<target name="mayajar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.core}">
 			<fileset dir="${folder.classes}">
@@ -166,7 +166,7 @@
 			<metainf dir="${folder.mld}" includes="component.mld"/>
 		</jar>
 	</target>
-	
+
 	<target name="samplejar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.sample}">
 			<fileset dir="${folder.classes}">
@@ -181,7 +181,7 @@
 			<metainf dir="${folder.classes}" includes="maya-sample.tld"/>
 		</jar>
 	</target>
-	
+
 	<target name="cleandoc">
 		<delete dir="${folder.javadoc}" verbose="${maya.verbose}"/>
 		<mkdir dir="${folder.javadoc}"/>
@@ -213,7 +213,7 @@
     </target>
 
 	<target name="make" depends="mayajar, standardjar, componentjar, samplejar, javadoc"/>
-	
+
 	<target name="distro" depends="make">
 		<zip destfile="../${maya.distro.bin}">
 			<fileset dir=".">
@@ -226,15 +226,12 @@
 				<exclude name="${folder.webinf}/lib/maya-sample-*.jar"/>
 				<exclude name="${folder.webinf}/lib/jstl-*.jar"/>
 				<exclude name="${folder.webinf}/lib/standard-*.jar"/>
-				<exclude name="/**/.cvsignore"/>
-				<exclude name="/**/CVS"/>
-				<exclude name="/**/CVS/**/*"/>
-			</fileset>		
+				<exclude name="./**/.svn"/>
+			</fileset>
 		</zip>
 		<zip destfile="../${maya.distro.src}">
 			<fileset dir="../">
 				<include name="maya/**/*"/>
-				<exclude name="maya/.*"/>
 				<exclude name="maya/${folder.webinf}/debug"/>
 				<exclude name="maya/${folder.webinf}/debug/**/*"/>
 				<exclude name="maya/${folder.webinf}/lib/maya-*.jar"/>
@@ -242,11 +239,9 @@
 				<exclude name="maya/${folder.javadoc}/**/*"/>
 				<exclude name="maya/${folder.classes}"/>
 				<exclude name="maya/${folder.classes}/**/*"/>
-				<exclude name="maya/**/.cvsignore"/>
-				<exclude name="maya/**/CVS"/>
-				<exclude name="maya/**/CVS/**/*"/>
-			</fileset>		
+				<exclude name="maya/**/.svn"/>
+			</fileset>
 		</zip>
 	</target>
-	
+
 </project>

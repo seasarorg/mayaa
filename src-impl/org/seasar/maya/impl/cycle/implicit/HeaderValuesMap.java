@@ -23,11 +23,11 @@ import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class HeadersMap extends AbstractAttributeMap {
+public class HeaderValuesMap extends AbstractAttributeMap {
     
     private final Request _request;
 
-    public HeadersMap(Request request) {
+    public HeaderValuesMap(Request request) {
         if(request == null) {
             throw new IllegalArgumentException();
         }

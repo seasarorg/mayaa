@@ -20,13 +20,13 @@ import org.seasar.maya.cycle.ServiceCycle;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class HeadersResolver implements ImplicitObjectResolver {
+public class HeaderValuesResolver implements ImplicitObjectResolver {
 
 	public Object resolve(ServiceCycle cycle) {
 	    if(cycle == null) {
 	        throw new IllegalArgumentException();
 	    }
-		return new HeadersMap(cycle.getRequest());
+		return new HeaderValuesMap(cycle.getRequest());
 	}
 
 }

@@ -9,9 +9,9 @@
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-7.jar"/>
-	<classpathentry exported="true" sourcepath="D:/libsrc/ognl-2.6.7-dist/java" kind="lib" path="context/WEB-INF/lib/ognl-2.6.7.jar"/>
-	<classpathentry exported="true" sourcepath="D:/libsrc/nekohtml-0.9.4/src/html" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.4.jar"/>
-	<classpathentry exported="true" sourcepath="D:/libsrc/xerces-2_6_2/src" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/ognl-2.6.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xmlParserAPIs-1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.3.jar"/>

@@ -24,18 +24,11 @@ import java.util.Iterator;
  */
 public interface ServiceCycle extends Serializable, AttributeScope {
 
-    String IMPLICIT_SCOPE = "implicitScope";
-    String PAGE_SCOPE = "pageScope";
-    String REQUEST_SCOPE = "requestScope";
-    String SESSION_SCOPE = "sessionScope";
-    String APPLICATION_SCOPE = "applicationScope";
+    String SERVICE_CYCLE = "serviceCycle";
     String PARAM = "param";
     String PARAM_VALUES = "paramValues";
     String HEADER = "header";
     String HEADER_VALUES = "headerValues";
-    String REQUEST = "request";
-    String RESPONSE = "response";
-    String SERVICE_CYCLE = "serviceCycle";
 
     String SCOPE_IMPLICIT = "implicit";
     String SCOPE_PAGE = "page";

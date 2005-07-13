@@ -27,6 +27,8 @@ import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
+ * TODO ServiceCycle
+ * 
  * ランタイムエンジン。ホストサーブレットからservice()が呼び出される。 
  * リクエストに対して、ステートレスに実装。
  * @author Masataka Kurihara (Gluegent, Inc.)

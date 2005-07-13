@@ -19,6 +19,8 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 
 /**
+ * TODO ServiceCycle
+ * 
  * TemplateProcessorの拡張インターフェイス。子要素の評価の機能を持つ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

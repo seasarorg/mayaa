@@ -18,6 +18,8 @@ package org.seasar.maya.engine.processor;
 import javax.servlet.jsp.PageContext;
 
 /**
+ * TODO ServiceCycle
+ * 
  * TemplateProcessorの拡張インターフェイス。例外処理関連のイベントを
  * 受け取る機能を持たせる。
  * @author Masataka Kurihara (Gluegent, Inc.)

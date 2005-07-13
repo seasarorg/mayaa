@@ -20,6 +20,8 @@ import javax.servlet.jsp.PageContext;
 import org.seasar.maya.engine.specification.QName;
 
 /**
+ * TODO ServiceCycle
+ * 
  * プロセッサに設定するプロパティのランタイムオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

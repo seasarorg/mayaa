@@ -28,6 +28,8 @@ import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
+ * TODO ServiceCycle
+ * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ExpressionUtil implements CONST_IMPL {

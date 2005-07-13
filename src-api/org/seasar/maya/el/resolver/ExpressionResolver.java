@@ -20,6 +20,8 @@ import javax.servlet.jsp.PageContext;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
+ * TODO ServiceCycle
+ * 
  * 式評価リゾルバ。アプリケーションスコープにて共有されるので、
  * スレッドセーフに実装することが求められる。
  * @author Masataka Kurihara (Gluegent, Inc.)

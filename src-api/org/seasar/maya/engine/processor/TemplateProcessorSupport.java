@@ -24,6 +24,8 @@ import javax.servlet.jsp.tagext.Tag;
 import org.seasar.maya.engine.Template;
 
 /**
+ * TODO ServiceCycle
+ * 
  * TemplateProcessorの基本実装。直接用いるのではなく、継承して
  * 具体的な機能が盛り込まれることが想定されている。継承クラスでは、
  * doStartProcess()およびdoEndProcess()を実装することになる。

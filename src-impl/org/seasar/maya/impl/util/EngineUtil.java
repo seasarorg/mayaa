@@ -29,6 +29,8 @@ import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
+ * TODO ServiceCycle, Application
+ * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class EngineUtil implements CONST_IMPL {

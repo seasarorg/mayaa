@@ -18,6 +18,8 @@ package org.seasar.maya.el.resolver;
 import javax.servlet.jsp.PageContext;
 
 /**
+ * TODO ServiceCycle
+ * 
  * 式評価リゾルバチェイン。アプリケーションスコープにて共有されるので、
  * スレッドセーフに実装することが求められる。
  * @author Masataka Kurihara (Gluegent, Inc.)

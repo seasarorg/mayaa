@@ -24,11 +24,23 @@ import java.util.Iterator;
  */
 public interface ServiceCycle extends Serializable, AttributeScope {
 
+    String PAGE_SCOPE = "pageScope";
+    String REQUEST_SCOPE = "requestScope";
+    String SESSION_SCOPE = "sessionScope";
+    String APPLICATION_SCOPE = "applicationScope";
+    String PARAM = "param";
+    String PARAM_VALUE = "paramValues";
+    String HEADER = "header";
+    String HEADER_VALUES = "headerValues";
+    String COOKIE = "cookie";
+    String REQUEST = "request";
+    String RESPONSE = "response";
+
     String SCOPE_IMPLICIT = "implicit";
-    String SCOPE_APPLICATION = "application";
-    String SCOPE_SESSION = "session";
-    String SCOPE_REQUEST = "request";
     String SCOPE_PAGE = "page";
+    String SCOPE_REQUEST = "request";
+    String SCOPE_SESSION = "session";
+    String SCOPE_APPLICATION = "application";
     
     /**
      * 「application」スコープオブジェクトの取得。
@@ -77,6 +89,13 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * @param scope 指定スコープ名。nullもしくは空白文字列のときは"page"スコープ。
      */
     void setAttribute(String name, Object attribute, String scope);
+    
+    /**
+     * エンジン埋め込みオブジェクトの取得を行う。
+     * @param name 埋め込みオブジェクトの名前。
+     * @return 指定名の埋め込みオブジェクト。指定名に該当するものが無いときにはnullを返す。
+     */
+    Object getImplicitObject(String name);
     
     /**
      * フォワードを行う。

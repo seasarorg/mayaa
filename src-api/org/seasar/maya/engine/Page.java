@@ -22,6 +22,8 @@ import javax.servlet.jsp.PageContext;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
+ * TODO ServiceCycle
+ * 
  * テンプレートのレンダリングエントリーポイント。アプリケーションを構成する各ページのモデル
  * であり、リクエストに対してはステートレスなオブジェクトである。Engine#doService(PageContext)
  * で、テンプレートを初期化をした後、doTemplate(ProcessorContext)が呼ばれる。また、

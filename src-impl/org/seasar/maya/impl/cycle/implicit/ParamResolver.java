@@ -13,25 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.engine.error;
+package org.seasar.maya.impl.cycle.implicit;
 
-import javax.servlet.jsp.PageContext;
-
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
- * TODO ServiceCycle
- * 
- * エラー処理のためのハンドラ。リクエストの最後、エラー画面の出力などを行う。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ErrorHandler extends Parameterizable {
+public class ParamResolver implements ImplicitObjectResolver {
 
-    /**
-     * エラー処理メソッド。
-     * @param context カレントコンテキスト。
-     * @param t 処理対象のThrowable。
-     */
-    void doErrorHandle(PageContext context, Throwable t);
+	public Object resolve(ServiceCycle cycle) {
+	    if(cycle == null) {
+	        throw new IllegalArgumentException();
+	    }
+		return new ParamMap(cycle.getRequest());
+	}
 
 }

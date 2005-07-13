@@ -20,6 +20,8 @@ import java.io.Serializable;
 import javax.servlet.jsp.PageContext;
 
 /**
+ * TODO ServiceCycle
+ * 
  * テンプレート中のHTMLタグを処理する委譲クラス。このTemplateProcessorのツリーすなわち
  * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
  * @author Masataka Kurihara (Gluegent, Inc.)

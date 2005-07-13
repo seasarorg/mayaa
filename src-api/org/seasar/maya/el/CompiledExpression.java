@@ -20,6 +20,8 @@ import java.io.Serializable;
 import javax.servlet.jsp.PageContext;
 
 /**
+ * TODO ServiceCycle
+ * 
  * コンパイル済みの式言語オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

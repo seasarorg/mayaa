@@ -23,6 +23,8 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
+ * TODO ServiceCycle
+ * 
  * テンプレートオブジェクト。HTMLをパースした結果の、TemplateProcessorのツリー構造を内包。
  * 自身もTemplateProcessorである。リクエストに対して、ステートレスである。 シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)

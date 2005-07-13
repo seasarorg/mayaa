@@ -24,6 +24,8 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.factory.SourceFactory;
 
 /**
+ * TODO Application
+ * 
  * アプリケーションスコープでのサービス提供オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

@@ -41,6 +41,8 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.xml.sax.Locator;
 
 /**
+ * TODO ServiceCycle
+ * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {

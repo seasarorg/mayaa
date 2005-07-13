@@ -149,7 +149,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         _scopes.put(name, attr);
     }
-    
+
     public Iterator iterateAttributeNames() {
         return _attributes.keySet().iterator();
     }
@@ -177,8 +177,13 @@ public class ServiceCycleImpl implements ServiceCycle {
             _attributes.remove(name);
         }
     }
+    
+	public Object getImplicitObject(String name) {
+        // TODO implementing
+        return null;
+    }
 
-	public void forward(String relativeUrlPath) {
+    public void forward(String relativeUrlPath) {
 		// TODO implementing
 		throw new UnsupportedOperationException();
 	}

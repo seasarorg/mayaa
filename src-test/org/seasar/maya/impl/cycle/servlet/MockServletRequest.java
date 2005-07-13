@@ -16,8 +16,10 @@
 package org.seasar.maya.impl.cycle.servlet;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class MockServletRequest implements ServletRequest {
 
     private Map _parameters = new HashMap();
     private Map _attributes = new HashMap();
-    private Locale _locale;
+    private List _locale;
     
     public Map getParameterMap() {
         return _parameters;
@@ -114,18 +116,21 @@ public class MockServletRequest implements ServletRequest {
         if(_locale == null) {
             throw new IllegalStateException();
         }
-        return _locale;
+        return (Locale)_locale.get(0);
     }
 
-    public void setLocale(Locale locale) {
+    public void addLocale(Locale locale) {
         if(locale == null) {
             throw new IllegalArgumentException();
         }
-        _locale = locale;
+        if(_locale == null) {
+        	_locale = new ArrayList();
+        }
+        _locale.add(locale);
     }
 
     public Enumeration getLocales() {
-        return null;
+        return IteratorEnumeration.getInstance(_locale.iterator());
     }
 
     public ServletInputStream getInputStream() {

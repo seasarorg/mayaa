@@ -15,9 +15,10 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,31 +53,6 @@ public class WebRequest implements Request {
         }
         _httpServletRequest = httpServletRequest;
     }
-    
-    public Locale getLocale() {
-        check();
-        return _httpServletRequest.getLocale();
-    }
-
-    public Iterator iterateParameterNames() {
-        check();
-        return _httpServletRequest.getParameterMap().keySet().iterator();
-    }
-    
-    public Map getParameterMap() {
-        check();
-        return _httpServletRequest.getParameterMap();
-    }
-    
-    public String[] getParameterValues(String name) {
-        check();
-        return _httpServletRequest.getParameterValues(name);
-    }
-    
-    public String getParameter(String name) {
-        check();
-        return _httpServletRequest.getParameter(name);
-    }
 
     public String getPath() {
         check();
@@ -84,6 +60,53 @@ public class WebRequest implements Request {
         buffer.append(StringUtil.preparePath(_httpServletRequest.getServletPath()));
         buffer.append(StringUtil.preparePath(_httpServletRequest.getPathInfo()));
         return buffer.toString();
+    }
+
+    public Iterator iterateParameterNames() {
+        check();
+        return _httpServletRequest.getParameterMap().keySet().iterator();
+    }
+    
+    public String[] getParameterValues(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+        	return null;
+        }
+        return _httpServletRequest.getParameterValues(name);
+    }
+
+    public Iterator iterateHeaderNames() {
+        check();
+		return EnumerationIterator.getInstance(_httpServletRequest.getHeaderNames());
+	}
+
+	public String[] getHeaderValues(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+        	return null;
+        }
+        Enumeration values = _httpServletRequest.getHeaders(name);
+        if(values == null) {
+        	return null;
+        }
+        ArrayList list = new ArrayList(); 
+        while(values.hasMoreElements()) {
+        	list.add(values.nextElement());
+        }
+        return (String[])list.toArray(new String[list.size()]);
+	}
+
+	public Locale[] getLocales() {
+        check();
+        Enumeration locales = _httpServletRequest.getLocales();
+        if(locales == null) {
+        	return null;
+        }
+        ArrayList list = new ArrayList(); 
+        while(locales.hasMoreElements()) {
+        	list.add(locales.nextElement());
+        }
+        return (Locale[])list.toArray(new Locale[list.size()]);
     }
     
     public String getScopeName() {

@@ -23,11 +23,11 @@ import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ParamMap extends AbstractAttributeMap {
+public class HeadersMap extends AbstractAttributeMap {
     
     private final Request _request;
 
-    public ParamMap(Request request) {
+    public HeadersMap(Request request) {
         if(request == null) {
             throw new IllegalArgumentException();
         }
@@ -35,11 +35,7 @@ public class ParamMap extends AbstractAttributeMap {
     }
 
     protected Object getAttribute(String key) {
-        String[] attrs = _request.getParameterValues(key);
-        if(attrs != null && attrs.length > 0) {
-        	return attrs[0];
-        }
-        return null;
+        return _request.getHeaderValues(key);
     }
 
     protected void setAttribute(String key, Object value) {
@@ -47,7 +43,7 @@ public class ParamMap extends AbstractAttributeMap {
     }
 
     protected Iterator getAttributeNames() {
-        return _request.iterateParameterNames();
+        return _request.iterateHeaderNames();
     }
     
 }

@@ -17,7 +17,6 @@ package org.seasar.maya.impl.cycle.web;
 
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockServletContext;
@@ -57,8 +56,8 @@ public class WebRequestTest extends TestCase {
     
     public void testGetLocale() {
         Locale locale = new Locale("ja_JP");
-        _httpServletRequest.setLocale(locale);
-        assertEquals(locale, _request.getLocale());
+        _httpServletRequest.addLocale(locale);
+        assertEquals(locale, _request.getLocales()[0]);
     }
     
     public void testGetPath() {
@@ -74,13 +73,7 @@ public class WebRequestTest extends TestCase {
         it.next();
         assertFalse(it.hasNext());
     }
-    
-    public void testGetParameterMap() {
-        Map params = _request.getParameterMap();
-        assertNotNull(params);
-        assertEquals(0, params.size());
-    }
-    
+
     public void testGetParameters() {
         _httpServletRequest.addParameter("test", "test param 0");
         _httpServletRequest.addParameter("test", "test param 1");
@@ -89,11 +82,6 @@ public class WebRequestTest extends TestCase {
         assertEquals(2, params.length);
         assertEquals("test param 0", params[0]);
         assertEquals("test param 1", params[1]);
-    }
-    
-    public void testGetParameter() {
-        _httpServletRequest.addParameter("test", "test param");
-        assertEquals("test param", _request.getParameter("test"));
     }
 
 }

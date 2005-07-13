@@ -18,7 +18,6 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * リクエストレベルのスコープ。
@@ -39,12 +38,6 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
     Iterator iterateParameterNames();
     
     /**
-     * リクエストのクエリパラメータを保持するMap。エントリはString[]型となる。
-     * @return クエリパラメータのMap。
-     */
-    Map getParameterMap();
-
-    /**
      * 指定名のリクエストのクエリパラメータ値を返す。
      * 該当するクエリパラメータ名が無い場合はnullを返す。
      * @param name 指定クエリパラメータ名。
@@ -53,18 +46,23 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
     String[] getParameterValues(String name);
 
     /**
-     * 指定名のリクエストのクエリパラメータ値を返す。
-     * 該当するクエリパラメータ名が無い場合はnullを返す。
-     * getParameterValues()[0]と同じ結果を返す。
-     * @param name 指定クエリパラメータ名。
-     * @return 指定クエリパラメータ値。
+     * リクエストヘッダの名前一覧。
+     * @return ヘッダ名（String）を保持するイテレータ。
      */
-    String getParameter(String name);
+    Iterator iterateHeaderNames();
+    
+    /**
+     * 指定名のリクエストヘッダ値を返す。
+     * 該当するヘッダ名が無い場合はnullを返す。
+     * @param name 指定ヘッダ名。
+     * @return 指定ヘッダの値。
+     */
+    String[] getHeaderValues(String name);
 
     /**
      * リクエストのロケールを返す。
      * @return リクエストロケール。
      */
-    Locale getLocale();
+    Locale[] getLocales();
     
 }

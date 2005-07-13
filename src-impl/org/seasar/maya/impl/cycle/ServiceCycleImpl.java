@@ -41,6 +41,10 @@ public class ServiceCycleImpl implements ServiceCycle {
     private Map _scopes;
     private Map _attributes;
     
+    public ServiceCycleImpl() {
+    	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope(this));
+    }
+    
     public Application getApplication() {
         return _application;
     }
@@ -176,11 +180,6 @@ public class ServiceCycleImpl implements ServiceCycle {
         } else {
             _attributes.remove(name);
         }
-    }
-    
-	public Object getImplicitObject(String name) {
-        // TODO implementing
-        return null;
     }
 
     public void forward(String relativeUrlPath) {

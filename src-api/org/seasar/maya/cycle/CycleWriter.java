@@ -15,66 +15,36 @@
  */
 package org.seasar.maya.cycle;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
 /**
+ * ネストした出力構造をもつWriterオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleWriter extends Writer {
+public abstract class CycleWriter extends Writer {
 
-    private boolean _flushed;
-    private CycleWriter _enclosingWriter;
+    /**
+     * コンストラクタで渡された、上位のWriterを返す。nullの場合もありえる。
+     * @return 上位のWriter。
+     */
+    public abstract CycleWriter getEnclosingWriter();
     
-	private ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
+	/**
+     * バッファをクリアする。
+	 */
+    public abstract void clearBuffer();
 	
-    public CycleWriter(CycleWriter enclosingWriter) {
-        _enclosingWriter = enclosingWriter;
-    }
+	/**
+     * バッファの内容を取得する。
+     * @return バッファ内容。
+	 */
+    public abstract byte[] getBuffer();
     
-    public CycleWriter getEnclosingWriter() {
-        return _enclosingWriter;
-    }
-    
-	public void clearBuffer() {
-        _flushed = false;
-		_outputStream.reset();
-	}
-	
-	public byte[] getBuffer() {
-		return _outputStream.toByteArray();
-	}
-	
-	public void close() throws IOException {
-	}
-
-	public void flush() throws IOException {
-	    if(_flushed) {
-	        throw new AlreadyFlushedException();
-        }
-        // write out to enclosing-writer.
-        if(_enclosingWriter != null) {
-            _flushed = true;
-            byte[] buffer = getBuffer();
-	        for(int i = 0; i < buffer.length; i++) {
-	            _enclosingWriter.write(buffer[i]);
-            }
-        }
-	}
-
-	public void write(char[] cbuf, int off, int len) throws IOException {
-        if (len == 0) {
-            return;
-        }
-		for(int i = off; i < len; i++) {
-			_outputStream.write(cbuf[i]);
-		}
-	}
-    
-    public OutputStream getOutputStream() {
-        return _outputStream;
-    }
+    /**
+     * 内包するバッファの出力ストリームの取得。 
+     * @return バッファの出力ストリーム。
+     */
+    public abstract OutputStream getOutputStream();
 	
 }

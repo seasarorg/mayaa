@@ -32,7 +32,7 @@ public abstract class AbstractResponse implements Response {
 
     public AbstractResponse() {
         _stack = new Stack();
-        _stack.push(new CycleWriter(null));
+        _stack.push(new CycleWriterImpl(null));
     }
     
     private String parseCharacterEncoding(String contentType) {
@@ -77,7 +77,7 @@ public abstract class AbstractResponse implements Response {
     }
 
     public CycleWriter pushWriter() {
-        CycleWriter writer = new CycleWriter(getWriter()); 
+        CycleWriter writer = new CycleWriterImpl(getWriter()); 
         _stack.push(writer);
         return writer;
     }

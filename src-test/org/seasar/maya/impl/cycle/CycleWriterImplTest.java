@@ -13,31 +13,29 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
-
-import org.seasar.maya.cycle.CycleWriter;
 
 import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleWriterTest extends TestCase {
+public class CycleWriterImplTest extends TestCase {
 
-    public CycleWriterTest(String name) {
+    public CycleWriterImplTest(String name) {
         super(name);
     }
 
     public void testGetBuffer() throws IOException {
-        CycleWriter writer = new CycleWriter(null);
+        CycleWriterImpl writer = new CycleWriterImpl(null);
         writer.write("test string");
         assertEquals("test string", new String(writer.getBuffer()));
     }
     
     public void testClearBuffer() throws IOException {
-        CycleWriter writer = new CycleWriter(null);
+        CycleWriterImpl writer = new CycleWriterImpl(null);
         writer.write("test string");
         writer.clearBuffer();
         assertEquals("", new String(writer.getBuffer()));

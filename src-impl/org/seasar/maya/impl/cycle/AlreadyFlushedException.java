@@ -13,7 +13,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.impl.cycle;
 
 import org.seasar.maya.impl.MayaException;
 
@@ -22,6 +22,6 @@ import org.seasar.maya.impl.MayaException;
  */
 public class AlreadyFlushedException extends MayaException {
 
-    private static final long serialVersionUID = 29252798619775977L;
+    private static final long serialVersionUID = -1490847544816568664L;
 
 }

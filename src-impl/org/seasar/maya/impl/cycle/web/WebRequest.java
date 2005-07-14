@@ -96,7 +96,7 @@ public class WebRequest implements Request {
         return (String[])list.toArray(new String[list.size()]);
 	}
 
-	public Locale[] getLocales() {
+    public Locale[] getLocales() {
         check();
         Enumeration locales = _httpServletRequest.getLocales();
         if(locales == null) {

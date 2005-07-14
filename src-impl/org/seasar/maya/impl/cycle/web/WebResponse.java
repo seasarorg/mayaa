@@ -51,7 +51,15 @@ public class WebResponse extends AbstractResponse {
         }
         _httpServletResponse = httpServletResponse;
     }
-    
+
+    public void addHeader(String name, String value) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return;
+        }
+        _httpServletResponse.addHeader(name, value);
+    }
+
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
         check();
         if(StringUtil.isEmpty(mimeType)) {

@@ -31,6 +31,13 @@ public interface Response extends Serializable, Underlyable  {
     void setMimeType(String mimeType);
     
     /**
+     * レスポンスヘッダの書き出し。
+     * @param name ヘッダ名。
+     * @param value ヘッダの値。
+     */
+    void addHeader(String name, String value);
+    
+    /**
      * 書き出しバッファのクリアを行う。
      */
     void clearBuffer();

@@ -30,13 +30,13 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      * @return リクエストURI。
      */
     String getPath();
-    
+
     /**
      * リクエストのクエリパラメータの名前一覧。
      * @return クエリパラメータ名（String）を保持するイテレータ。
      */
     Iterator iterateParameterNames();
-    
+
     /**
      * 指定名のリクエストのクエリパラメータ値を返す。
      * 該当するクエリパラメータ名が無い場合はnullを返す。
@@ -50,7 +50,7 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      * @return ヘッダ名（String）を保持するイテレータ。
      */
     Iterator iterateHeaderNames();
-    
+
     /**
      * 指定名のリクエストヘッダ値を返す。
      * 該当するヘッダ名が無い場合はnullを返す。

@@ -28,7 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
+import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.impl.cycle.web.WebRequest;
+import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
 import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -42,8 +46,6 @@ import org.seasar.maya.source.factory.SourceFactory;
 /**
  * TODO ServiceCycle
  * 
- * Mayaのサービスエントリ。web.xmlに登録する。GET＆POSTリクエストを受け取ると、
- * Engine#doService(ServletRequest, ServletResponse)を呼び出す
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MayaServlet extends HttpServlet implements CONST_IMPL {
@@ -77,18 +79,25 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     		doResourceService(request, response);
     	}
     }
-
-    private Throwable removeWrapperRuntimeException(Throwable t) {
-        Throwable throwable = t ;
-        while(throwable.getClass().equals(RuntimeException.class)) {
-            if( throwable.getCause() == null ) {
-                break;
-            }
-            throwable = throwable.getCause();
-        }
-        return throwable ;
+    
+    protected Request createRequest(HttpServletRequest request) {
+    	if(request == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	WebRequest webRequest = new WebRequest();
+    	webRequest.setHttpServletRequest(request);
+    	return webRequest;
     }
-
+    
+    protected Response createResponse(HttpServletResponse response) {
+    	if(response == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	WebResponse webResponse = new WebResponse();
+    	webResponse.setHttpServletResponse(response);
+    	return webResponse;
+    }
+    
     private PageContext getPageContext(
             ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
@@ -108,6 +117,17 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
         JspFactory factory = JspFactory.getDefaultFactory();
         factory.releasePageContext(context);
+    }
+
+    private Throwable removeWrapperRuntimeException(Throwable t) {
+        Throwable throwable = t ;
+        while(throwable.getClass().equals(RuntimeException.class)) {
+            if( throwable.getCause() == null ) {
+                break;
+            }
+            throwable = throwable.getCause();
+        }
+        return throwable ;
     }
     
     private void handleError(ServletRequest request, ServletResponse response, Throwable t) {
@@ -149,13 +169,11 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
     }
     
-    /**
+    /*
      * リクエストされたパスを分解して配列で返す。配列の内容は、
      * [0]=ページ名
      * [1]=ユーザーが強制指定する接尾辞
      * [2]=ページ拡張子
-     * @param path HttpServletRequest#getPathInfo()の値
-     * @return 情報を分解して格納したStringの配列。
      */
     protected String[] getRequestedPageInfo(EngineSetting setting, String path) {
         String[] requestedPageInfo = new String[3];

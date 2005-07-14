@@ -20,6 +20,9 @@ import javax.servlet.ServletContext;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -148,6 +151,15 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     	    throw new IllegalStateException();
     	}
         return _templateBuilder;
+    }
+
+    public ServiceCycle getServiceCycle(Request request, Response response) {
+    	// TODO ŽÀ‘•
+    	return null;
+    }
+    
+    public void releaseServiceCycle(ServiceCycle cycle) {
+    	// TODO ŽÀ‘•
     }
 
 }

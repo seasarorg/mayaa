@@ -18,6 +18,9 @@ package org.seasar.maya.provider;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.factory.SourceFactory;
@@ -63,5 +66,19 @@ public interface ServiceProvider {
      * @return テンプレートビルダ。
      */
     TemplateBuilder getTemplateBuilder();
-    
+
+    /**
+     * サービスサイクルの取得
+     * @param request カレントリクエスト
+     * @param response カレントレスポンス
+     * @return 払い出したサービスサイクル。
+     */
+    ServiceCycle getServiceCycle(Request request, Response response);
+
+    /**
+     * サービスサイクルの返却
+     * @param cycle 返却するサービスサイクル。
+     */
+    void releaseServiceCycle(ServiceCycle cycle);
+
 }

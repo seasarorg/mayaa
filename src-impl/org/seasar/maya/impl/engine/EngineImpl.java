@@ -16,14 +16,7 @@
 package org.seasar.maya.impl.engine;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.engine.Engine;
@@ -38,7 +31,6 @@ import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
-import org.seasar.maya.provider.PageContextSetting;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -53,7 +45,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     
 	private static final long serialVersionUID = 1428444571422324206L;
 
-	private DummyServlet _dummyServlet;
     private EngineSetting _engineSetting;
     private ErrorHandler _errorHandler;
     private String _welcomeFileName;
@@ -102,48 +93,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         return "/engine";
     }
     
-    /**
-     * リクエストされたパスを分解して配列で返す。配列の内容は、
-     * [0]=ページ名
-     * [1]=ユーザーが強制指定する接尾辞
-     * [2]=ページ拡張子
-     * @param path HttpServletRequest#getPathInfo()の値
-     * @return 情報を分解して格納したStringの配列。
-     */
-    protected String[] getRequestedPageInfo(EngineSetting setting, String path) {
-        String[] requestedPageInfo = new String[3];
-        int paramOffset = path.indexOf('?');
-        if(paramOffset >= 0) {
-            path = path.substring(0, paramOffset);
-        }
-        int lastSlashOffset = path.lastIndexOf('/');
-        String folder =  "";
-        String file = path;
-        if(lastSlashOffset >= 0) {
-            folder = path.substring(0, lastSlashOffset + 1);
-            file = path.substring(lastSlashOffset + 1);
-        }
-        int lastDotOffset = file.lastIndexOf('.');
-        if(lastDotOffset > 0) {
-            // 先頭にドットがある場合は、このブロックで処理しない
-            requestedPageInfo[2] = file.substring(lastDotOffset + 1);
-            file = file.substring(0, lastDotOffset);
-        } else {
-            requestedPageInfo[2] = "";
-        }
-        String suffixSeparator = setting.getSuffixSeparator();
-        int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
-        if(suffixSeparatorOffset > 0) {
-            // 先頭にセパレータがある場合は、このブロックで処理しない
-            requestedPageInfo[0] = folder + file.substring(0, suffixSeparatorOffset);
-            requestedPageInfo[1] = file.substring(suffixSeparatorOffset + suffixSeparator.length());
-        } else {
-            requestedPageInfo[0] = folder + file;
-            requestedPageInfo[1] = "";
-        }
-        return requestedPageInfo;
-    }
-    
     public synchronized Page getPage(String pageName, String extension) {
         String key = EngineUtil.createPageKey(pageName, extension);
         Page page = EngineUtil.getPage(this, key);
@@ -157,17 +106,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
             addChildSpecification(page);
         }
         return page;
-    }
-
-    private Throwable removeWrapperRuntimeException(Throwable t) {
-        Throwable throwable = t ;
-        while(throwable.getClass().equals(RuntimeException.class)) {
-            if( throwable.getCause() == null ) {
-                break;
-            }
-            throwable = throwable.getCause();
-        }
-        return throwable ;
     }
    
 	public void doService(PageContext context, String pageName, 
@@ -185,15 +123,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
             throw new RuntimeException(e);
         }
 	}
-    
-	protected void prepareRequest(ServletResponse response) {
-        if(response instanceof HttpServletResponse) {
-            HttpServletResponse httpResponse = (HttpServletResponse)response;
-            httpResponse.addHeader("Pragma", "no-cache");
-            httpResponse.addHeader("Cache-Control", "no-cache");
-            httpResponse.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
-        }
-	}
 	
     public String getWelcomeFileName() {
         if(StringUtil.hasValue(_welcomeFileName)) {
@@ -201,110 +130,5 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         }
         return "index.html";
     }
-
-    private PageContext getPageContext(
-    		ServletRequest request, ServletResponse response) {
-        if(request == null || response == null) {
-            throw new IllegalArgumentException();
-        }
-	    JspFactory factory = JspFactory.getDefaultFactory();
-        if(_dummyServlet == null) {
-        	_dummyServlet = new DummyServlet();
-        }
-		PageContextSetting pc = getEngineSetting().getPageContextSetting();
-        PageContext context = factory.getPageContext(_dummyServlet, request, response, 
-        		pc.getErrorPageURL(), pc.isNeedSession(), pc.getBufferSize(), pc.isAutoFlush());
-        EngineUtil.setEngine(context, this);
-        return context;
-    }
-    
-    private void releasePageContext(PageContext context) {
-    	if(context == null) {
-    		throw new IllegalArgumentException();
-    	}
-	    JspFactory factory = JspFactory.getDefaultFactory();
-	    factory.releasePageContext(context);
-    }
- 	
-	private void handleError(ServletRequest request, ServletResponse response, Throwable t) {
-    	PageContext context = getPageContext(request, response);
-        try {
-            t = removeWrapperRuntimeException(t);
-            getErrorHandler().doErrorHandle(context, t);
-        } catch(Throwable tx) {
-            if(tx instanceof RuntimeException) {
-                throw (RuntimeException)tx;
-            }
-            throw new RuntimeException(tx);
-    	} finally {
-    		releasePageContext(context);
-    	}
-	}
-    
-	protected String getRequestedPath(ServletRequest request) {
-        if(request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-	        StringBuffer buffer = new StringBuffer();
-	        buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
-	        String pathInfo = httpRequest.getPathInfo();
-	        buffer.append(StringUtil.preparePath(pathInfo));
-	        if(buffer.toString().endsWith("/")) {
-	            buffer.append(StringUtil.preparePath(getWelcomeFileName()));
-	        }
-	        return buffer.toString();
-        }
-        throw new IllegalStateException();
-	}
-	
-    public void doService(ServletRequest request, ServletResponse response) {
-        if(request == null || response == null) {
-            throw new IllegalArgumentException();
-        }
-        prepareRequest(response);
-        EngineSetting setting = getEngineSetting();
-        String path = getRequestedPath(request);
-        String[] requestedPageInfo = getRequestedPageInfo(setting, path);
-        try {
-            PageContext context = getPageContext(request, response);
-            try {
-            	doService(context, requestedPageInfo[0], 
-            	        requestedPageInfo[1], requestedPageInfo[2]);
-            } catch(Throwable t) {
-	            context.getOut().clearBuffer();
-                throw t;
-	        } finally {
-	            releasePageContext(context);
-	        }
-        } catch(Throwable t) {
-        	handleError(request, response, t);
-        }
-    }
-    
-	public void doResourceService(ServletRequest request, ServletResponse response) {
-        if(request == null || response == null) {
-            throw new IllegalArgumentException();
-        }
-        String path = PREFIX_PAGE + getRequestedPath(request);
-		ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-        SourceFactory factory = provider.getSourceFactory();
-		SourceDescriptor source = factory.createSourceDescriptor(path);
-		InputStream stream = source.getInputStream();
-		if(stream != null) {
-		    try {
-				Writer out = response.getWriter();
-				for(int i = stream.read(); i != -1; i = stream.read()) {
-					out.write(i);
-				}
-				out.flush();
-		    } catch(IOException e) {
-		        throw new RuntimeException(e);
-		    }
-		} else {
-	        if(response instanceof HttpServletResponse) {
-	            HttpServletResponse httpResponse = (HttpServletResponse)response;
-	            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	        }
-		}
-	}
 
 }

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.provider.factory;
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.impl.provider.SimpleModelProvider;
 import org.seasar.maya.impl.provider.SimpleServiceProvider;
 import org.seasar.maya.impl.source.factory.WebInfSourceEntry;
@@ -40,7 +41,9 @@ public class SimpleServiceProviderFactory extends ServiceProviderFactory
     protected static final String KEY_MODEL = ModelProvider.class.getName();
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
-        SourceEntry entry = new WebInfSourceEntry(servletContext);
+        WebApplication startupApplication = new WebApplication();
+        startupApplication.setServletContext(servletContext);
+        SourceEntry entry = new WebInfSourceEntry(startupApplication);
     	SourceDescriptor source = entry.createSourceDescriptor("/maya.conf"); 
     	if(source.exists()) {
 	    	MayaConfHandler handler = new MayaConfHandler(servletContext);

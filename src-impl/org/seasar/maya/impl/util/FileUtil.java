@@ -24,8 +24,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.jar.JarInputStream;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -37,15 +35,6 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 public class FileUtil {
 
     private FileUtil() {
-    }
-
-    public static File getContextRelatedFile(ServletContext servletContext, String path) {
-        if(servletContext == null) {
-        	throw new IllegalArgumentException();
-        }
-        path = StringUtil.preparePath(path);        
-    	String realPath = servletContext.getRealPath(path);
-        return new File(realPath);
     }
     
     public static Iterator iterateFiles(File dir) {

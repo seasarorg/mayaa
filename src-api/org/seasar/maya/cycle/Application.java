@@ -21,4 +21,18 @@ package org.seasar.maya.cycle;
  */
 public interface Application extends AttributeScope, Underlyable {
 
+    /**
+     * ファイル名より類推できるMIME型を返す。基本的には拡張子に対応して処理。
+     * @param fileName ファイル名。
+     * @return ファイル名から類推されるMIME型。 
+     */
+    String getMimeType(String fileName);
+    
+    /**
+     * リクエストURIのコンテキスト相対パスを、OS上のファイルパスに変換する。
+     * @param contextRelatedPath コンテキスト相対パス。
+     * @return OS上のファイルパス。
+     */
+    String getRealPath(String contextRelatedPath);
+    
 }

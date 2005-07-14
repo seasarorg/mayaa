@@ -20,8 +20,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 
-import javax.servlet.ServletContext;
-
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -34,7 +33,7 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ServletSourceDescriptor implements SourceDescriptor {
 
 	private static final long serialVersionUID = -2775274363708858237L;
-	private ServletContext _context;
+	private Application _application;
     private String _protocol;
     private String _root;
     private String _systemID;
@@ -45,16 +44,16 @@ public class ServletSourceDescriptor implements SourceDescriptor {
      * @param systemID ファイルのパス。
      */
     public ServletSourceDescriptor(
-            ServletContext context, String protocol, String root, String systemID) {
-        this(context, protocol, root, systemID, null);
+            Application application, String protocol, String root, String systemID) {
+        this(application, protocol, root, systemID, null);
     }
 
     protected ServletSourceDescriptor(
-            ServletContext context, String protocol, String root, String systemID, File file) {
-        if(context == null || StringUtil.isEmpty(protocol)) {
+            Application application, String protocol, String root, String systemID, File file) {
+        if(application == null || StringUtil.isEmpty(protocol)) {
             throw new IllegalArgumentException();
         }
-        _context = context;
+        _application = application;
         _protocol = protocol;
         _root = StringUtil.preparePath(root);
         _systemID = StringUtil.preparePath(systemID);
@@ -67,10 +66,7 @@ public class ServletSourceDescriptor implements SourceDescriptor {
      */
     protected void prepareContextRelatedSource(String path) {
         if(_file == null) {
-            if(_context == null) {
-                throw new IllegalStateException();
-            }
-            String realPath = _context.getRealPath(path);
+            String realPath = _application.getRealPath(path);
             if(StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if(file.exists()) {
@@ -156,7 +152,7 @@ public class ServletSourceDescriptor implements SourceDescriptor {
         }
 
         private String getSystemID(File file) {
-            String root = _context.getRealPath(_root);
+            String root = _application.getRealPath(_root);
             String absolutePath = file.getAbsolutePath();
             return absolutePath.substring(root.length());
         }
@@ -166,7 +162,7 @@ public class ServletSourceDescriptor implements SourceDescriptor {
             if(ret instanceof File) {
                 File file = (File)ret;
                 String systemID = getSystemID(file);
-                return new ServletSourceDescriptor(_context, _protocol, _root, systemID, file);
+                return new ServletSourceDescriptor(_application, _protocol, _root, systemID, file);
             }
             throw new IllegalStateException();
         }

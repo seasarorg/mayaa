@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine;
 
 import junit.framework.TestCase;
 
-import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
@@ -39,45 +38,11 @@ public class EngineImplTest extends TestCase {
     protected void setUp() {
         _engine = new EngineImpl();
     }
+
+    // TODO テスト。以下はダミー
     
-    public void testGetRequestedPageInfo() {
-        String[] info;
-        // よくあるパターン
-        EngineSettingImpl setting = new EngineSettingImpl();
-        info = _engine.getRequestedPageInfo(setting, "/index.html");
-        assertEquals("/index", info[0]);
-        assertEquals("", info[1]);
-        assertEquals("html", info[2]);
-        
-        // 接尾辞を強制的に指定されているパターン
-        info = _engine.getRequestedPageInfo(setting, "/index$ja.html");
-        assertEquals("/index", info[0]);
-        assertEquals("ja", info[1]);
-        assertEquals("html", info[2]);
-
-        // フォルダ階層があるパターン
-        info = _engine.getRequestedPageInfo(setting, "/folder/index.html");
-        assertEquals("/folder/index", info[0]);
-        assertEquals("", info[1]);
-        assertEquals("html", info[2]);
-        
-        // 拡張子がないパターン
-        info = _engine.getRequestedPageInfo(setting, "/index");
-        assertEquals("/index", info[0]);
-        assertEquals("", info[1]);
-        assertEquals("", info[2]);
-        
-        // ファイル名の先頭がドットのパターン
-        info = _engine.getRequestedPageInfo(setting, "/.index");
-        assertEquals("/.index", info[0]);
-        assertEquals("", info[1]);
-        assertEquals("", info[2]);
-
-        // ファイル名の先頭がアンダースコアのパターン
-        info = _engine.getRequestedPageInfo(setting, "/_index.html");
-        assertEquals("/_index", info[0]);
-        assertEquals("", info[1]);
-        assertEquals("html", info[2]);
+    public void test() {
+        _engine.getKey();
     }
-
+    
 }

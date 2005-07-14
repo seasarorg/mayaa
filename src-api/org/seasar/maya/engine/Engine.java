@@ -17,8 +17,6 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.engine.error.ErrorHandler;
@@ -61,13 +59,6 @@ public interface Engine extends Parameterizable, Specification, Serializable {
 	 * @return Pageオブジェクト。
 	 */
     Page getPage(String pageName, String extension);
-    
-	/**
-	 * サーブレットから呼び出される、サービスメソッド。
-	 * @param request HTTPリクエスト
-	 * @param response HTTPレスポンス
-	 */
-    void doService(ServletRequest request, ServletResponse response);
 
     /**
      * フォワードを行う際のサービスメソッド。
@@ -78,13 +69,5 @@ public interface Engine extends Parameterizable, Specification, Serializable {
      */
     void doService(PageContext context, String pageName, 
     		String requestedSuffix, String extension);
-
-    
-    /**
-     * リソースのサービスを行う。リクエストに応じて、該当リソースをそのまま返す。
-	 * @param request HTTPリクエスト
-	 * @param response HTTPレスポンス
-     */
-    void doResourceService(ServletRequest request, ServletResponse response);
     
 }

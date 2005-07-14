@@ -17,9 +17,9 @@ package org.seasar.maya.impl.util;
 
 import java.util.Iterator;
 
-import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -29,8 +29,6 @@ import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
- * TODO ServiceCycle, Application
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class EngineUtil implements CONST_IMPL {
@@ -143,8 +141,8 @@ public class EngineUtil implements CONST_IMPL {
         String ret = null ;
         if(StringUtil.hasValue(extension)) {
             ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-	        ServletContext context = provider.getServletContext();
-	        ret = context.getMimeType(extension);
+	        Application application = provider.getApplication();
+	        ret = application.getMimeType(extension);
         }
         if( ret == null ) ret = "text/html" ;
         return ret ;

@@ -19,6 +19,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.seasar.maya.engine.processor.TemplateProcessorSupportTest;
+import org.seasar.maya.impl.MayaServletTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDHanderTest;
 import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScannerTest;
 import org.seasar.maya.impl.cycle.AbstractResponseTest;
@@ -58,6 +59,9 @@ public class MayaAllTests extends TestSuite {
         // org.seasar.maya.engine.processor
         suite.addTestSuite(TemplateProcessorSupportTest.class);
 
+        // org.seasar.maya.impl.
+        suite.addTestSuite(MayaServletTest.class);
+        
         // org.seasar.maya.impl.builder.library.scanner
         suite.addTestSuite(MLDHanderTest.class);
         

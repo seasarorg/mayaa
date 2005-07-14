@@ -19,9 +19,11 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -31,6 +33,7 @@ import org.seasar.maya.source.factory.SourceFactory;
 public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     
     private ServletContext _servletContext;
+    private Application _application;
     private Engine _engine;
     private SourceFactory _sourceFactory;
     private ExpressionFactory _expressionFactory;
@@ -46,6 +49,15 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     
     public ServletContext getServletContext() {
         return _servletContext;
+    }
+    
+    public Application getApplication() {
+        if(_application == null) {
+            WebApplication application = new WebApplication();
+            application.setServletContext(_servletContext);
+            _application = application;
+        }
+        return _application;
     }
     
     public boolean hasSourceFactory() {

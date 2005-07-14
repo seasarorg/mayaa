@@ -15,28 +15,25 @@
  */
 package org.seasar.maya.provider;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.factory.SourceFactory;
 
 /**
- * TODO Application
- * 
  * アプリケーションスコープでのサービス提供オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceProvider {
 
     /**
-     * ホストWEBアプリケーションのコンテキスト取得を行う。
-     * @return コンテキスト。
+     * アプリケーションコンテキストの取得。
+     * @return アプリケーションコンテキスト。
      */
-    ServletContext getServletContext();
-
+    Application getApplication();
+    
 	/**
 	 * ソースディスクリプタのファクトリ取得。
 	 * @return ソースディスクリプタのファクトリオブジェクト。

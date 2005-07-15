@@ -50,14 +50,14 @@ public interface ProcessorProperty {
     
     /**
      * プロセッサの実行時に、プロパティ値取得を行う。
-     * @param context サービスサイクルコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @return プロパティ値。
      */
     Object getValue(ServiceCycle cycle);
  
     /**
      * プロセッサの実行時にモデルへの値設定を行う。
-     * @param context サービスサイクルコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param value 設定値。
      */
     void setValue(ServiceCycle cycle, Object value);

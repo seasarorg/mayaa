@@ -87,14 +87,14 @@ public interface TemplateProcessor extends Serializable {
 
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
-     * @param context サービスサイクルコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @return javax.servlet.jsp.tagext.Tag#doStartTag()の返値と同じ仕様。
      */
     int doStartProcess(ServiceCycle cycle);
 
     /**
      * 閉じタグの出力。
-     * @param context サービスサイクルコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @return javax.servlet.jsp.tagext.Tag#doEndTag()の返値と同じ仕様。
      */
     int doEndProcess(ServiceCycle cycle);

@@ -115,7 +115,7 @@ public interface Response extends Serializable, Underlyable  {
     
     /**
      * 実際の出力ストリームの取得。
-     * @return 
+     * @return 出力ストリーム。
      */
     OutputStream getUnderlyingOutputStream();
     

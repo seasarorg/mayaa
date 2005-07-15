@@ -18,8 +18,6 @@ package org.seasar.maya.engine.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.tagext.Tag;
-
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
 
@@ -80,14 +78,14 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        return Tag.EVAL_PAGE;
+        return EVAL_PAGE;
     }
 
     public int doStartProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        return Tag.EVAL_BODY_INCLUDE;
+        return EVAL_BODY_INCLUDE;
     }
 
     public int getChildProcessorSize() {

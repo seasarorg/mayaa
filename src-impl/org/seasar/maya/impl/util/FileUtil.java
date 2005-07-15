@@ -28,8 +28,6 @@ import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
- * TODO Application
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class FileUtil {

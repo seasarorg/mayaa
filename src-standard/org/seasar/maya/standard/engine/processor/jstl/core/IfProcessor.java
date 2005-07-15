@@ -19,8 +19,6 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.standard.engine.processor.AttributeValue;
-import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 
 /**
  * @author maruo_syunsuke
@@ -57,12 +55,7 @@ public class IfProcessor extends TemplateProcessorSupport {
         }
         boolean test = ObjectUtil.booleanValue(_test.getValue(cycle), false);
         Boolean bool = new Boolean(test);
-        //++ FIXME ServiceCycle導入後はコメントアウトコードに代える。
-        AttributeValue val = AttributeValueFactory.create(_var, _scope);
-        val.setValue(cycle, bool);
-        // cycle.setAttribute(_var, _scope);
-        // ServiceCycle#setAttribute()の引数はAttributeValueの趣旨を汲んで、nullも可能にした。
-        //--
+        cycle.setAttribute(_var, bool, _scope);
         if (test) {
             return EVAL_BODY_INCLUDE;
         }

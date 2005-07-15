@@ -15,9 +15,6 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
@@ -41,8 +38,8 @@ public class ServiceCycleImplTest extends TestCase {
     }
     
     protected void setUp() {
-        ServletContext servletContext = new MockServletContext(this, "context");
-        HttpServletRequest httpServletRequest = new MockHttpServletRequest(servletContext);
+        MockServletContext servletContext = new MockServletContext(this, "context");
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(servletContext);
         WebApplication application = new WebApplication();
         application.setServletContext(servletContext);
         WebSession session = new WebSession();
@@ -76,6 +73,11 @@ public class ServiceCycleImplTest extends TestCase {
     
     public void testGetScopeName() {
         assertEquals("page", _cycle.getScopeName());
+    }
+
+    public void testGetImplicitScope() {
+        AttributeScope scope = _cycle.getAttributeScope("implicit");
+        assertEquals("implicit", scope.getScopeName());
     }
     
     public void testGetApplicationScope() {

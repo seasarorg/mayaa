@@ -98,6 +98,9 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     	return webResponse;
     }
     
+    /**
+     * @deprecated
+     */
     private PageContext getPageContext(
             ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
@@ -111,6 +114,9 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return context;
     }
     
+    /**
+     * @deprecated
+     */
     private void releasePageContext(PageContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
@@ -119,7 +125,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         factory.releasePageContext(context);
     }
 
-    private Throwable removeWrapperRuntimeException(Throwable t) {
+    protected Throwable removeWrapperRuntimeException(Throwable t) {
         Throwable throwable = t ;
         while(throwable.getClass().equals(RuntimeException.class)) {
             if( throwable.getCause() == null ) {
@@ -130,7 +136,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return throwable ;
     }
     
-    private void handleError(ServletRequest request, ServletResponse response, Throwable t) {
+    protected void handleError(ServletRequest request, ServletResponse response, Throwable t) {
         PageContext context = getPageContext(request, response);
         try {
             t = removeWrapperRuntimeException(t);
@@ -170,10 +176,10 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     }
     
     /*
-     * リクエストされたパスを分解して配列で返す。配列の内容は、
-     * [0]=ページ名
-     * [1]=ユーザーが強制指定する接尾辞
-     * [2]=ページ拡張子
+     * return array include...
+     * [0]=page name
+     * [1]=suffix or none
+     * [2]=extention
      */
     protected String[] getRequestedPageInfo(EngineSetting setting, String path) {
         String[] requestedPageInfo = new String[3];
@@ -190,7 +196,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
         int lastDotOffset = file.lastIndexOf('.');
         if(lastDotOffset > 0) {
-            // 先頭にドットがある場合は、このブロックで処理しない
             requestedPageInfo[2] = file.substring(lastDotOffset + 1);
             file = file.substring(0, lastDotOffset);
         } else {
@@ -199,7 +204,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         String suffixSeparator = setting.getSuffixSeparator();
         int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
         if(suffixSeparatorOffset > 0) {
-            // 先頭にセパレータがある場合は、このブロックで処理しない
             requestedPageInfo[0] = folder + file.substring(0, suffixSeparatorOffset);
             requestedPageInfo[1] = file.substring(suffixSeparatorOffset + suffixSeparator.length());
         } else {
@@ -209,7 +213,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return requestedPageInfo;
     }
 
-    public void doMayaService(ServletRequest request, ServletResponse response) {
+    protected void doMayaService(ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
@@ -233,7 +237,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
     }
     
-    public void doResourceService(ServletRequest request, ServletResponse response) {
+    protected void doResourceService(ServletRequest request, ServletResponse response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }

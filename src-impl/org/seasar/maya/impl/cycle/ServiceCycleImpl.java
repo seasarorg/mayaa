@@ -35,7 +35,6 @@ public class ServiceCycleImpl implements ServiceCycle {
     private static final long serialVersionUID = -5197949674556232436L;
 
     private Application _application;
-    private Session _session;
     private Request _request;
     private Response _response;
     private Map _scopes;
@@ -57,18 +56,6 @@ public class ServiceCycleImpl implements ServiceCycle {
         putAttributeScope(SCOPE_APPLICATION, application);
     }
     
-    public Session getSession() {
-        return _session;
-    }
-    
-    public void setSession(Session session) {
-        if(session == null) {
-            throw new IllegalArgumentException();
-        }
-        _session = session;
-        putAttributeScope(SCOPE_SESSION, session);
-    }
-    
     public Request getRequest() {
         return _request;
     }
@@ -79,6 +66,8 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         _request = request;
         putAttributeScope(SCOPE_REQUEST, request);
+        Session session = request.getSession();
+        putAttributeScope(SCOPE_SESSION, session);
     }
     
     public Response getResponse() {
@@ -103,7 +92,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         AttributeScope attr = getAttributeScope(scope);
         return attr.iterateAttributeNames();
     }
-    
+
     public Object getAttribute(String name, String scope) {
         if(StringUtil.isEmpty(name)) {
             return null;
@@ -182,12 +171,22 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
     }
 
+    public String encodeURL(String url) {
+        // TODO implementing
+        throw new UnsupportedOperationException();
+    }
+
     public void forward(String relativeUrlPath) {
 		// TODO implementing
 		throw new UnsupportedOperationException();
 	}
 
-	public void include(String relativeUrlPath) {
+	public void redirect(String url) {
+        // TODO implementing
+        throw new UnsupportedOperationException();
+    }
+
+    public void include(String relativeUrlPath) {
 		// TODO implementing
 		throw new UnsupportedOperationException();
 	}

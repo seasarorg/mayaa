@@ -15,11 +15,9 @@
  */
 package org.seasar.maya.component.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
 import org.seasar.maya.component.CONST_COMPONENT;
 import org.seasar.maya.component.util.ComponentUtil;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -108,37 +106,37 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
     
     /**
      * 「p:endComponent」の内側の描画。
-     * @param context カレントのコンテキスト。
+     * @param cycle カレントのコンテキスト。
      * @return Template#doTemplateRender()の戻り値。
      */
-    public int renderChildren(PageContext context) {
+    public int renderChildren(ServiceCycle cycle) {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             TemplateProcessor processor = getChildProcessor(i);
-            if(template.doTemplateRender(context, processor) == Tag.SKIP_PAGE) {
-                return Tag.SKIP_PAGE;
+            if(template.doTemplateRender(cycle, processor) == SKIP_PAGE) {
+                return SKIP_PAGE;
             }
         }
-        return Tag.EVAL_PAGE;
+        return EVAL_PAGE;
     }
     
-	protected int writeStartElement(PageContext context) {
+	protected int writeStartElement(ServiceCycle cycle) {
         synchronized(this) {
             if(_page == null) {
                 _page = preparePage();
             }
         }
-        Template template = _page.getTemplate(context, "");
+        Template template = _page.getTemplate(cycle, "");
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);
         if(start != null) {
-            template.doTemplateRender(context, start);
-            return Tag.SKIP_BODY;
+            template.doTemplateRender(cycle, start);
+            return SKIP_BODY;
         }
         throw new StartComponentNotFoundException(template);
     }
     
-	protected void writeEndElement(PageContext context) {
+	protected void writeEndElement(ServiceCycle cycle) {
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,12 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
@@ -30,30 +25,20 @@ public class CDATAProcessor extends TemplateProcessorSupport {
     
 	private static final long serialVersionUID = -4267623139201513906L;
 
-	public int doStartProcess(PageContext context) {
-    	if(context == null) {
+	public int doStartProcess(ServiceCycle cycle) {
+    	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
-        Writer out = context.getOut();
-        try {
-            out.write("<![CDATA[");
-        } catch(IOException e) {
-        	throw new RuntimeException(e);
-        }
-        return Tag.EVAL_BODY_INCLUDE;
+        cycle.getResponse().write("<![CDATA[");
+        return EVAL_BODY_INCLUDE;
     }
 
-    public int doEndProcess(PageContext context) {
-    	if(context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+    	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
-        Writer out = context.getOut();
-        try {
-            out.write("]]>");
-        } catch(IOException e) {
-        	throw new RuntimeException(e);
-        }
-        return Tag.EVAL_PAGE;
+        cycle.getResponse().write("]]>");
+        return EVAL_PAGE;
     }
     
 }

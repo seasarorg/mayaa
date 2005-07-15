@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,12 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
@@ -42,24 +37,19 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     	return _text;
     }
     
-    protected Object getExpressed(PageContext context) {
-        return _text.getValue(context);
+    protected Object getExpressed(ServiceCycle cycle) {
+        return _text.getValue(cycle);
     }
     
-    public int doStartProcess(PageContext context) {
-    	if(context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+    	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
-        Object value = getExpressed(context);
+        Object value = getExpressed(cycle);
         if(value != null) {
-            Writer out = context.getOut();
-	        try {
-                out.write(value.toString());
-	        } catch(IOException e) {
-	        	throw new RuntimeException(e);
-	        }
+            cycle.getResponse().write(value.toString());
         }
-        return Tag.EVAL_BODY_INCLUDE;
+        return EVAL_BODY_INCLUDE;
     }
 
 }

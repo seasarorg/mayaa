@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -18,8 +18,7 @@ package org.seasar.maya.impl.el.resolver;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.resolver.ExpressionChain;
 import org.seasar.maya.el.resolver.ExpressionResolver;
 
@@ -44,28 +43,28 @@ public class CompositeExpressionResolver implements ExpressionResolver {
         }
     }
     
-    public Object getValue(PageContext context, 
+    public Object getValue(ServiceCycle cycle, 
             Object base, Object property, ExpressionChain chain) {
-    	if(context == null || property == null || chain == null) {
+    	if(cycle == null || property == null || chain == null) {
     		throw new IllegalArgumentException();
     	}
     	if(_resolvers.size() > 0) {
     	    ExpressionChainImpl first = new ExpressionChainImpl(chain);
-    	    return first.getValue(context, base, property);
+    	    return first.getValue(cycle, base, property);
     	}
-    	return chain.getValue(context, base, property);
+    	return chain.getValue(cycle, base, property);
     }
     
-    public void setValue(PageContext context, 
+    public void setValue(ServiceCycle cycle, 
             Object base, Object property, Object value, ExpressionChain chain) {
-    	if(context == null || property == null || chain == null) {
+    	if(cycle == null || property == null || chain == null) {
     		throw new IllegalArgumentException();
     	}
     	if(_resolvers.size() > 0) {
     	    ExpressionChainImpl first = new ExpressionChainImpl(chain);
-    	    first.getValue(context, base, property);
+    	    first.getValue(cycle, base, property);
     	} else {
-    	    chain.getValue(context, base, property);
+    	    chain.getValue(cycle, base, property);
     	}
     }
 
@@ -81,8 +80,8 @@ public class CompositeExpressionResolver implements ExpressionResolver {
     		_external = external;
     	}
     	
-    	public Object getValue(PageContext context, Object base, Object property) {
-    		if(context == null || property == null) {
+    	public Object getValue(ServiceCycle cycle, Object base, Object property) {
+    		if(cycle == null || property == null) {
     			throw new IllegalArgumentException();
     		}
             if(_index < _resolvers.size()) {
@@ -94,14 +93,14 @@ public class CompositeExpressionResolver implements ExpressionResolver {
                 } else {
                     chain = this;
                 }
-                return resolver.getValue(context, base, property, chain);
+                return resolver.getValue(cycle, base, property, chain);
             }
             throw new IndexOutOfBoundsException();
 		}
     	
-		public void setValue(PageContext context, 
+		public void setValue(ServiceCycle cycle, 
 				Object base, Object property, Object value) {
-    		if(context == null || property == null) {
+    		if(cycle == null || property == null) {
     			throw new IllegalArgumentException();
     		}
             if(_index < _resolvers.size()) {
@@ -113,7 +112,7 @@ public class CompositeExpressionResolver implements ExpressionResolver {
                 } else {
                     chain = this;
                 }
-                resolver.setValue(context, base, property, value, chain);
+                resolver.setValue(cycle, base, property, value, chain);
             } else {
                 throw new IndexOutOfBoundsException();
             }

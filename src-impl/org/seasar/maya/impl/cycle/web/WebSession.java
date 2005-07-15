@@ -56,6 +56,11 @@ public class WebSession implements Session {
         _httpServletRequest = httpServletRequest;
     }
     
+    public String getID() {
+        check();
+        return _httpServletRequest.getSession(true).getId();
+    }
+
     public String getScopeName() {
         return ServiceCycle.SCOPE_SESSION;
     }

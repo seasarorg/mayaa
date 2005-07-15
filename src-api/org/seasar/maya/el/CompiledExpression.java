@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -17,11 +17,9 @@ package org.seasar.maya.el;
 
 import java.io.Serializable;
 
-import javax.servlet.jsp.PageContext;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
- * TODO ServiceCycle
- * 
  * コンパイル済みの式言語オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -29,17 +27,17 @@ public interface CompiledExpression extends Serializable {
 
     /**
      * 式を実行して値を取得する。
-     * @param context 式コンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @return 実行結果の値。
      */
-    Object getValue(PageContext context);
+    Object getValue(ServiceCycle cycle);
     
     /**
      * 式により、値を設定する
-     * @param context 式コンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param value 設定する値。
      */
-    void setValue(PageContext context, Object value);
+    void setValue(ServiceCycle cycle, Object value);
 
     /**
      * 式の取得。

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -15,38 +15,41 @@
  */
 package org.seasar.maya.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyContent;
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
- * TODO ServiceCycle
- * 
  * TemplateProcessorの拡張インターフェイス。子要素の評価の機能を持つ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ChildEvaluationProcessor extends IterationProcessor {
 
     /**
+     * リターンフラグ。この値をdoStartProcess()が返すと、プロセッサボディをバッファリングする。
+     */
+    int EVAL_BODY_BUFFERED = 2;
+    
+    /**
      * ボディのスタック評価を行うかを返す。JSPのBodyTagをホストしている場合に
      * 利用する。デフォルトではfalseを返す。trueだと、setBodyContent()メソッド
      * およびdoInitChildProcess()メソッドがコンテナより呼び出される。
-     * @param context プロセス中のステートフルな情報を保持するコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @return ボディのスタック評価をする場合、true。普通はfalse。
      */
-    boolean isChildEvaluation(PageContext context);
+    boolean isChildEvaluation(ServiceCycle cycle);
     
     /**
-     * ボディのスタック評価を行う場合、スタック処理が行われたJSPのBodyContentを
+     * ボディのスタック評価を行う場合、スタック処理が行われたボディ部のバッファを
      * コンテナがセットする。
-     * @param context プロセス中のステートフルな情報を保持するコンテキスト。
-     * @param bodyContent スタックに積まれたBodyContent。
+     * @param cycle サービスサイクルコンテキスト。
+     * @param body スタックに積まれたボディ部のバッファ。
      */
-    void setBodyContent(PageContext context, BodyContent bodyContent);
+    void setBodyContent(ServiceCycle cycle, CycleWriter body);
 
     /**
      * ボディのスタック評価を行う場合、評価前に一度、コンテナより呼び出される。
-     * @param context プロセス中のステートフルな情報を保持するコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      */
-    void doInitChildProcess(PageContext context);
+    void doInitChildProcess(ServiceCycle cycle);
 
 }

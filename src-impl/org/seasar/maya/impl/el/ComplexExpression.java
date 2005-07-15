@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,8 +15,7 @@
  */
 package org.seasar.maya.impl.el;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -46,7 +45,7 @@ public class ComplexExpression implements CompiledExpression {
         return _expectedType;
     }
     
-    public Object getValue(PageContext context) {
+    public Object getValue(ServiceCycle cycle) {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
@@ -54,7 +53,7 @@ public class ComplexExpression implements CompiledExpression {
         }
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].getValue(context));
+            buffer.append(_compiled[i].getValue(cycle));
         }
         if(_expectedType == Void.class) {
             return null;
@@ -62,7 +61,7 @@ public class ComplexExpression implements CompiledExpression {
          return buffer.toString();
     }
     
-    public void setValue(PageContext context, Object value) {
+    public void setValue(ServiceCycle cycle, Object value) {
         throw new IllegalStateException();
     }
 

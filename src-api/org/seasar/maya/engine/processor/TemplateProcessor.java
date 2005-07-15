@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -17,17 +17,36 @@ package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
 
-import javax.servlet.jsp.PageContext;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
- * TODO ServiceCycle
- * 
  * テンプレート中のHTMLタグを処理する委譲クラス。このTemplateProcessorのツリーすなわち
  * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateProcessor extends Serializable {
 
+    /**
+     * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
+     */
+    int SKIP_BODY = 0;
+    
+    /**
+     * リターンフラグ。doStartProcess()がこの値を返すと、
+     * プロセッサボディをバッファリング無しで出力する。
+     */
+    int EVAL_BODY_INCLUDE = 1;
+    
+    /**
+     * リターンフラグ。doEndProcess()がこの値を返すと、以降の出力をただちに中止する。
+     */
+    int SKIP_PAGE = 5;
+    
+    /**
+     * リターンフラグ。doEndProcess()がこの値を返すと、以降のプロセッサ出力を続ける。
+     */
+    int EVAL_PAGE = 6;
+    
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
      * @param parent 親TemplateProcessor
@@ -68,16 +87,16 @@ public interface TemplateProcessor extends Serializable {
 
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
-     * @param context プロセス中のステートフルな情報を保持するコンテキスト。
+     * @param context サービスサイクルコンテキスト。
      * @return javax.servlet.jsp.tagext.Tag#doStartTag()の返値と同じ仕様。
      */
-    int doStartProcess(PageContext context);
+    int doStartProcess(ServiceCycle cycle);
 
     /**
      * 閉じタグの出力。
-     * @param context プロセス中のステートフルな情報を保持するコンテキスト。
+     * @param context サービスサイクルコンテキスト。
      * @return javax.servlet.jsp.tagext.Tag#doEndTag()の返値と同じ仕様。
      */
-    int doEndProcess(PageContext context);
+    int doEndProcess(ServiceCycle cycle);
 
 }

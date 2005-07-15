@@ -15,15 +15,12 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
-import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * @author maruo_syunsuke
@@ -34,7 +31,7 @@ public class IfProcessor extends TemplateProcessorSupport {
     
     private ProcessorProperty _test;
     private String _var;
-    private int _scope;
+    private String _scope;
 
     // MLD property (dynamic, required)
     public void setTest(ProcessorProperty test) {
@@ -51,25 +48,25 @@ public class IfProcessor extends TemplateProcessorSupport {
     
     // MLD property (static)
     public void setScope(String scope) {
-        _scope = JspUtil.getScopeFromString(scope);
+        _scope = scope;
     }
     
-    public int doStartProcess(PageContext context) {
-        if(context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        boolean test = ObjectUtil.booleanValue(_test.getValue(context), false);
+        boolean test = ObjectUtil.booleanValue(_test.getValue(cycle), false);
         Boolean bool = new Boolean(test);
         //++ FIXME ServiceCycle導入後はコメントアウトコードに代える。
         AttributeValue val = AttributeValueFactory.create(_var, _scope);
-        val.setValue(context, bool);
+        val.setValue(cycle, bool);
         // cycle.setAttribute(_var, _scope);
         // ServiceCycle#setAttribute()の引数はAttributeValueの趣旨を汲んで、nullも可能にした。
         //--
         if (test) {
-            return Tag.EVAL_BODY_INCLUDE;
+            return EVAL_BODY_INCLUDE;
         }
-        return Tag.SKIP_BODY;
+        return SKIP_BODY;
     }
 
 }

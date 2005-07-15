@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,12 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -62,26 +57,21 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
     	return _systemID;
     }
     
-    public int doStartProcess(PageContext context) {
-    	if(context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+    	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
-        Writer out = context.getOut();
-        try {
-	        StringBuffer docTypeDecl = new StringBuffer(128);
-	        docTypeDecl.append("<!DOCTYPE ").append(_name);
-	        if(StringUtil.hasValue(_publicID)) {
-	            docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
-	        }
-	        if(StringUtil.hasValue(_systemID)) {
-	            docTypeDecl.append(" SYSTEM \"").append(_systemID).append("\"");
-	        }
-	        docTypeDecl.append(">");
-            out.write(docTypeDecl.toString());
-        } catch(IOException e) {
-        	throw new RuntimeException(e);
+        StringBuffer docTypeDecl = new StringBuffer(128);
+        docTypeDecl.append("<!DOCTYPE ").append(_name);
+        if(StringUtil.hasValue(_publicID)) {
+            docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
         }
-        return Tag.SKIP_BODY;
+        if(StringUtil.hasValue(_systemID)) {
+            docTypeDecl.append(" SYSTEM \"").append(_systemID).append("\"");
+        }
+        docTypeDecl.append(">");
+        cycle.getResponse().write(docTypeDecl.toString());
+        return SKIP_BODY;
     }
 
 }

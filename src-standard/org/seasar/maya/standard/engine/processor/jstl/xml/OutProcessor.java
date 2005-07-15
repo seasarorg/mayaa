@@ -15,21 +15,23 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.xml;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.standard.util.AttributeScopeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
  * @author maruo_syunsuke
  */
-public class OutProcessor extends org.seasar.maya.standard.engine.processor.jstl.core.OutProcessor {
+public class OutProcessor 
+        extends org.seasar.maya.standard.engine.processor.jstl.core.OutProcessor {
+    
+    private static final long serialVersionUID = 5169977943531521022L;
+
     public void setSelect(final String select) {
         super.setValue(new ProcessorProperty() {
             public QName getQName() {
@@ -44,24 +46,24 @@ public class OutProcessor extends org.seasar.maya.standard.engine.processor.jstl
             public boolean isDynamic() {
                 return true;
             }
-            public Object getValue(PageContext context) {
-                return getNode(context,select).getNodeValue() ;
+            public Object getValue(ServiceCycle cycle) {
+                return getNode(cycle, select).getNodeValue() ;
             }
-            public void setValue(PageContext context, Object value) {
+            public void setValue(ServiceCycle cycle, Object value) {
             }
         });
     }
-    protected int process(PageContext context, Object obj) {
-        getNode(context,(String)obj);
-        
-        
-        return Tag.SKIP_BODY;
+    
+    protected int process(ServiceCycle cycle, Object obj) {
+        getNode(cycle, (String)obj);
+        return SKIP_BODY;
     }
-    private Node getNode(PageContext context, String select) {
+    
+    private Node getNode(ServiceCycle cycle, String select) {
         int firstSeparateIndex  = select.indexOf('/');
-        String docVarName       = getDocumentVariantName(select);
-        Document document       = getDocument(context, docVarName);
-        String xpathString      = docVarName.substring(firstSeparateIndex+1);
+        String docVarName = getDocumentVariantName(select);
+        Document document = getDocument(cycle, docVarName);
+        String xpathString = docVarName.substring(firstSeparateIndex+1);
         Node node;
         try {
             node = XPathAPI.selectSingleNode(document,xpathString);
@@ -70,21 +72,22 @@ public class OutProcessor extends org.seasar.maya.standard.engine.processor.jstl
         }
         return node;
     }
-    private Document getDocument(PageContext context, String docVarName) {
+    
+    private Document getDocument(ServiceCycle cycle, String docVarName) {
         int scopeSeparaterIndex = docVarName.indexOf(':');
-
-        if( scopeSeparaterIndex >= 0 ){
-            String scopeName     = docVarName.substring(0,scopeSeparaterIndex);
-            String attributeName = docVarName.substring(scopeSeparaterIndex+1);
-            int    scopeNumber   = AttributeScopeUtil.convertScopeStringToInt(scopeName);
-            return (Document)context.getAttribute(attributeName,scopeNumber);
+        if(scopeSeparaterIndex >= 0) {
+            String scopeName     = docVarName.substring(0, scopeSeparaterIndex);
+            String attributeName = docVarName.substring(scopeSeparaterIndex + 1);
+            return (Document)cycle.getAttribute(attributeName, scopeName);
         }
         String attributeName = docVarName;
-        return (Document)context.getAttribute(attributeName);
+        return (Document)cycle.getAttribute(attributeName);
     }
+    
     private String getDocumentVariantName(String select){
         int firstSeparateIndex  = select.indexOf('/');
         String docVarName       = select.substring(0,firstSeparateIndex);
         return docVarName ;
     }
+
 }

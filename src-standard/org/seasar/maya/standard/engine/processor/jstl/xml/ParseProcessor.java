@@ -17,12 +17,11 @@ package org.seasar.maya.standard.engine.processor.jstl.xml;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
@@ -34,15 +33,17 @@ import org.xml.sax.SAXException;
  */
 public class ParseProcessor extends TemplateProcessorSupport {
 
-    private String 	_resourceXml;
-    private String 	_var ;
-    private int 	_scope;
+    private static final long serialVersionUID = 3987652428781148203L;
+
+    private String _resourceXml;
+    private String _var ;
+    private String _scope;
 
     public void setXml(String resourceXml) {
         _resourceXml = resourceXml ;
     }
 
-    public int doStartProcess(PageContext context) {
+    public int doStartProcess(ServiceCycle cycle) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         Document doc;
@@ -50,14 +51,15 @@ public class ParseProcessor extends TemplateProcessorSupport {
             DocumentBuilder builder = factory.newDocumentBuilder();
             doc = builder.parse(_resourceXml);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("XML parse exception",e);
+            throw new RuntimeException(e);
         } catch (SAXException e) {
-            throw new RuntimeException("XML parse exception",e);
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException("XML parse exception",e);
+            throw new RuntimeException(e);
         }
-        AttributeValue var = AttributeValueFactory.create(_var,_scope);
-        var.setValue(context,doc);
-        return Tag.EVAL_PAGE;
+        AttributeValue var = AttributeValueFactory.create(_var, _scope);
+        var.setValue(cycle,doc);
+        return EVAL_PAGE;
     }
+
 }

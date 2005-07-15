@@ -1,31 +1,25 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
- *
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
- * you may not use this file except in compliance with the License which
+ * you may not use this file except in compliance with the License which 
  * accompanies this distribution, and is available at
- *
+ * 
  *     http://www.seasar.org/SEASAR-LICENSE.TXT
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+ * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
@@ -34,64 +28,55 @@ import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 /**
  * @author maruo_syunsuke
  */
-public class UrlProcessor extends TemplateProcessorSupport implements ChildParamReciever{
+public class UrlProcessor extends TemplateProcessorSupport
+        implements ChildParamReciever{
+    
+    private static final long serialVersionUID = 6419793385551077813L;
+
     private String _value ;
-    private String _context ;
     private String _var ;
-    private int    _scope ;
-    private Map    _childParam ;
+    private String _scope ;
+    private Map _childParam ;
     
     public void setVar(String var) {
         _var = var;
     }
     
     public void setScope(String scope) {
-    	_scope = SpecificationUtil.getScopeFromString(scope);
+    	_scope = scope;
     }
     
-    public int doStartProcess(PageContext context) {
-        return Tag.EVAL_BODY_INCLUDE;
+    public int doEndProcess(ServiceCycle cycle) {
+        String unEncodeString = _value + "?" + getParamString(); 
+        String encodedString  = cycle.encodeURL(unEncodeString);
+        outPutEncodedString(cycle, encodedString);
+        return super.doEndProcess(cycle);
     }
     
-    public int doEndProcess(PageContext context) {
-        HttpServletResponse httpServletResponse = (HttpServletResponse)context.getResponse();
-
-        String sessionID      = context.getSession().getId();
-        String unEncodeString = _value + ";jsessionid="+ sessionID + "?" + getParamString(); 
-        String encodedString  = httpServletResponse.encodeURL(unEncodeString);
-
-        ServletContext      servletContext      = context.getServletContext();
-        if(StringUtil.isEmpty(_context) == false ){
-            servletContext = servletContext.getContext(_context);
-            
-        }
-        // TODO context‚Á‚Ä‚È‚ñ‚ÉŽg‚¤‚ñ‚¶‚á‚ë(?_?)
-        outPutEncodedString(context, encodedString);
-        return super.doEndProcess(context);
-    }
-    private void outPutEncodedString(PageContext context, String encodedString) {
+    private void outPutEncodedString(ServiceCycle cycle, String encodedString) {
         if( StringUtil.isEmpty( _var ) ){
-	        Writer out = context.getOut();
-	        try {
-	            out.write(encodedString);
-	        } catch (IOException e) {
-	            throw new RuntimeException(e);
-	        }
-        }else{
-            AttributeValue attributeValue = AttributeValueFactory.create(_var,_scope);
-            attributeValue.setValue(context,encodedString);
+            cycle.getResponse().write(encodedString);
+        } else {
+            AttributeValue attributeValue = AttributeValueFactory.create(_var, _scope);
+            attributeValue.setValue(cycle, encodedString);
         }
     }
-    private String getParamString(){
+    
+    private String getParamString() {
         java.util.Iterator it = _childParam.keySet().iterator();
-        String paramString = "" ;
+        String paramString = "";
         while (it.hasNext()) {
             String key = (String) it.next();
             paramString += key + "=" + _childParam.get(key) + "&" ;
         }
-        return paramString.substring(0,paramString.length()-1) ;
+        return paramString.substring(0, paramString.length() - 1) ;
     }
+    
     public void addChildParam(String name, String value) {
-        _childParam.put(name,value);
+        if(_childParam == null) {
+            _childParam = new HashMap();
+        }
+        _childParam.put(name, value);
     }
+
 }

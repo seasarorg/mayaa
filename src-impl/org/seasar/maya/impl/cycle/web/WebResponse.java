@@ -60,6 +60,11 @@ public class WebResponse extends AbstractResponse {
         _httpServletResponse.addHeader(name, value);
     }
 
+    public void setStatus(int code) {
+        check();
+        _httpServletResponse.setStatus(code);
+    }
+
     protected void setMimeTypeToUnderlyingObject(String mimeType) {
         check();
         if(StringUtil.isEmpty(mimeType)) {

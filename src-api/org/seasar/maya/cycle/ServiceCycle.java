@@ -43,12 +43,6 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     Application getApplication();
     
     /**
-     * 「session」スコープオブジェクトの取得。
-     * @return 「session」スコープ。
-     */
-    Session getSession();
-    
-    /**
      * 「request」スコープオブジェクトの取得。
      * @return 「request」スコープ。
      */
@@ -85,10 +79,23 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     void setAttribute(String name, Object attribute, String scope);
 
     /**
+     * 渡されたURL文字列に、必要であればセッションIDを付加する。
+     * @param url URL文字列。
+     * @return セッションIDを付加した文字列。 
+     */
+    String encodeURL(String url);
+
+    /**
      * フォワードを行う。
      * @param relativeUrlPath パス文字列。
      */
     void forward(String relativeUrlPath);
+    
+    /**
+     * リダイレクトを行う。
+     * @param url リダイレクトを行うURL文字列。
+     */
+    void redirect(String url);
     
     /**
      * インクルードを行う。

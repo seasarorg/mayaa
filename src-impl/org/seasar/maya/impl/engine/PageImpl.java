@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -18,8 +18,7 @@ package org.seasar.maya.impl.engine;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
@@ -89,13 +88,8 @@ public class PageImpl extends SpecificationImpl
         return _extension;
     }
 
-    /**
-     * サービスすべきテンプレート接尾辞の取得。
-     * @param context ステートフル情報をファサードしたコンテキスト。
-     * @return テンプレート接尾辞もしくは、ゼロ長文字列かnull（デフォルトテンプレート）。
-     */
-    protected String getTemplateSuffix(PageContext context) {
-        if(context == null) {
+    protected String getTemplateSuffix(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         String expression = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
@@ -104,12 +98,12 @@ public class PageImpl extends SpecificationImpl
             ExpressionFactory expressionFactory = provider.getExpressionFactory();
             CompiledExpression action = 
                 expressionFactory.createExpression(expression, String.class);
-            return (String)action.getValue(context);
+            return (String)action.getValue(cycle);
         }
         return "";
     }
 
-    private Template findTemplate(String suffix) {
+    protected Template findTemplate(String suffix) {
         String key = EngineUtil.createTemplateKey(suffix);
         for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
             Object obj = it.next();
@@ -159,15 +153,15 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public Template getTemplate(PageContext context, String requestedSuffix) {
-        if(context == null) {
+    public Template getTemplate(ServiceCycle cycle, String requestedSuffix) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         String suffix;
         if(StringUtil.hasValue(requestedSuffix)) {
             suffix = requestedSuffix;
         } else {
-            suffix = getTemplateSuffix(context);
+            suffix = getTemplateSuffix(cycle);
         }
         Template template = getTemplate(suffix);
         if(template == null && StringUtil.hasValue(suffix) &&
@@ -180,13 +174,16 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public int doPageRender(PageContext context, String requestedSuffix) {
-    	EngineUtil.setPage(context, this);
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, context);
-        Template template = getTemplate(context, requestedSuffix);
-        int ret = template.doTemplateRender(context, null);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, context);
-        EngineUtil.removePage(context);
+    public int doPageRender(ServiceCycle cycle, String requestedSuffix) {
+        if(cycle == null) {
+            throw new IllegalArgumentException();
+        }
+    	EngineUtil.setPage(cycle, this);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
+        Template template = getTemplate(cycle, requestedSuffix);
+        int ret = template.doTemplateRender(cycle, null);
+        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
+        EngineUtil.setPage(cycle, null);
         return ret;
     }
 

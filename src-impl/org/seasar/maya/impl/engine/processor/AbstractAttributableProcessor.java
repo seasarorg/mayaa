@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -16,15 +16,11 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -60,79 +56,78 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     }
     
     // processtime method
-    public void addProcesstimeProperty(PageContext context, ProcessorProperty prop) {
-        if(context == null || prop == null) {
+    public void addProcesstimeProperty(ServiceCycle cycle, ProcessorProperty prop) {
+        if(cycle == null || prop == null) {
             throw new IllegalArgumentException();
         }
-        List list = getProcesstimeProperties(context);
+        List list = getProcesstimeProperties(cycle);
         if(list.contains(prop) == false) {
             list.add(prop);
         }
     }
     
-    public List getProcesstimeProperties(PageContext context) {
-        if(context == null) {
+    public List getProcesstimeProperties(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        ProcesstimeInfo info = getProcesstimeInfo(context);
+        ProcesstimeInfo info = getProcesstimeInfo(cycle);
         if(info._processtimeProperties == null) {
             info._processtimeProperties = new ArrayList();
         }
         return info._processtimeProperties;
     }
     
-    protected abstract int writeStartElement(PageContext context);
+    protected abstract int writeStartElement(ServiceCycle cycle);
     
-    protected abstract void writeEndElement(PageContext context);
+    protected abstract void writeEndElement(ServiceCycle cycle);
     
-    public int doStartProcess(PageContext context) {
+    public int doStartProcess(ServiceCycle cycle) {
         if(_childEvaluation) {
-            return BodyTag.EVAL_BODY_BUFFERED;
+            return EVAL_BODY_BUFFERED;
         }
-        return writeStartElement(context);
+        return writeStartElement(cycle);
     }
     
-    public int doEndProcess(PageContext context) {
-        if(context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        Writer out = context.getOut();
-        ProcesstimeInfo info = getProcesstimeInfo(context);
+        ProcesstimeInfo info = getProcesstimeInfo(cycle);
         if(_childEvaluation) {
-            writeStartElement(context);
-            if(info._bodyContent != null) {
-                try {
-	            	out.write(info._bodyContent.getString());
-	            } catch(IOException e) {
-	            	throw new RuntimeException(e);
-	            }
+            writeStartElement(cycle);
+            if(info._body != null) {
+            	try {
+                    info._body.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-        writeEndElement(context);
-        return Tag.EVAL_PAGE;
+        writeEndElement(cycle);
+        return EVAL_PAGE;
     }
     
-    public boolean isIteration(PageContext context) {
+    public boolean isIteration(ServiceCycle cycle) {
         return false;
     }
     
-    public boolean isChildEvaluation(PageContext context) {
+    public boolean isChildEvaluation(ServiceCycle cycle) {
         return _childEvaluation;
     }
     
-    public void setBodyContent(PageContext context, BodyContent bodyContent) {
-        if (context == null || bodyContent == null) {
+    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
+        if (cycle == null || body == null) {
             throw new IllegalArgumentException();
         }
-        ProcesstimeInfo info = getProcesstimeInfo(context);
-        info._bodyContent = bodyContent;
+        ProcesstimeInfo info = getProcesstimeInfo(cycle);
+        info._body = body;
     }
 
-    public void doInitChildProcess(PageContext context) {
+    public void doInitChildProcess(ServiceCycle cycle) {
     }
     
-    public int doAfterChildProcess(PageContext context) {
-        return Tag.SKIP_BODY;
+    public int doAfterChildProcess(ServiceCycle cycle) {
+        return SKIP_BODY;
     }
 
     //helper class, methods ----------------------------------------
@@ -141,23 +136,23 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return hashCode() + "@" + AbstractAttributableProcessor.class + ".RuntimeInfo";
     }
     
-    protected ProcesstimeInfo getProcesstimeInfo(PageContext context) {
+    protected ProcesstimeInfo getProcesstimeInfo(ServiceCycle cycle) {
         String key = getRuntimeKey();
-        ProcesstimeInfo info = (ProcesstimeInfo)context.getAttribute(key);
+        ProcesstimeInfo info = (ProcesstimeInfo)cycle.getAttribute(key);
         if(info == null) {
             info = new ProcesstimeInfo();
-            context.setAttribute(key, info);
+            cycle.setAttribute(key, info);
         }
         return info;
     }
     
-    protected void removeProcesstimeInfo(PageContext context) {
-        context.removeAttribute(getRuntimeKey());
+    protected void removeProcesstimeInfo(ServiceCycle cycle) {
+        cycle.setAttribute(getRuntimeKey(), null);
     }
     
     protected class ProcesstimeInfo {
         
-        private BodyContent _bodyContent; 
+        private CycleWriter _body; 
         private List _processtimeProperties;
         
     }

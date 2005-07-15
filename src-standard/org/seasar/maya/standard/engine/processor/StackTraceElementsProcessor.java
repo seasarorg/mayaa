@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -18,8 +18,7 @@ package org.seasar.maya.standard.engine.processor;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
 /**
@@ -44,8 +43,8 @@ public class StackTraceElementsProcessor extends AbstractIteratorProcessor {
     	super.setIndex(index);
     }
     
-    protected Iterator createIterator(PageContext context, Object expValue) {
-        if(context == null || (expValue instanceof Throwable) == false) {
+    protected Iterator createIterator(ServiceCycle cycle, Object expValue) {
+        if(cycle == null || (expValue instanceof Throwable) == false) {
             throw new IllegalArgumentException();
         }
         StackTraceElement[] elements = ((Throwable)expValue).getStackTrace();

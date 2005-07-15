@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -34,6 +35,7 @@ public class WebRequest implements Request {
 
     private static final long serialVersionUID = 8377365781441987529L;
 
+    private WebSession _session;
     private HttpServletRequest _httpServletRequest;
     
     private void check() {
@@ -109,6 +111,14 @@ public class WebRequest implements Request {
         return (Locale[])list.toArray(new Locale[list.size()]);
     }
     
+    public Session getSession() {
+        if(_session == null) {
+            _session = new WebSession();
+            _session.setHttpServletRequest(_httpServletRequest);
+        }
+        return _session;
+    }
+
     public String getScopeName() {
         return ServiceCycle.SCOPE_REQUEST;
     }

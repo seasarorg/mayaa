@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -41,8 +40,6 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.xml.sax.Locator;
 
 /**
- * TODO ServiceCycle
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
@@ -77,29 +74,13 @@ public class SpecificationUtil implements CONST_IMPL {
         }
         return null;
     }
-
-    public static int getScopeFromString(String value) {
-        int scope;
-        if("application".equalsIgnoreCase(value)) {
-            scope = PageContext.APPLICATION_SCOPE;
-        } else if("session".equalsIgnoreCase(value)) {
-            scope = PageContext.SESSION_SCOPE;
-        } else if("request".equalsIgnoreCase(value)) {
-            scope = PageContext.REQUEST_SCOPE;
-        } else if("page".equalsIgnoreCase(value)) {
-            scope = PageContext.PAGE_SCOPE;
-        } else {
-            throw new IllegalArgumentException();
-        }
-        return scope;
-    }
     
-    public static int getModelScope(SpecificationNode node) {
+    public static String getModelScope(SpecificationNode node) {
         NodeAttribute scopeAttr = node.getAttribute(QM_SCOPE);
         if(scopeAttr != null) {
-            return getScopeFromString(scopeAttr.getValue());
+            return scopeAttr.getValue();
         }
-        return PageContext.PAGE_SCOPE;
+        return ServiceCycle.SCOPE_PAGE;
     }
     
     /**
@@ -107,20 +88,20 @@ public class SpecificationUtil implements CONST_IMPL {
      * @param context カレントのコンテキスト。
      * @return みつかったSpecification（テンプレート/ページ/エンジン）。
      */
-    public static Specification findSpecification(PageContext context) {
-    	Specification specification = (Template)context.getAttribute(KEY_TEMPLATE);
+    public static Specification findSpecification(ServiceCycle cycle) {
+    	Specification specification = (Template)cycle.getAttribute(KEY_TEMPLATE);
         if(specification == null) {
-            specification = (Page)context.getAttribute(KEY_PAGE);
+            specification = (Page)cycle.getAttribute(KEY_PAGE);
             if(specification == null) {
-                specification = (Engine)context.getAttribute(KEY_ENGINE);
+                specification = (Engine)cycle.getAttribute(KEY_ENGINE);
         	}
         }
         return specification;
     }
     
     public static Object findSpecificationModel(
-            PageContext context, Specification specification) {
-        if(context == null) {
+            ServiceCycle cycle, Specification specification) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         while(specification != null) {
@@ -129,9 +110,9 @@ public class SpecificationUtil implements CONST_IMPL {
 		        Class modelClass = getModelClass(maya);
 		        if(modelClass != null) {
 		            String name = specification.getKey();
-		            int scope = SpecificationUtil.getModelScope(maya);
+		            String scope = SpecificationUtil.getModelScope(maya);
 		            ModelProvider provider = ServiceProviderFactory.getModelProvider();
-		           	return provider.getModel(context, name, modelClass, scope);
+		           	return provider.getModel(cycle, name, modelClass, scope);
 		        }
             }
             specification = specification.getParentSpecification();

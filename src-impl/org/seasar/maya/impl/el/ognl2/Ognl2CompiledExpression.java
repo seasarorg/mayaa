@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -18,11 +18,10 @@ package org.seasar.maya.impl.el.ognl2;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
-
 import ognl.Ognl;
 import ognl.OgnlException;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.el.AbstractCompiledExpression;
 import org.seasar.maya.impl.el.ConversionException;
 
@@ -34,7 +33,7 @@ public class Ognl2CompiledExpression
     
 	private static final long serialVersionUID = 4817887080438766198L;
 
-	public static final String PAGE_CONTEXT = "pageContext";
+	public static final String SERVICE_CYCLE = "serviceCycle";
     public static final Object ROOT = new Object();
 
     private Object _exp;
@@ -47,12 +46,12 @@ public class Ognl2CompiledExpression
         _exp = exp;
     }
     
-    public Object getValue(PageContext context) {
+    public Object getValue(ServiceCycle cycle) {
         Object ret;
         Class expectedType = getExpectedType();
         try {
             Map map = new HashMap();
-            map.put(PAGE_CONTEXT, context);
+            map.put(SERVICE_CYCLE, cycle);
             ret = Ognl.getValue(_exp, map, ROOT);
         } catch(OgnlException e) {
             throw new IllegalStateException(e.getMessage());
@@ -67,7 +66,7 @@ public class Ognl2CompiledExpression
         throw new ConversionException(expectedType, getExpression());
     }
     
-    public void setValue(PageContext context, Object value) {
+    public void setValue(ServiceCycle cycle, Object value) {
         Class expectedType = getExpectedType();
         if(expectedType == Void.class || 
                 expectedType.isAssignableFrom(value.getClass()) == false) {
@@ -75,7 +74,7 @@ public class Ognl2CompiledExpression
         }
         try {
             Map map = new HashMap();
-            map.put(PAGE_CONTEXT, context);
+            map.put(SERVICE_CYCLE, cycle);
             Ognl.setValue(_exp,  map, ROOT, value);
         } catch(OgnlException e) {
             throw new IllegalStateException(e.getMessage());

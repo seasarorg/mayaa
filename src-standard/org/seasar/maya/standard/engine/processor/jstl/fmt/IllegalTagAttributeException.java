@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -12,8 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
- *
- * Created on 2005/03/26
  */
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
@@ -25,14 +23,21 @@ import org.seasar.maya.impl.MayaException;
  * @author suga
  */
 public class IllegalTagAttributeException extends MayaException {
+    
+    private static final long serialVersionUID = -5397615438681398053L;
+
     /** 属性が見つからなかったテンプレート */
     private Template _template;
+    
     /** 対象のタグの名前 */
     private String _tagName;
+    
     /** 不正な値が渡された属性の名前 */
     private String _attributeName;
+    
     /** 不正な値 */
     private Object _attributeValue;
+    
     /** 正しい入力例などのメッセージ */
     private String _message;
 
@@ -69,4 +74,5 @@ public class IllegalTagAttributeException extends MayaException {
     public void setTemplate(Template template) {
         _template = template;
     }
+
 }

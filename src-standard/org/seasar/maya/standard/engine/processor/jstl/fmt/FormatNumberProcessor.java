@@ -1,36 +1,30 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
- *
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
- * you may not use this file except in compliance with the License which
+ * you may not use this file except in compliance with the License which 
  * accompanies this distribution, and is available at
- *
+ * 
  *     http://www.seasar.org/SEASAR-LICENSE.TXT
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+ * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
- *
- * Created on 2005/05/04
  */
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.standard.CONST_STANDARD;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 
 /**
@@ -39,37 +33,36 @@ import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
  * @author duran
  *  
  */
-public class FormatNumberProcessor extends AbstractBodyProcessor implements
-       CONST_STANDARD {
+public class FormatNumberProcessor extends AbstractBodyProcessor {
 
+    private static final long serialVersionUID = 2352354341113789083L;
     private static final String NUMBER 	= "number";
     private static final String CURRENCY 	= "currency";
     private static final String PERCENT 	= "percent";
     
-    
-    private ProcessorProperty 	_typeAttr;
-    private ProcessorProperty 	_patternAttr;
-    private ProcessorProperty 	_currencyCodeAttr;
-    private ProcessorProperty 	_currencySymbolAttr;
+    private ProcessorProperty _typeAttr;
+    private ProcessorProperty _patternAttr;
+    private ProcessorProperty _currencyCodeAttr;
+    private ProcessorProperty _currencySymbolAttr;
     private ProcessorProperty	_groupingUsedAttr;
-    private ProcessorProperty 	_maxIntegerDigitsAttr;
+    private ProcessorProperty _maxIntegerDigitsAttr;
     private ProcessorProperty	_minIntegerDigitsAttr;
-    private ProcessorProperty 	_maxFractionDigitsAttr;
-    private ProcessorProperty 	_minFractionDigitsAttr;
+    private ProcessorProperty _maxFractionDigitsAttr;
+    private ProcessorProperty _minFractionDigitsAttr;
 
     
-    private String 	_type;
-    private String 	_pattern;
-    private String 	_currencyCode;
-    private String 	_currencySymbol;
+    private String _type;
+    private String _pattern;
+    private String _currencyCode;
+    private String _currencySymbol;
     private boolean	_groupingUsed = true;
-    private int 		_maxIntegerDigits = -1;
-    private int		_minIntegerDigits = -1;
-    private int 		_maxFractionDigits = -1;
-    private int 		_minFractionDigits = -1;
+    private int _maxIntegerDigits = -1;
+    private int	_minIntegerDigits = -1;
+    private int _maxFractionDigits = -1;
+    private int _minFractionDigits = -1;
 
-    private String 	_var;
-    private int 		_scope;
+    private String _var;
+    private String _scope;
 
     private static final String FMT_LOCALE = "javax.servlet.jsp.jstl.fmt.locale";
 
@@ -129,15 +122,12 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
     }
 
     public void setScope(String scope) {
-      if (scope != null) {
-			ContextScopeType scopeType = ContextScopeType.getByName(scope);
-			_scope = scopeType.getValue();
-		}
+		_scope = scope;
     }
     
-    private int parseInt(ProcessorProperty prop,PageContext context){
-        if(prop != null && context != null){
-            Object obj = prop.getValue(context);
+    private int parseInt(ProcessorProperty prop, ServiceCycle cycle){
+        if(prop != null && cycle != null){
+            Object obj = prop.getValue(cycle);
             if(obj instanceof Integer){
                 return ((Integer)obj).intValue();
             }else if(obj instanceof String){
@@ -146,53 +136,52 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
         }
         return -1;
     }
-    private String parseString(ProcessorProperty prop,PageContext context){
-        if(prop != null && context != null){
-            Object obj = prop.getValue(context);
+
+    private String parseString(ProcessorProperty prop, ServiceCycle cycle){
+        if(prop != null && cycle != null){
+            Object obj = prop.getValue(cycle);
             if(obj instanceof String){
                 return (String)obj;
             }
         }
         return null;
     }
-
     
-    private void initParameter(PageContext context){
-        _type = parseString(_typeAttr,context);
-        _pattern = parseString(_patternAttr,context);
-        _currencyCode = parseString(_currencyCodeAttr,context);
-        _currencySymbol = parseString(_currencySymbolAttr,context);
+    private void initParameter(ServiceCycle cycle){
+        _type = parseString(_typeAttr,cycle);
+        _pattern = parseString(_patternAttr,cycle);
+        _currencyCode = parseString(_currencyCodeAttr,cycle);
+        _currencySymbol = parseString(_currencySymbolAttr,cycle);
         
         if(_groupingUsedAttr != null){
-            Object obj = _groupingUsedAttr.getValue(context);
-        	if(obj instanceof Boolean){
+            Object obj = _groupingUsedAttr.getValue(cycle);
+        	if(obj instanceof Boolean) {
         	    _groupingUsed = ((Boolean)obj).booleanValue();
-        	}else if(obj instanceof String){
+        	} else if(obj instanceof String) {
         	    _groupingUsed = Boolean.valueOf((String)obj).booleanValue();
         	}
-        }else{
+        } else {
             //デフォルト true
             _groupingUsed = true;
         }
         
-        _maxIntegerDigits = parseInt(_maxIntegerDigitsAttr,context);
-        _minIntegerDigits = parseInt(_minIntegerDigitsAttr,context);
-        _maxFractionDigits = parseInt(_maxFractionDigitsAttr,context);
-        _minFractionDigits = parseInt(_minFractionDigitsAttr,context);
+        _maxIntegerDigits = parseInt(_maxIntegerDigitsAttr,cycle);
+        _minIntegerDigits = parseInt(_minIntegerDigitsAttr,cycle);
+        _maxFractionDigits = parseInt(_maxFractionDigitsAttr,cycle);
+        _minFractionDigits = parseInt(_minFractionDigitsAttr,cycle);
         
     }
     
-    
-    protected int process(PageContext context, Object obj) {
+    protected int process(ServiceCycle cycle, Object obj) {
         String formatted = null;
         Object input = obj;
         
-        initParameter(context);
+        initParameter(cycle);
 
         if (input instanceof String) {
             
             if(input.equals("")){
-                return Tag.EVAL_PAGE;
+                return EVAL_PAGE;
             }
             
             try {
@@ -212,7 +201,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
                     "formatNumber", "value", obj, null);
         }
 
-        Locale locale = getLocale(context);
+        Locale locale = getLocale(cycle);
 
         if (locale != null) {
             // Create formatter
@@ -225,7 +214,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
                 DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
                 formatter = new DecimalFormat(_pattern, symbols);
             } else {
-                formatter = createFormatter(locale,context);
+                formatter = createFormatter(locale,cycle);
             }
             
             
@@ -237,7 +226,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
                     //TODO
                 }
             }
-            configureFormatter(formatter, context);
+            configureFormatter(formatter, cycle);
             formatted = formatter.format(input);
         } else {
             // no formatting locale available, use toString()
@@ -245,17 +234,12 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
         }
 
         if (_var != null) {
-            context.setAttribute(_var, formatted, _scope);
+            cycle.setAttribute(_var, formatted, _scope);
         } else {
-            Writer out = context.getOut();
-            try {
-                out.write(formatted);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            cycle.getResponse().write(formatted);
         }
 
-        return Tag.EVAL_PAGE;
+        return EVAL_PAGE;
     }
  
     /**
@@ -264,10 +248,10 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
      * typeは "number" "currency" "persent"<br>
      * typeの指定がなければ "number"
      * @param locale
-     * @param context
+     * @param cycle
      * @return NumberFormat
      */
-    private NumberFormat createFormatter(Locale locale, PageContext context) {
+    private NumberFormat createFormatter(Locale locale, ServiceCycle cycle) {
 
         NumberFormat formatter = null;
 
@@ -290,9 +274,9 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
      * フォーマットを設定します。
      * 
      * @param formatter
-     * @param context
+     * @param cycle
      */
-    private void configureFormatter(NumberFormat formatter, PageContext context) {
+    private void configureFormatter(NumberFormat formatter, ServiceCycle cycle) {
         formatter.setGroupingUsed(_groupingUsed);
         if (_maxIntegerDigits > -1) {
             formatter.setMaximumIntegerDigits(_maxIntegerDigits);
@@ -312,13 +296,13 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
     /**
      * Locale を取得する。 ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。 無ければデフォルト Locale を返す。
      * 
-     * @param context
+     * @param cycle
      *            評価時のページコンテキスト
      * @return Locale
      */
-    protected Locale getLocale(PageContext context) {
+    protected Locale getLocale(ServiceCycle cycle) {
         // TODO Localization
-        Object locale = context.findAttribute(FMT_LOCALE);
+        Object locale = CycleUtil.findAttribute(cycle, FMT_LOCALE);
 
         if (locale instanceof Locale) {
             return (Locale) locale;
@@ -431,19 +415,8 @@ public class FormatNumberProcessor extends AbstractBodyProcessor implements
         }
     }
 
-    public void doInitChildProcess(PageContext context) {
-
-    }
-
-    public int doAfterChildProcess(PageContext context) {
-        return Tag.SKIP_BODY;
-    }
-
-    public boolean isIteration(PageContext context) {
+    public boolean isChildEvaluation(ServiceCycle context) {
         return true;
     }
-
-    public boolean isChildEvaluation(PageContext context) {
-        return true;
-    }
+    
 }

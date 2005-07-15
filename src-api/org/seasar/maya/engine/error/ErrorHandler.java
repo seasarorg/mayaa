@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.engine.error;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
- * TODO ServiceCycle
- * 
  * エラー処理のためのハンドラ。リクエストの最後、エラー画面の出力などを行う。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -29,9 +26,9 @@ public interface ErrorHandler extends Parameterizable {
 
     /**
      * エラー処理メソッド。
-     * @param context カレントコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param t 処理対象のThrowable。
      */
-    void doErrorHandle(PageContext context, Throwable t);
+    void doErrorHandle(ServiceCycle cycle, Throwable t);
 
 }

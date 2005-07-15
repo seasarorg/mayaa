@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,8 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
@@ -62,18 +61,18 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         		((CompiledExpression)_value).isLiteralText() == false;
     }
 
-    public Object getValue(PageContext context) {
+    public Object getValue(ServiceCycle cycle) {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
-            return ExpressionUtil.expressGetValue(context, expression);
+            return ExpressionUtil.expressGetValue(cycle, expression);
         }
         return _value;
     }
     
-    public void setValue(PageContext context, Object value) {
+    public void setValue(ServiceCycle cycle, Object value) {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
-            ExpressionUtil.expressSetValue(context, expression, value);
+            ExpressionUtil.expressSetValue(cycle, expression, value);
         } else {
             throw new PropertyNotWritableException(value, getQName().getLocalName());
         }

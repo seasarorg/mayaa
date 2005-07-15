@@ -22,11 +22,11 @@ import java.util.Map;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.implicit.HeaderResolver;
+import org.seasar.maya.impl.cycle.implicit.HeaderValuesResolver;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
 import org.seasar.maya.impl.cycle.implicit.ParamResolver;
 import org.seasar.maya.impl.cycle.implicit.ParamValuesResolver;
 import org.seasar.maya.impl.cycle.implicit.ServiceCycleResolver;
-import org.seasar.maya.impl.el.context.HeaderValuesResolver;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -62,7 +62,7 @@ public class ImplicitScope implements AttributeScope {
 		return _resolverMap.keySet().iterator();
 	}
 
-	public Object getAttribute(String name) {
+    public Object getAttribute(String name) {
 		if(StringUtil.isEmpty(name)) {
 			return null;
 		}

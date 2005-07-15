@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,9 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
@@ -25,24 +23,24 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
  */
 public class RemoveProcessor extends TemplateProcessorSupport {
 
-    private String _var   = null ;
-    private int    _scope = PageContext.PAGE_SCOPE;
-    
-    public int doStartProcess(PageContext context) {
-        remove(context);
-        return Tag.EVAL_PAGE;
-    }
-    private void remove(PageContext context) {
-        if( _var == null ) return ;
+    private static final long serialVersionUID = 277626645808267048L;
 
-        context.removeAttribute(_var, _scope);
-    }
-    
-    public void setScope(int scope) {
-        if( ScopeUtil.isScopeValue(scope) == false ) return ; 
-        _scope = scope;
-    }
+    private String _var;
+    private String _scope;
+
     public void setVar(String var) {
         _var = var;
     }
+    
+    public void setScope(String scope) {
+        _scope = scope;
+    }
+    
+    public int doStartProcess(ServiceCycle cycle) {
+        if(_var != null) {
+            cycle.setAttribute(_var, null, _scope);
+        }
+        return EVAL_PAGE;
+    }
+
 }

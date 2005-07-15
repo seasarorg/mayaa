@@ -15,12 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -55,33 +50,28 @@ public class OutProcessor extends AbstractBodyProcessor {
         _escapeXml = escapeXml;
     }
     
-    private boolean getBoolean(PageContext context, ProcessorProperty value) {
+    private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
         if(value == null) {
             return false;
         }
-        Object obj = value.getValue(context);
+        Object obj = value.getValue(cycle);
         return ObjectUtil.booleanValue(obj, false);
     }
     
-    private String escapeXml(PageContext context, Object obj) {
+    private String escapeXml(ServiceCycle cycle, Object obj) {
         String plainString = String.valueOf(obj);
-        if(getBoolean(context, _escapeXml)) {
+        if(getBoolean(cycle, _escapeXml)) {
             return StringUtil.escapeEntity(plainString);
         }
         return plainString;
     }
 
-    protected int process(PageContext context, Object obj) {
+    protected int process(ServiceCycle cycle, Object obj) {
         if(_hasValue == false) {
             throw new IllegalStateException();
         }
-        Writer out = context.getOut();
-        try {
-            out.write(escapeXml(context, obj));
-            return Tag.EVAL_PAGE;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        cycle.getResponse().write(escapeXml(cycle, obj));
+        return EVAL_PAGE;
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -17,11 +17,10 @@ package org.seasar.maya.impl.el.ognl2;
 
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
-
 import ognl.ObjectMethodAccessor;
 import ognl.OgnlException;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.el.MethodNotFoundException;
 import org.seasar.maya.impl.util.SpecificationUtil;
@@ -34,10 +33,10 @@ public class Ognl2MethodAccessor extends ObjectMethodAccessor {
     public Object callMethod(Map map, Object target, String methodName, Object[] args) {
         try {
 	        if (target == Ognl2CompiledExpression.ROOT) {
-	            PageContext context = (PageContext)map.get(
-	                    Ognl2CompiledExpression.PAGE_CONTEXT);
-	            Specification specification = SpecificationUtil.findSpecification(context);
-                Object model = SpecificationUtil.findSpecificationModel(context, specification);
+	            ServiceCycle cycle = (ServiceCycle)map.get(
+	                    Ognl2CompiledExpression.SERVICE_CYCLE);
+	            Specification specification = SpecificationUtil.findSpecification(cycle);
+                Object model = SpecificationUtil.findSpecificationModel(cycle, specification);
                 if (model != null) {
                     return super.callMethod(map, model, methodName, args);
                 }

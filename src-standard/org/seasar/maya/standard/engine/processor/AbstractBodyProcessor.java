@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -15,11 +15,8 @@
  */
 package org.seasar.maya.standard.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -39,7 +36,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         return getClass().getName() + "@" + hashCode();
     }
 
-    protected abstract int process(PageContext context, Object obj);
+    protected abstract int process(ServiceCycle cycle, Object obj);
     
     protected void setValue(ProcessorProperty value) {
         _value = value;
@@ -49,60 +46,63 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         _defaultValue = defaultValue;
     }
     
-    public void setBodyContent(PageContext context, BodyContent bodyContent) {
-        if (context == null || bodyContent == null) {
+    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
+        if (cycle == null || body == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(getBodyContentKey(),  bodyContent);
+        cycle.setAttribute(getBodyContentKey(),  body);
     }
 
-    public int doStartProcess(PageContext context) {
-        if (context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+        if (cycle == null) {
             throw new IllegalArgumentException();
         }
         Object obj = null;
         if(_value != null) {
-	        obj = _value.getValue(context);
+	        obj = _value.getValue(cycle);
 	        if (obj == null && _defaultValue != null) {
-                obj = _defaultValue.getValue(context);
+                obj = _defaultValue.getValue(cycle);
 	        }
         }
         if(obj != null) {
-            context.setAttribute(getBodyContentKey(),  obj);
-	        return Tag.SKIP_BODY;
+            cycle.setAttribute(getBodyContentKey(),  obj);
+	        return SKIP_BODY;
         }
-        return BodyTag.EVAL_BODY_BUFFERED;
+        return EVAL_BODY_BUFFERED;
     }
 
-    public int doEndProcess(PageContext context) {
-        if (context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+        if (cycle == null) {
             throw new IllegalArgumentException();
         }
+        
+        // FIXME Ç»ÇÒÇ©ïœÇ»ÇÃÇ≈å„Ç≈å©íºÇ∑ÅB
+        
         String key = getBodyContentKey();
-        Object obj = context.getAttribute(key);
-        if (obj instanceof BodyContent) {
-            obj = ((BodyContent)obj).getString().trim();
-            context.removeAttribute(key);
+        Object obj = cycle.getAttribute(key);
+        if (obj instanceof CycleWriter) {
+            obj = ((CycleWriter)obj).getBuffer();
+            cycle.setAttribute(key, null);
         }
-        return process(context, obj);
+        return process(cycle, obj);
     }
 
-    public void doInitChildProcess(PageContext context) {
+    public void doInitChildProcess(ServiceCycle cycle) {
     }
 
-    public int doAfterChildProcess(PageContext context) {
-        return Tag.SKIP_BODY;
+    public int doAfterChildProcess(ServiceCycle cycle) {
+        return SKIP_BODY;
     }
 
     public void setChildEvaluation(boolean childEvaluation) {
         _childEvaluation = childEvaluation;
     }
     
-    public boolean isChildEvaluation(PageContext context) {
+    public boolean isChildEvaluation(ServiceCycle cycle) {
         return _childEvaluation;
     }
 
-    public boolean isIteration(PageContext context) {
+    public boolean isIteration(ServiceCycle cycle) {
         return true;
     }
 

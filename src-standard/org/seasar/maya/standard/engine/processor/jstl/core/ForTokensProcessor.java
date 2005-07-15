@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -12,37 +12,35 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
- *
- * Created on 2005/03/19
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
-
 /**
- * @version $Revision: 1.1 $ $Date: 2005/06/07 00:30:46 $
  * @author maruo_syunsuke
  */
 public class ForTokensProcessor extends ForEachProcessor {
+
+    private static final long serialVersionUID = 5664728733042219315L;
     private ProcessorProperty 	_item ;
     private ProcessorProperty 	_delims ;
 
-    protected ReadOnlyList initReadOnlyList(PageContext context) {
+    protected ReadOnlyList initReadOnlyList(ServiceCycle cycle) {
         return ForEachSupportUtil.toForEachList(
-            (String)_item.getValue(context),
-            (String)_delims.getValue(context) 
+            (String)_item.getValue(cycle),
+            (String)_delims.getValue(cycle) 
         );
     }
     
-    ////
     public void setDelims(ProcessorProperty delims) {
         _delims = delims;
     }
+    
     public void setItem(ProcessorProperty item) {
         _item = item;
     }
+    
 }
 

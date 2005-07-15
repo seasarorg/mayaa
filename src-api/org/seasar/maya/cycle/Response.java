@@ -31,6 +31,12 @@ public interface Response extends Serializable, Underlyable  {
     void setMimeType(String mimeType);
     
     /**
+     * HTTPステータスコードの設定。
+     * @param code ステータスコード。通常は200。404、500など。
+     */
+    void setStatus(int code);
+    
+    /**
      * レスポンスヘッダの書き出し。
      * @param name ヘッダ名。
      * @param value ヘッダの値。

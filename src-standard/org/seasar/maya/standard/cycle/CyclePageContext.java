@@ -155,7 +155,7 @@ public class CyclePageContext extends PageContext implements CONST_STANDARD {
     }
     
     public HttpSession getSession() {
-        Session session = _cycle.getSession();
+        Session session = _cycle.getRequest().getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;

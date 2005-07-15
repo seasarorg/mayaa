@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.QName;
 
 /**
- * TODO ServiceCycle
- * 
  * プロセッサに設定するプロパティのランタイムオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -53,16 +50,16 @@ public interface ProcessorProperty {
     
     /**
      * プロセッサの実行時に、プロパティ値取得を行う。
-     * @param context カレントのページコンテキスト。
+     * @param context サービスサイクルコンテキスト。
      * @return プロパティ値。
      */
-    Object getValue(PageContext context);
+    Object getValue(ServiceCycle cycle);
  
     /**
      * プロセッサの実行時にモデルへの値設定を行う。
-     * @param context カレントのページコンテキスト。
+     * @param context サービスサイクルコンテキスト。
      * @param value 設定値。
      */
-    void setValue(PageContext context, Object value);
+    void setValue(ServiceCycle cycle, Object value);
     
 }

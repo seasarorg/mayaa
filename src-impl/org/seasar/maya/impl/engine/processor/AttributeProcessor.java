@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,9 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -50,13 +48,13 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         _value = value;
     }
     
-    public int doStartProcess(PageContext context) {
+    public int doStartProcess(ServiceCycle cycle) {
         if(_value == null) {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
-        parent.addProcesstimeProperty(context, _value);
-        return Tag.SKIP_BODY;
+        parent.addProcesstimeProperty(cycle, _value);
+        return SKIP_BODY;
     }
     
 }

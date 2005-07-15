@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -18,14 +18,12 @@ package org.seasar.maya.engine.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
 
 /**
- * TODO ServiceCycle
- * 
  * TemplateProcessorの基本実装。直接用いるのではなく、継承して
  * 具体的な機能が盛り込まれることが想定されている。継承クラスでは、
  * doStartProcess()およびdoEndProcess()を実装することになる。
@@ -78,15 +76,15 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return _index;
     }
 
-    public int doEndProcess(PageContext context) {
-        if(context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         return Tag.EVAL_PAGE;
     }
 
-    public int doStartProcess(PageContext context) {
-        if(context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         return Tag.EVAL_BODY_INCLUDE;

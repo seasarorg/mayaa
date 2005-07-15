@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,13 +15,9 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
-import org.apache.commons.beanutils.PropertyUtils;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 
 /**
@@ -29,9 +25,12 @@ import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
  */
 public class SetPropertyProcessor extends AbstractBodyProcessor {
 
+    private static final long serialVersionUID = 8123151421552810350L;
+
     private ProcessorProperty _target; 
     private ProcessorProperty _property; 
 
+    // MLD property (dynamic, requested) 
     public void setTarget(ProcessorProperty target) {
         if(target == null) {
             throw new IllegalArgumentException();
@@ -39,6 +38,7 @@ public class SetPropertyProcessor extends AbstractBodyProcessor {
         _target = target;
     }
     
+    // MLD property (dynamic=java.lang.String, requested) 
     public void setProperty(ProcessorProperty property) {
         if(property == null) {
             throw new IllegalArgumentException();
@@ -46,39 +46,24 @@ public class SetPropertyProcessor extends AbstractBodyProcessor {
         _property = property;
     }
     
+    // MLD property (dynamic, requested) 
     public void setValue(ProcessorProperty value) {
         super.setValue(value);
     }
     
-    public int process(PageContext context, Object obj) {
-        preProcess(context);
-        try {
-            mainProcess(context, obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return Tag.EVAL_PAGE;
-    }
-
-    private void preProcess(PageContext context) {
-        if(context == null) {
+    public int process(ServiceCycle cycle, Object obj) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         if(_target == null || _property == null) {
             throw new IllegalStateException();
         }
-    }
-    private void mainProcess(PageContext context, Object obj) 
-    									throws 	IllegalAccessException, 
-    											InvocationTargetException, 
-    											NoSuchMethodException {
-        Object bean = _target.getValue(context);
-        if(bean == null) return ;
-        
-        Object prop = _property.getValue(context);
-        if(prop == null) return ;
-        
-        PropertyUtils.setProperty(bean, prop.toString(), obj);
+        Object bean = _target.getValue(cycle);
+        String prop = (String)_property.getValue(cycle);
+        if(bean != null && prop != null) {
+            ObjectUtil.setProperty(bean, prop, obj);
+        }
+        return EVAL_PAGE;
     }
 
 }

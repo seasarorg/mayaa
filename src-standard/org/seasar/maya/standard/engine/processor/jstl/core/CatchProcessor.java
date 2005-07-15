@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,9 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
@@ -26,7 +24,10 @@ import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 /**
  * @author maruo_syunsuke
  */
-public class CatchProcessor extends TemplateProcessorSupport implements TryCatchFinallyProcessor {
+public class CatchProcessor extends TemplateProcessorSupport
+        implements TryCatchFinallyProcessor {
+
+    private static final long serialVersionUID = -6528283511342748578L;
 
     private String _var;
     
@@ -34,19 +35,20 @@ public class CatchProcessor extends TemplateProcessorSupport implements TryCatch
         _var = var;
     }
 
-    public int doStartProcess(PageContext context) {
-        return Tag.EVAL_BODY_INCLUDE;
+    public int doStartProcess(ServiceCycle cycle) {
+        return EVAL_BODY_INCLUDE;
     }
 
-    public boolean canCatch(PageContext context) {
+    public boolean canCatch(ServiceCycle cycle) {
         return true;
     }
 
-    public void doCatchProcess(PageContext context, Throwable t) {
+    public void doCatchProcess(ServiceCycle cycle, Throwable t) {
         AttributeValue val = AttributeValueFactory.create(_var);
-        val.setValue(context, t);
+        val.setValue(cycle, t);
     }
 
-    public void doFinallyProcess(PageContext context) {
+    public void doFinallyProcess(ServiceCycle cycle) {
     }
+
 }

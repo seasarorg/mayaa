@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.impl.util;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
 /**
- * TODO ServiceCycle
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorUtil {
@@ -30,11 +27,11 @@ public class ProcessorUtil {
     }
 
     public static boolean getBooleanPropertyValue(
-            PageContext context, ProcessorProperty property) {
+            ServiceCycle cycle, ProcessorProperty property) {
         if(property == null) {
             return false;
         }
-        Object obj = property.getValue(context);
+        Object obj = property.getValue(cycle);
         return ObjectUtil.booleanValue(obj, false);
     }
     

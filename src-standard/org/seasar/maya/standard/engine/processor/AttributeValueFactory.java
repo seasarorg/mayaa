@@ -1,71 +1,95 @@
+/*
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * 
+ * Licensed under the Seasar Software License, v1.1 (aka "the License");
+ * you may not use this file except in compliance with the License which 
+ * accompanies this distribution, and is available at
+ * 
+ *     http://www.seasar.org/SEASAR-LICENSE.TXT
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+ * express or implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.seasar.maya.standard.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.standard.util.AttributeScopeUtil;
 
 /**
  * @author maruo_syunsuke
  */
-public class AttributeValueFactory{
+public class AttributeValueFactory {
+    
     public static AttributeValue create(String name){
         if( StringUtil.isEmpty(name)){
             return new AttributeValue_Null();
         }
         return new AttributeValue_Basic(name);
     }
-    public static AttributeValue create(String name, int scope){
+    
+    public static AttributeValue create(String name, String scope){
         if( StringUtil.isEmpty(name)){
             return new AttributeValue_Null();
         }
-        return new AttributeValue_Basic(name,scope);
+        return new AttributeValue_Basic(name, scope);
     }
-    public static AttributeValue create(String name, String scopeString){
-        if( StringUtil.isEmpty(name)){
-            return new AttributeValue_Null();
-        }
-        return new AttributeValue_Basic(name,
-                AttributeScopeUtil.convertScopeStringToInt(scopeString));
-    }
+    
 }
 
-class AttributeValue_Basic implements AttributeValue{
+class AttributeValue_Basic implements AttributeValue {
+    
+    private static final long serialVersionUID = 5161583383272232824L;
+    
     private String _name ;
-    private int    _scope ;
+    private String _scope ;
+    
     public AttributeValue_Basic(String name){
-        this(name,PageContext.PAGE_SCOPE);
+        this(name, ServiceCycle.SCOPE_PAGE);
     }
-    public AttributeValue_Basic(String name,int scope){
+    
+    public AttributeValue_Basic(String name, String scope){
         _name  = name ;
         _scope = scope ;
     }
+    
     public String getName() {
         return _name;
     }
-    public void setValue(PageContext context, Object value){
-        context.setAttribute( _name, value, _scope );
+    
+    public void setValue(ServiceCycle cycle, Object value){
+        cycle.setAttribute( _name, value, _scope );
     }
-    public Object getValue(PageContext context){
-        return context.getAttribute( _name );
+    
+    public Object getValue(ServiceCycle cycle){
+        return cycle.getAttribute( _name );
     }
-    public void remove(PageContext context){
-        context.removeAttribute(_name);
+    
+    public void remove(ServiceCycle cycle){
+        cycle.setAttribute(_name, null);
     }
+    
 }
 
-class AttributeValue_Null implements AttributeValue{
-    public void setValue(PageContext context, Object value){
+class AttributeValue_Null implements AttributeValue {
+    
+    private static final long serialVersionUID = 6535995392396158657L;
+    
+    public void setValue(ServiceCycle cycle, Object value){
     }
-    public void setValue(PageContext context, Object value, int scope){
-    }
-    public Object getValue(PageContext context){
+    
+    public Object getValue(ServiceCycle cycle){
         return null ;
     }
-    public void remove(PageContext context){
+    
+    public void remove(ServiceCycle cycle){
     }
+    
     public String getName() {
         return null;
     }
+
 }
 

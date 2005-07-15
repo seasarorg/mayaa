@@ -1,37 +1,32 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
- *
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
- * you may not use this file except in compliance with the License which
+ * you may not use this file except in compliance with the License which 
  * accompanies this distribution, and is available at
- *
+ * 
  *     http://www.seasar.org/SEASAR-LICENSE.TXT
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+ * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
- *
- * Created on 2005/03/26
  */
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
 import ognl.NoSuchPropertyException;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.CONST_STANDARD;
 
@@ -41,6 +36,8 @@ import org.seasar.maya.standard.CONST_STANDARD;
  */
 public class FormatDateProcessor extends TemplateProcessorSupport
         implements CONST_STANDARD {
+
+    private static final long serialVersionUID = -9118340781420704614L;
 
     protected static final String DATE 		= "date";
     protected static final String TIME 		= "time";
@@ -68,7 +65,7 @@ public class FormatDateProcessor extends TemplateProcessorSupport
     /* not rtexprvalue */
     protected String _var;
     protected String _scopeString;
-    protected int _scope;
+    protected String _scope;
 
     public void setValue(ProcessorProperty value) {
         if(value == null) {
@@ -102,31 +99,27 @@ public class FormatDateProcessor extends TemplateProcessorSupport
     }
 
     public void setScope(String scope) {
-        if (scope != null) {
-            ContextScopeType scopeType = ContextScopeType.getByName(scope);
-            _scopeString = scopeType.getName();
-            _scope = scopeType.getValue();
-        }
+        _scope = scope;
     }
 
-    public int doStartProcess(PageContext context) {
-        if (context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+        if (cycle == null) {
             throw new IllegalArgumentException();
         }
-        Date value = getDateValue(context);
+        Date value = getDateValue(cycle);
         if (value == null) {
-            return Tag.EVAL_PAGE;
+            return EVAL_PAGE;
         }
 
-        Locale locale = getLocale(context);
+        Locale locale = getLocale(cycle);
 
         String formatted = null;
         if (locale == null) {
             formatted = value.toString();
         } else {
-            DateFormat format = createFormat(context, locale);
+            DateFormat format = createFormat(cycle, locale);
     
-            TimeZone timeZone = getTimeZone(context);
+            TimeZone timeZone = getTimeZone(cycle);
             if (timeZone != null) {
                 format.setTimeZone(timeZone);
             }
@@ -135,34 +128,25 @@ public class FormatDateProcessor extends TemplateProcessorSupport
         }
 
         if (_var != null) {
-            context.setAttribute(_var, formatted, _scope);
+            cycle.setAttribute(_var, formatted, _scope);
         } else {
-            Writer out = context.getOut();
-            try {
-                out.write(formatted);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            cycle.getResponse().write(formatted);
         }
 
-        return Tag.SKIP_BODY;
-    }
-
-    public int doEndProcess(PageContext context) {
-        return Tag.EVAL_PAGE;
+        return SKIP_BODY;
     }
 
     /**
      * value を評価して Date を取得する。
      *
-     * @param context 評価時のページコンテキスト
+     * @param cycle 評価時のページコンテキスト
      * @return Date
      * @throws IllegalTagAttributeException dateが不正な場合
      */
-    protected Date getDateValue(PageContext context) {
+    protected Date getDateValue(ServiceCycle cycle) {
         Object value = null;
         try {
-            value = _value.getValue(context);
+            value = _value.getValue(cycle);
         } catch (RuntimeException e) {
             // FIXME OGNLに依存しない実装へ -> impl.elで例外を抽象化する。
             if (!(e.getCause() instanceof NoSuchPropertyException)) {
@@ -188,29 +172,29 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * type も pattern もセットされていないなら、type="date" がセットされていると
      * 見なす。
      *
-     * @param context 評価時のページコンテキスト
+     * @param cycle 評価時のページコンテキスト
      * @param locale 環境の Locale
      * @return DateFormat
      * @throws IllegalTagAttributeException typeが不正な場合
      */
-    protected DateFormat createFormat(PageContext context, Locale locale) {
+    protected DateFormat createFormat(ServiceCycle cycle, Locale locale) {
         String type = null;
         if (_type != null) {
-            type = (String)_type.getValue(context);
+            type = (String)_type.getValue(cycle);
         } else if (_pattern != null) {
-            String pattern = (String) _pattern.getValue(context);
+            String pattern = (String) _pattern.getValue(cycle);
             if (pattern != null) {
                 return new SimpleDateFormat(pattern, locale);
             }
         }
 
         if ((type == null) || DATE.equalsIgnoreCase(type)) {
-            return DateFormat.getDateInstance(getDateStyle(context), locale);
+            return DateFormat.getDateInstance(getDateStyle(cycle), locale);
         } else if (TIME.equalsIgnoreCase(type)) {
-            return DateFormat.getTimeInstance(getTimeStyle(context), locale);
+            return DateFormat.getTimeInstance(getTimeStyle(cycle), locale);
         } else if (DATETIME.equalsIgnoreCase(type)) {
             return DateFormat.getDateTimeInstance(
-                    getDateStyle(context), getTimeStyle(context), locale);
+                    getDateStyle(cycle), getTimeStyle(cycle), locale);
         } else {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "type", _type, null);
@@ -222,13 +206,13 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * (DateFormat#getXxxInstance で利用する定数値)
      * 未定義の場合は DateFormat.DEFAULT を返す。
      *
-     * @param context 評価時のページコンテキスト
+     * @param cycle 評価時のページコンテキスト
      * @return 日付のフォーマットスタイル
      * @throws IllegalTagAttributeException dateStyleが不正な場合
      */
-    protected int getDateStyle(PageContext context)
+    protected int getDateStyle(ServiceCycle cycle)
             throws IllegalTagAttributeException {
-        int dateStyle = getStyle(_dateStyle, context);
+        int dateStyle = getStyle(_dateStyle, cycle);
         if (dateStyle == INVALID_STYLE) {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "style", _dateStyle, null);
@@ -242,13 +226,13 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * (DateFormat#getXxxInstance で利用する定数値)
      * 未定義の場合は DateFormat.DEFAULT を返す。
      *
-     * @param context 評価時のページコンテキスト
+     * @param cycle 評価時のページコンテキスト
      * @return 時刻のフォーマットスタイル
      * @throws IllegalTagAttributeException timeStyleが不正な場合
      */
-    protected int getTimeStyle(PageContext context)
+    protected int getTimeStyle(ServiceCycle cycle)
             throws IllegalTagAttributeException {
-        int timeStyle = getStyle(_timeStyle, context);
+        int timeStyle = getStyle(_timeStyle, cycle);
         if (timeStyle == INVALID_STYLE) {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "style", _timeStyle, null);
@@ -263,16 +247,16 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * style が null の場合は DateFormat.DEFAULT を返す。
      *
      * @param style 評価対象の式。
-     * @param context 評価時のページコンテキスト。
+     * @param cycle 評価時のページコンテキスト。
      * @return 日付または時刻のフォーマットスタイル。
      *          style の評価結果が不正な場合は INVALID_STYLE を返す。
      */
-    protected int getStyle(ProcessorProperty style, PageContext context) {
+    protected int getStyle(ProcessorProperty style, ServiceCycle cycle) {
         if (style == null) {
             return DateFormat.DEFAULT;
         }
 
-        return getStyle((String) style.getValue(context));
+        return getStyle((String) style.getValue(cycle));
     }
 
     /**
@@ -313,16 +297,16 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * timeZone の評価結果が TimeZone オブジェクトならそのまま返す。
      * String なら TimeZone の文字列表現として評価して返す。
      *
-     * @param context 評価時のページコンテキスト
+     * @param cycle 評価時のページコンテキスト
      * @return TimeZone
      * @throws IllegalTagAttributeException timeZoneが不正な場合
      */
-    protected TimeZone getTimeZone(PageContext context) {
+    protected TimeZone getTimeZone(ServiceCycle cycle) {
         if (_timeZone == null) {
             return null;
         }
 
-        Object timeZone = _timeZone.getValue(context);
+        Object timeZone = _timeZone.getValue(cycle);
         if (timeZone == null) {
             return null;
         } else if (timeZone instanceof String) {
@@ -340,12 +324,12 @@ public class FormatDateProcessor extends TemplateProcessorSupport
      * ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。
      * 無ければデフォルト Locale を返す。
      *
-     * @param context 評価時のページコンテキスト 
+     * @param cycle 評価時のページコンテキスト 
      * @return Locale
      */
-    protected Locale getLocale(PageContext context) {
+    protected Locale getLocale(ServiceCycle cycle) {
         // TODO Localization
-        Object locale = context.findAttribute(FMT_LOCALE);
+        Object locale = CycleUtil.findAttribute(cycle, FMT_LOCALE);
 
         if (locale instanceof Locale) {
             return (Locale) locale;

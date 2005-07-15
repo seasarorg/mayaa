@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,19 +15,13 @@
  */
 package org.seasar.maya.impl.engine;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.IterationTag;
-import javax.servlet.jsp.tagext.Tag;
-
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
@@ -109,9 +103,9 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private boolean isEvaluation(
-            PageContext context, TemplateProcessor current) {
+            ServiceCycle cycle, TemplateProcessor current) {
         return current instanceof ChildEvaluationProcessor && 
-        		((ChildEvaluationProcessor)current).isChildEvaluation(context);
+        		((ChildEvaluationProcessor)current).isChildEvaluation(cycle);
     }
 
     private ChildEvaluationProcessor getEvaluation(TemplateProcessor current) {
@@ -119,9 +113,9 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private boolean isIteration(
-            PageContext context, TemplateProcessor current) {
+            ServiceCycle cycle, TemplateProcessor current) {
         return current instanceof IterationProcessor &&
-        		((IterationProcessor)current).isIteration(context);
+        		((IterationProcessor)current).isIteration(cycle);
     }
     
     private IterationProcessor getIteration(TemplateProcessor current) {
@@ -134,9 +128,9 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private boolean isTryCatchFinally(
-            PageContext context, TemplateProcessor current) {
+            ServiceCycle cycle, TemplateProcessor current) {
         return current instanceof TryCatchFinallyProcessor &&
-        		((TryCatchFinallyProcessor)current).canCatch(context);
+        		((TryCatchFinallyProcessor)current).canCatch(cycle);
     }
     
     private TryCatchFinallyProcessor getTryCatchFinally(TemplateProcessor current) {
@@ -144,57 +138,57 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     // main rendering method
-    private int render(PageContext context, TemplateProcessor current) {
-        if(context == null || current == null) {
+    private int render(ServiceCycle cycle, TemplateProcessor current) {
+        if(cycle == null || current == null) {
             throw new IllegalArgumentException();
         }
         
-        int ret = Tag.EVAL_PAGE;
+        int ret = EVAL_PAGE;
         try { 
-            int startRet = current.doStartProcess(context);
-            if(startRet == Tag.SKIP_PAGE) {
-                return Tag.SKIP_PAGE;
+            int startRet = current.doStartProcess(cycle);
+            if(startRet == SKIP_PAGE) {
+                return SKIP_PAGE;
             }
             boolean buffered = false;
-            if(startRet == BodyTag.EVAL_BODY_BUFFERED && isEvaluation(context, current)) {
+            if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && isEvaluation(cycle, current)) {
                 buffered = true;
-                getEvaluation(current).setBodyContent(context, context.pushBody());
-                getEvaluation(current).doInitChildProcess(context);
+                getEvaluation(current).setBodyContent(cycle, cycle.getResponse().pushWriter());
+                getEvaluation(current).doInitChildProcess(cycle);
             }
-            if(startRet == Tag.EVAL_BODY_INCLUDE || 
-                    startRet == BodyTag.EVAL_BODY_BUFFERED) {
+            if(startRet == EVAL_BODY_INCLUDE || 
+                    startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED) {
                 int afterRet;
                 do {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
-                        final int child = render(context, current.getChildProcessor(i));
-                        if(child == Tag.SKIP_PAGE) {
-                            return Tag.SKIP_PAGE;
+                        final int child = render(cycle, current.getChildProcessor(i));
+                        if(child == SKIP_PAGE) {
+                            return SKIP_PAGE;
                         }
                     }
-                    afterRet = Tag.SKIP_BODY;
-                    if(isIteration(context, current)) {
-                        afterRet = getIteration(current).doAfterChildProcess(context);
+                    afterRet = SKIP_BODY;
+                    if(isIteration(cycle, current)) {
+                        afterRet = getIteration(current).doAfterChildProcess(cycle);
                     	TemplateProcessor parent = current.getParentProcessor();
-                    	if(afterRet == IterationTag.EVAL_BODY_AGAIN && isDuplicated(parent)) {
-                            parent.doEndProcess(context);
-                            parent.doStartProcess(context);
+                    	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN && isDuplicated(parent)) {
+                            parent.doEndProcess(cycle);
+                            parent.doStartProcess(cycle);
                     	}
                     }
-                } while(afterRet == IterationTag.EVAL_BODY_AGAIN);
+                } while(afterRet == IterationProcessor.EVAL_BODY_AGAIN);
             }
             if(buffered) {
-                context.popBody();
+                cycle.getResponse().popWriter();
             }
-            ret = current.doEndProcess(context);
+            ret = current.doEndProcess(cycle);
         } catch (RuntimeException e) {
-            if(isTryCatchFinally(context, current)) {
-                getTryCatchFinally(current).doCatchProcess(context, e);
+            if(isTryCatchFinally(cycle, current)) {
+                getTryCatchFinally(current).doCatchProcess(cycle, e);
             } else {
                 throw e;
             }
         } finally {
-            if(isTryCatchFinally(context, current)) {
-                getTryCatchFinally(current).doFinallyProcess(context);
+            if(isTryCatchFinally(cycle, current)) {
+                getTryCatchFinally(current).doFinallyProcess(cycle);
             }
         }
         return ret;
@@ -212,55 +206,29 @@ public class TemplateImpl extends SpecificationImpl
         return mimeType + "; charset=UTF-8";
     }
     
-    private String getCharacterEncoding(String contentType) {
-		if (StringUtil.hasValue(contentType)) {
-		    String lower = contentType.toLowerCase();
-			int startPos = lower.indexOf("charset");
-			if (startPos > 0) {
-				startPos += 7; /*7 = "charset".length()*/
-				final int eqPos = contentType.indexOf("=", startPos);
-				if (eqPos > 0) {
-					int endPos = contentType.indexOf(";", eqPos);
-					if (endPos < 0) {
-						endPos = contentType.length();
-					}
-					return contentType.substring(eqPos + 1, endPos).trim();
-				}
-			}
-		}
-		return "UTF-8";
-	}
-
-    private void prepareEncoding(PageContext context) {
-        ServletResponse response = context.getResponse();
+    private void prepareEncoding(ServiceCycle cycle) {
+        Response response = cycle.getResponse();
         String contentType = getContentType();
-        response.setContentType(contentType);
-        String encoding = getCharacterEncoding(contentType);
-        ServletRequest request = context.getRequest();
-        try {
-            request.setCharacterEncoding(encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        response.setMimeType(contentType);
     }
     
-    public int doTemplateRender(PageContext context,
+    public int doTemplateRender(ServiceCycle cycle,
             TemplateProcessor renderRoot) {
-        if(context == null) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        EngineUtil.setTemplate(context, this);
+        EngineUtil.setTemplate(cycle, this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
             processor = this;
         }
         if(getParentProcessor() == null) {
-            prepareEncoding(context);
+            prepareEncoding(cycle);
         }
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, context);
-        int ret = render(context, processor);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, context);
-        EngineUtil.removeTemplate(context);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
+        int ret = render(cycle, processor);
+        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
+        EngineUtil.setTemplate(cycle, null);
         return ret;
     }
 
@@ -317,12 +285,12 @@ public class TemplateImpl extends SpecificationImpl
         return _parentNode;
     }
     
-    public int doStartProcess(PageContext context) {
-        return Tag.EVAL_BODY_INCLUDE;
+    public int doStartProcess(ServiceCycle cycle) {
+        return EVAL_BODY_INCLUDE;
     }
 
-    public int doEndProcess(PageContext context) {
-        return Tag.EVAL_PAGE;
+    public int doEndProcess(ServiceCycle cycle) {
+        return EVAL_PAGE;
     }
 
 }

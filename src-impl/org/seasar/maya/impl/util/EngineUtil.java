@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -17,9 +17,8 @@ package org.seasar.maya.impl.util;
 
 import java.util.Iterator;
 
-import javax.servlet.jsp.PageContext;
-
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -43,27 +42,20 @@ public class EngineUtil implements CONST_IMPL {
         return "/template[@suffix='" + suffix + "']";
     } 
     
-    public static Template getTemplate(PageContext context) {
+    public static Template getTemplate(ServiceCycle cycle) {
         Template template = 
-            (Template)context.getAttribute(KEY_TEMPLATE);
+            (Template)cycle.getAttribute(KEY_TEMPLATE);
         if(template == null) {
             throw new IllegalStateException();
         }
         return template;
     }
 
-    public static void setTemplate(PageContext context, Template template) {
-        if(context == null || template == null) {
+    public static void setTemplate(ServiceCycle cycle, Template template) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(KEY_TEMPLATE, template);
-    }
-    
-    public static void removeTemplate(PageContext context) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        context.removeAttribute(KEY_TEMPLATE);
+        cycle.setAttribute(KEY_TEMPLATE, template);
     }
     
     public static String createPageKey(String pageName, String extension) {
@@ -88,26 +80,19 @@ public class EngineUtil implements CONST_IMPL {
         return null;
     }
     
-    public static Page getPage(PageContext context) {
-        Page page = (Page)context.getAttribute(KEY_PAGE);
+    public static Page getPage(ServiceCycle cycle) {
+        Page page = (Page)cycle.getAttribute(KEY_PAGE);
         if(page == null) {
             throw new IllegalStateException();
         }
         return page;
     }
 
-    public static void setPage(PageContext context, Page page) {
-        if(context == null || page == null) {
+    public static void setPage(ServiceCycle cycle, Page page) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(KEY_PAGE, page);
-    }
-    
-    public static void removePage(PageContext context) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        context.removeAttribute(KEY_PAGE);
+        cycle.setAttribute(KEY_PAGE, page);
     }
 
     public static Engine getEngine(Specification specification) {
@@ -121,19 +106,19 @@ public class EngineUtil implements CONST_IMPL {
         throw new IllegalArgumentException();
     }
     
-    public static Engine getEngine(PageContext context) {
-        Engine engine = (Engine)context.getAttribute(KEY_ENGINE);
+    public static Engine getEngine(ServiceCycle cycle) {
+        Engine engine = (Engine)cycle.getAttribute(KEY_ENGINE);
         if(engine == null) {
             throw new IllegalStateException();
         }
         return engine;
     }
     
-    public static void setEngine(PageContext context, Engine engine) {
-        if(context == null || engine == null) {
+    public static void setEngine(ServiceCycle cycle, Engine engine) {
+        if(cycle == null || engine == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(KEY_ENGINE, engine);
+        cycle.setAttribute(KEY_ENGINE, engine);
     }
     
     public static String getMimeType(Page page) {

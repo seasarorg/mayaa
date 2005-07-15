@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 
 /**
@@ -31,16 +31,16 @@ public class TagContext {
 
     /**
      * ステートフル情報を保持するコンテキストオブジェクトの取得を行う。
-     * @param context カレントのテンプレートコンテキスト。
+     * @param cycle カレントのテンプレートコンテキスト。
      * @return コンテキストオブジェクト。
      *          テンプレートコンテキスト中に保持していないときには生成する。
      */
-    public static TagContext getTagContext(PageContext context) {
+    public static TagContext getTagContext(ServiceCycle cycle) {
         final String KEY_TAG_CONTEXT = TagContext.class.getName();
-        TagContext tagContext = (TagContext)context.getAttribute(KEY_TAG_CONTEXT);
+        TagContext tagContext = (TagContext)cycle.getAttribute(KEY_TAG_CONTEXT);
         if(tagContext == null) {
             tagContext = new TagContext();
-            context.setAttribute(KEY_TAG_CONTEXT, tagContext);
+            cycle.setAttribute(KEY_TAG_CONTEXT, tagContext);
         }
         return tagContext;
     }

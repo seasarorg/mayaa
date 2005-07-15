@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,11 +15,8 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 
@@ -28,26 +25,29 @@ import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
  */
 public class SetAttributeProcessor extends AbstractBodyProcessor {
 
-    private ProcessorProperty _var;
-    private int _scope = PageContext.PAGE_SCOPE;
-    
-    public int process(PageContext context, Object obj) {
-        String varName = _var.getValue(context).toString();
-        if(StringUtil.isEmpty(varName) || _scope < PageContext.PAGE_SCOPE || 
-                PageContext.APPLICATION_SCOPE < _scope) {
-            throw new IllegalStateException();
-        }
-        context.setAttribute(varName, obj, _scope);
-        return Tag.EVAL_PAGE;
-    }
+    private static final long serialVersionUID = -8774293192056971213L;
 
+    private ProcessorProperty _var;
+    private String _scope;
+    
     public void setVar(ProcessorProperty var) {
         _var = var;
     }
+    
     public void setValue(ProcessorProperty value) {
         super.setValue(value);
     }
+    
     public void setScope(String scope) {
-        _scope = SpecificationUtil.getScopeFromString(scope);
+        _scope = scope;
     }
+
+    public int process(ServiceCycle cycle, Object obj) {
+        String varName = (String)_var.getValue(cycle);
+        if(StringUtil.hasValue(varName)) {
+            cycle.setAttribute(varName, obj, _scope);
+        }
+        return EVAL_PAGE;
+    }
+
 }

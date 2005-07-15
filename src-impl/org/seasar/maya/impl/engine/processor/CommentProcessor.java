@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,11 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -28,22 +24,17 @@ public class CommentProcessor extends CharactersProcessor {
     
 	private static final long serialVersionUID = -5176372123366627130L;
 
-	public int doStartProcess(PageContext context) {
-    	if(context == null) {
+	public int doStartProcess(ServiceCycle cycle) {
+    	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
-        Writer out = context.getOut();
-        try {
-            out.write("<!--");
-            Object value = getExpressed(context);
-            if(value != null) {
-                out.write(value.toString());
-            }
-            out.write("-->");
-        } catch(IOException e) {
-        	throw new RuntimeException(e);
+        cycle.getResponse().write("<!--");
+        Object value = getExpressed(cycle);
+        if(value != null) {
+            cycle.getResponse().write(value.toString());
         }
-        return Tag.SKIP_BODY;
+        cycle.getResponse().write("-->");
+        return SKIP_BODY;
     }
 
 }

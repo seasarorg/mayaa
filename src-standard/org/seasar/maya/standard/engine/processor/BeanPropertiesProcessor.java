@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -22,9 +22,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import javax.servlet.jsp.PageContext;
-
 import org.apache.commons.beanutils.PropertyUtils;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -55,8 +54,8 @@ public class BeanPropertiesProcessor extends AbstractIteratorProcessor {
     	_ignore = ignore;
     }
     
-    protected Iterator createIterator(PageContext context, Object eval) {
-        if(context == null || eval == null) {
+    protected Iterator createIterator(ServiceCycle cycle, Object eval) {
+        if(cycle == null || eval == null) {
             throw new IllegalArgumentException();
         }
         PropertyDescriptor[] descs = PropertyUtils.getPropertyDescriptors(eval);

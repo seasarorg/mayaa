@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,8 +15,7 @@
  */
 package org.seasar.maya.impl.provider;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.provider.ModelProvider;
 
@@ -28,14 +27,14 @@ public class SimpleModelProvider implements ModelProvider {
     public SimpleModelProvider() {
     }
     
-	public Object getModel(PageContext context, 
-    		String modelName, Class modelClass, int modelScope) {
-        Object model = context.getAttribute(modelName, modelScope); 
+	public Object getModel(ServiceCycle cycle, 
+    		String modelName, Class modelClass, String modelScope) {
+        Object model = cycle.getAttribute(modelName, modelScope); 
         if(model != null) {
             return model;
         }
         model = ObjectUtil.newInstance(modelClass);
-        context.setAttribute(modelName, model, modelScope);
+        cycle.setAttribute(modelName, model, modelScope);
         return model;
 	}
 	

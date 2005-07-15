@@ -26,7 +26,10 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
+import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -42,12 +45,14 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private ExpressionFactory _expressionFactory;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
+    private ServiceCyclePool _serviceCyclePool;
 	
     public SimpleServiceProvider(ServletContext servletContext) {
         if(servletContext == null) {
             throw new IllegalArgumentException();
         }
         _servletContext = servletContext;
+        _serviceCyclePool = new ServiceCyclePool();
     }
     
     public ServletContext getServletContext() {
@@ -154,12 +159,36 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     }
 
     public ServiceCycle getServiceCycle(Request request, Response response) {
-    	// TODO ŽÀ‘•
-    	return null;
+        ServiceCycleImpl cycle = _serviceCyclePool.borrowServiceCycle();
+        cycle.setApplication(getApplication());
+        cycle.setRequest(request);
+        cycle.setResponse(response);
+        EngineUtil.setEngine(cycle, getEngine());
+    	return cycle;
     }
     
     public void releaseServiceCycle(ServiceCycle cycle) {
-    	// TODO ŽÀ‘•
+        _serviceCyclePool.returnServiceCycle(cycle);
+    }
+    
+    private class ServiceCyclePool extends AbstractSoftReferencePool {
+
+        protected Object createObject() {
+            return new ServiceCycleImpl();
+        }
+        
+        protected boolean validateObject(Object object) {
+            return object instanceof ServiceCycleImpl;
+        }
+    
+        ServiceCycleImpl borrowServiceCycle() {
+            return (ServiceCycleImpl)borrowObject();
+        }
+        
+        void returnServiceCycle(ServiceCycle cycle) {
+            returnObject(cycle);
+        }
+        
     }
 
 }

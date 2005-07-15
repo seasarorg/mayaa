@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,15 +15,12 @@
  */
 package org.seasar.maya.impl.engine;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.error.JspContextErrorHandler;
+import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -73,7 +70,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 
     public ErrorHandler getErrorHandler() {
 	    if(_errorHandler == null) {
-	        _errorHandler = new JspContextErrorHandler();
+	        _errorHandler = new SimpleErrorHandler();
 	    }
         return _errorHandler;
     }
@@ -108,20 +105,16 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         return page;
     }
    
-	public void doService(PageContext context, String pageName, 
+	public void doService(ServiceCycle cycle, String pageName, 
 			String requestedSuffix, String extension) {
-        if(context == null || StringUtil.isEmpty(pageName)) {
+        if(cycle == null || StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, context);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
         Page page = getPage(pageName, extension);
-        page.doPageRender(context, requestedSuffix);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, context);
-        try {
-            context.getOut().flush();
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
+        page.doPageRender(cycle, requestedSuffix);
+        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
+        cycle.getResponse().flush();
 	}
 	
     public String getWelcomeFileName() {

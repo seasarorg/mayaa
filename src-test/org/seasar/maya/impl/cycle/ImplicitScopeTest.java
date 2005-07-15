@@ -56,7 +56,6 @@ public class ImplicitScopeTest extends TestCase {
         response.setHttpServletResponse(new MockHttpServletResponse());
         _cycle = new ServiceCycleImpl();
         _cycle.setApplication(application);
-        _cycle.setSession(session);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
         _scope = new ImplicitScope(_cycle);

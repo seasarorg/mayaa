@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,11 +15,9 @@
  */
 package org.seasar.maya.provider;
 
-import javax.servlet.jsp.PageContext;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
- * TODO ServiceCycle
- * 
  * アプリケーションスコープでのモデル提供オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -27,13 +25,13 @@ public interface ModelProvider {
 
     /**
      * ユーザー定義のモデルオブジェクト取得メソッド。
-     * @param context カレントコンテキスト。 
+     * @param cycle サービスサイクルコンテキスト。
      * @param modelName コンポーネント名。
      * @param modelClass コンポーネントクラス型。
      * @param modelScope スコープ。
      * @return モデルオブジェクト。
      */
-    Object getModel(PageContext context, 
-            String modelName, Class modelClass, int modelScope);
+    Object getModel(ServiceCycle cycle, 
+            String modelName, Class modelClass, String modelScope);
     
 }

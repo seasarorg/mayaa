@@ -65,4 +65,10 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      */
     Locale[] getLocales();
     
+    /**
+     * セッションの取得。
+     * @return セッションオブジェクト。
+     */
+    Session getSession();
+    
 }

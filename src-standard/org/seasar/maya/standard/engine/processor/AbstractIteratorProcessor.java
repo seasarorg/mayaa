@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -17,10 +17,7 @@ package org.seasar.maya.standard.engine.processor;
 
 import java.util.Iterator;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.IterationTag;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -53,8 +50,8 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
     	_index = index;
     }
     
-    public boolean isIteration(PageContext context) {
-        if(context == null) {
+    public boolean isIteration(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         return true;
@@ -64,86 +61,84 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
         return getClass().getName() + "@" + hashCode();
     }
     
-    protected boolean nextArrayItem(PageContext context) {
-        if(context == null) {
+    protected boolean nextArrayItem(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        Iterator it = getIterator(context);
+        Iterator it = getIterator(cycle);
         if(it.hasNext()) {
 	        Object next = it.next();
-	        setVarItem(context, next);
-	        incrimentIndex(context);
+	        setVarItem(cycle, next);
+	        incrimentIndex(cycle);
 	        return true;
         }
-        removeVarItem(context);
-        removeIndexValue(context);
+        removeVarItem(cycle);
+        removeIndexValue(cycle);
         return false;
     }
     
-    protected final Iterator getIterator(PageContext context) {
-		Iterator it = (Iterator)context.getAttribute(getKey());
+    protected final Iterator getIterator(ServiceCycle cycle) {
+		Iterator it = (Iterator)cycle.getAttribute(getKey());
 		return it;
 	}
 
-	protected final void removeIndexValue(PageContext context) {
+	protected final void removeIndexValue(ServiceCycle cycle) {
 		if(StringUtil.hasValue(_index)) {
-            context.removeAttribute(_index);
+            cycle.setAttribute(_index, null);
         }
 	}
 
-    protected final void removeVarItem(PageContext context) {
+    protected final void removeVarItem(ServiceCycle cycle) {
 		if(StringUtil.hasValue(_var)) {
-            context.removeAttribute(_var);
+            cycle.setAttribute(_var, null);
         }
 	}
 
-    protected final void incrimentIndex(PageContext context) {
+    protected final void incrimentIndex(ServiceCycle cycle) {
 		if(StringUtil.hasValue(_index)) {
-		    Integer index = (Integer)context.getAttribute(_index);
+		    Integer index = (Integer)cycle.getAttribute(_index);
 		    if(index == null) {
-		        context.setAttribute(_index, new Integer(0));
+		        cycle.setAttribute(_index, new Integer(0));
 		    } else {
-		        context.setAttribute(_index, new Integer(index.intValue() + 1));
+		        cycle.setAttribute(_index, new Integer(index.intValue() + 1));
 		    }
 		}
 	}
 
-    protected final void setVarItem(PageContext context, Object next) {
+    protected final void setVarItem(ServiceCycle cycle, Object next) {
 		if(StringUtil.hasValue(_var)) {
-		    context.setAttribute(_var, next);
+		    cycle.setAttribute(_var, next);
 		}
 	}
 
-	protected abstract Iterator createIterator(PageContext context, Object eval);
+	protected abstract Iterator createIterator(ServiceCycle cycle, Object eval);
     
-    public int doStartProcess(PageContext context) {
-        if(context == null) {
+    public int doStartProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        Object eval = _expression.getValue(context);
-        Iterator it = createIterator(context, eval);
+        Object eval = _expression.getValue(cycle);
+        Iterator it = createIterator(cycle, eval);
         if(it == null) {
             it = NullIterator.getInstance();
         }
-		context.setAttribute(getKey(), it);
-        return nextArrayItem(context) ? 
-                Tag.EVAL_BODY_INCLUDE : Tag.SKIP_BODY;
+		cycle.setAttribute(getKey(), it);
+        return nextArrayItem(cycle) ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     
-	public int doAfterChildProcess(PageContext context) {
-        if(context == null) {
+	public int doAfterChildProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        return nextArrayItem(context) ?
-                IterationTag.EVAL_BODY_AGAIN : Tag.SKIP_BODY;
+        return nextArrayItem(cycle) ? EVAL_BODY_AGAIN : SKIP_BODY;
     }
     
-    public int doEndProcess(PageContext context) {
-        if(context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        context.removeAttribute(getKey());
-        return Tag.EVAL_PAGE;
+        cycle.setAttribute(getKey(), null);
+        return EVAL_PAGE;
     }
 
 }

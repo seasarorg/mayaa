@@ -25,27 +25,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
 
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
-import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
-import org.seasar.maya.provider.PageContextSetting;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
 /**
- * TODO ServiceCycle
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MayaServlet extends HttpServlet implements CONST_IMPL {
@@ -98,33 +93,22 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     	return webResponse;
     }
     
-    /**
-     * @deprecated
-     */
-    private PageContext getPageContext(
-            ServletRequest request, ServletResponse response) {
+    protected ServiceCycle getServiceCycle(Request request, Response response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
-        JspFactory factory = JspFactory.getDefaultFactory();
-        PageContextSetting pc = _engine.getEngineSetting().getPageContextSetting();
-        PageContext context = factory.getPageContext(this, request, response, 
-                pc.getErrorPageURL(), pc.isNeedSession(), pc.getBufferSize(), pc.isAutoFlush());
-        EngineUtil.setEngine(context, _engine);
-        return context;
+        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        return provider.getServiceCycle(request, response);
     }
     
-    /**
-     * @deprecated
-     */
-    private void releasePageContext(PageContext context) {
-        if(context == null) {
+    protected void releaseServiceCycle(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        JspFactory factory = JspFactory.getDefaultFactory();
-        factory.releasePageContext(context);
+        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        provider.releaseServiceCycle(cycle);
     }
-
+    
     protected Throwable removeWrapperRuntimeException(Throwable t) {
         Throwable throwable = t ;
         while(throwable.getClass().equals(RuntimeException.class)) {
@@ -136,18 +120,18 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return throwable ;
     }
     
-    protected void handleError(ServletRequest request, ServletResponse response, Throwable t) {
-        PageContext context = getPageContext(request, response);
+    protected void handleError(Request request, Response response, Throwable t) {
+        ServiceCycle cycle = getServiceCycle(request, response);
         try {
             t = removeWrapperRuntimeException(t);
-            _engine.getErrorHandler().doErrorHandle(context, t);
+            _engine.getErrorHandler().doErrorHandle(cycle, t);
         } catch(Throwable tx) {
             if(tx instanceof RuntimeException) {
                 throw (RuntimeException)tx;
             }
             throw new RuntimeException(tx);
         } finally {
-            releasePageContext(context);
+            releaseServiceCycle(cycle);
         }
     }
     
@@ -213,7 +197,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return requestedPageInfo;
     }
 
-    protected void doMayaService(ServletRequest request, ServletResponse response) {
+    protected void doMayaService(
+            HttpServletRequest request, HttpServletResponse response) {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
@@ -221,19 +206,21 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         EngineSetting setting = _engine.getEngineSetting();
         String path = getRequestedPath(request);
         String[] requestedPageInfo = getRequestedPageInfo(setting, path);
+        Request req = createRequest(request);
+        Response res = createResponse(response);
         try {
-            PageContext context = getPageContext(request, response);
+            ServiceCycle cycle = getServiceCycle(req, res);
             try {
-                _engine.doService(context, requestedPageInfo[0], 
+                _engine.doService(cycle, requestedPageInfo[0], 
                         requestedPageInfo[1], requestedPageInfo[2]);
             } catch(Throwable t) {
-                context.getOut().clearBuffer();
+                res.clearBuffer();
                 throw t;
             } finally {
-                releasePageContext(context);
+                releaseServiceCycle(cycle);
             }
         } catch(Throwable t) {
-            handleError(request, response, t);
+            handleError(req, res, t);
         }
     }
     

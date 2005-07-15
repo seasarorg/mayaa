@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -17,13 +17,10 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
- * TODO ServiceCycle
- * 
  * テンプレートのレンダリングエントリーポイント。アプリケーションを構成する各ページのモデル
  * であり、リクエストに対してはステートレスなオブジェクトである。Engine#doService(PageContext)
  * で、テンプレートを初期化をした後、doTemplate(ProcessorContext)が呼ばれる。また、
@@ -55,18 +52,18 @@ public interface Page extends Specification, Serializable {
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
      * テンプレート接尾辞に対応したTemplateが見つからない場合は、テンプレート接尾辞の無い、
      * 「デフォルトテンプレート」を返す。
-     * @param context ステートフル情報をファサードしたコンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param requestedSuffix リクエストで強制するページ接尾辞。nullでもよい。
      * @return レンダリングするテンプレート。
      */
-    Template getTemplate(PageContext context, String requestedSuffix);
+    Template getTemplate(ServiceCycle cycle, String requestedSuffix);
 	
     /**
      * テンプレートレンダリングを行う。
-     * @param context ステートフル情報をファサードしたコンテキスト
+     * @param cycle サービスサイクルコンテキスト。
      * @param requestedSuffix リクエストで強制するページ接尾辞。もしくはnull。
      * @return JSPカスタムタグのdoStartTag()メソッドの返値の仕様と同じ。
      */
-    int doPageRender(PageContext context, String requestedSuffix);
+    int doPageRender(ServiceCycle cycle, String requestedSuffix);
 
 }

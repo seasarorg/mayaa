@@ -50,17 +50,12 @@ public class ServiceCycleImplTest extends TestCase {
         response.setHttpServletResponse(new MockHttpServletResponse());
         _cycle = new ServiceCycleImpl();
         _cycle.setApplication(application);
-        _cycle.setSession(session);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
     }
     
     public void testGetApplication() {
         assertNotNull(_cycle.getApplication());
-    }
-    
-    public void testGetSession() {
-        assertNotNull(_cycle.getSession());
     }
     
     public void testGetRequest() {

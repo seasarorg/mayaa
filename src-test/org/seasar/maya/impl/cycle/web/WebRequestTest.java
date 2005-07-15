@@ -47,6 +47,10 @@ public class WebRequestTest extends TestCase {
         assertEquals("request", _request.getScopeName());
     }
     
+    public void testGetSession() {
+        assertNotNull(_request.getSession());
+    }
+    
     public void testGetAttribute() {
         _request.setAttribute("test", "test attr");
         assertEquals("test attr", _request.getAttribute("test"));

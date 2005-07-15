@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,8 +15,7 @@
  */
 package org.seasar.maya.standard.engine.error;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
@@ -50,25 +49,25 @@ public class TemplateErrorHandler  implements ErrorHandler {
         }
     }
     
-    public void doErrorHandle(PageContext context, Throwable t) {
-        if(t == null || context == null) {
+    public void doErrorHandle(ServiceCycle cycle, Throwable t) {
+        if(t == null || cycle == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(THROWABLE, t);
-        Engine engine = EngineUtil.getEngine(context);
+        cycle.setAttribute(THROWABLE, t);
+        Engine engine = EngineUtil.getEngine(cycle);
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
                 	String pageName = getPageName(throwableClass);
-		            engine.doService(context, pageName, "", "html");
+		            engine.doService(cycle, pageName, "", "html");
 		            break;
                 } catch(PageNotFoundException ignore) {
                 }
             }
         } finally {
-            context.removeAttribute(THROWABLE);
+            cycle.setAttribute(THROWABLE, null);
         }
     }
     

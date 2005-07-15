@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
@@ -15,8 +15,7 @@
  */
 package org.seasar.maya.impl.util;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.el.CompiledExpression;
 import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -28,8 +27,6 @@ import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
- * TODO ServiceCycle
- * 
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ExpressionUtil implements CONST_IMPL {
@@ -50,28 +47,28 @@ public class ExpressionUtil implements CONST_IMPL {
         return null;
     }
     
-    public static Object expressGetValue(PageContext context, Object expression) {
+    public static Object expressGetValue(ServiceCycle cycle, Object expression) {
         Object value = null;
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
-            value = compiledExpression.getValue(context);
+            value = compiledExpression.getValue(cycle);
         } else {
             value = expression;
         }
         return value;
     }
 
-    public static void expressSetValue(PageContext context,
+    public static void expressSetValue(ServiceCycle cycle,
             Object expression, Object value) {
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
-            compiledExpression.setValue(context, value);
+            compiledExpression.setValue(cycle, value);
         }
     }
     
     public static  void execEvent(Specification specification, QName eventName,
-            PageContext context) {
-        if(specification == null || eventName == null || context == null) {
+            ServiceCycle cycle) {
+        if(specification == null || eventName == null || cycle == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
@@ -81,7 +78,7 @@ public class ExpressionUtil implements CONST_IMPL {
 	        	String expression = attr.getValue();
 	        	if(StringUtil.hasValue(expression)) {
 		            Object obj = ExpressionUtil.parseExpression(expression, Void.class);
-		            ExpressionUtil.expressGetValue(context, obj);
+		            ExpressionUtil.expressGetValue(cycle, obj);
 	        	}
 	        }
         }

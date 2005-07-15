@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -17,14 +17,11 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
- * TODO ServiceCycle
- * 
  * テンプレートオブジェクト。HTMLをパースした結果の、TemplateProcessorのツリー構造を内包。
  * 自身もTemplateProcessorである。リクエストに対して、ステートレスである。 シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -45,11 +42,11 @@ public interface Template extends Specification, TemplateProcessor, Serializable
 
     /**
      * テンプレートをレンダリングする。
-     * @param context ステートフル情報をファサードしたコンテキスト
+     * @param cycle サービスサイクルコンテキスト。
      * @param renderRoot 描画のルートとなるプロセッサ。nullの場合は自身をルートとして描画する。
      * @return javax.servlet.jsp.tagext.Tag#doStartTag()/doAfterBody()/doEndTag()
      * 				の返値仕様と同じ。
      */
-    int doTemplateRender(PageContext context, TemplateProcessor renderRoot);
+    int doTemplateRender(ServiceCycle cycle, TemplateProcessor renderRoot);
     
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which 
@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.el.resolver;
 
-import javax.servlet.jsp.PageContext;
-
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
- * TODO ServiceCycle
- * 
  * 式評価リゾルバ。アプリケーションスコープにて共有されるので、
  * スレッドセーフに実装することが求められる。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -31,25 +28,25 @@ public interface ExpressionResolver extends Parameterizable {
     /**
      * 値の取得のためのリゾルバメソッド。解決した場合は、ExpressionContext
      * のpropertyResolvedプロパティにtrueをセットする。
-     * @param context 式コンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値取得するプロパティ。文字列もしくはインデックス値。
      * @param chain 次のレゾルバへのエントリーとなるチェーン。
      * @return 評価結果。
      */
-    Object getValue(PageContext context, 
+    Object getValue(ServiceCycle cycle, 
             Object base, Object property, ExpressionChain chain);
 
     /**
      * 値設定のためのリゾルバメソッド。解決した場合は、ExpressionContext
      * のpropertyResolvedプロパティにtrueをセットする。
-     * @param context 式コンテキスト。
+     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値設定するプロパティ。文字列もしくはインデックス値。
      * @param value 設定値。
      * @param chain 次のレゾルバへのエントリーとなるチェーン。
      */
-    void setValue(PageContext context, 
+    void setValue(ServiceCycle cycle, 
             Object base, Object property, Object value, ExpressionChain chain);
     
 }

@@ -38,18 +38,29 @@ import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.impl.util.collection.NullEnumeration;
-import org.seasar.maya.standard.CONST_STANDARD;
 import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CyclePageContext extends PageContext implements CONST_STANDARD {
+public class CyclePageContext extends PageContext {
     
     private static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
     private static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
     private static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
     private static final String ERROR_SERVLET_NAME = "javax.servlet.error.servlet_name";
+    private static final int[] JSP_SCOPES = {
+            PageContext.PAGE_SCOPE,
+            PageContext.REQUEST_SCOPE,
+            PageContext.SESSION_SCOPE,
+            PageContext.APPLICATION_SCOPE
+    }; 
+    private static final String[] CYCLE_SCOPES = {
+            ServiceCycle.SCOPE_PAGE,
+            ServiceCycle.SCOPE_REQUEST,
+            ServiceCycle.SCOPE_SESSION,
+            ServiceCycle.SCOPE_APPLICATION
+    };
 
     private ServletConfig _config;
 	private ServiceCycle _cycle;

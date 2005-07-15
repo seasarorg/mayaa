@@ -17,16 +17,19 @@ package org.seasar.maya.sample;
 
 import java.util.Locale;
 
-import javax.servlet.jsp.PageContext;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LocaleModel {
 
-    public String processLocale(PageContext context) {
-        Locale locale = context.getRequest().getLocale();
-        return locale.getLanguage();
+    public String processLocale(ServiceCycle cycle) {
+        Locale[] locales = cycle.getRequest().getLocales();
+        if(locales.length > 0) {
+            return locales[0].getLanguage();
+        }
+        return Locale.ENGLISH.getLanguage();
     }
     
 }

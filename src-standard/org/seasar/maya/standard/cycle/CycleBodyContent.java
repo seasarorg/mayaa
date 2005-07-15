@@ -25,13 +25,14 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.standard.CONST_STANDARD;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleBodyContent extends BodyContent implements CONST_STANDARD {
+public class CycleBodyContent extends BodyContent {
     
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     private CycleWriter _writer;
     
     public CycleBodyContent(CycleWriter writer) {

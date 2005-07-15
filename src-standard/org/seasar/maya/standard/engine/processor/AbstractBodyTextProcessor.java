@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Project and the Others.
+ * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  *
  * Licensed under the Seasar Software License, v1.1 (aka "the License");
  * you may not use this file except in compliance with the License which
@@ -15,11 +15,8 @@
  */
 package org.seasar.maya.standard.engine.processor;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
@@ -37,49 +34,50 @@ public abstract class AbstractBodyTextProcessor
         return getClass().getName() + "@" + hashCode();
     }
 
-    protected abstract int process(PageContext context, String bodyString);
+    protected abstract int process(ServiceCycle cycle, String bodyString);
     
-    public void setBodyContent(PageContext context, BodyContent bodyContent) {
-        if (context == null || bodyContent == null) {
+    public void setBodyContent(ServiceCycle context, CycleWriter body) {
+        if (context == null || body == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(getBodyContentKey(),  bodyContent);
+        context.setAttribute(getBodyContentKey(),  body);
     }
 
-    public int doStartProcess(PageContext context) {
-        return BodyTag.EVAL_BODY_BUFFERED;
+    public int doStartProcess(ServiceCycle cycle) {
+        return EVAL_BODY_BUFFERED;
     }
 
-    public int doEndProcess(PageContext context) {
-        if (context == null) {
+    public int doEndProcess(ServiceCycle cycle) {
+        if (cycle == null) {
             throw new IllegalArgumentException();
         }
         String key = getBodyContentKey();
-        Object obj = context.getAttribute(key);
-        if (obj instanceof BodyContent) {
-            String bodyString = ((BodyContent)obj).getString().trim();
-            context.removeAttribute(key);
-            return process(context, bodyString);
+        Object obj = cycle.getAttribute(key);
+        if (obj instanceof CycleWriter) {
+            String bodyString = new String(((CycleWriter)obj).getBuffer()).trim();
+            cycle.setAttribute(key, null);
+            return process(cycle, bodyString);
         }
-        return process(context, null);
+        return process(cycle, null);
     }
 
-    public void doInitChildProcess(PageContext context) {
+    public void doInitChildProcess(ServiceCycle cycle) {
     }
 
-    public int doAfterChildProcess(PageContext context) {
-        return Tag.SKIP_BODY;
+    public int doAfterChildProcess(ServiceCycle cycle) {
+        return SKIP_BODY;
     }
 
     public void setChildEvaluation(boolean childEvaluation) {
         _childEvaluation = childEvaluation;
     }
     
-    public boolean isChildEvaluation(PageContext context) {
+    public boolean isChildEvaluation(ServiceCycle cycle) {
         return _childEvaluation;
     }
 
-    public boolean isIteration(PageContext context) {
+    public boolean isIteration(ServiceCycle cycle) {
         return true;
     }
+
 }

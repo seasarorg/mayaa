@@ -20,12 +20,13 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.standard.CONST_STANDARD;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleJspWriter extends JspWriter implements CONST_STANDARD  {
+public class CycleJspWriter extends JspWriter {
+    
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
     private CycleWriter _writer;
     

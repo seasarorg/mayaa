@@ -28,14 +28,12 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.standard.CONST_STANDARD;
 
 /**
  * JSTL の fmt:formatDate にあたるネイティブプロセッサ.
  * @author suga
  */
-public class FormatDateProcessor extends TemplateProcessorSupport
-        implements CONST_STANDARD {
+public class FormatDateProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -9118340781420704614L;
 

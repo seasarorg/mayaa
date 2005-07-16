@@ -31,14 +31,16 @@ public class CycleWriterImplTest extends TestCase {
     public void testGetBuffer() throws IOException {
         CycleWriterImpl writer = new CycleWriterImpl(null);
         writer.write("test string");
-        assertEquals("test string", new String(writer.getBuffer()));
+        assertEquals("test string", writer.getString());
     }
     
     public void testClearBuffer() throws IOException {
         CycleWriterImpl writer = new CycleWriterImpl(null);
         writer.write("test string");
         writer.clearBuffer();
-        assertEquals("", new String(writer.getBuffer()));
+        assertEquals("", writer.getString());
     }
+
+    // FIXME èëÇ´Ç©ÇØÅBÅBÅB
     
 }

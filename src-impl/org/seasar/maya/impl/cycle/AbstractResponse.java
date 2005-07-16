@@ -16,6 +16,10 @@
 package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.Stack;
 
 import org.seasar.maya.cycle.CycleWriter;
@@ -72,8 +76,12 @@ public abstract class AbstractResponse implements Response {
         getWriter().clearBuffer();
     }
 
-    public String getBuffer() {
-        return new String(getWriter().getBuffer());
+    public String getString() {
+        return getWriter().getString();
+    }
+    
+    public Reader getReader() {
+        return getWriter().getReader();
     }
 
     public CycleWriter pushWriter() {
@@ -125,18 +133,20 @@ public abstract class AbstractResponse implements Response {
         return _encoding;
     }
 
-    protected abstract void writeToUnderlyingObject(byte[] buffer);
-    
     public void flush() {
-        if(_stack.size() == 1) {
-            CycleWriter writer = (CycleWriter)_stack.peek();
-            writeToUnderlyingObject(writer.getBuffer());
-        } else {
-            try {
+        try {
+            if(_stack.size() == 1) {
+                CycleWriter writer = (CycleWriter)_stack.peek();
+                Writer underlyingWriter = new OutputStreamWriter(
+                        getUnderlyingOutputStream(), _encoding);
+                writer.writeOut(underlyingWriter);
+            } else {
                 getWriter().flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

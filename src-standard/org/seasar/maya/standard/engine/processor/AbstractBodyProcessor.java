@@ -81,7 +81,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         String key = getBodyContentKey();
         Object obj = cycle.getAttribute(key);
         if (obj instanceof CycleWriter) {
-            obj = ((CycleWriter)obj).getBuffer();
+            obj = ((CycleWriter)obj).getString();
             cycle.setAttribute(key, null);
         }
         return process(cycle, obj);

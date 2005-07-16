@@ -16,6 +16,7 @@
 package org.seasar.maya.cycle;
 
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Serializable;
 
 /**
@@ -52,7 +53,13 @@ public interface Response extends Serializable, Underlyable  {
      * 書き出しバッファの内容を取得する。
      * @return バッファ内容。
      */
-    String getBuffer();
+    String getString();
+    
+    /**
+     * 書き出しバッファの内容を取得する。
+     * @return バッファ内容。
+     */
+    Reader getReader();
     
     /**
      * バッファへの書き出し。

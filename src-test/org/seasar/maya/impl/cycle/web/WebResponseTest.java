@@ -39,11 +39,6 @@ public class WebResponseTest extends TestCase {
         _response =  new WebResponse();
         _response.setHttpServletResponse(_httpServletResponse);
     }
-    
-    public void testWriteToUnderlyingObject() {
-        _response.writeToUnderlyingObject("<html></html>".getBytes());
-        assertEquals("<html></html>", new String(_httpServletResponse.getBuffer()));
-    }
 
     public void testGetOutputStream() throws IOException {
         PrintWriter writer = new PrintWriter(_response.getUnderlyingOutputStream());

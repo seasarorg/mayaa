@@ -15,7 +15,8 @@
  */
 package org.seasar.maya.cycle;
 
-import java.io.OutputStream;
+import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 
 /**
@@ -36,15 +37,21 @@ public abstract class CycleWriter extends Writer {
     public abstract void clearBuffer();
 	
 	/**
-     * バッファの内容を取得する。
+     * バッファの内容をStringで取得する。
      * @return バッファ内容。
 	 */
-    public abstract byte[] getBuffer();
+    public abstract String getString();
+	
+    /**
+     * バッファの内容をReaderで取得する。
+     * @return バッファ内容。
+     */
+    public abstract Reader getReader();
     
     /**
-     * 内包するバッファの出力ストリームの取得。 
-     * @return バッファの出力ストリーム。
+     * 指定Writerにバッファ内容を書き出す。
+     * @param writer 書き出し先のWriter。
      */
-    public abstract OutputStream getOutputStream();
-	
+    public abstract void writeOut(Writer writer) throws IOException;
+    
 }

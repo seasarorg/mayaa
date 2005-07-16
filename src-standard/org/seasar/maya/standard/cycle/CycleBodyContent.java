@@ -15,9 +15,7 @@
  */
 package org.seasar.maya.standard.cycle;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -56,11 +54,11 @@ public class CycleBodyContent extends BodyContent {
     }
 
     public Reader getReader() {
-        return new InputStreamReader(new ByteArrayInputStream(_writer.getBuffer()));
+        return _writer.getReader();
     } 
     
     public String getString() {
-        return new String(_writer.getBuffer());
+        return _writer.getString();
     }
 
     public void clear() throws IOException {

@@ -15,9 +15,10 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayReader;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 import org.seasar.maya.cycle.CycleWriter;
 
@@ -26,12 +27,32 @@ import org.seasar.maya.cycle.CycleWriter;
  */
 public class CycleWriterImpl extends CycleWriter {
 
+    private static final int BLOCK_SIZE = 1024;
+    private static final int MAX_BLOCK_NUM = 32; 
+    
+    private boolean _closed;
     private boolean _flushed;
     private CycleWriter _enclosingWriter;
-	private ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
-	
-    public CycleWriterImpl(CycleWriter enclosingWriter) {
+    private char[] _buffer;
+    private int _blockSize;
+    private int _maxBlockNum;
+    private int _currentBlockNum;
+    private int _bufferOffset;
+    private int _usedBufferSize;
+
+    public CycleWriterImpl(CycleWriter enclosingWriter, int blockSize, int maxBlockNum) {
+        if(blockSize <= 0 || maxBlockNum <= 0) {
+            throw new IllegalArgumentException();
+        }
         _enclosingWriter = enclosingWriter;
+        _blockSize = blockSize;
+        _maxBlockNum = maxBlockNum;
+        _currentBlockNum = 1;
+        _buffer = new char[_blockSize];
+    }
+    
+    public CycleWriterImpl(CycleWriter enclosingWriter) {
+        this(enclosingWriter, BLOCK_SIZE, MAX_BLOCK_NUM);
     }
     
     public CycleWriter getEnclosingWriter() {
@@ -39,42 +60,77 @@ public class CycleWriterImpl extends CycleWriter {
     }
     
     public void clearBuffer() {
-        _flushed = false;
-		_outputStream.reset();
+        check();
+        _bufferOffset = 0;
+		_usedBufferSize = 0;
 	}
 	
-    public byte[] getBuffer() {
-		return _outputStream.toByteArray();
-	}
-	
-	public void close() throws IOException {
+	public void close() {
+        _closed = true;
+        _bufferOffset = 0;
+        _usedBufferSize = 0;
+        _buffer = null;
 	}
 
-	public void flush() throws IOException {
-	    if(_flushed) {
-	        throw new AlreadyFlushedException();
+    private void check() {
+        if(_closed) {
+            throw new AlreadyClosedException();
         }
-        // write out to enclosing-writer.
+        if(_flushed) {
+            throw new AlreadyFlushedException();
+        }
+    }
+    
+    // write out to enclosing-writer.
+    private void writeToEnclosing() throws IOException {
         if(_enclosingWriter != null) {
-            _flushed = true;
-            byte[] buffer = getBuffer();
-	        for(int i = 0; i < buffer.length; i++) {
-	            _enclosingWriter.write(buffer[i]);
-            }
+            _enclosingWriter.write(_buffer, _bufferOffset, _usedBufferSize);
+            _bufferOffset = _usedBufferSize;
         }
+    }
+    
+	public void flush() throws IOException {
+	    check();
+        _flushed = true;
+        writeToEnclosing();
 	}
 
 	public void write(char[] cbuf, int off, int len) throws IOException {
+
+        // FIXME ‘‚«‚©‚¯BBB
+        
+        check();
         if (len == 0) {
             return;
         }
-		for(int i = off; i < len; i++) {
-			_outputStream.write(cbuf[i]);
-		}
-	}
-    
-    public OutputStream getOutputStream() {
-        return _outputStream;
+        if(_usedBufferSize + len > _buffer.length) {
+            if(_currentBlockNum == _maxBlockNum) {
+                writeToEnclosing();
+                clearBuffer();
+            } else {
+                _currentBlockNum++;
+                char[] newBuffer = new char[_blockSize * _currentBlockNum];
+                System.arraycopy(_buffer, 0, newBuffer, 0, _usedBufferSize);
+                _buffer = newBuffer;
+            }
+        }
+        System.arraycopy(cbuf, off, _buffer, _usedBufferSize, len);
+        _usedBufferSize += len;
     }
-	
+
+    public Reader getReader() {
+        return new CharArrayReader(_buffer, 0, _usedBufferSize);
+    }
+
+    public String getString() {
+        return new String(_buffer, 0, _usedBufferSize);
+    }
+
+    public void writeOut(Writer writer) throws IOException {
+        if(writer == null) {
+            throw new IllegalArgumentException();
+        }
+        writer.write(_buffer, 0, _usedBufferSize);
+    }
+    
 }

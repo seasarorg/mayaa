@@ -17,8 +17,6 @@ package org.seasar.maya.impl.cycle.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -71,20 +69,6 @@ public class WebResponse extends AbstractResponse {
             throw new IllegalArgumentException();
         }
         _httpServletResponse.setContentType(mimeType);
-    }
-
-    protected void writeToUnderlyingObject(byte[] buffer) {
-        check();
-        try {
-            Writer writer = new OutputStreamWriter(
-                    _httpServletResponse.getOutputStream(), getEncoding());
-            for(int i = 0; i < buffer.length; i++) {
-                writer.write(buffer[i]);
-            }
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public OutputStream getUnderlyingOutputStream() {

@@ -54,8 +54,8 @@ public class ImplicitScope implements AttributeScope {
     	_cycle = cycle;
     }
     
-	public String getScopeName() {
-		return "implicit";
+	public Scope getScope() {
+		return AttributeScope.SCOPE_IMPLICIT;
 	}
 
 	public Iterator iterateAttributeNames() {

@@ -81,8 +81,8 @@ public class ServiceCycleImpl implements ServiceCycle {
         _response = response;
     }
     
-    public String getScopeName() {
-        return SCOPE_PAGE;
+    public Scope getScope() {
+        return AttributeScope.SCOPE_PAGE;
     }
 
     public Iterator iterateAttributeNames(String scope) {

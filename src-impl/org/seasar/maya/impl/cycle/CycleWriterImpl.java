@@ -95,22 +95,24 @@ public class CycleWriterImpl extends CycleWriter {
         writeToEnclosing();
 	}
 
-	protected void prepareBuffer(int len) throws IOException {
+	protected int prepareBuffer(int len) throws IOException {
 		int newUsed = _usedBufferSize + len;
-		if(newUsed <= _buffer.length) {
-			return;
+		int currentSize = _buffer.length;
+		if(newUsed <= currentSize) {
+			return currentSize;
 		}
 		for(int blockNum = _currentBlockNum; blockNum <= _maxBlockNum; blockNum++) {
 			int newSize = blockNum * _blockSize;
 			if(newSize >= newUsed) {
 				char[] newBuffer = new char[newSize];
                 System.arraycopy(_buffer, 0, newBuffer, 0, _usedBufferSize);
-				return;
+                _buffer = newBuffer;
+				return newSize;
 			}
 		}
 		writeToEnclosing();
         clearBuffer();
-        prepareBuffer(len);
+        return prepareBuffer(len);
 	}
 	
 	public void write(char[] cbuf, int off, int len) throws IOException {
@@ -136,6 +138,7 @@ public class CycleWriterImpl extends CycleWriter {
             throw new IllegalArgumentException();
         }
         writer.write(_buffer, 0, _usedBufferSize);
+        writer.flush();
     }
     
 }

@@ -41,6 +41,13 @@ public class CycleWriterImplTest extends TestCase {
         assertEquals("", writer.getString());
     }
 
-    // FIXME èëÇ´Ç©ÇØÅBÅBÅB
+    public void testPrepareBuffer() throws IOException {
+    	CycleWriterImpl writer = new CycleWriterImpl(null, 2, 4);
+    	assertEquals(4, writer.prepareBuffer(3));
+    	writer.write("123");
+    	assertEquals(4, writer.prepareBuffer(1));
+    	writer.write("4");
+    	assertEquals(8, writer.prepareBuffer(3));
+    }
     
 }

@@ -46,7 +46,7 @@ public class UrlProcessor extends TemplateProcessorSupport
     	_scope = scope;
     }
     
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         String unEncodeString = _value + "?" + getParamString(); 
         String encodedString  = cycle.encodeURL(unEncodeString);
         outPutEncodedString(cycle, encodedString);

@@ -29,7 +29,7 @@ public class WhenProcessor extends TemplateProcessorSupport {
 
     private ProcessorProperty _test;
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }

@@ -42,7 +42,7 @@ public class SetAttributeProcessor extends AbstractBodyProcessor {
         _scope = scope;
     }
 
-    public int process(ServiceCycle cycle, Object obj) {
+    public ProcessStatus process(ServiceCycle cycle, Object obj) {
         String varName = (String)_var.getValue(cycle);
         if(StringUtil.hasValue(varName)) {
             cycle.setAttribute(varName, obj, _scope);

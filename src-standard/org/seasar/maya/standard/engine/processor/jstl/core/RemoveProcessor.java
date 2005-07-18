@@ -36,7 +36,7 @@ public class RemoveProcessor extends TemplateProcessorSupport {
         _scope = scope;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(_var != null) {
             cycle.setAttribute(_var, null, _scope);
         }

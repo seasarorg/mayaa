@@ -33,11 +33,11 @@ public class RedirectProcessor extends TemplateProcessorSupport
     private String _url ;
     private Map    _childParam ;
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         return EVAL_BODY_INCLUDE;
     }
     
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         String paramString    = getParamString();
         String unEncodeString = _url + "?" + paramString;
         String encodedString  = cycle.encodeURL(unEncodeString);

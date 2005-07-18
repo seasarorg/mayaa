@@ -43,7 +43,7 @@ public class ParseProcessor extends TemplateProcessorSupport {
         _resourceXml = resourceXml ;
     }
 
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         Document doc;

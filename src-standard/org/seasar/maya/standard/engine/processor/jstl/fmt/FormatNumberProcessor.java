@@ -172,7 +172,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         
     }
     
-    protected int process(ServiceCycle cycle, Object obj) {
+    protected ProcessStatus process(ServiceCycle cycle, Object obj) {
         String formatted = null;
         Object input = obj;
         

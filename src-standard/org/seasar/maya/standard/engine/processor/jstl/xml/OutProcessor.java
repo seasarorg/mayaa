@@ -54,7 +54,7 @@ public class OutProcessor
         });
     }
     
-    protected int process(ServiceCycle cycle, Object obj) {
+    protected ProcessStatus process(ServiceCycle cycle, Object obj) {
         getNode(cycle, (String)obj);
         return SKIP_BODY;
     }

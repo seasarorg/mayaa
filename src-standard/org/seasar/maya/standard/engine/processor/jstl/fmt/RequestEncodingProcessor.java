@@ -39,7 +39,7 @@ public class RequestEncodingProcessor extends AbstractBodyProcessor {
         super.setValue(value);
     }
     
-    public int process(ServiceCycle cycle, Object obj) {
+    public ProcessStatus process(ServiceCycle cycle, Object obj) {
         // TODO impl
         return EVAL_PAGE;
     }

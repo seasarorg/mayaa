@@ -63,7 +63,7 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         _var = var;
     }
 
-    public int process(ServiceCycle cycle, Object obj) {
+    public ProcessStatus process(ServiceCycle cycle, Object obj) {
         Locale       locale   = getLocale(cycle);
         NumberFormat format   = getFormat(locale);
         Number       number   = null;

@@ -28,7 +28,9 @@ public class BodyValueProcessor
                         extends TemplateProcessorSupport 
                         implements ChildEvaluationProcessor {
     
-    protected int process(ServiceCycle cycle){
+	private static final long serialVersionUID = 5795848587818700175L;
+
+	protected ProcessStatus process(ServiceCycle cycle){
         return EVAL_PAGE;
     }
     
@@ -46,11 +48,11 @@ public class BodyValueProcessor
         return ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         return EVAL_BODY_BUFFERED;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -58,7 +60,7 @@ public class BodyValueProcessor
     }
     public void doInitChildProcess(ServiceCycle cycle) {
     }
-    public int doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
         return SKIP_BODY;
     }
     public boolean isChildEvaluation(ServiceCycle cycle) {

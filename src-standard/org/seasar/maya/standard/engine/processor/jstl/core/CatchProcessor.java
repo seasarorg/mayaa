@@ -35,7 +35,7 @@ public class CatchProcessor extends TemplateProcessorSupport
         _var = var;
     }
 
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         return EVAL_BODY_INCLUDE;
     }
 

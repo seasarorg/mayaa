@@ -66,7 +66,7 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return getClass().getName() + "@" + hashCode();
     }
 
-    public int doStartProcess(ServiceCycle context) {
+    public ProcessStatus doStartProcess(ServiceCycle context) {
         if (context == null) {
             throw new IllegalArgumentException();
         }
@@ -135,14 +135,14 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return endValue;
     }
 
-    public int doAfterChildProcess(ServiceCycle context) {
+    public ProcessStatus doAfterChildProcess(ServiceCycle context) {
         if (context == null) {
             throw new IllegalArgumentException();
         }
         return nextArrayItem(context) ? EVAL_BODY_AGAIN : SKIP_BODY;
     }
 
-    public int doEndProcess(ServiceCycle context) {
+    public ProcessStatus doEndProcess(ServiceCycle context) {
         if (context == null) {
             throw new IllegalArgumentException();
         }

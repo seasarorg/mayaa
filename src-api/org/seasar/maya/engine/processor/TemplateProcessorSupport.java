@@ -74,14 +74,14 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return _index;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         return EVAL_PAGE;
     }
 
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }

@@ -47,6 +47,6 @@ public interface Template extends Specification, TemplateProcessor, Serializable
      * @return javax.servlet.jsp.tagext.Tag#doStartTag()/doAfterBody()/doEndTag()
      * 				の返値仕様と同じ。
      */
-    int doTemplateRender(ServiceCycle cycle, TemplateProcessor renderRoot);
+    ProcessStatus doTemplateRender(ServiceCycle cycle, TemplateProcessor renderRoot);
     
 }

@@ -26,7 +26,7 @@ public interface IterationProcessor extends TemplateProcessor {
     /**
      * リターンフラグ。この値をdoAfterChildProcess()が返すと、再イテレートする。
      */
-    int EVAL_BODY_AGAIN = 2;
+    ProcessStatus EVAL_BODY_AGAIN = new ProcessStatus();
     
     /**
      * イテレート実行するかどうかを返す。JSPのIterationTagやBodyTagをホスト
@@ -42,6 +42,6 @@ public interface IterationProcessor extends TemplateProcessor {
      * @param cycle サービスサイクルコンテキスト。
      * @return リターンフラグ。EVAL_BODY_AGAINで再イテレート。SKIP_BODYで中止。
      */
-    int doAfterChildProcess(ServiceCycle cycle);
+    ProcessStatus doAfterChildProcess(ServiceCycle cycle);
 
 }

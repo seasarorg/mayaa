@@ -29,23 +29,23 @@ public interface TemplateProcessor extends Serializable {
     /**
      * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
      */
-    int SKIP_BODY = 0;
+    ProcessStatus SKIP_BODY = new ProcessStatus();
     
     /**
      * リターンフラグ。doStartProcess()がこの値を返すと、
      * プロセッサボディをバッファリング無しで出力する。
      */
-    int EVAL_BODY_INCLUDE = 1;
+    ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
     
     /**
      * リターンフラグ。doEndProcess()がこの値を返すと、以降の出力をただちに中止する。
      */
-    int SKIP_PAGE = 5;
+    ProcessStatus SKIP_PAGE = new ProcessStatus();
     
     /**
      * リターンフラグ。doEndProcess()がこの値を返すと、以降のプロセッサ出力を続ける。
      */
-    int EVAL_PAGE = 6;
+    ProcessStatus EVAL_PAGE = new ProcessStatus();
     
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
@@ -88,15 +88,29 @@ public interface TemplateProcessor extends Serializable {
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
      * @param cycle サービスサイクルコンテキスト。
-     * @return javax.servlet.jsp.tagext.Tag#doStartTag()の返値と同じ仕様。
+     * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
+     * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
      */
-    int doStartProcess(ServiceCycle cycle);
+    ProcessStatus doStartProcess(ServiceCycle cycle);
 
     /**
      * 閉じタグの出力。
      * @param cycle サービスサイクルコンテキスト。
-     * @return javax.servlet.jsp.tagext.Tag#doEndTag()の返値と同じ仕様。
+     * @return ページのこのタグ以降を処理する場合にはEVAL_PAGE、
+     * 以降の処理をスキップする場合にはSKIP_PAGE。
      */
-    int doEndProcess(ServiceCycle cycle);
+    ProcessStatus doEndProcess(ServiceCycle cycle);
 
+    /**
+     * プロセッサ動作にて状態遷移を示すステータス。
+     */
+    public class ProcessStatus implements Serializable {
+
+		private static final long serialVersionUID = 473586899180314059L;
+
+		protected ProcessStatus() {
+    	}
+    	
+    }
+    
 }

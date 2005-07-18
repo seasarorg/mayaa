@@ -27,7 +27,7 @@ public interface ChildEvaluationProcessor extends IterationProcessor {
     /**
      * リターンフラグ。この値をdoStartProcess()が返すと、プロセッサボディをバッファリングする。
      */
-    int EVAL_BODY_BUFFERED = 2;
+    ProcessStatus EVAL_BODY_BUFFERED = new ProcessStatus();
     
     /**
      * ボディのスタック評価を行うかを返す。JSPのBodyTagをホストしている場合に

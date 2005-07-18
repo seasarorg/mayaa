@@ -20,7 +20,7 @@ import java.util.Iterator;
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -65,8 +65,8 @@ public class WebApplication implements Application {
         return _servletContext.getRealPath(contextRelatedPath);
     }
 
-    public Scope getScope() {
-        return AttributeScope.SCOPE_APPLICATION;
+    public String getScopeName() {
+        return ServiceCycle.SCOPE_APPLICATION;
     }
     
     public Iterator iterateAttributeNames() {

@@ -25,7 +25,7 @@ public class CDATAProcessor extends TemplateProcessorSupport {
     
 	private static final long serialVersionUID = -4267623139201513906L;
 
-	public int doStartProcess(ServiceCycle cycle) {
+	public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}
@@ -33,7 +33,7 @@ public class CDATAProcessor extends TemplateProcessorSupport {
         return EVAL_BODY_INCLUDE;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}

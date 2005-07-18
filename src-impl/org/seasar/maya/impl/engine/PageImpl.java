@@ -24,6 +24,7 @@ import org.seasar.maya.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
@@ -174,14 +175,14 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public int doPageRender(ServiceCycle cycle, String requestedSuffix) {
+    public ProcessStatus doPageRender(ServiceCycle cycle, String requestedSuffix) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
     	EngineUtil.setPage(cycle, this);
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
         Template template = getTemplate(cycle, requestedSuffix);
-        int ret = template.doTemplateRender(cycle, null);
+        ProcessStatus ret = template.doTemplateRender(cycle, null);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
         EngineUtil.setPage(cycle, null);
         return ret;

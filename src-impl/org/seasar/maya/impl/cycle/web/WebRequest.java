@@ -22,8 +22,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -119,8 +119,8 @@ public class WebRequest implements Request {
         return _session;
     }
 
-    public Scope getScope() {
-        return AttributeScope.SCOPE_REQUEST;
+    public String getScopeName() {
+        return ServiceCycle.SCOPE_REQUEST;
     }
     
     public Iterator iterateAttributeNames() {

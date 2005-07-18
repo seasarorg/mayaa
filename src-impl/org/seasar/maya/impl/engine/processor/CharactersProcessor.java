@@ -41,7 +41,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
         return _text.getValue(cycle);
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}

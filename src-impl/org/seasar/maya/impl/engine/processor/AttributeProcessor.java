@@ -48,7 +48,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         _value = value;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(_value == null) {
             throw new IllegalStateException();
         }

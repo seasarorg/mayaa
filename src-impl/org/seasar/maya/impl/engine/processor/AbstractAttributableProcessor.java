@@ -77,18 +77,18 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return info._processtimeProperties;
     }
     
-    protected abstract int writeStartElement(ServiceCycle cycle);
+    protected abstract ProcessStatus writeStartElement(ServiceCycle cycle);
     
     protected abstract void writeEndElement(ServiceCycle cycle);
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(_childEvaluation) {
             return EVAL_BODY_BUFFERED;
         }
         return writeStartElement(cycle);
     }
     
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -126,7 +126,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     public void doInitChildProcess(ServiceCycle cycle) {
     }
     
-    public int doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
         return SKIP_BODY;
     }
 

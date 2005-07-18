@@ -138,14 +138,14 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     // main rendering method
-    private int render(ServiceCycle cycle, TemplateProcessor current) {
+    private ProcessStatus render(ServiceCycle cycle, TemplateProcessor current) {
         if(cycle == null || current == null) {
             throw new IllegalArgumentException();
         }
         
-        int ret = EVAL_PAGE;
+        ProcessStatus ret = EVAL_PAGE;
         try { 
-            int startRet = current.doStartProcess(cycle);
+        	ProcessStatus startRet = current.doStartProcess(cycle);
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
@@ -157,10 +157,10 @@ public class TemplateImpl extends SpecificationImpl
             }
             if(startRet == EVAL_BODY_INCLUDE || 
                     startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED) {
-                int afterRet;
+            	ProcessStatus afterRet;
                 do {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
-                        final int child = render(cycle, current.getChildProcessor(i));
+                        final ProcessStatus child = render(cycle, current.getChildProcessor(i));
                         if(child == SKIP_PAGE) {
                             return SKIP_PAGE;
                         }
@@ -212,7 +212,7 @@ public class TemplateImpl extends SpecificationImpl
         response.setMimeType(contentType);
     }
     
-    public int doTemplateRender(ServiceCycle cycle,
+    public ProcessStatus doTemplateRender(ServiceCycle cycle,
             TemplateProcessor renderRoot) {
         if(cycle == null) {
             throw new IllegalArgumentException();
@@ -226,7 +226,7 @@ public class TemplateImpl extends SpecificationImpl
             prepareEncoding(cycle);
         }
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
-        int ret = render(cycle, processor);
+        ProcessStatus ret = render(cycle, processor);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
         EngineUtil.setTemplate(cycle, null);
         return ret;
@@ -285,11 +285,11 @@ public class TemplateImpl extends SpecificationImpl
         return _parentNode;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         return EVAL_BODY_INCLUDE;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         return EVAL_PAGE;
     }
 

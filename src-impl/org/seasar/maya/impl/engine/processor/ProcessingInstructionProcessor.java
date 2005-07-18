@@ -48,7 +48,7 @@ public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
         return _data;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}

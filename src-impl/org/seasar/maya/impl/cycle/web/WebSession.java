@@ -20,7 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -61,8 +61,8 @@ public class WebSession implements Session {
         return _httpServletRequest.getSession(true).getId();
     }
 
-    public Scope getScope() {
-        return AttributeScope.SCOPE_SESSION;
+    public String getScopeName() {
+        return ServiceCycle.SCOPE_SESSION;
     }
     
     public Iterator iterateAttributeNames() {

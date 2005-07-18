@@ -57,7 +57,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
     	return _systemID;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}

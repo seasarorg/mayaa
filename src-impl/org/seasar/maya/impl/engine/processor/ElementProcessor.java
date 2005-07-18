@@ -97,7 +97,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         cycle.getResponse().write(buffer.toString());
     }
     
-    protected int writeStartElement(ServiceCycle cycle) {
+    protected ProcessStatus writeStartElement(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }

@@ -24,7 +24,7 @@ public class CommentProcessor extends CharactersProcessor {
     
 	private static final long serialVersionUID = -5176372123366627130L;
 
-	public int doStartProcess(ServiceCycle cycle) {
+	public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	if(cycle == null) {
     		throw new IllegalArgumentException();
     	}

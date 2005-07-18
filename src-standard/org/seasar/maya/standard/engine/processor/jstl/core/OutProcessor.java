@@ -16,7 +16,9 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
@@ -28,27 +30,16 @@ public class OutProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 3988388279125884492L;
 
-    private ProcessorProperty _value;
+    private ProcessorProperty _value = NullProcessorProperty.NULL;
     private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
 
-    // MLD property (dynamic, required)
-    public void setValue(ProcessorProperty value) {
-        _value = value ;
+    protected ProcessStatus process(ServiceCycle cycle){
+        Object outputValue = getOutputObject(cycle);
+        cycle.getResponse().write(escapeXml(cycle, outputValue));
+        return EVAL_PAGE;
     }
 
-    // MLD property (dynamic)
-    public void setDefault(ProcessorProperty defaultValue) {
-        _default = defaultValue ;
-    }
-    
-    // MLD property (dynamic)
-    public void setEscapeXml(ProcessorProperty escapeXml) {
-        _escapeXml = escapeXml;
-    }
-    /**
-     * @category aa
-     */
     private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
         if(value == null) {
             return false;
@@ -65,17 +56,9 @@ public class OutProcessor extends BodyValueProcessor {
         return plainString;
     }
 
-    protected ProcessStatus process(ServiceCycle cycle) {
-        Object outputValue = getOutputObject(cycle);
-        cycle.getResponse().write(escapeXml(cycle, outputValue));
-        return EVAL_PAGE;
-    }
-
     private Object getOutputObject(ServiceCycle cycle) {
-        Object outputValue = null ;
-        if( _value != null ){
-            outputValue = _value.getValue(cycle);
-        }
+        Object outputValue = _value.getValue(cycle);
+
         if( outputValue == null ){
             outputValue = getBodyValue(cycle) ;
         }
@@ -83,5 +66,22 @@ public class OutProcessor extends BodyValueProcessor {
             outputValue = _default.getValue(cycle) ;
         }
         return outputValue;
+    }
+
+    
+    // MLD property (dynamic, required)
+    public void setValue(ProcessorProperty value) {
+        if( value == null ) return ;
+        _value = value ;
+    }
+
+    // MLD property (dynamic)
+    public void setDefault(ProcessorProperty defaultValue) {
+        _default = defaultValue ;
+    }
+    
+    // MLD property (dynamic)
+    public void setEscapeXml(ProcessorProperty escapeXml) {
+        _escapeXml = escapeXml;
     }
 }

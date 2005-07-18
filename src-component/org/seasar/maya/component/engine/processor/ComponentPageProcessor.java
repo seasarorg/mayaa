@@ -109,7 +109,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
      * @param cycle カレントのコンテキスト。
      * @return Template#doTemplateRender()の戻り値。
      */
-    public int renderChildren(ServiceCycle cycle) {
+    public ProcessStatus renderChildren(ServiceCycle cycle) {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             TemplateProcessor processor = getChildProcessor(i);
@@ -120,7 +120,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return EVAL_PAGE;
     }
     
-	protected int writeStartElement(ServiceCycle cycle) {
+	protected ProcessStatus writeStartElement(ServiceCycle cycle) {
         synchronized(this) {
             if(_page == null) {
                 _page = preparePage();

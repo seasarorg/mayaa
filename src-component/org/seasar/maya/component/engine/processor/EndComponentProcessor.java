@@ -43,7 +43,7 @@ public class EndComponentProcessor extends DoBodyProcessor {
         return null;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
     	ComponentPageProcessor componentPage = findComponentPage();
         if(componentPage != null) {
             return componentPage.renderChildren(cycle);

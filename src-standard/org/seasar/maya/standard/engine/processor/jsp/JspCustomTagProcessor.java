@@ -46,6 +46,7 @@ import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.standard.cycle.CycleBodyContent;
 import org.seasar.maya.standard.cycle.CyclePageContext;
+import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * カスタムタグ用プロセッサ.
@@ -202,7 +203,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return pageContext;
     }
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -245,7 +246,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         try {
             final int result = customTag.doStartTag();
             tagContext.putLoadedTag(this, customTag);
-            return result;
+            return JspUtil.getProcessStatus(result);
         } catch (JspException e) {
             throw new RuntimeException(e);
         }
@@ -301,7 +302,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
-    public int doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -309,21 +310,23 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         if(tag instanceof IterationTag) {
             IterationTag iterationTag = (IterationTag)tag;
             try {
-                return iterationTag.doAfterBody();
+            	int ret = iterationTag.doAfterBody();
+                return JspUtil.getProcessStatus(ret);
             } catch (JspException e) {
                 throw new RuntimeException(e);
             }
         }
-        return Tag.SKIP_BODY;
+        return SKIP_BODY;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         Tag customTag = getLoadedTag(cycle);
         try {
-            return customTag.doEndTag();
+        	int ret = customTag.doEndTag();
+            return JspUtil.getProcessStatus(ret);
         } catch (JspException e) {
             throw new RuntimeException(e);
         } finally {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<maya 	xmlns:m="http://maya.seasar.org"
+			xmlns:c="http://maya.seasar.org/jstl/core">
+
+	<c:out m:id="message" value="こんにちは ${ 1+1 }" m:rendered="true"/>
+
+</maya>

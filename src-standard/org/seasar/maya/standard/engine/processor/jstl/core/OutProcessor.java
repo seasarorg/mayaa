@@ -65,7 +65,7 @@ public class OutProcessor extends BodyValueProcessor {
         return plainString;
     }
 
-    protected int process(ServiceCycle cycle) {
+    protected ProcessStatus process(ServiceCycle cycle) {
         Object outputValue = getOutputObject(cycle);
         cycle.getResponse().write(escapeXml(cycle, outputValue));
         return EVAL_PAGE;

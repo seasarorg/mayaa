@@ -25,7 +25,7 @@ public class OtherwiseProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -8161187898291017653L;
 
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if( (getParentProcessor() instanceof ChooseProcessor) == false )
             throw new IllegalStateException();
         ChooseProcessor chooseProcessor = (ChooseProcessor)getParentProcessor();

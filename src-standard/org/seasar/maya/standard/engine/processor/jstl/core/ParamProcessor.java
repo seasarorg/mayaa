@@ -28,7 +28,7 @@ public class ParamProcessor extends AbstractBodyProcessor {
 
     private String _name ;
 
-    protected int process(ServiceCycle cycle, Object obj) {
+    protected ProcessStatus process(ServiceCycle cycle, Object obj) {
         String paramValue = getParamValue(obj);
         setParamValueToParentProcessor(paramValue);
         return EVAL_PAGE;

@@ -26,7 +26,7 @@ public class ForEachProcessor extends ForLoopProcessor {
     private static final String LOCAL_LIST = "LOCAL_LIST" ;
     private ProcessorProperty 	_expressionValue ;
 
-    public int doStartProcess(ServiceCycle context) {
+    public ProcessStatus doStartProcess(ServiceCycle context) {
         setReadOnlyList(context,initReadOnlyList(context));
         return super.doStartProcess(context);
     }

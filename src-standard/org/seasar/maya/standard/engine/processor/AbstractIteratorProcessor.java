@@ -113,7 +113,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
 
 	protected abstract Iterator createIterator(ServiceCycle cycle, Object eval);
     
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -126,14 +126,14 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
         return nextArrayItem(cycle) ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     
-	public int doAfterChildProcess(ServiceCycle cycle) {
+	public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         return nextArrayItem(cycle) ? EVAL_BODY_AGAIN : SKIP_BODY;
     }
     
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }

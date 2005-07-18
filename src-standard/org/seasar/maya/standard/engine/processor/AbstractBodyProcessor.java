@@ -36,7 +36,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         return getClass().getName() + "@" + hashCode();
     }
 
-    protected abstract int process(ServiceCycle cycle, Object obj);
+    protected abstract ProcessStatus process(ServiceCycle cycle, Object obj);
     
     protected void setValue(ProcessorProperty value) {
         _value = value;
@@ -53,7 +53,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         cycle.setAttribute(getBodyContentKey(),  body);
     }
 
-    public int doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -71,7 +71,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         return EVAL_BODY_BUFFERED;
     }
 
-    public int doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -90,7 +90,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
     public void doInitChildProcess(ServiceCycle cycle) {
     }
 
-    public int doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
         return SKIP_BODY;
     }
 

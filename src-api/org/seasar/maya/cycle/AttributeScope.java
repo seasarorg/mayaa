@@ -24,35 +24,10 @@ import java.util.Iterator;
 public interface AttributeScope {
 
     /**
-     * 組み込みオブジェクトのスコープ。
-     */
-    Scope SCOPE_IMPLICIT = new Scope("implicit");
-    
-    /**
-     * ページスコープ。
-     */
-    Scope SCOPE_PAGE = new Scope("page");
-    
-    /**
-     * リクエストスコープ。
-     */
-    Scope SCOPE_REQUEST = new Scope("request");
-    
-    /**
-     * セッションスコープ。
-     */
-    Scope SCOPE_SESSION = new Scope("session");
-    
-    /**
-     * アプリケーションスコープ。
-     */
-    Scope SCOPE_APPLICATION = new Scope("application");
-
-    /**
      * スコープ識別の取得を行う補助メソッド。
      * @return スコープ識別。
      */
-    Scope getScope();
+    String getScopeName();
     
     /**
      * このスコープに保存されている名前をイテレートする。
@@ -75,39 +50,4 @@ public interface AttributeScope {
      */
     void setAttribute(String name, Object attribute);
 
-    /**
-     * スコープ識別。
-     */
-    public class Scope {
-
-        private String _scopeName;
-        
-        /**
-         * @param scopeName スコープ名。
-         */
-        public Scope(String scopeName) {
-            _scopeName = scopeName;
-        }
-        
-        /**
-         * スコープ名の取得。
-         * @return スコープ名。
-         */
-        public String getScopeName() {
-            return _scopeName;
-        }
-        
-        public String toString() {
-            return getScopeName();
-        }
-        
-        public boolean equals(Object test) {
-            if(test instanceof Scope) {
-                return _scopeName.equals(((Scope)test).getScopeName());
-            }
-            return false;
-        }
-        
-    }
-    
 }

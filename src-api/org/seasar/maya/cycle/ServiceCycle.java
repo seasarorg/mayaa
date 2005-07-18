@@ -30,10 +30,29 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     String HEADER = "header";
     String HEADER_VALUES = "headerValues";
 
+    /**
+     * 組み込みオブジェクト取得のための特別スコープ。
+     */
     String SCOPE_IMPLICIT = "implicit";
+    
+    /**
+     * ページレベルスコープ。 
+     */
     String SCOPE_PAGE = "page";
+    
+    /**
+     * リクエストレベルスコープ。
+     */
     String SCOPE_REQUEST = "request";
+    
+    /**
+     * セッションレベルスコープ。
+     */
     String SCOPE_SESSION = "session";
+    
+    /**
+     * アプリケーションレベルスコープ。
+     */
     String SCOPE_APPLICATION = "application";
     
     /**

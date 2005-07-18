@@ -41,7 +41,7 @@ public class WebSessionTest extends TestCase {
     }
     
     public void testGetScopeName() {
-        assertEquals("session", _session.getScopeName());
+        assertEquals("session", _session.getScope().getScopeName());
     }
     
     public void testGetAttribute() {

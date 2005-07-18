@@ -67,32 +67,32 @@ public class ServiceCycleImplTest extends TestCase {
     }
     
     public void testGetScopeName() {
-        assertEquals("page", _cycle.getScopeName());
+        assertEquals("page", _cycle.getScope().getScopeName());
     }
 
     public void testGetImplicitScope() {
         AttributeScope scope = _cycle.getAttributeScope("implicit");
-        assertEquals("implicit", scope.getScopeName());
+        assertEquals("implicit", scope.getScope().getScopeName());
     }
     
     public void testGetApplicationScope() {
         AttributeScope scope = _cycle.getAttributeScope("application");
-        assertEquals("application", scope.getScopeName());
+        assertEquals("application", scope.getScope().getScopeName());
     }
 
     public void testGetSessionScope() {
         AttributeScope scope = _cycle.getAttributeScope("session");
-        assertEquals("session", scope.getScopeName());
+        assertEquals("session", scope.getScope().getScopeName());
     }
     
     public void testGetRequestScope() {
         AttributeScope scope = _cycle.getAttributeScope("request");
-        assertEquals("request", scope.getScopeName());
+        assertEquals("request", scope.getScope().getScopeName());
     }
 
     public void testGetPageScope() {
         AttributeScope scope = _cycle.getAttributeScope("page");
-        assertEquals("page", scope.getScopeName());
+        assertEquals("page", scope.getScope().getScopeName());
     }
     
     public void testGetApplicationAttribute() {

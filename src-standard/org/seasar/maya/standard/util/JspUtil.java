@@ -16,27 +16,37 @@
 package org.seasar.maya.standard.util;
 
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.Tag;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
+import org.seasar.maya.engine.processor.IterationProcessor;
+import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspUtil implements CONST_IMPL {
+public class JspUtil {
     
 	private JspUtil() {
 	}
 
-    public static int getScopeFromString(String value) {
-        if(ServiceCycle.SCOPE_APPLICATION.equalsIgnoreCase(value)) {
-            return PageContext.APPLICATION_SCOPE;
-        } else if(ServiceCycle.SCOPE_SESSION.equalsIgnoreCase(value)) {
-            return PageContext.SESSION_SCOPE;
-        } else if(ServiceCycle.SCOPE_REQUEST.equalsIgnoreCase(value)) {
-            return PageContext.REQUEST_SCOPE;
-        } else if(ServiceCycle.SCOPE_PAGE.equalsIgnoreCase(value)) {
-            return PageContext.PAGE_SCOPE;
+    public static ProcessStatus getProcessStatus(int status) {
+        if(status == Tag.EVAL_BODY_INCLUDE) {
+            return TemplateProcessor.EVAL_BODY_INCLUDE;
+        } else if(status == Tag.SKIP_BODY) {
+            return TemplateProcessor.SKIP_BODY;
+        } else if(status == Tag.EVAL_PAGE) {
+            return TemplateProcessor.EVAL_PAGE;
+        } else if(status == Tag.SKIP_PAGE) {
+            return TemplateProcessor.SKIP_PAGE;
+        } else if(status == IterationTag.EVAL_BODY_AGAIN) {
+        	return IterationProcessor.EVAL_BODY_AGAIN;
+        } else if(status == BodyTag.EVAL_BODY_BUFFERED) {
+        	return ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
         }
         throw new IllegalArgumentException();
     }

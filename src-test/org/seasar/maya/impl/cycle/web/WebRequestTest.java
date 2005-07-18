@@ -44,7 +44,7 @@ public class WebRequestTest extends TestCase {
     }
 
     public void testGetScopeName() {
-        assertEquals("request", _request.getScope().getScopeName());
+        assertEquals("request", _request.getScopeName());
     }
     
     public void testGetSession() {

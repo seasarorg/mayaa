@@ -62,7 +62,7 @@ public class ImplicitScopeTest extends TestCase {
     }
     
     public void testGetScopeName() {
-        assertEquals("implicit", _scope.getScope().getScopeName());
+        assertEquals("implicit", _scope.getScopeName());
     }
     
     public void testIterateAttributeNames() {

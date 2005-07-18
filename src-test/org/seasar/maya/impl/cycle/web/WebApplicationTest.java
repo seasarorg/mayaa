@@ -38,7 +38,7 @@ public class WebApplicationTest extends TestCase {
     }
     
     public void testGetScopeName() {
-        assertEquals("application", _application.getScope().getScopeName());
+        assertEquals("application", _application.getScopeName());
     }
     
     public void testGetAttribute() {

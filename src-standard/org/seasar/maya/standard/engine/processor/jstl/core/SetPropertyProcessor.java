@@ -54,7 +54,7 @@ public class SetPropertyProcessor extends BodyValueProcessor {
         _value = value ;
     }
     
-    public int process(ServiceCycle cycle) {
+    public ProcessStatus process(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }

@@ -18,13 +18,14 @@ package org.seasar.maya.standard.engine.processor.jstl.core;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
 /**
  * @author maruo_syunsuke
  */
-public class SetPropertyProcessor extends BodyValueProcessor {
+class SetPropertyProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 8123151421552810350L;
 
@@ -32,29 +33,8 @@ public class SetPropertyProcessor extends BodyValueProcessor {
     private ProcessorProperty _target   = null;
     private ProcessorProperty _property = null;
 
-    // MLD property (dynamic, requested) 
-    public void setTarget(ProcessorProperty target) {
-        if(target == null) {
-            throw new IllegalArgumentException();
-        }
-        _target = target;
-    }
     
-    // MLD property (dynamic=java.lang.String, requested) 
-    public void setProperty(ProcessorProperty property) {
-        if(property == null) {
-            throw new IllegalArgumentException();
-        }
-        _property = property;
-    }
-    
-    // MLD property (dynamic, requested) 
-    public void setValue(ProcessorProperty value) {
-        if( value == null ) return ;
-        _value = value ;
-    }
-    
-    public ProcessStatus process(ServiceCycle cycle) {
+    protected ProcessStatus process(ServiceCycle cycle){
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
@@ -78,4 +58,26 @@ public class SetPropertyProcessor extends BodyValueProcessor {
         return value;
     }
 
+    // MLD property (dynamic, requested) 
+    public void setTarget(ProcessorProperty target) {
+        if(target == null) {
+            throw new IllegalArgumentException();
+        }
+        _target = target;
+    }
+    
+    // MLD property (dynamic=java.lang.String, requested) 
+    public void setProperty(ProcessorProperty property) {
+        if(property == null) {
+            throw new IllegalArgumentException();
+        }
+        _property = property;
+    }
+    
+    // MLD property (dynamic, requested) 
+    public void setValue(ProcessorProperty value) {
+        if( value == null ) return ;
+        _value = value ;
+    }
+    
 }

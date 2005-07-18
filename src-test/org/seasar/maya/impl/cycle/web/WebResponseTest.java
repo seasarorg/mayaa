@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
@@ -40,7 +39,7 @@ public class WebResponseTest extends TestCase {
         _response.setHttpServletResponse(_httpServletResponse);
     }
 
-    public void testGetOutputStream() throws IOException {
+    public void testGetOutputStream() {
         PrintWriter writer = new PrintWriter(_response.getUnderlyingOutputStream());
         writer.write("<html></html>");
         writer.flush();

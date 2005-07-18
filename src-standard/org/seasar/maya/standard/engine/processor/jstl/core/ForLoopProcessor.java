@@ -21,6 +21,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
+import org.seasar.maya.standard.engine.processor.ProcessorLocalValueUtil;
 
 /**
  * @author maruo_syunsuke

@@ -17,6 +17,7 @@ package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.standard.engine.processor.ProcessorLocalValueUtil;
 
 public class ForEachProcessor extends ForLoopProcessor {
 

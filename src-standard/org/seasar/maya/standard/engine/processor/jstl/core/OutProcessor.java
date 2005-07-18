@@ -19,37 +19,36 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
+import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
 /**
  * @author maruo_syunsuke
  */
-public class OutProcessor extends AbstractBodyProcessor {
+public class OutProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 3988388279125884492L;
 
-    private boolean _hasValue;
+    private ProcessorProperty _value;
+    private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
 
     // MLD property (dynamic, required)
     public void setValue(ProcessorProperty value) {
-        if(value == null) {
-            throw new IllegalArgumentException();
-        }
-        _hasValue = true;
-        super.setValue(value);
+        _value = value ;
     }
-    
+
     // MLD property (dynamic)
     public void setDefault(ProcessorProperty defaultValue) {
-        super.setDefault(defaultValue);
+        _default = defaultValue ;
     }
     
     // MLD property (dynamic)
     public void setEscapeXml(ProcessorProperty escapeXml) {
         _escapeXml = escapeXml;
     }
-    
+    /**
+     * @category aa
+     */
     private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
         if(value == null) {
             return false;
@@ -66,12 +65,23 @@ public class OutProcessor extends AbstractBodyProcessor {
         return plainString;
     }
 
-    protected int process(ServiceCycle cycle, Object obj) {
-        if(_hasValue == false) {
-            throw new IllegalStateException();
-        }
-        cycle.getResponse().write(escapeXml(cycle, obj));
+    protected int process(ServiceCycle cycle) {
+        Object outputValue = getOutputObject(cycle);
+        cycle.getResponse().write(escapeXml(cycle, outputValue));
         return EVAL_PAGE;
     }
 
+    private Object getOutputObject(ServiceCycle cycle) {
+        Object outputValue = null ;
+        if( _value != null ){
+            outputValue = _value.getValue(cycle);
+        }
+        if( outputValue == null ){
+            outputValue = getBodyValue(cycle) ;
+        }
+        if( outputValue == null ){
+            outputValue = _default.getValue(cycle) ;
+        }
+        return outputValue;
+    }
 }

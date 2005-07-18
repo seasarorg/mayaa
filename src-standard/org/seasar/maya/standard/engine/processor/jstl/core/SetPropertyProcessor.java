@@ -16,19 +16,21 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
+import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
 /**
  * @author maruo_syunsuke
  */
-public class SetPropertyProcessor extends AbstractBodyProcessor {
+public class SetPropertyProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 8123151421552810350L;
 
-    private ProcessorProperty _target; 
-    private ProcessorProperty _property; 
+    private ProcessorProperty _value    = NullProcessorProperty.NULL; 
+    private ProcessorProperty _target   = null;
+    private ProcessorProperty _property = null;
 
     // MLD property (dynamic, requested) 
     public void setTarget(ProcessorProperty target) {
@@ -48,22 +50,32 @@ public class SetPropertyProcessor extends AbstractBodyProcessor {
     
     // MLD property (dynamic, requested) 
     public void setValue(ProcessorProperty value) {
-        super.setValue(value);
+        if( value == null ) return ;
+        _value = value ;
     }
     
-    public int process(ServiceCycle cycle, Object obj) {
+    public int process(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         if(_target == null || _property == null) {
             throw new IllegalStateException();
         }
-        Object bean = _target.getValue(cycle);
-        String prop = (String)_property.getValue(cycle);
+        Object value = getValue(cycle);
+        Object bean  = _target.getValue(cycle);
+        String prop  = (String)_property.getValue(cycle);
         if(bean != null && prop != null) {
-            ObjectUtil.setProperty(bean, prop, obj);
+            ObjectUtil.setProperty(bean, prop, value);
         }
         return EVAL_PAGE;
+    }
+
+    private Object getValue(ServiceCycle cycle) {
+        Object value = _value.getValue(cycle);
+        if( value == null ){
+            value = getBodyValue(cycle);
+        }
+        return value;
     }
 
 }

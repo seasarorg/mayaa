@@ -17,9 +17,9 @@ package org.seasar.maya.impl.cycle.web;
 
 import java.io.PrintWriter;
 
-import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
-
 import junit.framework.TestCase;
+
+import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

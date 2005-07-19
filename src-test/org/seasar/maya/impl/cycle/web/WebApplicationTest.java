@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
-import org.seasar.maya.impl.cycle.servlet.MockServletContext;
-
 import junit.framework.TestCase;
+
+import org.seasar.maya.impl.cycle.servlet.MockServletContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

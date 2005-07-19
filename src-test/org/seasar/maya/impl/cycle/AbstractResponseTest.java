@@ -15,10 +15,10 @@
  */
 package org.seasar.maya.impl.cycle;
 
+import junit.framework.TestCase;
+
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
 import org.seasar.maya.impl.cycle.web.WebResponse;
-
-import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -18,10 +18,10 @@ package org.seasar.maya.impl.cycle.web;
 import java.util.Iterator;
 import java.util.Locale;
 
+import junit.framework.TestCase;
+
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockServletContext;
-
-import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.provider;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.provider.ModelProvider;
@@ -29,12 +30,13 @@ public class SimpleModelProvider implements ModelProvider {
     
 	public Object getModel(ServiceCycle cycle, 
     		String modelName, Class modelClass, String modelScope) {
-        Object model = cycle.getAttribute(modelName, modelScope); 
+        AttributeScope attrScope = cycle.getAttributeScope(modelScope);
+        Object model = attrScope.getAttribute(modelName); 
         if(model != null) {
             return model;
         }
         model = ObjectUtil.newInstance(modelClass);
-        cycle.setAttribute(modelName, model, modelScope);
+        attrScope.setAttribute(modelName, model);
         return model;
 	}
 	

@@ -95,31 +95,9 @@ public class ServiceCycleImplTest extends TestCase {
         assertEquals("page", scope.getScopeName());
     }
     
-    public void testGetApplicationAttribute() {
-        _cycle.setAttribute("test", "test attr", "application");
-        assertEquals("test attr", _cycle.getAttribute("test", "application"));
-    }
-    
-    public void testGetSessionAttribute() {
-        _cycle.setAttribute("test", "test attr", "session");
-        assertEquals("test attr", _cycle.getAttribute("test", "session"));
-    }
-    
-    public void testGetRequestAttribute() {
-        _cycle.setAttribute("test", "test attr", "request");
-        assertEquals("test attr", _cycle.getAttribute("test", "request"));
-    }
-    
-    public void testGetPageAttribute() {
-        _cycle.setAttribute("test", "test attr", "page");
-        assertEquals("test attr", _cycle.getAttribute("test", "page"));
-        assertEquals("test attr", _cycle.getAttribute("test"));
-    }
-    
     public void testGetAttribute() {
         _cycle.setAttribute("test", "test attr");
         assertEquals("test attr", _cycle.getAttribute("test"));
-        assertEquals("test attr", _cycle.getAttribute("test", "page"));
     }
 
 }

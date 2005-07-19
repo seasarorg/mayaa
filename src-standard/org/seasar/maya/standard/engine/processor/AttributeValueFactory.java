@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -59,8 +60,9 @@ class AttributeValue_Basic implements AttributeValue {
         return _name;
     }
     
-    public void setValue(ServiceCycle cycle, Object value){
-        cycle.setAttribute( _name, value, _scope );
+    public void setValue(ServiceCycle cycle, Object value) {
+        AttributeScope scope = cycle.getAttributeScope(_scope);
+        scope.setAttribute(_name, value);
     }
     
     public Object getValue(ServiceCycle cycle){

@@ -31,6 +31,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -44,7 +45,7 @@ import org.seasar.maya.standard.util.JspUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CyclePageContext extends PageContext {
-    
+
     private static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
     private static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
     private static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
@@ -72,6 +73,8 @@ public class CyclePageContext extends PageContext {
         }
         _cycle = cycle;
         _errorPageURL = errorPageURL;
+        _cycle.putAttributeScope(
+                JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope(_cycle));
     }
 
     public void initialize(Servlet servlet, ServletRequest request,
@@ -197,7 +200,8 @@ public class CyclePageContext extends PageContext {
     // Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = _cycle.getAttribute(name, CYCLE_SCOPES[i]);
+            AttributeScope scope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            Object ret = scope.getAttribute(name);
             if(ret != null) {
                 return ret;
             }
@@ -210,7 +214,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        return _cycle.getAttribute(name, scopeName);
+        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        return attrScope.getAttribute(name);
     }
 
     public Object getAttribute(String name) {
@@ -222,7 +227,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        _cycle.setAttribute(name, null, scopeName);
+        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        attrScope.setAttribute(name, null);
     }
 
     public void removeAttribute(String name) {
@@ -230,7 +236,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            _cycle.setAttribute(name, null, CYCLE_SCOPES[i]);
+            AttributeScope attrScope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            attrScope.setAttribute(name, null);
         }
     }
 
@@ -239,7 +246,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        _cycle.setAttribute(name, value, scopeName);
+        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        attrScope.setAttribute(name, value);
     }
 
     public void setAttribute(String name, Object value) {
@@ -248,12 +256,14 @@ public class CyclePageContext extends PageContext {
 
     public Enumeration getAttributeNamesInScope(int scope) {
         String scopeName = JspUtil.getScopeFromInt(scope);
-        return IteratorEnumeration.getInstance(_cycle.iterateAttributeNames(scopeName));
+        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
     }
 
     public int getAttributesScope(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = _cycle.getAttribute(name, CYCLE_SCOPES[i]);
+            AttributeScope attrScope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            Object ret = attrScope.getAttribute(name);
             if(ret != null) {
                 return JSP_SCOPES[i];
             }

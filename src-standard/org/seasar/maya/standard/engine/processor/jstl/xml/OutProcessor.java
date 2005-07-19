@@ -18,6 +18,7 @@ package org.seasar.maya.standard.engine.processor.jstl.xml;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
@@ -78,7 +79,8 @@ public class OutProcessor
         if(scopeSeparaterIndex >= 0) {
             String scopeName     = docVarName.substring(0, scopeSeparaterIndex);
             String attributeName = docVarName.substring(scopeSeparaterIndex + 1);
-            return (Document)cycle.getAttribute(attributeName, scopeName);
+            AttributeScope scope = cycle.getAttributeScope(scopeName);
+            return (Document)scope.getAttribute(attributeName);
         }
         String attributeName = docVarName;
         return (Document)cycle.getAttribute(attributeName);

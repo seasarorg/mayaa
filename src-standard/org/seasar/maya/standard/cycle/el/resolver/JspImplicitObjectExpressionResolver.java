@@ -13,18 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle.el.resolver;
+package org.seasar.maya.standard.cycle.el.resolver;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
+import org.seasar.maya.standard.cycle.JspImplicitScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ImplicitObjectExpressionResolver implements ExpressionResolver {
+public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
 
     public Object getValue(ServiceCycle cycle, 
             Object base, Object property, ExpressionChain chain) {
@@ -32,8 +33,9 @@ public class ImplicitObjectExpressionResolver implements ExpressionResolver {
             throw new NullPointerException();
         }
         if(base == null) {
-            AttributeScope implicitScope = cycle.getAttributeScope(ServiceCycle.SCOPE_IMPLICIT);
-            Object obj = implicitScope.getAttribute(property.toString());
+            AttributeScope scope = cycle.getAttributeScope(
+                    JspImplicitScope.SCOPE_JSP_IMPLICIT);
+            Object obj = scope.getAttribute(property.toString());
             if(obj != null) {
                 return obj;
             }
@@ -47,8 +49,9 @@ public class ImplicitObjectExpressionResolver implements ExpressionResolver {
             throw new NullPointerException();
         }
         if(base == null) {
-            AttributeScope implicitScope = cycle.getAttributeScope(ServiceCycle.SCOPE_IMPLICIT);
-            Object obj = implicitScope.getAttribute(property.toString());
+            AttributeScope scope = cycle.getAttributeScope(
+                    JspImplicitScope.SCOPE_JSP_IMPLICIT);
+            Object obj = scope.getAttribute(property.toString());
             if(obj != null) {
                 throw new PropertyNotWritableException(base, property);
             }

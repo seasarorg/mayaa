@@ -41,6 +41,7 @@ public class ServiceCycleImpl implements ServiceCycle {
     private Map _attributes;
     
     public ServiceCycleImpl() {
+        _scopes = new HashMap();
     	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope(this));
         putAttributeScope(SCOPE_PAGE, this);
     }
@@ -86,59 +87,22 @@ public class ServiceCycleImpl implements ServiceCycle {
         return SCOPE_PAGE;
     }
 
-    public Iterator iterateAttributeNames(String scope) {
+    public AttributeScope getAttributeScope(String scope) {
         if(StringUtil.isEmpty(scope)) {
             scope = SCOPE_PAGE;
         }
-        AttributeScope attr = getAttributeScope(scope);
-        return attr.iterateAttributeNames();
-    }
-
-    public Object getAttribute(String name, String scope) {
-        if(StringUtil.isEmpty(name)) {
-            return null;
-        }
-        if(StringUtil.isEmpty(scope)) {
-            scope = SCOPE_PAGE;
-        }
-        AttributeScope attr = getAttributeScope(scope);
-        return attr.getAttribute(name);
-    }
-
-    public void setAttribute(String name, Object attribute, String scope) {
-        if(StringUtil.isEmpty(name)) {
-            return;
-        }
-        if(StringUtil.isEmpty(scope)) {
-            scope = SCOPE_PAGE;
-        }
-        AttributeScope attr = getAttributeScope(scope);
-        attr.setAttribute(name, attribute);
-    }
-    
-    protected AttributeScope getAttributeScope(String scope) {
-        if(_scopes == null) {
-            throw new IllegalStateException();
-        }
-        if(StringUtil.hasValue(scope)) {
-            scope = scope.toLowerCase();
-            AttributeScope attr = (AttributeScope)_scopes.get(scope);
-            if(attr != null) {
-                return attr;
-            }
+        AttributeScope attr = (AttributeScope)_scopes.get(scope);
+        if(attr != null) {
+            return attr;
         }
         throw new IllegalArgumentException();
     }
 
-    public void putAttributeScope(String scope, AttributeScope attr) {
-        if(StringUtil.isEmpty(scope) || attr == null) {
+    public void putAttributeScope(String scope, AttributeScope attrScope) {
+        if(StringUtil.isEmpty(scope) || attrScope == null) {
             throw new IllegalArgumentException();
         }
-        scope = scope.toLowerCase();
-        if(_scopes == null) {
-            _scopes = new HashMap();
-        }
-        _scopes.put(scope, attr);
+        _scopes.put(scope, attrScope);
     }
 
     public Iterator iterateAttributeNames() {

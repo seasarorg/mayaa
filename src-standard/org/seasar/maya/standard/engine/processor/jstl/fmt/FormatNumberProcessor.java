@@ -21,6 +21,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.CycleUtil;
@@ -234,7 +235,8 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         }
 
         if (_var != null) {
-            cycle.setAttribute(_var, formatted, _scope);
+            AttributeScope scope = cycle.getAttributeScope(_scope);
+            scope.setAttribute(_var, formatted);
         } else {
             cycle.getResponse().write(formatted);
         }

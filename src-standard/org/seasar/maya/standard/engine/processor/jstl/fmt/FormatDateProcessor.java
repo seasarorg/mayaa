@@ -23,6 +23,7 @@ import java.util.TimeZone;
 
 import ognl.NoSuchPropertyException;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -126,7 +127,8 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
         }
 
         if (_var != null) {
-            cycle.setAttribute(_var, formatted, _scope);
+            AttributeScope scope = cycle.getAttributeScope(_scope);
+            scope.setAttribute(_var, formatted);
         } else {
             cycle.getResponse().write(formatted);
         }

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.util;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 
 /**
@@ -34,7 +35,8 @@ public class CycleUtil {
     
     public static Object findAttribute(ServiceCycle cycle, String name) {
       for(int i = 0; i < SCOPES.length; i++) {
-          Object obj = cycle.getAttribute(name, SCOPES[i]);
+          AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
+          Object obj = scope.getAttribute(name);
           if(obj != null) {
               return obj;
           }
@@ -44,9 +46,10 @@ public class CycleUtil {
     
     public static void rewriteAttribute(ServiceCycle cycle, String name, Object value) {
         for(int i = 0; i < SCOPES.length; i++) {
-            Object obj = cycle.getAttribute(name, SCOPES[i]);
+            AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
+            Object obj = scope.getAttribute(name);
             if(obj != null) {
-                cycle.setAttribute(name, value, SCOPES[i]);
+                scope.setAttribute(name, value);
                 return;
             }
         }

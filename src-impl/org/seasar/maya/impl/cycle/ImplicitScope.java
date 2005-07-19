@@ -34,14 +34,20 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ImplicitScope implements AttributeScope {
 
+    public static final String SERVICE_CYCLE = "serviceCycle";
+    public static final String PARAM = "param";
+    public static final String PARAM_VALUES = "paramValues";
+    public static final String HEADER = "header";
+    public static final String HEADER_VALUES = "headerValues";
+    
 	private static Map _resolverMap;
     static {
     	_resolverMap = new HashMap();
-    	_resolverMap.put(ServiceCycle.SERVICE_CYCLE , new ServiceCycleResolver());
-    	_resolverMap.put(ServiceCycle.PARAM , new ParamResolver());
-    	_resolverMap.put(ServiceCycle.PARAM_VALUES , new ParamValuesResolver());
-    	_resolverMap.put(ServiceCycle.HEADER , new HeaderResolver());
-    	_resolverMap.put(ServiceCycle.HEADER_VALUES , new HeaderValuesResolver());
+    	_resolverMap.put(SERVICE_CYCLE , new ServiceCycleResolver());
+    	_resolverMap.put(PARAM , new ParamResolver());
+    	_resolverMap.put(PARAM_VALUES , new ParamValuesResolver());
+    	_resolverMap.put(HEADER , new HeaderResolver());
+    	_resolverMap.put(HEADER_VALUES , new HeaderValuesResolver());
     }
     
     private ServiceCycle _cycle;
@@ -62,13 +68,20 @@ public class ImplicitScope implements AttributeScope {
 		return _resolverMap.keySet().iterator();
 	}
 
+    protected ImplicitObjectResolver getResolver(String name) {
+        if(StringUtil.isEmpty(name)) {
+            return null;
+        }
+        return (ImplicitObjectResolver)_resolverMap.get(name);
+    }
+    
     public Object getAttribute(String name) {
 		if(StringUtil.isEmpty(name)) {
 			return null;
 		}
         Object object = _instanceMap.get(name);
         if(object == null) {
-            ImplicitObjectResolver resolver = (ImplicitObjectResolver)_resolverMap.get(name);
+            ImplicitObjectResolver resolver = getResolver(name);
             if(resolver != null) {
                 object = resolver.resolve(_cycle);
                 _instanceMap.put(name, object);

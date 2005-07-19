@@ -16,19 +16,12 @@
 package org.seasar.maya.cycle;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle extends Serializable, AttributeScope {
-
-    String SERVICE_CYCLE = "serviceCycle";
-    String PARAM = "param";
-    String PARAM_VALUES = "paramValues";
-    String HEADER = "header";
-    String HEADER_VALUES = "headerValues";
 
     /**
      * 組み込みオブジェクト取得のための特別スコープ。
@@ -72,31 +65,21 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * @return レスポンス。
      */
     Response getResponse();
-    
-    /**
-     * 指定スコープ中に保存されている名前をイテレートする。
-     * @param scope 指定スコープ名。
-     * @return 名前（String）の入ったイテレータ。nullもしくは空白文字列のときは"page"スコープ。
-     */
-    Iterator iterateAttributeNames(String scope);
-    
-    /**
-     * 指定スコープ中より指定名のオブジェクトを取得する。
-     * 該当するものが無い場合、nullを返す。
-     * @param name 指定オブジェクト名。
-     * @param scope 指定スコープ名。
-     * @return 該当オブジェクトもしくはnull。nullもしくは空白文字列のときは"page"スコープ。
-     */
-    Object getAttribute(String name, String scope);
-    
-    /**
-     * 指定スコープ中に、名前を指定してオブジェクトを保存する。
-     * @param name 指定オブジェクト名。
-     * @param attribute 保存オブジェクト。
-     * @param scope 指定スコープ名。nullもしくは空白文字列のときは"page"スコープ。
-     */
-    void setAttribute(String name, Object attribute, String scope);
 
+    /**
+     * スコープ空間オブジェクトの取得。
+     * @param scope スコープ名もしくはnull。nullの場合は「page」とする。
+     * @return スコープ空間オブジェクト。
+     */
+    AttributeScope getAttributeScope(String scope);
+    
+    /**
+     * スコープ空間オブジェクトの追加。エンジンカスタマイズ用のAPI。
+     * @param scope スコープ名。非nullのみ許される。
+     * @param attrScope スコープ空間オブジェクト。
+     */
+    void putAttributeScope(String scope, AttributeScope attrScope);
+    
     /**
      * 渡されたURL文字列に、必要であればセッションIDを付加する。
      * @param url URL文字列。

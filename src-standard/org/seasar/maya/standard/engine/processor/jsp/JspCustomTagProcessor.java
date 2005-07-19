@@ -58,7 +58,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
 				CONST_IMPL {
     
 	private static final long serialVersionUID = -4416320364576454337L;
-	private static final String PAGE_CONTEXT = "pageContext";
     
     private Class _tagClass;
     private TagExtraInfo _tei;
@@ -195,10 +194,10 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
     }
     
     protected PageContext getPageContext(ServiceCycle cycle) {
-        PageContext pageContext = (PageContext)cycle.getAttribute(PAGE_CONTEXT);
+        PageContext pageContext = (PageContext)cycle.getAttribute(PageContext.PAGECONTEXT);
         if(pageContext == null) {
             pageContext = new CyclePageContext(cycle, null);
-            cycle.setAttribute(PAGE_CONTEXT, pageContext);
+            cycle.setAttribute(PageContext.PAGECONTEXT, pageContext);
         }
         return pageContext;
     }

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -55,7 +56,8 @@ public class IfProcessor extends TemplateProcessorSupport {
         }
         boolean test = ObjectUtil.booleanValue(_test.getValue(cycle), false);
         Boolean bool = new Boolean(test);
-        cycle.setAttribute(_var, bool, _scope);
+        AttributeScope scope = cycle.getAttributeScope(_scope);
+        scope.setAttribute(_var, bool);
         if (test) {
             return EVAL_BODY_INCLUDE;
         }

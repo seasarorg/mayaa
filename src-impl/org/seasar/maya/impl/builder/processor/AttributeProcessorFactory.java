@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.builder.processor;
 
 import org.seasar.maya.builder.processor.ProcessorFactory;
-import org.seasar.maya.el.CompiledExpression;
+import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.QNameable;

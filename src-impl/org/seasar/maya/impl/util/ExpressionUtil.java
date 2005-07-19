@@ -16,8 +16,8 @@
 package org.seasar.maya.impl.util;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.el.CompiledExpression;
-import org.seasar.maya.el.ExpressionFactory;
+import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.el.ExpressionFactory;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;

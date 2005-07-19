@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.el.AbstractExpressionFactory;
-import org.seasar.maya.impl.el.ognl2.Ognl2ExpressionFactory;
+import org.seasar.maya.impl.cycle.el.AbstractExpressionFactory;
+import org.seasar.maya.impl.cycle.el.ognl2.Ognl2ExpressionFactory;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 

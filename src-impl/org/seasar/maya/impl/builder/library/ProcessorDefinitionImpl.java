@@ -25,7 +25,7 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.processor.ProcessorFactory;
-import org.seasar.maya.el.CompiledExpression;
+import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;

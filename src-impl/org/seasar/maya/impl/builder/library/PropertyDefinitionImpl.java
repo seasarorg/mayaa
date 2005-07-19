@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.el.CompiledExpression;
+import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Namespaceable;

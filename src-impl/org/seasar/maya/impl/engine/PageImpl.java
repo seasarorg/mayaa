@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.el.CompiledExpression;
-import org.seasar.maya.el.ExpressionFactory;
+import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;

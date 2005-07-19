@@ -41,7 +41,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.el.PropertyNotFoundException;
+import org.seasar.maya.impl.cycle.el.PropertyNotFoundException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.standard.cycle.CycleBodyContent;

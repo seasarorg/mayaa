@@ -3,5 +3,7 @@
 			xmlns:c="http://maya.seasar.org/jstl/core">
 
 	<c:out m:id="message" value="‚±‚ñ‚É‚¿‚Í ${ 1+1 }" m:rendered="true"/>
+	<c:set m:id="set" var="var" value="2" m:rendered="true"/>
+	<c:out m:id="out" value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
 
 </maya>

@@ -16,6 +16,9 @@
 package org.seasar.maya.standard.builder.library;
 
 import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.VariableInfo;
+
+import org.seasar.maya.standard.util.JspUtil;
 
 /**
  * @author suga
@@ -26,7 +29,7 @@ public class TagVariableInfoImpl extends TagVariableInfo {
     private String _nameFromAttribute;
     private String _className = "java.lang.String";
     private boolean _declare = true;
-    private ScopeType _scope = ScopeType.NESTED;
+    private int _scope = VariableInfo.NESTED;
 
     public TagVariableInfoImpl() {
         super(null, null, null, false, 0);
@@ -65,11 +68,11 @@ public class TagVariableInfoImpl extends TagVariableInfo {
     }
 
     public int getScope() {
-        return _scope.getValue();
+        return _scope;
     }
 
-    public void setScopeType(ScopeType scope) {
-        _scope = scope;
+    public void setScopeType(String scope) {
+        _scope = JspUtil.getVariableScopeFromString(scope);
     }
 
 }

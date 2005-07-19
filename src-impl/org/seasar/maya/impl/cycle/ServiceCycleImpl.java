@@ -42,6 +42,7 @@ public class ServiceCycleImpl implements ServiceCycle {
     
     public ServiceCycleImpl() {
     	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope(this));
+        putAttributeScope(SCOPE_PAGE, this);
     }
     
     public Application getApplication() {
@@ -119,11 +120,8 @@ public class ServiceCycleImpl implements ServiceCycle {
         if(_scopes == null) {
             throw new IllegalStateException();
         }
-        if(SCOPE_IMPLICIT.equals(scope) ||
-                SCOPE_APPLICATION.equals(scope) ||
-                SCOPE_SESSION.equals(scope) || 
-                SCOPE_REQUEST.equals(scope) ||
-                SCOPE_PAGE.equals(scope)) {
+        if(StringUtil.hasValue(scope)) {
+            scope = scope.toLowerCase();
             AttributeScope attr = (AttributeScope)_scopes.get(scope);
             if(attr != null) {
                 return attr;
@@ -132,15 +130,15 @@ public class ServiceCycleImpl implements ServiceCycle {
         throw new IllegalArgumentException();
     }
 
-    public void putAttributeScope(String name, AttributeScope attr) {
-        if(StringUtil.isEmpty(name) || attr == null) {
+    public void putAttributeScope(String scope, AttributeScope attr) {
+        if(StringUtil.isEmpty(scope) || attr == null) {
             throw new IllegalArgumentException();
         }
+        scope = scope.toLowerCase();
         if(_scopes == null) {
             _scopes = new HashMap();
-            _scopes.put(SCOPE_PAGE, this);
         }
-        _scopes.put(name, attr);
+        _scopes.put(scope, attr);
     }
 
     public Iterator iterateAttributeNames() {
@@ -172,22 +170,22 @@ public class ServiceCycleImpl implements ServiceCycle {
     }
 
     public String encodeURL(String url) {
-        // TODO implementing
+        // FIXME implementing
         throw new UnsupportedOperationException();
     }
 
     public void forward(String relativeUrlPath) {
-		// TODO implementing
+		// FIXME implementing
 		throw new UnsupportedOperationException();
 	}
 
 	public void redirect(String url) {
-        // TODO implementing
+        // FIXME implementing
         throw new UnsupportedOperationException();
     }
 
     public void include(String relativeUrlPath) {
-		// TODO implementing
+		// FIXME implementing
 		throw new UnsupportedOperationException();
 	}
     

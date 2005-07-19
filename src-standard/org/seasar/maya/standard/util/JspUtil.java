@@ -19,6 +19,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
@@ -64,4 +65,15 @@ public class JspUtil {
         throw new IllegalArgumentException();
     }
 	
+    public static int getVariableScopeFromString(String scope) {
+        if("AT_BEGIN".equalsIgnoreCase(scope)) {
+            return VariableInfo.AT_BEGIN;
+        } else if("AT_END".equalsIgnoreCase(scope)) {
+            return VariableInfo.AT_END;
+        } if("NESTED".equalsIgnoreCase(scope)) {
+            return VariableInfo.NESTED;
+        }
+        throw new IllegalArgumentException();
+    }
+    
 }

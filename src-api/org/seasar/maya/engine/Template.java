@@ -44,8 +44,7 @@ public interface Template extends Specification, TemplateProcessor, Serializable
      * テンプレートをレンダリングする。
      * @param cycle サービスサイクルコンテキスト。
      * @param renderRoot 描画のルートとなるプロセッサ。nullの場合は自身をルートとして描画する。
-     * @return javax.servlet.jsp.tagext.Tag#doStartTag()/doAfterBody()/doEndTag()
-     * 				の返値仕様と同じ。
+     * @return テンプレートプロセッサのプロセスステートフラグ。
      */
     ProcessStatus doTemplateRender(ServiceCycle cycle, TemplateProcessor renderRoot);
     

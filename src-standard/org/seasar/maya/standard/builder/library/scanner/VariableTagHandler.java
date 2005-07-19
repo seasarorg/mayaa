@@ -17,7 +17,6 @@ package org.seasar.maya.standard.builder.library.scanner;
 
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
-import org.seasar.maya.standard.builder.library.ScopeType;
 import org.seasar.maya.standard.builder.library.TagVariableInfoImpl;
 import org.xml.sax.Attributes;
 
@@ -54,7 +53,7 @@ public class VariableTagHandler extends TagHandler {
         });
         putHandler("scope", new TagHandler() {
             public void end(String body) {
-                _variable.setScopeType(ScopeType.getByName(body));
+                _variable.setScopeType(body);
             }
         });
     }

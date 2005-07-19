@@ -45,7 +45,12 @@ public class BodyValueProcessor
     }
 
     public Object getBodyValue(ServiceCycle cycle){
-        return ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
+        Object obj = ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
+        if (obj instanceof CycleWriter) {
+            obj = ((CycleWriter)obj).getString();
+            ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,null);
+        }
+        return obj ;
     }
     
     public ProcessStatus doStartProcess(ServiceCycle cycle) {

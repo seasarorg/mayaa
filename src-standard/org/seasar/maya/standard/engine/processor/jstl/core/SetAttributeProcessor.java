@@ -29,6 +29,7 @@ class SetAttributeProcessor extends BodyValueProcessor {
     private static final long serialVersionUID = -8774293192056971213L;
 
     private ProcessorProperty _value;
+    
     private ProcessorProperty _var;
     private String            _scope;
     

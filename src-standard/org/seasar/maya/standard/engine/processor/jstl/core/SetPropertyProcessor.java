@@ -28,7 +28,8 @@ class SetPropertyProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 8123151421552810350L;
 
-    private ProcessorProperty _value    = NullProcessorProperty.NULL; 
+    private ProcessorProperty _value    = NullProcessorProperty.NULL;
+    
     private ProcessorProperty _target   = null;
     private ProcessorProperty _property = null;
 

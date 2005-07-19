@@ -59,5 +59,4 @@ public class SetProcessor extends BodyValueProcessor {
     public void setScope(String scope) {
         _scope = scope;
     }
-
 }

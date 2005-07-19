@@ -29,8 +29,8 @@ public class OutProcessor extends BodyValueProcessor {
 
     private static final long serialVersionUID = 3988388279125884492L;
 
-    private ProcessorProperty _value = NullProcessorProperty.NULL;
-    private ProcessorProperty _default;
+    private ProcessorProperty _value   = NullProcessorProperty.NULL;
+    private ProcessorProperty _default = NullProcessorProperty.NULL;
     private ProcessorProperty _escapeXml;
 
     protected ProcessStatus process(ServiceCycle cycle){
@@ -59,10 +59,10 @@ public class OutProcessor extends BodyValueProcessor {
         Object outputValue = _value.getValue(cycle);
 
         if( outputValue == null ){
-            outputValue = getBodyValue(cycle) ;
+            outputValue = _default.getValue(cycle) ;
         }
         if( outputValue == null ){
-            outputValue = _default.getValue(cycle) ;
+            outputValue = getBodyValue(cycle) ;
         }
         return outputValue;
     }

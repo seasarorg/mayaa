@@ -180,6 +180,7 @@ public class TemplateImpl extends SpecificationImpl
                 cycle.getResponse().popWriter();
             }
             ret = current.doEndProcess(cycle);
+            // TODO flush‚ª‘«‚è‚È‚¢‚©‚çe‚É‘‚«‚İî•ñ‚ª“`”d‚µ‚È‚¢ orz
         } catch (RuntimeException e) {
             if(isTryCatchFinally(cycle, current)) {
                 getTryCatchFinally(current).doCatchProcess(cycle, e);

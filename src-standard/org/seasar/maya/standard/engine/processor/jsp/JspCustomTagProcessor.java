@@ -245,7 +245,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         try {
             final int result = customTag.doStartTag();
             tagContext.putLoadedTag(this, customTag);
-            return JspUtil.getProcessStatus(result);
+            return JspUtil.getProcessStatus(result, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
         }
@@ -310,7 +310,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             IterationTag iterationTag = (IterationTag)tag;
             try {
             	int ret = iterationTag.doAfterBody();
-                return JspUtil.getProcessStatus(ret);
+                return JspUtil.getProcessStatus(ret, false);
             } catch (JspException e) {
                 throw new RuntimeException(e);
             }
@@ -325,7 +325,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag(cycle);
         try {
         	int ret = customTag.doEndTag();
-            return JspUtil.getProcessStatus(ret);
+            return JspUtil.getProcessStatus(ret, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
         } finally {

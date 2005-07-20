@@ -35,7 +35,7 @@ public class JspUtil {
 	private JspUtil() {
 	}
 
-    public static ProcessStatus getProcessStatus(int status) {
+    public static ProcessStatus getProcessStatus(int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
             return TemplateProcessor.EVAL_BODY_INCLUDE;
         } else if(status == Tag.SKIP_BODY) {
@@ -44,9 +44,9 @@ public class JspUtil {
             return TemplateProcessor.EVAL_PAGE;
         } else if(status == Tag.SKIP_PAGE) {
             return TemplateProcessor.SKIP_PAGE;
-        } else if(status == IterationTag.EVAL_BODY_AGAIN) {
+        } else if(!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
         	return IterationProcessor.EVAL_BODY_AGAIN;
-        } else if(status == BodyTag.EVAL_BODY_BUFFERED) {
+        } else if(doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
         	return ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
         }
         throw new IllegalArgumentException();

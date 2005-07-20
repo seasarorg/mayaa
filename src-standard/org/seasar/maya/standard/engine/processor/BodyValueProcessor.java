@@ -15,10 +15,13 @@
  */
 package org.seasar.maya.standard.engine.processor;
 
+import java.io.IOException;
+
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 
 /**
  * ボディーの情報のあるタグの処理をおこなう。
@@ -45,12 +48,7 @@ public class BodyValueProcessor
     }
 
     public Object getBodyValue(ServiceCycle cycle){
-        Object obj = ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
-        if (obj instanceof CycleWriter) {
-            obj = ((CycleWriter)obj).getString();
-            ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,null);
-        }
-        return obj ;
+        return ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
     }
     
     public ProcessStatus doStartProcess(ServiceCycle cycle) {
@@ -61,7 +59,16 @@ public class BodyValueProcessor
         if (cycle == null) {
             throw new IllegalArgumentException();
         }
-        return process(cycle);
+        try{
+            Object obj = ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
+            if (obj instanceof CycleWriter) {
+                obj = ((CycleWriter)obj).getString();
+                ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,obj);
+            }
+            return process(cycle);
+        }finally{
+            ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,null);
+        }
     }
     public void doInitChildProcess(ServiceCycle cycle) {
     }

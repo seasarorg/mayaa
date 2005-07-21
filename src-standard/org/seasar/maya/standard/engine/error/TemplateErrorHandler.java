@@ -19,7 +19,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
-import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -54,7 +54,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
             throw new IllegalArgumentException();
         }
         cycle.setAttribute(THROWABLE, t);
-        Engine engine = EngineUtil.getEngine(cycle);
+        Engine engine = SpecificationUtil.getEngine(cycle);
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 

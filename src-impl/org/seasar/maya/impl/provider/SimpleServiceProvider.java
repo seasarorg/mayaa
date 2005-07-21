@@ -28,7 +28,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
-import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.factory.SourceFactory;
@@ -163,7 +163,7 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         cycle.setApplication(getApplication());
         cycle.setRequest(request);
         cycle.setResponse(response);
-        EngineUtil.setEngine(cycle, getEngine());
+        SpecificationUtil.setEngine(cycle, getEngine());
     	return cycle;
     }
     

@@ -24,8 +24,8 @@ import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.provider.ServiceProvider;
@@ -91,8 +91,8 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     }
     
     public synchronized Page getPage(String pageName, String extension) {
-        String key = EngineUtil.createPageKey(pageName, extension);
-        Page page = EngineUtil.getPage(this, key);
+        String key = SpecificationUtil.createPageKey(pageName, extension);
+        Page page = SpecificationUtil.getPage(this, key);
         if(page == null) {
             String path = PREFIX_PAGE + pageName + ".maya";
             ServiceProvider provider = ServiceProviderFactory.getServiceProvider();

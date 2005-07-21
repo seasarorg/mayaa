@@ -28,7 +28,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.el.PropertyNotFoundException;
 import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
 import org.seasar.maya.impl.cycle.implicit.ParamMap;
-import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -55,7 +55,7 @@ public class AttributeExpressionResolver
             throw new NullPointerException();
         }
         if (base == null && "attribute".equals(property)) {
-            Template template = EngineUtil.getTemplate(cycle);
+            Template template = SpecificationUtil.getTemplate(cycle);
             TemplateProcessor parent = template.getParentProcessor();
             if (parent == null) {
                 return new ParamMap(cycle.getRequest());

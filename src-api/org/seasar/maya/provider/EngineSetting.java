@@ -54,9 +54,15 @@ public interface EngineSetting {
 	boolean isReportUnresolvedID();
 	
     /**
-     * 内部PageContext生成オプション設定値。
-     * @return PageContext生成オプション。
+     * 内部ServiceCycle生成オプション。デフォルトでは「1024」。
+     * @return 書き出しバッファのブロックサイズ。
      */
-	PageContextSetting getPageContextSetting();
+    int getBlockSize();
+    
+    /**
+     * 内部PageContext生成オプション。デフォルトでは「32」
+     * @return 書き出しバッファの最大ブロックサイズ。
+     */
+    int getMaxBlockNum();
 
 }

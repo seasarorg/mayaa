@@ -34,26 +34,26 @@ public class CycleUtil {
     };
     
     public static Object findAttribute(ServiceCycle cycle, String name) {
-      for(int i = 0; i < SCOPES.length; i++) {
-          AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
-          Object obj = scope.getAttribute(name);
-          if(obj != null) {
-              return obj;
-          }
-      }
-      return null;
-    }
-    
-    public static void rewriteAttribute(ServiceCycle cycle, String name, Object value) {
-        for(int i = 0; i < SCOPES.length; i++) {
+        for (int i = 0; i < SCOPES.length; i++) {
             AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
             Object obj = scope.getAttribute(name);
-            if(obj != null) {
+            if (obj != null) {
+                return obj;
+            }
+        }
+        return null;
+    }
+
+    public static void rewriteAttribute(ServiceCycle cycle, String name, Object value) {
+        for (int i = 0; i < SCOPES.length; i++) {
+            AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
+            Object obj = scope.getAttribute(name);
+            if (obj != null) {
                 scope.setAttribute(name, value);
                 return;
             }
         }
         cycle.setAttribute(name, value);
-      }
+    }
     
 }

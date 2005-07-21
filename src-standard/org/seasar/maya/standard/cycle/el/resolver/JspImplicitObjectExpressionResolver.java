@@ -33,11 +33,13 @@ public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
             throw new NullPointerException();
         }
         if(base == null) {
-            AttributeScope scope = cycle.getAttributeScope(
-                    JspImplicitScope.SCOPE_JSP_IMPLICIT);
-            Object obj = scope.getAttribute(property.toString());
-            if(obj != null) {
-                return obj;
+            if(cycle.hasAttributeScope(JspImplicitScope.SCOPE_JSP_IMPLICIT)) {
+                AttributeScope scope = cycle.getAttributeScope(
+                        JspImplicitScope.SCOPE_JSP_IMPLICIT);
+                Object obj = scope.getAttribute(property.toString());
+                if(obj != null) {
+                    return obj;
+                }
             }
         }
         return chain.getValue(cycle, base, property);
@@ -49,11 +51,13 @@ public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
             throw new NullPointerException();
         }
         if(base == null) {
-            AttributeScope scope = cycle.getAttributeScope(
-                    JspImplicitScope.SCOPE_JSP_IMPLICIT);
-            Object obj = scope.getAttribute(property.toString());
-            if(obj != null) {
-                throw new PropertyNotWritableException(base, property);
+            if(cycle.hasAttributeScope(JspImplicitScope.SCOPE_JSP_IMPLICIT)) {
+                AttributeScope scope = cycle.getAttributeScope(
+                        JspImplicitScope.SCOPE_JSP_IMPLICIT);
+                Object obj = scope.getAttribute(property.toString());
+                if(obj != null) {
+                    throw new PropertyNotWritableException(base, property);
+                }
             }
         }
         chain.setValue(cycle, base, property, value);

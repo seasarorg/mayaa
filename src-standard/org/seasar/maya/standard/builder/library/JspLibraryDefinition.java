@@ -15,6 +15,9 @@
  */
 package org.seasar.maya.standard.builder.library;
 
+import javax.servlet.jsp.JspFactory;
+
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -23,6 +26,16 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class JspLibraryDefinition extends LibraryDefinitionImpl {
 
+    private static String VERSION_JSP ;
+    static {
+        JspFactory factory = JspFactory.getDefaultFactory();
+        if(factory != null) {
+            VERSION_JSP = factory.getEngineInfo().getSpecificationVersion();
+        } else {
+            VERSION_JSP = "1.1";
+        }
+    }
+    
     private String _requiredVersion;
     
     public void setRequiredVersion(String requiredVersion) {
@@ -34,6 +47,13 @@ public class JspLibraryDefinition extends LibraryDefinitionImpl {
     
     public String getRequiredVersion() {
         return _requiredVersion;
+    }
+
+    public ProcessorDefinition getProcessorDefinition(String localName) {
+        if(_requiredVersion != null && VERSION_JSP.compareTo(_requiredVersion) < 0) {
+            return null;
+        }
+        return super.getProcessorDefinition(localName);
     }
     
 }

@@ -67,6 +67,13 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     Response getResponse();
 
     /**
+     * 指定スコープが存在するかをテストする。
+     * @param scope スコープ名もしくはnull。nullの場合は「page」とする。
+     * @return 指定スコープの存在テスト結果。
+     */
+    boolean hasAttributeScope(String scope);
+    
+    /**
      * スコープ空間オブジェクトの取得。
      * @param scope スコープ名もしくはnull。nullの場合は「page」とする。
      * @return スコープ空間オブジェクト。

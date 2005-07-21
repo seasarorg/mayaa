@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
@@ -34,7 +35,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.NodeNamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -80,7 +80,7 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     public String getKey() {
-        return EngineUtil.createTemplateKey(getSuffix());
+        return SpecificationUtil.createTemplateKey(getSuffix());
     }
 
     public Page getPage() {
@@ -195,6 +195,18 @@ public class TemplateImpl extends SpecificationImpl
         return ret;
     }
 
+    public String getMimeType(Page page) {
+        String extension = page.getPageName() + "." + page.getExtension();
+        String ret = null ;
+        if(StringUtil.hasValue(extension)) {
+            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            Application application = provider.getApplication();
+            ret = application.getMimeType(extension);
+        }
+        if( ret == null ) ret = "text/html" ;
+        return ret ;
+    }
+    
     private String getContentType() {
         SpecificationNode maya = SpecificationUtil.getMayaNode(this);
 		if(maya != null) {
@@ -203,8 +215,18 @@ public class TemplateImpl extends SpecificationImpl
 	            return contentType;
 	        }
 		}
-        String mimeType = EngineUtil.getMimeType(getPage());
-        return mimeType + "; charset=UTF-8";
+        Page page = getPage();
+        String extension = page.getPageName() + "." + page.getExtension();
+        String ret = null ;
+        if(StringUtil.hasValue(extension)) {
+            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            Application application = provider.getApplication();
+            ret = application.getMimeType(extension);
+        }
+        if(ret == null) {
+            ret = "text/html; charset=UTF-8";
+        }
+        return ret ;
     }
     
     private void prepareEncoding(ServiceCycle cycle) {
@@ -218,7 +240,7 @@ public class TemplateImpl extends SpecificationImpl
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        EngineUtil.setTemplate(cycle, this);
+        SpecificationUtil.setTemplate(cycle, this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
             processor = this;
@@ -229,7 +251,7 @@ public class TemplateImpl extends SpecificationImpl
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
         ProcessStatus ret = render(cycle, processor);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
-        EngineUtil.setTemplate(cycle, null);
+        SpecificationUtil.setTemplate(cycle, null);
         return ret;
     }
 

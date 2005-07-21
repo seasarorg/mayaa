@@ -43,10 +43,100 @@ import org.xml.sax.Locator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
+
+    private static final String KEY_ENGINE = "engine";
+    private static final String KEY_PAGE = "page";
+    private static final String KEY_TEMPLATE = "template";
     
 	private SpecificationUtil() {
 	}
 
+    public static String createTemplateKey(String suffix) {
+        if(suffix == null) {
+            throw new IllegalArgumentException();
+        }
+        return "/template[@suffix='" + suffix + "']";
+    } 
+    
+    public static Template getTemplate(ServiceCycle cycle) {
+        Template template = 
+            (Template)cycle.getAttribute(KEY_TEMPLATE);
+        if(template == null) {
+            throw new IllegalStateException();
+        }
+        return template;
+    }
+
+    public static void setTemplate(ServiceCycle cycle, Template template) {
+        if(cycle == null) {
+            throw new IllegalArgumentException();
+        }
+        cycle.setAttribute(KEY_TEMPLATE, template);
+    }
+    
+    public static String createPageKey(String pageName, String extension) {
+        if(StringUtil.isEmpty(pageName)) {
+            throw new IllegalArgumentException();
+        }
+        StringBuffer key = new StringBuffer();
+        key.append("/page[@pageName='").append(pageName).append("']");
+        if(StringUtil.hasValue(extension)) {
+            key.append("[@extension='").append(extension).append("']");
+        }
+        return key.toString();
+    }
+    
+    public static Page getPage(Engine engine, String key) {
+        for(Iterator it = engine.iterateChildSpecification(); it.hasNext(); ) {
+            Page page = (Page)it.next();
+            if(key.equals(page.getKey())) {
+                return page;
+            }
+        }
+        return null;
+    }
+    
+    public static Page getPage(ServiceCycle cycle) {
+        Page page = (Page)cycle.getAttribute(KEY_PAGE);
+        if(page == null) {
+            throw new IllegalStateException();
+        }
+        return page;
+    }
+
+    public static void setPage(ServiceCycle cycle, Page page) {
+        if(cycle == null) {
+            throw new IllegalArgumentException();
+        }
+        cycle.setAttribute(KEY_PAGE, page);
+    }
+
+    public static Engine getEngine(Specification specification) {
+        if(specification instanceof Template) {
+            return ((Template)specification).getPage().getEngine();
+        } else if(specification instanceof Page) {
+            return ((Page)specification).getEngine();
+        } else if(specification instanceof Engine) {
+            return (Engine)specification;
+        }
+        throw new IllegalArgumentException();
+    }
+    
+    public static Engine getEngine(ServiceCycle cycle) {
+        Engine engine = (Engine)cycle.getAttribute(KEY_ENGINE);
+        if(engine == null) {
+            throw new IllegalStateException();
+        }
+        return engine;
+    }
+    
+    public static void setEngine(ServiceCycle cycle, Engine engine) {
+        if(cycle == null || engine == null) {
+            throw new IllegalArgumentException();
+        }
+        cycle.setAttribute(KEY_ENGINE, engine);
+    }
+    
     public static String getAttributeValue(SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);
         if(nameAttr != null) {

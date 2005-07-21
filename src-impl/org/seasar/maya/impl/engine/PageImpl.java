@@ -29,7 +29,6 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.EngineUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -74,7 +73,7 @@ public class PageImpl extends SpecificationImpl
     }
     
     public String getKey() {
-        return EngineUtil.createPageKey(getPageName(), getExtension());
+        return SpecificationUtil.createPageKey(getPageName(), getExtension());
     }
     
     public Engine getEngine() {
@@ -105,7 +104,7 @@ public class PageImpl extends SpecificationImpl
     }
 
     protected Template findTemplate(String suffix) {
-        String key = EngineUtil.createTemplateKey(suffix);
+        String key = SpecificationUtil.createTemplateKey(suffix);
         for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
             Object obj = it.next();
             if(obj instanceof Template) {
@@ -179,12 +178,12 @@ public class PageImpl extends SpecificationImpl
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-    	EngineUtil.setPage(cycle, this);
+        SpecificationUtil.setPage(cycle, this);
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
         Template template = getTemplate(cycle, requestedSuffix);
         ProcessStatus ret = template.doTemplateRender(cycle, null);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
-        EngineUtil.setPage(cycle, null);
+        SpecificationUtil.setPage(cycle, null);
         return ret;
     }
 

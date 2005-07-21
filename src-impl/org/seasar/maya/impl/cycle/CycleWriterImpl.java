@@ -26,9 +26,6 @@ import org.seasar.maya.cycle.CycleWriter;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CycleWriterImpl extends CycleWriter {
-
-    private static final int BLOCK_SIZE = 1024;
-    private static final int MAX_BLOCK_NUM = 32; 
     
     private boolean _closed;
     private boolean _flushed;

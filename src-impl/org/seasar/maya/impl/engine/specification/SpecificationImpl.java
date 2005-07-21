@@ -45,7 +45,6 @@ import org.seasar.maya.source.SourceDescriptor;
 public abstract class SpecificationImpl 
 		extends SpecificationNodeImpl implements Specification, CONST_IMPL {
     
-    private static final Date DATE_ZERO = new Date(0);
     private static final NodeNamespace NS_MAYA = 
         new NodeNamespaceImpl(PREFIX_MAYA, URI_MAYA);
     
@@ -71,9 +70,6 @@ public abstract class SpecificationImpl
     }
     
     public Date getTimestamp() {
-        if(_buildTimestamp == null) {
-            return DATE_ZERO;
-        }
         return _buildTimestamp;
     }
     
@@ -95,7 +91,8 @@ public abstract class SpecificationImpl
             return true;
         }
         Date source = getSource().getTimestamp();
-        return source.after(buildTimestamp);
+        Date now = new Date();
+        return source.after(buildTimestamp) && now.after(source);
     }
 
     /**

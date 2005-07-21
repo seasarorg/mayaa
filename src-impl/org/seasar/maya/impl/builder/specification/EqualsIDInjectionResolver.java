@@ -28,7 +28,7 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.IDNotResolvedException;
-import org.seasar.maya.impl.util.EngineUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
 
@@ -76,7 +76,7 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 	            }
 	            return injected.copyTo(_idFilter);
 	        }
-	        EngineSetting setting = EngineUtil.getEngine(template).getEngineSetting();
+	        EngineSetting setting = SpecificationUtil.getEngine(template).getEngineSetting();
             if(setting.isReportUnresolvedID()) { 
 		        throw new IDNotResolvedException(template, original, id);
             }

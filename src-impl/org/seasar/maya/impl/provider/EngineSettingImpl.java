@@ -18,9 +18,9 @@ package org.seasar.maya.impl.provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
-import org.seasar.maya.provider.PageContextSetting;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -28,11 +28,12 @@ import org.seasar.maya.provider.PageContextSetting;
 public class EngineSettingImpl implements EngineSetting {
 
     private Map _parameters; 
-    private PageContextSetting _pageContextSetting;
     private boolean _checkTimestamp = true;
     private boolean _outputWhitespace = true;
     private boolean _reportUnresolvedID = true;
     private String _suffixSeparator = "$";
+    private int _blockSize = CycleWriter.BLOCK_SIZE;
+    private int _maxBlockNum = CycleWriter.MAX_BLOCK_NUM;
     
     public void putParameter(String name, String value) {
     	if(StringUtil.isEmpty(name)) {
@@ -85,16 +86,28 @@ public class EngineSettingImpl implements EngineSetting {
     public String getSuffixSeparator() {
     	return _suffixSeparator;
     }
-    
-    public void setPageContextSetting(PageContextSetting pageContextSetting) {
-    	_pageContextSetting = pageContextSetting; 
+
+    public void setBlockSize(int blockSize) {
+        if(blockSize <= 0) {
+            throw new IllegalArgumentException();
+        }
+        _blockSize = blockSize;
     }
     
-    public PageContextSetting getPageContextSetting() {
-    	if(_pageContextSetting == null) {
-    		_pageContextSetting = new PageContextSettingImpl();
-    	}
-    	return _pageContextSetting;
+    public int getBlockSize() {
+        return _blockSize;
     }
+
+    public void setMaxBlockNum(int maxBlockNum) {
+        if(maxBlockNum <= 0) {
+            throw new IllegalArgumentException();
+        }
+        _maxBlockNum = maxBlockNum;
+    }
+    
+    public int getMaxBlockNum() {
+        return _maxBlockNum;
+    }
+    
     
 }

@@ -39,16 +39,22 @@ public class MockHttpServletResponse extends MockServletResponse
     public void setStatus(int status) {
     }
 
+    /**
+     * @deprecated
+     */
     public String encodeUrl(String url) {
-        throw new UnsupportedOperationException();
+        return encodeURL(url);
     }
 
     public String encodeURL(String url) {
-        throw new UnsupportedOperationException();
+        return url;
     }
 
+    /**
+     * @deprecated
+     */
     public String encodeRedirectUrl(String url) {
-        throw new UnsupportedOperationException();
+        return encodeRedirectURL(url);
     }
 
     public String encodeRedirectURL(String url) {

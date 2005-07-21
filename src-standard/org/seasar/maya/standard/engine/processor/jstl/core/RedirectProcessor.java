@@ -40,7 +40,7 @@ public class RedirectProcessor extends TemplateProcessorSupport
     public ProcessStatus doEndProcess(ServiceCycle cycle) {
         String paramString    = getParamString();
         String unEncodeString = _url + "?" + paramString;
-        String encodedString  = cycle.encodeURL(unEncodeString);
+        String encodedString  = cycle.getResponse().encodeURL(unEncodeString);
         cycle.redirect(encodedString);
         return SKIP_BODY;
     }

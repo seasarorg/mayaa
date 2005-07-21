@@ -109,7 +109,7 @@ public class CyclePageContext extends PageContext {
     }
 
     public void include(String relativeUrlPath) throws ServletException, IOException {
-    	_cycle.include(relativeUrlPath);
+        throw new UnsupportedOperationException();
     }
 
     public void handlePageException(Exception e) throws ServletException, IOException {

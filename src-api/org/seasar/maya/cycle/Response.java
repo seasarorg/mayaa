@@ -126,4 +126,11 @@ public interface Response extends Serializable, Underlyable  {
      */
     OutputStream getUnderlyingOutputStream();
     
+    /**
+     * 渡されたURL文字列に、必要であればセッションIDを付加する。
+     * @param url URL文字列。
+     * @return セッションIDを付加した文字列。 
+     */
+    String encodeURL(String url);
+    
 }

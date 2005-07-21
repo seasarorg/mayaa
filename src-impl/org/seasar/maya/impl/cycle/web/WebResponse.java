@@ -80,4 +80,12 @@ public class WebResponse extends AbstractResponse {
         }
     }
     
+    public String encodeURL(String url) {
+        check();
+        if(StringUtil.isEmpty(url)) {
+            throw new IllegalArgumentException();
+        }
+        return _httpServletResponse.encodeURL(url);
+    }
+
 }

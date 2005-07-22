@@ -60,11 +60,7 @@ public interface Engine extends Parameterizable, Specification, Serializable {
     /**
      * サービスメソッド。
      * @param cycle サービスサイクルコンテキスト。
-     * @param pageName ページ名。「/WEB-INF」フォルダを含むことができる。
-     * @param requestedSuffix リクエストで強制するページ接尾辞。nullでもよい。
-     * @param extension ページ拡張子。
      */
-    void doService(ServiceCycle cycle, String pageName, 
-    		String requestedSuffix, String extension);
+    void doService(ServiceCycle cycle);
     
 }

@@ -19,68 +19,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceCycleImpl implements ServiceCycle {
+public abstract class AbstractServiceCycle implements ServiceCycle {
 
-    private static final long serialVersionUID = -5197949674556232436L;
-
-    private Application _application;
-    private Request _request;
-    private Response _response;
     private Map _scopes;
     private Map _attributes;
     
-    public ServiceCycleImpl() {
+    public AbstractServiceCycle() {
         _scopes = new HashMap();
     	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope(this));
         putAttributeScope(SCOPE_PAGE, this);
-    }
-    
-    public Application getApplication() {
-        return _application;
-    }
-    
-    public void setApplication(Application application) {
-        if(application == null) {
-            throw new IllegalArgumentException();
-        }
-        _application = application;
-        putAttributeScope(SCOPE_APPLICATION, application);
-    }
-    
-    public Request getRequest() {
-        return _request;
-    }
-    
-    public void setRequest(Request request) {
-        if(request == null) {
-            throw new IllegalArgumentException();
-        }
-        _request = request;
-        putAttributeScope(SCOPE_REQUEST, request);
-        Session session = request.getSession();
-        putAttributeScope(SCOPE_SESSION, session);
-    }
-    
-    public Response getResponse() {
-        return _response;
-    }
-
-    public void setResponse(Response response) {
-        if(response == null) {
-            throw new IllegalArgumentException();
-        }
-        _response = response;
     }
     
     public String getScopeName() {
@@ -138,16 +92,6 @@ public class ServiceCycleImpl implements ServiceCycle {
         } else {
             _attributes.remove(name);
         }
-    }
-
-    public void forward(String relativeUrlPath) {
-        // FIXME implementing
-        throw new UnsupportedOperationException();
-	}
-
-	public void redirect(String url) {
-        // FIXME implementing
-        throw new UnsupportedOperationException();
     }
     
 }

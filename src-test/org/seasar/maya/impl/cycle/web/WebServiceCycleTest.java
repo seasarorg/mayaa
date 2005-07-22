@@ -13,27 +13,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
-
-import junit.framework.TestCase;
+package org.seasar.maya.impl.cycle.web;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
 import org.seasar.maya.impl.cycle.servlet.MockServletContext;
-import org.seasar.maya.impl.cycle.web.WebApplication;
-import org.seasar.maya.impl.cycle.web.WebRequest;
-import org.seasar.maya.impl.cycle.web.WebResponse;
-import org.seasar.maya.impl.cycle.web.WebSession;
+
+import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceCycleImplTest extends TestCase {
+public class WebServiceCycleTest extends TestCase {
 
-    private ServiceCycleImpl _cycle;
-    
-    public ServiceCycleImplTest(String name) {
+    private WebServiceCycle _cycle;
+
+    public WebServiceCycleTest(String name) {
         super(name);
     }
     
@@ -42,14 +38,11 @@ public class ServiceCycleImplTest extends TestCase {
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(servletContext);
         WebApplication application = new WebApplication();
         application.setServletContext(servletContext);
-        WebSession session = new WebSession();
-        session.setHttpServletRequest(httpServletRequest);
-        WebRequest request = new WebRequest();
+        WebRequest request = new WebRequest("$");
         request.setHttpServletRequest(httpServletRequest);
         WebResponse response = new WebResponse();
         response.setHttpServletResponse(new MockHttpServletResponse());
-        _cycle = new ServiceCycleImpl();
-        _cycle.setApplication(application);
+        _cycle = new WebServiceCycle(application);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
     }
@@ -66,15 +59,6 @@ public class ServiceCycleImplTest extends TestCase {
         assertNotNull(_cycle.getResponse());
     }
     
-    public void testGetScopeName() {
-        assertEquals("page", _cycle.getScopeName());
-    }
-
-    public void testGetImplicitScope() {
-        AttributeScope scope = _cycle.getAttributeScope("implicit");
-        assertEquals("implicit", scope.getScopeName());
-    }
-    
     public void testGetApplicationScope() {
         AttributeScope scope = _cycle.getAttributeScope("application");
         assertEquals("application", scope.getScopeName());
@@ -89,15 +73,13 @@ public class ServiceCycleImplTest extends TestCase {
         AttributeScope scope = _cycle.getAttributeScope("request");
         assertEquals("request", scope.getScopeName());
     }
-
-    public void testGetPageScope() {
-        AttributeScope scope = _cycle.getAttributeScope("page");
-        assertEquals("page", scope.getScopeName());
+    
+    public void testForward() {
+        // TODO テスト
     }
     
-    public void testGetAttribute() {
-        _cycle.setAttribute("test", "test attr");
-        assertEquals("test attr", _cycle.getAttribute("test"));
+    public void testRedirect() {
+        // TODO テスト
     }
-
+    
 }

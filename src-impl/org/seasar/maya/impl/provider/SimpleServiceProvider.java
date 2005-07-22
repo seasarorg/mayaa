@@ -26,8 +26,8 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
+import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.provider.ServiceProvider;
@@ -159,8 +159,7 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     }
 
     public ServiceCycle getServiceCycle(Request request, Response response) {
-        ServiceCycleImpl cycle = _serviceCyclePool.borrowServiceCycle();
-        cycle.setApplication(getApplication());
+        WebServiceCycle cycle = _serviceCyclePool.borrowServiceCycle();
         cycle.setRequest(request);
         cycle.setResponse(response);
         SpecificationUtil.setEngine(cycle, getEngine());
@@ -174,15 +173,15 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private class ServiceCyclePool extends AbstractSoftReferencePool {
 
         protected Object createObject() {
-            return new ServiceCycleImpl();
+            return new WebServiceCycle(getApplication());
         }
         
         protected boolean validateObject(Object object) {
-            return object instanceof ServiceCycleImpl;
+            return object instanceof WebServiceCycle;
         }
     
-        ServiceCycleImpl borrowServiceCycle() {
-            return (ServiceCycleImpl)borrowObject();
+        WebServiceCycle borrowServiceCycle() {
+            return (WebServiceCycle)borrowObject();
         }
         
         void returnServiceCycle(ServiceCycle cycle) {

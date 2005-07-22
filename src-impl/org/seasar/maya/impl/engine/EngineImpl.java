@@ -105,14 +105,15 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         return page;
     }
    
-	public void doService(ServiceCycle cycle, String pageName, 
-			String requestedSuffix, String extension) {
-        if(cycle == null || StringUtil.isEmpty(pageName)) {
+	public void doService(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
+        String pageName = cycle.getRequest().getPageName();
+        String extension = cycle.getRequest().getExtension();
         Page page = getPage(pageName, extension);
-        page.doPageRender(cycle, requestedSuffix);
+        page.doPageRender(cycle);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
         cycle.getResponse().flush();
 	}

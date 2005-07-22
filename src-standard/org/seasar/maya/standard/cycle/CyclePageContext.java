@@ -24,7 +24,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -36,7 +35,9 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.engine.Engine;
+import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.ThrowableUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.impl.util.collection.NullEnumeration;
 import org.seasar.maya.standard.util.JspUtil;
@@ -46,10 +47,6 @@ import org.seasar.maya.standard.util.JspUtil;
  */
 public class CyclePageContext extends PageContext {
 
-    private static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
-    private static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
-    private static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
-    private static final String ERROR_SERVLET_NAME = "javax.servlet.error.servlet_name";
     private static final int[] JSP_SCOPES = {
             PageContext.PAGE_SCOPE,
             PageContext.REQUEST_SCOPE,
@@ -65,14 +62,12 @@ public class CyclePageContext extends PageContext {
 
     private ServletConfig _config;
 	private ServiceCycle _cycle;
-    private String _errorPageURL;
 
-    public CyclePageContext(ServiceCycle cycle, String errorPageURL) {
+    public CyclePageContext(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         _cycle = cycle;
-        _errorPageURL = errorPageURL;
         _cycle.putAttributeScope(
                 JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope(_cycle));
     }
@@ -120,24 +115,9 @@ public class CyclePageContext extends PageContext {
         if(t == null) {
             return ;
         }
-        if(StringUtil.isEmpty(_errorPageURL)) {
-            t.printStackTrace();
-            return;
-        }
-        Integer status = new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        String uri = _cycle.getRequest().getPath();
-        String servletName = getServletConfig().getServletName();
-        setAttribute(EXCEPTION, t, REQUEST_SCOPE);
-        setAttribute(ERROR_EXCEPTION, t, REQUEST_SCOPE);
-        setAttribute(ERROR_STATUS_CODE, status, REQUEST_SCOPE);
-        setAttribute(ERROR_REQUEST_URI, uri, REQUEST_SCOPE);
-        setAttribute(ERROR_SERVLET_NAME, servletName, REQUEST_SCOPE);
-        forward(_errorPageURL);
-        removeAttribute(EXCEPTION, REQUEST_SCOPE);
-        removeAttribute(ERROR_EXCEPTION, REQUEST_SCOPE);
-        removeAttribute(ERROR_STATUS_CODE, REQUEST_SCOPE);
-        removeAttribute(ERROR_REQUEST_URI, REQUEST_SCOPE);
-        removeAttribute(ERROR_SERVLET_NAME, REQUEST_SCOPE);
+        t = ThrowableUtil.removeWrapperRuntimeException(t);
+        Engine engine = SpecificationUtil.getEngine(_cycle); 
+        engine.getErrorHandler().doErrorHandle(_cycle, t);
     }
 
     public Exception getException() {

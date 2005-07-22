@@ -36,7 +36,7 @@ import org.seasar.maya.impl.cycle.web.WebSession;
 public class ImplicitScopeTest extends TestCase {
 
     private MockHttpServletRequest _httpServletRequest;
-    private ServiceCycleImpl _cycle;
+    private TestServiceCycle _cycle;
     private ImplicitScope _scope;
     
     public ImplicitScopeTest(String name) {
@@ -50,12 +50,11 @@ public class ImplicitScopeTest extends TestCase {
         application.setServletContext(servletContext);
         WebSession session = new WebSession();
         session.setHttpServletRequest(_httpServletRequest);
-        WebRequest request = new WebRequest();
+        WebRequest request = new WebRequest("$");
         request.setHttpServletRequest(_httpServletRequest);
         WebResponse response = new WebResponse();
         response.setHttpServletResponse(new MockHttpServletResponse());
-        _cycle = new ServiceCycleImpl();
-        _cycle.setApplication(application);
+        _cycle = new TestServiceCycle(application);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
         _scope = new ImplicitScope(_cycle);

@@ -88,21 +88,6 @@ public class PageImpl extends SpecificationImpl
         return _extension;
     }
 
-    protected String getTemplateSuffix(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        String expression = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
-        if(StringUtil.hasValue(expression)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            ExpressionFactory expressionFactory = provider.getExpressionFactory();
-            CompiledExpression action = 
-                expressionFactory.createExpression(expression, String.class);
-            return (String)action.getValue(cycle);
-        }
-        return "";
-    }
-
     protected Template findTemplate(String suffix) {
         String key = SpecificationUtil.createTemplateKey(suffix);
         for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
@@ -117,14 +102,7 @@ public class PageImpl extends SpecificationImpl
         return null;
     }
     
-    /**
-     * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
-     * テンプレート接尾辞に対応したTemplateが見つからない場合は、テンプレート接尾辞の無い、
-     * 「デフォルトテンプレート」を返す。
-     * @param suffix テンプレート接尾辞。
-     * @return レンダリングするテンプレート。
-     */
-    protected synchronized Template getTemplate(String suffix) {
+    public synchronized Template getTemplate(String suffix) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
@@ -153,11 +131,27 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public Template getTemplate(ServiceCycle cycle, String requestedSuffix) {
+    protected String getTemplateSuffix(ServiceCycle cycle) {
+        if(cycle == null) {
+            throw new IllegalArgumentException();
+        }
+        String expression = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
+        if(StringUtil.hasValue(expression)) {
+            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ExpressionFactory expressionFactory = provider.getExpressionFactory();
+            CompiledExpression action = 
+                expressionFactory.createExpression(expression, String.class);
+            return (String)action.getValue(cycle);
+        }
+        return "";
+    }
+
+    protected Template getTemplate(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         String suffix;
+        String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
             suffix = requestedSuffix;
         } else {
@@ -174,13 +168,13 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public ProcessStatus doPageRender(ServiceCycle cycle, String requestedSuffix) {
+    public ProcessStatus doPageRender(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
         SpecificationUtil.setPage(cycle, this);
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
-        Template template = getTemplate(cycle, requestedSuffix);
+        Template template = getTemplate(cycle);
         ProcessStatus ret = template.doTemplateRender(cycle, null);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
         SpecificationUtil.setPage(cycle, null);

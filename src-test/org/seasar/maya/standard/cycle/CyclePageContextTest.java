@@ -21,21 +21,20 @@ import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
-import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
 import org.seasar.maya.impl.cycle.servlet.MockServletContext;
 import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
-import org.seasar.maya.impl.cycle.web.WebSession;
+import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CyclePageContextTest extends TestCase {
 
-    private ServiceCycleImpl _cycle;
+    private WebServiceCycle _cycle;
     private CyclePageContext _pageContext;
     
     public CyclePageContextTest(String name) {
@@ -47,17 +46,14 @@ public class CyclePageContextTest extends TestCase {
         HttpServletRequest httpServletRequest = new MockHttpServletRequest(servletContext);
         WebApplication application = new WebApplication();
         application.setServletContext(servletContext);
-        WebSession session = new WebSession();
-        session.setHttpServletRequest(httpServletRequest);
-        WebRequest request = new WebRequest();
+        WebRequest request = new WebRequest("$");
         request.setHttpServletRequest(httpServletRequest);
         WebResponse response = new WebResponse();
         response.setHttpServletResponse(new MockHttpServletResponse());
-        _cycle = new ServiceCycleImpl();
-        _cycle.setApplication(application);
+        _cycle = new WebServiceCycle(application);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
-        _pageContext = new CyclePageContext(_cycle, null);
+        _pageContext = new CyclePageContext(_cycle);
     }
     
     public void testGetRequest() {

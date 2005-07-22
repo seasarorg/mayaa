@@ -51,20 +51,17 @@ public interface Page extends Specification, Serializable {
 
     /**
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
-     * テンプレート接尾辞に対応したTemplateが見つからない場合は、テンプレート接尾辞の無い、
-     * 「デフォルトテンプレート」を返す。
      * @param cycle サービスサイクルコンテキスト。
-     * @param requestedSuffix リクエストで強制するページ接尾辞。nullでもよい。
+     * @param suffix ページ接尾辞。nullでもよい。
      * @return レンダリングするテンプレート。
      */
-    Template getTemplate(ServiceCycle cycle, String requestedSuffix);
+    Template getTemplate(String suffix);
 	
     /**
      * テンプレートレンダリングを行う。
      * @param cycle サービスサイクルコンテキスト。
-     * @param requestedSuffix リクエストで強制するページ接尾辞。もしくはnull。
      * @return プロセッサ処理ステータス。
      */
-    ProcessStatus doPageRender(ServiceCycle cycle, String requestedSuffix);
+    ProcessStatus doPageRender(ServiceCycle cycle);
 
 }

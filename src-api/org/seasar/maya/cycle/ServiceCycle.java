@@ -65,7 +65,7 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * @return レスポンス。
      */
     Response getResponse();
-
+    
     /**
      * 指定スコープが存在するかをテストする。
      * @param scope スコープ名もしくはnull。nullの場合は「page」とする。

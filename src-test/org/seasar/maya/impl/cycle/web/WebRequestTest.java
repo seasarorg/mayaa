@@ -39,8 +39,45 @@ public class WebRequestTest extends TestCase {
     protected void setUp() {
         _servletContext = new MockServletContext(this, "context");
         _httpServletRequest = new MockHttpServletRequest(_servletContext);
-        _request = new WebRequest();
+        _request = new WebRequest("$");
         _request.setHttpServletRequest(_httpServletRequest);
+    }
+    public void testGetRequestedPageInfo() {
+        // よくあるパターン
+        _request.setRequestedPageInfo("/index.html", "$");
+        assertEquals("/index", _request.getPageName());
+        assertEquals("", _request.getRequestedSuffix());
+        assertEquals("html", _request.getExtension());
+        
+        // 接尾辞を強制的に指定されているパターン
+        _request.setRequestedPageInfo("/index$ja.html", "$");
+        assertEquals("/index", _request.getPageName());
+        assertEquals("ja", _request.getRequestedSuffix());
+        assertEquals("html", _request.getExtension());
+
+        // フォルダ階層があるパターン
+        _request.setRequestedPageInfo("/folder/index.html", "$");
+        assertEquals("/folder/index", _request.getPageName());
+        assertEquals("", _request.getRequestedSuffix());
+        assertEquals("html", _request.getExtension());
+        
+        // 拡張子がないパターン
+        _request.setRequestedPageInfo("/index", "$");
+        assertEquals("/index", _request.getPageName());
+        assertEquals("", _request.getRequestedSuffix());
+        assertEquals("", _request.getExtension());
+        
+        // ファイル名の先頭がドットのパターン
+        _request.setRequestedPageInfo("/.index", "$");
+        assertEquals("/.index", _request.getPageName());
+        assertEquals("", _request.getRequestedSuffix());
+        assertEquals("", _request.getExtension());
+
+        // ファイル名の先頭がアンダースコアのパターン
+        _request.setRequestedPageInfo("/_index.html", "$");
+        assertEquals("/_index", _request.getPageName());
+        assertEquals("", _request.getRequestedSuffix());
+        assertEquals("html", _request.getExtension());
     }
 
     public void testGetScopeName() {
@@ -66,7 +103,7 @@ public class WebRequestTest extends TestCase {
     
     public void testGetPath() {
         _httpServletRequest.setPathInfo("/index.html");
-        assertEquals("/index.html", _request.getPath());
+        assertEquals("/index.html", _request.getHttpRequestPath());
     }
 
     public void testIterateParameterNames() {

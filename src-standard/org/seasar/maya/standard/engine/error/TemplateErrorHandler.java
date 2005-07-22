@@ -17,6 +17,7 @@ package org.seasar.maya.standard.engine.error;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.util.SpecificationUtil;
@@ -60,8 +61,8 @@ public class TemplateErrorHandler  implements ErrorHandler {
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
-                	String pageName = getPageName(throwableClass);
-		            engine.doService(cycle, pageName, "", "html");
+                	Page page = engine.getPage(getPageName(throwableClass), "html");
+                    page.doPageRender(cycle);
 		            break;
                 } catch(PageNotFoundException ignore) {
                 }

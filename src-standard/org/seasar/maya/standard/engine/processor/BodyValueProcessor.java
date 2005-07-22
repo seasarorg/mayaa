@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.standard.engine.processor;
 
-import java.io.IOException;
-
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 
 /**
  * ボディーの情報のあるタグの処理をおこなう。

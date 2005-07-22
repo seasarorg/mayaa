@@ -37,10 +37,62 @@ public class WebRequest implements Request {
 
     private WebSession _session;
     private HttpServletRequest _httpServletRequest;
+    private String _suffixSeparator;
+    private String _pageName;
+    private String _requestedSuffix;
+    private String _extension;
+    
+    public WebRequest(String suffixSeparator) {
+        if(StringUtil.isEmpty(suffixSeparator)) {
+            throw new IllegalArgumentException();
+        }
+        _suffixSeparator = suffixSeparator;
+    }
     
     private void check() {
         if(_httpServletRequest == null) {
             throw new IllegalStateException();
+        }
+    }
+
+    protected String getHttpRequestPath() {
+        return StringUtil.preparePath(_httpServletRequest.getServletPath()) +
+            StringUtil.preparePath(_httpServletRequest.getPathInfo());
+    }
+    
+    public void setForwardPath(String relativeUrlPath) {
+        if(StringUtil.isEmpty(relativeUrlPath)) {
+            throw new IllegalArgumentException();
+        }
+        setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+    }
+    
+    protected void setRequestedPageInfo(String path, String suffixSeparator) {
+        int paramOffset = path.indexOf('?');
+        if(paramOffset >= 0) {
+            path = path.substring(0, paramOffset);
+        }
+        int lastSlashOffset = path.lastIndexOf('/');
+        String folder =  "";
+        String file = path;
+        if(lastSlashOffset >= 0) {
+            folder = path.substring(0, lastSlashOffset + 1);
+            file = path.substring(lastSlashOffset + 1);
+        }
+        int lastDotOffset = file.lastIndexOf('.');
+        if(lastDotOffset > 0) {
+            _extension = file.substring(lastDotOffset + 1);
+            file = file.substring(0, lastDotOffset);
+        } else {
+            _extension = "";
+        }
+        int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
+        if(suffixSeparatorOffset > 0) {
+            _pageName = folder + file.substring(0, suffixSeparatorOffset);
+            _requestedSuffix = file.substring(suffixSeparatorOffset + suffixSeparator.length());
+        } else {
+            _pageName = folder + file;
+            _requestedSuffix = "";
         }
     }
     
@@ -56,12 +108,28 @@ public class WebRequest implements Request {
         _httpServletRequest = httpServletRequest;
     }
 
-    public String getPath() {
-        check();
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(StringUtil.preparePath(_httpServletRequest.getServletPath()));
-        buffer.append(StringUtil.preparePath(_httpServletRequest.getPathInfo()));
-        return buffer.toString();
+    public String getPageName() {
+        if(_pageName == null) {
+            check();
+            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+        }
+        return _pageName;
+    }
+
+    public String getRequestedSuffix() {
+        if(_requestedSuffix == null) {
+            check();
+            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+        }
+        return _requestedSuffix;
+    }
+
+    public String getExtension() {
+        if(_extension == null) {
+            check();
+            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+        }
+        return _extension;
     }
 
     public Iterator iterateParameterNames() {

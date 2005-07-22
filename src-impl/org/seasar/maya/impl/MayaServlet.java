@@ -34,7 +34,7 @@ import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.EngineSetting;
+import org.seasar.maya.impl.util.ThrowableUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -79,7 +79,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     	if(request == null) {
     		throw new IllegalArgumentException();
     	}
-    	WebRequest webRequest = new WebRequest();
+        String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
+    	WebRequest webRequest = new WebRequest(suffixSeparator);
     	webRequest.setHttpServletRequest(request);
     	return webRequest;
     }
@@ -109,21 +110,10 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         provider.releaseServiceCycle(cycle);
     }
     
-    protected Throwable removeWrapperRuntimeException(Throwable t) {
-        Throwable throwable = t ;
-        while(throwable.getClass().equals(RuntimeException.class)) {
-            if( throwable.getCause() == null ) {
-                break;
-            }
-            throwable = throwable.getCause();
-        }
-        return throwable ;
-    }
-    
     protected void handleError(Request request, Response response, Throwable t) {
         ServiceCycle cycle = getServiceCycle(request, response);
         try {
-            t = removeWrapperRuntimeException(t);
+            t = ThrowableUtil.removeWrapperRuntimeException(t);
             _engine.getErrorHandler().doErrorHandle(cycle, t);
         } catch(Throwable tx) {
             if(tx instanceof RuntimeException) {
@@ -135,7 +125,39 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
     }
     
-    protected String getRequestedPath(ServletRequest request) {
+    protected void prepareRequest(ServletResponse response) {
+        if(response instanceof HttpServletResponse) {
+            HttpServletResponse httpResponse = (HttpServletResponse)response;
+            httpResponse.addHeader("Pragma", "no-cache");
+            httpResponse.addHeader("Cache-Control", "no-cache");
+            httpResponse.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+        }
+    }
+
+    protected void doMayaService(
+            HttpServletRequest request, HttpServletResponse response) {
+        if(request == null || response == null) {
+            throw new IllegalArgumentException();
+        }
+        prepareRequest(response);
+        Request req = createRequest(request);
+        Response res = createResponse(response);
+        try {
+            ServiceCycle cycle = getServiceCycle(req, res);
+            try {
+                _engine.doService(cycle);
+            } catch(Throwable t) {
+                res.clearBuffer();
+                throw t;
+            } finally {
+                releaseServiceCycle(cycle);
+            }
+        } catch(Throwable t) {
+            handleError(req, res, t);
+        }
+    }
+    
+    private String getRequestedPath(ServletRequest request) {
         if(request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest)request;
             StringBuffer buffer = new StringBuffer();
@@ -148,80 +170,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             return buffer.toString();
         }
         throw new IllegalStateException();
-    }
-    
-    protected void prepareRequest(ServletResponse response) {
-        if(response instanceof HttpServletResponse) {
-            HttpServletResponse httpResponse = (HttpServletResponse)response;
-            httpResponse.addHeader("Pragma", "no-cache");
-            httpResponse.addHeader("Cache-Control", "no-cache");
-            httpResponse.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
-        }
-    }
-    
-    /*
-     * return array include...
-     * [0]=page name
-     * [1]=suffix or none
-     * [2]=extention
-     */
-    protected String[] getRequestedPageInfo(EngineSetting setting, String path) {
-        String[] requestedPageInfo = new String[3];
-        int paramOffset = path.indexOf('?');
-        if(paramOffset >= 0) {
-            path = path.substring(0, paramOffset);
-        }
-        int lastSlashOffset = path.lastIndexOf('/');
-        String folder =  "";
-        String file = path;
-        if(lastSlashOffset >= 0) {
-            folder = path.substring(0, lastSlashOffset + 1);
-            file = path.substring(lastSlashOffset + 1);
-        }
-        int lastDotOffset = file.lastIndexOf('.');
-        if(lastDotOffset > 0) {
-            requestedPageInfo[2] = file.substring(lastDotOffset + 1);
-            file = file.substring(0, lastDotOffset);
-        } else {
-            requestedPageInfo[2] = "";
-        }
-        String suffixSeparator = setting.getSuffixSeparator();
-        int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
-        if(suffixSeparatorOffset > 0) {
-            requestedPageInfo[0] = folder + file.substring(0, suffixSeparatorOffset);
-            requestedPageInfo[1] = file.substring(suffixSeparatorOffset + suffixSeparator.length());
-        } else {
-            requestedPageInfo[0] = folder + file;
-            requestedPageInfo[1] = "";
-        }
-        return requestedPageInfo;
-    }
-
-    protected void doMayaService(
-            HttpServletRequest request, HttpServletResponse response) {
-        if(request == null || response == null) {
-            throw new IllegalArgumentException();
-        }
-        prepareRequest(response);
-        EngineSetting setting = _engine.getEngineSetting();
-        String path = getRequestedPath(request);
-        String[] requestedPageInfo = getRequestedPageInfo(setting, path);
-        Request req = createRequest(request);
-        Response res = createResponse(response);
-        try {
-            ServiceCycle cycle = getServiceCycle(req, res);
-            try {
-                _engine.doService(cycle, requestedPageInfo[0], 
-                        requestedPageInfo[1], requestedPageInfo[2]);
-            } catch(Throwable t) {
-                res.clearBuffer();
-                throw t;
-            } finally {
-                releaseServiceCycle(cycle);
-            }
-        } catch(Throwable t) {
-            handleError(req, res, t);
-        }
     }
     
     protected void doResourceService(ServletRequest request, ServletResponse response) {

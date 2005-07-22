@@ -26,11 +26,23 @@ import java.util.Locale;
 public interface Request extends Serializable, AttributeScope, Underlyable {
     
     /**
-     * リクエストされたURIパスを取得する。
-     * @return リクエストURI。
+     * リクエストされたページ名を取得する。
+     * @return リクエストページ名。
      */
-    String getPath();
+    String getPageName();
 
+    /**
+     * リクエストで強制されるページ接尾辞を取得する。
+     * @return リクエスト接尾辞、もしくはnull。
+     */
+    String getRequestedSuffix();
+    
+    /**
+     * リクエストされたページ拡張子を取得する。
+     * @return リクエスト拡張子。
+     */
+    String getExtension();
+    
     /**
      * リクエストのクエリパラメータの名前一覧。
      * @return クエリパラメータ名（String）を保持するイテレータ。
@@ -70,5 +82,11 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      * @return セッションオブジェクト。
      */
     Session getSession();
+
+    /**
+     * フォワード先のパスを設定する。
+     * @param relativeUrlPath コンテキスト相対のパス。
+     */
+    void setForwardPath(String relativeUrlPath);
     
 }

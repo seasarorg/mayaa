@@ -126,7 +126,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
                 _page = preparePage();
             }
         }
-        Template template = _page.getTemplate(cycle, "");
+        Template template = _page.getTemplate(cycle.getRequest().getRequestedSuffix());
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);
         if(start != null) {

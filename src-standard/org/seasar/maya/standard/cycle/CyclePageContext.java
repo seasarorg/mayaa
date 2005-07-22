@@ -174,7 +174,7 @@ public class CyclePageContext extends PageContext {
     }
 
     public Object getPage() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     // Attributes ------------------------------------------------------------

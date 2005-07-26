@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -89,6 +90,18 @@ public class MetaInfCache {
             _ignoreNames.add(it.next());
         }
     }
+
+    protected void scanJar(String jarPath, JarInputStream stream) throws IOException {
+    	JarEntry jarEntry;
+    	while ((jarEntry = stream.getNextJarEntry()) != null) {
+            String name = jarEntry.getName();
+            if(name.startsWith("META-INF/")) {
+            	long size = jarEntry.getSize();
+            	// TODO ŽÀ‘•‚Ì‚Â‚Ã‚«
+                _entryMap.put(name, new Entry(null, jarEntry));
+            }
+        }
+    }
     
     private void scanJar(JarURLConnection conn) throws IOException {
         conn.setUseCaches(false);
@@ -123,6 +136,23 @@ public class MetaInfCache {
         return false;
     }
 
+    protected void scanJars(SourceDescriptor root) {
+        _entryMap = new HashMap();
+        for(Iterator it = root.iterateChildren("jar"); it.hasNext(); ) {
+        	SourceDescriptor jar = (SourceDescriptor)it.next();
+        	String jarPath = jar.getPath();
+            if(ignoreListContains(getFileName(jarPath))) {
+                continue;
+            }
+            try {
+            	JarInputStream stream = new JarInputStream(jar.getInputStream());
+            	scanJar(jarPath, stream);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }    
+    
     private void scanJars() {
         _entryMap = new HashMap();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();

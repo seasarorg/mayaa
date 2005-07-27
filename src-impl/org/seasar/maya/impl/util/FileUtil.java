@@ -34,6 +34,17 @@ public class FileUtil {
 
     private FileUtil() {
     }
+
+    public static String getFileNameFromURL(String url) {
+        int pos = url.lastIndexOf("/");
+        if(pos != -1) {
+            url = url.substring(pos);
+        }
+        if(url.startsWith("/")) {
+            url = url.substring(1);
+        }
+        return url;
+    }
     
     public static Iterator iterateFiles(File dir) {
         if(dir.exists()) {
@@ -68,7 +79,64 @@ public class FileUtil {
         }
     }
     
-    static class FileArrayIterator implements Iterator {
+//    private static class FileArrayEntry {
+//
+//        private File[] _files;
+//        private int _index;
+//
+//        private FileArrayEntry(File[] files) {
+//            if(files == null) {
+//                throw new IllegalArgumentException();
+//            }
+//            _files = files;
+//        }
+//        
+//        public boolean hasNext() {
+//            return _index < _files.length;
+//        }
+//        
+//        public Object next() {
+//            if(hasNext() == false) {
+//                throw new NoSuchElementException();
+//            }
+//            return _files[_index++];
+//        }
+//        
+//    }
+//
+//    static class FileArrayIterator2 implements Iterator {
+//
+//        private Stack _stack;
+//        
+//        FileArrayIterator2(File[] files) {
+//            if(files == null) {
+//                throw new IllegalArgumentException();
+//            }
+//            _stack = new Stack();
+//            _stack.push(new FileArrayEntry(files));
+//        }
+//        
+//        public boolean hasNext() {
+//            if(_stack.size() == 0) {
+//                return false;
+//            }
+//            FileArrayEntry entry = (FileArrayEntry)_stack.peek();
+//            if(entry.hasNext()) {
+//                return true;
+//            }
+//            entry = (FileArrayEntry)_stack.pop();
+//        }
+//        
+//        public Object next() {
+//        }
+//        
+//        public void remove() {
+//            throw new UnsupportedOperationException();
+//        }
+//        
+//    }
+    
+    private static class FileArrayIterator implements Iterator {
         
         private File[] _files;
         private int _index;
@@ -97,7 +165,7 @@ public class FileUtil {
         
     }
     
-    static class FileFilteredIterator extends AbstractScanningIterator {
+    private static class FileFilteredIterator extends AbstractScanningIterator {
         
         private String _extension;
         

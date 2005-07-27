@@ -16,14 +16,11 @@
 package org.seasar.maya.impl.source;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,8 +31,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 
+import org.seasar.maya.cycle.Application;
+import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -91,23 +89,8 @@ public class MetaInfCache {
         }
     }
 
-    protected void scanJar(String jarPath, JarInputStream stream) throws IOException {
-    	JarEntry jarEntry;
-    	while ((jarEntry = stream.getNextJarEntry()) != null) {
-            String name = jarEntry.getName();
-            if(name.startsWith("META-INF/")) {
-            	long size = jarEntry.getSize();
-            	// TODO ŽÀ‘•‚Ì‚Â‚Ã‚«
-                _entryMap.put(name, new Entry(null, jarEntry));
-            }
-        }
-    }
-    
-    private void scanJar(JarURLConnection conn) throws IOException {
-        conn.setUseCaches(false);
-        JarFile jarFile = conn.getJarFile();
-        Enumeration entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
+    protected void scanJar(JarFile jarFile) throws IOException {
+        for(Enumeration entries = jarFile.entries(); entries.hasMoreElements(); ) {
             JarEntry jarEntry = (JarEntry)entries.nextElement();
             String name = jarEntry.getName();
             if(name.startsWith("META-INF/")) {
@@ -115,19 +98,8 @@ public class MetaInfCache {
             }
         }
     }
-    
-    private String getFileName(String path) {
-        int pos = path.lastIndexOf("/");
-        if(pos != -1) {
-            path = path.substring(pos);
-        }
-        if(path.startsWith("/")) {
-            path = path.substring(1);
-        }
-        return path;
-    }
 
-    private boolean ignoreListContains(String name) {
+    protected boolean ignoreListContains(String name) {
         for (Iterator it = _ignoreNames.iterator(); it.hasNext(); ) {
             if (name.startsWith(it.next().toString())) {
                 return true;
@@ -136,55 +108,25 @@ public class MetaInfCache {
         return false;
     }
 
-    protected void scanJars(SourceDescriptor root) {
+    protected void scanJars(File root) {
         _entryMap = new HashMap();
-        for(Iterator it = root.iterateChildren("jar"); it.hasNext(); ) {
-        	SourceDescriptor jar = (SourceDescriptor)it.next();
-        	String jarPath = jar.getPath();
-            if(ignoreListContains(getFileName(jarPath))) {
+        for(Iterator it = FileUtil.iterateFiles(root, "jar"); it.hasNext(); ) {
+        	File jar = (File)it.next();
+            if(ignoreListContains(jar.getName())) {
                 continue;
             }
             try {
-            	JarInputStream stream = new JarInputStream(jar.getInputStream());
-            	scanJar(jarPath, stream);
+            	scanJar(new JarFile(jar));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }    
     
-    private void scanJars() {
-        _entryMap = new HashMap();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if(loader instanceof URLClassLoader) {
-            URLClassLoader urlLoader = (URLClassLoader)loader;
-            URL[] urls = urlLoader.getURLs();
-            for (int i = 0; i < urls.length; ++i) {
-                try {
-                    String path = urls[i].toString();
-                    if(path.toLowerCase().endsWith(".jar")) {
-                        if(ignoreListContains(getFileName(path))) {
-                            continue;
-                        }
-                        String ju = "jar:" + path + "!/";
-                        URL jarURL = new URL(ju);
-                        URLConnection conn = jarURL.openConnection();
-                        if (conn instanceof JarURLConnection) {
-                            scanJar((JarURLConnection)conn);
-                        } else {
-                            throw new IllegalStateException();
-                        }
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    public void init() {
+    public void init(Application application) {
         setupIgnoreList();
-        scanJars();
+        String realPath = application.getRealPath("/WEB-INF/lib");
+        scanJars(new File(realPath));
     }
     
     public Entry getMetaInfEntry(String path) {

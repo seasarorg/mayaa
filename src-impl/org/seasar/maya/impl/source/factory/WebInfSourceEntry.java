@@ -18,8 +18,7 @@ package org.seasar.maya.impl.source.factory;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.ServletSourceDescriptor;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceEntry;
 
@@ -43,8 +42,7 @@ public class WebInfSourceEntry implements SourceEntry, CONST_IMPL {
     public SourceDescriptor createSourceDescriptor(String systemID) {
         // when default constructor used -> to reading default maya xml.
         if(_application == null) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            _application = provider.getApplication();
+            _application = CycleUtil.getApplication();
         }
         return new ServletSourceDescriptor(
                 _application, PROTOCOL_WEB_INF, "/WEB-INF", systemID);

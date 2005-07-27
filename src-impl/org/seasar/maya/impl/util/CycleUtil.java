@@ -15,8 +15,10 @@
  */
 package org.seasar.maya.impl.util;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -54,6 +56,10 @@ public class CycleUtil {
             }
         }
         cycle.setAttribute(name, value);
+    }
+    
+    public static Application getApplication() {
+        return ServiceProviderFactory.getServiceProvider().getApplication();
     }
     
 }

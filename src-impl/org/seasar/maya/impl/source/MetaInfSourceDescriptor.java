@@ -19,8 +19,10 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.MetaInfCache.Entry;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.source.SourceDescriptor;
@@ -35,10 +37,13 @@ public class MetaInfSourceDescriptor
 	private static final long serialVersionUID = 8839712576913816936L;
 	private static MetaInfCache _metaInfCache;
 
-	protected static MetaInfCache getMetaInfCache() {
+	protected static MetaInfCache getMetaInfCache(Application application) {
+        if(application == null) {
+            throw new IllegalArgumentException();
+        }
         if(_metaInfCache == null) {
             _metaInfCache = new MetaInfCache();
-            _metaInfCache.init();
+            _metaInfCache.init(application);
         }
         return _metaInfCache;
 	}
@@ -89,7 +94,8 @@ public class MetaInfSourceDescriptor
     
     public boolean exists() {
         if(_entry == null) {
-            _entry = getMetaInfCache().getMetaInfEntry(_systemID);
+            Application application = CycleUtil.getApplication();
+            _entry = getMetaInfCache(application).getMetaInfEntry(_systemID);
         }
         return _entry != null;
     }
@@ -109,12 +115,15 @@ public class MetaInfSourceDescriptor
     }
 
     public Iterator iterateChildren() {
-        return new EntryToSourceIterator(getMetaInfCache().iterateEntry());
+        Application application = CycleUtil.getApplication();
+        return new EntryToSourceIterator(getMetaInfCache(application).iterateEntry());
     }
 
     public Iterator iterateChildren(String extension) {
-        return new EntryToSourceIterator( 
-        	new EntryFilteredIterator(_systemID, extension, getMetaInfCache().iterateEntry()));
+        Application application = CycleUtil.getApplication();
+        return new EntryToSourceIterator(
+                new EntryFilteredIterator(
+                        _systemID, extension, getMetaInfCache(application).iterateEntry()));
     }
     
     public String toString() {

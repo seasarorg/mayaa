@@ -18,8 +18,7 @@ package org.seasar.maya.impl.source.factory;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.ServletSourceDescriptor;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceEntry;
 
@@ -32,8 +31,7 @@ public class ContextSourceEntry implements SourceEntry, CONST_IMPL {
     
     public SourceDescriptor createSourceDescriptor(String systemID) {
         if(_application == null) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            _application = provider.getApplication();
+            _application = CycleUtil.getApplication();
         }
         return new ServletSourceDescriptor(
                 _application, PROTOCOL_CONTEXT, "/", systemID);

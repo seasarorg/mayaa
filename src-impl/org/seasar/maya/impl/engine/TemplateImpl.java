@@ -35,6 +35,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.NodeNamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -198,8 +199,7 @@ public class TemplateImpl extends SpecificationImpl
         String extension = page.getPageName() + "." + page.getExtension();
         String ret = null ;
         if(StringUtil.hasValue(extension)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            Application application = provider.getApplication();
+            Application application = CycleUtil.getApplication();
             ret = application.getMimeType(extension);
         }
         if( ret == null ) ret = "text/html" ;
@@ -218,8 +218,7 @@ public class TemplateImpl extends SpecificationImpl
         String extension = page.getPageName() + "." + page.getExtension();
         String ret = null ;
         if(StringUtil.hasValue(extension)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            Application application = provider.getApplication();
+            Application application = CycleUtil.getApplication();
             ret = application.getMimeType(extension);
         }
         if(ret == null) {

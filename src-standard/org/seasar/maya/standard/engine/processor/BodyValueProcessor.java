@@ -22,30 +22,32 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
  * ボディーの情報のあるタグの処理をおこなう。
+ * AbstractBodyProcessorの簡素版
  * @author maruo_syunsuke
  */
-public class BodyValueProcessor 
-                        extends TemplateProcessorSupport 
-                        implements ChildEvaluationProcessor {
+public abstract class BodyValueProcessor extends TemplateProcessorSupport implements ChildEvaluationProcessor {
     
 	private static final long serialVersionUID = 5795848587818700175L;
 
-	protected ProcessStatus process(ServiceCycle cycle){
-        return EVAL_PAGE;
-    }
+	protected abstract ProcessStatus process(ServiceCycle cycle);
     
-    private static String BODY_VALUE_NAME 
-            = BodyValueProcessor.class.getName() + "@bodyValue" ;
+    private String getBodyContentKey() {
+        return getClass().getName() + "@" + hashCode();
+    }
     
     public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
         if (cycle == null || body == null) {
             throw new IllegalArgumentException();
         }
-        ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,body);
+        cycle.setAttribute(getBodyContentKey(),body);
     }
 
     public Object getBodyValue(ServiceCycle cycle){
-        return ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
+        Object obj = cycle.getAttribute(getBodyContentKey());
+        if (obj instanceof CycleWriter) {
+            obj = ((CycleWriter)obj).getString();
+        }
+        return obj;
     }
     
     public ProcessStatus doStartProcess(ServiceCycle cycle) {
@@ -57,14 +59,9 @@ public class BodyValueProcessor
             throw new IllegalArgumentException();
         }
         try{
-            Object obj = ProcessorLocalValueUtil.getObject(cycle,this,BODY_VALUE_NAME);
-            if (obj instanceof CycleWriter) {
-                obj = ((CycleWriter)obj).getString();
-                ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,obj);
-            }
             return process(cycle);
         }finally{
-            ProcessorLocalValueUtil.setObject(cycle,this,BODY_VALUE_NAME,null);
+            cycle.setAttribute(getBodyContentKey(),null);
         }
     }
     public void doInitChildProcess(ServiceCycle cycle) {

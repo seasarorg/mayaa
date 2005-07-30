@@ -21,7 +21,6 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
-import org.seasar.maya.standard.engine.processor.ProcessorLocalValueUtil;
 
 /**
  * @author maruo_syunsuke
@@ -155,15 +154,14 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
 
     // Local Value
-    protected int getIntValue(String name, ServiceCycle context) {
-        Integer indexObject = (Integer) ProcessorLocalValueUtil.getObject(
-                context, this, name);
+    protected int getIntValue(String name, ServiceCycle cycle) {
+        Integer indexObject = (Integer)cycle.getAttribute(createAttributeKey(name));
+        if( indexObject == null )throw new IllegalArgumentException("name is illegal.");
         return indexObject.intValue();
     }
 
-    protected void setIntValue(String name, ServiceCycle context, int value) {
-        ProcessorLocalValueUtil.setObject(
-                context, this, name, new Integer(value));
+    protected void setIntValue(String name, ServiceCycle cycle, int value) {
+        cycle.setAttribute(createAttributeKey(name), new Integer(value));
     }
 
     protected int getIndexValue(ServiceCycle context) {
@@ -198,15 +196,17 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         setIntValue(LOCAL_END, context, step);
     }
 
-    protected AttributeValue getVarAttribute(ServiceCycle context) {
-        String varName = (String) ProcessorLocalValueUtil.getObject(
-                context, this, LOCAL_VAR);
-        return AttributeValueFactory.create(varName);
+    protected AttributeValue getVarAttribute(ServiceCycle cycle) {
+        return AttributeValueFactory.create(
+                (String)cycle.getAttribute(createAttributeKey(LOCAL_VAR)));
     }
 
-    protected void setVarAttribute(ServiceCycle context, AttributeValue value) {
-        ProcessorLocalValueUtil.setObject(
-                context, this, LOCAL_VAR, value.getName());
+    protected void setVarAttribute(ServiceCycle cycle, AttributeValue value) {
+        cycle.setAttribute(createAttributeKey(LOCAL_VAR), value.getName());
+    }
+
+    private String createAttributeKey(String postFix) {
+        return getClass().getName() + "@" + hashCode() +":"+ postFix;
     }
 
     public void setBeginParameter(ProcessorProperty beginParameter) {

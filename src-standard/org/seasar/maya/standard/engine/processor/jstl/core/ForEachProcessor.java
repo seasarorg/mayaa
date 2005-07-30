@@ -17,7 +17,6 @@ package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.standard.engine.processor.ProcessorLocalValueUtil;
 
 public class ForEachProcessor extends ForLoopProcessor {
 
@@ -36,13 +35,12 @@ public class ForEachProcessor extends ForLoopProcessor {
                 _expressionValue.getValue(context));
     }
     
-    protected ReadOnlyList getReadOnlyList(ServiceCycle context){
-        ReadOnlyList varName = (ReadOnlyList)ProcessorLocalValueUtil.getObject(context,this,LOCAL_LIST);
-        return varName;
+    protected ReadOnlyList getReadOnlyList(ServiceCycle cycle){
+        return (ReadOnlyList)cycle.getAttribute(createAttributeKey(LOCAL_LIST));
     }
     
-    protected void setReadOnlyList(ServiceCycle context,ReadOnlyList value){
-        ProcessorLocalValueUtil.setObject(context,this,LOCAL_LIST,value);
+    protected void setReadOnlyList(ServiceCycle cycle,ReadOnlyList value){
+        cycle.setAttribute(createAttributeKey(LOCAL_LIST),value);
     }
     
     protected int initEndParameter(ServiceCycle context) {
@@ -67,5 +65,8 @@ public class ForEachProcessor extends ForLoopProcessor {
         _expressionValue = expressionValue;
     }
 
+    private String createAttributeKey(String postFix) {
+        return getClass().getName() + "@" + hashCode() +":"+ postFix;
+    }
 }
 

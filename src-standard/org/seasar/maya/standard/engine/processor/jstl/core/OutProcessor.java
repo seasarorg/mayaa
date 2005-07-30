@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -26,35 +27,19 @@ import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
  * @author maruo_syunsuke
  */
 public class OutProcessor extends BodyValueProcessor {
-
+    
     private static final long serialVersionUID = 3988388279125884492L;
 
     private ProcessorProperty _value   = NullProcessorProperty.NULL;
     private ProcessorProperty _default = NullProcessorProperty.NULL;
     private ProcessorProperty _escapeXml;
 
-    protected ProcessStatus process(ServiceCycle cycle){
+    protected ProcessStatus process(ServiceCycle cycle) {
         Object outputValue = getOutputObject(cycle);
-        cycle.getResponse().write(escapeXml(cycle, outputValue));
+        Response response  = cycle.getResponse();
+        response.write(escapeXml(cycle, outputValue));
         return EVAL_PAGE;
     }
-
-    private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
-        if(value == null) {
-            return false;
-        }
-        Object obj = value.getValue(cycle);
-        return ObjectUtil.booleanValue(obj, false);
-    }
-    
-    private String escapeXml(ServiceCycle cycle, Object obj) {
-        String plainString = String.valueOf(obj);
-        if(getBoolean(cycle, _escapeXml)) {
-            return StringUtil.escapeEntity(plainString);
-        }
-        return plainString;
-    }
-
     private Object getOutputObject(ServiceCycle cycle) {
         Object outputValue = _value.getValue(cycle);
 
@@ -67,6 +52,21 @@ public class OutProcessor extends BodyValueProcessor {
         return outputValue;
     }
 
+    private String escapeXml(ServiceCycle cycle, Object obj) {
+        String plainString = String.valueOf(obj);
+        if(getBoolean(cycle, _escapeXml)) {
+            return StringUtil.escapeEntity(plainString);
+        }
+        return plainString;
+    }
+
+    private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
+        if(value == null) {
+            return false;
+        }
+        Object obj = value.getValue(cycle);
+        return ObjectUtil.booleanValue(obj, false);
+    }
     
     // MLD property (dynamic, required)
     public void setValue(ProcessorProperty value) {

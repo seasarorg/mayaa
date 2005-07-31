@@ -155,6 +155,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         } catch(Throwable t) {
             handleError(req, res, t);
         }
+        // XXX Ç«Ç§ÇπÇ»ÇÁÇ±Ç±Ç≈flushÇµÇΩÇŸÇ§Ç™Ç¢Ç¢ÅH
+        res.flush();
     }
     
     private String getRequestedPath(ServletRequest request) {

@@ -63,6 +63,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 try {
                 	Page page = engine.getPage(getPageName(throwableClass), "html");
                     page.doPageRender(cycle);
+                    // XXX flush しないとエラーページでないんだけどどうしよう。(--) cycle.getResponse().flush();
 		            break;
                 } catch(PageNotFoundException ignore) {
                 }

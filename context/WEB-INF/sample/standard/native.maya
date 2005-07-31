@@ -5,5 +5,5 @@
 	<c:out m:id="message" value="‚±‚ñ‚É‚¿‚Í ${ 1+1 }" m:rendered="true"/>
 	<c:set m:id="set" var="var" value="2" m:rendered="true"/>
 	<c:out m:id="out" value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
-
+	<c:remove m:id="remove" var="var" m:rendered="true"/>
 </maya>

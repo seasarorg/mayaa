@@ -130,8 +130,12 @@ public class TemplateImpl extends SpecificationImpl
     
     private boolean isTryCatchFinally(
             ServiceCycle cycle, TemplateProcessor current) {
-        return current instanceof TryCatchFinallyProcessor &&
-        		((TryCatchFinallyProcessor)current).canCatch(cycle);
+        if( current instanceof TryCatchFinallyProcessor ){
+            TryCatchFinallyProcessor tryCatchFinallyProcessor 
+                                        = (TryCatchFinallyProcessor)current;
+            return tryCatchFinallyProcessor.canCatch(cycle);
+        }
+        return false ;
     }
     
     private TryCatchFinallyProcessor getTryCatchFinally(TemplateProcessor current) {

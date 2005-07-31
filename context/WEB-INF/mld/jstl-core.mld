@@ -12,19 +12,19 @@
 		<property name="default"/>
 		<property name="escapeXml"/>
 	</processor>
-
-	<processor name="set"
-			class="org.seasar.maya.standard.engine.processor.jstl.core.SetAttributeProcessor">
-		<property name="value"/>
-		<property name="var"   expectedType="java.lang.String"/>
-		<property name="scope" expectedType="java.lang.String"/>
-	</processor>
-
 	<processor name="if"
 			class="org.seasar.maya.standard.engine.processor.jstl.core.IfProcessor">
 		<property name="test" required="true" expectedType="java.lang.Boolean"/>
 		<property name="var"/>
 		<property name="scope"/>
+	</processor>
+	<processor name="set"
+			class="org.seasar.maya.standard.engine.processor.jstl.core.SetProcessor">
+		<property name="value"/>
+		<property name="var"/>
+		<property name="scope"/>
+		<property name="target"/>
+		<property name="property"/>
 	</processor>
 
 </library>

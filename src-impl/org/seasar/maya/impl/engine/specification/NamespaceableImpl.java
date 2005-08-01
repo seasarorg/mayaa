@@ -41,8 +41,11 @@ public class NamespaceableImpl implements Namespaceable {
 	}
     
     public void addNamespace(String prefix, String namespaceURI) {
-        if(StringUtil.isEmpty(prefix) || StringUtil.isEmpty(namespaceURI)) {
+        if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
+        }
+        if(prefix == null) {
+            prefix = "";
         }
 	    synchronized(this) {
 	        if(_namespaces == null) {
@@ -70,7 +73,7 @@ public class NamespaceableImpl implements Namespaceable {
     
     public NodeNamespace getNamespace(String prefix) {
         if(prefix == null) {
-            throw new IllegalArgumentException();
+            prefix = "";
         }
         return (NodeNamespace)_namespaces.get(prefix);
     }

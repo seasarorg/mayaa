@@ -115,7 +115,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         Page page = getPage(pageName, extension);
         page.doPageRender(cycle);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
-        // XXX ‚¿‚å‚Á‚Æflush‚ğ‚¢‚Ç‚¤‚µ‚Ä‚İ‚é@cycle.getResponse().flush();
 	}
 	
     public String getWelcomeFileName() {

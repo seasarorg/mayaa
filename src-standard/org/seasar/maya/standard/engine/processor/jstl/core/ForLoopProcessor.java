@@ -145,7 +145,7 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         if (context == null) {
             throw new IllegalArgumentException();
         }
-        context.setAttribute(getKey(), null);
+        context.removeAttribute(getKey());
         return EVAL_PAGE;
     }
 

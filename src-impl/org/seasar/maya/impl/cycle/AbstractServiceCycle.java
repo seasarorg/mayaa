@@ -87,11 +87,14 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(_attributes == null) {
             _attributes = new HashMap();
         }
-        if(attribute != null) {
-            _attributes.put(name, attribute);
-        } else {
-            _attributes.remove(name);
-        }
+        _attributes.put(name, attribute);
     }
+    
+    public void removeAttribute(String name) {
+        if(StringUtil.isEmpty(name)) {
+            return;
+        }
+        _attributes.remove(name);
+    }    
     
 }

@@ -40,7 +40,7 @@ public class RemoveProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess(ServiceCycle cycle) {
         if(_var != null) {
             AttributeScope scope = cycle.getAttributeScope(_scope);
-            scope.setAttribute(_var, null);
+            scope.removeAttribute(_var);
         }
         return EVAL_PAGE;
     }

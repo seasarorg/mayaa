@@ -88,11 +88,15 @@ public class WebSession implements Session {
         if(_session == null) {
             _session = _httpServletRequest.getSession(true);
         }
-        if(attribute != null) {
-            _session.setAttribute(name, attribute);
-        } else {
-            _session.removeAttribute(name);
+        _session.setAttribute(name, attribute);
+    }
+    
+    public void removeAttribute(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return;
         }
+        _session.removeAttribute(name);
     }
 
 }

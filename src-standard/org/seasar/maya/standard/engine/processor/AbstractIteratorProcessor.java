@@ -84,13 +84,13 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
 
 	protected final void removeIndexValue(ServiceCycle cycle) {
 		if(StringUtil.hasValue(_index)) {
-            cycle.setAttribute(_index, null);
+            cycle.removeAttribute(_index);
         }
 	}
 
     protected final void removeVarItem(ServiceCycle cycle) {
 		if(StringUtil.hasValue(_var)) {
-            cycle.setAttribute(_var, null);
+            cycle.removeAttribute(_var);
         }
 	}
 
@@ -137,7 +137,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        cycle.setAttribute(getKey(), null);
+        cycle.removeAttribute(getKey());
         return EVAL_PAGE;
     }
 

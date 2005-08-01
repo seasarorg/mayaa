@@ -87,11 +87,15 @@ public class WebApplication implements Application {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        if(attribute != null) {
-            _servletContext.setAttribute(name, attribute);
-        } else {
-            _servletContext.removeAttribute(name);
-        }
+        _servletContext.setAttribute(name, attribute);
     }
     
+    public void removeAttribute(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return;
+        }
+        _servletContext.removeAttribute(name);
+    }
+        
 }

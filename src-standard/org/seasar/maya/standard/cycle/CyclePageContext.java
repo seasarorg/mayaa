@@ -208,7 +208,7 @@ public class CyclePageContext extends PageContext {
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
         AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
-        attrScope.setAttribute(name, null);
+        attrScope.removeAttribute(name);
     }
 
     public void removeAttribute(String name) {
@@ -217,7 +217,7 @@ public class CyclePageContext extends PageContext {
         }
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
             AttributeScope attrScope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
-            attrScope.setAttribute(name, null);
+            attrScope.removeAttribute(name);
         }
     }
 

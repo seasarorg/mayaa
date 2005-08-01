@@ -208,11 +208,15 @@ public class WebRequest implements Request {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        if(attribute != null) {
-            _httpServletRequest.setAttribute(name, attribute);
-        } else {
-            _httpServletRequest.removeAttribute(name);
+        _httpServletRequest.setAttribute(name, attribute);
+    }
+    
+    public void removeAttribute(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return;
         }
+        _httpServletRequest.removeAttribute(name);
     }
     
 }

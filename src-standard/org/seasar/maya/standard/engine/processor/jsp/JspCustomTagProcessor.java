@@ -183,11 +183,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             for(Iterator it = vars.iterator(); it.hasNext(); ) {
                 String var = (String)it.next();
                 Object previousValue = nestedVariables.get(var);
-                if (previousValue != null) {
-                    cycle.setAttribute(var, previousValue);
-                } else {
-                    cycle.setAttribute(var, null);
-                }
+                cycle.setAttribute(var, previousValue);
             }
             nestedVariables.clear();
         }

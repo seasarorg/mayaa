@@ -60,8 +60,8 @@ public abstract class BodyValueProcessor extends TemplateProcessorSupport implem
         }
         try{
             return process(cycle);
-        }finally{
-            cycle.setAttribute(getBodyContentKey(),null);
+        } finally {
+            cycle.removeAttribute(getBodyContentKey());
         }
     }
     public void doInitChildProcess(ServiceCycle cycle) {

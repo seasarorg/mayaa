@@ -70,7 +70,7 @@ class AttributeValue_Basic implements AttributeValue {
     }
     
     public void remove(ServiceCycle cycle){
-        cycle.setAttribute(_name, null);
+        cycle.removeAttribute(_name);
     }
     
 }

@@ -68,7 +68,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 }
             }
         } finally {
-            cycle.setAttribute(THROWABLE, null);
+            cycle.removeAttribute(THROWABLE);
         }
     }
     

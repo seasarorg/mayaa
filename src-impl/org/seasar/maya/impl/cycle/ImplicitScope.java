@@ -93,5 +93,9 @@ public class ImplicitScope implements AttributeScope {
 	public void setAttribute(String name, Object attribute) {
 		throw new ScopeNotWritableException();
 	}
+
+    public void removeAttribute(String name) {
+        throw new ScopeNotWritableException();
+    }
 	
 }

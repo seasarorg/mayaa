@@ -147,7 +147,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     }
     
     protected void removeProcesstimeInfo(ServiceCycle cycle) {
-        cycle.setAttribute(getRuntimeKey(), null);
+        cycle.removeAttribute(getRuntimeKey());
     }
     
     protected class ProcesstimeInfo {

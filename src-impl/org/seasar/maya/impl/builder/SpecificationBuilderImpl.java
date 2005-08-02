@@ -76,7 +76,7 @@ public class SpecificationBuilderImpl
         return URI_MAYA + "/specification";
     }
     
-    private void setContentHander(XMLReader xmlReader, ContentHandler handler) {
+    protected void setContentHander(XMLReader xmlReader, ContentHandler handler) {
         xmlReader.setContentHandler(handler);
         if(handler instanceof EntityResolver) {
             xmlReader.setEntityResolver((EntityResolver)handler);

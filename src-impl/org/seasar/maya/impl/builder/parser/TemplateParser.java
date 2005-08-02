@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.builder.parser;
 
 import org.apache.xerces.parsers.AbstractSAXParser;
+import org.apache.xerces.xni.parser.XMLDocumentFilter;
 import org.cyberneko.html.HTMLConfiguration;
 import org.cyberneko.html.HTMLScanner;
 
@@ -31,8 +32,11 @@ public class TemplateParser extends AbstractSAXParser {
     private static class TemplateParserConfiguration extends HTMLConfiguration {
 
     	public TemplateParserConfiguration(HTMLScanner scanner) {
+            XmlDeclFireStarter starter = new XmlDeclFireStarter();
+            addComponent(starter);
             setProperty(TemplateScanner.NAMES_ELEMS, "match");
             setProperty(TemplateScanner.NAMES_ATTRS, "no-change");
+            setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);
         }

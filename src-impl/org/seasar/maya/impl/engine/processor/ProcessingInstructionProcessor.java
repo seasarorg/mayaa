@@ -57,7 +57,7 @@ public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
         if(StringUtil.hasValue(_data)) {
             processingInstruction.append(" ").append(_data);
         }
-        processingInstruction.append("?>");
+        processingInstruction.append("?>\r\n");
         cycle.getResponse().write(processingInstruction.toString());
         return SKIP_BODY;
     }

@@ -25,6 +25,7 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.SpecificationUtil;
@@ -41,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationNodeHandler extends DefaultHandler
-		implements LexicalHandler, CONST_IMPL {
+		implements LexicalHandler, AdditionalHandler, CONST_IMPL {
     
     private static final Log LOG = LogFactory.getLog(SpecificationNodeHandler.class);
 
@@ -138,6 +139,25 @@ public class SpecificationNodeHandler extends DefaultHandler
     	}
     }
     
+    public void xmlDecl(String version, String encoding, String standalone) {
+        addCharactersNode();
+        SpecificationNode node = addNode(QM_PROCESSING_INSTRUCTION);
+        node.addAttribute(QM_TARGET, "xml");
+        StringBuffer buffer = new StringBuffer();
+        if(StringUtil.hasValue(version)) {
+            buffer.append("version=\"").append(version).append("\" ");
+        }
+        if(StringUtil.hasValue(encoding)) {
+            buffer.append("encoding=\"").append(encoding).append("\" ");
+        }
+        if(StringUtil.hasValue(standalone)) {
+            buffer.append("standalone=\"").append(standalone).append("\" ");
+        }
+        if(buffer.length() > 0) {
+            node.addAttribute(QM_DATA, buffer.toString());
+        }
+    }
+
     public void processingInstruction(String target, String data) {
         addCharactersNode();
 		SpecificationNode node = addNode(QM_PROCESSING_INSTRUCTION);

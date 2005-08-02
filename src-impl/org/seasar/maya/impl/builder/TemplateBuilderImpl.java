@@ -21,6 +21,7 @@ import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.builder.parser.TemplateParser;
 import org.seasar.maya.impl.builder.parser.TemplateScanner;
 import org.seasar.maya.impl.builder.specification.CompositeInjectionResolver;
@@ -32,6 +33,8 @@ import org.seasar.maya.impl.builder.specification.InjectAttributeInjectionResolv
 import org.seasar.maya.impl.builder.specification.NamespacesSetter;
 import org.seasar.maya.impl.builder.specification.XPathMatchesInjectionResolver;
 import org.seasar.maya.source.SourceDescriptor;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -109,6 +112,17 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return URI_MAYA + "/template";
     }
     
+    protected void setContentHander(XMLReader xmlReader, ContentHandler handler) {
+        super.setContentHander(xmlReader, handler);
+        if(handler instanceof AdditionalHandler) {
+            try {
+                xmlReader.setProperty(AdditionalHandler.ADDITIONAL_HANDLER, handler);
+            } catch(SAXException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void build(Specification specification) {
         if((specification instanceof Template) == false) {
             throw new IllegalArgumentException();

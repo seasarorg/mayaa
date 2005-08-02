@@ -32,6 +32,7 @@ public class TemplateScanner extends HTMLScanner {
     public static final String NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
     public static final String NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
     public static final String LEXICAL_HANDLER = "http://xml.org/sax/properties/lexical-handler";
+    public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
     
     public TemplateScanner() {
         HTMLScanner.Scanner scanner = createScanner();

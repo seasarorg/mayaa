@@ -51,7 +51,6 @@ public interface Page extends Specification, Serializable {
 
     /**
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
-     * @param cycle サービスサイクルコンテキスト。
      * @param suffix ページ接尾辞。nullでもよい。
      * @return レンダリングするテンプレート。
      */

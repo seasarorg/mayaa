@@ -237,7 +237,12 @@ public class SpecificationUtil implements CONST_IMPL {
             namespaceURI = namespace.getNamespaceURI();
         } else if(parsed.length == 1) {
             localName = parsed[0];
-            namespaceURI = defaultURI;
+            NodeNamespace namespace = namespaces.getNamespace("");
+            if(namespace != null) {
+                namespaceURI = namespace.getNamespaceURI();
+            } else {
+                namespaceURI = defaultURI;
+            }
         } else {
             throw new IllegalNameException(specification, locator, qName);
         }

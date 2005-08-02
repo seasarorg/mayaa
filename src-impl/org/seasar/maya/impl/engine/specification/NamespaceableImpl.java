@@ -72,6 +72,9 @@ public class NamespaceableImpl implements Namespaceable {
     }
     
     public NodeNamespace getNamespace(String prefix) {
+        if(_namespaces == null) {
+            return null;
+        }
         if(prefix == null) {
             prefix = "";
         }

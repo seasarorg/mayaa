@@ -31,10 +31,30 @@
 	</processor>
 
 	<processor name="if"
-			class="org.seasar.maya.standard.engine.processor.jstl.core.IfProcessor">
+		class="org.seasar.maya.standard.engine.processor.jstl.core.IfProcessor">
 		<property name="test" required="true" expectedType="java.lang.Boolean"/>
 		<property name="var"/>
 		<property name="scope"/>
 	</processor>
 
+	<processor name="forTokens"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.ForTokensProcessor">
+		<property name="items"  required="true"/>
+		<property name="delims" />
+		<property name="var"    />
+		<property name="begin"  />
+		<property name="end"    />
+		<property name="step"   />
+	</processor>
+
+	<processor name="choose"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.ChooseProcessor">
+	</processor>
+	<processor name="when"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.WhenProcessor">
+		<property name="test" required="true"/>
+	</processor>
+	<processor name="otherwise"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.OtherwiseProcessor">
+	</processor>
 </library>

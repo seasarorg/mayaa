@@ -32,10 +32,10 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
 	private static final int DEFAULT_STEP_START_VALUE = 1;
     private static final int DEFAULT_INDEX_START_VALUE = 0;
     
-    private ProcessorProperty	_varParameter 	= null ;
-    private ProcessorProperty	_beginParameter = null ;
-    private ProcessorProperty	_endParameter	= null ;
-    private ProcessorProperty	_stepParameter	= null ;
+    private String _var   = null ;
+    private ProcessorProperty _begin = null ;
+    private ProcessorProperty _end   = null ;
+    private ProcessorProperty _step  = null ;
     
     private static final String LOCAL_INDEX = "LOCAL_INDEX" ;
     private static final String LOCAL_VAR   = "LOCAL_VAR" ;
@@ -74,8 +74,7 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
 
     private void initParameter(ServiceCycle context) {
-        AttributeValue varAttribute = AttributeValueFactory
-                .create((String) _varParameter.getValue(context));
+        AttributeValue varAttribute = AttributeValueFactory.create(_var);
         setVarAttribute(context, varAttribute);
         setIndexValue(context, initBeginParameter(context));
         setStepValue(context, initStepParameter(context));
@@ -84,8 +83,8 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
 
     protected int initBeginParameter(ServiceCycle context) {
-        if (_beginParameter != null) {
-            Object value = _beginParameter.getValue(context);
+        if (_begin != null) {
+            Object value = _begin.getValue(context);
             if (value != null) {
                 if (value instanceof Integer) {
                     Integer beginValue = (Integer) value;
@@ -99,8 +98,8 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     }
 
     protected int initStepParameter(ServiceCycle context) {
-        if (_stepParameter != null) {
-            Object value = _stepParameter.getValue(context);
+        if (_step != null) {
+            Object value = _step.getValue(context);
             if (value != null && value instanceof Integer) {
                 Integer stepValue = (Integer) value;
                 return stepValue.intValue();
@@ -121,8 +120,8 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
 
     protected Integer getEndParameterValue(ServiceCycle context) {
         Integer endValue = null;
-        if (_endParameter != null) {
-            Object value = _endParameter.getValue(context);
+        if (_end != null) {
+            Object value = _end.getValue(context);
             if (value != null) {
                 if (value instanceof Integer) {
                     endValue = (Integer) value;
@@ -209,20 +208,20 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return getClass().getName() + "@" + hashCode() +":"+ postFix;
     }
 
-    public void setBeginParameter(ProcessorProperty beginParameter) {
-        _beginParameter = beginParameter;
+    public void setBegin(ProcessorProperty beginParameter) {
+        _begin = beginParameter;
     }
 
-    public void setEndParameter(ProcessorProperty endParameter) {
-        _endParameter = endParameter;
+    public void setEnd(ProcessorProperty endParameter) {
+        _end = endParameter;
     }
 
-    public void setStepParameter(ProcessorProperty stepParameter) {
-        _stepParameter = stepParameter;
+    public void setStep(ProcessorProperty stepParameter) {
+        _step = stepParameter;
     }
 
-    public void setVarParameter(ProcessorProperty varParameter) {
-        _varParameter = varParameter;
+    public void setVar(String varParameter) {
+        _var = varParameter;
     }
 
 }

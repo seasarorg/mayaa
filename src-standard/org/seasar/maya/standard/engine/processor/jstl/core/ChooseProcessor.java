@@ -15,7 +15,12 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
+import ognl.ObjectPropertyAccessor;
+
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.standard.engine.processor.ObjectAttributeUtil;
 
 /**
  * @author maruo_syunsuke
@@ -23,15 +28,16 @@ import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 public class ChooseProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 3983358462082328502L;
-
-    private boolean run ;
     
-    public boolean isAlreadyRun() {
-        return run;
+    private static final String RUN_FLAG = "runFlag" ;
+    
+    public boolean isAlreadyRun(ServiceCycle cycle) {
+        return ObjectUtil.booleanValue(
+                ObjectAttributeUtil.getAttribute(cycle,this,RUN_FLAG),false);
     }
     
-    public void setRun() {
-        this.run = true;
+    public void setRun(ServiceCycle cycle) {
+        ObjectAttributeUtil.setAttribute(cycle,this,RUN_FLAG,Boolean.TRUE);
     }
 
 }

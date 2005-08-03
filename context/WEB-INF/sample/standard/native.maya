@@ -2,8 +2,25 @@
 <maya 	xmlns:m="http://maya.seasar.org"
 		xmlns:c="http://maya.seasar.org/jstl/core">
 
-	<c:out m:id="message" value="‚±‚ñ‚É‚¿‚Í ${ 1+1 }" m:rendered="true"/>
-	<c:set m:id="set" var="var" value="2" m:rendered="true"/>
-	<c:out m:id="out" value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
-	<c:remove m:id="remove" var="var" m:rendered="true"/>
+	<c:out    m:id="message" value="‚±‚ñ‚É‚¿‚Í ${ 1+1 }" m:rendered="true"/>
+	<c:set    m:id="set"     var="var" value="2"      m:rendered="true"/>
+	<c:out    m:id="out"     value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
+	<c:remove m:id="remove"  var="var"                m:rendered="true"/>
+
+	<c:out m:id="outForToken" value="${ var }" m:rendered="true"/>
+	<c:forTokens m:id="forTokens1" 
+			items="1-2-3-4-5" 
+			delims="-" var="var" 
+			m:rendered="true"/>
+	<c:forTokens m:id="forTokens2" 
+			items="1,2,3,4,5" 
+			var="var" begin="1" end="4" step="2"
+			m:rendered="true"/>
+
+	<c:choose m:id="choose"/>
+	<c:when   m:id="when1-1" test="false"/>
+	<c:when   m:id="when1-2" test="true"/>
+	<c:otherwise   m:id="otherwise"/>
+	
+	<c:forEach m:id="foreach1" begin="0" end="10" step="1"/>
 </maya>

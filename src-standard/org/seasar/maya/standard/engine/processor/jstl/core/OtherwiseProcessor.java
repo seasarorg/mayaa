@@ -29,9 +29,9 @@ public class OtherwiseProcessor extends TemplateProcessorSupport {
         if( (getParentProcessor() instanceof ChooseProcessor) == false )
             throw new IllegalStateException();
         ChooseProcessor chooseProcessor = (ChooseProcessor)getParentProcessor();
-        if( chooseProcessor.isAlreadyRun() ) 
+        if( chooseProcessor.isAlreadyRun(cycle) ) 
             return SKIP_BODY ;
-        chooseProcessor.setRun();
+        chooseProcessor.setRun(cycle);
         return EVAL_BODY_INCLUDE;
     }
     

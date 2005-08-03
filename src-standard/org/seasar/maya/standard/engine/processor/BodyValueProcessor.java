@@ -32,7 +32,7 @@ public abstract class BodyValueProcessor extends TemplateProcessorSupport implem
 	protected abstract ProcessStatus process(ServiceCycle cycle);
     
     private String getBodyContentKey() {
-        return getClass().getName() + "@" + hashCode();
+        return ObjectAttributeUtil.getIdentityKeyString(this,"BODY_VALUE");
     }
     
     public void setBodyContent(ServiceCycle cycle, CycleWriter body) {

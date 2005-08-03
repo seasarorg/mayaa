@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.ObjectUtil;
 
 /**
  * @author maruo_syunsuke
@@ -34,19 +35,19 @@ public class WhenProcessor extends TemplateProcessorSupport {
             throw new IllegalArgumentException();
         }
         checkThatParentIsChooseTag();
-        if ( isAlreadyRunAnotherTagInChooseTag()) {
+        if ( isAlreadyRunAnotherTagInChooseTag(cycle)) {
             return SKIP_BODY;
         }
         if (isTestValueTrue(cycle)) {
-            getParentChooseProcessor().setRun();
+            getParentChooseProcessor().setRun(cycle);
             return EVAL_BODY_INCLUDE;
         }
         return SKIP_BODY;
     }
 
-    private boolean isAlreadyRunAnotherTagInChooseTag() {
+    private boolean isAlreadyRunAnotherTagInChooseTag(ServiceCycle cycle) {
         ChooseProcessor chooseProcessor = getParentChooseProcessor();
-        if( chooseProcessor.isAlreadyRun() ) return true ;
+        if( chooseProcessor.isAlreadyRun(cycle) ) return true ;
         return false ;
     }
 
@@ -65,12 +66,7 @@ public class WhenProcessor extends TemplateProcessorSupport {
     private boolean isTestValueTrue(ServiceCycle cycle) {
         if( _test == null )
             throw new IllegalStateException();
-        Object elValue = _test.getValue(cycle);
-        if( (elValue instanceof Boolean) == false ) 
-            throw new IllegalStateException();
-        
-        Boolean bool = (Boolean)elValue;
-        return bool.booleanValue();
+        return ObjectUtil.booleanValue(_test.getValue(cycle),false);
     }
     
     public void setTest(ProcessorProperty test) {

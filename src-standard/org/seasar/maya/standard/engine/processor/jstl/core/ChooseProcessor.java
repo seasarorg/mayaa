@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import ognl.ObjectPropertyAccessor;
-
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ObjectUtil;

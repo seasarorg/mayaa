@@ -89,13 +89,14 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
 
     public void redirect(String url) {
-    	// XXX Ç±ÇÍÇ≈ó«Ç¢ÅH(ÅPÅ`ÅPÅG)
-    	WebResponse webResponse = (WebResponse)_response;
-    	try {
-			webResponse.redirect(url);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+    	if( _response instanceof WebResponse){
+        	WebResponse webResponse = (WebResponse)_response;
+        	try {
+    			webResponse.redirect(url);
+    		} catch (IOException e) {
+    			throw new RuntimeException(e);
+    		}
+    	}
     }
     
 }

@@ -28,6 +28,7 @@ import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.cycle.implicit.PageContextResolver;
 import org.seasar.maya.standard.cycle.implicit.RequestResolver;
 import org.seasar.maya.standard.cycle.implicit.ResponseResolver;
+import org.seasar.maya.standard.cycle.implicit.SessionResolver;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -42,6 +43,7 @@ public class JspImplicitScope extends ImplicitScope {
         _jspResolverMap.put(PageContext.PAGECONTEXT, new PageContextResolver());
         _jspResolverMap.put(PageContext.REQUEST, new RequestResolver());
         _jspResolverMap.put(PageContext.RESPONSE, new ResponseResolver());
+        _jspResolverMap.put(PageContext.SESSION, new SessionResolver());
     }
     
     public JspImplicitScope(ServiceCycle cycle) {

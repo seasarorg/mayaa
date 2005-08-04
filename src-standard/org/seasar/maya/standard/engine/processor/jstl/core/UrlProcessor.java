@@ -15,28 +15,21 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
-import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 
 /**
  * @author maruo_syunsuke
  */
-public class UrlProcessor extends TemplateProcessorSupport
-        implements ChildParamReciever{
+public class UrlProcessor extends HasParamsProcessor{
     
     private static final long serialVersionUID = 6419793385551077813L;
 
     private String _value ;
-    private String _var ;
+    private String _var   ;
     private String _scope ;
-    private Map _childParam ;
     
     public void setVar(String var) {
         _var = var;
@@ -47,9 +40,7 @@ public class UrlProcessor extends TemplateProcessorSupport
     }
     
     public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        String unEncodeString = _value + "?" + getParamString(); 
-        String encodedString  = cycle.getResponse().encodeURL(unEncodeString);
-        outPutEncodedString(cycle, encodedString);
+        outPutEncodedString(cycle, getEncodedUrlString(cycle));
         return super.doEndProcess(cycle);
     }
     
@@ -62,21 +53,7 @@ public class UrlProcessor extends TemplateProcessorSupport
         }
     }
     
-    private String getParamString() {
-        java.util.Iterator it = _childParam.keySet().iterator();
-        String paramString = "";
-        while (it.hasNext()) {
-            String key = (String) it.next();
-            paramString += key + "=" + _childParam.get(key) + "&" ;
-        }
-        return paramString.substring(0, paramString.length() - 1) ;
-    }
-    
-    public void addChildParam(String name, String value) {
-        if(_childParam == null) {
-            _childParam = new HashMap();
-        }
-        _childParam.put(name, value);
-    }
-
+	protected String getBaseURL() {
+		return _value;
+	}
 }

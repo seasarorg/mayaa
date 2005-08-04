@@ -15,48 +15,27 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 
 /**
  * @author maruo_syunsuke
  */
-public class RedirectProcessor extends TemplateProcessorSupport 
-        implements ChildParamReciever{
+public class RedirectProcessor extends HasParamsProcessor{
     
     private static final long serialVersionUID = -6741423544407439357L;
 
-    private String _url ;
-    private Map    _childParam ;
-    
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        return EVAL_BODY_INCLUDE;
-    }
+    private String _url = null ;
     
     public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        String paramString    = getParamString();
-        String unEncodeString = _url + "?" + paramString;
-        String encodedString  = cycle.getResponse().encodeURL(unEncodeString);
-        cycle.redirect(encodedString);
+        cycle.redirect(getEncodedUrlString(cycle));
         return SKIP_BODY;
     }
     
-    private String getParamString(){
-        Iterator it = _childParam.keySet().iterator();
-        String paramString = "";
-        while (it.hasNext()) {
-            String key = (String) it.next();
-            paramString += key + "=" + _childParam.get(key) + "&" ;
-        }
-        return paramString.substring(0,paramString.length()-1) ;
-    }
-    
-    public void addChildParam(String name, String value) {
-        _childParam.put(name,value);
-    }
+	public void setUrl(String url){
+		_url = url ;
+	}
 
+	protected String getBaseURL() {
+		return _url;
+	}
 }

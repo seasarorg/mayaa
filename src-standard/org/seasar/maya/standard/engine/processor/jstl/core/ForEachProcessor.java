@@ -16,23 +16,25 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
 public class ForEachProcessor extends ForLoopProcessor {
 
     private static final long serialVersionUID = 5392396535368214943L;
-
     private static final String LOCAL_LIST = "LOCAL_LIST" ;
-    private ProcessorProperty 	_expressionValue ;
+    
+    private ProcessorProperty _items = null;
 
     public ProcessStatus doStartProcess(ServiceCycle context) {
-        setReadOnlyList(context,initReadOnlyList(context));
+    	initReadOnlyList(context);
         return super.doStartProcess(context);
     }
     
-    protected ReadOnlyList initReadOnlyList(ServiceCycle context) {
-        return ForEachSupportUtil.toForEachList(
-                _expressionValue.getValue(context));
+    protected void initReadOnlyList(ServiceCycle cycle) {
+        Object itemsValue = getItemsValue(cycle);
+        if( itemsValue == null ) return ;
+		setReadOnlyList(cycle,ForEachSupportUtil.toForEachList(itemsValue));
     }
     
     protected ReadOnlyList getReadOnlyList(ServiceCycle cycle){
@@ -48,25 +50,37 @@ public class ForEachProcessor extends ForLoopProcessor {
         int end = 0 ;
         if( endValue != null ){
             end = endValue.intValue();
-            if( end >= getReadOnlyList(context).size() ){
+            if( getReadOnlyList(context) != null 
+            		&& end >= getReadOnlyList(context).size() ){
                 end = getReadOnlyList(context).size() -1 ;
             }
         }else{
+        	if( getReadOnlyList(context) == null )
+        		throw new IllegalStateException("end is required.");
             end = getReadOnlyList(context).size() - 1;
         }
         return end ;
     }
     
-    protected Object getCurrentItem(ServiceCycle context) {
-        return getReadOnlyList(context).get(getIndexValue(context));
+    protected Object getCurrentItem(ServiceCycle cycle) {
+        ReadOnlyList readOnlyList = getReadOnlyList(cycle);
+        if( readOnlyList == null ){
+        	return super.getCurrentItem(cycle);
+        }
+		return readOnlyList.get(getIndexValue(cycle));
 	}
     
-    public void setExpressionValue(ProcessorProperty expressionValue) {
-        _expressionValue = expressionValue;
-    }
-
     private String createAttributeKey(String postFix) {
         return getClass().getName() + "@" + hashCode() +":"+ postFix;
     }
+
+    public void setItems(ProcessorProperty items) {
+        _items = items;
+    }
+    protected Object getItemsValue(ServiceCycle cycle) {
+    	if( _items == null ) return null ;
+        return _items.getValue(cycle);
+    }
+
 }
 

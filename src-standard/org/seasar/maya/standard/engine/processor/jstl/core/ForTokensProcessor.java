@@ -24,23 +24,18 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 public class ForTokensProcessor extends ForEachProcessor {
 
     private static final long serialVersionUID = 5664728733042219315L;
-    private ProcessorProperty 	_items ;
     private String _delims = ",";
 
-    protected ReadOnlyList initReadOnlyList(ServiceCycle cycle) {
-        return ForEachSupportUtil.toForEachList(
-            (String)_items.getValue(cycle),
-            _delims 
-        );
+    protected void initReadOnlyList(ServiceCycle cycle) {
+        setReadOnlyList(
+        		cycle, 
+        		ForEachSupportUtil.toForEachList(
+        				(String)getItemsValue(cycle),_delims ));
     }
     
     public void setDelims(String delims) {
         if( delims == null )return ; 
         _delims = delims;
-    }
-    
-    public void setItems(ProcessorProperty items) {
-        _items = items;
     }
     
 }

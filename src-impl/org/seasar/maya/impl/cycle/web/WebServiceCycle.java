@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.io.IOException;
+
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
@@ -87,8 +89,13 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
 
     public void redirect(String url) {
-        // FIXME implementing
-        throw new UnsupportedOperationException();
+    	// XXX Ç±ÇÍÇ≈ó«Ç¢ÅH(ÅPÅ`ÅPÅG)
+    	WebResponse webResponse = (WebResponse)_response;
+    	try {
+			webResponse.redirect(url);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
     
 }

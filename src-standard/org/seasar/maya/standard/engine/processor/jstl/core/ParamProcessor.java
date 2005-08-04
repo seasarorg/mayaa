@@ -30,14 +30,14 @@ public class ParamProcessor extends AbstractBodyProcessor {
 
     protected ProcessStatus process(ServiceCycle cycle, Object obj) {
         String paramValue = getParamValue(obj);
-        setParamValueToParentProcessor(paramValue);
+        setParamValueToParentProcessor(cycle,paramValue);
         return EVAL_PAGE;
     }
     
-    private void setParamValueToParentProcessor(String paramValue) {
+    private void setParamValueToParentProcessor(ServiceCycle cycle, String paramValue) {
         if(getParentProcessor() instanceof ChildParamReciever) {
             ChildParamReciever reciever = (ChildParamReciever)getParentProcessor();
-            reciever.addChildParam(_name,paramValue);
+            reciever.addChildParam(cycle,_name,paramValue);
         } else {
             throw new IllegalStateException();
         }

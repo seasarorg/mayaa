@@ -57,4 +57,18 @@
 	<processor name="otherwise"
 		class="org.seasar.maya.standard.engine.processor.jstl.core.OtherwiseProcessor">
 	</processor>
+	
+	<processor name="forEach"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.ForEachProcessor">
+		<property name="items"  />
+		<property name="var"    />
+		<property name="begin"  />
+		<property name="end"    />
+		<property name="step"   />
+	</processor>
+
+	<processor name="redirect"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.RedirectProcessor">
+		<property name="url"/>
+	</processor>
 </library>

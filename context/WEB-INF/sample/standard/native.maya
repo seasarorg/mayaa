@@ -7,20 +7,32 @@
 	<c:out    m:id="out"     value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
 	<c:remove m:id="remove"  var="var"                m:rendered="true"/>
 
-	<c:out m:id="outForToken" value="${ var }" m:rendered="true"/>
+	<c:out       m:id="outForToken" value="${ var }"/>
+	<c:out       m:id="outForToken2" value="${ var2 }"/>
 	<c:forTokens m:id="forTokens1" 
-			items="1-2-3-4-5" 
-			delims="-" var="var" 
-			m:rendered="true"/>
+		items="a-b-c-d-e" 
+		delims="-" var="var" 
+	/>
+	<c:forTokens m:id="forTokens1-2" 
+		items="a,b,c,d,e" 
+		var="var2" 
+	/>
 	<c:forTokens m:id="forTokens2" 
-			items="1,2,3,4,5" 
-			var="var" begin="1" end="4" step="2"
-			m:rendered="true"/>
+		items="a,b,c,d,e" 
+		var="var" begin="1" end="4" step="2"
+	/>
 
-	<c:choose m:id="choose"/>
-	<c:when   m:id="when1-1" test="false"/>
-	<c:when   m:id="when1-2" test="true"/>
-	<c:otherwise   m:id="otherwise"/>
+	<c:choose    m:id="choose"/>
+	<c:when      m:id="when1-1" test="false"/>
+	<c:when      m:id="when1-2" test="true"/>
+	<c:otherwise m:id="otherwise"/>
 	
-	<c:forEach m:id="foreach1" begin="0" end="10" step="1"/>
+	<c:forEach m:id="foreach1" var="i" begin="0" end="10" step="1"/>
+	<c:out     m:id="outForEach_i" value="${ i }"/>
+	<c:forEach m:id="foreach2" var="j" begin="0" end="10" step="1"/>
+	<c:out     m:id="outForEach_j" value="${ j }"/>
+	<!--
+	<c:redirect m:id="redirect" url="http://google.com"/>
+	-->
+	
 </maya>

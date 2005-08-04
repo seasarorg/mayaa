@@ -49,16 +49,15 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         }
         if (getEndValue(context) >= getIndexValue(context)) {
             getVarAttribute(context).setValue(context, getCurrentItem(context));
-            setIndexValue(context, getIndexValue(context)
-                    + getStepValue(context));
+            setIndexValue(context, getIndexValue(context) + getStepValue(context));
             return true;
         }
         getVarAttribute(context).remove(context);
         return false;
     }
 
-    protected Object getCurrentItem(ServiceCycle context) {
-        return new Integer(getIndexValue(context));
+    protected Object getCurrentItem(ServiceCycle cycle) {
+        return new Integer(getIndexValue(cycle));
     }
 
     private String getKey() {

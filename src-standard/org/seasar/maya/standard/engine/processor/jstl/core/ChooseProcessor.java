@@ -38,4 +38,8 @@ public class ChooseProcessor extends TemplateProcessorSupport {
         ObjectAttributeUtil.setAttribute(cycle,this,RUN_FLAG,Boolean.TRUE);
     }
 
+    public ProcessStatus doEndProcess(ServiceCycle cycle) {
+        ObjectAttributeUtil.setAttribute(cycle,this,RUN_FLAG,null);
+    	return super.doEndProcess(cycle);
+    }
 }

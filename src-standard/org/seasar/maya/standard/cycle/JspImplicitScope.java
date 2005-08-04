@@ -26,6 +26,8 @@ import org.seasar.maya.impl.cycle.ImplicitScope;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.cycle.implicit.PageContextResolver;
+import org.seasar.maya.standard.cycle.implicit.RequestResolver;
+import org.seasar.maya.standard.cycle.implicit.ResponseResolver;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -38,7 +40,8 @@ public class JspImplicitScope extends ImplicitScope {
     static {
         _jspResolverMap = new HashMap();
         _jspResolverMap.put(PageContext.PAGECONTEXT, new PageContextResolver());
-        // TODO JSP固有の埋め込みオブジェクトのレゾルバ追加。
+        _jspResolverMap.put(PageContext.REQUEST, new RequestResolver());
+        _jspResolverMap.put(PageContext.RESPONSE, new ResponseResolver());
     }
     
     public JspImplicitScope(ServiceCycle cycle) {

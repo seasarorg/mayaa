@@ -24,6 +24,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -66,6 +67,9 @@ public class WebSession implements Session {
     }
     
     public Iterator iterateAttributeNames() {
+        if(_session == null) {
+            return NullIterator.getInstance();
+        }
         return EnumerationIterator.getInstance(_session.getAttributeNames());
     }
 
@@ -96,7 +100,9 @@ public class WebSession implements Session {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _session.removeAttribute(name);
+        if(_session != null) {
+            _session.removeAttribute(name);
+        }
     }
 
 }

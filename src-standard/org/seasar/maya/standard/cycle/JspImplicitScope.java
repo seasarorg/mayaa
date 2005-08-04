@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.jsp.PageContext;
-
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.ImplicitScope;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
@@ -40,10 +38,10 @@ public class JspImplicitScope extends ImplicitScope {
     private static Map _jspResolverMap;
     static {
         _jspResolverMap = new HashMap();
-        _jspResolverMap.put(PageContext.PAGECONTEXT, new PageContextResolver());
-        _jspResolverMap.put(PageContext.REQUEST, new RequestResolver());
-        _jspResolverMap.put(PageContext.RESPONSE, new ResponseResolver());
-        _jspResolverMap.put(PageContext.SESSION, new SessionResolver());
+        _jspResolverMap.put("pageContext", new PageContextResolver());
+        _jspResolverMap.put("request", new RequestResolver());
+        _jspResolverMap.put("response", new ResponseResolver());
+        _jspResolverMap.put("session", new SessionResolver());
     }
     
     public JspImplicitScope(ServiceCycle cycle) {

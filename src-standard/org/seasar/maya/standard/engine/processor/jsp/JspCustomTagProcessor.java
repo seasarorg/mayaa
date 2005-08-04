@@ -41,7 +41,6 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.el.PropertyNotFoundException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.standard.cycle.CycleBodyContent;
@@ -211,11 +210,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
             String propertyName = property.getQName().getLocalName();
-            Object value = null;
-            try {
-                value = property.getValue(cycle);
-            } catch (PropertyNotFoundException ignore) {
-            }
+            Object value = property.getValue(cycle);
             ObjectUtil.setProperty(customTag, propertyName, value);
             if(value != null) {
                 tagData.setAttribute(propertyName, value);

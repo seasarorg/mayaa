@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<m:maya xmlns:m="http://maya.seasar.org"
+			xmlns:c="http://java.sun.com/jstl/core_rt">
+
+	<c:if m:id="ifID" test="${ false }" />
+
+</m:maya>

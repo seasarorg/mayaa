@@ -24,7 +24,6 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
-import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -40,14 +39,14 @@ public class WebSession implements Session {
         if(_httpServletRequest == null) {
             throw new IllegalStateException();
         }
+        if(_session == null) {
+            _session = _httpServletRequest.getSession(true);
+        }
     }
 
     public Object getUnderlyingObject() {
         check();
-        if(_session != null) {
-            return _session;
-        }
-        return _httpServletRequest.getSession(true);
+        return _session;
     }
     
     public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
@@ -59,7 +58,7 @@ public class WebSession implements Session {
     
     public String getID() {
         check();
-        return _httpServletRequest.getSession(true).getId();
+        return _session.getId();
     }
 
     public String getScopeName() {
@@ -67,9 +66,6 @@ public class WebSession implements Session {
     }
     
     public Iterator iterateAttributeNames() {
-        if(_session == null) {
-            return NullIterator.getInstance();
-        }
         return EnumerationIterator.getInstance(_session.getAttributeNames());
     }
 
@@ -78,19 +74,13 @@ public class WebSession implements Session {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        if(_session != null) {
-            return _session.getAttribute(name);
-        }
-        return null;
+        return _session.getAttribute(name);
     }
 
     public void setAttribute(String name, Object attribute) {
         check();
         if(StringUtil.isEmpty(name)) {
             return;
-        }
-        if(_session == null) {
-            _session = _httpServletRequest.getSession(true);
         }
         _session.setAttribute(name, attribute);
     }
@@ -100,9 +90,7 @@ public class WebSession implements Session {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        if(_session != null) {
-            _session.removeAttribute(name);
-        }
+        _session.removeAttribute(name);
     }
 
 }

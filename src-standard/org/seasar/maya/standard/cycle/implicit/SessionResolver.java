@@ -35,7 +35,7 @@ public class SessionResolver implements ImplicitObjectResolver {
         if(obj instanceof HttpSession) {
             return obj;
         }
-        return null;
+        throw new IllegalStateException();
 	}
 
 }

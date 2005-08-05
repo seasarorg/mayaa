@@ -35,7 +35,7 @@ public class ResponseResolver implements ImplicitObjectResolver {
         if(obj instanceof HttpServletResponse) {
             return obj;
         }
-        return null;
+        throw new IllegalStateException();
 	}
 
 }

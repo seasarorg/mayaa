@@ -26,12 +26,10 @@ public interface ModelProvider {
     /**
      * ユーザー定義のモデルオブジェクト取得メソッド。
      * @param cycle サービスサイクルコンテキスト。
-     * @param modelName コンポーネント名。
-     * @param modelClass コンポーネントクラス型。
+     * @param modelKey コンポーネントキー。
      * @param modelScope スコープ。
      * @return モデルオブジェクト。
      */
-    Object getModel(ServiceCycle cycle, 
-            String modelName, Class modelClass, String modelScope);
+    Object getModel(ServiceCycle cycle, Object modelKey, String modelScope);
     
 }

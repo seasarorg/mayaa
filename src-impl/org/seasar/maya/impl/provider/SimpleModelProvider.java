@@ -28,8 +28,12 @@ public class SimpleModelProvider implements ModelProvider {
     public SimpleModelProvider() {
     }
     
-	public Object getModel(ServiceCycle cycle, 
-    		String modelName, Class modelClass, String modelScope) {
+	public Object getModel(ServiceCycle cycle, Object modelKey, String modelScope) {
+        if(modelKey instanceof Class == false) {
+            throw new IllegalArgumentException();
+        }
+        Class modelClass = (Class)modelKey;
+        String modelName = modelClass.getName();
         AttributeScope attrScope = cycle.getAttributeScope(modelScope);
         Object model = attrScope.getAttribute(modelName); 
         if(model != null) {

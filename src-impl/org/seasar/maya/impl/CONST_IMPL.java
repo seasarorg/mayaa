@@ -85,6 +85,7 @@ public interface CONST_IMPL {
     QName QM_COMMENT = new QName("comment");
     QName QM_CDATA = new QName("cdata");
     QName QM_DOCTYPE = new QName("doctype");
+    QName QM_NAME = new QName("name");
     QName QM_PUBLIC_ID = new QName("publicID");
     QName QM_SYSTEM_ID = new QName("systemID");
 
@@ -93,7 +94,6 @@ public interface CONST_IMPL {
 	QName QM_BEFORE_RENDER = new QName("beforeRender");
 	QName QM_AFTER_RENDER = new QName("afterRender");
 
-    QName QM_NAME = new QName("name");
     QName QM_CLASS = new QName("class");
     QName QM_SCOPE = new QName("scope");
 

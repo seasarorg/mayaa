@@ -199,10 +199,9 @@ public class SpecificationUtil implements CONST_IMPL {
             if(maya != null) {
 		        Class modelClass = getModelClass(maya);
 		        if(modelClass != null) {
-		            String name = specification.getKey();
 		            String scope = SpecificationUtil.getModelScope(maya);
 		            ModelProvider provider = ServiceProviderFactory.getModelProvider();
-		           	return provider.getModel(cycle, name, modelClass, scope);
+		           	return provider.getModel(cycle, modelClass, scope);
 		        }
             }
             specification = specification.getParentSpecification();

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE library
+	PUBLIC "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN"
+	"http://maya.seasar.org/dtd/mld_1_0.dtd">
+<library uri="http://maya.seasar.org/component">
+
+	<description>The Maya component processors</description>
+
+	<processor name="componentPage"
+			class="org.seasar.maya.component.engine.processor.ComponentPageProcessor">
+		<property name="path" required="true"/>
+		<property name="namespaceURI" required="true"/>
+	</processor>
+
+	<processor name="startComponent"
+			class="org.seasar.maya.component.engine.processor.StartComponentProcessor">
+	</processor>
+
+	<processor name="endComponent"
+			class="org.seasar.maya.component.engine.processor.EndComponentProcessor">
+	</processor>
+	
+</library>

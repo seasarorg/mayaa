@@ -36,7 +36,7 @@ public class Ognl2MethodAccessor extends ObjectMethodAccessor {
 	            ServiceCycle cycle = (ServiceCycle)map.get(
 	                    Ognl2CompiledExpression.SERVICE_CYCLE);
 	            Specification specification = SpecificationUtil.findSpecification(cycle);
-                Object model = SpecificationUtil.findSpecificationModel(cycle, specification);
+                Object model = SpecificationUtil.findSpecificationModel(specification);
                 if (model != null) {
                     return super.callMethod(map, model, methodName, args);
                 }

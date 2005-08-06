@@ -19,7 +19,6 @@ import java.io.Serializable;
 
 import javax.servlet.ServletContext;
 
-import org.seasar.maya.provider.ModelProvider;
 import org.seasar.maya.provider.ServiceProvider;
 
 /**
@@ -63,17 +62,6 @@ public abstract class ServiceProviderFactory implements Serializable {
 	    }
 		return _factory.getServiceProvider(_servletContext);
 	}
-
-	/**
-	 * モデル供給用のファクトリオブジェクトの取得。
-	 * @return モデル供給ファクトリオブジェクト。
-	 */
-	public static ModelProvider getModelProvider() {
-	    if(_factory == null || _servletContext == null) {
-	        throw new IllegalStateException();
-	    }
-		return _factory.getModelProvider(_servletContext);
-	}
 	
 	/**
 	 * サービスプロバイダの取得。生成もしくはServletContext中にサーブレット名を
@@ -82,13 +70,5 @@ public abstract class ServiceProviderFactory implements Serializable {
 	 * @return エンジンカスタマイズ用コンテキスト。
 	 */
 	protected abstract ServiceProvider getServiceProvider(ServletContext servletContext);
-	
-	/**
-	 * モデル供給用のファクトリオブジェクトの取得。生成もしくはServletContext中にサーブレット名を
-	 * キーとして保存しているプロバイダを取り出す。
-	 * @param servletContext サーブレットコンテキスト。
-	 * @return モデル供給ファクトリオブジェクト。
-	 */
-	protected abstract ModelProvider getModelProvider(ServletContext servletContext);
 	
 }

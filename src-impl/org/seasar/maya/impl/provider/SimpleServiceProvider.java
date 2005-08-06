@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -32,6 +33,7 @@ import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.cycle.web.WebServiceCycle;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.provider.ServiceProvider;
@@ -187,6 +189,23 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     public void releaseServiceCycle(ServiceCycle cycle) {
         _serviceCyclePool.returnServiceCycle(cycle);
     }
+    
+	public Object getModel(Object modelKey, String modelScope) {
+        if(modelKey instanceof Class == false) {
+            throw new IllegalArgumentException();
+        }
+        Class modelClass = (Class)modelKey;
+        String modelName = modelClass.getName();
+        ServiceCycle cycle = getServiceCycle(); 
+        AttributeScope attrScope = cycle.getAttributeScope(modelScope);
+        Object model = attrScope.getAttribute(modelName); 
+        if(model != null) {
+            return model;
+        }
+        model = ObjectUtil.newInstance(modelClass);
+        attrScope.setAttribute(modelName, model);
+        return model;
+	}
     
     private class ServiceCyclePool extends AbstractSoftReferencePool {
     	

@@ -92,4 +92,12 @@ public interface ServiceProvider {
      */
     void releaseServiceCycle(ServiceCycle cycle);
 
+    /**
+     * ユーザー定義のモデルオブジェクト取得メソッド。
+     * @param modelKey コンポーネントキー。
+     * @param modelScope スコープ。
+     * @return モデルオブジェクト。
+     */
+    Object getModel(Object modelKey, String modelScope);
+    
 }

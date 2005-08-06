@@ -19,11 +19,9 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.web.WebApplication;
-import org.seasar.maya.impl.provider.SimpleModelProvider;
 import org.seasar.maya.impl.provider.SimpleServiceProvider;
 import org.seasar.maya.impl.source.factory.WebInfSourceEntry;
 import org.seasar.maya.impl.util.XmlUtil;
-import org.seasar.maya.provider.ModelProvider;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -38,7 +36,6 @@ public class SimpleServiceProviderFactory extends ServiceProviderFactory
 	private static final long serialVersionUID = 3581634661222113559L;
 
 	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
-    protected static final String KEY_MODEL = ModelProvider.class.getName();
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
         WebApplication startupApplication = new WebApplication();
@@ -65,17 +62,5 @@ public class SimpleServiceProviderFactory extends ServiceProviderFactory
         }
         return provider;
     }
-
-	public ModelProvider getModelProvider(ServletContext servletContext) {
-        if(servletContext == null) {
-            throw new IllegalArgumentException();
-        }
-        ModelProvider provider = (ModelProvider)servletContext.getAttribute(KEY_MODEL);
-		if(provider == null) {
-			provider = new SimpleModelProvider();
-			servletContext.setAttribute(KEY_MODEL, provider);
-		}
-        return provider;
-	}
 
 }

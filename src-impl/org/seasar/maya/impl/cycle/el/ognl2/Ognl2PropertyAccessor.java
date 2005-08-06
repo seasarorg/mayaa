@@ -48,7 +48,7 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
 	private Object getRootModel(Map map) {
         ServiceCycle cycle = getServiceCycle(map);
         Specification specification = SpecificationUtil.findSpecification(cycle);
-       	return SpecificationUtil.findSpecificationModel(cycle, specification);
+       	return SpecificationUtil.findSpecificationModel(specification);
 	}
 	
 	public Object getProperty(Map map, Object target, Object property) {

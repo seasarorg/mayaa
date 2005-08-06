@@ -35,7 +35,7 @@ import org.seasar.maya.impl.builder.IllegalNameException;
 import org.seasar.maya.impl.builder.PrefixMappingNotFoundException;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
-import org.seasar.maya.provider.ModelProvider;
+import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.xml.sax.Locator;
 
@@ -189,19 +189,15 @@ public class SpecificationUtil implements CONST_IMPL {
         return specification;
     }
     
-    public static Object findSpecificationModel(
-            ServiceCycle cycle, Specification specification) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public static Object findSpecificationModel(Specification specification) {
         while(specification != null) {
             SpecificationNode maya = getMayaNode(specification);
             if(maya != null) {
 		        Class modelClass = getModelClass(maya);
 		        if(modelClass != null) {
 		            String scope = SpecificationUtil.getModelScope(maya);
-		            ModelProvider provider = ServiceProviderFactory.getModelProvider();
-		           	return provider.getModel(cycle, modelClass, scope);
+		            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+		           	return provider.getModel(modelClass, scope);
 		        }
             }
             specification = specification.getParentSpecification();

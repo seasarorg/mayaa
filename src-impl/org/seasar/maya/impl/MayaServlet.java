@@ -74,17 +74,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     protected ServiceCycle getServiceCycle(
     		HttpServletRequest request, HttpServletResponse response) {
         ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-        provider.setHttpServletRequest(request);
-        provider.setHttpServletResponse(response);
+        provider.initialize(request, response);
         return provider.getServiceCycle();
-    }
-    
-    protected void releaseServiceCycle(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-        provider.releaseServiceCycle(cycle);
     }
     
     protected void handleError(
@@ -98,12 +89,10 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
                 throw (RuntimeException)tx;
             }
             throw new RuntimeException(tx);
-        } finally {
-            releaseServiceCycle(cycle);
         }
     }
     
-    protected void prepareRequest(ServletResponse response) {
+    protected void prepareResponse(ServletResponse response) {
         if(response instanceof HttpServletResponse) {
             HttpServletResponse httpResponse = (HttpServletResponse)response;
             httpResponse.addHeader("Pragma", "no-cache");
@@ -117,18 +106,12 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         if(request == null || response == null) {
             throw new IllegalArgumentException();
         }
-        prepareRequest(response);
+        prepareResponse(response);
         ServiceCycle cycle = getServiceCycle(request, response);
         try {
-            try {
-                _engine.doService(cycle);
-            } catch(Throwable t) {
-                cycle.getResponse().clearBuffer();
-                throw t;
-            } finally {
-                releaseServiceCycle(cycle);
-            }
+            _engine.doService(cycle);
         } catch(Throwable t) {
+            cycle.getResponse().clearBuffer();
             handleError(request, response, t);
         }
         cycle.getResponse().flush();

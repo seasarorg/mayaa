@@ -71,26 +71,15 @@ public interface ServiceProvider {
     /**
      * サーブレットAPIのコンテキストオブジェクト設定。
      * @param request カレントのHTTPリクエスト。
+     * @param response カレントのHTTPレスポンス。
      */
-    void setHttpServletRequest(HttpServletRequest request);
-    
-    /**
-     * サーブレットAPIのコンテキストオブジェクト設定。
-     * @param request カレントのHTTPレスポンス。
-     */
-    void setHttpServletResponse(HttpServletResponse response);
+    void initialize(HttpServletRequest request, HttpServletResponse response);
     
     /**
      * サービスサイクルの取得
-     * @return 払い出したサービスサイクル。
+     * @return カレントスレッドでのサービスサイクル。
      */
     ServiceCycle getServiceCycle();
-
-    /**
-     * サービスサイクルの返却
-     * @param cycle 返却するサービスサイクル。
-     */
-    void releaseServiceCycle(ServiceCycle cycle);
 
     /**
      * ユーザー定義のモデルオブジェクト取得メソッド。

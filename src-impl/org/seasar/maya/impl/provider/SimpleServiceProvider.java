@@ -35,7 +35,6 @@ import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -51,18 +50,14 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private ExpressionFactory _expressionFactory;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
-    private ServiceCyclePool _serviceCyclePool;
-    private ThreadLocal _httpRequest;
-    private ThreadLocal _httpResponse;
+	private ThreadLocal _currentServiceCycle;
 	
     public SimpleServiceProvider(ServletContext servletContext) {
         if(servletContext == null) {
             throw new IllegalArgumentException();
         }
         _servletContext = servletContext;
-        _serviceCyclePool = new ServiceCyclePool();
-        _httpRequest = new ThreadLocal();
-        _httpResponse = new ThreadLocal();
+        _currentServiceCycle = new ThreadLocal();
     }
     
     public ServletContext getServletContext() {
@@ -168,26 +163,45 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         return _templateBuilder;
     }
 
-	public void setHttpServletRequest(HttpServletRequest request) {
-		if(request == null) {
+    private Request createRequest(HttpServletRequest request) {
+    	if(request == null) {
+    		throw new IllegalArgumentException();
+    	}
+        String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
+    	WebRequest webRequest = new WebRequest(suffixSeparator);
+    	webRequest.setHttpServletRequest(request);
+    	return webRequest;
+    }
+    
+    private Response createResponse(HttpServletResponse response) {
+    	if(response == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	WebResponse webResponse = new WebResponse();
+    	webResponse.setHttpServletResponse(response);
+    	return webResponse;
+    }
+    
+	public void initialize(HttpServletRequest request, HttpServletResponse response) {
+		if(request == null || response == null) {
 			throw new IllegalArgumentException();
 		}
-		_httpRequest.set(request);
-	}
-
-	public void setHttpServletResponse(HttpServletResponse response) {
-		if(response == null) {
-			throw new IllegalArgumentException();
-		}
-		_httpResponse.set(response);
+    	WebServiceCycle cycle = (WebServiceCycle)_currentServiceCycle.get();
+    	if(cycle == null) {
+    		cycle = new WebServiceCycle(getApplication());
+            SpecificationUtil.setEngine(cycle, getEngine());
+    		_currentServiceCycle.set(cycle);
+    	}
+		cycle.setRequest(createRequest(request));
+        cycle.setResponse(createResponse(response));
 	}
 
 	public ServiceCycle getServiceCycle() {
-        return _serviceCyclePool.borrowServiceCycle();
-    }
-    
-    public void releaseServiceCycle(ServiceCycle cycle) {
-        _serviceCyclePool.returnServiceCycle(cycle);
+		ServiceCycle cycle = (ServiceCycle)_currentServiceCycle.get();
+		if(cycle == null) {
+			throw new IllegalStateException();
+		}
+		return cycle;
     }
     
 	public Object getModel(Object modelKey, String modelScope) {
@@ -206,58 +220,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         attrScope.setAttribute(modelName, model);
         return model;
 	}
-    
-    private class ServiceCyclePool extends AbstractSoftReferencePool {
-    	
-    	private ThreadLocal _current = new ThreadLocal();
-        
-        protected Request createRequest() {
-        	HttpServletRequest request = (HttpServletRequest)_httpRequest.get();
-        	if(request == null) {
-        		throw new IllegalStateException();
-        	}
-            String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
-        	WebRequest webRequest = new WebRequest(suffixSeparator);
-        	webRequest.setHttpServletRequest(request);
-        	return webRequest;
-        }
-        
-        protected Response createResponse() {
-        	HttpServletResponse response = (HttpServletResponse)_httpResponse.get();
-        	if(response == null) {
-        		throw new IllegalStateException();
-        	}
-        	WebResponse webResponse = new WebResponse();
-        	webResponse.setHttpServletResponse(response);
-        	return webResponse;
-        }
-
-        protected Object createObject() {
-            return new WebServiceCycle(getApplication());
-        }
-        
-        protected boolean validateObject(Object object) {
-            return object instanceof WebServiceCycle;
-        }
-    
-        WebServiceCycle borrowServiceCycle() {
-        	WebServiceCycle cycle = (WebServiceCycle)_current.get();
-        	if(cycle == null) {
-        		cycle = (WebServiceCycle)borrowObject();
-                cycle.setRequest(createRequest());
-                cycle.setResponse(createResponse());
-                SpecificationUtil.setEngine(cycle, getEngine());
-        		_current.set(cycle);
-        	}
-        	return cycle;
-        }
-        
-        void returnServiceCycle(ServiceCycle cycle) {
-            returnObject(cycle);
-            _current.set(null);
-        }
-        
-    }
 
 }
 

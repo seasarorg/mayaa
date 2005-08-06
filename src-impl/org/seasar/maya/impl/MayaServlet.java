@@ -112,6 +112,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             _engine.doService(cycle);
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
+            cycle.resetPageScope();
             handleError(request, response, t);
         }
         cycle.getResponse().flush();

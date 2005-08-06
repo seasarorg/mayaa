@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
-import java.io.IOException;
-
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
@@ -81,6 +79,7 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
 
     public void forward(String relativeUrlPath) {
+    	resetPageScope();
         _request.setForwardPath(relativeUrlPath);
         _response.clearBuffer();
         Engine engine = SpecificationUtil.getEngine(this);
@@ -89,13 +88,9 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
 
     public void redirect(String url) {
-    	if( _response instanceof WebResponse){
+    	if( _response instanceof WebResponse) {
         	WebResponse webResponse = (WebResponse)_response;
-        	try {
-    			webResponse.redirect(url);
-    		} catch (IOException e) {
-    			throw new RuntimeException(e);
-    		}
+   			webResponse.redirect(url);
     	}
     }
     

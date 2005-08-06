@@ -88,7 +88,12 @@ public class WebResponse extends AbstractResponse {
         return _httpServletResponse.encodeURL(url);
     }
 
-    public void redirect(String url) throws IOException {
-    	_httpServletResponse.sendRedirect(url);
+    public void redirect(String url) {
+    	try {
+    		_httpServletResponse.sendRedirect(url);
+    	} catch(IOException e) {
+    		throw new RuntimeException(e);
+    	}
     }
+    
 }

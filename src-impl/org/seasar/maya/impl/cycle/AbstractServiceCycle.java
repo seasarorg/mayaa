@@ -65,8 +65,12 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         }
         _scopes.put(scope, attrScope);
     }
+    
+	public void resetPageScope() {
+		_attributes.clear();
+	}
 
-    public Iterator iterateAttributeNames() {
+	public Iterator iterateAttributeNames() {
         return _attributes.keySet().iterator();
     }
 

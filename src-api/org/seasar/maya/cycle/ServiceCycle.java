@@ -88,6 +88,11 @@ public interface ServiceCycle extends Serializable, AttributeScope {
     void putAttributeScope(String scope, AttributeScope attrScope);
 
     /**
+     * ページスコープ空間をリセットする。
+     */
+    void resetPageScope();
+    
+    /**
      * フォワードを行う。
      * @param relativeUrlPath パス文字列。
      */

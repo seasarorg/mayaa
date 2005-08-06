@@ -16,6 +16,8 @@
 package org.seasar.maya.impl.provider;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
@@ -27,6 +29,8 @@ import org.seasar.maya.cycle.el.ExpressionFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.web.WebApplication;
+import org.seasar.maya.impl.cycle.web.WebRequest;
+import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
@@ -46,6 +50,8 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
     private ServiceCyclePool _serviceCyclePool;
+    private ThreadLocal _httpRequest;
+    private ThreadLocal _httpResponse;
 	
     public SimpleServiceProvider(ServletContext servletContext) {
         if(servletContext == null) {
@@ -53,6 +59,8 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         }
         _servletContext = servletContext;
         _serviceCyclePool = new ServiceCyclePool();
+        _httpRequest = new ThreadLocal();
+        _httpResponse = new ThreadLocal();
     }
     
     public ServletContext getServletContext() {
@@ -158,12 +166,22 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         return _templateBuilder;
     }
 
-    public ServiceCycle getServiceCycle(Request request, Response response) {
-        WebServiceCycle cycle = _serviceCyclePool.borrowServiceCycle();
-        cycle.setRequest(request);
-        cycle.setResponse(response);
-        SpecificationUtil.setEngine(cycle, getEngine());
-    	return cycle;
+	public void setHttpServletRequest(HttpServletRequest request) {
+		if(request == null) {
+			throw new IllegalArgumentException();
+		}
+		_httpRequest.set(request);
+	}
+
+	public void setHttpServletResponse(HttpServletResponse response) {
+		if(response == null) {
+			throw new IllegalArgumentException();
+		}
+		_httpResponse.set(response);
+	}
+
+	public ServiceCycle getServiceCycle() {
+        return _serviceCyclePool.borrowServiceCycle();
     }
     
     public void releaseServiceCycle(ServiceCycle cycle) {
@@ -171,6 +189,29 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     }
     
     private class ServiceCyclePool extends AbstractSoftReferencePool {
+    	
+    	private ThreadLocal _current = new ThreadLocal();
+        
+        protected Request createRequest() {
+        	HttpServletRequest request = (HttpServletRequest)_httpRequest.get();
+        	if(request == null) {
+        		throw new IllegalStateException();
+        	}
+            String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
+        	WebRequest webRequest = new WebRequest(suffixSeparator);
+        	webRequest.setHttpServletRequest(request);
+        	return webRequest;
+        }
+        
+        protected Response createResponse() {
+        	HttpServletResponse response = (HttpServletResponse)_httpResponse.get();
+        	if(response == null) {
+        		throw new IllegalStateException();
+        	}
+        	WebResponse webResponse = new WebResponse();
+        	webResponse.setHttpServletResponse(response);
+        	return webResponse;
+        }
 
         protected Object createObject() {
             return new WebServiceCycle(getApplication());
@@ -181,11 +222,20 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         }
     
         WebServiceCycle borrowServiceCycle() {
-            return (WebServiceCycle)borrowObject();
+        	WebServiceCycle cycle = (WebServiceCycle)_current.get();
+        	if(cycle == null) {
+        		cycle = (WebServiceCycle)borrowObject();
+                cycle.setRequest(createRequest());
+                cycle.setResponse(createResponse());
+                SpecificationUtil.setEngine(cycle, getEngine());
+        		_current.set(cycle);
+        	}
+        	return cycle;
         }
         
         void returnServiceCycle(ServiceCycle cycle) {
             returnObject(cycle);
+            _current.set(null);
         }
         
     }

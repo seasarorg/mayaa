@@ -26,12 +26,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.cycle.web.WebRequest;
-import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.ThrowableUtil;
@@ -75,31 +71,12 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     	}
     }
     
-    protected Request createRequest(HttpServletRequest request) {
-    	if(request == null) {
-    		throw new IllegalArgumentException();
-    	}
-        String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
-    	WebRequest webRequest = new WebRequest(suffixSeparator);
-    	webRequest.setHttpServletRequest(request);
-    	return webRequest;
-    }
-    
-    protected Response createResponse(HttpServletResponse response) {
-    	if(response == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	WebResponse webResponse = new WebResponse();
-    	webResponse.setHttpServletResponse(response);
-    	return webResponse;
-    }
-    
-    protected ServiceCycle getServiceCycle(Request request, Response response) {
-        if(request == null || response == null) {
-            throw new IllegalArgumentException();
-        }
+    protected ServiceCycle getServiceCycle(
+    		HttpServletRequest request, HttpServletResponse response) {
         ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-        return provider.getServiceCycle(request, response);
+        provider.setHttpServletRequest(request);
+        provider.setHttpServletResponse(response);
+        return provider.getServiceCycle();
     }
     
     protected void releaseServiceCycle(ServiceCycle cycle) {
@@ -110,7 +87,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         provider.releaseServiceCycle(cycle);
     }
     
-    protected void handleError(Request request, Response response, Throwable t) {
+    protected void handleError(
+    		HttpServletRequest request, HttpServletResponse response, Throwable t) {
         ServiceCycle cycle = getServiceCycle(request, response);
         try {
             t = ThrowableUtil.removeWrapperRuntimeException(t);
@@ -140,22 +118,20 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             throw new IllegalArgumentException();
         }
         prepareRequest(response);
-        Request req = createRequest(request);
-        Response res = createResponse(response);
+        ServiceCycle cycle = getServiceCycle(request, response);
         try {
-            ServiceCycle cycle = getServiceCycle(req, res);
             try {
                 _engine.doService(cycle);
             } catch(Throwable t) {
-                res.clearBuffer();
+                cycle.getResponse().clearBuffer();
                 throw t;
             } finally {
                 releaseServiceCycle(cycle);
             }
         } catch(Throwable t) {
-            handleError(req, res, t);
+            handleError(request, response, t);
         }
-        res.flush();
+        cycle.getResponse().flush();
     }
     
     private String getRequestedPath(ServletRequest request) {

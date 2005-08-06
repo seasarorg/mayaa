@@ -43,7 +43,7 @@ public abstract class ServiceProviderFactory implements Serializable {
 	}
 	
 	/**
-	 * サーブレットコンテキストの設定。
+     * サーブレットAPIのコンテキストオブジェクト設定。
 	 * @param servletContext カレントのサーブレットコンテキスト。
 	 */
 	public static void setServletContext(ServletContext servletContext) {

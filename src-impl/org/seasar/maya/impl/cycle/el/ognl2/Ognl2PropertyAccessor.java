@@ -20,7 +20,6 @@ import java.util.Map;
 import ognl.ObjectPropertyAccessor;
 import ognl.OgnlException;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 import org.seasar.maya.engine.specification.Specification;
@@ -41,13 +40,8 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
 		_resolver = resolver;
 	}
 	
-	private ServiceCycle getServiceCycle(Map map) {
-        return (ServiceCycle)map.get(Ognl2CompiledExpression.SERVICE_CYCLE);
-	}	    
-	
 	private Object getRootModel(Map map) {
-        ServiceCycle cycle = getServiceCycle(map);
-        Specification specification = SpecificationUtil.findSpecification(cycle);
+        Specification specification = SpecificationUtil.findSpecification();
        	return SpecificationUtil.findSpecificationModel(specification);
 	}
 	
@@ -62,14 +56,6 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
                 }
             }
             base = null;
-        }
-        ServiceCycle cycle = getServiceCycle(map);
-        if(cycle == null) {
-            try {
-                return super.getProperty(map, target, property);
-            } catch (OgnlException e) {
-                throw new RuntimeException(e);
-            }
         }
         OgnlExpressionChain chain = new OgnlExpressionChain(map);
         return _resolver.getValue(base, property, chain);
@@ -87,15 +73,6 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
                 }
             }
             base = null;
-        }
-        ServiceCycle cycle = getServiceCycle(map);
-        if(cycle == null) {
-            try {
-                super.setProperty(map, target, property, value);
-                return;
-            } catch (OgnlException e) {
-                throw new RuntimeException(e);
-            }
         }
         OgnlExpressionChain chain = new OgnlExpressionChain(map);
         _resolver.setValue(base, property, value, chain);

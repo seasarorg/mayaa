@@ -15,15 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.el.ognl2;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ognl.Ognl;
 import ognl.OgnlException;
 
 import org.seasar.maya.impl.cycle.el.AbstractCompiledExpression;
 import org.seasar.maya.impl.cycle.el.ConversionException;
-import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -50,9 +46,7 @@ public class Ognl2CompiledExpression
         Object ret;
         Class expectedType = getExpectedType();
         try {
-            Map map = new HashMap();
-            map.put(SERVICE_CYCLE, CycleUtil.getServiceCycle());
-            ret = Ognl.getValue(_exp, map, ROOT);
+            ret = Ognl.getValue(_exp, ROOT);
         } catch(OgnlException e) {
             throw new IllegalStateException(e.getMessage());
         }
@@ -73,9 +67,7 @@ public class Ognl2CompiledExpression
             throw new ConversionException(expectedType, getExpression());
         }
         try {
-            Map map = new HashMap();
-            map.put(SERVICE_CYCLE, CycleUtil.getServiceCycle());
-            Ognl.setValue(_exp,  map, ROOT, value);
+            Ognl.setValue(_exp,  ROOT, value);
         } catch(OgnlException e) {
             throw new IllegalStateException(e.getMessage());
         }

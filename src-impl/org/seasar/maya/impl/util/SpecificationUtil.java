@@ -175,10 +175,10 @@ public class SpecificationUtil implements CONST_IMPL {
     
     /**
      * コンテキストから、より下位のSpecificationを探す。見つからないとnullを返す。
-     * @param context カレントのコンテキスト。
      * @return みつかったSpecification（テンプレート/ページ/エンジン）。
      */
-    public static Specification findSpecification(ServiceCycle cycle) {
+    public static Specification findSpecification() {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	Specification specification = (Template)cycle.getAttribute(KEY_TEMPLATE);
         if(specification == null) {
             specification = (Page)cycle.getAttribute(KEY_PAGE);

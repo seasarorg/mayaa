@@ -20,7 +20,6 @@ import java.util.Map;
 import ognl.ObjectMethodAccessor;
 import ognl.OgnlException;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.cycle.el.MethodNotFoundException;
 import org.seasar.maya.impl.util.SpecificationUtil;
@@ -33,9 +32,7 @@ public class Ognl2MethodAccessor extends ObjectMethodAccessor {
     public Object callMethod(Map map, Object target, String methodName, Object[] args) {
         try {
 	        if (target == Ognl2CompiledExpression.ROOT) {
-	            ServiceCycle cycle = (ServiceCycle)map.get(
-	                    Ognl2CompiledExpression.SERVICE_CYCLE);
-	            Specification specification = SpecificationUtil.findSpecification(cycle);
+	            Specification specification = SpecificationUtil.findSpecification();
                 Object model = SpecificationUtil.findSpecificationModel(specification);
                 if (model != null) {
                     return super.callMethod(map, model, methodName, args);

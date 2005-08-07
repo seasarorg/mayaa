@@ -51,7 +51,7 @@ public class ExpressionUtil implements CONST_IMPL {
         Object value = null;
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
-            value = compiledExpression.getValue(cycle);
+            value = compiledExpression.getValue();
         } else {
             value = expression;
         }
@@ -62,7 +62,7 @@ public class ExpressionUtil implements CONST_IMPL {
             Object expression, Object value) {
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
-            compiledExpression.setValue(cycle, value);
+            compiledExpression.setValue(value);
         }
     }
     

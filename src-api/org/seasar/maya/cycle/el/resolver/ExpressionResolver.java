@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.cycle.el.resolver;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
@@ -28,25 +27,21 @@ public interface ExpressionResolver extends Parameterizable {
     /**
      * 値の取得のためのリゾルバメソッド。解決した場合は、ExpressionContext
      * のpropertyResolvedプロパティにtrueをセットする。
-     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値取得するプロパティ。文字列もしくはインデックス値。
      * @param chain 次のレゾルバへのエントリーとなるチェーン。
      * @return 評価結果。
      */
-    Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain);
+    Object getValue(Object base, Object property, ExpressionChain chain);
 
     /**
      * 値設定のためのリゾルバメソッド。解決した場合は、ExpressionContext
      * のpropertyResolvedプロパティにtrueをセットする。
-     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値設定するプロパティ。文字列もしくはインデックス値。
      * @param value 設定値。
      * @param chain 次のレゾルバへのエントリーとなるチェーン。
      */
-    void setValue(ServiceCycle cycle, 
-            Object base, Object property, Object value, ExpressionChain chain);
+    void setValue(Object base, Object property, Object value, ExpressionChain chain);
     
 }

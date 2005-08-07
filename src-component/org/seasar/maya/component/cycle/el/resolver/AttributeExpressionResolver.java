@@ -28,6 +28,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.el.PropertyNotFoundException;
 import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
 import org.seasar.maya.impl.cycle.implicit.ParamMap;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
@@ -49,11 +50,11 @@ public class AttributeExpressionResolver
         return null;
     }
     
-    public Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain) {
-        if (cycle == null || property == null || chain == null) {
+    public Object getValue(Object base, Object property, ExpressionChain chain) {
+        if (property == null || chain == null) {
             throw new NullPointerException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (base == null && "attribute".equals(property)) {
             Template template = SpecificationUtil.getTemplate(cycle);
             TemplateProcessor parent = template.getParentProcessor();
@@ -77,19 +78,18 @@ public class AttributeExpressionResolver
             }
             throw new PropertyNotFoundException(base, property);
         }
-        return chain.getValue(cycle, base, property);
+        return chain.getValue(base, property);
     }
 
-    public void setValue(ServiceCycle cycle,
-            Object base, Object property, Object value, ExpressionChain chain) {
-        if (cycle == null || property == null || chain == null) {
+    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
+        if (property == null || chain == null) {
             throw new NullPointerException();
         }
         if ((base == null && "attribute".equals(property))
                 || (base instanceof ComponentPageProcessor)) {
             throw new PropertyNotWritableException(base, property);
         }
-        chain.setValue(cycle, base, property, value);
+        chain.setValue(base, property, value);
     }
     
     public void putParameter(String name, String value) {

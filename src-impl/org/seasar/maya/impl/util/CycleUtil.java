@@ -18,6 +18,7 @@ package org.seasar.maya.impl.util;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
@@ -35,7 +36,13 @@ public class CycleUtil {
         ServiceCycle.SCOPE_APPLICATION
     };
     
-    public static Object findAttribute(ServiceCycle cycle, String name) {
+    public static ServiceCycle getServiceCycle() {
+    	ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+    	return provider.getServiceCycle();
+    }
+    
+    public static Object findAttribute(String name) {
+    	ServiceCycle cycle = getServiceCycle();
         for (int i = 0; i < SCOPES.length; i++) {
             AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
             Object obj = scope.getAttribute(name);
@@ -46,7 +53,8 @@ public class CycleUtil {
         return null;
     }
 
-    public static void rewriteAttribute(ServiceCycle cycle, String name, Object value) {
+    public static void rewriteAttribute(String name, Object value) {
+    	ServiceCycle cycle = getServiceCycle();
         for (int i = 0; i < SCOPES.length; i++) {
             AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
             Object obj = scope.getAttribute(name);

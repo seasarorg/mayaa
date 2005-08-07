@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.el;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -42,7 +41,7 @@ public class LiteralExpression  implements CompiledExpression {
         return _expectedType;
     }
     
-    public Object getValue(ServiceCycle cycle) {
+    public Object getValue() {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
@@ -54,7 +53,7 @@ public class LiteralExpression  implements CompiledExpression {
         return _expression;
     }
     
-    public void setValue(ServiceCycle cycle, Object value) {
+    public void setValue(Object value) {
         throw new IllegalStateException();
     }
 

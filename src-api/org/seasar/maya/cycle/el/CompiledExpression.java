@@ -17,8 +17,6 @@ package org.seasar.maya.cycle.el;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * コンパイル済みの式言語オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -27,17 +25,15 @@ public interface CompiledExpression extends Serializable {
 
     /**
      * 式を実行して値を取得する。
-     * @param cycle サービスサイクルコンテキスト。
      * @return 実行結果の値。
      */
-    Object getValue(ServiceCycle cycle);
+    Object getValue();
     
     /**
      * 式により、値を設定する
-     * @param cycle サービスサイクルコンテキスト。
      * @param value 設定する値。
      */
-    void setValue(ServiceCycle cycle, Object value);
+    void setValue(Object value);
 
     /**
      * 式の取得。

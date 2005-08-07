@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.el.resolver;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 import org.seasar.maya.impl.util.CycleUtil;
@@ -25,29 +24,21 @@ import org.seasar.maya.impl.util.CycleUtil;
  */
 public class ScopedAttributeExpressionResolver implements ExpressionResolver {
     
-    public Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public Object getValue(Object base, Object property, ExpressionChain chain) {
         if(base == null) {
-	        Object value = CycleUtil.findAttribute(cycle, property.toString());
+	        Object value = CycleUtil.findAttribute(property.toString());
 	        if(value != null) {
                 return value;
 	        }
         }
-        return chain.getValue(cycle, base, property);
+        return chain.getValue(base, property);
     }
 
-    public void setValue(ServiceCycle cycle, 
-            Object base, Object property, Object value, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
         if(base == null) {
-            CycleUtil.rewriteAttribute(cycle, property.toString(), value);
+            CycleUtil.rewriteAttribute(property.toString(), value);
         }
-        chain.setValue(cycle, base, property, value);
+        chain.setValue(base, property, value);
     }
     
     public void putParameter(String name, String value) {

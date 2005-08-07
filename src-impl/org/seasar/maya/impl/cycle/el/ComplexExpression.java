@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.el;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -45,7 +44,7 @@ public class ComplexExpression implements CompiledExpression {
         return _expectedType;
     }
     
-    public Object getValue(ServiceCycle cycle) {
+    public Object getValue() {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
@@ -53,7 +52,7 @@ public class ComplexExpression implements CompiledExpression {
         }
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].getValue(cycle));
+            buffer.append(_compiled[i].getValue());
         }
         if(_expectedType == Void.class) {
             return null;
@@ -61,7 +60,7 @@ public class ComplexExpression implements CompiledExpression {
          return buffer.toString();
     }
     
-    public void setValue(ServiceCycle cycle, Object value) {
+    public void setValue(Object value) {
         throw new IllegalStateException();
     }
 

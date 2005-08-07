@@ -304,7 +304,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
      */
     protected Locale getLocale(ServiceCycle cycle) {
         // TODO Localization
-        Object locale = CycleUtil.findAttribute(cycle, FMT_LOCALE);
+        Object locale = CycleUtil.findAttribute(FMT_LOCALE);
 
         if (locale instanceof Locale) {
             return (Locale) locale;

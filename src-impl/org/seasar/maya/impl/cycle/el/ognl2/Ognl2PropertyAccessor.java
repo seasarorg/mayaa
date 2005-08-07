@@ -72,7 +72,7 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
             }
         }
         OgnlExpressionChain chain = new OgnlExpressionChain(map);
-        return _resolver.getValue(cycle, base, property, chain);
+        return _resolver.getValue(base, property, chain);
     }
 
     public void setProperty(Map map, Object target, Object property, Object value) {
@@ -98,7 +98,7 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
             }
         }
         OgnlExpressionChain chain = new OgnlExpressionChain(map);
-        _resolver.setValue(cycle, base, property, value, chain);
+        _resolver.setValue(base, property, value, chain);
     }
     
 	public Object superGetPropertyValue(Map map, Object target, Object property) {
@@ -128,13 +128,11 @@ public class Ognl2PropertyAccessor extends ObjectPropertyAccessor {
             _map = map;
         }
         
-	    public Object getValue(
-                ServiceCycle cycle, Object base, Object property) {
+	    public Object getValue(Object base, Object property) {
 	        return superGetPropertyValue(_map, base, property);
 	    }
 	
-	    public void setValue(ServiceCycle cycle, 
-	            Object base, Object property, Object value) {
+	    public void setValue(Object base, Object property, Object value) {
 	        superSetPropertyValue(_map, base, property, value);
 	    }
 

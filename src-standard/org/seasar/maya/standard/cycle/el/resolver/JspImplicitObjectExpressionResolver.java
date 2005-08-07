@@ -20,6 +20,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.standard.cycle.JspImplicitScope;
 
 /**
@@ -27,7 +28,8 @@ import org.seasar.maya.standard.cycle.JspImplicitScope;
  */
 public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
 
-    private Object getImplicitObject(ServiceCycle cycle, Object property) {
+    private Object getImplicitObject(Object property) {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle.hasAttributeScope(JspImplicitScope.SCOPE_JSP_IMPLICIT) == false) {
             cycle.putAttributeScope(
                     JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope(cycle));
@@ -36,32 +38,24 @@ public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
         return scope.getAttribute(property.toString());
     }
     
-    public Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new NullPointerException();
-        }
+    public Object getValue(Object base, Object property, ExpressionChain chain) {
         if(base == null) {
-            Object obj = getImplicitObject(cycle, property.toString());
+            Object obj = getImplicitObject(property.toString());
             if(obj != null) {
                 return obj;
             }
         }
-        return chain.getValue(cycle, base, property);
+        return chain.getValue(base, property);
     }
 
-    public void setValue(ServiceCycle cycle, 
-            Object base, Object property, Object value, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new NullPointerException();
-        }
+    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
         if(base == null) {
-            Object obj = getImplicitObject(cycle, property.toString());
+            Object obj = getImplicitObject(property.toString());
             if(obj != null) {
                 throw new PropertyNotWritableException(base, property);
             }
         }
-        chain.setValue(cycle, base, property, value);
+        chain.setValue(base, property, value);
     }
     
     public void putParameter(String name, String value) {

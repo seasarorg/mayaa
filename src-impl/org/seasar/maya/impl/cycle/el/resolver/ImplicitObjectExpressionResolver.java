@@ -20,40 +20,35 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ImplicitObjectExpressionResolver implements ExpressionResolver {
 
-    public Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new NullPointerException();
-        }
+    public Object getValue(Object base, Object property, ExpressionChain chain) {
         if(base == null) {
+        	ServiceCycle cycle = CycleUtil.getServiceCycle();
             AttributeScope implicitScope = cycle.getAttributeScope(ServiceCycle.SCOPE_IMPLICIT);
             Object obj = implicitScope.getAttribute(property.toString());
             if(obj != null) {
                 return obj;
             }
         }
-        return chain.getValue(cycle, base, property);
+        return chain.getValue(base, property);
     }
 
-    public void setValue(ServiceCycle cycle, 
-            Object base, Object property, Object value, ExpressionChain chain) {
-        if(cycle == null) {
-            throw new NullPointerException();
-        }
+    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
         if(base == null) {
+        	ServiceCycle cycle = CycleUtil.getServiceCycle();
             AttributeScope implicitScope = cycle.getAttributeScope(ServiceCycle.SCOPE_IMPLICIT);
             Object obj = implicitScope.getAttribute(property.toString());
             if(obj != null) {
                 throw new PropertyNotWritableException(base, property);
             }
         }
-        chain.setValue(cycle, base, property, value);
+        chain.setValue(base, property, value);
     }
     
     public void putParameter(String name, String value) {

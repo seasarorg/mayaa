@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.cycle.el.resolver;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * 式評価リゾルバチェイン。アプリケーションスコープにて共有されるので、
  * スレッドセーフに実装することが求められる。
@@ -26,20 +24,18 @@ public interface ExpressionChain {
 
     /**
      * 値の取得のためのチェインメソッド。
-     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値取得するプロパティ。文字列もしくはインデックス値。
      * @return 評価結果。
      */
-    Object getValue(ServiceCycle cycle, Object base, Object property);
+    Object getValue(Object base, Object property);
 
     /**
      * 値設定のためのチェインメソッド。
-     * @param cycle サービスサイクルコンテキスト。
      * @param base 評価のベースとなるオブジェクト。
      * @param property 値設定するプロパティ。文字列もしくはインデックス値。
      * @param value 設定値。
      */
-    void setValue(ServiceCycle cycle, Object base, Object property, Object value);
+    void setValue(Object base, Object property, Object value);
     
 }

@@ -18,7 +18,6 @@ package org.seasar.maya.impl.cycle.el.resolver;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.resolver.ExpressionChain;
 import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
 
@@ -43,28 +42,26 @@ public class CompositeExpressionResolver implements ExpressionResolver {
         }
     }
     
-    public Object getValue(ServiceCycle cycle, 
-            Object base, Object property, ExpressionChain chain) {
-    	if(cycle == null || property == null || chain == null) {
+    public Object getValue(Object base, Object property, ExpressionChain chain) {
+    	if(property == null || chain == null) {
     		throw new IllegalArgumentException();
     	}
     	if(_resolvers.size() > 0) {
     	    ExpressionChainImpl first = new ExpressionChainImpl(chain);
-    	    return first.getValue(cycle, base, property);
+    	    return first.getValue(base, property);
     	}
-    	return chain.getValue(cycle, base, property);
+    	return chain.getValue(base, property);
     }
     
-    public void setValue(ServiceCycle cycle, 
-            Object base, Object property, Object value, ExpressionChain chain) {
-    	if(cycle == null || property == null || chain == null) {
+    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
+    	if(property == null || chain == null) {
     		throw new IllegalArgumentException();
     	}
     	if(_resolvers.size() > 0) {
     	    ExpressionChainImpl first = new ExpressionChainImpl(chain);
-    	    first.getValue(cycle, base, property);
+    	    first.getValue(base, property);
     	} else {
-    	    chain.getValue(cycle, base, property);
+    	    chain.getValue(base, property);
     	}
     }
 
@@ -80,8 +77,8 @@ public class CompositeExpressionResolver implements ExpressionResolver {
     		_external = external;
     	}
     	
-    	public Object getValue(ServiceCycle cycle, Object base, Object property) {
-    		if(cycle == null || property == null) {
+    	public Object getValue(Object base, Object property) {
+    		if(property == null) {
     			throw new IllegalArgumentException();
     		}
             if(_index < _resolvers.size()) {
@@ -93,14 +90,13 @@ public class CompositeExpressionResolver implements ExpressionResolver {
                 } else {
                     chain = this;
                 }
-                return resolver.getValue(cycle, base, property, chain);
+                return resolver.getValue(base, property, chain);
             }
             throw new IndexOutOfBoundsException();
 		}
     	
-		public void setValue(ServiceCycle cycle, 
-				Object base, Object property, Object value) {
-    		if(cycle == null || property == null) {
+		public void setValue(Object base, Object property, Object value) {
+    		if(property == null) {
     			throw new IllegalArgumentException();
     		}
             if(_index < _resolvers.size()) {
@@ -112,7 +108,7 @@ public class CompositeExpressionResolver implements ExpressionResolver {
                 } else {
                     chain = this;
                 }
-                resolver.setValue(cycle, base, property, value, chain);
+                resolver.setValue(base, property, value, chain);
             } else {
                 throw new IndexOutOfBoundsException();
             }

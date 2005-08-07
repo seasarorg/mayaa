@@ -141,7 +141,7 @@ public class PageImpl extends SpecificationImpl
             ExpressionFactory expressionFactory = provider.getExpressionFactory();
             CompiledExpression action = 
                 expressionFactory.createExpression(expression, String.class);
-            return (String)action.getValue(cycle);
+            return (String)action.getValue();
         }
         return "";
     }

@@ -82,9 +82,9 @@ public class WebServiceCycle extends AbstractServiceCycle {
     	resetPageScope();
         _request.setForwardPath(relativeUrlPath);
         _response.clearBuffer();
-        Engine engine = SpecificationUtil.getEngine(this);
+        Engine engine = SpecificationUtil.getEngine();
         Page page = engine.getPage(_request.getPageName(), _request.getExtension());
-        page.doPageRender(this);
+        page.doPageRender();
     }
 
     public void redirect(String url) {

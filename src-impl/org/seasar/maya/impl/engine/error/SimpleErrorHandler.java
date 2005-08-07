@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -31,8 +32,8 @@ public class SimpleErrorHandler  implements ErrorHandler {
     public void putParameter(String name, String value) {
     }
     
-    public void doErrorHandle(ServiceCycle cycle, Throwable t) {
-        if(cycle == null || t == null) {
+    public void doErrorHandle(Throwable t) {
+        if(t == null) {
             throw new IllegalArgumentException();
         }
         if(LOG.isTraceEnabled()) {
@@ -42,6 +43,7 @@ public class SimpleErrorHandler  implements ErrorHandler {
         if(t instanceof PageNotFoundException) {
             code = 404;
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().setStatus(code);
     }
     

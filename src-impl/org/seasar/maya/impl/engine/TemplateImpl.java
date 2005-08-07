@@ -143,11 +143,11 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     // main rendering method
-    private ProcessStatus render(ServiceCycle cycle, TemplateProcessor current) {
-        if(cycle == null || current == null) {
+    private ProcessStatus render(TemplateProcessor current) {
+        if(current == null) {
             throw new IllegalArgumentException();
         }
-        
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
         	ProcessStatus startRet = current.doStartProcess(cycle);
@@ -165,7 +165,7 @@ public class TemplateImpl extends SpecificationImpl
             	ProcessStatus afterRet;
                 do {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
-                        final ProcessStatus child = render(cycle, current.getChildProcessor(i));
+                        final ProcessStatus child = render(current.getChildProcessor(i));
                         if(child == SKIP_PAGE) {
                             return SKIP_PAGE;
                         }
@@ -231,29 +231,26 @@ public class TemplateImpl extends SpecificationImpl
         return ret ;
     }
     
-    private void prepareEncoding(ServiceCycle cycle) {
-        Response response = cycle.getResponse();
+    private void prepareEncoding() {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	Response response = cycle.getResponse();
         String contentType = getContentType();
         response.setMimeType(contentType);
     }
     
-    public ProcessStatus doTemplateRender(ServiceCycle cycle,
-            TemplateProcessor renderRoot) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        SpecificationUtil.setTemplate(cycle, this);
+    public ProcessStatus doTemplateRender(TemplateProcessor renderRoot) {
+        SpecificationUtil.setTemplate(this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
             processor = this;
         }
         if(getParentProcessor() == null) {
-            prepareEncoding(cycle);
+            prepareEncoding();
         }
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
-        ProcessStatus ret = render(cycle, processor);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
-        SpecificationUtil.setTemplate(cycle, null);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
+        ProcessStatus ret = render(processor);
+        ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
+        SpecificationUtil.setTemplate(null);
         return ret;
     }
 

@@ -17,7 +17,6 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.provider.EngineSetting;
@@ -59,8 +58,7 @@ public interface Engine extends Parameterizable, Specification, Serializable {
 
     /**
      * サービスメソッド。
-     * @param cycle サービスサイクルコンテキスト。
      */
-    void doService(ServiceCycle cycle);
+    void doService();
     
 }

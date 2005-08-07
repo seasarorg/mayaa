@@ -64,7 +64,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             throws IOException, ServletException {
         String uri = request.getRequestURI();
     	String mimeType = getServletContext().getMimeType(uri);
-    	if(mimeType == null || "text/html".equals(mimeType)) {
+    	if(mimeType != null && mimeType.startsWith("text/")) {
     		doMayaService(request, response);
     	} else {
     		doResourceService(request, response);
@@ -78,12 +78,10 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         return provider.getServiceCycle();
     }
     
-    protected void handleError(
-    		HttpServletRequest request, HttpServletResponse response, Throwable t) {
-        ServiceCycle cycle = getServiceCycle(request, response);
+    protected void handleError(Throwable t) {
         try {
             t = ThrowableUtil.removeWrapperRuntimeException(t);
-            _engine.getErrorHandler().doErrorHandle(cycle, t);
+            _engine.getErrorHandler().doErrorHandle(t);
         } catch(Throwable tx) {
             if(tx instanceof RuntimeException) {
                 throw (RuntimeException)tx;
@@ -109,11 +107,11 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         prepareResponse(response);
         ServiceCycle cycle = getServiceCycle(request, response);
         try {
-            _engine.doService(cycle);
+            _engine.doService();
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
             cycle.resetPageScope();
-            handleError(request, response, t);
+            handleError(t);
         }
         cycle.getResponse().flush();
     }

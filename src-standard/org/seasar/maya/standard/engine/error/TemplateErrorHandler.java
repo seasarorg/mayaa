@@ -20,6 +20,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -50,19 +51,20 @@ public class TemplateErrorHandler  implements ErrorHandler {
         }
     }
     
-    public void doErrorHandle(ServiceCycle cycle, Throwable t) {
-        if(t == null || cycle == null) {
+    public void doErrorHandle(Throwable t) {
+        if(t == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setAttribute(THROWABLE, t);
-        Engine engine = SpecificationUtil.getEngine(cycle);
+        Engine engine = SpecificationUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
                 	Page page = engine.getPage(getPageName(throwableClass), "html");
-                    page.doPageRender(cycle);
+                    page.doPageRender();
     	            break;
                 } catch(PageNotFoundException ignore) {
                 }

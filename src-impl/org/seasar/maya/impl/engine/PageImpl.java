@@ -29,6 +29,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ExpressionUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -131,10 +132,7 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    protected String getTemplateSuffix(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    protected String getTemplateSuffix() {
         String expression = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(expression)) {
             ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
@@ -146,16 +144,14 @@ public class PageImpl extends SpecificationImpl
         return "";
     }
 
-    protected Template getTemplate(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    protected Template getTemplate() {
         String suffix;
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
             suffix = requestedSuffix;
         } else {
-            suffix = getTemplateSuffix(cycle);
+            suffix = getTemplateSuffix();
         }
         Template template = getTemplate(suffix);
         if(template == null && StringUtil.hasValue(suffix) &&
@@ -168,16 +164,13 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    public ProcessStatus doPageRender(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        SpecificationUtil.setPage(cycle, this);
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER, cycle);
-        Template template = getTemplate(cycle);
-        ProcessStatus ret = template.doTemplateRender(cycle, null);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER, cycle);
-        SpecificationUtil.setPage(cycle, null);
+    public ProcessStatus doPageRender() {
+        SpecificationUtil.setPage(this);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
+        Template template = getTemplate();
+        ProcessStatus ret = template.doTemplateRender(null);
+        ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
+        SpecificationUtil.setPage(null);
         return ret;
     }
 

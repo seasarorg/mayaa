@@ -56,7 +56,7 @@ public class AttributeExpressionResolver
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (base == null && "attribute".equals(property)) {
-            Template template = SpecificationUtil.getTemplate(cycle);
+            Template template = SpecificationUtil.getTemplate();
             TemplateProcessor parent = template.getParentProcessor();
             if (parent == null) {
                 return new ParamMap(cycle.getRequest());

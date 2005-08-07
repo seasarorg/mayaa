@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.util;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.cycle.el.ExpressionFactory;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -47,7 +46,7 @@ public class ExpressionUtil implements CONST_IMPL {
         return null;
     }
     
-    public static Object expressGetValue(ServiceCycle cycle, Object expression) {
+    public static Object expressGetValue(Object expression) {
         Object value = null;
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
@@ -58,17 +57,15 @@ public class ExpressionUtil implements CONST_IMPL {
         return value;
     }
 
-    public static void expressSetValue(ServiceCycle cycle,
-            Object expression, Object value) {
+    public static void expressSetValue(Object expression, Object value) {
         if (expression instanceof CompiledExpression) {
             CompiledExpression compiledExpression = (CompiledExpression)expression;
             compiledExpression.setValue(value);
         }
     }
     
-    public static  void execEvent(Specification specification, QName eventName,
-            ServiceCycle cycle) {
-        if(specification == null || eventName == null || cycle == null) {
+    public static  void execEvent(Specification specification, QName eventName) {
+        if(specification == null || eventName == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
@@ -78,7 +75,7 @@ public class ExpressionUtil implements CONST_IMPL {
 	        	String expression = attr.getValue();
 	        	if(StringUtil.hasValue(expression)) {
 		            Object obj = ExpressionUtil.parseExpression(expression, Void.class);
-		            ExpressionUtil.expressGetValue(cycle, obj);
+		            ExpressionUtil.expressGetValue(obj);
 	        	}
 	        }
         }

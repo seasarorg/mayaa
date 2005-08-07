@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.engine.error;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
@@ -26,9 +25,8 @@ public interface ErrorHandler extends Parameterizable {
 
     /**
      * エラー処理メソッド。
-     * @param cycle サービスサイクルコンテキスト。
      * @param t 処理対象のThrowable。
      */
-    void doErrorHandle(ServiceCycle cycle, Throwable t);
+    void doErrorHandle(Throwable t);
 
 }

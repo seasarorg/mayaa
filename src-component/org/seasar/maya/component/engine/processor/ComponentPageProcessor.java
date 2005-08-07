@@ -113,7 +113,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             TemplateProcessor processor = getChildProcessor(i);
-            if(template.doTemplateRender(cycle, processor) == SKIP_PAGE) {
+            if(template.doTemplateRender(processor) == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
         }
@@ -130,7 +130,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);
         if(start != null) {
-            template.doTemplateRender(cycle, start);
+            template.doTemplateRender(start);
             return SKIP_BODY;
         }
         throw new StartComponentNotFoundException(template);

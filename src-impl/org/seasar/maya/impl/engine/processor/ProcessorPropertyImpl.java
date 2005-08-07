@@ -64,7 +64,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     public Object getValue(ServiceCycle cycle) {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
-            return ExpressionUtil.expressGetValue(cycle, expression);
+            return ExpressionUtil.expressGetValue(expression);
         }
         return _value;
     }
@@ -72,7 +72,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     public void setValue(ServiceCycle cycle, Object value) {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
-            ExpressionUtil.expressSetValue(cycle, expression, value);
+            ExpressionUtil.expressSetValue(expression, value);
         } else {
             throw new PropertyNotWritableException(value, getQName().getLocalName());
         }

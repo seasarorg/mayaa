@@ -17,7 +17,6 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 
@@ -58,9 +57,8 @@ public interface Page extends Specification, Serializable {
 	
     /**
      * テンプレートレンダリングを行う。
-     * @param cycle サービスサイクルコンテキスト。
      * @return プロセッサ処理ステータス。
      */
-    ProcessStatus doPageRender(ServiceCycle cycle);
+    ProcessStatus doPageRender();
 
 }

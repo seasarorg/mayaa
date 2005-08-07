@@ -17,7 +17,6 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Specification;
 
@@ -42,10 +41,9 @@ public interface Template extends Specification, TemplateProcessor, Serializable
 
     /**
      * テンプレートをレンダリングする。
-     * @param cycle サービスサイクルコンテキスト。
      * @param renderRoot 描画のルートとなるプロセッサ。nullの場合は自身をルートとして描画する。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
-    ProcessStatus doTemplateRender(ServiceCycle cycle, TemplateProcessor renderRoot);
+    ProcessStatus doTemplateRender(TemplateProcessor renderRoot);
     
 }

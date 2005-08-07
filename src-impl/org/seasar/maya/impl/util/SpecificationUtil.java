@@ -58,7 +58,8 @@ public class SpecificationUtil implements CONST_IMPL {
         return "/template[@suffix='" + suffix + "']";
     } 
     
-    public static Template getTemplate(ServiceCycle cycle) {
+    public static Template getTemplate() {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
         Template template = 
             (Template)cycle.getAttribute(KEY_TEMPLATE);
         if(template == null) {
@@ -67,11 +68,9 @@ public class SpecificationUtil implements CONST_IMPL {
         return template;
     }
 
-    public static void setTemplate(ServiceCycle cycle, Template template) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        cycle.setAttribute(KEY_TEMPLATE, template);
+    public static void setTemplate(Template template) {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	cycle.setAttribute(KEY_TEMPLATE, template);
     }
     
     public static String createPageKey(String pageName, String extension) {
@@ -96,7 +95,8 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
     
-    public static Page getPage(ServiceCycle cycle) {
+    public static Page getPage() {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
         Page page = (Page)cycle.getAttribute(KEY_PAGE);
         if(page == null) {
             throw new IllegalStateException();
@@ -104,11 +104,9 @@ public class SpecificationUtil implements CONST_IMPL {
         return page;
     }
 
-    public static void setPage(ServiceCycle cycle, Page page) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        cycle.setAttribute(KEY_PAGE, page);
+    public static void setPage(Page page) {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	cycle.setAttribute(KEY_PAGE, page);
     }
 
     public static Engine getEngine(Specification specification) {
@@ -122,7 +120,8 @@ public class SpecificationUtil implements CONST_IMPL {
         throw new IllegalArgumentException();
     }
     
-    public static Engine getEngine(ServiceCycle cycle) {
+    public static Engine getEngine() {
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
         Engine engine = (Engine)cycle.getAttribute(KEY_ENGINE);
         if(engine == null) {
             throw new IllegalStateException();

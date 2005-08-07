@@ -35,9 +35,6 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.impl.util.ThrowableUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.impl.util.collection.NullEnumeration;
 import org.seasar.maya.standard.util.JspUtil;
@@ -108,16 +105,11 @@ public class CyclePageContext extends PageContext {
     }
 
     public void handlePageException(Exception e) throws ServletException, IOException {
-        handlePageException((Throwable)e);
+    	throw new UnsupportedOperationException();
     }
     
     public void handlePageException(Throwable t) throws ServletException, IOException {
-        if(t == null) {
-            return ;
-        }
-        t = ThrowableUtil.removeWrapperRuntimeException(t);
-        Engine engine = SpecificationUtil.getEngine(_cycle); 
-        engine.getErrorHandler().doErrorHandle(_cycle, t);
+    	throw new UnsupportedOperationException();
     }
 
     public Exception getException() {

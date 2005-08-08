@@ -16,16 +16,15 @@
 package org.seasar.maya.impl.cycle.implicit;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ParamValuesResolver implements ImplicitObjectResolver {
 
-	public Object resolve(ServiceCycle cycle) {
-	    if(cycle == null) {
-	        throw new IllegalArgumentException();
-	    }
+	public Object resolve() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
 		return new ParamValuesMap(cycle.getRequest());
 	}
 

@@ -21,7 +21,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
@@ -43,7 +42,7 @@ public class ParseProcessor extends TemplateProcessorSupport {
         _resourceXml = resourceXml ;
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         Document doc;
@@ -58,7 +57,7 @@ public class ParseProcessor extends TemplateProcessorSupport {
             throw new RuntimeException(e);
         }
         AttributeValue var = AttributeValueFactory.create(_var, _scope);
-        var.setValue(cycle,doc);
+        var.setValue(doc);
         return EVAL_PAGE;
     }
 

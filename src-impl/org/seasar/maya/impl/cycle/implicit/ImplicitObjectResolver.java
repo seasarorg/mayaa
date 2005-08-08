@@ -15,13 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.implicit;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ImplicitObjectResolver {
 
-	public Object resolve(ServiceCycle cycle);
+	public Object resolve();
 	
 }

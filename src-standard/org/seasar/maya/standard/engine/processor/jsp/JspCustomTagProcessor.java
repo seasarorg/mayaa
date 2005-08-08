@@ -41,6 +41,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.standard.cycle.CycleBodyContent;
@@ -149,11 +150,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return _attributesKey;
     }
     
-    protected Tag getLoadedTag(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        TagContext tagContext = TagContext.getTagContext(cycle);
+    protected Tag getLoadedTag() {
+        TagContext tagContext = TagContext.getTagContext();
         Tag tag = tagContext.getLoadedTag(this);
         if(tag == null) {
             throw new IllegalStateException();
@@ -161,34 +159,37 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return tag;
     }
 
-    protected void saveForNestedVariable(ServiceCycle cycle, Tag customTag) {
-        TagContext tagContext = TagContext.getTagContext(cycle);
+    protected void saveForNestedVariable(Tag customTag) {
+        TagContext tagContext = TagContext.getTagContext();
         Collection vars = tagContext.getNestedVariableNames(customTag);
         if (vars != null) {
             Map nestedVariables = new HashMap();
             for(Iterator it = vars.iterator(); it.hasNext(); ) {
                 String var = (String)it.next();
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
                 nestedVariables.put(var, cycle.getAttribute(var));
             }
             tagContext.putNestedVariables(customTag, nestedVariables);
         }
     }
 
-    protected void restoreForNestedVariable(ServiceCycle cycle, Tag customTag) {
-        TagContext tagContext = TagContext.getTagContext(cycle);
+    protected void restoreForNestedVariable(Tag customTag) {
+        TagContext tagContext = TagContext.getTagContext();
         Collection vars = tagContext.getNestedVariableNames(customTag);
         if (vars != null) {
             Map nestedVariables = tagContext.getNestedVariables(customTag);
             for(Iterator it = vars.iterator(); it.hasNext(); ) {
                 String var = (String)it.next();
                 Object previousValue = nestedVariables.get(var);
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
                 cycle.setAttribute(var, previousValue);
             }
             nestedVariables.clear();
         }
     }
     
-    protected PageContext getPageContext(ServiceCycle cycle) {
+    protected PageContext getPageContext() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         PageContext pageContext = (PageContext)cycle.getAttribute(PageContext.PAGECONTEXT);
         if(pageContext == null) {
             pageContext = new CyclePageContext(cycle);
@@ -197,20 +198,17 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return pageContext;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doStartProcess() {
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
-        TagContext tagContext = TagContext.getTagContext(cycle);
+        TagContext tagContext = TagContext.getTagContext();
         Tag customTag = tagContext.loadTag(_tagClass, getAttributesKey());
         TagData tagData = new TagData((Object[][])null);
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
             String propertyName = property.getQName().getLocalName();
-            Object value = property.getValue(cycle);
+            Object value = property.getValue();
             ObjectUtil.setProperty(customTag, propertyName, value);
             if(value != null) {
                 tagData.setAttribute(propertyName, value);
@@ -219,8 +217,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             }
         }
         tagContext.putNestedVariableNames(customTag, getNestedVariableNames(tagData));
-        customTag.setPageContext(getPageContext(cycle));
-        saveForNestedVariable(cycle, customTag);
+        customTag.setPageContext(getPageContext());
+        saveForNestedVariable(customTag);
         TemplateProcessor processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspCustomTagProcessor) {
@@ -242,46 +240,34 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
-    public boolean isChildEvaluation(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        return getLoadedTag(cycle) instanceof BodyTag;
+    public boolean isChildEvaluation() {
+        return getLoadedTag() instanceof BodyTag;
     }
 
-    public boolean isIteration(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        return getLoadedTag(cycle) instanceof IterationTag;
+    public boolean isIteration() {
+        return getLoadedTag() instanceof IterationTag;
     }
 
-    public boolean canCatch(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public boolean canCatch() {
         try {
-            return getLoadedTag(cycle) instanceof TryCatchFinally;
+            return getLoadedTag() instanceof TryCatchFinally;
         } catch(Exception e) {
             return false;
         }
     }
 
-    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
-        if(cycle == null || body == null) {
+    public void setBodyContent(CycleWriter body) {
+        if(body == null) {
             throw new IllegalArgumentException();
         }
-        Tag tag = getLoadedTag(cycle);
+        Tag tag = getLoadedTag();
         if(tag instanceof BodyTag) {
             ((BodyTag)tag).setBodyContent(new CycleBodyContent(body));
         }
     }
 
-    public void doInitChildProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Tag tag = getLoadedTag(cycle);
+    public void doInitChildProcess() {
+        Tag tag = getLoadedTag();
         if(tag instanceof BodyTag) {
             BodyTag bodyTag = (BodyTag)tag;
             try {
@@ -292,11 +278,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
-    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Tag tag = getLoadedTag(cycle);
+    public ProcessStatus doAfterChildProcess() {
+        Tag tag = getLoadedTag();
         if(tag instanceof IterationTag) {
             IterationTag iterationTag = (IterationTag)tag;
             try {
@@ -309,30 +292,27 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return SKIP_BODY;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Tag customTag = getLoadedTag(cycle);
+    public ProcessStatus doEndProcess() {
+        Tag customTag = getLoadedTag();
         try {
         	int ret = customTag.doEndTag();
             return JspUtil.getProcessStatus(ret, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
         } finally {
-            if (!canCatch(cycle)) {
-                restoreForNestedVariable(cycle, customTag);
-                TagContext tagContext = TagContext.getTagContext(cycle);
+            if (!canCatch()) {
+                restoreForNestedVariable(customTag);
+                TagContext tagContext = TagContext.getTagContext();
                 tagContext.releaseTag(customTag, getAttributesKey());
             }
         }
     }
 
-    public void doCatchProcess(ServiceCycle cycle, Throwable t) {
-        if (cycle == null || t == null) {
+    public void doCatchProcess(Throwable t) {
+        if (t == null) {
             throw new IllegalArgumentException();
         }
-        Tag customTag = getLoadedTag(cycle);
+        Tag customTag = getLoadedTag();
         try {
             ((TryCatchFinally) customTag).doCatch(t);
         } catch (RuntimeException e) {
@@ -342,16 +322,13 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
-    public void doFinallyProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Tag customTag = getLoadedTag(cycle);
+    public void doFinallyProcess() {
+        Tag customTag = getLoadedTag();
         try {
             ((TryCatchFinally) customTag).doFinally();
         } finally {
-            restoreForNestedVariable(cycle, customTag);
-            TagContext tagContext = TagContext.getTagContext(cycle);
+            restoreForNestedVariable(customTag);
+            TagContext tagContext = TagContext.getTagContext();
             tagContext.releaseTag(customTag, getAttributesKey());
         }
     }

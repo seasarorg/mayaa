@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 
@@ -43,47 +44,41 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
     private static final String LOCAL_START = "LOCAL_START" ;
     private static final String LOCAL_END   = "LOCAL_END" ;
     
-    protected boolean nextArrayItem(ServiceCycle context) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        if (getEndValue(context) >= getIndexValue(context)) {
-            getVarAttribute(context).setValue(context, getCurrentItem(context));
-            setIndexValue(context, getIndexValue(context) + getStepValue(context));
+    protected boolean nextArrayItem() {
+        if (getEndValue() >= getIndexValue()) {
+            getVarAttribute().setValue(getCurrentItem());
+            setIndexValue(getIndexValue() + getStepValue());
             return true;
         }
-        getVarAttribute(context).remove(context);
+        getVarAttribute().remove();
         return false;
     }
 
-    protected Object getCurrentItem(ServiceCycle cycle) {
-        return new Integer(getIndexValue(cycle));
+    protected Object getCurrentItem() {
+        return new Integer(getIndexValue());
     }
 
     private String getKey() {
         return getClass().getName() + "@" + hashCode();
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle context) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        initParameter(context);
-        return nextArrayItem(context) ? EVAL_BODY_INCLUDE : SKIP_BODY;
+    public ProcessStatus doStartProcess() {
+        initParameter();
+        return nextArrayItem() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
 
-    private void initParameter(ServiceCycle context) {
+    private void initParameter() {
         AttributeValue varAttribute = AttributeValueFactory.create(_var);
-        setVarAttribute(context, varAttribute);
-        setIndexValue(context, initBeginParameter(context));
-        setStepValue(context, initStepParameter(context));
-        setEndValue(context, initEndParameter(context));
-        varAttribute.setValue(context, new Integer(getIndexValue(context)));
+        setVarAttribute(varAttribute);
+        setIndexValue(initBeginParameter());
+        setStepValue(initStepParameter());
+        setEndValue(initEndParameter());
+        varAttribute.setValue(new Integer(getIndexValue()));
     }
 
-    protected int initBeginParameter(ServiceCycle context) {
+    protected int initBeginParameter() {
         if (_begin != null) {
-            Object value = _begin.getValue(context);
+            Object value = _begin.getValue();
             if (value != null) {
                 if (value instanceof Integer) {
                     Integer beginValue = (Integer) value;
@@ -96,9 +91,9 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return DEFAULT_INDEX_START_VALUE;
     }
 
-    protected int initStepParameter(ServiceCycle context) {
+    protected int initStepParameter() {
         if (_step != null) {
-            Object value = _step.getValue(context);
+            Object value = _step.getValue();
             if (value != null && value instanceof Integer) {
                 Integer stepValue = (Integer) value;
                 return stepValue.intValue();
@@ -109,18 +104,18 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return DEFAULT_STEP_START_VALUE;
     }
 
-    protected int initEndParameter(ServiceCycle context) {
-        Integer endValue = getEndParameterValue(context);
+    protected int initEndParameter() {
+        Integer endValue = getEndParameterValue();
         if (endValue != null) {
             return endValue.intValue();
         }
         return 0;
     }
 
-    protected Integer getEndParameterValue(ServiceCycle context) {
+    protected Integer getEndParameterValue() {
         Integer endValue = null;
         if (_end != null) {
-            Object value = _end.getValue(context);
+            Object value = _end.getValue();
             if (value != null) {
                 if (value instanceof Integer) {
                     endValue = (Integer) value;
@@ -132,74 +127,73 @@ public class ForLoopProcessor extends TemplateProcessorSupport implements Iterat
         return endValue;
     }
 
-    public ProcessStatus doAfterChildProcess(ServiceCycle context) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        return nextArrayItem(context) ? EVAL_BODY_AGAIN : SKIP_BODY;
+    public ProcessStatus doAfterChildProcess() {
+        return nextArrayItem() ? EVAL_BODY_AGAIN : SKIP_BODY;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle context) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        context.removeAttribute(getKey());
+    public ProcessStatus doEndProcess() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.removeAttribute(getKey());
         return EVAL_PAGE;
     }
 
-    public boolean isIteration(ServiceCycle context) {
+    public boolean isIteration() {
         return true;
     }
 
     // Local Value
-    protected int getIntValue(String name, ServiceCycle cycle) {
+    protected int getIntValue(String name) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Integer indexObject = (Integer)cycle.getAttribute(createAttributeKey(name));
         if( indexObject == null )throw new IllegalArgumentException("name is illegal.");
         return indexObject.intValue();
     }
 
-    protected void setIntValue(String name, ServiceCycle cycle, int value) {
+    protected void setIntValue(String name, int value) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setAttribute(createAttributeKey(name), new Integer(value));
     }
 
-    protected int getIndexValue(ServiceCycle context) {
-        return getIntValue(LOCAL_INDEX, context);
+    protected int getIndexValue() {
+        return getIntValue(LOCAL_INDEX);
     }
 
-    protected void setIndexValue(ServiceCycle context, int index) {
-        setIntValue(LOCAL_INDEX, context, index);
+    protected void setIndexValue(int index) {
+        setIntValue(LOCAL_INDEX, index);
     }
 
-    protected int getStepValue(ServiceCycle context) {
-        return getIntValue(LOCAL_STEP, context);
+    protected int getStepValue() {
+        return getIntValue(LOCAL_STEP);
     }
 
-    protected void setStepValue(ServiceCycle context, int step) {
-        setIntValue(LOCAL_STEP, context, step);
+    protected void setStepValue(int step) {
+        setIntValue(LOCAL_STEP, step);
     }
 
-    protected int getSartValue(ServiceCycle context) {
-        return getIntValue(LOCAL_START, context);
+    protected int getSartValue() {
+        return getIntValue(LOCAL_START);
     }
 
-    protected void setStartValue(ServiceCycle context, int step) {
-        setIntValue(LOCAL_START, context, step);
+    protected void setStartValue(int step) {
+        setIntValue(LOCAL_START, step);
     }
 
-    protected int getEndValue(ServiceCycle context) {
-        return getIntValue(LOCAL_END, context);
+    protected int getEndValue() {
+        return getIntValue(LOCAL_END);
     }
 
-    protected void setEndValue(ServiceCycle context, int step) {
-        setIntValue(LOCAL_END, context, step);
+    protected void setEndValue(int step) {
+        setIntValue(LOCAL_END, step);
     }
 
-    protected AttributeValue getVarAttribute(ServiceCycle cycle) {
+    protected AttributeValue getVarAttribute() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         return AttributeValueFactory.create(
                 (String)cycle.getAttribute(createAttributeKey(LOCAL_VAR)));
     }
 
-    protected void setVarAttribute(ServiceCycle cycle, AttributeValue value) {
+    protected void setVarAttribute(AttributeValue value) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setAttribute(createAttributeKey(LOCAL_VAR), value.getName());
     }
 

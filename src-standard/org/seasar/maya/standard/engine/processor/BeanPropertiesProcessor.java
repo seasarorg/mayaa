@@ -23,7 +23,6 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -54,8 +53,8 @@ public class BeanPropertiesProcessor extends AbstractIteratorProcessor {
     	_ignore = ignore;
     }
     
-    protected Iterator createIterator(ServiceCycle cycle, Object eval) {
-        if(cycle == null || eval == null) {
+    protected Iterator createIterator(Object eval) {
+        if(eval == null) {
             throw new IllegalArgumentException();
         }
         PropertyDescriptor[] descs = PropertyUtils.getPropertyDescriptors(eval);

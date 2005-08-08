@@ -22,6 +22,7 @@ import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -50,10 +51,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
     	_index = index;
     }
     
-    public boolean isIteration(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public boolean isIteration() {
         return true;
     }
     
@@ -61,41 +59,42 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
         return getClass().getName() + "@" + hashCode();
     }
     
-    protected boolean nextArrayItem(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Iterator it = getIterator(cycle);
+    protected boolean nextArrayItem() {
+        Iterator it = getIterator();
         if(it.hasNext()) {
 	        Object next = it.next();
-	        setVarItem(cycle, next);
-	        incrimentIndex(cycle);
+	        setVarItem(next);
+	        incrimentIndex();
 	        return true;
         }
-        removeVarItem(cycle);
-        removeIndexValue(cycle);
+        removeVarItem();
+        removeIndexValue();
         return false;
     }
     
-    protected final Iterator getIterator(ServiceCycle cycle) {
+    protected final Iterator getIterator() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
 		Iterator it = (Iterator)cycle.getAttribute(getKey());
 		return it;
 	}
 
-	protected final void removeIndexValue(ServiceCycle cycle) {
+	protected final void removeIndexValue() {
 		if(StringUtil.hasValue(_index)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.removeAttribute(_index);
         }
 	}
 
-    protected final void removeVarItem(ServiceCycle cycle) {
+    protected final void removeVarItem() {
 		if(StringUtil.hasValue(_var)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.removeAttribute(_var);
         }
 	}
 
-    protected final void incrimentIndex(ServiceCycle cycle) {
+    protected final void incrimentIndex() {
 		if(StringUtil.hasValue(_index)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
 		    Integer index = (Integer)cycle.getAttribute(_index);
 		    if(index == null) {
 		        cycle.setAttribute(_index, new Integer(0));
@@ -105,38 +104,32 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
 		}
 	}
 
-    protected final void setVarItem(ServiceCycle cycle, Object next) {
+    protected final void setVarItem(Object next) {
 		if(StringUtil.hasValue(_var)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
 		    cycle.setAttribute(_var, next);
 		}
 	}
 
-	protected abstract Iterator createIterator(ServiceCycle cycle, Object eval);
+	protected abstract Iterator createIterator(Object eval);
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Object eval = _expression.getValue(cycle);
-        Iterator it = createIterator(cycle, eval);
+    public ProcessStatus doStartProcess() {
+        Object eval = _expression.getValue();
+        Iterator it = createIterator(eval);
         if(it == null) {
             it = NullIterator.getInstance();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
 		cycle.setAttribute(getKey(), it);
-        return nextArrayItem(cycle) ? EVAL_BODY_INCLUDE : SKIP_BODY;
+        return nextArrayItem() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     
-	public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        return nextArrayItem(cycle) ? EVAL_BODY_AGAIN : SKIP_BODY;
+	public ProcessStatus doAfterChildProcess() {
+        return nextArrayItem() ? EVAL_BODY_AGAIN : SKIP_BODY;
     }
     
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doEndProcess() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.removeAttribute(getKey());
         return EVAL_PAGE;
     }

@@ -1,6 +1,5 @@
 package org.seasar.maya.standard.engine.processor.jstl;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
 
@@ -31,11 +30,11 @@ public class ProcessorPropertyString implements ProcessorProperty {
         return false;
     }
 
-    public Object getValue(ServiceCycle cycle) {
+    public Object getValue() {
         return _value.toString();
     }
 
-    public void setValue(ServiceCycle cycle, Object value) {
+    public void setValue(Object value) {
         _value = value ;
     }
 

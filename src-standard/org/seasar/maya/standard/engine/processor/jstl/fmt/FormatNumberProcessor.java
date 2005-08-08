@@ -126,21 +126,21 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
 		_scope = scope;
     }
     
-    private int parseInt(ProcessorProperty prop, ServiceCycle cycle){
-        if(prop != null && cycle != null){
-            Object obj = prop.getValue(cycle);
-            if(obj instanceof Integer){
+    private int parseInt(ProcessorProperty prop) {
+        if(prop != null) {
+            Object obj = prop.getValue();
+            if(obj instanceof Integer) {
                 return ((Integer)obj).intValue();
-            }else if(obj instanceof String){
+            } else if(obj instanceof String) {
                 return Integer.parseInt((String)obj);
             }
         }
         return -1;
     }
 
-    private String parseString(ProcessorProperty prop, ServiceCycle cycle){
-        if(prop != null && cycle != null){
-            Object obj = prop.getValue(cycle);
+    private String parseString(ProcessorProperty prop) {
+        if(prop != null) {
+            Object obj = prop.getValue();
             if(obj instanceof String){
                 return (String)obj;
             }
@@ -148,14 +148,14 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         return null;
     }
     
-    private void initParameter(ServiceCycle cycle){
-        _type = parseString(_typeAttr,cycle);
-        _pattern = parseString(_patternAttr,cycle);
-        _currencyCode = parseString(_currencyCodeAttr,cycle);
-        _currencySymbol = parseString(_currencySymbolAttr,cycle);
+    private void initParameter() {
+        _type = parseString(_typeAttr);
+        _pattern = parseString(_patternAttr);
+        _currencyCode = parseString(_currencyCodeAttr);
+        _currencySymbol = parseString(_currencySymbolAttr);
         
         if(_groupingUsedAttr != null){
-            Object obj = _groupingUsedAttr.getValue(cycle);
+            Object obj = _groupingUsedAttr.getValue();
         	if(obj instanceof Boolean) {
         	    _groupingUsed = ((Boolean)obj).booleanValue();
         	} else if(obj instanceof String) {
@@ -165,19 +165,18 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
             //デフォルト true
             _groupingUsed = true;
         }
-        
-        _maxIntegerDigits = parseInt(_maxIntegerDigitsAttr,cycle);
-        _minIntegerDigits = parseInt(_minIntegerDigitsAttr,cycle);
-        _maxFractionDigits = parseInt(_maxFractionDigitsAttr,cycle);
-        _minFractionDigits = parseInt(_minFractionDigitsAttr,cycle);
+        _maxIntegerDigits = parseInt(_maxIntegerDigitsAttr);
+        _minIntegerDigits = parseInt(_minIntegerDigitsAttr);
+        _maxFractionDigits = parseInt(_maxFractionDigitsAttr);
+        _minFractionDigits = parseInt(_minFractionDigitsAttr);
         
     }
     
-    protected ProcessStatus process(ServiceCycle cycle, Object obj) {
+    protected ProcessStatus process(Object obj) {
         String formatted = null;
         Object input = obj;
         
-        initParameter(cycle);
+        initParameter();
 
         if (input instanceof String) {
             
@@ -202,23 +201,18 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
                     "formatNumber", "value", obj, null);
         }
 
-        Locale locale = getLocale(cycle);
+        Locale locale = getLocale();
 
         if (locale != null) {
             // Create formatter
             NumberFormat formatter = null;
-            
-            
-            
             if ((_pattern != null) && !_pattern.equals("")) {
                 // if 'pattern' is specified, 'type' is ignored
                 DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
                 formatter = new DecimalFormat(_pattern, symbols);
             } else {
-                formatter = createFormatter(locale,cycle);
+                formatter = createFormatter(locale);
             }
-            
-            
             if (((_pattern != null) && !_pattern.equals(""))
                     || CURRENCY.equalsIgnoreCase(_type)) {
                 try {
@@ -227,20 +221,19 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
                     //TODO
                 }
             }
-            configureFormatter(formatter, cycle);
+            configureFormatter(formatter);
             formatted = formatter.format(input);
         } else {
             // no formatting locale available, use toString()
             formatted = input.toString();
         }
-
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (_var != null) {
             AttributeScope scope = cycle.getAttributeScope(_scope);
             scope.setAttribute(_var, formatted);
         } else {
             cycle.getResponse().write(formatted);
         }
-
         return EVAL_PAGE;
     }
  
@@ -250,10 +243,9 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
      * typeは "number" "currency" "persent"<br>
      * typeの指定がなければ "number"
      * @param locale
-     * @param cycle
      * @return NumberFormat
      */
-    private NumberFormat createFormatter(Locale locale, ServiceCycle cycle) {
+    private NumberFormat createFormatter(Locale locale) {
 
         NumberFormat formatter = null;
 
@@ -276,9 +268,8 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
      * フォーマットを設定します。
      * 
      * @param formatter
-     * @param cycle
      */
-    private void configureFormatter(NumberFormat formatter, ServiceCycle cycle) {
+    private void configureFormatter(NumberFormat formatter) {
         formatter.setGroupingUsed(_groupingUsed);
         if (_maxIntegerDigits > -1) {
             formatter.setMaximumIntegerDigits(_maxIntegerDigits);
@@ -297,12 +288,9 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
 
     /**
      * Locale を取得する。 ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。 無ければデフォルト Locale を返す。
-     * 
-     * @param cycle
-     *            評価時のページコンテキスト
      * @return Locale
      */
-    protected Locale getLocale(ServiceCycle cycle) {
+    protected Locale getLocale() {
         // TODO Localization
         Object locale = CycleUtil.findAttribute(FMT_LOCALE);
 
@@ -417,7 +405,7 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         }
     }
 
-    public boolean isChildEvaluation(ServiceCycle context) {
+    public boolean isChildEvaluation() {
         return true;
     }
     

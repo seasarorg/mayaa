@@ -16,6 +16,7 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author maruo_syunsuke
@@ -26,16 +27,18 @@ public class RedirectProcessor extends HasParamsProcessor{
 
     private String _url = null ;
     
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        cycle.redirect(getEncodedUrlString(cycle));
+    public ProcessStatus doEndProcess() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.redirect(getEncodedUrlString());
         return SKIP_BODY;
     }
     
-	public void setUrl(String url){
+	public void setUrl(String url) {
 		_url = url ;
 	}
 
 	protected String getBaseURL() {
 		return _url;
 	}
+
 }

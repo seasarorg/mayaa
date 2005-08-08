@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
@@ -34,37 +35,37 @@ public class OutProcessor extends BodyValueProcessor {
     private ProcessorProperty _default = NullProcessorProperty.NULL;
     private ProcessorProperty _escapeXml;
 
-    protected ProcessStatus process(ServiceCycle cycle) {
-        Object outputValue = getOutputObject(cycle);
+    protected ProcessStatus process() {
+        Object outputValue = getOutputObject();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response  = cycle.getResponse();
-        response.write(escapeXml(cycle, outputValue));
+        response.write(escapeXml(outputValue));
         return EVAL_PAGE;
     }
-    private Object getOutputObject(ServiceCycle cycle) {
-        Object outputValue = _value.getValue(cycle);
-
+    private Object getOutputObject() {
+        Object outputValue = _value.getValue();
         if( outputValue == null ){
-            outputValue = _default.getValue(cycle) ;
+            outputValue = _default.getValue() ;
         }
         if( outputValue == null ){
-            outputValue = getBodyValue(cycle) ;
+            outputValue = getBodyValue() ;
         }
         return outputValue;
     }
 
-    private String escapeXml(ServiceCycle cycle, Object obj) {
+    private String escapeXml(Object obj) {
         String plainString = String.valueOf(obj);
-        if(getBoolean(cycle, _escapeXml)) {
+        if(getBoolean(_escapeXml)) {
             return StringUtil.escapeEntity(plainString);
         }
         return plainString;
     }
 
-    private boolean getBoolean(ServiceCycle cycle, ProcessorProperty value) {
+    private boolean getBoolean(ProcessorProperty value) {
         if(value == null) {
             return false;
         }
-        Object obj = value.getValue(cycle);
+        Object obj = value.getValue();
         return ObjectUtil.booleanValue(obj, false);
     }
     
@@ -83,4 +84,5 @@ public class OutProcessor extends BodyValueProcessor {
     public void setEscapeXml(ProcessorProperty escapeXml) {
         _escapeXml = escapeXml;
     }
+
 }

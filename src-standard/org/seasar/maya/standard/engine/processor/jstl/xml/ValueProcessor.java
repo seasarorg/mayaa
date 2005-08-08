@@ -7,6 +7,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -31,16 +32,17 @@ public class ValueProcessor extends org.seasar.maya.standard.engine.processor.js
             public boolean isDynamic() {
                 return true;
             }
-            public Object getValue(ServiceCycle cycle) {
-                return getNode(cycle,select).getNodeValue() ;
+            public Object getValue() {
+                return getNode(select).getNodeValue() ;
             }
-            public void setValue(ServiceCycle cycle, Object value) {
+            public void setValue(Object value) {
             }
         });
     }
     
-    private Document getDocument(ServiceCycle cycle, String docVarName) {
+    private Document getDocument(String docVarName) {
         int scopeSeparaterIndex = docVarName.indexOf(':');
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(scopeSeparaterIndex >= 0) {
             String scopeName = docVarName.substring(0, scopeSeparaterIndex);
             String attributeName = docVarName.substring(scopeSeparaterIndex + 1);
@@ -56,10 +58,10 @@ public class ValueProcessor extends org.seasar.maya.standard.engine.processor.js
         return select.substring(0, firstSeparateIndex);
     }
     
-    private Node getNode(ServiceCycle cycle, String select) {
+    private Node getNode(String select) {
         int firstSeparateIndex = select.indexOf('/');
         String docVarName = getDocumentVariantName(select);
-        Document document = getDocument(cycle, docVarName);
+        Document document = getDocument(docVarName);
         String xpathString = docVarName.substring(firstSeparateIndex+1);
         Node node;
         try {

@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.component.engine.processor;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 
@@ -43,10 +42,10 @@ public class EndComponentProcessor extends DoBodyProcessor {
         return null;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
     	ComponentPageProcessor componentPage = findComponentPage();
         if(componentPage != null) {
-            return componentPage.renderChildren(cycle);
+            return componentPage.renderChildren();
         }
         return EVAL_BODY_INCLUDE;
     }

@@ -24,6 +24,7 @@ import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -82,25 +83,22 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return element.isEmpty() == false;
     }
     
-    private void appendAttributeString(
-            ServiceCycle cycle, StringBuffer buffer, ProcessorProperty prop) {
+    private void appendAttributeString(StringBuffer buffer, ProcessorProperty prop) {
         buffer.append(" ");
         String attrPrefix = prop.getPrefix();
         if(StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
         buffer.append(prop.getQName().getLocalName());
-        buffer.append("=\"").append(prop.getValue(cycle)).append("\"");
+        buffer.append("=\"").append(prop.getValue()).append("\"");
     }
     
-    private void write(ServiceCycle cycle, StringBuffer buffer) {
+    private void write(StringBuffer buffer) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(buffer.toString());
     }
     
-    protected ProcessStatus writeStartElement(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    protected ProcessStatus writeStartElement() {
         if(_qName == null) {
             throw new IllegalStateException();
         }
@@ -109,19 +107,19 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(_prefix).append(":");
         }
         buffer.append(_qName.getLocalName());
-        List additionalAttributes = getProcesstimeProperties(cycle);
+        List additionalAttributes = getProcesstimeProperties();
         for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             QName propQName = prop.getQName(); 
             if(_duplicated && (QH_ID.equals(propQName) || QX_ID.equals(propQName))) {
                 continue;
             }
-            appendAttributeString(cycle, buffer, prop);
+            appendAttributeString(buffer, prop);
         }
         for(Iterator it = getInformalProperties().iterator(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             if(additionalAttributes.contains(prop) == false) {
-                appendAttributeString(cycle, buffer, prop);
+                appendAttributeString(buffer, prop);
             }
         }
         if(isXHTML(_qName) && getChildProcessorSize() == 0) {
@@ -129,20 +127,20 @@ public class ElementProcessor extends AbstractAttributableProcessor
         } else {
             buffer.append(">");
         }
-        write(cycle, buffer);
+        write(buffer);
         return EVAL_BODY_INCLUDE;
     }
     
-    protected void writeEndElement(ServiceCycle cycle) {
+    protected void writeEndElement() {
         if(needsCloseElement(_qName)) {
 	        StringBuffer buffer = new StringBuffer("</");
 	        if(StringUtil.hasValue(_prefix)) {
 	            buffer.append(_prefix).append(":");
 	        }
 	        buffer.append(_qName.getLocalName()).append(">");
-	        write(cycle, buffer);
+	        write(buffer);
         }
-        removeProcesstimeInfo(cycle);
+        removeProcesstimeInfo();
     }
     
 }

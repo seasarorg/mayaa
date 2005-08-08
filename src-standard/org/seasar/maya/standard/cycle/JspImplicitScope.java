@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.ImplicitScope;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
 import org.seasar.maya.impl.util.StringUtil;
@@ -44,10 +43,6 @@ public class JspImplicitScope extends ImplicitScope {
         _jspResolverMap.put("session", new SessionResolver());
     }
     
-    public JspImplicitScope(ServiceCycle cycle) {
-        super(cycle);
-    }
-
     public Iterator iterateAttributeNames() {
         return _jspResolverMap.keySet().iterator();
     }

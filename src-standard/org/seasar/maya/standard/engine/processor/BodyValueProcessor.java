@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * ボディーの情報のあるタグの処理をおこなう。
@@ -29,20 +30,22 @@ public abstract class BodyValueProcessor extends TemplateProcessorSupport implem
     
 	private static final long serialVersionUID = 5795848587818700175L;
 
-	protected abstract ProcessStatus process(ServiceCycle cycle);
+	protected abstract ProcessStatus process();
     
     private String getBodyContentKey() {
         return ObjectAttributeUtil.getIdentityKeyString(this,"BODY_VALUE");
     }
     
-    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
-        if (cycle == null || body == null) {
+    public void setBodyContent(CycleWriter body) {
+        if (body == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setAttribute(getBodyContentKey(),body);
     }
 
-    public Object getBodyValue(ServiceCycle cycle){
+    public Object getBodyValue() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Object obj = cycle.getAttribute(getBodyContentKey());
         if (obj instanceof CycleWriter) {
             obj = ((CycleWriter)obj).getString();
@@ -50,29 +53,31 @@ public abstract class BodyValueProcessor extends TemplateProcessorSupport implem
         return obj;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         return EVAL_BODY_BUFFERED;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doEndProcess() {
         try{
-            return process(cycle);
+            return process();
         } finally {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.removeAttribute(getBodyContentKey());
         }
     }
-    public void doInitChildProcess(ServiceCycle cycle) {
+    public void doInitChildProcess() {
     }
-    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
+    
+    public ProcessStatus doAfterChildProcess() {
         return SKIP_BODY;
     }
-    public boolean isChildEvaluation(ServiceCycle cycle) {
+    
+    public boolean isChildEvaluation() {
         return true;
     }
-    public boolean isIteration(ServiceCycle cycle) {
+    
+    public boolean isIteration() {
         return false;
     }
+
 }

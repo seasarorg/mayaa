@@ -103,20 +103,18 @@ public class TemplateImpl extends SpecificationImpl
         return _suffix;
     }
     
-    private boolean isEvaluation(
-            ServiceCycle cycle, TemplateProcessor current) {
+    private boolean isEvaluation(TemplateProcessor current) {
         return current instanceof ChildEvaluationProcessor && 
-        		((ChildEvaluationProcessor)current).isChildEvaluation(cycle);
+        		((ChildEvaluationProcessor)current).isChildEvaluation();
     }
 
     private ChildEvaluationProcessor getEvaluation(TemplateProcessor current) {
         return (ChildEvaluationProcessor)current;
     }
     
-    private boolean isIteration(
-            ServiceCycle cycle, TemplateProcessor current) {
+    private boolean isIteration(TemplateProcessor current) {
         return current instanceof IterationProcessor &&
-        		((IterationProcessor)current).isIteration(cycle);
+        		((IterationProcessor)current).isIteration();
     }
     
     private IterationProcessor getIteration(TemplateProcessor current) {
@@ -128,12 +126,11 @@ public class TemplateImpl extends SpecificationImpl
         		((ElementProcessor)current).isDuplicated(); 
     }
     
-    private boolean isTryCatchFinally(
-            ServiceCycle cycle, TemplateProcessor current) {
+    private boolean isTryCatchFinally(TemplateProcessor current) {
         if( current instanceof TryCatchFinallyProcessor ){
             TryCatchFinallyProcessor tryCatchFinallyProcessor 
                                         = (TryCatchFinallyProcessor)current;
-            return tryCatchFinallyProcessor.canCatch(cycle);
+            return tryCatchFinallyProcessor.canCatch();
         }
         return false ;
     }
@@ -147,18 +144,18 @@ public class TemplateImpl extends SpecificationImpl
         if(current == null) {
             throw new IllegalArgumentException();
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
-        	ProcessStatus startRet = current.doStartProcess(cycle);
+        	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
             boolean buffered = false;
-            if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && isEvaluation(cycle, current)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
-                getEvaluation(current).setBodyContent(cycle, cycle.getResponse().pushWriter());
-                getEvaluation(current).doInitChildProcess(cycle);
+                getEvaluation(current).setBodyContent(cycle.getResponse().pushWriter());
+                getEvaluation(current).doInitChildProcess();
             }
             if(startRet == EVAL_BODY_INCLUDE || 
                     startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED) {
@@ -171,12 +168,12 @@ public class TemplateImpl extends SpecificationImpl
                         }
                     }
                     afterRet = SKIP_BODY;
-                    if(isIteration(cycle, current)) {
-                        afterRet = getIteration(current).doAfterChildProcess(cycle);
+                    if(isIteration(current)) {
+                        afterRet = getIteration(current).doAfterChildProcess();
                     	TemplateProcessor parent = current.getParentProcessor();
                     	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN && isDuplicated(parent)) {
-                            parent.doEndProcess(cycle);
-                            parent.doStartProcess(cycle);
+                            parent.doEndProcess();
+                            parent.doStartProcess();
                     	}
                     }
                 } while(afterRet == IterationProcessor.EVAL_BODY_AGAIN);
@@ -184,16 +181,16 @@ public class TemplateImpl extends SpecificationImpl
             if(buffered) {
                 cycle.getResponse().popWriter();
             }
-            ret = current.doEndProcess(cycle);
+            ret = current.doEndProcess();
         } catch (RuntimeException e) {
-            if(isTryCatchFinally(cycle, current)) {
-                getTryCatchFinally(current).doCatchProcess(cycle, e);
+            if(isTryCatchFinally(current)) {
+                getTryCatchFinally(current).doCatchProcess(e);
             } else {
                 throw e;
             }
         } finally {
-            if(isTryCatchFinally(cycle, current)) {
-                getTryCatchFinally(current).doFinallyProcess(cycle);
+            if(isTryCatchFinally(current)) {
+                getTryCatchFinally(current).doFinallyProcess();
             }
         }
         return ret;
@@ -307,11 +304,11 @@ public class TemplateImpl extends SpecificationImpl
         return _parentNode;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         return EVAL_BODY_INCLUDE;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
+    public ProcessStatus doEndProcess() {
         return EVAL_PAGE;
     }
 

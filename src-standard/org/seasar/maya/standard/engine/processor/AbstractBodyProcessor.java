@@ -20,6 +20,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * ボディーの情報>属性値>デフォルト値の三つの値を持つ可能性のあるタグの処理をおこなう。
@@ -36,7 +37,7 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         return getClass().getName() + "@" + hashCode();
     }
 
-    protected abstract ProcessStatus process(ServiceCycle cycle, Object obj);
+    protected abstract ProcessStatus process(Object obj);
     
     protected void setValue(ProcessorProperty value) {
         _value = value;
@@ -46,51 +47,46 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         _defaultValue = defaultValue;
     }
     
-    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
-        if (cycle == null || body == null) {
+    public void setBodyContent(CycleWriter body) {
+        if (body == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setAttribute(getBodyContentKey(),  body);
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doStartProcess() {
         Object obj = null;
         if(_value != null) {
-	        obj = _value.getValue(cycle);
+	        obj = _value.getValue();
 	        if (obj == null && _defaultValue != null) {
-                obj = _defaultValue.getValue(cycle);
+                obj = _defaultValue.getValue();
 	        }
         }
         if(obj != null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.setAttribute(getBodyContentKey(),  obj);
 	        return SKIP_BODY;
         }
         return EVAL_BODY_BUFFERED;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        
+    public ProcessStatus doEndProcess() {
         // FIXME なんか変なので後で見直す。
-        
         String key = getBodyContentKey();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Object obj = cycle.getAttribute(key);
         if (obj instanceof CycleWriter) {
             obj = ((CycleWriter)obj).getString();
             cycle.removeAttribute(key);
         }
-        return process(cycle, obj);
+        return process(obj);
     }
 
-    public void doInitChildProcess(ServiceCycle cycle) {
+    public void doInitChildProcess() {
     }
 
-    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess() {
         return SKIP_BODY;
     }
 
@@ -98,11 +94,11 @@ public abstract class AbstractBodyProcessor extends TemplateProcessorSupport
         _childEvaluation = childEvaluation;
     }
     
-    public boolean isChildEvaluation(ServiceCycle cycle) {
+    public boolean isChildEvaluation() {
         return _childEvaluation;
     }
 
-    public boolean isIteration(ServiceCycle cycle) {
+    public boolean isIteration() {
         return true;
     }
 

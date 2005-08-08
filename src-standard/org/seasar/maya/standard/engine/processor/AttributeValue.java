@@ -17,8 +17,6 @@ package org.seasar.maya.standard.engine.processor;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * @author maruo_syunsuke
  */
@@ -26,11 +24,11 @@ public interface AttributeValue extends Serializable{
     
     public String getName();
     
-    public void setValue(ServiceCycle cycle, Object value);
+    public void setValue(Object value);
     
-    public Object getValue(ServiceCycle cycle);
+    public Object getValue();
     
-    public void remove(ServiceCycle cycle);
+    public void remove();
 
 }
 

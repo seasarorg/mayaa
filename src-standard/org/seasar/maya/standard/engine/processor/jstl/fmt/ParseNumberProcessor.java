@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
@@ -63,13 +64,12 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         _var = var;
     }
 
-    public ProcessStatus process(ServiceCycle cycle, Object obj) {
-        Locale       locale   = getLocale(cycle);
-        NumberFormat format   = getFormat(locale);
-        Number       number   = null;
+    public ProcessStatus process(Object obj) {
+        Locale locale = getLocale();
+        NumberFormat format = getFormat(locale);
+        Number number = null;
         boolean isIntegerOnly = ObjectUtil.booleanValue(
                                 _integerOnly.getLiteral(),false);
-
         try {
             number = format.parse(obj.toString());
             if( isIntegerOnly ){
@@ -79,12 +79,13 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
             throw new RuntimeException(e);
         }
         if(StringUtil.isEmpty(_var.getLiteral())){
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(number.toString());
         } else {
             AttributeValue attributeValue 
                     = AttributeValueFactory.create(
                             _var.getLiteral(),_scope.getLiteral());
-            attributeValue.setValue(cycle,number);
+            attributeValue.setValue(number);
         }
         return SKIP_BODY;
     }
@@ -101,11 +102,11 @@ public class ParseNumberProcessor extends AbstractBodyProcessor {
         return NumberFormat.getInstance(locale);
     }
 
-    private Locale getLocale(ServiceCycle cycle) {
-        Locale locale       = Locale.getDefault();
-        Object parseLocale  = _parseLocale.getValue(cycle);
-        if( parseLocale instanceof Locale ){
-            locale = (Locale)parseLocale ;
+    private Locale getLocale() {
+        Locale locale = Locale.getDefault();
+        Object parseLocale  = _parseLocale.getValue();
+        if(parseLocale instanceof Locale){
+            locale = (Locale)parseLocale;
         }
         return locale;
     }

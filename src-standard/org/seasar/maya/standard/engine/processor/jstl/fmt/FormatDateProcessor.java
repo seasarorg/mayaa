@@ -101,31 +101,28 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
         _scope = scope;
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if (cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        Date value = getDateValue(cycle);
+    public ProcessStatus doStartProcess() {
+        Date value = getDateValue();
         if (value == null) {
             return EVAL_PAGE;
         }
 
-        Locale locale = getLocale(cycle);
+        Locale locale = getLocale();
 
         String formatted = null;
         if (locale == null) {
             formatted = value.toString();
         } else {
-            DateFormat format = createFormat(cycle, locale);
+            DateFormat format = createFormat(locale);
     
-            TimeZone timeZone = getTimeZone(cycle);
+            TimeZone timeZone = getTimeZone();
             if (timeZone != null) {
                 format.setTimeZone(timeZone);
             }
     
             formatted = format.format(value);
         }
-
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (_var != null) {
             AttributeScope scope = cycle.getAttributeScope(_scope);
             scope.setAttribute(_var, formatted);
@@ -138,15 +135,13 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
 
     /**
      * value を評価して Date を取得する。
-     *
-     * @param cycle 評価時のページコンテキスト
      * @return Date
      * @throws IllegalTagAttributeException dateが不正な場合
      */
-    protected Date getDateValue(ServiceCycle cycle) {
+    protected Date getDateValue() {
         Object value = null;
         try {
-            value = _value.getValue(cycle);
+            value = _value.getValue();
         } catch (RuntimeException e) {
             // FIXME OGNLに依存しない実装へ -> impl.elで例外を抽象化する。
             if (!(e.getCause() instanceof NoSuchPropertyException)) {
@@ -171,30 +166,28 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      *  pattern の評価結果を元に作成する。
      * type も pattern もセットされていないなら、type="date" がセットされていると
      * 見なす。
-     *
-     * @param cycle 評価時のページコンテキスト
      * @param locale 環境の Locale
      * @return DateFormat
      * @throws IllegalTagAttributeException typeが不正な場合
      */
-    protected DateFormat createFormat(ServiceCycle cycle, Locale locale) {
+    protected DateFormat createFormat(Locale locale) {
         String type = null;
         if (_type != null) {
-            type = (String)_type.getValue(cycle);
+            type = (String)_type.getValue();
         } else if (_pattern != null) {
-            String pattern = (String) _pattern.getValue(cycle);
+            String pattern = (String) _pattern.getValue();
             if (pattern != null) {
                 return new SimpleDateFormat(pattern, locale);
             }
         }
 
         if ((type == null) || DATE.equalsIgnoreCase(type)) {
-            return DateFormat.getDateInstance(getDateStyle(cycle), locale);
+            return DateFormat.getDateInstance(getDateStyle(), locale);
         } else if (TIME.equalsIgnoreCase(type)) {
-            return DateFormat.getTimeInstance(getTimeStyle(cycle), locale);
+            return DateFormat.getTimeInstance(getTimeStyle(), locale);
         } else if (DATETIME.equalsIgnoreCase(type)) {
             return DateFormat.getDateTimeInstance(
-                    getDateStyle(cycle), getTimeStyle(cycle), locale);
+                    getDateStyle(), getTimeStyle(), locale);
         } else {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "type", _type, null);
@@ -205,14 +198,12 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      * 日付のフォーマットスタイルを取得する。
      * (DateFormat#getXxxInstance で利用する定数値)
      * 未定義の場合は DateFormat.DEFAULT を返す。
-     *
-     * @param cycle 評価時のページコンテキスト
      * @return 日付のフォーマットスタイル
      * @throws IllegalTagAttributeException dateStyleが不正な場合
      */
-    protected int getDateStyle(ServiceCycle cycle)
+    protected int getDateStyle()
             throws IllegalTagAttributeException {
-        int dateStyle = getStyle(_dateStyle, cycle);
+        int dateStyle = getStyle(_dateStyle);
         if (dateStyle == INVALID_STYLE) {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "style", _dateStyle, null);
@@ -225,14 +216,12 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      * 時刻のフォーマットスタイルを取得する。
      * (DateFormat#getXxxInstance で利用する定数値)
      * 未定義の場合は DateFormat.DEFAULT を返す。
-     *
-     * @param cycle 評価時のページコンテキスト
      * @return 時刻のフォーマットスタイル
      * @throws IllegalTagAttributeException timeStyleが不正な場合
      */
-    protected int getTimeStyle(ServiceCycle cycle)
+    protected int getTimeStyle()
             throws IllegalTagAttributeException {
-        int timeStyle = getStyle(_timeStyle, cycle);
+        int timeStyle = getStyle(_timeStyle);
         if (timeStyle == INVALID_STYLE) {
             throw new IllegalTagAttributeException(
                     getTemplate(), "formatDate", "style", _timeStyle, null);
@@ -245,18 +234,15 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      * style を評価し、日付または時刻のフォーマットスタイルを取得する。
      * (DateFormat#getXxxInstance で利用する定数値)
      * style が null の場合は DateFormat.DEFAULT を返す。
-     *
      * @param style 評価対象の式。
-     * @param cycle 評価時のページコンテキスト。
      * @return 日付または時刻のフォーマットスタイル。
      *          style の評価結果が不正な場合は INVALID_STYLE を返す。
      */
-    protected int getStyle(ProcessorProperty style, ServiceCycle cycle) {
+    protected int getStyle(ProcessorProperty style) {
         if (style == null) {
             return DateFormat.DEFAULT;
         }
-
-        return getStyle((String) style.getValue(cycle));
+        return getStyle((String) style.getValue());
     }
 
     /**
@@ -296,17 +282,14 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      * timeZone がセットされているなら TimeZone オブジェクトを取得する。
      * timeZone の評価結果が TimeZone オブジェクトならそのまま返す。
      * String なら TimeZone の文字列表現として評価して返す。
-     *
-     * @param cycle 評価時のページコンテキスト
      * @return TimeZone
      * @throws IllegalTagAttributeException timeZoneが不正な場合
      */
-    protected TimeZone getTimeZone(ServiceCycle cycle) {
+    protected TimeZone getTimeZone() {
         if (_timeZone == null) {
             return null;
         }
-
-        Object timeZone = _timeZone.getValue(cycle);
+        Object timeZone = _timeZone.getValue();
         if (timeZone == null) {
             return null;
         } else if (timeZone instanceof String) {
@@ -323,11 +306,9 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      * Locale を取得する。
      * ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。
      * 無ければデフォルト Locale を返す。
-     *
-     * @param cycle 評価時のページコンテキスト 
      * @return Locale
      */
-    protected Locale getLocale(ServiceCycle cycle) {
+    protected Locale getLocale() {
         // TODO Localization
         Object locale = CycleUtil.findAttribute(FMT_LOCALE);
 
@@ -396,4 +377,5 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
         sb.append(_scopeString);
         return new String(sb);
     }
+
 }

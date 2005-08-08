@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -30,28 +29,24 @@ public class WhenProcessor extends TemplateProcessorSupport {
 
     private ProcessorProperty _test;
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doStartProcess() {
         checkThatParentIsChooseTag();
-        if ( isAlreadyRunAnotherTagInChooseTag(cycle)) {
+        if ( isAlreadyRunAnotherTagInChooseTag()) {
             return SKIP_BODY;
         }
-        if (isTestValueTrue(cycle)) {
-            getParentChooseProcessor().setRun(cycle);
+        if (isTestValueTrue()) {
+            getParentChooseProcessor().setRun();
             return EVAL_BODY_INCLUDE;
         }
         return SKIP_BODY;
     }
 
-    private boolean isAlreadyRunAnotherTagInChooseTag(ServiceCycle cycle) {
+    private boolean isAlreadyRunAnotherTagInChooseTag() {
         ChooseProcessor chooseProcessor = getParentChooseProcessor();
-        if( chooseProcessor.isAlreadyRun(cycle) ) return true ;
-        return false ;
+        return chooseProcessor.isAlreadyRun();
     }
 
-    private void checkThatParentIsChooseTag(){
+    private void checkThatParentIsChooseTag() {
         TemplateProcessor parentProcessor = getParentProcessor();
         if(parentProcessor == null || 
                 parentProcessor instanceof ChooseProcessor == false) {
@@ -63,10 +58,11 @@ public class WhenProcessor extends TemplateProcessorSupport {
         return (ChooseProcessor)getParentProcessor();
     }
 
-    private boolean isTestValueTrue(ServiceCycle cycle) {
-        if( _test == null )
+    private boolean isTestValueTrue() {
+        if(_test == null) {
             throw new IllegalStateException();
-        return ObjectUtil.booleanValue(_test.getValue(cycle),false);
+        }
+        return ObjectUtil.booleanValue(_test.getValue(), false);
     }
     
     public void setTest(ProcessorProperty test) {

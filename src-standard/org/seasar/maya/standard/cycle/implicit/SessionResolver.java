@@ -20,16 +20,15 @@ import javax.servlet.http.HttpSession;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SessionResolver implements ImplicitObjectResolver {
 
-	public Object resolve(ServiceCycle cycle) {
-	    if(cycle == null) {
-	        throw new IllegalArgumentException();
-	    }
+	public Object resolve() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Session session = cycle.getRequest().getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {

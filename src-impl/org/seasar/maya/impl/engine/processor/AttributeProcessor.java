@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -48,12 +47,12 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         _value = value;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         if(_value == null) {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
-        parent.addProcesstimeProperty(cycle, _value);
+        parent.addProcesstimeProperty(_value);
         return SKIP_BODY;
     }
     

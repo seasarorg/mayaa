@@ -66,7 +66,7 @@ public class CyclePageContext extends PageContext {
         }
         _cycle = cycle;
         _cycle.putAttributeScope(
-                JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope(_cycle));
+                JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope());
     }
 
     public void initialize(Servlet servlet, ServletRequest request,

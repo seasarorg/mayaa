@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 
@@ -28,16 +27,16 @@ public class ParamProcessor extends AbstractBodyProcessor {
 
     private String _name ;
 
-    protected ProcessStatus process(ServiceCycle cycle, Object obj) {
+    protected ProcessStatus process(Object obj) {
         String paramValue = getParamValue(obj);
-        setParamValueToParentProcessor(cycle,paramValue);
+        setParamValueToParentProcessor(paramValue);
         return EVAL_PAGE;
     }
     
-    private void setParamValueToParentProcessor(ServiceCycle cycle, String paramValue) {
+    private void setParamValueToParentProcessor(String paramValue) {
         if(getParentProcessor() instanceof ChildParamReciever) {
             ChildParamReciever reciever = (ChildParamReciever)getParentProcessor();
-            reciever.addChildParam(cycle,_name,paramValue);
+            reciever.addChildParam(_name, paramValue);
         } else {
             throw new IllegalStateException();
         }

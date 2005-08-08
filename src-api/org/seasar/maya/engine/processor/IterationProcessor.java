@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.engine.processor;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * TemplateProcessorの拡張インターフェイス。処理のイテレート機能。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -32,16 +30,14 @@ public interface IterationProcessor extends TemplateProcessor {
      * イテレート実行するかどうかを返す。JSPのIterationTagやBodyTagをホスト
      * している場合に利用する。デフォルトではfalseを返す。trueだと、子プロセッサ
      * の実行後にdoAfterChildProcess()メソッドがコンテナより呼び出される。
-     * @param cycle サービスサイクルコンテキスト。
      * @return イテレート実行する場合、true。普通はfalse。
      */
-    boolean isIteration(ServiceCycle cycle);
+    boolean isIteration();
 
     /**
      * イテレート実行する場合、子プロセッサの実行後にコンテナより呼び出される。
-     * @param cycle サービスサイクルコンテキスト。
      * @return リターンフラグ。EVAL_BODY_AGAINで再イテレート。SKIP_BODYで中止。
      */
-    ProcessStatus doAfterChildProcess(ServiceCycle cycle);
+    ProcessStatus doAfterChildProcess();
 
 }

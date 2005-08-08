@@ -25,6 +25,7 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -56,45 +57,39 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     }
     
     // processtime method
-    public void addProcesstimeProperty(ServiceCycle cycle, ProcessorProperty prop) {
-        if(cycle == null || prop == null) {
+    public void addProcesstimeProperty(ProcessorProperty prop) {
+        if(prop == null) {
             throw new IllegalArgumentException();
         }
-        List list = getProcesstimeProperties(cycle);
+        List list = getProcesstimeProperties();
         if(list.contains(prop) == false) {
             list.add(prop);
         }
     }
     
-    public List getProcesstimeProperties(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        ProcesstimeInfo info = getProcesstimeInfo(cycle);
+    public List getProcesstimeProperties() {
+        ProcesstimeInfo info = getProcesstimeInfo();
         if(info._processtimeProperties == null) {
             info._processtimeProperties = new ArrayList();
         }
         return info._processtimeProperties;
     }
     
-    protected abstract ProcessStatus writeStartElement(ServiceCycle cycle);
+    protected abstract ProcessStatus writeStartElement();
     
-    protected abstract void writeEndElement(ServiceCycle cycle);
+    protected abstract void writeEndElement();
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         if(_childEvaluation) {
             return EVAL_BODY_BUFFERED;
         }
-        return writeStartElement(cycle);
+        return writeStartElement();
     }
     
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        ProcesstimeInfo info = getProcesstimeInfo(cycle);
+    public ProcessStatus doEndProcess() {
+        ProcesstimeInfo info = getProcesstimeInfo();
         if(_childEvaluation) {
-            writeStartElement(cycle);
+            writeStartElement();
             if(info._body != null) {
             	try {
                     info._body.flush();
@@ -103,30 +98,30 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
                 }
             }
         }
-        writeEndElement(cycle);
+        writeEndElement();
         return EVAL_PAGE;
     }
     
-    public boolean isIteration(ServiceCycle cycle) {
+    public boolean isIteration() {
         return false;
     }
     
-    public boolean isChildEvaluation(ServiceCycle cycle) {
+    public boolean isChildEvaluation() {
         return _childEvaluation;
     }
     
-    public void setBodyContent(ServiceCycle cycle, CycleWriter body) {
-        if (cycle == null || body == null) {
+    public void setBodyContent(CycleWriter body) {
+        if (body == null) {
             throw new IllegalArgumentException();
         }
-        ProcesstimeInfo info = getProcesstimeInfo(cycle);
+        ProcesstimeInfo info = getProcesstimeInfo();
         info._body = body;
     }
 
-    public void doInitChildProcess(ServiceCycle cycle) {
+    public void doInitChildProcess() {
     }
     
-    public ProcessStatus doAfterChildProcess(ServiceCycle cycle) {
+    public ProcessStatus doAfterChildProcess() {
         return SKIP_BODY;
     }
 
@@ -136,8 +131,9 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return hashCode() + "@" + AbstractAttributableProcessor.class + ".RuntimeInfo";
     }
     
-    protected ProcesstimeInfo getProcesstimeInfo(ServiceCycle cycle) {
+    protected ProcesstimeInfo getProcesstimeInfo() {
         String key = getRuntimeKey();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcesstimeInfo info = (ProcesstimeInfo)cycle.getAttribute(key);
         if(info == null) {
             info = new ProcesstimeInfo();
@@ -146,7 +142,8 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return info;
     }
     
-    protected void removeProcesstimeInfo(ServiceCycle cycle) {
+    protected void removeProcesstimeInfo() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.removeAttribute(getRuntimeKey());
     }
     

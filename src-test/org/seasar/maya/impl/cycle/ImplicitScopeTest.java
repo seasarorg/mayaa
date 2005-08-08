@@ -57,7 +57,7 @@ public class ImplicitScopeTest extends TestCase {
         _cycle = new TestServiceCycle(application);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
-        _scope = new ImplicitScope(_cycle);
+        _scope = new ImplicitScope();
     }
     
     public void testGetScopeName() {

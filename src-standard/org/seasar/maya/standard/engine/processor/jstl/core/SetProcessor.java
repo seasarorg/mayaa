@@ -18,6 +18,7 @@ package org.seasar.maya.standard.engine.processor.jstl.core;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
@@ -32,20 +33,21 @@ public class SetProcessor extends BodyValueProcessor {
     private ProcessorProperty _var;
     private String            _scope;
     
-    protected ProcessStatus process(ServiceCycle cycle){
-        String varName = (String)_var.getValue(cycle);
+    protected ProcessStatus process() {
+        String varName = (String)_var.getValue();
         if(StringUtil.hasValue(varName)) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             AttributeScope scope = cycle.getAttributeScope(_scope);
-            scope.setAttribute(varName, getVarValue(cycle));
+            scope.setAttribute(varName, getVarValue());
         }
         return EVAL_PAGE;
     }
 
-    private Object getVarValue(ServiceCycle cycle) {
+    private Object getVarValue() {
         if( _value == null ){
-            return getBodyValue(cycle);
+            return getBodyValue();
         }
-        return _value.getValue(cycle);
+        return _value.getValue();
     }
 
     public void setValue(ProcessorProperty value) {
@@ -59,4 +61,5 @@ public class SetProcessor extends BodyValueProcessor {
     public void setScope(String scope) {
         _scope = scope;
     }
+
 }

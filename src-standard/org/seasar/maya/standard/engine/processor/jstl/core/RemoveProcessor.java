@@ -18,6 +18,7 @@ package org.seasar.maya.standard.engine.processor.jstl.core;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author maruo_syunsuke
@@ -37,8 +38,9 @@ public class RemoveProcessor extends TemplateProcessorSupport {
         _scope = scope;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         if(_var != null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             AttributeScope scope = cycle.getAttributeScope(_scope);
             scope.removeAttribute(_var);
         }

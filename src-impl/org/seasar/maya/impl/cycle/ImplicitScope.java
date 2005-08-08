@@ -50,16 +50,8 @@ public class ImplicitScope implements AttributeScope {
     	_resolverMap.put(HEADER_VALUES , new HeaderValuesResolver());
     }
     
-    private ServiceCycle _cycle;
     private Map _instanceMap = new HashMap();
 	
-    public ImplicitScope(ServiceCycle cycle) {
-    	if(cycle == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	_cycle = cycle;
-    }
-    
 	public String getScopeName() {
 		return ServiceCycle.SCOPE_IMPLICIT;
 	}
@@ -83,7 +75,7 @@ public class ImplicitScope implements AttributeScope {
         if(object == null) {
             ImplicitObjectResolver resolver = getResolver(name);
             if(resolver != null) {
-                object = resolver.resolve(_cycle);
+                object = resolver.resolve();
                 _instanceMap.put(name, object);
             }
         }

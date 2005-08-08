@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 import org.seasar.maya.standard.engine.processor.ObjectAttributeUtil;
 
@@ -30,24 +31,25 @@ import org.seasar.maya.standard.engine.processor.ObjectAttributeUtil;
 public abstract class HasParamsProcessor extends TemplateProcessorSupport 
         implements ChildParamReciever{
     
-    private static final long   serialVersionUID = -6741423544407439357L;
-    private static final String CHILD_PARAMS     = "childParams" ;
+    private static final long serialVersionUID = -6741423544407439357L;
+    private static final String CHILD_PARAMS = "childParams";
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-    	initChildParam(cycle);
+    public ProcessStatus doStartProcess() {
+    	initChildParam();
         return EVAL_BODY_INCLUDE;
     }
 
     protected abstract String getBaseURL();
 
-	protected String getEncodedUrlString(ServiceCycle cycle) {
-		String unEncodeString = getBaseURL() + getQueryString(cycle);
+	protected String getEncodedUrlString() {
+		String unEncodeString = getBaseURL() + getQueryString();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         String encodedString  = cycle.getResponse().encodeURL(unEncodeString);
 		return encodedString;
 	}
     
-    private String getQueryString(ServiceCycle cycle){
-    	Map childParamMap = getChildParamMap(cycle) ;
+    private String getQueryString() {
+    	Map childParamMap = getChildParamMap() ;
         Iterator it = childParamMap.entrySet().iterator();
         String paramString = "?";
         while (it.hasNext()) {
@@ -57,16 +59,17 @@ public abstract class HasParamsProcessor extends TemplateProcessorSupport
         return paramString.substring(0,paramString.length()-1) ;
     }
     
-    public void addChildParam(ServiceCycle cycle, String name, String value) {
-    	Map childParamMap = getChildParamMap(cycle);
+    public void addChildParam(String name, String value) {
+    	Map childParamMap = getChildParamMap();
     	childParamMap.put(name,value);
     }
 
-	private Map getChildParamMap(ServiceCycle cycle) {
-		return (Map)ObjectAttributeUtil.getAttribute(cycle,this,CHILD_PARAMS);
+	private Map getChildParamMap() {
+		return (Map)ObjectAttributeUtil.getAttribute(this, CHILD_PARAMS);
 	}
 	
-	private void initChildParam(ServiceCycle cycle) {
-		ObjectAttributeUtil.setAttribute(cycle,this,CHILD_PARAMS,new HashMap());
+	private void initChildParam() {
+		ObjectAttributeUtil.setAttribute(this, CHILD_PARAMS, new HashMap());
 	}
+
 }

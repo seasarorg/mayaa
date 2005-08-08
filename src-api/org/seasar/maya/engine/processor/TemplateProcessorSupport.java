@@ -18,7 +18,6 @@ package org.seasar.maya.engine.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
 
 /**
@@ -63,7 +62,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
                 return (Template)current;
             }
         }
-        throw new IllegalStateException("getTemplate() is null");
+        throw new IllegalStateException();
     }
 
     public TemplateProcessor getParentProcessor() {
@@ -74,17 +73,11 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return _index;
     }
 
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doEndProcess() {
         return EVAL_PAGE;
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
+    public ProcessStatus doStartProcess() {
         return EVAL_BODY_INCLUDE;
     }
 

@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
@@ -35,20 +34,20 @@ public class CatchProcessor extends TemplateProcessorSupport
         _var = var;
     }
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         return EVAL_BODY_INCLUDE;
     }
 
-    public boolean canCatch(ServiceCycle cycle) {
+    public boolean canCatch() {
         return true;
     }
 
-    public void doCatchProcess(ServiceCycle cycle, Throwable t) {
+    public void doCatchProcess(Throwable t) {
         AttributeValue val = AttributeValueFactory.create(_var);
-        val.setValue(cycle, t);
+        val.setValue(t);
     }
 
-    public void doFinallyProcess(ServiceCycle cycle) {
+    public void doFinallyProcess() {
     }
 
 }

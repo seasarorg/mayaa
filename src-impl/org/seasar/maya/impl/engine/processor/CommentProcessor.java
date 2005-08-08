@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -24,12 +25,10 @@ public class CommentProcessor extends CharactersProcessor {
     
 	private static final long serialVersionUID = -5176372123366627130L;
 
-	public ProcessStatus doStartProcess(ServiceCycle cycle) {
-    	if(cycle == null) {
-    		throw new IllegalArgumentException();
-    	}
+	public ProcessStatus doStartProcess() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("<!--");
-        Object value = getExpressed(cycle);
+        Object value = getExpressed();
         if(value != null) {
             cycle.getResponse().write(value.toString());
         }

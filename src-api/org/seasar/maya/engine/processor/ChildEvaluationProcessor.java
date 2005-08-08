@@ -16,7 +16,6 @@
 package org.seasar.maya.engine.processor;
 
 import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.cycle.ServiceCycle;
 
 /**
  * TemplateProcessorの拡張インターフェイス。子要素の評価の機能を持つ。
@@ -33,23 +32,20 @@ public interface ChildEvaluationProcessor extends IterationProcessor {
      * ボディのスタック評価を行うかを返す。JSPのBodyTagをホストしている場合に
      * 利用する。デフォルトではfalseを返す。trueだと、setBodyContent()メソッド
      * およびdoInitChildProcess()メソッドがコンテナより呼び出される。
-     * @param cycle サービスサイクルコンテキスト。
      * @return ボディのスタック評価をする場合、true。普通はfalse。
      */
-    boolean isChildEvaluation(ServiceCycle cycle);
+    boolean isChildEvaluation();
     
     /**
      * ボディのスタック評価を行う場合、スタック処理が行われたボディ部のバッファを
      * コンテナがセットする。
-     * @param cycle サービスサイクルコンテキスト。
      * @param body スタックに積まれたボディ部のバッファ。
      */
-    void setBodyContent(ServiceCycle cycle, CycleWriter body);
+    void setBodyContent(CycleWriter body);
 
     /**
      * ボディのスタック評価を行う場合、評価前に一度、コンテナより呼び出される。
-     * @param cycle サービスサイクルコンテキスト。
      */
-    void doInitChildProcess(ServiceCycle cycle);
+    void doInitChildProcess();
 
 }

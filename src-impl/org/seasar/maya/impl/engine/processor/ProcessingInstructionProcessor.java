@@ -17,6 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -48,16 +49,14 @@ public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
         return _data;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-    	if(cycle == null) {
-    		throw new IllegalArgumentException();
-    	}
+    public ProcessStatus doStartProcess() {
         StringBuffer processingInstruction = new StringBuffer(128);
         processingInstruction.append("<?").append(_target);
         if(StringUtil.hasValue(_data)) {
             processingInstruction.append(" ").append(_data);
         }
         processingInstruction.append("?>\r\n");
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(processingInstruction.toString());
         return SKIP_BODY;
     }

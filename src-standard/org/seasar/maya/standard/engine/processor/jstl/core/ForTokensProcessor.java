@@ -15,9 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-
 /**
  * @author maruo_syunsuke
  */
@@ -26,11 +23,9 @@ public class ForTokensProcessor extends ForEachProcessor {
     private static final long serialVersionUID = 5664728733042219315L;
     private String _delims = ",";
 
-    protected void initReadOnlyList(ServiceCycle cycle) {
+    protected void initReadOnlyList() {
         setReadOnlyList(
-        		cycle, 
-        		ForEachSupportUtil.toForEachList(
-        				(String)getItemsValue(cycle),_delims ));
+                ForEachSupportUtil.toForEachList((String)getItemsValue(), _delims));
     }
     
     public void setDelims(String delims) {

@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.el.CompiledExpression;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
@@ -61,7 +60,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         		((CompiledExpression)_value).isLiteralText() == false;
     }
 
-    public Object getValue(ServiceCycle cycle) {
+    public Object getValue() {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
             return ExpressionUtil.expressGetValue(expression);
@@ -69,7 +68,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         return _value;
     }
     
-    public void setValue(ServiceCycle cycle, Object value) {
+    public void setValue(Object value) {
         if(_value instanceof CompiledExpression) {
             CompiledExpression expression = (CompiledExpression)_value;
             ExpressionUtil.expressSetValue(expression, value);

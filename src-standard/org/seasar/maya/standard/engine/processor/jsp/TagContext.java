@@ -23,6 +23,7 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author suga
@@ -35,8 +36,9 @@ public class TagContext {
      * @return コンテキストオブジェクト。
      *          テンプレートコンテキスト中に保持していないときには生成する。
      */
-    public static TagContext getTagContext(ServiceCycle cycle) {
+    public static TagContext getTagContext() {
         final String KEY_TAG_CONTEXT = TagContext.class.getName();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         TagContext tagContext = (TagContext)cycle.getAttribute(KEY_TAG_CONTEXT);
         if(tagContext == null) {
             tagContext = new TagContext();

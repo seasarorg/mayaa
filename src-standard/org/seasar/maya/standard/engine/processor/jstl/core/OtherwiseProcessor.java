@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
@@ -25,13 +24,13 @@ public class OtherwiseProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -8161187898291017653L;
 
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
+    public ProcessStatus doStartProcess() {
         if( (getParentProcessor() instanceof ChooseProcessor) == false )
             throw new IllegalStateException();
         ChooseProcessor chooseProcessor = (ChooseProcessor)getParentProcessor();
-        if( chooseProcessor.isAlreadyRun(cycle) ) 
+        if( chooseProcessor.isAlreadyRun() ) 
             return SKIP_BODY ;
-        chooseProcessor.setRun(cycle);
+        chooseProcessor.setRun();
         return EVAL_BODY_INCLUDE;
     }
     

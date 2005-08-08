@@ -17,8 +17,6 @@ package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.ServiceCycle;
-
 /**
  * テンプレート中のHTMLタグを処理する委譲クラス。このTemplateProcessorのツリーすなわち
  * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
@@ -87,19 +85,17 @@ public interface TemplateProcessor extends Serializable {
 
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
-     * @param cycle サービスサイクルコンテキスト。
      * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
      * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
      */
-    ProcessStatus doStartProcess(ServiceCycle cycle);
+    ProcessStatus doStartProcess();
 
     /**
      * 閉じタグの出力。
-     * @param cycle サービスサイクルコンテキスト。
      * @return ページのこのタグ以降を処理する場合にはEVAL_PAGE、
      * 以降の処理をスキップする場合にはSKIP_PAGE。
      */
-    ProcessStatus doEndProcess(ServiceCycle cycle);
+    ProcessStatus doEndProcess();
 
     /**
      * プロセッサ動作にて状態遷移を示すステータス。

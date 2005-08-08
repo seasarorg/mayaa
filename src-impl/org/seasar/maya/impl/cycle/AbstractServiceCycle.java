@@ -33,7 +33,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     
     public AbstractServiceCycle() {
         _scopes = new HashMap();
-    	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope(this));
+    	putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope());
         putAttributeScope(SCOPE_PAGE, this);
     }
     

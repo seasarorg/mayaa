@@ -23,6 +23,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.engine.PageImpl;
 import org.seasar.maya.impl.engine.processor.AbstractAttributableProcessor;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
@@ -106,10 +107,9 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
     
     /**
      * 「p:endComponent」の内側の描画。
-     * @param cycle カレントのコンテキスト。
      * @return Template#doTemplateRender()の戻り値。
      */
-    public ProcessStatus renderChildren(ServiceCycle cycle) {
+    public ProcessStatus renderChildren() {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             TemplateProcessor processor = getChildProcessor(i);
@@ -120,12 +120,13 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return EVAL_PAGE;
     }
     
-	protected ProcessStatus writeStartElement(ServiceCycle cycle) {
+	protected ProcessStatus writeStartElement() {
         synchronized(this) {
             if(_page == null) {
                 _page = preparePage();
             }
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Template template = _page.getTemplate(cycle.getRequest().getRequestedSuffix());
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);
@@ -136,7 +137,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         throw new StartComponentNotFoundException(template);
     }
     
-	protected void writeEndElement(ServiceCycle cycle) {
+	protected void writeEndElement() {
 	}
 
 }

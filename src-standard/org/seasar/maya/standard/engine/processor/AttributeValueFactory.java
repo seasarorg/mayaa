@@ -17,6 +17,7 @@ package org.seasar.maya.standard.engine.processor;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -60,16 +61,19 @@ class AttributeValue_Basic implements AttributeValue {
         return _name;
     }
     
-    public void setValue(ServiceCycle cycle, Object value) {
+    public void setValue(Object value) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getAttributeScope(_scope);
         scope.setAttribute(_name, value);
     }
     
-    public Object getValue(ServiceCycle cycle){
+    public Object getValue(){
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         return cycle.getAttribute( _name );
     }
     
-    public void remove(ServiceCycle cycle){
+    public void remove(){
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.removeAttribute(_name);
     }
     
@@ -79,14 +83,14 @@ class AttributeValue_Null implements AttributeValue {
     
     private static final long serialVersionUID = 6535995392396158657L;
     
-    public void setValue(ServiceCycle cycle, Object value){
+    public void setValue(Object value){
     }
     
-    public Object getValue(ServiceCycle cycle){
+    public Object getValue(){
         return null ;
     }
     
-    public void remove(ServiceCycle cycle){
+    public void remove(){
     }
     
     public String getName() {

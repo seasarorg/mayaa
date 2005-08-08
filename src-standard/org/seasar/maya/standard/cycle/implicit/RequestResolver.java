@@ -20,16 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class RequestResolver implements ImplicitObjectResolver {
 
-	public Object resolve(ServiceCycle cycle) {
-	    if(cycle == null) {
-	        throw new IllegalArgumentException();
-	    }
+	public Object resolve() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Request request = cycle.getRequest();
         Object obj = request.getUnderlyingObject();
         if(obj instanceof HttpServletRequest) {

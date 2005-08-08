@@ -16,6 +16,7 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
@@ -39,21 +40,23 @@ public class UrlProcessor extends HasParamsProcessor{
     	_scope = scope;
     }
     
-    public ProcessStatus doEndProcess(ServiceCycle cycle) {
-        outPutEncodedString(cycle, getEncodedUrlString(cycle));
-        return super.doEndProcess(cycle);
+    public ProcessStatus doEndProcess() {
+        outPutEncodedString(getEncodedUrlString());
+        return super.doEndProcess();
     }
     
-    private void outPutEncodedString(ServiceCycle cycle, String encodedString) {
+    private void outPutEncodedString(String encodedString) {
         if( StringUtil.isEmpty( _var ) ){
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(encodedString);
         } else {
             AttributeValue attributeValue = AttributeValueFactory.create(_var, _scope);
-            attributeValue.setValue(cycle, encodedString);
+            attributeValue.setValue(encodedString);
         }
     }
     
 	protected String getBaseURL() {
 		return _value;
 	}
+
 }

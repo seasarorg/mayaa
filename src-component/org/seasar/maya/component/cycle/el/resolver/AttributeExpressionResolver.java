@@ -70,11 +70,11 @@ public class AttributeExpressionResolver
             Iterator it = component.getInformalProperties().iterator();
             ProcessorProperty prop = findProperty(it, property);
             if(prop == null) {
-                it = component.getProcesstimeProperties(cycle).iterator();
+                it = component.getProcesstimeProperties().iterator();
                 prop = findProperty(it , property);
             }
             if(prop != null) {
-                return prop.getValue(cycle);
+                return prop.getValue();
             }
             throw new PropertyNotFoundException(base, property);
         }

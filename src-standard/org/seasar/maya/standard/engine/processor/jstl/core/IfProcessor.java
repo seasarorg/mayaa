@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 
 /**
@@ -50,12 +51,10 @@ public class IfProcessor extends TemplateProcessorSupport {
         _scope = scope;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        boolean test = ObjectUtil.booleanValue(_test.getValue(cycle), false);
+    public ProcessStatus doStartProcess() {
+        boolean test = ObjectUtil.booleanValue(_test.getValue(), false);
         Boolean bool = new Boolean(test);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getAttributeScope(_scope);
         scope.setAttribute(_var, bool);
         if (test) {

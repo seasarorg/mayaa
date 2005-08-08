@@ -18,7 +18,6 @@ package org.seasar.maya.standard.engine.processor;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 
 /**
@@ -43,8 +42,8 @@ public class StackTraceElementsProcessor extends AbstractIteratorProcessor {
     	super.setIndex(index);
     }
     
-    protected Iterator createIterator(ServiceCycle cycle, Object expValue) {
-        if(cycle == null || (expValue instanceof Throwable) == false) {
+    protected Iterator createIterator(Object expValue) {
+        if(expValue instanceof Throwable == false) {
             throw new IllegalArgumentException();
         }
         StackTraceElement[] elements = ((Throwable)expValue).getStackTrace();

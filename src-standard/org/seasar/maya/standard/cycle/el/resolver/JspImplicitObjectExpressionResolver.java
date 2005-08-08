@@ -32,7 +32,7 @@ public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle.hasAttributeScope(JspImplicitScope.SCOPE_JSP_IMPLICIT) == false) {
             cycle.putAttributeScope(
-                    JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope(cycle));
+                    JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope());
         }
         AttributeScope scope = cycle.getAttributeScope(JspImplicitScope.SCOPE_JSP_IMPLICIT);
         return scope.getAttribute(property.toString());

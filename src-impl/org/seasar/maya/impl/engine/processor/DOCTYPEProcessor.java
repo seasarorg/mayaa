@@ -17,6 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -57,10 +58,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
     	return _systemID;
     }
     
-    public ProcessStatus doStartProcess(ServiceCycle cycle) {
-    	if(cycle == null) {
-    		throw new IllegalArgumentException();
-    	}
+    public ProcessStatus doStartProcess() {
         StringBuffer docTypeDecl = new StringBuffer(128);
         docTypeDecl.append("<!DOCTYPE ").append(_name);
         if(StringUtil.hasValue(_publicID)) {
@@ -70,6 +68,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
             docTypeDecl.append(" SYSTEM \"").append(_systemID).append("\"");
         }
         docTypeDecl.append(">");
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(docTypeDecl.toString());
         return SKIP_BODY;
     }

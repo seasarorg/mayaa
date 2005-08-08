@@ -35,6 +35,7 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.impl.util.collection.NullEnumeration;
 import org.seasar.maya.standard.util.JspUtil;
@@ -58,14 +59,10 @@ public class CyclePageContext extends PageContext {
     };
 
     private ServletConfig _config;
-	private ServiceCycle _cycle;
 
-    public CyclePageContext(ServiceCycle cycle) {
-        if(cycle == null) {
-            throw new IllegalArgumentException();
-        }
-        _cycle = cycle;
-        _cycle.putAttributeScope(
+    public CyclePageContext() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.putAttributeScope(
                 JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope());
     }
 
@@ -82,22 +79,26 @@ public class CyclePageContext extends PageContext {
     }
 
     public JspWriter getOut() {
-        Response response = _cycle.getResponse();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Response response = cycle.getResponse();
         return new CycleJspWriter(response.getWriter());
     }
 
     public JspWriter popBody() {
-        Response response = _cycle.getResponse();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Response response = cycle.getResponse();
     	return new CycleJspWriter(response.popWriter());
     }
 
     public BodyContent pushBody() {
-        Response response = _cycle.getResponse();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Response response = cycle.getResponse();
         return new CycleBodyContent(response.pushWriter());
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
-    	_cycle.forward(relativeUrlPath);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	cycle.forward(relativeUrlPath);
     }
 
     public void include(String relativeUrlPath) throws ServletException, IOException {
@@ -113,7 +114,8 @@ public class CyclePageContext extends PageContext {
     }
 
     public Exception getException() {
-        Request request = _cycle.getRequest();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Request request = cycle.getRequest();
         Throwable throwable = (Throwable)request.getAttribute(EXCEPTION);
         if(throwable != null && !(throwable instanceof Exception)) {
             throwable = new Exception(throwable);
@@ -123,7 +125,8 @@ public class CyclePageContext extends PageContext {
 
     // Underlying object -----------------------------------------------
     public ServletRequest getRequest() {
-    	Request request = _cycle.getRequest();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	Request request = cycle.getRequest();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;
@@ -132,7 +135,8 @@ public class CyclePageContext extends PageContext {
     }
     
     public ServletResponse getResponse() {
-    	Response response = _cycle.getResponse();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	Response response = cycle.getResponse();
     	Object obj = response.getUnderlyingObject();
     	if(obj instanceof ServletResponse) {
     		return (ServletResponse)obj;
@@ -141,7 +145,8 @@ public class CyclePageContext extends PageContext {
     }
     
     public HttpSession getSession() {
-        Session session = _cycle.getRequest().getSession();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Session session = cycle.getRequest().getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;
@@ -157,7 +162,8 @@ public class CyclePageContext extends PageContext {
     }
     
     public ServletContext getServletContext() {
-        Application application = _cycle.getApplication();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Application application = cycle.getApplication();
         Object obj = application.getUnderlyingObject();
         if(obj instanceof ServletContext) {
             return (ServletContext)obj;
@@ -171,8 +177,9 @@ public class CyclePageContext extends PageContext {
 
     // Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope scope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            AttributeScope scope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
             Object ret = scope.getAttribute(name);
             if(ret != null) {
                 return ret;
@@ -186,7 +193,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return attrScope.getAttribute(name);
     }
 
@@ -199,7 +207,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         attrScope.removeAttribute(name);
     }
 
@@ -207,8 +216,9 @@ public class CyclePageContext extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope attrScope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            AttributeScope attrScope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
             attrScope.removeAttribute(name);
         }
     }
@@ -218,7 +228,8 @@ public class CyclePageContext extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = JspUtil.getScopeFromInt(scope);
-        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         attrScope.setAttribute(name, value);
     }
 
@@ -228,13 +239,15 @@ public class CyclePageContext extends PageContext {
 
     public Enumeration getAttributeNamesInScope(int scope) {
         String scopeName = JspUtil.getScopeFromInt(scope);
-        AttributeScope attrScope = _cycle.getAttributeScope(scopeName);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
     }
 
     public int getAttributesScope(String name) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope attrScope = _cycle.getAttributeScope(CYCLE_SCOPES[i]);
+            AttributeScope attrScope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
             Object ret = attrScope.getAttribute(name);
             if(ret != null) {
                 return JSP_SCOPES[i];

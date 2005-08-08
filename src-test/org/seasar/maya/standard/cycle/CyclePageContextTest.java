@@ -53,7 +53,7 @@ public class CyclePageContextTest extends TestCase {
         _cycle = new WebServiceCycle(application);
         _cycle.setRequest(request);
         _cycle.setResponse(response);
-        _pageContext = new CyclePageContext(_cycle);
+        _pageContext = new CyclePageContext();
     }
     
     public void testGetRequest() {

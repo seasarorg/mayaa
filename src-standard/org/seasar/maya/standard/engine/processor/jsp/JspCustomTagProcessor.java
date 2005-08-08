@@ -192,7 +192,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         PageContext pageContext = (PageContext)cycle.getAttribute(PageContext.PAGECONTEXT);
         if(pageContext == null) {
-            pageContext = new CyclePageContext(cycle);
+            pageContext = new CyclePageContext();
             cycle.setAttribute(PageContext.PAGECONTEXT, pageContext);
         }
         return pageContext;

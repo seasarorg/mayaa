@@ -18,13 +18,15 @@ package org.seasar.maya.sample;
 import java.util.Locale;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LocaleModel {
 
-    public String processLocale(ServiceCycle cycle) {
+    public String processLocale() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Locale[] locales = cycle.getRequest().getLocales();
         if(locales.length > 0) {
             return locales[0].getLanguage();

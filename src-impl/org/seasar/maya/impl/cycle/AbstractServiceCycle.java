@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -30,6 +31,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 
     private Map _scopes;
     private Map _attributes;
+    private SpecificationNode _node;
     
     public AbstractServiceCycle() {
         _scopes = new HashMap();
@@ -67,7 +69,9 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     }
     
 	public void resetPageScope() {
+        Object engine = _attributes.get("engine");
 		_attributes.clear();
+        _attributes.put("engine", engine);
 	}
 
 	public Iterator iterateAttributeNames() {
@@ -99,6 +103,17 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
             return;
         }
         _attributes.remove(name);
+    }
+
+    public void setCurrentNode(SpecificationNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        _node = node;
     }    
+
+    public SpecificationNode getCurrentNode() {
+        return _node;
+    }
     
 }

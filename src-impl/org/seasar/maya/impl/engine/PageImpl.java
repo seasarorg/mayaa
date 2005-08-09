@@ -165,10 +165,13 @@ public class PageImpl extends SpecificationImpl
     }
 
     public ProcessStatus doPageRender() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(this);
         SpecificationUtil.setPage(this);
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
         Template template = getTemplate();
         ProcessStatus ret = template.doTemplateRender(null);
+        cycle.setCurrentNode(this);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.setPage(null);
         return ret;

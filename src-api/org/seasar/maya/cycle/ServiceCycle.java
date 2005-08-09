@@ -17,6 +17,8 @@ package org.seasar.maya.cycle;
 
 import java.io.Serializable;
 
+import org.seasar.maya.engine.specification.SpecificationNode;
+
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -103,5 +105,17 @@ public interface ServiceCycle extends Serializable, AttributeScope {
      * @param url リダイレクトを行うURL文字列。
      */
     void redirect(String url);
+
+    /**
+     * 現在処理中のノードを設定する。例外情報やデバッグなどで開発者に提供する情報。
+     * @param node 処理中のノード。
+     */    
+    void setCurrentNode(SpecificationNode node);
+    
+    /**
+     * 現在処理中のノードを取得する。例外情報やデバッグなどで開発者に提供する情報。
+     * @return 処理中のノード。
+     */
+    SpecificationNode getCurrentNode();
     
 }

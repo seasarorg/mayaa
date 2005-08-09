@@ -107,12 +107,14 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     }
    
 	public void doService() {
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(this);
+        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
         String pageName = cycle.getRequest().getPageName();
         String extension = cycle.getRequest().getExtension();
         Page page = getPage(pageName, extension);
         page.doPageRender();
+        cycle.setCurrentNode(this);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
 	}
 	

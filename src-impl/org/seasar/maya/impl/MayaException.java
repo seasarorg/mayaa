@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl;
 
+import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.util.MessageUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -26,6 +27,8 @@ public class MayaException extends RuntimeException {
 
 	private static final long serialVersionUID = -9103534239273385474L;
 
+    private SpecificationNode _node;
+    
 	public MayaException() {
     }
 
@@ -42,6 +45,14 @@ public class MayaException extends RuntimeException {
             }
         }
         return message;
+    }
+    
+    public void setCurrentNode(SpecificationNode node) {
+        _node = node;
+    }
+    
+    public SpecificationNode getCurrentNode() {
+        return _node;
     }
     
 }

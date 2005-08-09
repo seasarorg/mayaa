@@ -162,7 +162,9 @@ public class SpecificationNodeImpl extends QNameableImpl
 	        path.append(prefix).append(":");
 	    }
 	    path.append(getQName().getLocalName());
-	    return path.toString();
+        path.append("(").append(_locator.getLineNumber()).append(":");
+        path.append(_locator.getColumnNumber()).append(")");
+        return path.toString();
 	}
 	
     public Locator getLocator() {

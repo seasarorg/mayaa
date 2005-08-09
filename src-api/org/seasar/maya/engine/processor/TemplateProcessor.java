@@ -17,6 +17,8 @@ package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
 
+import org.seasar.maya.engine.specification.SpecificationNode;
+
 /**
  * テンプレート中のHTMLタグを処理する委譲クラス。このTemplateProcessorのツリーすなわち
  * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
@@ -97,6 +99,18 @@ public interface TemplateProcessor extends Serializable {
      */
     ProcessStatus doEndProcess();
 
+    /**
+     * インジェクションされたノード情報の設定。開発時の例外やデバッグに用いる情報。
+     * @param node インジェクトされたノード。
+     */
+    void setInjectedNode(SpecificationNode node);
+    
+    /**
+     * インジェクションされたノード情報の取得。開発時の例外やデバッグに用いる情報。
+     * @return インジェクトされたノード。
+     */    
+    SpecificationNode getInjectedNode();
+    
     /**
      * プロセッサ動作にて状態遷移を示すステータス。
      */

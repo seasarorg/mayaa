@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
  * TemplateProcessorの基本実装。直接用いるのではなく、継承して
@@ -33,7 +34,8 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 	private TemplateProcessor _parent;
     private int _index;
     private List _children = new ArrayList();
-
+    private SpecificationNode _node;
+    
     public void setParentProcessor(TemplateProcessor parent, int index) {
         if(parent == null) {
             throw new IllegalArgumentException();
@@ -89,6 +91,17 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public TemplateProcessor getChildProcessor(int index) {
         return (TemplateProcessor)_children.get(index);
+    }
+
+    public void setInjectedNode(SpecificationNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        _node = node;
+    }
+
+    public SpecificationNode getInjectedNode() {
+        return _node;
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.Stack;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -31,6 +32,7 @@ import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.NullLocator;
 
@@ -49,6 +51,11 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         }
         _injectionResolver = injectionResolver;
         _libraryManger = libraryManager;
+    }
+    
+    private void saveToCycle(SpecificationNode node) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(node);
     }
 	
 	private TemplateProcessor getConnectPoint(TemplateProcessor processor) {
@@ -79,10 +86,12 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
+        saveToCycle(injected);
         TemplateProcessor processor = null;
         ProcessorDefinition def = _libraryManger.getProcessorDefinition(injected.getQName());
         if(def != null) {
             processor = def.createTemplateProcessor(template, injected);
+            processor.setInjectedNode(injected);
         }
         if(processor == null) {
             throw new NodeNotResolvedException(template, injected);
@@ -98,12 +107,13 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         TemplateProcessor connectionPoint = null;
         while(it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode)it.next();
-            TemplateProcessor child = resolveInjectedNode(template, stack, childNode);
-            if(child instanceof DoBodyProcessor) {
+            saveToCycle(childNode);
+            TemplateProcessor childProcessor = resolveInjectedNode(template, stack, childNode);
+            if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
                     throw new TooManyDoBodyException(template, childNode);
                 }
-                connectionPoint = child;
+                connectionPoint = childProcessor;
             }
         }
         stack.pop();
@@ -121,6 +131,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         it = original.iterateChildNode();
         while(it.hasNext()) {
             SpecificationNode child = (SpecificationNode)it.next();
+            saveToCycle(child);
             if(QM_MAYA.equals(child.getQName())) {
                 continue;
             }
@@ -130,7 +141,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	            throw new NodeNotResolvedException(template, child);
 	        }
 	        TemplateProcessor processor = resolveInjectedNode(template, stack, injected);
-	        if(processor != null) {
+	        saveToCycle(child);
+            if(processor != null) {
 	            stack.push(processor);
 	            resolveChildren(template, stack, child);
 	            stack.pop();
@@ -142,6 +154,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(template == null) {
             throw new IllegalArgumentException();
         }
+        saveToCycle(template);
         Stack stack = new Stack();
         stack.push(template);
 	    SpecificationNode maya = new SpecificationNodeImpl(QM_MAYA, NullLocator.getInstance());
@@ -150,6 +163,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(template.equals(stack.peek()) == false) {
             throw new IllegalStateException();
         }
+        saveToCycle(template);
     }
     
 }

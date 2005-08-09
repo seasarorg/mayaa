@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -28,6 +29,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.NullLocator;
@@ -96,6 +98,11 @@ public class SpecificationNodeHandler extends DefaultHandler
     	}
     }
     
+    private void saveToCycle(SpecificationNode node) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(node);
+    }
+    
     public void startElement(
             String namespaceUR, String localNam, String qName, Attributes attributes) {
         addCharactersNode();
@@ -113,13 +120,19 @@ public class SpecificationNodeHandler extends DefaultHandler
             node.addAttribute(attrQName, attributes.getValue(i));
         }
         _current = node;
+        saveToCycle(_current);
     }
 
     public void endElement(String namespaceURI, String localName, String qName) {
         addCharactersNode();
         _current = _current.getParentNode();
+        saveToCycle(_current);
     }
     
+    public void endDocument() {
+        saveToCycle(_specification);
+    }
+
     public void characters(char[] buffer, int start, int length) {
     	if(_inEntity == 0) {
 	    	if(_outputWhitespace) {

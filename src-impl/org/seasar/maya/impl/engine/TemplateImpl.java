@@ -144,6 +144,8 @@ public class TemplateImpl extends SpecificationImpl
         if(current == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(current.getInjectedNode());
         ProcessStatus ret = EVAL_PAGE;
         try { 
         	ProcessStatus startRet = current.doStartProcess();
@@ -151,7 +153,6 @@ public class TemplateImpl extends SpecificationImpl
                 return SKIP_PAGE;
             }
             boolean buffered = false;
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
             if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
                 getEvaluation(current).setBodyContent(cycle.getResponse().pushWriter());
@@ -171,11 +172,13 @@ public class TemplateImpl extends SpecificationImpl
                     if(isIteration(current)) {
                         afterRet = getIteration(current).doAfterChildProcess();
                     	TemplateProcessor parent = current.getParentProcessor();
+                        cycle.setCurrentNode(parent.getInjectedNode());
                     	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN && isDuplicated(parent)) {
                             parent.doEndProcess();
                             parent.doStartProcess();
                     	}
                     }
+                    cycle.setCurrentNode(current.getInjectedNode());
                 } while(afterRet == IterationProcessor.EVAL_BODY_AGAIN);
             }
             if(buffered) {
@@ -236,6 +239,8 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     public ProcessStatus doTemplateRender(TemplateProcessor renderRoot) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setCurrentNode(this);
         SpecificationUtil.setTemplate(this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
@@ -246,6 +251,7 @@ public class TemplateImpl extends SpecificationImpl
         }
         ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
+        cycle.setCurrentNode(this);
         ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.setTemplate(null);
         return ret;
@@ -312,4 +318,12 @@ public class TemplateImpl extends SpecificationImpl
         return EVAL_PAGE;
     }
 
+    public void setInjectedNode(SpecificationNode node) {
+        throw new IllegalStateException();
+    }
+
+    public SpecificationNode getInjectedNode() {
+        return this;
+    }
+    
 }

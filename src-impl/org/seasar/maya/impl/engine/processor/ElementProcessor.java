@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -31,7 +30,7 @@ import org.seasar.maya.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ElementProcessor extends AbstractAttributableProcessor
-		implements InformalPropertyAcceptable, CONST_IMPL {
+		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 923306412062075314L;
 

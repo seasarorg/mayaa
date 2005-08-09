@@ -109,6 +109,9 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         try {
             _engine.doService();
         } catch(Throwable t) {
+            if(t instanceof MayaException) {
+                ((MayaException)t).setCurrentNode(cycle.getCurrentNode());
+            }
             cycle.getResponse().clearBuffer();
             cycle.resetPageScope();
             handleError(t);

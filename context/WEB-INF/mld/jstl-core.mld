@@ -67,8 +67,16 @@
 		<property name="step"   />
 	</processor>
 
-	<processor name="redirect"
-		class="org.seasar.maya.standard.engine.processor.jstl.core.RedirectProcessor">
-		<property name="url"/>
+	<processor name="catch"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.CatchProcessor">
+		<property name="var"/>
+	</processor>
+	
+	<processor name="url"
+		class="org.seasar.maya.standard.engine.processor.jstl.core.UrlProcessor">
+		<property name="value"/>
+		<property name="var"/>
+		<property name="context"/>
+		<property name="scope"/>
 	</processor>
 </library>

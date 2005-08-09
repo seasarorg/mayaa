@@ -55,6 +55,10 @@ public class WebRequest implements Request {
         }
     }
 
+    public String getServletPath() {
+        return _httpServletRequest.getServletPath();
+    }
+
     protected String getHttpRequestPath() {
         return StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());

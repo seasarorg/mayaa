@@ -34,5 +34,8 @@
 	<!--
 	<c:redirect m:id="redirect" url="http://google.com"/>
 	-->
+
+	<c:catch m:id="catch" var="e"/>
+	<c:out   m:id="errorOut" value="${e.message}"/>
 	
 </maya>

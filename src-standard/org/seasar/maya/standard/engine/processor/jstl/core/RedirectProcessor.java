@@ -21,7 +21,7 @@ import org.seasar.maya.impl.util.CycleUtil;
 /**
  * @author maruo_syunsuke
  */
-public class RedirectProcessor extends HasParamsProcessor{
+public class RedirectProcessor extends MakeUrlProcessor{
     
     private static final long serialVersionUID = -6741423544407439357L;
 

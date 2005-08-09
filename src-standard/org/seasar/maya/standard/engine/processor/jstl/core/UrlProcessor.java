@@ -24,7 +24,7 @@ import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 /**
  * @author maruo_syunsuke
  */
-public class UrlProcessor extends HasParamsProcessor{
+public class UrlProcessor extends MakeUrlProcessor{
     
     private static final long serialVersionUID = 6419793385551077813L;
 

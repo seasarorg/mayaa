@@ -49,6 +49,13 @@ public class WebApplication implements Application {
         _servletContext = servletContext;
     }
     
+    public ServletContext getContext() {
+        return _servletContext;
+    }
+    public ServletContext getContext(String urlPath) {
+        return _servletContext.getContext(urlPath);
+    }
+    
     public String getMimeType(String fileName) {
         check();
         if(StringUtil.isEmpty(fileName)) {

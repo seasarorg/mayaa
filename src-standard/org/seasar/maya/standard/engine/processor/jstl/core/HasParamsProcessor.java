@@ -39,37 +39,16 @@ public abstract class HasParamsProcessor extends TemplateProcessorSupport
         return EVAL_BODY_INCLUDE;
     }
 
-    protected abstract String getBaseURL();
-
-	protected String getEncodedUrlString() {
-		String unEncodeString = getBaseURL() + getQueryString();
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String encodedString  = cycle.getResponse().encodeURL(unEncodeString);
-		return encodedString;
-	}
-    
-    private String getQueryString() {
-    	Map childParamMap = getChildParamMap() ;
-        Iterator it = childParamMap.entrySet().iterator();
-        String paramString = "?";
-        while (it.hasNext()) {
-        	Map.Entry entry = (Map.Entry) it.next();
-            paramString += entry.getKey() + "=" + entry.getValue() + "&" ;
-        }
-        return paramString.substring(0,paramString.length()-1) ;
-    }
-    
     public void addChildParam(String name, String value) {
     	Map childParamMap = getChildParamMap();
     	childParamMap.put(name,value);
     }
 
-	private Map getChildParamMap() {
+	protected Map getChildParamMap() {
 		return (Map)ObjectAttributeUtil.getAttribute(this, CHILD_PARAMS);
 	}
 	
 	private void initChildParam() {
 		ObjectAttributeUtil.setAttribute(this, CHILD_PARAMS, new HashMap());
 	}
-
 }

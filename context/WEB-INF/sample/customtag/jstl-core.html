@@ -38,8 +38,6 @@
 				&lt;span m:inject="c:set" c:var="foo" c:scope="AT_END"&gt;タグボディ&lt;/span&gt;<br />
 				&lt;span m:inject="c:out" c:value="&#36;{ foo }"&gt;ダミーデータ&lt;/span&gt;<br />
 				&lt;br /&gt;<br />
-				&lt;span m:inject="c:set" c:var="foo" c:value="&#36;{ null }" c:scope="AT_END"&gt;タグボディ&lt;/span&gt;<br />
-				&lt;span m:inject="c:out" c:value="&#36;{ foo }" c:default="value is null"&gt;ダミーデータ&lt;/span&gt;
 			</code>
 			<h3>実行結果</h3>
 				<span m:inject="c:set" c:var="foo" c:value="属性" c:scope="AT_END"></span>
@@ -48,8 +46,6 @@
 				<span m:inject="c:set" c:var="foo" c:scope="AT_END">タグボディ</span>
 				<span m:inject="c:out" c:value="${ foo }">ダミーデータ</span>
 				<br />
-				<span m:inject="c:set" c:var="foo" c:value="${ null }" c:scope="AT_END">タグボディ</span>
-				<span m:inject="c:out" c:value="${ foo }" c:default="value is null">ダミーデータ</span>
 		</div>
 
 		<!-- ---------------------------------------------------- -->

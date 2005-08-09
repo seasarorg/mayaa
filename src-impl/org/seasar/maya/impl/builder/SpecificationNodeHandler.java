@@ -108,14 +108,14 @@ public class SpecificationNodeHandler extends DefaultHandler
         addCharactersNode();
         NodeNamespace ns = _specification.getDefaultNamespace();
         QNameable parsedName = SpecificationUtil.parseName(
-                _namespaces, _specification, _locator, qName, ns.getNamespaceURI());
+                _namespaces, qName, ns.getNamespaceURI());
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             QNameable parsedAttrName = SpecificationUtil.parseName(
-                    _namespaces, _specification, _locator, attrName, nodeURI);
+                    _namespaces, attrName, nodeURI);
             QName attrQName = parsedAttrName.getQName();
             node.addAttribute(attrQName, attributes.getValue(i));
         }

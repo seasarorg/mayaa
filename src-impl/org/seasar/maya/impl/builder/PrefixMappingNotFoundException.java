@@ -15,35 +15,19 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.xml.sax.Locator;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * プレフィックスから名前空間URIを引けなかったとき。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixMappingNotFoundException extends SpecificationBuildException {
+public class PrefixMappingNotFoundException extends MayaException {
 
 	private static final long serialVersionUID = -9114023056056051237L;
 
 	private String _prefix;
     
-    public PrefixMappingNotFoundException(
-    		Specification specification, SpecificationNode node, String prefix) {
-    	super(specification, node);
-    	_prefix = prefix;
-    }
-    
-    
-    /**
-	 * @param specification テンプレートファイルもしくは、埋め込みページ、設定XML。
-	 * @param locator 例外発生箇所。
-     * @param namespaceURI マッピング対象が見つからなかったプレフィックス。
-     */
-    public PrefixMappingNotFoundException(
-            Specification specification, Locator locator, String prefix) {
-        super(specification, locator);
+    public PrefixMappingNotFoundException(String prefix) {
     	_prefix = prefix;
     }
     

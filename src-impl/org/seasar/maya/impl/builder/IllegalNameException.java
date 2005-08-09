@@ -15,27 +15,22 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.Specification;
-import org.xml.sax.Locator;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * テンプレートや設定XMLに指定されたノード名や属性名が不正な場合の例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalNameException extends SpecificationBuildException {
+public class IllegalNameException extends MayaException {
 
 	private static final long serialVersionUID = 2431120366863355234L;
 
 	private String _qName;
 	
 	/**
-	 * @param specification テンプレートファイル名もしくは、埋め込みページ名。
-	 * @param locator 例外発生箇所。
 	 * @param qName 不正なノード名。 
 	 */
-	public IllegalNameException(
-	        Specification specification, Locator locator, String qName) {
-	    super(specification, locator);
+	public IllegalNameException(String qName) {
 		_qName = qName;
     }
 	

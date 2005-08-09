@@ -38,8 +38,8 @@ public class ElementProcessorFactory implements ProcessorFactory, CONST_IMPL {
         ElementProcessor processor = new ElementProcessor();
         String qNameString = SpecificationUtil.getAttributeValue(injected, QM_Q_NAME);
         if(StringUtil.hasValue(qNameString)) {
-	        QNameable qNameable = SpecificationUtil.parseName(injected, template,
-	                injected.getLocator(), qNameString, URI_HTML);
+	        QNameable qNameable = SpecificationUtil.parseName(
+                    injected, qNameString, URI_HTML);
 	        processor.setQName(qNameable.getQName());
 	        processor.setPrefix(qNameable.getPrefix());
 	        return processor;

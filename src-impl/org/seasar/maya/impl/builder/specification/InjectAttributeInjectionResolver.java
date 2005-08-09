@@ -38,7 +38,7 @@ public class InjectAttributeInjectionResolver implements InjectionResolver, CONS
     	String injectName = SpecificationUtil.getAttributeValue(original, QM_INJECT);
         if(StringUtil.hasValue(injectName)) {
             QNameable qNameable = SpecificationUtil.parseName(
-                    original, template, original.getLocator(), injectName, URI_MAYA);
+                    original, injectName, URI_MAYA);
             QName qName = qNameable.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();

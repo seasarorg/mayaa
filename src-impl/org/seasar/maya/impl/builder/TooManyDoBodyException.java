@@ -15,18 +15,24 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TooManyDoBodyException extends SpecificationBuildException {
+public class TooManyDoBodyException extends MayaException {
 
 	private static final long serialVersionUID = 5164593430185077800L;
 
-	public TooManyDoBodyException(Specification specification, SpecificationNode node) {
-        super(specification, node);
+    private SpecificationNode _node;
+    
+	public TooManyDoBodyException(SpecificationNode node) {
+        _node = node;
+    }
+    
+    public SpecificationNode getTooManyBodyNode() {
+        return _node;
     }
     
 }

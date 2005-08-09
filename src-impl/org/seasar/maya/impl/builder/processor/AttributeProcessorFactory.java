@@ -35,8 +35,8 @@ public class AttributeProcessorFactory implements ProcessorFactory, CONST_IMPL {
     public TemplateProcessor createProcessor(Template template, SpecificationNode injected) {
         AttributeProcessor processor = new AttributeProcessor();
         String qNameString = SpecificationUtil.getAttributeValue(injected, QM_Q_NAME);
-        QNameable qNameable = SpecificationUtil.parseName(injected, template,
-                injected.getLocator(), qNameString, URI_HTML);
+        QNameable qNameable = SpecificationUtil.parseName(
+                injected, qNameString, URI_HTML);
         String value = SpecificationUtil.getAttributeValue(injected, QM_VALUE);
         CompiledExpression expression = ExpressionUtil.parseExpression(value, Object.class);
         Object obj = expression; 

@@ -37,7 +37,6 @@ import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
-import org.xml.sax.Locator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -214,9 +213,8 @@ public class SpecificationUtil implements CONST_IMPL {
 	    return null;
 	}
 	
-	// FIXME 引数の整理： Specification、locatorは例外にしか使ってない。
-    public static QNameable parseName(Namespaceable namespaces, 
-            Specification specification, Locator locator, String qName, String defaultURI) {
+    public static QNameable parseName(
+            Namespaceable namespaces, String qName, String defaultURI) {
         String[] parsed = qName.split(":");
         String prefix = null;
         String localName = null;
@@ -226,7 +224,7 @@ public class SpecificationUtil implements CONST_IMPL {
             localName = parsed[1];
             NodeNamespace namespace = namespaces.getNamespace(prefix);
             if(namespace == null) {
-                throw new PrefixMappingNotFoundException(specification, locator, prefix);
+                throw new PrefixMappingNotFoundException(prefix);
             }
             namespaceURI = namespace.getNamespaceURI();
         } else if(parsed.length == 1) {
@@ -238,7 +236,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 namespaceURI = defaultURI;
             }
         } else {
-            throw new IllegalNameException(specification, locator, qName);
+            throw new IllegalNameException(qName);
         }
         return new QNameableImpl(new QName(namespaceURI, localName));
     }

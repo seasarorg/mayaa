@@ -111,7 +111,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             TemplateProcessor childProcessor = resolveInjectedNode(template, stack, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
-                    throw new TooManyDoBodyException(template, childNode);
+                    throw new TooManyDoBodyException(childNode);
                 }
                 connectionPoint = childProcessor;
             }

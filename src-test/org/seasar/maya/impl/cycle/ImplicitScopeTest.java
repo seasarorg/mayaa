@@ -25,10 +25,9 @@ import junit.framework.TestCase;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletRequest;
 import org.seasar.maya.impl.cycle.servlet.MockHttpServletResponse;
 import org.seasar.maya.impl.cycle.servlet.MockServletContext;
-import org.seasar.maya.impl.cycle.web.WebApplication;
-import org.seasar.maya.impl.cycle.web.WebRequest;
-import org.seasar.maya.impl.cycle.web.WebResponse;
-import org.seasar.maya.impl.cycle.web.WebSession;
+import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,7 +35,6 @@ import org.seasar.maya.impl.cycle.web.WebSession;
 public class ImplicitScopeTest extends TestCase {
 
     private MockHttpServletRequest _httpServletRequest;
-    private TestServiceCycle _cycle;
     private ImplicitScope _scope;
     
     public ImplicitScopeTest(String name) {
@@ -46,17 +44,10 @@ public class ImplicitScopeTest extends TestCase {
     protected void setUp() {
         MockServletContext servletContext = new MockServletContext(this, "context");
         _httpServletRequest = new MockHttpServletRequest(servletContext);
-        WebApplication application = new WebApplication();
-        application.setServletContext(servletContext);
-        WebSession session = new WebSession();
-        session.setHttpServletRequest(_httpServletRequest);
-        WebRequest request = new WebRequest("$");
-        request.setHttpServletRequest(_httpServletRequest);
-        WebResponse response = new WebResponse();
-        response.setHttpServletResponse(new MockHttpServletResponse());
-        _cycle = new TestServiceCycle(application);
-        _cycle.setRequest(request);
-        _cycle.setResponse(response);
+        ServiceProviderFactory.setDefaultFactory(new SimpleServiceProviderFactory());
+        ServiceProviderFactory.setServletContext(servletContext);
+        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        provider.initialize(_httpServletRequest, new MockHttpServletResponse());
         _scope = new ImplicitScope();
     }
     
@@ -85,7 +76,7 @@ public class ImplicitScopeTest extends TestCase {
     }
     
     public void testGetAttribute1() {
-        assertEquals(_cycle, _scope.getAttribute("serviceCycle"));
+        assertNotNull(_scope.getAttribute("serviceCycle"));
     }
     
     public void testGetAttribute2() {

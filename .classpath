@@ -10,8 +10,8 @@
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/ognl-2.6.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.6.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xmlParserAPIs-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xml-apis-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-test/junit-3.8.1.jar"/>

@@ -17,13 +17,17 @@ package org.seasar.maya.impl.builder.parser;
 
 import java.io.IOException;
 
+import org.apache.xerces.util.XMLAttributesImpl;
 import org.apache.xerces.util.XMLStringBuffer;
+import org.apache.xerces.xni.QName;
+import org.apache.xerces.xni.XMLAttributes;
 import org.cyberneko.html.HTMLScanner;
+import org.seasar.maya.impl.CONST_IMPL;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateScanner extends HTMLScanner {
+public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
 
     public static final String DEFAULT_ENCODING = HTMLScanner.DEFAULT_ENCODING;
     public static final String NOTIFY_CHAR_REFS = HTMLScanner.NOTIFY_CHAR_REFS;
@@ -33,6 +37,9 @@ public class TemplateScanner extends HTMLScanner {
     public static final String NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
     public static final String LEXICAL_HANDLER = "http://xml.org/sax/properties/lexical-handler";
     public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
+    
+    private static final XMLAttributes ATTR_EMPTY = new XMLAttributesImpl();
+    private static final QName NAME_CODELET = new QName("", "codelet", "codelet", "");
     
     public TemplateScanner() {
         HTMLScanner.Scanner scanner = createScanner();
@@ -95,9 +102,7 @@ public class TemplateScanner extends HTMLScanner {
             int c = read();
         	if(c == '%') {
                 setScannerState(STATE_CONTENT);
-                //++ Codeletスタートイベント発火
-                System.out.println("start codelet");
-                //--
+                fDocumentHandler.startElement(NAME_CODELET, ATTR_EMPTY, locationAugs());
                 return null; 
             }
         	unread(1);
@@ -114,6 +119,7 @@ public class TemplateScanner extends HTMLScanner {
             for (int i = offset; i < fCurrentEntity.offset; i++) {
                 fCurrentEntity.buffer[i] = '\n';
             }
+            boolean codelet = false;
             while (fCurrentEntity.offset < fCurrentEntity.length) {
                 c = fCurrentEntity.buffer[fCurrentEntity.offset];
                 if (c == '<' || c == '&' || c == '\n' || c == '\r') {
@@ -124,11 +130,10 @@ public class TemplateScanner extends HTMLScanner {
                 if(c == '%') {
                     c = fCurrentEntity.buffer[fCurrentEntity.offset];
                     if(c == '>') {
-                        fCurrentEntity.offset++;
-                        fCurrentEntity.columnNumber++;
-                        //++ Codeletエンドイベント発火
-                        System.out.println("end codelet");
-                        //--
+                        codelet = true;
+                        fCurrentEntity.offset--;
+                        fCurrentEntity.columnNumber--;
+                        break;
                     }
                 }
             }
@@ -138,6 +143,11 @@ public class TemplateScanner extends HTMLScanner {
                 fEndLineNumber = fCurrentEntity.lineNumber;
                 fEndColumnNumber = fCurrentEntity.columnNumber;
                 fDocumentHandler.characters(fString, locationAugs());
+            }
+            if(codelet) {
+                fCurrentEntity.offset += 2;
+                fCurrentEntity.columnNumber += 2;
+                fDocumentHandler.endElement(NAME_CODELET, locationAugs());
             }
         }
     }

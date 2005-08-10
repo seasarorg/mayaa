@@ -7,9 +7,9 @@
 	<classpathentry kind="src" path="src-sample"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/ognl-2.6.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xmlParserAPIs-1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

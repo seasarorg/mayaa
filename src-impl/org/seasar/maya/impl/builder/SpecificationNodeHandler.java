@@ -120,6 +120,11 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         SpecificationNode node = addNode(nodeQName);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
+            if(attrName.startsWith("xmlns")) {
+                // TODO NekoHTML0.9.5へのバージョンアップによって発生した問題回避を、
+                // きちんと対応すること。このままだと、テンプレートに書かれたxmlnsが出力に出ない。
+                continue;
+            }
             QNameable parsedAttrName = SpecificationUtil.parseName(
                     _namespaces, attrName, nodeURI);
             QName attrQName = parsedAttrName.getQName();

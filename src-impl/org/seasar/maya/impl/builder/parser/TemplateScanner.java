@@ -92,15 +92,57 @@ public class TemplateScanner extends HTMLScanner {
     public class CodeletScanner extends HTMLScanner.ContentScanner {
     	
     	protected String scanStartElement(boolean[] empty) throws IOException {
-    		int c = read();
+/**
+            int c = read();
         	if(c == '%') {
-            	// TODO パースの拡張ポイントを作る。
-        	} else {
-        		unread(1);
-        	}
+                setScannerState(STATE_CONTENT);
+                //++ Codeletスタートイベント発火
+                System.out.println("start codelet");
+                //--
+                return null; 
+            }
+        	unread(1);
+**/
 			return super.scanStartElement(empty);
 		}
-    
+/**    
+        protected void scanCharacters() throws IOException {
+            int newlines = skipNewlines();
+            if (newlines == 0 && fCurrentEntity.offset == fCurrentEntity.length) {
+                return;
+            }
+            char c;
+            int offset = fCurrentEntity.offset - newlines;
+            for (int i = offset; i < fCurrentEntity.offset; i++) {
+                fCurrentEntity.buffer[i] = '\n';
+            }
+            while (fCurrentEntity.offset < fCurrentEntity.length) {
+                c = fCurrentEntity.buffer[fCurrentEntity.offset];
+                if (c == '<' || c == '&' || c == '\n' || c == '\r') {
+                    break;
+                }
+                fCurrentEntity.offset++;
+                fCurrentEntity.columnNumber++;
+                if(c == '%') {
+                    c = fCurrentEntity.buffer[fCurrentEntity.offset];
+                    if(c == '>') {
+                        fCurrentEntity.offset++;
+                        fCurrentEntity.columnNumber++;
+                        //++ Codeletエンドイベント発火
+                        System.out.println("end codelet");
+                        //--
+                    }
+                }
+            }
+            if (fCurrentEntity.offset > offset && 
+                fDocumentHandler != null && fElementCount >= fElementDepth) {
+                fString.setValues(fCurrentEntity.buffer, offset, fCurrentEntity.offset - offset);
+                fEndLineNumber = fCurrentEntity.lineNumber;
+                fEndColumnNumber = fCurrentEntity.columnNumber;
+                fDocumentHandler.characters(fString, locationAugs());
+            }
+        }
+**/        
     }
     
 }

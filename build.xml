@@ -8,7 +8,6 @@
 
 	<property name="maya.jar.core" value="maya-${maya.ver}.jar"/>
 	<property name="maya.jar.standard" value="maya-standard-${maya.ver}.jar"/>
-	<property name="maya.jar.component" value="maya-component-${maya.ver}.jar"/>
 	<property name="maya.jar.sample" value="maya-sample-${maya.ver}.jar"/>
 
 	<property name="maya.packages" value="org.seasar.maya.*"/>
@@ -16,8 +15,6 @@
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.src.standard"  value="src-standard"/>
-	<property name="folder.src.component"  value="src-component"/>
-	<property name="folder.src.test"  value="src-test"/>
 	<property name="folder.src.sample"  value="src-sample"/>
 
 	<property name="folder.context" value="context"/>
@@ -48,7 +45,6 @@
 					<include name="${folder.src.api}"/>
 					<include name="${folder.src.impl}"/>
 					<include name="${folder.src.standard}"/>
-					<include name="${folder.src.component}"/>
 					<include name="${folder.src.sample}"/>
 				</dirset>
 			</src>
@@ -81,13 +77,6 @@
 				<exclude name="**/CVS"/>
 				<exclude name="**/CVS/**/*"/>
 			</fileset>
-			<fileset dir="${folder.src.component}">
-				<include name="**/*"/>
-				<exclude name="**/*.java"/>
-				<exclude name="**/.cvsignore"/>
-				<exclude name="**/CVS"/>
-				<exclude name="**/CVS/**/*"/>
-			</fileset>
 			<fileset dir="${folder.src.sample}">
 				<include name="**/*"/>
 				<exclude name="**/*.java"/>
@@ -111,6 +100,7 @@
 	<target name="mayajar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.core}">
 			<fileset dir="${folder.classes}">
+				<include name="javax/servlet/jsp/el/*.class"/>
 				<include name="org/seasar/maya/**/*.class"/>
 				<include name="org/seasar/maya/**/*.dtd"/>
 				<include name="org/seasar/maya/**/*.lst"/>
@@ -118,8 +108,6 @@
 				<exclude name="org/seasar/maya/**/CVS/**/*"/>
 				<exclude name="org/seasar/maya/standard"/>
 				<exclude name="org/seasar/maya/standard/**/*"/>
-				<exclude name="org/seasar/maya/component"/>
-				<exclude name="org/seasar/maya/component/**/*"/>
 				<exclude name="org/seasar/maya/sample"/>
 				<exclude name="org/seasar/maya/sample/**/*"/>
 			</fileset>
@@ -134,7 +122,6 @@
 	<target name="standardjar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.standard}">
 			<fileset dir="${folder.classes}">
-				<include name="javax/servlet/jsp/el/*.class"/>
 				<include name="org/seasar/maya/standard/**/*.class"/>
 				<include name="org/seasar/maya/standard/**/*.dtd"/>
 				<include name="org/seasar/maya/standard/**/*.xsd"/>
@@ -145,25 +132,8 @@
 				<attribute name="Title" value="Maya Standard"/>
 				<attribute name="Version" value="${maya.ver}"/>
 			</manifest>
-			<metainf dir="${folder.mld}" includes="standard.mld"/>
 			<metainf dir="${folder.mld}" includes="jstl-core.mld"/>
 			<metainf dir="${folder.mld}" includes="jstl-fmt.mld"/>
-		</jar>
-	</target>
-
-	<target name="componentjar" depends="cleanjar, javabuild">
-		<jar jarfile="${folder.lib}/${maya.jar.component}">
-			<fileset dir="${folder.classes}">
-				<include name="org/seasar/maya/component/**/*.class"/>
-				<exclude name="org/seasar/maya/component/**/CVS"/>
-				<exclude name="org/seasar/maya/component/**/CVS/**/*"/>
-			</fileset>
-			<manifest>
-				<attribute name="Title" value="Maya Component"/>
-				<attribute name="Version" value="${maya.ver}"/>
-			</manifest>
-			<metainf dir="${folder.context}" includes="WEB-INF/*.lst"/>
-			<metainf dir="${folder.mld}" includes="component.mld"/>
 		</jar>
 	</target>
 
@@ -212,7 +182,7 @@
        	</javadoc>
     </target>
 
-	<target name="make" depends="mayajar, standardjar, componentjar, samplejar, javadoc"/>
+	<target name="make" depends="mayajar, standardjar, samplejar, javadoc"/>
 
 	<target name="distro" depends="make">
 		<zip destfile="../${maya.distro.bin}">
@@ -224,8 +194,6 @@
 				<include name="${folder.webinf}/error/*"/>
 				<include name="${folder.webinf}/lib/*"/>
 				<exclude name="${folder.webinf}/lib/maya-sample-*.jar"/>
-				<exclude name="${folder.webinf}/lib/jstl-*.jar"/>
-				<exclude name="${folder.webinf}/lib/standard-*.jar"/>
 				<exclude name="./**/.svn"/>
 			</fileset>
 		</zip>

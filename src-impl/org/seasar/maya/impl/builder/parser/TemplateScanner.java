@@ -92,7 +92,6 @@ public class TemplateScanner extends HTMLScanner {
     public class CodeletScanner extends HTMLScanner.ContentScanner {
     	
     	protected String scanStartElement(boolean[] empty) throws IOException {
-/**
             int c = read();
         	if(c == '%') {
                 setScannerState(STATE_CONTENT);
@@ -102,10 +101,9 @@ public class TemplateScanner extends HTMLScanner {
                 return null; 
             }
         	unread(1);
-**/
 			return super.scanStartElement(empty);
 		}
-/**    
+
         protected void scanCharacters() throws IOException {
             int newlines = skipNewlines();
             if (newlines == 0 && fCurrentEntity.offset == fCurrentEntity.length) {
@@ -142,7 +140,6 @@ public class TemplateScanner extends HTMLScanner {
                 fDocumentHandler.characters(fString, locationAugs());
             }
         }
-**/        
     }
     
 }

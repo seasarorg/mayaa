@@ -139,7 +139,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         _current = _current.getParentNode();
         saveToCycle(_current);
     }
-    
+
     public void endDocument() {
         saveToCycle(_specification);
     }

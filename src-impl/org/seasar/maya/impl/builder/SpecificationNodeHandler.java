@@ -32,19 +32,22 @@ import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.xml.NullLocator;
 import org.seasar.maya.provider.EngineSetting;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationNodeHandler extends DefaultHandler
-		implements LexicalHandler, AdditionalHandler, CONST_IMPL {
+public class SpecificationNodeHandler implements EntityResolver, DTDHandler, 
+        ContentHandler, ErrorHandler, LexicalHandler, AdditionalHandler, CONST_IMPL {
     
     private static final Log LOG = LogFactory.getLog(SpecificationNodeHandler.class);
 
@@ -63,13 +66,16 @@ public class SpecificationNodeHandler extends DefaultHandler
         _specification = specification;
     }
 
+    public void setDocumentLocator(Locator locator) {
+        _locator = locator;
+    }
+
     public void startDocument() {
         _charactersBuffer = new StringBuffer(128);
         _namespaces = new NamespaceableImpl();
         EngineSetting engineSetting = SpecificationUtil.getEngine(_specification).getEngineSetting();
         _outputWhitespace = engineSetting.isOutputWhitespace();
         _current = _specification;
-        _locator = NullLocator.getInstance();
     }
 
     public void startPrefixMapping(String prefix, String uri) {
@@ -180,6 +186,13 @@ public class SpecificationNodeHandler extends DefaultHandler
 		}
     }
 
+    public void skippedEntity(String name) {
+    }
+
+    public InputSource resolveEntity(String publicId, String systemId) {
+        return null;
+    }
+
     public void startEntity(String name) {
         String entityRef = "&" + name + ";";
         _charactersBuffer.append(entityRef);
@@ -195,6 +208,13 @@ public class SpecificationNodeHandler extends DefaultHandler
         String comment = new String(buffer, start, length);
         SpecificationNode node = addNode(QM_COMMENT);
         node.addAttribute(QM_TEXT, comment);
+    }
+
+    public void notationDecl(String name, String publicId, String systemId) {
+    }
+
+    public void unparsedEntityDecl(
+            String name, String publicId, String systemId, String notationName) {
     }
 
     public void startDTD(String name, String publicID, String systemID) {
@@ -224,13 +244,22 @@ public class SpecificationNodeHandler extends DefaultHandler
         _current = _current.getParentNode();
     }
 
+    public void warning(SAXParseException e) {
+        if(LOG.isWarnEnabled()) {
+            LOG.warn(e);
+        }
+    }
+
     public void fatalError(SAXParseException e) {
-        error(e);
+        if(LOG.isFatalEnabled()) {
+            LOG.fatal(e);
+        }
+        throw new RuntimeException(e);
     }
     
     public void error(SAXParseException e) {
         if(LOG.isErrorEnabled()) {
-            LOG.trace(e);
+            LOG.error(e);
         }
         throw new RuntimeException(e);
     }

@@ -34,7 +34,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.impl.util.xml.NullLocator;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ServiceProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -54,7 +53,7 @@ public abstract class SpecificationImpl
     private List _children;
     
     public SpecificationImpl(QName qName, Specification parent) {
-        super(qName, NullLocator.getInstance());
+        super(qName, null);
         _parent = parent;
     }
 

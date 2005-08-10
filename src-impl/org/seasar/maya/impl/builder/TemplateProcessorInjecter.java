@@ -34,7 +34,6 @@ import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.xml.NullLocator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -157,7 +156,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         saveToCycle(template);
         Stack stack = new Stack();
         stack.push(template);
-	    SpecificationNode maya = new SpecificationNodeImpl(QM_MAYA, NullLocator.getInstance());
+	    SpecificationNode maya = new SpecificationNodeImpl(
+                QM_MAYA, template.getLocator());
 	    template.addChildNode(maya);
         resolveChildren(template, stack, template);
         if(template.equals(stack.peek()) == false) {

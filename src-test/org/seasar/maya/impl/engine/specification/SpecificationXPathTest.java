@@ -35,8 +35,6 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.impl.util.xml.NullLocator;
-import org.xml.sax.Locator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -52,25 +50,24 @@ public class SpecificationXPathTest extends TestCase implements CONST_IMPL {
     private SpecificationNodeImpl _node4;
     
     protected void setUp() {
-        Locator locator = NullLocator.getInstance();
         _specification = new TestSpecification(null);
         // 1: qName1 & testID1
-        _node1 = new SpecificationNodeImpl(_qName1, locator);
+        _node1 = new SpecificationNodeImpl(_qName1, null);
         _node1.addAttribute(QM_ID, "testID1");
         _specification.addChildNode(_node1);
         _node1.addNamespace("m", URI_MAYA);
         // 2: qName2 & testID1
-        _node2 = new SpecificationNodeImpl(_qName2, locator);
+        _node2 = new SpecificationNodeImpl(_qName2, null);
         _node2.addAttribute(QM_ID, "testID1");
         _specification.addChildNode(_node2);
         _node2.addNamespace("m", URI_MAYA);
         // 3: qName1 & testID2
-        _node3 = new SpecificationNodeImpl(_qName1, locator);
+        _node3 = new SpecificationNodeImpl(_qName1, null);
         _node3.addAttribute(QM_ID, "testID2");
         _specification.addChildNode(_node3);
         _node3.addNamespace("m", URI_MAYA);
         // 4: qName2 & testID2
-        _node4 = new SpecificationNodeImpl(_qName2, locator);
+        _node4 = new SpecificationNodeImpl(_qName2, null);
         _node4.addAttribute(QM_ID, "testID2");
         _specification.addChildNode(_node4);
         _specification.addNamespace("m", URI_MAYA);

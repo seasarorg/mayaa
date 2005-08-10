@@ -40,7 +40,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.impl.util.xml.NullLocator;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.LocatorImpl;
 
@@ -58,13 +57,10 @@ public class SpecificationNodeImpl extends QNameableImpl
 
 	public SpecificationNodeImpl(QName qName, Locator locator) {
 	    super(qName);
-	    if(locator == null) {
-	        throw new IllegalArgumentException();
-	    }
 	    if(locator != null) {
 	        _locator = new LocatorImpl(locator);
 	    } else {
-            _locator = NullLocator.getInstance();
+            _locator = LOCATOR_NULL;
 	    }
     }
     
@@ -162,8 +158,7 @@ public class SpecificationNodeImpl extends QNameableImpl
 	        path.append(prefix).append(":");
 	    }
 	    path.append(getQName().getLocalName());
-        path.append("(").append(_locator.getLineNumber()).append(":");
-        path.append(_locator.getColumnNumber()).append(")");
+        path.append(" (line: ").append(_locator.getLineNumber()).append(")");
         return path.toString();
 	}
 	
@@ -224,7 +219,7 @@ public class SpecificationNodeImpl extends QNameableImpl
         return copyTo(FILTER_ALL);
     }
 
-    private static CopyToFilter FILTER_ALL = new AllCopyToFilter();
+    private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
     
     private static class AllCopyToFilter implements CopyToFilter {
         
@@ -234,4 +229,29 @@ public class SpecificationNodeImpl extends QNameableImpl
         
     }
     
+    private static final Locator LOCATOR_NULL = new NullLocator();
+    
+    private static class NullLocator implements Locator {
+        
+        private NullLocator() {
+        }
+        
+        public int getColumnNumber() {
+            return 0;
+        }
+
+        public int getLineNumber() {
+            return 0;
+        }
+        
+        public String getPublicId() {
+            return "";
+        }
+        
+        public String getSystemId() {
+            return "";
+        }
+
+    }
+
 }

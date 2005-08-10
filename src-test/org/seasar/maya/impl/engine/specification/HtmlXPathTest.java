@@ -27,7 +27,6 @@ import org.jaxen.pattern.PatternParser;
 import org.jaxen.saxpath.SAXPathException;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.util.xml.NullLocator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -44,7 +43,7 @@ public class HtmlXPathTest extends TestCase implements CONST_IMPL {
         Context context = new Context(support);
         pattern = PatternParser.parse("@class='box'");
         
-        SpecificationNodeImpl node = new SpecificationNodeImpl(QH_HTML, NullLocator.getInstance());
+        SpecificationNodeImpl node = new SpecificationNodeImpl(QH_HTML, null);
         node.addAttribute(new QName(URI_HTML, "class"), "box");
         
         assertTrue(pattern.matches(node, context));

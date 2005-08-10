@@ -1,23 +1,22 @@
 <html xmlns:m="http://maya.seasar.org"
-		xmlns:c="http://maya.seasar.org/jstl/core"
-		xmlns:s="http://maya.seasar.org/standard">
+		xmlns:c="http://maya.seasar.org/jstl/core">
 	<head>
 		<meta http-equiv="content-type" content="text/html; UTF-8">
 	</head>
 	<body>
 		<h2>${ THROWABLE.class.name }</h2>
 		<h3>${ THROWABLE.message }</h3>
-		<span m:inject="s:beanProperties" s:bean="${ THROWABLE }" s:var="var"
-			s:ignore="cause, stackTrace, class"> 
+		<span m:inject="m:beanProperties" m:bean="${ THROWABLE }" m:var="var"
+			m:ignore="cause, stackTrace, class"> 
 			${ var.name }: ${ var.value }<br>
 		</span>
 		<h3>stackTrace:</h3>
-		<span m:inject="s:stackTraceElements" s:throwable="${ THROWABLE }" s:var="var">
+		<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE }" m:var="var">
 			${ var.className }.${ var.methodName }(${ var.lineNumber })<br>
 		</span>
 		<span m:inject="c:if" c:test="${ THROWABLE.cause != null }">
 			<h3>cause:</h3>
-			<span m:inject="s:stackTraceElements" s:throwable="${ THROWABLE.cause }" s:var="var">
+			<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE.cause }" m:var="var">
 				${ var.className }.${ var.methodName }(${ var.lineNumber })<br>
 			</span>
 		</span>

@@ -101,4 +101,7 @@ public interface CONST_IMPL {
 
     QName QM_DO_BODY = new QName("doBody");
 
+    QName QM_COMPONENT_PAGE = new QName("componentPage");
+    QName QM_PATH = new QName("path");
+    
 }

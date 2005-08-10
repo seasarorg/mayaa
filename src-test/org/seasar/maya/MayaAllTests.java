@@ -42,13 +42,13 @@ import org.seasar.maya.impl.engine.specification.HtmlXPathTest;
 import org.seasar.maya.impl.engine.specification.NamespaceableImplTest;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImplTest;
 import org.seasar.maya.impl.engine.specification.SpecificationXPathTest;
+import org.seasar.maya.impl.jsp.builder.library.scanner.TLDLibraryScannerTest;
+import org.seasar.maya.impl.jsp.cycle.CyclePageContextTest;
 import org.seasar.maya.impl.source.JavaSourceDescriptorTest;
 import org.seasar.maya.impl.source.MetaInfCacheTest;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptorTest;
 import org.seasar.maya.impl.util.MessageUtilTest;
 import org.seasar.maya.impl.util.StringUtilTest;
-import org.seasar.maya.standard.builder.library.scanner.TLDLibraryScannerTest;
-import org.seasar.maya.standard.cycle.CyclePageContextTest;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -96,6 +96,12 @@ public class MayaAllTests extends TestSuite {
         suite.addTestSuite(PageImplTest.class);
         suite.addTestSuite(TemplateImplTest.class);
 
+        // org.seasar.maya.impl.jsp.builder.library.scanner
+        suite.addTestSuite(TLDLibraryScannerTest.class);
+        
+        // org.seasar.maya.impl.jsp.cycle
+        suite.addTestSuite(CyclePageContextTest.class);
+        
         // org.seasar.maya.impl.source
         suite.addTestSuite(JavaSourceDescriptorTest.class);
         suite.addTestSuite(MetaInfCacheTest.class);
@@ -110,12 +116,6 @@ public class MayaAllTests extends TestSuite {
         // org.seasar.maya.impl.util
         suite.addTestSuite(MessageUtilTest.class);
         suite.addTestSuite(StringUtilTest.class);
-        
-        // org.seasar.maya.standard.builder.library.scanner
-        suite.addTestSuite(TLDLibraryScannerTest.class);
-        
-        // org.seasar.maya.standard.cycle
-        suite.addTestSuite(CyclePageContextTest.class);
         
         return suite;
     }

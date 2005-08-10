@@ -55,4 +55,33 @@
 		<property name="data"/>
 	</processor>
 
+	<processor name="componentPage"
+			class="org.seasar.maya.impl.engine.processor.ComponentPageProcessor">
+		<property name="path" required="true"/>
+		<property name="namespaceURI" required="true"/>
+	</processor>
+
+	<processor name="startComponent"
+			class="org.seasar.maya.impl.engine.processor.StartComponentProcessor">
+	</processor>
+
+	<processor name="endComponent"
+			class="org.seasar.maya.impl.engine.processor.EndComponentProcessor">
+	</processor>
+
+	<processor name="beanProperties"
+			class="org.seasar.maya.impl.engine.processor.BeanPropertiesProcessor">
+		<property name="bean" required="true"/>
+		<property name="var"/>
+		<property name="index"/>
+		<property name="ignore"/>
+	</processor>
+
+	<processor name="stackTraceElements"
+			class="org.seasar.maya.impl.engine.processor.StackTraceElementsProcessor">
+		<property name="throwable" required="true" expectedType="java.lang.Throwable"/>
+		<property name="var"/>
+		<property name="index"/>
+	</processor>
+
 </library>

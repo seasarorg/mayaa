@@ -39,7 +39,7 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
     public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
     
     private static final XMLAttributes ATTR_EMPTY = new XMLAttributesImpl();
-    private static final QName NAME_CODELET = new QName("", "codelet", "codelet", "");
+    private static final QName NAME_CODELET = new QName("", "%", "%", "");
     
     public TemplateScanner() {
         HTMLScanner.Scanner scanner = createScanner();

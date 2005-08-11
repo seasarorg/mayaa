@@ -16,6 +16,8 @@
 package org.seasar.maya.impl.builder.parser;
 
 import org.apache.xerces.xni.Augmentations;
+import org.apache.xerces.xni.QName;
+import org.apache.xerces.xni.XMLAttributes;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLConfigurationException;
 import org.cyberneko.html.filters.DefaultFilter;
@@ -23,7 +25,7 @@ import org.cyberneko.html.filters.DefaultFilter;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XmlDeclFireStarter extends DefaultFilter {
+public class AdditionalHandlerFilter extends DefaultFilter {
 
     private static final String[] _recognizedProps = new String[] {
         AdditionalHandler.ADDITIONAL_HANDLER
@@ -48,8 +50,25 @@ public class XmlDeclFireStarter extends DefaultFilter {
             Augmentations augs) throws XNIException {
         if(_handler != null) {
             _handler.xmlDecl(version, encoding, standalone);
+            return;
         }
         super.xmlDecl(version, encoding, standalone, augs);
+    }
+    
+    public void startElement(QName element, XMLAttributes attributes, Augmentations augs) {
+        if(_handler != null && "%".equals(element.localpart)) {
+            _handler.startCodelet();
+            return;
+        }
+        super.startElement(element, attributes, augs);
+    }
+
+    public void endElement(QName element, Augmentations augs) {
+        if(_handler != null && "%".equals(element.localpart)) {
+            _handler.endCodelet();
+            return;
+        }
+        super.endElement(element, augs);
     }
     
 }

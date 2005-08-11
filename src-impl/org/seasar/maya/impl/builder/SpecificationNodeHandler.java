@@ -140,6 +140,19 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         saveToCycle(_current);
     }
 
+    public void startCodelet() {
+        addCharactersNode();
+        SpecificationNode node = addNode(QM_CODELET);
+        _current = node;
+        saveToCycle(_current);
+    }
+
+    public void endCodelet() {
+        addCharactersNode();
+        _current = _current.getParentNode();
+        saveToCycle(_current);
+    }
+
     public void endDocument() {
         saveToCycle(_specification);
     }

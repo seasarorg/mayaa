@@ -32,7 +32,7 @@ public class TemplateParser extends AbstractSAXParser {
     private static class TemplateParserConfiguration extends HTMLConfiguration {
 
     	public TemplateParserConfiguration(HTMLScanner scanner) {
-            XmlDeclFireStarter starter = new XmlDeclFireStarter();
+            AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
             setProperty(TemplateScanner.NAMES_ELEMS, "match");
             setProperty(TemplateScanner.NAMES_ATTRS, "no-change");

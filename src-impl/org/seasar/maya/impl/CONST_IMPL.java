@@ -88,7 +88,8 @@ public interface CONST_IMPL {
     QName QM_NAME = new QName("name");
     QName QM_PUBLIC_ID = new QName("publicID");
     QName QM_SYSTEM_ID = new QName("systemID");
-
+    QName QM_CODELET = new QName("codelet");
+    
     QName QM_IGNORE = new QName("ignore");
     
 	QName QM_BEFORE_RENDER = new QName("beforeRender");

@@ -24,4 +24,8 @@ public interface AdditionalHandler {
     
     void xmlDecl(String version, String encoding, String standalone);
     
+    void startCodelet();
+    
+    void endCodelet();
+    
 }

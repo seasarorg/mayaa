@@ -176,5 +176,23 @@ public class MockServletRequest implements ServletRequest {
     public boolean isSecure() {
         return false;
     }
+
+// since 2.4 --------------------------------------------------    
+    
+	public String getLocalAddr() {
+		return null;
+	}
+
+	public String getLocalName() {
+		return null;
+	}
+
+	public int getLocalPort() {
+		return 0;
+	}
+
+	public int getRemotePort() {
+		return 0;
+	}
     
 }

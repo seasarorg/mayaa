@@ -27,6 +27,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.seasar.maya.cycle.Application;
@@ -175,7 +177,19 @@ public class CyclePageContext extends PageContext {
         throw new UnsupportedOperationException();
     }
 
-    // Attributes ------------------------------------------------------------
+	public void include(String relativeUrlPath, boolean flush) {
+        throw new UnsupportedOperationException();
+	}
+
+	public ExpressionEvaluator getExpressionEvaluator() {
+        throw new UnsupportedOperationException();
+	}
+
+	public VariableResolver getVariableResolver() {
+        throw new UnsupportedOperationException();
+	}
+
+	// Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {

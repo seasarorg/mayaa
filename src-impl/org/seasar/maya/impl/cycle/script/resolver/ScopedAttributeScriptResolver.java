@@ -22,6 +22,10 @@ import org.seasar.maya.impl.util.CycleUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScopedAttributeScriptResolver implements ScriptResolver {
+
+    public void putParameter(String name, String value) {
+        throw new UnsupportedOperationException();
+    }
     
     public Object getVariable(String name) {
         Object value = CycleUtil.findAttribute(name);
@@ -31,8 +35,9 @@ public class ScopedAttributeScriptResolver implements ScriptResolver {
         return UNDEFINED; 
     }
 
-    public void putParameter(String name, String value) {
-        throw new UnsupportedOperationException();
-    }
+	public boolean setVariable(String name, Object value) {
+		CycleUtil.rewriteAttribute(name, value);
+		return true;
+	}
 
 }

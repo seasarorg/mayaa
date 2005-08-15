@@ -16,37 +16,24 @@
 package org.seasar.maya.impl.cycle.script;
 
 /**
- * 式ブロックの開き・閉じのバランスが悪いときの例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class UnbalancedBraceException extends ScriptException {
 
 	private static final long serialVersionUID = 9098125536269480736L;
 
-	private String _expression;
+	private String _script;
 	private int _offset;
-	
-	/**
-	 * @param expression 問題の式文字列。
-	 * @param offset アンバランスの発生箇所。
-	 */
-	public UnbalancedBraceException(String expression, int offset) {
-		_expression = expression;
+
+	public UnbalancedBraceException(String script, int offset) {
+		_script = script;
 		_offset = offset;
 	}
 	
-	/**
-	 * 式文字列の取得。
-	 * @return 式文字列。
-	 */
-	public String getExpression() {
-		return _expression;
+	public String getScript() {
+		return _script;
 	}
 	
-	/**
-	 * アンバランス発生箇所の取得。
-	 * @return 発生箇所オフセット。
-	 */
 	public int getOffset() {
 		return _offset;
 	}

@@ -25,7 +25,7 @@ import org.seasar.maya.impl.cycle.script.ScriptBlock;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RhinoExpressionFactory extends AbstractScriptCompiler {
+public class RhinoScriptCompiler extends AbstractScriptCompiler {
     
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
@@ -40,9 +40,11 @@ public class RhinoExpressionFactory extends AbstractScriptCompiler {
             return new LiteralScript(expression, expectedType);
         }
         Context cx = Context.enter();
+        // TODO ファイル名、行の設定。
         Script script = cx.compileString(expression, null, 0, null);
         Context.exit();
-        return new RhinoCompiledExpression(script, expression, expectedType);
+        return new RhinoCompiledExpression(getScriptResolver(),
+        		script, expression, expectedType);
     }
     
 }

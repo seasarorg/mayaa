@@ -23,21 +23,14 @@ public class SyntaxException extends ScriptException {
 
 	private static final long serialVersionUID = 4167069503212250014L;
 
-	private String _expression;
+	private String _script;
     
-    /**
-     * @param expression ®•¶š—ñB
-     */
-    public SyntaxException(String expression) {
-        _expression = expression;
+    public SyntaxException(String script) {
+        _script = script;
     }
     
-    /**
-     * “ü—Í®•¶š—ñ‚Ìæ“¾B
-     * @return ®•¶š—ñB
-     */
-    public String getExpression() {
-        return _expression;
+    public String getScript() {
+        return _script;
     }
     
 }

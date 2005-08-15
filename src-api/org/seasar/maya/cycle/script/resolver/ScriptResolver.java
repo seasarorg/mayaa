@@ -36,4 +36,12 @@ public interface ScriptResolver extends Parameterizable {
      */
     Object getVariable(String name);
     
+    /**
+     * 値設定のためのリゾルバメソッド。
+     * @param name 設定する値の名前文字列。
+     * @param value 設定する値。
+     * @return 値設定を行った際に、true。処理をおこなわないとfalseを返す。
+     */
+    boolean setVariable(String name, Object value);
+    
 }

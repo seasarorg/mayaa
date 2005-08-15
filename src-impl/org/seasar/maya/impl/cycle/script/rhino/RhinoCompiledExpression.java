@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.script.rhino;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
+import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
 import org.seasar.maya.impl.cycle.script.ConversionException;
 
@@ -30,28 +31,31 @@ public class RhinoCompiledExpression extends AbstractCompiledScript {
     private static ThreadLocal _scope = new ThreadLocal();
     private static Scriptable _standardObjects;
     
-    public static Scriptable getScope() {
+    private ScriptResolver _resolver;
+    private Script _script;
+    
+    public RhinoCompiledExpression(ScriptResolver resolver,
+    		Script script, String expression, Class expectedType) {
+        super(expression, expectedType);
+        if(resolver == null || script == null) {
+            throw new IllegalArgumentException();
+        }
+        _resolver = resolver;
+        _script = script;
+    }
+    
+    private Scriptable getScope() {
         Scriptable scope = (Scriptable)_scope.get();
         if(scope == null) {
             Context cx = Context.getCurrentContext();
             if(_standardObjects == null) {
                 _standardObjects = cx.initStandardObjects(null, true);
             }
-            scope = new GlobalScope(); 
+            scope = new GlobalScope(_resolver); 
             scope.setPrototype(_standardObjects);
             _scope.set(scope);
         }
         return scope;
-    }
-    
-    private Script _script;
-    
-    public RhinoCompiledExpression(Script script, String expression, Class expectedType) {
-        super(expression, expectedType);
-        if(script == null) {
-            throw new IllegalArgumentException();
-        }
-        _script = script;
     }
     
     public Object exec() {

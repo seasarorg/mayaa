@@ -18,7 +18,6 @@ package org.seasar.maya.impl.cycle.script;
 import org.seasar.maya.impl.MayaException;
 
 /**
- * 式関連例外の基本的な例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptException extends MayaException {

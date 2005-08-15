@@ -54,4 +54,14 @@ public class CompositeScriptResolver implements ScriptResolver {
         return UNDEFINED;
     }
 
+	public boolean setVariable(String name, Object value) {
+        for(int i = 0; i < _resolvers.size(); i++) {
+            ScriptResolver resolver = (ScriptResolver)_resolvers.get(i);
+            if(resolver.setVariable(name, value)) {
+                return true;
+            }
+        }
+        return false;
+	}
+
 }

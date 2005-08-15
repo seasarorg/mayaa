@@ -39,4 +39,8 @@ public class ImplicitObjectScriptResolver implements ScriptResolver {
         return UNDEFINED;
     }
 
+	public boolean setVariable(String name, Object value) {
+		return false;
+	}
+
 }

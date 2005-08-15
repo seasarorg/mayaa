@@ -37,6 +37,8 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
+import org.seasar.maya.impl.jsp.cycle.el.CycleExpressionEvaluator;
+import org.seasar.maya.impl.jsp.cycle.el.CycleVariableResolver;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.JspUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
@@ -177,16 +179,18 @@ public class CyclePageContext extends PageContext {
         throw new UnsupportedOperationException();
     }
 
+    // since 2.0 -------------------------------------------------    
+    
 	public void include(String relativeUrlPath, boolean flush) {
         throw new UnsupportedOperationException();
 	}
 
 	public ExpressionEvaluator getExpressionEvaluator() {
-        throw new UnsupportedOperationException();
+        return CycleExpressionEvaluator.getInstance();
 	}
 
 	public VariableResolver getVariableResolver() {
-        throw new UnsupportedOperationException();
+        return CycleVariableResolver.getInstance();
 	}
 
 	// Attributes ------------------------------------------------------------

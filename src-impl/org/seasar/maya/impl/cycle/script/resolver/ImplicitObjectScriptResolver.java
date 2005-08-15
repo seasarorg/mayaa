@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.script.resolver;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+import org.seasar.maya.impl.cycle.script.PropertyNotWritableException;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
@@ -40,7 +41,11 @@ public class ImplicitObjectScriptResolver implements ScriptResolver {
     }
 
 	public boolean setVariable(String name, Object value) {
-		return false;
+		Object obj = getVariable(name);
+		if(UNDEFINED.equals(obj)) {
+			return false;
+		}
+		throw new PropertyNotWritableException(name);
 	}
 
 }

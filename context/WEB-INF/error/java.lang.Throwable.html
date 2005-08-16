@@ -4,20 +4,20 @@
 		<meta http-equiv="content-type" content="text/html; UTF-8">
 	</head>
 	<body>
-		<h2>${ THROWABLE.class.name }</h2>
+		<h2>${ THROWABLE.getClass() }</h2>
 		<h3>${ THROWABLE.message }</h3>
-		<span m:inject="m:beanProperties" m:bean="${ THROWABLE }" m:var="var"
+		<span m:inject="m:beanProperties" m:bean="${ THROWABLE }" m:var="varr"
 			m:ignore="cause, stackTrace, class"> 
-			${ var.name }: ${ var.value }<br>
+			${ varr.name }: ${ varr.value }<br>
 		</span>
 		<h3>stackTrace:</h3>
-		<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE }" m:var="var">
-			${ var.className }.${ var.methodName }(${ var.lineNumber })<br>
+		<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE }" m:var="varr">
+			${ varr.className }.${ varr.methodName }(${ varr.lineNumber })<br>
 		</span>
 		<span m:inject="c:if" c:test="${ THROWABLE.cause != null }">
 			<h3>cause:</h3>
-			<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE.cause }" m:var="var">
-				${ var.className }.${ var.methodName }(${ var.lineNumber })<br>
+			<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE.cause }" m:var="varr">
+				${ varr.className }.${ varr.methodName }(${ varr.lineNumber })<br>
 			</span>
 		</span>
 	</body>

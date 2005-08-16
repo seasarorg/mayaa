@@ -3,23 +3,23 @@
 		xmlns:c="http://maya.seasar.org/jstl/core">
 
 	<c:out    m:id="message" value="‚±‚ñ‚É‚¿‚Í ${ 1+1 }" m:rendered="true"/>
-	<c:set    m:id="set"     var="var" value="2"      m:rendered="true"/>
-	<c:out    m:id="out"     value="‚±‚ñ‚É‚¿‚Í ${ var }" m:rendered="true"/>
-	<c:remove m:id="remove"  var="var"                m:rendered="true"/>
+	<c:set    m:id="set"     var="varr" value="2"      m:rendered="true"/>
+	<c:out    m:id="out"     value="‚±‚ñ‚É‚¿‚Í ${ varr }" m:rendered="true"/>
+	<c:remove m:id="remove"  var="varr"                m:rendered="true"/>
 
-	<c:out       m:id="outForToken" value="${ var }"/>
-	<c:out       m:id="outForToken2" value="${ var2 }"/>
+	<c:out       m:id="outForToken" value="${ varr }"/>
+	<c:out       m:id="outForToken2" value="${ varr2 }"/>
 	<c:forTokens m:id="forTokens1" 
 		items="a-b-c-d-e" 
-		delims="-" var="var" 
+		delims="-" var="varr" 
 	/>
 	<c:forTokens m:id="forTokens1-2" 
 		items="a,b,c,d,e" 
-		var="var2" 
+		var="varr2" 
 	/>
 	<c:forTokens m:id="forTokens2" 
 		items="a,b,c,d,e" 
-		var="var" begin="1" end="4" step="2"
+		var="varr" begin="1" end="4" step="2"
 	/>
 
 	<c:choose    m:id="choose"/>

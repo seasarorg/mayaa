@@ -25,7 +25,7 @@ import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
@@ -109,13 +109,13 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 	public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setCurrentNode(this);
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
+        ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         String pageName = cycle.getRequest().getPageName();
         String extension = cycle.getRequest().getExtension();
         Page page = getPage(pageName, extension);
         page.doPageRender();
         cycle.setCurrentNode(this);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
+        ScriptUtil.execEvent(this, QM_AFTER_RENDER);
 	}
 	
     public String getWelcomeFileName() {

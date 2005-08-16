@@ -18,7 +18,7 @@ package org.seasar.maya.impl.engine.processor;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -62,7 +62,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     public Object getValue() {
         if(_value instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)_value;
-            return ExpressionUtil.expressGetValue(script);
+            return ScriptUtil.execute(script);
         }
         return _value;
     }

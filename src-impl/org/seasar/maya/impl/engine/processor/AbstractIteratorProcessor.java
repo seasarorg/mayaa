@@ -32,15 +32,15 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
 		implements IterationProcessor, CONST_IMPL {
     
-    private ProcessorProperty _expression;
+    private ProcessorProperty _property;
     private String _var;
     private String _index;
     
-    protected void setExpression(ProcessorProperty expression) {
-        if(expression == null) {
+    protected void setProperty(ProcessorProperty property) {
+        if(property == null) {
             throw new IllegalArgumentException();
         }
-        _expression = expression;
+        _property = property;
     }
 
     protected void setVar(String var) {
@@ -114,7 +114,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
 	protected abstract Iterator createIterator(Object eval);
     
     public ProcessStatus doStartProcess() {
-        Object eval = _expression.getValue();
+        Object eval = _property.getValue();
         Iterator it = createIterator(eval);
         if(it == null) {
             it = NullIterator.getInstance();

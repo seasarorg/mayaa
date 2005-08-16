@@ -28,31 +28,31 @@ public class ScriptBlockIterator implements Iterator {
     public static final String BLOCK_SIGN_JSP = "$";
     public static final String BLOCK_SIGN_JSF = "#";
 
-	private String _script;
+	private String _text;
 	private String _blockSign;
 	private int _offset;
 
-	public ScriptBlockIterator(String expression, String blockSign) {
-		if (StringUtil.isEmpty(expression) || StringUtil.isEmpty(blockSign)) {
+	public ScriptBlockIterator(String text, String blockSign) {
+		if (StringUtil.isEmpty(text) || StringUtil.isEmpty(blockSign)) {
 			throw new IllegalArgumentException();
 		}
-		_script = expression;
+		_text = text;
 		_blockSign = blockSign;
 		_offset = 0;
 	}
 
 	public boolean hasNext() {
-		return _offset < _script.length();
+		return _offset < _text.length();
 	}
 
     protected int scanBlockCloseOffset(int start) {
-        char c = _script.charAt(start);
+        char c = _text.charAt(start);
         if(c != '{') {
             throw new IllegalArgumentException();
         }
         int depth = 0;
-        for(int i = start; i < _script.length(); i++) {
-            c = _script.charAt(i);
+        for(int i = start; i < _text.length(); i++) {
+            c = _text.charAt(i);
             if(c == '{') {
                 depth++;
             } else if(c == '}') {
@@ -60,7 +60,7 @@ public class ScriptBlockIterator implements Iterator {
                 if(depth == 0) {
                     return i; 
                 } else if(depth < 0) {
-                    throw new UnbalancedBraceException(_script, i); 
+                    throw new UnbalancedBraceException(_text, i); 
                 }
             }
         }
@@ -72,26 +72,26 @@ public class ScriptBlockIterator implements Iterator {
 			throw new NoSuchElementException();
 		}
         String blockStart = _blockSign + "{";
-		int sign = _script.indexOf(blockStart, _offset);
+		int sign = _text.indexOf(blockStart, _offset);
         if (sign != -1) {
             if(_offset == sign) {
                 // script block
                 int close = scanBlockCloseOffset(_offset + _blockSign.length());
                 if (close == -1) {
-                    throw new UnbalancedBraceException(_script, _script.length());
+                    throw new UnbalancedBraceException(_text, _text.length());
                 }
-                String expressionBlock = _script.substring(_offset + blockStart.length(), close);
+                String text = _text.substring(_offset + blockStart.length(), close);
                 _offset = close + 1;
-                return new ScriptBlock(expressionBlock, false);
+                return new ScriptBlock(text, false);
             }
             // literal
-            String lastLiteralBlock = _script.substring(_offset, sign);
+            String lastLiteralBlock = _text.substring(_offset, sign);
             _offset = sign;
             return new ScriptBlock(lastLiteralBlock, true);
 		}
         // tail literal
-        String lastLiteralBlock = _script.substring(_offset);
-        _offset = _script.length();
+        String lastLiteralBlock = _text.substring(_offset);
+        _offset = _text.length();
         return new ScriptBlock(lastLiteralBlock, true);
 	}
 

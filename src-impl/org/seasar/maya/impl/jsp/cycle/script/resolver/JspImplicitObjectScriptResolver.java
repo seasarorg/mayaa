@@ -25,7 +25,7 @@ import org.seasar.maya.impl.util.CycleUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspImplicitObjectExpressionResolver implements ScriptResolver {
+public class JspImplicitObjectScriptResolver implements ScriptResolver {
 
     private Object getImplicitObject(Object property) {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();

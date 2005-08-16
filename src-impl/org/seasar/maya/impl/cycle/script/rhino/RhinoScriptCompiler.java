@@ -35,16 +35,16 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         if(scriptBlock == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
-        String expression = scriptBlock.getBlockString();
+        String text = scriptBlock.getBlockString();
         if(scriptBlock.isLiteral()) {
-            return new LiteralScript(expression, expectedType);
+            return new LiteralScript(text, expectedType);
         }
         Context cx = Context.enter();
         // TODO ファイル名、行の設定。
-        Script script = cx.compileString(expression, null, 0, null);
+        Script script = cx.compileString(text, null, 0, null);
         Context.exit();
         return new RhinoCompiledScript(getScriptResolver(),
-        		script, expression, expectedType);
+        		script, text, expectedType);
     }
     
 }

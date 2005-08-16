@@ -38,7 +38,7 @@ public class BeanPropertiesProcessor extends AbstractIteratorProcessor {
     	if(bean == null) {
     		throw new IllegalArgumentException();
     	}
-    	setExpression(bean);
+    	setProperty(bean);
     }
     
     public void setVar(String var) {

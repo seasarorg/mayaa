@@ -27,7 +27,7 @@ public interface CompiledScript extends Serializable {
      * スクリプトを実行して値を取得する。
      * @return 実行結果の値。
      */
-    Object exec();
+    Object execute();
     
     /**
      * スクリプトの取得。

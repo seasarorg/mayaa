@@ -33,7 +33,7 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -139,7 +139,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             QName qName = attr.getQName();
             if(acceptable.getInformalAttrituteURI().equals(qName.getNamespaceURI())) {
 	            String prefix = injected.getPrefix();
-	            CompiledScript script = ExpressionUtil.parseExpression(attr.getValue(), Object.class);
+	            CompiledScript script = ScriptUtil.compile(attr.getValue(), Object.class);
 	            Object obj = script;
 	            if(script == null) {
 	            	obj = "";

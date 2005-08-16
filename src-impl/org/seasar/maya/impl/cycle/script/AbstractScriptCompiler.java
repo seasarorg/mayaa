@@ -53,7 +53,7 @@ public abstract class AbstractScriptCompiler implements ScriptCompiler {
     }
     
     protected abstract CompiledScript compile(
-            ScriptBlock expressionBlock, Class expectedType);
+            ScriptBlock scriptBlock, Class expectedType);
     
     public CompiledScript compile(String script, Class expectedType) {
         if(StringUtil.isEmpty(script) || expectedType == null) {

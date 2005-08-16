@@ -58,7 +58,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         return scope;
     }
     
-    public Object exec() {
+    public Object execute() {
         Object ret;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();

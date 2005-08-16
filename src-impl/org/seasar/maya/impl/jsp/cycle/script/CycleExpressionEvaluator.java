@@ -22,7 +22,7 @@ import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -43,7 +43,7 @@ public class CycleExpressionEvaluator extends ExpressionEvaluator {
 
     public Expression parseExpression(String expression, Class expectedType, 
             FunctionMapper fMapper) throws ELException {
-        CompiledScript script = ExpressionUtil.parseExpression(expression, expectedType);
+        CompiledScript script = ScriptUtil.compile(expression, expectedType);
         return new CycleExpression(script);
     }
 

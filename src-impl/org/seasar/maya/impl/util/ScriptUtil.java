@@ -28,12 +28,12 @@ import org.seasar.maya.provider.factory.ServiceProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionUtil implements CONST_IMPL {
+public class ScriptUtil implements CONST_IMPL {
 
-	private ExpressionUtil() {
+	private ScriptUtil() {
 	}
 
-    public static CompiledScript parseExpression(String text, Class expectedType) {
+    public static CompiledScript compile(String text, Class expectedType) {
         if(expectedType == null) {
         	throw new IllegalArgumentException();
         }
@@ -45,11 +45,11 @@ public class ExpressionUtil implements CONST_IMPL {
         return null;
     }
     
-    public static Object expressGetValue(Object obj) {
+    public static Object execute(Object obj) {
         Object value = null;
         if (obj instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)obj;
-            value = script.exec();
+            value = script.execute();
         } else {
             value = obj;
         }
@@ -64,10 +64,10 @@ public class ExpressionUtil implements CONST_IMPL {
         if(maya != null) {
 	        NodeAttribute attr = maya.getAttribute(eventName);
 	        if(attr != null) {
-	        	String expression = attr.getValue();
-	        	if(StringUtil.hasValue(expression)) {
-		            Object obj = ExpressionUtil.parseExpression(expression, Void.class);
-		            ExpressionUtil.expressGetValue(obj);
+	        	String text = attr.getValue();
+	        	if(StringUtil.hasValue(text)) {
+		            Object obj = ScriptUtil.compile(text, Void.class);
+		            ScriptUtil.execute(obj);
 	        	}
 	        }
         }

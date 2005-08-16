@@ -31,7 +31,7 @@ public class StackTraceElementsProcessor extends AbstractIteratorProcessor {
     	if(throwable == null) {
     		throw new IllegalArgumentException();
     	}
-        setExpression(throwable);
+        setProperty(throwable);
     }
     
     public void setVar(String var) {

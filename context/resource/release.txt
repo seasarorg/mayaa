@@ -61,7 +61,7 @@ WEBƒRƒ“ƒeƒi‹N“®ƒvƒ‰ƒOƒCƒ““™‚É‚ÄŠm”F‚Å‚«‚Ü‚·B‚Ü‚½AƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“ƒ‹[ƒgƒ
 -ServiceProvider‚È‚Ç‚ðStruts‚È‚Ç‚ÌŠO•”‚ÌƒtƒŒ[ƒ€ƒ[ƒN‚©‚ç‚à—˜—p‚Å‚«‚é‚æ‚¤‚ÉA
  ThreadLocal‚ð—˜—p‚µ‚ÄServiceCycle‚ð•ÛŽ‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½B
 
--TemplateProcessorAExpressionResolver‚Æ‚¢‚Á‚½ƒƒ\ƒbƒhˆø”‚ÉServiceCycle
+-TemplateProcessorAScriptResolver‚Æ‚¢‚Á‚½ƒƒ\ƒbƒhˆø”‚ÉServiceCycle
   ‚ðŽæ‚é‚à‚Ì‚ð‘S‚Ä®—‚µAServiceCycle‚ðˆø”“n‚µ‚¹‚¸AServiceProvider‚©‚ç
   Žæ“¾‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½B
   
@@ -75,6 +75,9 @@ WEBƒRƒ“ƒeƒi‹N“®ƒvƒ‰ƒOƒCƒ““™‚É‚ÄŠm”F‚Å‚«‚Ü‚·B‚Ü‚½AƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“ƒ‹[ƒgƒ
 -“¯«‚·‚éNekoHTML‚Ìƒo[ƒWƒ‡ƒ“‚ð0.9.5‚ÉƒAƒbƒvƒf[ƒg‚µ‚Ü‚µ‚½B
 
 -“¯«‚·‚éXerces‚Ìƒo[ƒWƒ‡ƒ“‚ð2.7.1‚ÉƒAƒbƒvƒf[ƒg‚µ‚Ü‚µ‚½B  
+
+-Ž®Œ¾Œê‚ÌŽg—p‚ð”pŽ~‚µA‘ã‚¦‚ÄƒXƒNƒŠƒvƒgŒ¾Œê‚ð—˜—p‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½BŽÀ‘•‚Å‚ÍA
+ JavaScript‚ÌƒGƒ“ƒWƒ“‚Å‚ ‚éARhino‚ðÌ—p‚µ‚Ä‚¢‚Ü‚·B
 
 -----------------------------------------------------------------------
 •ÏX“_ 0.9.7.1 -> 0.9.8

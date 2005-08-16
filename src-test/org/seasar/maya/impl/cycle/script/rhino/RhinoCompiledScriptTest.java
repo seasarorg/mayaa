@@ -55,7 +55,7 @@ public class RhinoCompiledScriptTest extends TestCase {
     }
     
     public void testExec() {
-        Object obj = _script.exec();
+        Object obj = _script.execute();
         assertTrue(obj instanceof String);
         assertEquals("hi", obj);
     }

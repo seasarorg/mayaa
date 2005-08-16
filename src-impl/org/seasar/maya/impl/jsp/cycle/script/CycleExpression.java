@@ -20,7 +20,7 @@ import javax.servlet.jsp.el.Expression;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -34,7 +34,7 @@ public class CycleExpression extends Expression {
     }
     
     public Object evaluate(VariableResolver vResolver) throws ELException {
-        return ExpressionUtil.expressGetValue(_script);
+        return ScriptUtil.execute(_script);
     }
 
 }

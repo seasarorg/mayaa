@@ -28,7 +28,7 @@ import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -133,7 +133,7 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	        	Class clazz = ObjectUtil.loadClass(_expectedType);
-	            CompiledScript script  = ExpressionUtil.parseExpression(stringValue, clazz);
+	            CompiledScript script  = ScriptUtil.compile(stringValue, clazz);
 	            String prefix = getPrefix(injected, qName);
 	            return new ProcessorPropertyImpl(qName, prefix, script);
 	        }

@@ -25,14 +25,14 @@ public class LiteralScript  implements CompiledScript {
 
 	private static final long serialVersionUID = -3791475287481727514L;
 
-	private String _script;
+	private String _text;
     private Class _expectedType;
     
-    public LiteralScript(String expression, Class expectedType) {
-        if(StringUtil.isEmpty(expression)) {
+    public LiteralScript(String text, Class expectedType) {
+        if(StringUtil.isEmpty(text)) {
             throw new IllegalArgumentException();
         }
-        _script = expression;
+        _text = text;
         _expectedType = expectedType;
     }
     
@@ -40,7 +40,7 @@ public class LiteralScript  implements CompiledScript {
         return _expectedType;
     }
     
-    public Object exec() {
+    public Object execute() {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
@@ -49,11 +49,11 @@ public class LiteralScript  implements CompiledScript {
         if(_expectedType == Void.class) {
             return null;
         }
-        return _script;
+        return _text;
     }
     
     public String getText() {
-        return _script;
+        return _text;
     }
 
     public boolean isLiteral() {

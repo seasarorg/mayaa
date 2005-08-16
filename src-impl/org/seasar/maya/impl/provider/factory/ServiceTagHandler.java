@@ -36,7 +36,7 @@ public class ServiceTagHandler extends TagHandler {
         _context = context;
         putHandler("engine", new EngineTagHandler(this));
         putHandler("source", new SourceTagHandler(this));
-        putHandler("expression", new ScriptTagHandler(this));
+        putHandler("script", new ScriptTagHandler(this));
         putHandler("specificationBuilder", new SpecificationBuilderTagHandler(this));
         putHandler("templateBuilder", new TemplateBuilderTagHandler(this));
     }

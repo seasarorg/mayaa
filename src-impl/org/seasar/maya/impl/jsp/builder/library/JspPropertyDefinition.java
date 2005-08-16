@@ -21,7 +21,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.jsp.engine.processor.JspCustomTagProcessor;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,7 +36,7 @@ public class JspPropertyDefinition extends PropertyDefinitionImpl {
         QName qName = getQName(injected);
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
-            Object value = ExpressionUtil.parseExpression(stringValue, Object.class);
+            Object value = ScriptUtil.compile(stringValue, Object.class);
             String prefix = getPrefix(injected, qName);
             return new ProcessorPropertyImpl(qName, prefix, value);
         }

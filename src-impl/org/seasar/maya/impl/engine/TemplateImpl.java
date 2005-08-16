@@ -36,7 +36,7 @@ import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.NodeNamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -249,10 +249,10 @@ public class TemplateImpl extends SpecificationImpl
         if(getParentProcessor() == null) {
             prepareEncoding();
         }
-        ExpressionUtil.execEvent(this, QM_BEFORE_RENDER);
+        ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
         cycle.setCurrentNode(this);
-        ExpressionUtil.execEvent(this, QM_AFTER_RENDER);
+        ScriptUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.setTemplate(null);
         return ret;
     }

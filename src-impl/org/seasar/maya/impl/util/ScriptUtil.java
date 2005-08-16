@@ -55,7 +55,9 @@ public class ScriptUtil implements CONST_IMPL {
         Object value = null;
         if (obj instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)obj;
-            value = script.execute();
+            Specification specification = SpecificationUtil.findSpecification();
+            Object model = SpecificationUtil.findSpecificationModel(specification);
+            value = script.execute(model);
         } else {
             value = obj;
         }

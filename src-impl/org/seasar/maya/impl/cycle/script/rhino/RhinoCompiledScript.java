@@ -34,37 +34,50 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     
     private ScriptResolver _resolver;
     private Script _script;
+    private String _sourceName;
+    int _lineno;
     
     public RhinoCompiledScript(ScriptResolver resolver,
-    		Script script, String text, Class expectedType) {
+    		String text, Class expectedType, String sourceName, int lineno) {
         super(text, expectedType);
-        if(resolver == null || script == null) {
+        if(resolver == null) {
             throw new IllegalArgumentException();
         }
         _resolver = resolver;
-        _script = script;
+        _sourceName = sourceName;
+        _lineno = lineno;
     }
     
-    private Scriptable getScope() {
+    private Scriptable getScope(Object root) {
         Scriptable scope = (Scriptable)_scope.get();
         if(scope == null) {
             Context cx = Context.getCurrentContext();
             if(_standardObjects == null) {
                 _standardObjects = cx.initStandardObjects(null, true);
             }
-            scope = new GlobalScope(_resolver); 
+            scope = new GlobalScope(_resolver);
             scope.setPrototype(_standardObjects);
+            if(root != null) {
+                Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
+                        cx, scope, root, root.getClass());
+                rootScope.setPrototype(scope);
+                _scope.set(rootScope);
+                return rootScope;
+            }
             _scope.set(scope);
         }
         return scope;
     }
     
-    public Object execute() {
+    public Object execute(Object root) {
         Object ret;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
         try {
-            Object value = _script.exec(cx, getScope());
+            if(_script == null) {
+                _script = cx.compileString(getText(), _sourceName, _lineno, null);
+            }
+            Object value = _script.exec(cx, getScope(root));
             ret = JavaAdapter.convertResult(value, expectedType);
         } finally {
             Context.exit();

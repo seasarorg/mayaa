@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Script;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
@@ -40,11 +38,8 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text, expectedType);
         }
-        Context cx = Context.enter();
-        Script script = cx.compileString(text, null, 0, null);
-        Context.exit();
-        return new RhinoCompiledScript(getScriptResolver(),
-        		script, text, expectedType);
+        return new RhinoCompiledScript(getScriptResolver(), 
+                text, expectedType, sourceName, lineno);
     }
     
 }

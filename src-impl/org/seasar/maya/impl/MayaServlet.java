@@ -81,6 +81,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     protected void handleError(Throwable t) {
         try {
             t = ThrowableUtil.removeWrapperRuntimeException(t);
+            t.printStackTrace();
             _engine.getErrorHandler().doErrorHandle(t);
         } catch(Throwable tx) {
             if(tx instanceof RuntimeException) {

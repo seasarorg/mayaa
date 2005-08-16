@@ -43,7 +43,7 @@ public class ComplexScript implements CompiledScript {
         return _expectedType;
     }
     
-    public Object execute() {
+    public Object execute(Object root) {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
@@ -51,7 +51,7 @@ public class ComplexScript implements CompiledScript {
         }
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].execute());
+            buffer.append(_compiled[i].execute(root));
         }
         if(_expectedType == Void.class) {
             return null;

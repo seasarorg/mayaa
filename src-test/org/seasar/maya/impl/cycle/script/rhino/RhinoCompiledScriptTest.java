@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Script;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.resolver.CompositeScriptResolver;
 
@@ -35,11 +33,8 @@ public class RhinoCompiledScriptTest extends TestCase {
     
     protected void setUp() {
         ScriptResolver resolver = new CompositeScriptResolver();
-        Context cx = Context.enter();
-        Script scr = cx.compileString(
-                "obj = { run: function() { return 'hi'; } }; obj.run();", null, 0, null);
-        _script = new RhinoCompiledScript(
-                resolver, scr, "obj = { run: function() { return 'hi'; } }; obj.run();", String.class);
+        _script = new RhinoCompiledScript(resolver, 
+                "obj = { run: function() { return 'hi'; } }; obj.run();", String.class, null, 0);
     }
     
     public void testGetText() {
@@ -55,7 +50,7 @@ public class RhinoCompiledScriptTest extends TestCase {
     }
     
     public void testExec() {
-        Object obj = _script.execute();
+        Object obj = _script.execute(null);
         assertTrue(obj instanceof String);
         assertEquals("hi", obj);
     }

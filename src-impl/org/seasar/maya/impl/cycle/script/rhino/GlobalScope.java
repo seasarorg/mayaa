@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
@@ -41,22 +42,24 @@ public class GlobalScope extends ScriptableObject {
 
 	public Object get(String name, Scriptable scope) {
 		Object obj = _resolver.getVariable(name);
-		if(ScriptResolver.UNDEFINED.equals(obj) == false) {
-			return obj;
+		if(ScriptResolver.UNDEFINED.equals(obj)) {
+            return super.get(name, scope);
 		}
-		return super.get(name, scope);
+        return Context.javaToJS(obj, scope);
 	}
 
 	public boolean has(String name, Scriptable scope) {
 		Object obj = _resolver.getVariable(name);
-		if(ScriptResolver.UNDEFINED.equals(obj) == false) {
-			return true;
+		if(ScriptResolver.UNDEFINED.equals(obj)) {
+            return super.has(name, scope);
 		}
-		return super.has(name, scope);
+        return true;
 	}
 
 	public void put(String name, Scriptable scope, Object value) {
-		super.put(name, scope, value);
+        if(_resolver.setVariable(name, value) == false) {
+            super.put(name, scope, value);
+        }
 	}
     
 }

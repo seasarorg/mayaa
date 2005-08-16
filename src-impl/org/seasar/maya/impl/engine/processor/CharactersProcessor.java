@@ -38,12 +38,12 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     	return _text;
     }
     
-    protected Object getExpressed() {
+    protected Object getExecuted() {
         return _text.getValue();
     }
     
     public ProcessStatus doStartProcess() {
-        Object value = getExpressed();
+        Object value = getExecuted();
         if(value != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());

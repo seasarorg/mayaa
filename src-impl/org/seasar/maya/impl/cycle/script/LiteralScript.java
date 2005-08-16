@@ -40,7 +40,7 @@ public class LiteralScript  implements CompiledScript {
         return _expectedType;
     }
     
-    public Object execute() {
+    public Object execute(Object root) {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {

@@ -135,7 +135,7 @@ public class PageImpl extends SpecificationImpl
         String text = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(text)) {
             CompiledScript action = ScriptUtil.compile(text, String.class);
-            return (String)action.execute();
+            return (String)ScriptUtil.execute(action);
         }
         return "";
     }

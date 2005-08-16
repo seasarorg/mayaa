@@ -55,7 +55,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
             if(_standardObjects == null) {
                 _standardObjects = cx.initStandardObjects(null, true);
             }
-            scope = new GlobalScope(_resolver);
+            scope = new ResolverScope(_resolver);
             scope.setPrototype(_standardObjects);
             if(root != null) {
                 Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(

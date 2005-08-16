@@ -23,13 +23,13 @@ import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class GlobalScope extends ScriptableObject {
+public class ResolverScope extends ScriptableObject {
 
     private static final long serialVersionUID = -3701752195372455053L;
 
     private ScriptResolver _resolver;
     
-    public GlobalScope(ScriptResolver resolver) {
+    public ResolverScope(ScriptResolver resolver) {
     	if(resolver == null) {
     		throw new IllegalArgumentException();
     	}

@@ -15,10 +15,12 @@
  */
 package org.seasar.maya.impl.cycle.script.resolver;
 
+import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class AttributeScriptResolver {
+public class AttributeScriptResolver implements ScriptResolver {
     
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
@@ -66,7 +68,7 @@ public class AttributeScriptResolver {
 //            throw new PropertyNotFoundException(base, property);
 //        }
 //        return chain.getValue(base, property);
-        return null;
+        return UNDEFINED;
     }
 
     public boolean setVariable(String name, Object value) {

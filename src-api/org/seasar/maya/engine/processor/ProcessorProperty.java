@@ -52,11 +52,5 @@ public interface ProcessorProperty {
      * @return プロパティ値。
      */
     Object getValue();
- 
-    /**
-     * プロセッサの実行時にモデルへの値設定を行う。
-     * @param value 設定値。
-     */
-    void setValue(Object value);
     
 }

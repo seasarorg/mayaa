@@ -25,7 +25,7 @@ import org.seasar.maya.impl.cycle.script.ConversionException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RhinoCompiledExpression extends AbstractCompiledScript {
+public class RhinoCompiledScript extends AbstractCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
     private static ThreadLocal _scope = new ThreadLocal();
@@ -34,9 +34,9 @@ public class RhinoCompiledExpression extends AbstractCompiledScript {
     private ScriptResolver _resolver;
     private Script _script;
     
-    public RhinoCompiledExpression(ScriptResolver resolver,
-    		Script script, String expression, Class expectedType) {
-        super(expression, expectedType);
+    public RhinoCompiledScript(ScriptResolver resolver,
+    		Script script, String text, Class expectedType) {
+        super(text, expectedType);
         if(resolver == null || script == null) {
             throw new IllegalArgumentException();
         }

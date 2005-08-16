@@ -59,11 +59,11 @@ public class ComplexScript implements CompiledScript {
          return buffer.toString();
     }
 
-    public String getScript() {
+    public String getText() {
         return _script;
     }
 
-    public boolean isLiteralText() {
+    public boolean isLiteral() {
         return false;
     }
     

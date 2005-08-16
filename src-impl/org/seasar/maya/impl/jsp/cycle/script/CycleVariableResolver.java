@@ -13,13 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.el;
+package org.seasar.maya.impl.jsp.cycle.script;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.el.CompiledExpression;
-import org.seasar.maya.impl.util.ExpressionUtil;
+import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ServiceProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,8 +35,12 @@ public class CycleVariableResolver implements VariableResolver {
     }
 
     public Object resolveVariable(String pName) throws ELException {
-        CompiledExpression exp = ExpressionUtil.parseExpression(pName, Object.class);
-        return ExpressionUtil.expressGetValue(exp);
+        if(StringUtil.hasValue(pName)) {
+            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ScriptCompiler compiler = provider.getScriptCompiler();
+            return compiler.getScriptResolver().getVariable(pName);
+        }
+        return null;
     }
     
 }

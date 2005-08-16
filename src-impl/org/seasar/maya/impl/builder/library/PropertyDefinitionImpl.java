@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Namespaceable;
@@ -133,10 +133,9 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	        	Class clazz = ObjectUtil.loadClass(_expectedType);
-	            CompiledExpression expression  = 
-	                ExpressionUtil.parseExpression(stringValue, clazz);
+	            CompiledScript script  = ExpressionUtil.parseExpression(stringValue, clazz);
 	            String prefix = getPrefix(injected, qName);
-	            return new ProcessorPropertyImpl(qName, prefix, expression);
+	            return new ProcessorPropertyImpl(qName, prefix, script);
 	        }
 	        return stringValue;
         }

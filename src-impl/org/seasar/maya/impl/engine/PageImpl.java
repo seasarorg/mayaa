@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.el.CompiledExpression;
-import org.seasar.maya.cycle.el.ExpressionFactory;
+import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -133,13 +133,12 @@ public class PageImpl extends SpecificationImpl
     }
 
     protected String getTemplateSuffix() {
-        String expression = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
-        if(StringUtil.hasValue(expression)) {
+        String text = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
+        if(StringUtil.hasValue(text)) {
             ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            ExpressionFactory expressionFactory = provider.getExpressionFactory();
-            CompiledExpression action = 
-                expressionFactory.createExpression(expression, String.class);
-            return (String)action.getValue();
+            ScriptCompiler compiler = provider.getScriptCompiler();
+            CompiledScript action = compiler.compile(text, String.class);
+            return (String)action.exec();
         }
         return "";
     }

@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ognl.NoSuchPropertyException;
-
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -140,15 +138,7 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
      */
     protected Date getDateValue() {
         Object value = null;
-        try {
-            value = _value.getValue();
-        } catch (RuntimeException e) {
-            // FIXME OGNL‚ÉˆË‘¶‚µ‚È‚¢À‘•‚Ö -> impl.el‚Å—áŠO‚ğ’ŠÛ‰»‚·‚éB
-            if (!(e.getCause() instanceof NoSuchPropertyException)) {
-                throw e;
-            }
-        }
-
+        value = _value.getValue();
         if (value == null) {
             return null;
         } else if (value instanceof Date) {

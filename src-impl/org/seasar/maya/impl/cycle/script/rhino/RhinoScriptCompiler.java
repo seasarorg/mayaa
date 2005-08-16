@@ -43,7 +43,7 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         // TODO ファイル名、行の設定。
         Script script = cx.compileString(expression, null, 0, null);
         Context.exit();
-        return new RhinoCompiledExpression(getScriptResolver(),
+        return new RhinoCompiledScript(getScriptResolver(),
         		script, expression, expectedType);
     }
     

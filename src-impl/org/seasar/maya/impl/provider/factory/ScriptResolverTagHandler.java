@@ -15,45 +15,41 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.cycle.el.AbstractExpressionFactory;
-import org.seasar.maya.impl.cycle.el.ognl2.Ognl2ExpressionFactory;
+import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionTagHandler extends AbstractParameterizableTagHandler {
+public class ScriptResolverTagHandler extends AbstractParameterizableTagHandler {
     
-    private ServiceTagHandler _parent;
-    private AbstractExpressionFactory _expressionFactory;
+    private ScriptTagHandler _parent;
+    private ScriptResolver _resolver;
     
-    public ExpressionTagHandler(ServiceTagHandler parent) {
+    public ScriptResolverTagHandler(ScriptTagHandler parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("resolver", new ExpressionResolverTagHandler(this));
     }
     
     protected void start(Attributes attributes) {
-        _expressionFactory = new Ognl2ExpressionFactory();
-        _parent.getServiceProvider().setExpressionFactory(_expressionFactory);
+        _resolver = (ScriptResolver)XmlUtil.getObjectValue(
+                attributes, "class", null, ScriptResolver.class);
+        _parent.getScriptCompiler().addScriptResolver(_resolver);
     }
     
     protected void end(String body) {
-        _expressionFactory = null;
-    }
-    
-    public AbstractExpressionFactory getExpressionFactory() {
-        if(_expressionFactory == null) {
-            throw new IllegalStateException();
-        }
-        return _expressionFactory;
+        _resolver = null;
     }
     
     public Parameterizable getParameterizable() {
-        return getExpressionFactory();
+        if(_resolver == null) {
+            throw new IllegalStateException();
+        }
+        return _resolver;
     }
-
+    
 }

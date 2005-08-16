@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.el;
+package org.seasar.maya.impl.jsp.cycle.script;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.Expression;
@@ -21,7 +21,7 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.util.ExpressionUtil;
 
 /**
@@ -43,8 +43,8 @@ public class CycleExpressionEvaluator extends ExpressionEvaluator {
 
     public Expression parseExpression(String expression, Class expectedType, 
             FunctionMapper fMapper) throws ELException {
-        CompiledExpression exp = ExpressionUtil.parseExpression(expression, expectedType);
-        return new CycleExpression(exp);
+        CompiledScript script = ExpressionUtil.parseExpression(expression, expectedType);
+        return new CycleExpression(script);
     }
 
 }

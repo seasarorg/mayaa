@@ -13,74 +13,72 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle.el;
-
-import org.seasar.maya.impl.cycle.el.ExpressionBlock;
+package org.seasar.maya.impl.cycle.script;
 
 import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionBlockTest extends TestCase {
+public class ScriptBlockTest extends TestCase {
 
-    public ExpressionBlockTest(String name) {
+    public ScriptBlockTest(String name) {
         super(name);
     }
 
     public void testGetBlockString1() {
         // 式文字列中のエンティティ解決
-        ExpressionBlock block = new ExpressionBlock("&amp;", false);
+        ScriptBlock block = new ScriptBlock("&amp;", false);
         assertFalse(block.isLiteral());
         assertEquals("&", block.getBlockString());
     }
 
     public void testGetBlockString2() {
         // テキストボディ中のエンティティ解決
-        ExpressionBlock block = new ExpressionBlock("&amp;", true);
+        ScriptBlock block = new ScriptBlock("&amp;", true);
         assertTrue(block.isLiteral());
         assertEquals("&amp;", block.getBlockString());
     }
 
     public void testGetBlockString3() {
         // エンティティの閉じセミコロンがないとき
-        ExpressionBlock block = new ExpressionBlock("&amp", false);
+        ScriptBlock block = new ScriptBlock("&amp", false);
         assertEquals("&amp", block.getBlockString());
     }
 
     public void testGetBlockString4() {
         // エンティティの閉じセミコロンと開き＆の関係がおかしいとき
-        ExpressionBlock block = new ExpressionBlock(";amp&", false);
+        ScriptBlock block = new ScriptBlock(";amp&", false);
         assertEquals(";amp&", block.getBlockString());
     }
 
     public void testGetBlockString5() {
         // 架空のエンティティ名のとき
-        ExpressionBlock block = new ExpressionBlock("&abcxyz;", false);
+        ScriptBlock block = new ScriptBlock("&abcxyz;", false);
         assertEquals("&abcxyz;", block.getBlockString());
     }
 
     public void testGetBlockString6() {
         // エンティティが複数含まれるとき
-        ExpressionBlock block = new ExpressionBlock("&lt;&gt;", false);
+        ScriptBlock block = new ScriptBlock("&lt;&gt;", false);
         assertEquals("<>", block.getBlockString());
     }
 
     public void testGetBlockString7() {
         // エンティティが複数と間に字があるとき
-        ExpressionBlock block = new ExpressionBlock("&lt;a&gt;", false);
+        ScriptBlock block = new ScriptBlock("&lt;a&gt;", false);
         assertEquals("<a>", block.getBlockString());
     }
 
     public void testGetBlockString8() {
         // エンティティが複数と前に字があるとき
-        ExpressionBlock block = new ExpressionBlock("&lt;a", false);
+        ScriptBlock block = new ScriptBlock("&lt;a", false);
         assertEquals("<a", block.getBlockString());
     }
 
     public void testGetBlockString9() {
         // エンティティが複数と後に字があるとき
-        ExpressionBlock block = new ExpressionBlock("a&gt;", false);
+        ScriptBlock block = new ScriptBlock("a&gt;", false);
         assertEquals("a>", block.getBlockString());
     }
     

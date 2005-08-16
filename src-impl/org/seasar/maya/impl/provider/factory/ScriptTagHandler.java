@@ -15,41 +15,45 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
+import org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompiler;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionResolverTagHandler extends AbstractParameterizableTagHandler {
+public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     
-    private ExpressionTagHandler _parent;
-    private ExpressionResolver _resolver;
+    private ServiceTagHandler _parent;
+    private AbstractScriptCompiler _scriptCompiler;
     
-    public ExpressionResolverTagHandler(ExpressionTagHandler parent) {
+    public ScriptTagHandler(ServiceTagHandler parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        putHandler("resolver", new ScriptResolverTagHandler(this));
     }
     
     protected void start(Attributes attributes) {
-        _resolver = (ExpressionResolver)XmlUtil.getObjectValue(
-                attributes, "class", null, ExpressionResolver.class);
-        _parent.getExpressionFactory().addExpressionResolver(_resolver);
+        _scriptCompiler = new RhinoScriptCompiler();
+        _parent.getServiceProvider().setScriptCompiler(_scriptCompiler);
     }
     
     protected void end(String body) {
-        _resolver = null;
+        _scriptCompiler = null;
+    }
+    
+    public AbstractScriptCompiler getScriptCompiler() {
+        if(_scriptCompiler == null) {
+            throw new IllegalStateException();
+        }
+        return _scriptCompiler;
     }
     
     public Parameterizable getParameterizable() {
-        if(_resolver == null) {
-            throw new IllegalStateException();
-        }
-        return _resolver;
+        return getScriptCompiler();
     }
-    
+
 }

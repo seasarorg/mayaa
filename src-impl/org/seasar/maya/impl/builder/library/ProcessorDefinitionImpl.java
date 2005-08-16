@@ -25,7 +25,7 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.processor.ProcessorFactory;
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -139,13 +139,12 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             QName qName = attr.getQName();
             if(acceptable.getInformalAttrituteURI().equals(qName.getNamespaceURI())) {
 	            String prefix = injected.getPrefix();
-	            CompiledExpression expression = 
-	                ExpressionUtil.parseExpression(attr.getValue(), Object.class);
-	            Object obj = expression;
-	            if(expression == null) {
+	            CompiledScript script = ExpressionUtil.parseExpression(attr.getValue(), Object.class);
+	            Object obj = script;
+	            if(script == null) {
 	            	obj = "";
-	            } else if(expression.isLiteralText()) {
-	                obj = expression.getExpression();
+	            } else if(script.isLiteral()) {
+	                obj = script.getText();
 	            }
 	            acceptable.addInformalProperty(new ProcessorPropertyImpl(qName, prefix, obj));
             }

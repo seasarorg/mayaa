@@ -15,10 +15,9 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
 import org.seasar.maya.impl.util.ExpressionUtil;
 
 /**
@@ -48,33 +47,24 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     }
     
     public String getLiteral() {
-        if(_value instanceof CompiledExpression) {
-            CompiledExpression expression = (CompiledExpression)_value;
-            return expression.getExpression();
+        if(_value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript)_value;
+            return script.getText();
         }
         return String.valueOf(_value);
     }
     
     public boolean isDynamic() {
-        return _value instanceof CompiledExpression &&
-        		((CompiledExpression)_value).isLiteralText() == false;
+        return _value instanceof CompiledScript &&
+        		((CompiledScript)_value).isLiteral() == false;
     }
 
     public Object getValue() {
-        if(_value instanceof CompiledExpression) {
-            CompiledExpression expression = (CompiledExpression)_value;
-            return ExpressionUtil.expressGetValue(expression);
+        if(_value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript)_value;
+            return ExpressionUtil.expressGetValue(script);
         }
         return _value;
-    }
-    
-    public void setValue(Object value) {
-        if(_value instanceof CompiledExpression) {
-            CompiledExpression expression = (CompiledExpression)_value;
-            ExpressionUtil.expressSetValue(expression, value);
-        } else {
-            throw new PropertyNotWritableException(value, getQName().getLocalName());
-        }
     }
     
     public boolean equals(Object test) {

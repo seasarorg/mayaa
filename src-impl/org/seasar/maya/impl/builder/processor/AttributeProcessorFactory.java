@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.builder.processor;
 
 import org.seasar.maya.builder.processor.ProcessorFactory;
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.QNameable;
@@ -38,10 +38,10 @@ public class AttributeProcessorFactory implements ProcessorFactory, CONST_IMPL {
         QNameable qNameable = SpecificationUtil.parseName(
                 injected, qNameString, URI_HTML);
         String value = SpecificationUtil.getAttributeValue(injected, QM_VALUE);
-        CompiledExpression expression = ExpressionUtil.parseExpression(value, Object.class);
-        Object obj = expression; 
-        if(expression.isLiteralText()) {
-            obj = expression.getExpression();
+        CompiledScript script = ExpressionUtil.parseExpression(value, Object.class);
+        Object obj = script; 
+        if(script.isLiteral()) {
+            obj = script.getText();
         }
         processor.setAttribute(new ProcessorPropertyImpl(
                 qNameable.getQName(), qNameable.getPrefix(), obj));

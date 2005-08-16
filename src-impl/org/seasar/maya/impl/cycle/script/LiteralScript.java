@@ -52,11 +52,11 @@ public class LiteralScript  implements CompiledScript {
         return _script;
     }
     
-    public String getScript() {
+    public String getText() {
         return _script;
     }
 
-    public boolean isLiteralText() {
+    public boolean isLiteral() {
         return true;
     }
     

@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.el;
+package org.seasar.maya.impl.jsp.cycle.script;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.Expression;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.el.CompiledExpression;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.util.ExpressionUtil;
 
 /**
@@ -27,14 +27,14 @@ import org.seasar.maya.impl.util.ExpressionUtil;
  */
 public class CycleExpression extends Expression {
 
-    private CompiledExpression _exp;
+    private CompiledScript _script;
     
-    public CycleExpression(CompiledExpression exp) {
-        _exp = exp;
+    public CycleExpression(CompiledScript script) {
+        _script = script;
     }
     
     public Object evaluate(VariableResolver vResolver) throws ELException {
-        return ExpressionUtil.expressGetValue(_exp);
+        return ExpressionUtil.expressGetValue(_script);
     }
 
 }

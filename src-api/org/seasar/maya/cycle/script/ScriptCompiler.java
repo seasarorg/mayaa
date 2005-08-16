@@ -31,16 +31,11 @@ public interface ScriptCompiler extends Parameterizable {
     ScriptResolver getScriptResolver();
     
     /**
-     * 式言語文字列の開きクオート文字列の設定。
-     * @param blockStart 開きクオート文字列。
+     * スクリプト文字列ブロックの開きクオートに前置される識別文字列の設定。
+     * デフォルトでは、JSP仕様と同じく、「$」。
+     * @param blockSign 開きクオート前置文字列。
      */
-    void setBlockStart(String blockStart);
-    
-    /**
-     * 式言語文字列の閉じクオート文字列の設定。
-     * @param blockEnd 閉じクオート文字列。
-     */
-    void setBlockEnd(String blockEnd);
+    void setBlockSign(String blockSign);
     
     /**
      * 式文字列をコンパイルする。

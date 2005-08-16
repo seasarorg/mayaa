@@ -13,20 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.el.resolver;
+package org.seasar.maya.impl.jsp.cycle.script.resolver;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.el.resolver.ExpressionChain;
-import org.seasar.maya.cycle.el.resolver.ExpressionResolver;
-import org.seasar.maya.impl.cycle.el.PropertyNotWritableException;
+import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+import org.seasar.maya.impl.cycle.script.PropertyNotWritableException;
 import org.seasar.maya.impl.jsp.cycle.JspImplicitScope;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
+public class JspImplicitObjectExpressionResolver implements ScriptResolver {
 
     private Object getImplicitObject(Object property) {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
@@ -38,24 +37,20 @@ public class JspImplicitObjectExpressionResolver implements ExpressionResolver {
         return scope.getAttribute(property.toString());
     }
     
-    public Object getValue(Object base, Object property, ExpressionChain chain) {
-        if(base == null) {
-            Object obj = getImplicitObject(property.toString());
-            if(obj != null) {
-                return obj;
-            }
+    public Object getVariable(String name) {
+        Object obj = getImplicitObject(name);
+        if(obj != null) {
+            return obj;
         }
-        return chain.getValue(base, property);
+        return UNDEFINED;
     }
 
-    public void setValue(Object base, Object property, Object value, ExpressionChain chain) {
-        if(base == null) {
-            Object obj = getImplicitObject(property.toString());
-            if(obj != null) {
-                throw new PropertyNotWritableException(base, property);
-            }
+    public boolean setVariable(String name, Object value) {
+        Object obj = getImplicitObject(name);
+        if(UNDEFINED.equals(obj)) {
+            return false;
         }
-        chain.setValue(base, property, value);
+        throw new PropertyNotWritableException(name);
     }
     
     public void putParameter(String name, String value) {

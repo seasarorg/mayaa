@@ -26,7 +26,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.el.ExpressionFactory;
+import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.web.WebApplication;
@@ -47,7 +47,7 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private Application _application;
     private Engine _engine;
     private SourceFactory _sourceFactory;
-    private ExpressionFactory _expressionFactory;
+    private ScriptCompiler _scriptCompiler;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
 	private ThreadLocal _currentServiceCycle;
@@ -109,22 +109,22 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         return _engine;
     }
     
-    public boolean hasExpressionFactory() {
-        return _expressionFactory != null;
+    public boolean hasScriptCompiler() {
+        return _scriptCompiler != null;
     }
     
-    public void setExpressionFactory(ExpressionFactory expressionFactory) {
-        if(expressionFactory == null) {
+    public void setScriptCompiler(ScriptCompiler scriptCompiler) {
+        if(scriptCompiler == null) {
             throw new IllegalArgumentException();
         }
-        _expressionFactory = expressionFactory;
+        _scriptCompiler = scriptCompiler;
     }
     
-    public ExpressionFactory getExpressionFactory() {
-        if(_expressionFactory == null) {
+    public ScriptCompiler getScriptCompiler() {
+        if(_scriptCompiler == null) {
             throw new IllegalStateException();
         }
-        return _expressionFactory;
+        return _scriptCompiler;
     }
     
     public boolean hasSpecificationBuilder() {

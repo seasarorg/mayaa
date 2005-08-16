@@ -24,8 +24,6 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.resolver.CompositeScriptResolver;
-import org.seasar.maya.impl.cycle.script.resolver.ImplicitObjectScriptResolver;
-import org.seasar.maya.impl.cycle.script.resolver.ScopedAttributeScriptResolver;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -33,42 +31,21 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public abstract class AbstractScriptCompiler implements ScriptCompiler {
     
-    private String _blockStart = ScriptBlockIterator.BLOCK_START_JSP;
-    private String _blockEnd = ScriptBlockIterator.BLOCK_END_JSP;
-    private CompositeScriptResolver _scriptResolver;
-    private CompositeScriptResolver _userScriptResolver;
-
-    public AbstractScriptCompiler() {
-        prepareExpressionResolver();
-    }
-    
-    protected void prepareExpressionResolver() {
-        _userScriptResolver = new CompositeScriptResolver();
-        _scriptResolver = new CompositeScriptResolver();
-        _scriptResolver.add(new ImplicitObjectScriptResolver());
-        _scriptResolver.add(_userScriptResolver);
-        _scriptResolver.add(new ScopedAttributeScriptResolver());
-    }
+    private String _blockSign = ScriptBlockIterator.BLOCK_SIGN_JSP;
+    private CompositeScriptResolver _scriptResolver = new CompositeScriptResolver();;
 
     public void addScriptResolver(ScriptResolver resolver) {
     	if(resolver == null) {
     		throw new IllegalArgumentException();
     	}
-    	_userScriptResolver.add(resolver);
+        _scriptResolver.add(resolver);
      }
     
-    public void setBlockStart(String blockStart) {
-        if(StringUtil.isEmpty(blockStart)) {
+    public void setBlockSign(String blockSign) {
+        if(StringUtil.isEmpty(blockSign)) {
             throw new IllegalArgumentException();
         }
-        _blockStart = blockStart;
-    }
-    
-    public void setBlockEnd(String blockEnd) {
-        if(StringUtil.isEmpty(blockEnd)) {
-            throw new IllegalArgumentException();
-        }
-        _blockEnd = blockEnd;
+        _blockSign = blockSign;
     }
     
     public ScriptResolver getScriptResolver() {
@@ -83,7 +60,7 @@ public abstract class AbstractScriptCompiler implements ScriptCompiler {
             throw new IllegalArgumentException();
         }
         List list = new ArrayList();
-        for(Iterator it = new ScriptBlockIterator(script, _blockStart, _blockEnd);
+        for(Iterator it = new ScriptBlockIterator(script, _blockSign);
         	it.hasNext();) {
             ScriptBlock block = (ScriptBlock)it.next();
             list.add(compile(block, expectedType));

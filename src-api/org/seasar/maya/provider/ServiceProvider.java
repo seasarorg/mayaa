@@ -22,7 +22,7 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.el.ExpressionFactory;
+import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -51,10 +51,10 @@ public interface ServiceProvider {
     Engine getEngine();
     
     /**
-     * 式評価エンジンの取得
-     * @return 式評価エンジン。
+     * スクリプトコンパイラの取得。
+     * @return スクリプトコンパイラ。
      */
-    ExpressionFactory getExpressionFactory();
+    ScriptCompiler getScriptCompiler();
     
     /**
      * 設定XMLのビルダを取得する。

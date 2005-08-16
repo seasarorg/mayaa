@@ -25,25 +25,19 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ScriptBlockIterator implements Iterator {
 
-    public static final String BLOCK_START_JSP = "${";
-    public static final String BLOCK_END_JSP = "}";
-    public static final String BLOCK_START_JSF = "#{";
-    public static final String BLOCK_END_JSF = "}";
+    public static final String BLOCK_SIGN_JSP = "$";
+    public static final String BLOCK_SIGN_JSF = "#";
 
 	private String _script;
-	private String _blockStart;
-	private String _blockEnd;
+	private String _blockSign;
 	private int _offset;
 
-	public ScriptBlockIterator(String expression, 
-	        String blockStart, String blockEnd) {
-		if (StringUtil.isEmpty(expression) || 
-		        StringUtil.isEmpty(blockStart) || StringUtil.isEmpty(blockEnd)) {
+	public ScriptBlockIterator(String expression, String blockSign) {
+		if (StringUtil.isEmpty(expression) || StringUtil.isEmpty(blockSign)) {
 			throw new IllegalArgumentException();
 		}
 		_script = expression;
-		_blockStart = blockStart;
-		_blockEnd = blockEnd;
+		_blockSign = blockSign;
 		_offset = 0;
 	}
 
@@ -51,30 +45,54 @@ public class ScriptBlockIterator implements Iterator {
 		return _offset < _script.length();
 	}
 
+    protected int scanBlockCloseOffset(int start) {
+        char c = _script.charAt(start);
+        if(c != '{') {
+            throw new IllegalArgumentException();
+        }
+        int depth = 0;
+        for(int i = start; i < _script.length(); i++) {
+            c = _script.charAt(i);
+            if(c == '{') {
+                depth++;
+            } else if(c == '}') {
+                depth--;
+                if(depth == 0) {
+                    return i; 
+                } else if(depth < 0) {
+                    throw new UnbalancedBraceException(_script, i); 
+                }
+            }
+        }
+        return -1;
+    }
+    
 	public Object next() {
 		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
-		int start = _script.indexOf(_blockStart, _offset);
-		int end = _script.indexOf(_blockEnd, _offset);
-		if (start == -1) {
-			String lastLiteralBlock = _script.substring(_offset);
-			_offset = _script.length();
-			return new ScriptBlock(lastLiteralBlock, true);
-		} else if (start == _offset) {
-			if (end == -1) {
-				throw new UnbalancedBraceException(_script, _script.length());
-			}
-			String expressionBlock = _script.substring(_offset + _blockStart.length(), end);
-			_offset = end + _blockEnd.length();
-			return new ScriptBlock(expressionBlock.trim(), false);
-		} else if(end < start) {
-			int errorOffset = start != -1 ? start : end;
-			throw new UnbalancedBraceException(_script, errorOffset);
+        String blockStart = _blockSign + "{";
+		int sign = _script.indexOf(blockStart, _offset);
+        if (sign != -1) {
+            if(_offset == sign) {
+                // script block
+                int close = scanBlockCloseOffset(_offset + _blockSign.length());
+                if (close == -1) {
+                    throw new UnbalancedBraceException(_script, _script.length());
+                }
+                String expressionBlock = _script.substring(_offset + blockStart.length(), close);
+                _offset = close + 1;
+                return new ScriptBlock(expressionBlock, false);
+            }
+            // literal
+            String lastLiteralBlock = _script.substring(_offset, sign);
+            _offset = sign;
+            return new ScriptBlock(lastLiteralBlock, true);
 		}
-		String literalBlock = _script.substring(_offset, start);
-		_offset = start;
-		return new ScriptBlock(literalBlock, true);
+        // tail literal
+        String lastLiteralBlock = _script.substring(_offset);
+        _offset = _script.length();
+        return new ScriptBlock(lastLiteralBlock, true);
 	}
 
 	public void remove() {

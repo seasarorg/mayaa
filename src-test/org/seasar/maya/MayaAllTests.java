@@ -26,10 +26,10 @@ import org.seasar.maya.impl.cycle.AbstractResponseTest;
 import org.seasar.maya.impl.cycle.CycleWriterImplTest;
 import org.seasar.maya.impl.cycle.ImplicitScopeTest;
 import org.seasar.maya.impl.cycle.AbstractServiceCycleTest;
-import org.seasar.maya.impl.cycle.el.ExpressionBlockIteratorTest;
-import org.seasar.maya.impl.cycle.el.ExpressionBlockTest;
-import org.seasar.maya.impl.cycle.el.ognl2.Ognl2CompiledExpressionTest;
-import org.seasar.maya.impl.cycle.el.ognl2.Ognl2PropertyAccessorTest;
+import org.seasar.maya.impl.cycle.script.ScriptBlockIteratorTest;
+import org.seasar.maya.impl.cycle.script.ScriptBlockTest;
+import org.seasar.maya.impl.cycle.script.rhino.RhinoCompiledScriptTest;
+import org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompilerTest;
 import org.seasar.maya.impl.cycle.web.WebApplicationTest;
 import org.seasar.maya.impl.cycle.web.WebRequestTest;
 import org.seasar.maya.impl.cycle.web.WebResponseTest;
@@ -83,13 +83,13 @@ public class MayaAllTests extends TestSuite {
         suite.addTestSuite(WebResponseTest.class);
         suite.addTestSuite(WebServiceCycleTest.class);
                 
-        // org.seasar.maya.impl.cycle.el
-        suite.addTestSuite(ExpressionBlockTest.class);
-        suite.addTestSuite(ExpressionBlockIteratorTest.class);
+        // org.seasar.maya.impl.cycle.script
+        suite.addTestSuite(ScriptBlockTest.class);
+        suite.addTestSuite(ScriptBlockIteratorTest.class);
         
-        // org.seasar.maya.impl.cycle.el.ognl2
-        suite.addTestSuite(Ognl2PropertyAccessorTest.class);
-        suite.addTestSuite(Ognl2CompiledExpressionTest.class);
+        // org.seasar.maya.impl.cycle.script.rhino
+        suite.addTestSuite(RhinoScriptCompilerTest.class);
+        suite.addTestSuite(RhinoCompiledScriptTest.class);
         
         // org.seasar.maya.impl.engine
         suite.addTestSuite(EngineImplTest.class);

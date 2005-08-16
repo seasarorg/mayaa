@@ -23,14 +23,14 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public abstract class AbstractCompiledScript implements CompiledScript {
 
-    private String _script;
+    private String _text;
     private Class _expectedType;
     
-    public AbstractCompiledScript(String script, Class expectedType) {
-        if(StringUtil.isEmpty(script) || expectedType == null) {
+    public AbstractCompiledScript(String text, Class expectedType) {
+        if(StringUtil.isEmpty(text) || expectedType == null) {
             throw new IllegalArgumentException();
         }
-        _script = script;
+        _text = text;
         _expectedType = expectedType;
     }
     
@@ -38,11 +38,11 @@ public abstract class AbstractCompiledScript implements CompiledScript {
         return _expectedType;
     }
 
-    public String getScript() {
-        return _script;
+    public String getText() {
+        return _text;
     }
     
-    public boolean isLiteralText() {
+    public boolean isLiteral() {
         return false;
     }
 

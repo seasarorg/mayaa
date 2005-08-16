@@ -13,41 +13,36 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle.el;
+package org.seasar.maya.impl.cycle.script;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.seasar.maya.impl.cycle.el.ExpressionBlock;
-import org.seasar.maya.impl.cycle.el.ExpressionBlockIterator;
 
 import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionBlockIteratorTest extends TestCase {
+public class ScriptBlockIteratorTest extends TestCase {
 
-    public ExpressionBlockIteratorTest(String name) {
+    public ScriptBlockIteratorTest(String name) {
         super(name);
     }
     
     public void testNext1() {
-    	Iterator it = new ExpressionBlockIterator("${ 123 } 456 ${ 789 }", 
-    	        ExpressionBlockIterator.BLOCK_START_JSP,
-    	        ExpressionBlockIterator.BLOCK_END_JSP);
+    	Iterator it = new ScriptBlockIterator("${ 123 } 456 ${ 789 }", "$");
     	assertTrue(it.hasNext());
-    	ExpressionBlock block1 = (ExpressionBlock)it.next();
+        ScriptBlock block1 = (ScriptBlock)it.next();
     	assertFalse(block1.isLiteral());
-    	assertEquals("123", block1.getBlockString());
+    	assertEquals(" 123 ", block1.getBlockString());
     	assertTrue(it.hasNext());
-    	ExpressionBlock block2 = (ExpressionBlock)it.next();
+        ScriptBlock block2 = (ScriptBlock)it.next();
     	assertTrue(block2.isLiteral());
     	assertEquals(" 456 ", block2.getBlockString());
     	assertTrue(it.hasNext());
-    	ExpressionBlock block3 = (ExpressionBlock)it.next();
+        ScriptBlock block3 = (ScriptBlock)it.next();
     	assertFalse(block3.isLiteral());
-    	assertEquals("789", block3.getBlockString());
+    	assertEquals(" 789 ", block3.getBlockString());
     	try {
     		it.next();
     		fail();
@@ -56,26 +51,30 @@ public class ExpressionBlockIteratorTest extends TestCase {
     }
 
     public void testNext2() {
-    	Iterator it = new ExpressionBlockIterator("123 ${ 456 } 789", 
-    	        ExpressionBlockIterator.BLOCK_START_JSP,
-    	        ExpressionBlockIterator.BLOCK_END_JSP);
+    	Iterator it = new ScriptBlockIterator("123 ${ 456 } 789", "$");
     	assertTrue(it.hasNext());
-    	ExpressionBlock block1 = (ExpressionBlock)it.next();
+        ScriptBlock block1 = (ScriptBlock)it.next();
     	assertTrue(block1.isLiteral());
     	assertEquals("123 ", block1.getBlockString());
     	assertTrue(it.hasNext());
-    	ExpressionBlock block2 = (ExpressionBlock)it.next();
+        ScriptBlock block2 = (ScriptBlock)it.next();
     	assertFalse(block2.isLiteral());
-    	assertEquals("456", block2.getBlockString());
+    	assertEquals(" 456 ", block2.getBlockString());
     	assertTrue(it.hasNext());
-    	ExpressionBlock block3 = (ExpressionBlock)it.next();
+        ScriptBlock block3 = (ScriptBlock)it.next();
     	assertTrue(block3.isLiteral());
     	assertEquals(" 789", block3.getBlockString());
-    	try {
-    		it.next();
-    		fail();
-    	} catch(NoSuchElementException e) {
-    	}
+        assertFalse(it.hasNext());
+    }
+
+    public void testNext3() {
+        Iterator it = new ScriptBlockIterator(
+                "${ obj = { run: function() { return 'hi'; } }; }", "$");
+        assertTrue(it.hasNext());
+        ScriptBlock block1 = (ScriptBlock)it.next();
+        assertFalse(block1.isLiteral());
+        assertEquals(" obj = { run: function() { return 'hi'; } }; ", block1.getBlockString());
+        assertFalse(it.hasNext());
     }
     
 }

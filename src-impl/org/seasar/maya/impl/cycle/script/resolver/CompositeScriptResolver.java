@@ -25,14 +25,11 @@ import org.seasar.maya.cycle.script.resolver.ScriptResolver;
  */
 public class CompositeScriptResolver implements ScriptResolver {
 
-    private List _resolvers;
+    private List _resolvers = new ArrayList();
     
     public void add(ScriptResolver resolver) {
         if(resolver == null) {
             throw new IllegalArgumentException();
-        }
-        if(_resolvers == null) {
-            _resolvers = new ArrayList();
         }
         synchronized (_resolvers) {
             _resolvers.add(resolver);

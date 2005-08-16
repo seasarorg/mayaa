@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.impl.util;
 
-import org.seasar.maya.cycle.el.CompiledExpression;
-import org.seasar.maya.cycle.el.ExpressionFactory;
+import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
@@ -33,35 +33,27 @@ public class ExpressionUtil implements CONST_IMPL {
 	private ExpressionUtil() {
 	}
 
-    public static CompiledExpression parseExpression(
-            String expressionString, Class expectedType) {
+    public static CompiledScript parseExpression(String text, Class expectedType) {
         if(expectedType == null) {
         	throw new IllegalArgumentException();
         }
-        if(StringUtil.hasValue(expressionString)) {
+        if(StringUtil.hasValue(text)) {
             ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-	        ExpressionFactory expressionFactory = provider.getExpressionFactory();
-            return expressionFactory.createExpression(expressionString, expectedType);
+	        ScriptCompiler compiler = provider.getScriptCompiler();
+            return compiler.compile(text, expectedType);
         }
         return null;
     }
     
-    public static Object expressGetValue(Object expression) {
+    public static Object expressGetValue(Object obj) {
         Object value = null;
-        if (expression instanceof CompiledExpression) {
-            CompiledExpression compiledExpression = (CompiledExpression)expression;
-            value = compiledExpression.getValue();
+        if (obj instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript)obj;
+            value = script.exec();
         } else {
-            value = expression;
+            value = obj;
         }
         return value;
-    }
-
-    public static void expressSetValue(Object expression, Object value) {
-        if (expression instanceof CompiledExpression) {
-            CompiledExpression compiledExpression = (CompiledExpression)expression;
-            compiledExpression.setValue(value);
-        }
     }
     
     public static  void execEvent(Specification specification, QName eventName) {

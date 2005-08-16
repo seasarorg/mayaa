@@ -70,7 +70,7 @@
 		<h2><code>choose</code></h2>
 			<h3>記述</h3>
 			<code>
-				&lt;span m:inject="c:set" c:var="sec" c:value="&#36;{ @java.util.Calendar@getInstance().get(@java.util.Calendar@SECOND) }" c:scope="AT_END"&gt;&lt;/span&gt;<br />
+				&lt;span m:inject="c:set" c:var="sec" c:value="&#36;{ java.util.Calendar.getInstance().get(java.util.Calendar.SECOND) }" c:scope="AT_END"&gt;&lt;/span&gt;<br />
 				現在 &lt;span m:inject="c:out" c:value="&#36;{ sec }"&gt;ダミーデータ&lt;/span&gt; 秒：<br />
 				&lt;div m:inject="c:choose"&gt;<br />
 				<div class="indent">
@@ -82,7 +82,7 @@
 				&lt;/div&gt;
 			</code>
 			<h3>実行結果</h3>
-				<span m:inject="c:set" c:var="sec" c:value="${ @java.util.Calendar@getInstance().get(@java.util.Calendar@SECOND) % 10 }" c:scope="AT_END"></span>
+				<span m:inject="c:set" c:var="sec" c:value="${ java.util.Calendar.getInstance().get(java.util.Calendar.SECOND) % 10 }" c:scope="AT_END"></span>
 				現在 x<span m:inject="c:out" c:value="${ sec }">ダミーデータ</span> 秒：
 				<div m:inject="c:choose">
 					<span m:inject="c:when" c:test="${ sec < 2 }">2 未満</span>
@@ -104,7 +104,7 @@
 				&lt;/span&gt;&lt;br /&gt;<br />
 				&lt;ul&gt;
 				<div class="indent">
-					&lt;li m:inject="c:forEach" c:items="&#36;{ @java.util.Arrays@asList('One,Two,Three'.split(',')) }" c:var="it" m:rendered="true"&gt;
+					&lt;li m:inject="c:forEach" c:items="&#36;{ java.util.Arrays.asList('One,Two,Three'.split(',')) }" c:var="it" m:rendered="true"&gt;
 					<div class="indent">
 						&lt;span m:inject="c:out" c:value="&#36;{ it }" m:rendered="true"&gt;ダミーデータ&lt;/span&gt;
 					</div>
@@ -117,7 +117,7 @@
 					<span m:inject="c:out" c:value="${ i }">ダミーデータ</span>
 				</span><br />
 				<ul>
-					<li m:inject="c:forEach" c:items="${ @java.util.Arrays@asList('One,Two,Three'.split(',')) }" c:var="it" m:rendered="true">
+					<li m:inject="c:forEach" c:items="${ java.util.Arrays.asList('One,Two,Three'.split(',')) }" c:var="it" m:rendered="true">
 						<span m:inject="c:out" c:value="${ it }" m:rendered="true">ダミーデータ</span>
 					</li>
 				</ul>

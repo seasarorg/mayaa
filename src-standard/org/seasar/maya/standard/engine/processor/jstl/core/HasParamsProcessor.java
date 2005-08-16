@@ -16,12 +16,9 @@
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.standard.engine.processor.ChildParamReciever;
 import org.seasar.maya.standard.engine.processor.ObjectAttributeUtil;
 

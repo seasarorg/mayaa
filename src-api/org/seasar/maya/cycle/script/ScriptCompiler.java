@@ -41,8 +41,11 @@ public interface ScriptCompiler extends Parameterizable {
      * 式文字列をコンパイルする。
      * @param script スクリプト。
      * @param expectedType 期待する結果型。Void.classの場合、リターンはなし。
+     * @param sourceName ソースファイル名。
+     * @param lineno 開始行番号。
      * @return コンパイル済みスクリプトオブジェクト。
      */
-    CompiledScript compile(String script, Class expectedType);
+    CompiledScript compile(
+            String script, Class expectedType, String sourceName, int lineno);
 
 }

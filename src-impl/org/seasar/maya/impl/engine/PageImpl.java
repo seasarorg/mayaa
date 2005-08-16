@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -135,9 +134,7 @@ public class PageImpl extends SpecificationImpl
     protected String getTemplateSuffix() {
         String text = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(text)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
-            ScriptCompiler compiler = provider.getScriptCompiler();
-            CompiledScript action = compiler.compile(text, String.class);
+            CompiledScript action = ScriptUtil.compile(text, String.class);
             return (String)action.execute();
         }
         return "";

@@ -16,8 +16,6 @@
 package org.seasar.maya.impl.builder.parser;
 
 import org.apache.xerces.xni.Augmentations;
-import org.apache.xerces.xni.QName;
-import org.apache.xerces.xni.XMLAttributes;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLConfigurationException;
 import org.cyberneko.html.filters.DefaultFilter;
@@ -53,22 +51,6 @@ public class AdditionalHandlerFilter extends DefaultFilter {
             return;
         }
         super.xmlDecl(version, encoding, standalone, augs);
-    }
-    
-    public void startElement(QName element, XMLAttributes attributes, Augmentations augs) {
-        if(_handler != null && "%".equals(element.localpart)) {
-            _handler.startCodelet();
-            return;
-        }
-        super.startElement(element, attributes, augs);
-    }
-
-    public void endElement(QName element, Augmentations augs) {
-        if(_handler != null && "%".equals(element.localpart)) {
-            _handler.endCodelet();
-            return;
-        }
-        super.endElement(element, augs);
     }
     
 }

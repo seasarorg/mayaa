@@ -52,10 +52,11 @@ public abstract class AbstractScriptCompiler implements ScriptCompiler {
     	return _scriptResolver;
     }
     
-    protected abstract CompiledScript compile(
-            ScriptBlock scriptBlock, Class expectedType);
+    protected abstract CompiledScript compile(ScriptBlock scriptBlock, 
+            Class expectedType, String sourceName, int lineno);
     
-    public CompiledScript compile(String script, Class expectedType) {
+    public CompiledScript compile(String script, 
+            Class expectedType, String sourceName, int lineno) {
         if(StringUtil.isEmpty(script) || expectedType == null) {
             throw new IllegalArgumentException();
         }
@@ -63,7 +64,7 @@ public abstract class AbstractScriptCompiler implements ScriptCompiler {
         for(Iterator it = new ScriptBlockIterator(script, _blockSign);
         	it.hasNext();) {
             ScriptBlock block = (ScriptBlock)it.next();
-            list.add(compile(block, expectedType));
+            list.add(compile(block, expectedType, sourceName, lineno));
         }
         if(list.size() == 0) {
     	    throw new SyntaxException(script);

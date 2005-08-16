@@ -51,8 +51,6 @@ public class OutProcessor
             public Object getValue() {
                 return getNode(select).getNodeValue() ;
             }
-            public void setValue(Object value) {
-            }
         });
     }
     

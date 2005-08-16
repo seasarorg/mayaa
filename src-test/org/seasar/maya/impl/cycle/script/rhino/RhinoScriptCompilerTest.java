@@ -46,7 +46,7 @@ public class RhinoScriptCompilerTest extends TestCase {
     public void testCompile() {
         ScriptBlock block = new ScriptBlock(
                 "obj = { run: function() { return 'hi'; } }; obj.run();", false);
-        CompiledScript script = _compiler.compile(block, String.class);
+        CompiledScript script = _compiler.compile(block, String.class, null, 0);
         assertEquals(String.class, script.getExpectedType());
         assertEquals("obj = { run: function() { return 'hi'; } }; obj.run();", script.getText());
         assertFalse(script.isLiteral());

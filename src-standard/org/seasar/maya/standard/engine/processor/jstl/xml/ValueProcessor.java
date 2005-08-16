@@ -35,8 +35,6 @@ public class ValueProcessor extends org.seasar.maya.standard.engine.processor.js
             public Object getValue() {
                 return getNode(select).getNodeValue() ;
             }
-            public void setValue(Object value) {
-            }
         });
     }
     

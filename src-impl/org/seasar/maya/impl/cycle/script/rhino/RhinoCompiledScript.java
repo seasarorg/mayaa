@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
@@ -63,14 +64,13 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
         try {
-            ret = _script.exec(cx, getScope());
+            Object value = _script.exec(cx, getScope());
+            ret = JavaAdapter.convertResult(value, expectedType);
         } finally {
             Context.exit();
         }
         if(expectedType == Void.class || ret == null) {
             return null;
-        } else if(expectedType == String.class) {
-            return ret.toString();
         } else if(expectedType.isAssignableFrom(ret.getClass())) {
             return ret;
         }

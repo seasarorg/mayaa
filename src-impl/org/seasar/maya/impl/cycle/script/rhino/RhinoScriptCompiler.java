@@ -31,7 +31,8 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         throw new UnsupportedOperationException();
     }
 
-    protected CompiledScript compile(ScriptBlock scriptBlock, Class expectedType) {
+    protected CompiledScript compile(
+            ScriptBlock scriptBlock, Class expectedType, String sourceName, int lineno) {
         if(scriptBlock == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
@@ -40,7 +41,6 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
             return new LiteralScript(text, expectedType);
         }
         Context cx = Context.enter();
-        // TODO ファイル名、行の設定。
         Script script = cx.compileString(text, null, 0, null);
         Context.exit();
         return new RhinoCompiledScript(getScriptResolver(),

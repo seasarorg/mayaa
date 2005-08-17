@@ -21,6 +21,7 @@ import org.seasar.maya.provider.Parameterizable;
 /**
  * ライブラリ構築を行うスキャナー。
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @deprecated
  */
 public interface LibraryScanner extends Parameterizable {
 

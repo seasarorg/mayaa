@@ -39,6 +39,10 @@ public class WebInfSourceEntry implements SourceEntry, CONST_IMPL {
         _application = application;
     }
 
+    public String getProtocol() {
+        return PROTOCOL_WEB_INF;
+    }
+
     public SourceDescriptor createSourceDescriptor(String systemID) {
         // when default constructor used -> to reading default maya xml.
         if(_application == null) {

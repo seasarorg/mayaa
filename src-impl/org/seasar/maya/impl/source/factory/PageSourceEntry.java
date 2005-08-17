@@ -30,6 +30,10 @@ public class PageSourceEntry implements SourceEntry, CONST_IMPL {
     private WebInfSourceEntry _webInfEntry = new WebInfSourceEntry();
     private ContextSourceEntry _contextEntry = new ContextSourceEntry();
 
+    public String getProtocol() {
+        return PREFIX_PAGE;
+    }
+
     public SourceDescriptor createSourceDescriptor(String systemID) {
 		CompositeSourceDescriptor descriptor = 
 		    new CompositeSourceDescriptor(PROTOCOL_PAGE, systemID);

@@ -36,10 +36,9 @@ public class SourceEntryTagHandler extends AbstractParameterizableTagHandler {
     }
 
     protected void start(Attributes attributes) {
-        String name = XmlUtil.getStringValue(attributes, "name", null);
         _sourceEntry = (SourceEntry)XmlUtil.getObjectValue(
                 attributes, "class", null, SourceEntry.class);
-        _parent.getSourceFactory().putSourceEntry(name, _sourceEntry);
+        _parent.getSourceFactory().putSourceEntry(_sourceEntry);
     }
 
     protected void end(String body) {

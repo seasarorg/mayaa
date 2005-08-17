@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.source.factory;
 
-import java.util.Map;
-
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -27,10 +25,10 @@ import org.seasar.maya.source.SourceDescriptor;
 public interface SourceFactory extends Parameterizable {
 
     /**
-     * ソースエントリの登録されたマップ。
-     * @return マップ。
+     * 登録されている全ソースエントリ。
+     * @return エントリの配列。
      */
-    Map getSourceEntries();
+    SourceEntry[] getSourceEntries();
     
 	/**
 	 * テンプレートや設定XMLのソースディスクリプタの取得。

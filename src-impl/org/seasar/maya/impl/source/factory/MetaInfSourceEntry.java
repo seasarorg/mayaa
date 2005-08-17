@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.source.factory;
 
+import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceEntry;
@@ -22,7 +23,11 @@ import org.seasar.maya.source.factory.SourceEntry;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MetaInfSourceEntry implements SourceEntry {
+public class MetaInfSourceEntry implements SourceEntry, CONST_IMPL {
+
+    public String getProtocol() {
+        return PROTOCOL_META_INF;
+    }
 
     public SourceDescriptor createSourceDescriptor(String systemID) {
         return new MetaInfSourceDescriptor(systemID);

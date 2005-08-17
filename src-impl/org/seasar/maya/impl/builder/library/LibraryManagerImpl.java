@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
+import org.seasar.maya.builder.library.LibraryDefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
@@ -47,6 +48,7 @@ public class LibraryManagerImpl implements LibraryManager {
         throw new UnsupportedOperationException();
     }
 
+//++    
     protected void prepareLibraryScanner() {
         _libraryScanner = new CompositeLibraryScanner();
         _libraryScanner.add(new MLDLibraryScanner());
@@ -62,7 +64,7 @@ public class LibraryManagerImpl implements LibraryManager {
     public LibraryScanner getLibraryScanner() {
         return _libraryScanner;
     }
-        
+
     public void addLibraryDefinition(LibraryDefinition library) {
         if(library == null) {
             throw new IllegalArgumentException();
@@ -73,11 +75,19 @@ public class LibraryManagerImpl implements LibraryManager {
         _libraries.add(library);
     }
     
-    public Iterator iterateLibraryDefinition() {
+    private void scanLibrary() {
         if(_scaned == false) {
             _scaned = true;
             _libraryScanner.scanLibrary(this);
         }
+    }
+//--
+    
+    public void addLibraryDefinitionBuilder(LibraryDefinitionBuilder builder) {
+    }
+    
+    public Iterator iterateLibraryDefinition() {
+        scanLibrary();
         if(_libraries == null) {
             return NullIterator.getInstance();
         }

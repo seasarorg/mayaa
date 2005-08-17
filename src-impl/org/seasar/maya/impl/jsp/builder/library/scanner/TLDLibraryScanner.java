@@ -22,6 +22,9 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.jsp.builder.library.JspLibraryDefinition;
+import org.seasar.maya.impl.jsp.builder.library.handler.TLDHandler;
+import org.seasar.maya.impl.jsp.builder.library.handler.TaglibDirective;
+import org.seasar.maya.impl.jsp.builder.library.handler.WebXMLHandler;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.XmlUtil;
@@ -51,7 +54,7 @@ public class TLDLibraryScanner implements LibraryScanner, CONST_IMPL {
         TLDHandler handler = new TLDHandler(systemID);
         // FIXME validation="true" ‚¾‚ÆAJSTL‚Ìc.tld/x.tld‚È‚ÇXSD‚ğ—˜—p‚·‚é‚à‚Ì‚ÅSAX—áŠO
         XmlUtil.parse(handler, stream, "tld", systemID, true, false, false);
-        return handler.getResult();
+        return handler.getLibraryDefinition();
     }
     
     /*

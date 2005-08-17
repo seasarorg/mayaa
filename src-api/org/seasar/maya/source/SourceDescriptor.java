@@ -66,6 +66,7 @@ public interface SourceDescriptor extends Serializable {
      * 子ノードのファイル群をすべてイテレートする。
      * @return SourceDescriptorのイテレータ。子ノードが無かったり、
      * 自身がファイルだと非nullゼロ長のイテレータを返す。
+     * @deprecated
      */
     Iterator iterateChildren();
 
@@ -74,6 +75,7 @@ public interface SourceDescriptor extends Serializable {
      * @param extension イテレートする子ノードの指定拡張子。
      * @return SourceDescriptorのイテレータ。子ノードが無かったり、
      * 自身がファイルだと非nullゼロ長のイテレータを返す。
+     * @deprecated
      */
     Iterator iterateChildren(String extension);
 

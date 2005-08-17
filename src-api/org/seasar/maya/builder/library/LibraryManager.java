@@ -30,14 +30,22 @@ public interface LibraryManager extends Parameterizable {
     /**
      * ルートのライブラリスキャナの取得。
      * @return ライブラリスキャナ。
+     * @deprecated
      */
     LibraryScanner getLibraryScanner();
     
     /**
      * ライブラリの追加を行う。
      * @param library ライブラリ。
+     * @deprecated
      */
     void addLibraryDefinition(LibraryDefinition library);    
+
+    /**
+     * ライブラリ定義ビルダの追加。
+     * @param builder ライブラリ定義ビルダ。
+     */
+    void addLibraryDefinitionBuilder(LibraryDefinitionBuilder builder);    
     
     /**
      * 全MLD設定（=<code>LibraryDefinition</code>）のイテレータ取得。

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceEntry;
 import org.seasar.maya.source.factory.SourceFactory;
@@ -50,15 +49,16 @@ public class SourceFactoryImpl
         throw new UnsupportedOperationException();
     }
 
-    public Map getSourceEntries() {
-        return _sourceEntries;
+    public SourceEntry[] getSourceEntries() {
+        return (SourceEntry[])_sourceEntries.values().toArray(
+                new SourceEntry[_sourceEntries.size()]);
     }
     
-    public void putSourceEntry(String protocol, SourceEntry entry) {
-        if(StringUtil.isEmpty(protocol) || entry == null) {
+    public void putSourceEntry(SourceEntry entry) {
+        if(entry == null) {
             throw new IllegalArgumentException();
         }
-        _sourceEntries.put(protocol, entry);
+        _sourceEntries.put(entry.getProtocol(), entry);
     }
     
     protected String[] parseSourcePath(String path) {

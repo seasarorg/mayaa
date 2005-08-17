@@ -29,6 +29,10 @@ public class ContextSourceEntry implements SourceEntry, CONST_IMPL {
 
     private Application _application;
     
+    public String getProtocol() {
+        return PROTOCOL_CONTEXT;
+    }
+
     public SourceDescriptor createSourceDescriptor(String systemID) {
         if(_application == null) {
             _application = CycleUtil.getApplication();

@@ -13,27 +13,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.source.factory;
+package org.seasar.maya.builder.library;
 
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * プロトコル毎のファクトリエントリ。  
+ * ライブラリ定義ソースビルダ。
+ * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceEntry extends Parameterizable {
-    
+public interface LibraryDefinitionBuilder extends Parameterizable {
+
     /**
-     * プロトコル名の取得。
-     * @return プロトコル名。
+     * ライブラリ定義ソースからライブラリをビルドする。
+     * @param source ライブラリ定義ソース。
+     * @return ビルド結果。処理できなかった場合にはnullを返す。
      */
-    String getProtocol();
-    
-    /**
-     * ソースディスクリプタの生成。
-     * @param systemID ソースのSystemID。
-     * @return ソースディスクリプタ。
-     */
-    SourceDescriptor createSourceDescriptor(String systemID);
+    LibraryDefinition build(SourceDescriptor source);
     
 }

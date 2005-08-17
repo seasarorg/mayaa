@@ -18,7 +18,7 @@ package org.seasar.maya.impl.jsp.builder.library;
 import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryDefinitionBuilder;
+import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.jsp.builder.library.handler.TLDHandler;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
@@ -27,7 +27,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TLDLibraryDefinitionBuilder implements LibraryDefinitionBuilder {
+public class TLDLibraryDefinitionBuilder implements DefinitionBuilder {
 
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();

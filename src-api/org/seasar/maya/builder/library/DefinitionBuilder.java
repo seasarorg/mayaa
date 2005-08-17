@@ -15,18 +15,20 @@
  */
 package org.seasar.maya.builder.library;
 
-import java.util.Iterator;
+import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * ライブラリ定義ソースの検索スキャナ。
+ * ライブラリ定義ソースビルダ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface LibraryDefinitionSourceScanner {
+public interface DefinitionBuilder extends Parameterizable {
 
     /**
-     * ライブラリ定義ソースをイテレートする。
-     * @return ソース（SourceDescriptor）のイテレータ。
+     * ライブラリ定義ソースからライブラリをビルドする。
+     * @param source ライブラリ定義ソース。
+     * @return ビルド結果。処理できなかった場合にはnullを返す。
      */
-    Iterator scanSource();
+    LibraryDefinition build(SourceDescriptor source);
     
 }

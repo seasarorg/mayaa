@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryDefinitionBuilder;
-import org.seasar.maya.builder.library.LibraryDefinitionSourceScanner;
+import org.seasar.maya.builder.library.DefinitionBuilder;
+import org.seasar.maya.builder.library.SourceScanner;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
@@ -84,11 +84,10 @@ public class LibraryManagerImpl implements LibraryManager {
     }
 //--
 
-    public void addLibraryDefinitionSourceScanner(
-    		LibraryDefinitionSourceScanner scanner) {
+    public void addSourceScanner(SourceScanner scanner) {
 	}
 
-    public void addLibraryDefinitionBuilder(LibraryDefinitionBuilder builder) {
+    public void addDefinitionBuilder(DefinitionBuilder builder) {
     }
     
     public Iterator iterateLibraryDefinition() {

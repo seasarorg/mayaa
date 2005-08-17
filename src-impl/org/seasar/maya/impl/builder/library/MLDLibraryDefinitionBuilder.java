@@ -18,7 +18,7 @@ package org.seasar.maya.impl.builder.library;
 import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryDefinitionBuilder;
+import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.handler.MLDHandler;
 import org.seasar.maya.impl.util.StringUtil;
@@ -28,7 +28,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDLibraryDefinitionBuilder implements LibraryDefinitionBuilder, CONST_IMPL {
+public class MLDLibraryDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
 
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();

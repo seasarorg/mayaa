@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
-<m:maya xmlns:m="http://maya.seasar.org" 
-			xmlns:fmt="http://maya.seasar.org/jstl/fmt">
-
-	<fmt:formatDate m:id="message" value="${ new java.util.Date() }"
-			type="BOTH" dateStyle="FULL" timeStyle="FULL"/>
-
-</m:maya>

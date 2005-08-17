@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
-<m:maya xmlns:m="http://maya.seasar.org"
-			xmlns:fmt="http://java.sun.com/jstl/fmt_rt">
-
-	<fmt:formatNumber m:id="number" value="123456789" 
-			type="CURRENCY" groupingUsed="true" currencySymbol="$"/>
-
-</m:maya>

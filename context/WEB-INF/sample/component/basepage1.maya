@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
-<maya xmlns:m="http://maya.seasar.org" xmlns:x="/sample/component">
-
-	<x:component1.html m:id="implicit" x:greeting="（引数で渡す文字列）"/>
-
-</maya>
-
-

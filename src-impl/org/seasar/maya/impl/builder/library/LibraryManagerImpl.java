@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.builder.library.SourceScanner;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
@@ -31,6 +30,7 @@ import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScanner;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.maya.source.SourceScanner;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

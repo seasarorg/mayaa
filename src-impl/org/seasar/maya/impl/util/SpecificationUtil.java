@@ -36,7 +36,7 @@ import org.seasar.maya.impl.builder.PrefixMappingNotFoundException;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -194,7 +194,7 @@ public class SpecificationUtil implements CONST_IMPL {
 		        Class modelClass = getModelClass(maya);
 		        if(modelClass != null) {
 		            String scope = SpecificationUtil.getModelScope(maya);
-		            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+		            ServiceProvider provider = ProviderFactory.getServiceProvider();
 		           	return provider.getModel(modelClass, scope);
 		        }
             }

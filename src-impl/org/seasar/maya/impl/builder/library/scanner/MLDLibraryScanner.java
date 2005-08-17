@@ -25,7 +25,7 @@ import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.handler.MLDHandler;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -54,7 +54,7 @@ public class MLDLibraryScanner implements LibraryScanner, CONST_IMPL {
         if(manager == null) {
         	throw new IllegalArgumentException();
         }
-        SourceFactory factory = ServiceProviderFactory.getServiceProvider().getSourceFactory();
+        SourceFactory factory = ProviderFactory.getServiceProvider().getSourceFactory();
         SourceDescriptor webInf = factory.createSourceDescriptor("web-inf:/");
         for(Iterator it = webInf.iterateChildren("mld"); it.hasNext(); ) {
             SourceDescriptor mld = (SourceDescriptor)it.next();
@@ -70,7 +70,7 @@ public class MLDLibraryScanner implements LibraryScanner, CONST_IMPL {
         	throw new IllegalArgumentException();
         }
     	SourceFactory factory = 
-    	    ServiceProviderFactory.getServiceProvider().getSourceFactory(); 
+    	    ProviderFactory.getServiceProvider().getSourceFactory(); 
     	SourceDescriptor metaInf = factory.createSourceDescriptor("meta-inf:/");
     	for(Iterator it = metaInf.iterateChildren("mld"); it.hasNext(); ) {
     	    MetaInfSourceDescriptor source = (MetaInfSourceDescriptor)it.next();

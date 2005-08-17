@@ -34,7 +34,7 @@ import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -119,7 +119,7 @@ public class PageImpl extends SpecificationImpl
                 name.append(".").append(extension);
             }
             String path = PREFIX_PAGE + name.toString();
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
 	        SourceFactory factory = provider.getSourceFactory();
             SourceDescriptor source = factory.createSourceDescriptor(path);
             if(source.exists()) {

@@ -21,7 +21,7 @@ import javax.servlet.jsp.el.VariableResolver;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,7 +36,7 @@ public class CycleVariableResolver implements VariableResolver {
 
     public Object resolveVariable(String pName) throws ELException {
         if(StringUtil.hasValue(pName)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
             ScriptCompiler compiler = provider.getScriptCompiler();
             return compiler.getScriptResolver().getVariable(pName);
         }

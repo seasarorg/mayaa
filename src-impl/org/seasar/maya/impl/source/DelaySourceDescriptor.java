@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -44,7 +44,7 @@ public class DelaySourceDescriptor extends NullSourceDescriptor {
     public boolean exists() {
         if(_source == null) {
             SourceFactory factory = 
-                ServiceProviderFactory.getServiceProvider().getSourceFactory();
+                ProviderFactory.getServiceProvider().getSourceFactory();
             _source = factory.createSourceDescriptor(_path);
         }
         return _source.exists();

@@ -30,7 +30,7 @@ import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -96,7 +96,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         Page page = SpecificationUtil.getPage(this, key);
         if(page == null) {
             String path = PREFIX_PAGE + pageName + ".maya";
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
             SourceFactory factory = provider.getSourceFactory();
             SourceDescriptor source = factory.createSourceDescriptor(path);
             page = new PageImpl(this, pageName, extension);

@@ -28,7 +28,7 @@ import org.seasar.maya.impl.jsp.builder.library.handler.WebXMLHandler;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.XmlUtil;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -72,7 +72,7 @@ public class TLDLibraryScanner implements LibraryScanner, CONST_IMPL {
         } else {
             protocol = PREFIX_WEB_INF;
         }
-        SourceFactory factory = ServiceProviderFactory.getServiceProvider().getSourceFactory();
+        SourceFactory factory = ProviderFactory.getServiceProvider().getSourceFactory();
         SourceDescriptor source = factory.createSourceDescriptor(protocol + location);
         if(source.exists()) {
             InputStream stream = source.getInputStream();
@@ -94,7 +94,7 @@ public class TLDLibraryScanner implements LibraryScanner, CONST_IMPL {
     }
     
     protected void scanWebXml(LibraryManager manager) {
-        SourceFactory factory = ServiceProviderFactory.getServiceProvider().getSourceFactory();
+        SourceFactory factory = ProviderFactory.getServiceProvider().getSourceFactory();
         SourceDescriptor source = factory.createSourceDescriptor("web-inf:/web.xml");
         if(source.exists()) {
             InputStream stream = source.getInputStream();
@@ -106,7 +106,7 @@ public class TLDLibraryScanner implements LibraryScanner, CONST_IMPL {
     }
 
     protected void scanWebInfFolder(LibraryManager manager) {
-        SourceFactory factory = ServiceProviderFactory.getServiceProvider().getSourceFactory();
+        SourceFactory factory = ProviderFactory.getServiceProvider().getSourceFactory();
         SourceDescriptor webInf = factory.createSourceDescriptor("web-inf:/");
         for(Iterator it = webInf.iterateChildren("tld"); it.hasNext(); ) {
             SourceDescriptor tld = (SourceDescriptor)it.next();
@@ -121,7 +121,7 @@ public class TLDLibraryScanner implements LibraryScanner, CONST_IMPL {
         if(manager == null) {
         	throw new IllegalArgumentException();
         }
-        SourceFactory factory = ServiceProviderFactory.getServiceProvider().getSourceFactory();
+        SourceFactory factory = ProviderFactory.getServiceProvider().getSourceFactory();
     	SourceDescriptor metaInf = factory.createSourceDescriptor("meta-inf:/");
         for(Iterator it = metaInf.iterateChildren("tld"); it.hasNext(); ) {
             SourceDescriptor tld = (SourceDescriptor)it.next();

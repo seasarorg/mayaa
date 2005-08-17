@@ -40,7 +40,7 @@ import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -94,7 +94,7 @@ public class TemplateImpl extends SpecificationImpl
     protected void parseSpecification() {
         setTimestamp(new Date());
         clear();
-        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
         TemplateBuilder builder = provider.getTemplateBuilder();
         builder.build(this);
     }

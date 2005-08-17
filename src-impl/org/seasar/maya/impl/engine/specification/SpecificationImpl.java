@@ -35,7 +35,7 @@ import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -101,7 +101,7 @@ public abstract class SpecificationImpl
 		setTimestamp(new Date());
         if(getSource().exists()) {
 	    	clear();
-	        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+	        ServiceProvider provider = ProviderFactory.getServiceProvider();
 	        SpecificationBuilder builder = provider.getSpecificationBuilder();
 	        builder.build(this);
         }

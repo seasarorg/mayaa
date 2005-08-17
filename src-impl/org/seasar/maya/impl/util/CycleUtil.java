@@ -19,7 +19,7 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,7 +37,7 @@ public class CycleUtil {
     };
     
     public static ServiceCycle getServiceCycle() {
-    	ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+    	ServiceProvider provider = ProviderFactory.getServiceProvider();
     	return provider.getServiceCycle();
     }
     
@@ -67,7 +67,7 @@ public class CycleUtil {
     }
     
     public static Application getApplication() {
-        return ServiceProviderFactory.getServiceProvider().getApplication();
+        return ProviderFactory.getServiceProvider().getApplication();
     }
     
 }

@@ -22,7 +22,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * テンプレート中に、JSP風に直接プロセッサQNameを記述した場合の解決を行うレゾルバ。
@@ -46,7 +46,7 @@ public class DirectInjectionResolver implements InjectionResolver {
             SpecificationNode original, InjectionChain chain) {
         QName qName = original.getQName();
         LibraryManager libraryManager = 
-            ServiceProviderFactory.getServiceProvider().getTemplateBuilder().getLibraryManager();
+            ProviderFactory.getServiceProvider().getTemplateBuilder().getLibraryManager();
         if(libraryManager.getProcessorDefinition(qName) != null) {
             return SpecificationUtil.createInjectedNode(
                     qName, qName.getNamespaceURI(), original);

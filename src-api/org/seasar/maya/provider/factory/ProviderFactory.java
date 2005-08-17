@@ -25,16 +25,16 @@ import org.seasar.maya.provider.ServiceProvider;
  * アプリケーションサービスプロバイダのファクトリクラス
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class ServiceProviderFactory implements Serializable {
+public abstract class ProviderFactory implements Serializable {
 
-	private static ServiceProviderFactory _factory;
+	private static ProviderFactory _factory;
 	private static ServletContext _servletContext;
 	
 	/**
 	 * ファクトリのカスタマイズ用。 
 	 * @param factory カスタマイズしたファクトリ。
 	 */
-	public static void setDefaultFactory(ServiceProviderFactory factory) {
+	public static void setDefaultFactory(ProviderFactory factory) {
 	    if(factory == null) {
 	        throw new IllegalArgumentException();
 	    }

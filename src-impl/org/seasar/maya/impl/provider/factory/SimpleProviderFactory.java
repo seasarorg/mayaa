@@ -23,14 +23,14 @@ import org.seasar.maya.impl.provider.SimpleServiceProvider;
 import org.seasar.maya.impl.source.factory.WebInfSourceEntry;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceEntry;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SimpleServiceProviderFactory extends ServiceProviderFactory
+public class SimpleProviderFactory extends ProviderFactory
 		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 3581634661222113559L;

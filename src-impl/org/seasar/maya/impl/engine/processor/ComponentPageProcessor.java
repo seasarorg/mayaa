@@ -25,7 +25,7 @@ import org.seasar.maya.impl.util.ComponentUtil;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -76,7 +76,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         String[] pagePath = ComponentUtil.parsePath(_path);
         Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[1]);
         String sourcePath = PREFIX_PAGE + pagePath[0] + ".maya";
-        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
         SourceFactory factory = provider.getSourceFactory();
         SourceDescriptor source = factory.createSourceDescriptor(sourcePath);
         if(source.exists()) {

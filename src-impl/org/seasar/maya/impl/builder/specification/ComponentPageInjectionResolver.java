@@ -25,7 +25,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * 解決した結果がコンポーネントページの場合に、インジェクションの修正を行うレゾルバ。
@@ -44,7 +44,7 @@ public class ComponentPageInjectionResolver
         QName qName = injected.getQName();
         String uri = qName.getNamespaceURI();
         if(uri.startsWith("/")) {
-	        ServiceProvider provider = ServiceProviderFactory.getServiceProvider(); 
+	        ServiceProvider provider = ProviderFactory.getServiceProvider(); 
 	        LibraryManager libraryManager = provider.getTemplateBuilder().getLibraryManager();
 	        if(libraryManager.getProcessorDefinition(qName) == null) {
 	            String name = qName.getLocalName();

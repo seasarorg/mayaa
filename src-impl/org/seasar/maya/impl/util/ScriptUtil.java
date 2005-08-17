@@ -24,7 +24,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.xml.sax.Locator;
 
 /**
@@ -40,7 +40,7 @@ public class ScriptUtil implements CONST_IMPL {
         	throw new IllegalArgumentException();
         }
         if(StringUtil.hasValue(text)) {
-            ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
 	        ScriptCompiler compiler = provider.getScriptCompiler();
             ServiceCycle cycle = provider.getServiceCycle();
             SpecificationNode node = cycle.getCurrentNode();

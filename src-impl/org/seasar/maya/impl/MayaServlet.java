@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.provider.factory.SimpleServiceProviderFactory;
+import org.seasar.maya.impl.provider.factory.SimpleProviderFactory;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.ThrowableUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ServiceProviderFactory;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -47,11 +47,11 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
 
     public void init() throws ServletException {
     	if(_inithialized == false) {
-            ServiceProviderFactory.setDefaultFactory(new SimpleServiceProviderFactory());
-            ServiceProviderFactory.setServletContext(getServletContext());
+            ProviderFactory.setDefaultFactory(new SimpleProviderFactory());
+            ProviderFactory.setServletContext(getServletContext());
             _inithialized = true;
     	}
-    	ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+    	ServiceProvider provider = ProviderFactory.getServiceProvider();
         _engine = provider.getEngine();
     }
 
@@ -73,7 +73,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     
     protected ServiceCycle getServiceCycle(
     		HttpServletRequest request, HttpServletResponse response) {
-        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
         provider.initialize(request, response);
         return provider.getServiceCycle();
     }
@@ -140,7 +140,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             throw new IllegalArgumentException();
         }
         String path = PREFIX_PAGE + getRequestedPath(request);
-        ServiceProvider provider = ServiceProviderFactory.getServiceProvider();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
         SourceFactory factory = provider.getSourceFactory();
         SourceDescriptor source = factory.createSourceDescriptor(path);
         InputStream stream = source.getInputStream();

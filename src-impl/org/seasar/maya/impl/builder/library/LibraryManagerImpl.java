@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryDefinitionBuilder;
+import org.seasar.maya.builder.library.LibraryDefinitionSourceScanner;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
@@ -82,7 +83,11 @@ public class LibraryManagerImpl implements LibraryManager {
         }
     }
 //--
-    
+
+    public void addLibraryDefinitionSourceScanner(
+    		LibraryDefinitionSourceScanner scanner) {
+	}
+
     public void addLibraryDefinitionBuilder(LibraryDefinitionBuilder builder) {
     }
     
@@ -137,7 +142,6 @@ public class LibraryManagerImpl implements LibraryManager {
             return  _namespaceURI.equals(library.getNamespaceURI()) ||
             	_namespaceURI.equals(library.getAssignedURI());
         }
-
     }
     
 }

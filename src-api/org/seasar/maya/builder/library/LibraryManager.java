@@ -42,6 +42,12 @@ public interface LibraryManager extends Parameterizable {
     void addLibraryDefinition(LibraryDefinition library);    
 
     /**
+     * ライブラリ定義ソーススキャナの追加。
+     * @param scanner ライブラリ定義ソーススキャナ。
+     */
+    void addLibraryDefinitionSourceScanner(LibraryDefinitionSourceScanner scanner);
+    
+    /**
      * ライブラリ定義ビルダの追加。
      * @param builder ライブラリ定義ビルダ。
      */

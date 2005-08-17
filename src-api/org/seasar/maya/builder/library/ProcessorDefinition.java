@@ -40,7 +40,7 @@ public interface ProcessorDefinition {
     String getName();
     
     /**
-     * class属性で指定した、<code>org.seasar.maya.engine.processor.TemplateProcessor</code>
+     * class属性で指定した、<code>TemplateProcessor</code>の
      * 実装もしくは<code>ProcessorFactory</code>の実装クラス完全修飾名。
      * @return 実装クラス名。
      */

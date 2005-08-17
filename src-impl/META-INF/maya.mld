@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE library
+	PUBLIC "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN"
+	"http://maya.seasar.org/dtd/mld_1_0.dtd">
+<library uri="http://maya.seasar.org">
+
+	<description>The Maya core processors</description>
+
+	<processor name="attribute" class="org.seasar.maya.impl.builder.processor.AttributeProcessorFactory">
+		<description>m:attribute injection</description>
+	</processor>
+
+	<processor name="element" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+		<description>m:element injection</description>
+		<property name="childEvaluation" defaultValue="true"/>
+	</processor>
+	
+	<processor name="templateElement" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+		<description>element on the template</description>
+	</processor>
+	
+	<processor name="duplecatedElement" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+		<description>duplecated element on the template by m:rendered="true"</description>
+		<property name="duplicated" defaultValue="true"/>
+	</processor>
+
+	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
+		<description>m:doBody injection</description>
+	</processor>
+
+	<processor name="cdata" class="org.seasar.maya.impl.engine.processor.CDATAProcessor">
+		<description>an CDATA on the template</description>
+	</processor>
+
+	<processor name="characters" class="org.seasar.maya.impl.engine.processor.CharactersProcessor">
+		<description>text on the template</description>
+		<property name="text"/>
+	</processor>
+	
+	<processor name="comment" class="org.seasar.maya.impl.engine.processor.CommentProcessor">
+		<description>comment on the template</description>
+		<property name="text"/>
+	</processor>
+
+	<processor name="doctype" class="org.seasar.maya.impl.engine.processor.DOCTYPEProcessor">
+		<description>DOCTYPE on the template</description>
+		<property name="name" required="true"/>
+		<property name="publicID"/>
+		<property name="systemID"/>
+	</processor>
+
+	<processor name="processingInstruction" class="org.seasar.maya.impl.engine.processor.ProcessingInstructionProcessor">
+		<description>PI on the template</description>
+		<property name="target" required="true"/>
+		<property name="data"/>
+	</processor>
+
+	<processor name="componentPage"
+			class="org.seasar.maya.impl.engine.processor.ComponentPageProcessor">
+		<property name="path" required="true"/>
+		<property name="namespaceURI" required="true"/>
+	</processor>
+
+	<processor name="startComponent"
+			class="org.seasar.maya.impl.engine.processor.StartComponentProcessor">
+	</processor>
+
+	<processor name="endComponent"
+			class="org.seasar.maya.impl.engine.processor.EndComponentProcessor">
+	</processor>
+
+	<processor name="beanProperties"
+			class="org.seasar.maya.impl.engine.processor.BeanPropertiesProcessor">
+		<property name="bean" required="true"/>
+		<property name="var"/>
+		<property name="index"/>
+		<property name="ignore"/>
+	</processor>
+
+	<processor name="stackTraceElements"
+			class="org.seasar.maya.impl.engine.processor.StackTraceElementsProcessor">
+		<property name="throwable" required="true" expectedType="java.lang.Throwable"/>
+		<property name="var"/>
+		<property name="index"/>
+	</processor>
+
+</library>

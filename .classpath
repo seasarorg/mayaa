@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src-api"/>
 	<classpathentry kind="src" path="src-impl"/>
 	<classpathentry kind="src" path="src-standard"/>
-	<classpathentry kind="src" path="src-test"/>
-	<classpathentry kind="src" path="src-sample"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.0.4.jar"/>
 	<classpathentry exported="true" sourcepath="D:/libsrc/nekohtml-0.9.5/src/html" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar"/>

@@ -20,7 +20,7 @@ import java.io.InputStream;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.handler.MLDHandler;
+import org.seasar.maya.impl.builder.library.mld.MLDHandler;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.builder.library.handler;
+package org.seasar.maya.impl.jsp.builder.library.tld;
 
 import java.util.HashMap;
 import java.util.Map;

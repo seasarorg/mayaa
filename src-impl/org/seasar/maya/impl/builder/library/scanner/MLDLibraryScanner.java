@@ -22,7 +22,7 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.scanner.LibraryScanner;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
-import org.seasar.maya.impl.builder.library.handler.MLDHandler;
+import org.seasar.maya.impl.builder.library.mld.MLDHandler;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.factory.ProviderFactory;

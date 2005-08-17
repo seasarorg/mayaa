@@ -19,7 +19,7 @@ import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.impl.jsp.builder.library.handler.TLDHandler;
+import org.seasar.maya.impl.jsp.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;

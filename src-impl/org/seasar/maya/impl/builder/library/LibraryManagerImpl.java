@@ -30,19 +30,25 @@ import org.seasar.maya.impl.builder.library.scanner.CompositeLibraryScanner;
 import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScanner;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
-import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LibraryManagerImpl implements LibraryManager {
-    
-    private CompositeLibraryScanner _libraryScanner;
+
+	private List _scanners;
+	private List _builders;
     private List _libraries;
     private boolean _scaned;
     
     public LibraryManagerImpl() {
+    	_scanners = new ArrayList();
+    	_builders = new ArrayList();
+        _libraries = new ArrayList();
+//++        
         prepareLibraryScanner();
+//--
     }
     
     public void putParameter(String name, String value) {
@@ -50,6 +56,8 @@ public class LibraryManagerImpl implements LibraryManager {
     }
 
 //++    
+	private CompositeLibraryScanner _libraryScanner;
+    
     protected void prepareLibraryScanner() {
         _libraryScanner = new CompositeLibraryScanner();
         _libraryScanner.add(new MLDLibraryScanner());
@@ -70,9 +78,6 @@ public class LibraryManagerImpl implements LibraryManager {
         if(library == null) {
             throw new IllegalArgumentException();
         }
-        if(_libraries == null) {
-            _libraries = new ArrayList();
-        }
         _libraries.add(library);
     }
     
@@ -84,17 +89,43 @@ public class LibraryManagerImpl implements LibraryManager {
     }
 //--
 
+    protected void buildAll() {
+    	for(int i = 0; i < _scanners.size(); i++) {
+	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
+	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
+		    	SourceDescriptor source = (SourceDescriptor)it.next();
+		    	for(int k = 0; k < _builders.size(); k++) {
+			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
+			    	LibraryDefinition library = builder.build(source);
+			    	if(library != null) {
+			            _libraries.add(library);
+			            break;
+			    	}
+		    	}
+	    	}
+    	}
+    }
+    
     public void addSourceScanner(SourceScanner scanner) {
+		if(scanner == null) {
+			throw new IllegalArgumentException();
+		}
+		synchronized (_scanners) {
+			_scanners.add(scanner);
+		}
 	}
 
     public void addDefinitionBuilder(DefinitionBuilder builder) {
+    	if(builder == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	synchronized(_builders) {
+    		_builders.add(builder);
+    	}
     }
     
     public Iterator iterateLibraryDefinition() {
         scanLibrary();
-        if(_libraries == null) {
-            return NullIterator.getInstance();
-        }
         return _libraries.iterator();
     }
     

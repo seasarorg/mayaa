@@ -13,7 +13,7 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.handler;
+package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;

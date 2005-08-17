@@ -15,8 +15,10 @@
  */
 package org.seasar.maya.impl.source;
 
+import java.io.File;
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.source.SourceScanner;
 
 /**
@@ -24,8 +26,49 @@ import org.seasar.maya.source.SourceScanner;
  */
 public class ServletSourceScanner implements SourceScanner {
 
+	private Application _application;
+    private String _protocol;
+    private String _root;
+	
 	public Iterator scan() {
 		return null;
 	}
+
+    private class FileToSourceIterator implements Iterator {
+        
+        private Iterator _iterator;
+        
+        private FileToSourceIterator(Iterator iterator) {
+            if(iterator == null) {
+                throw new IllegalArgumentException();
+            }
+            _iterator = iterator;
+        }
+        
+        public boolean hasNext() {
+            return _iterator.hasNext();
+        }
+
+        private String getSystemID(File file) {
+            String root = _application.getRealPath(_root);
+            String absolutePath = file.getAbsolutePath();
+            return absolutePath.substring(root.length());
+        }
+        
+        public Object next() {
+            Object ret = _iterator.next();
+            if(ret instanceof File) {
+                File file = (File)ret;
+                String systemID = getSystemID(file);
+                return new ServletSourceDescriptor(_application, _protocol, _root, systemID, file);
+            }
+            throw new IllegalStateException();
+        }
+
+        public void remove() {
+            _iterator.remove();
+        }
+
+    }
 
 }

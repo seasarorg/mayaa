@@ -20,7 +20,6 @@ import java.io.InputStream;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.jsp.builder.library.tld.TLDHandler;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -32,19 +31,12 @@ public class TLDLibraryDefinitionBuilder implements DefinitionBuilder {
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
-
-    private boolean isMLD(String path) {
-        if(StringUtil.isEmpty(path)) {
-            throw new IllegalArgumentException();
-        }
-        return path.toLowerCase().endsWith(".mld");
-    }
     
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && isMLD(source.getPath())) {
+        if(source.exists() && source.getPath().toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();
             TLDHandler handler = new TLDHandler(systemID);

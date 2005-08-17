@@ -21,7 +21,6 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.mld.MLDHandler;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -33,19 +32,12 @@ public class MLDLibraryDefinitionBuilder implements DefinitionBuilder, CONST_IMP
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
-
-    private boolean isMLD(String path) {
-        if(StringUtil.isEmpty(path)) {
-            throw new IllegalArgumentException();
-        }
-        return path.toLowerCase().endsWith(".mld");
-    }
     
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && isMLD(source.getPath())) {
+        if(source.exists() && source.getPath().toLowerCase().endsWith(".mld")) {
             MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();

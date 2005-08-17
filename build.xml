@@ -8,14 +8,12 @@
 
 	<property name="maya.jar.core" value="maya-${maya.ver}.jar"/>
 	<property name="maya.jar.standard" value="maya-standard-${maya.ver}.jar"/>
-	<property name="maya.jar.sample" value="maya-sample-${maya.ver}.jar"/>
 
 	<property name="maya.packages" value="org.seasar.maya.*"/>
 
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.src.standard"  value="src-standard"/>
-	<property name="folder.src.sample"  value="src-sample"/>
 
 	<property name="folder.context" value="context"/>
 	<property name="folder.webinf" value="${folder.context}/WEB-INF"/>
@@ -45,7 +43,6 @@
 					<include name="${folder.src.api}"/>
 					<include name="${folder.src.impl}"/>
 					<include name="${folder.src.standard}"/>
-					<include name="${folder.src.sample}"/>
 				</dirset>
 			</src>
 			<classpath>
@@ -59,30 +56,20 @@
 			<fileset dir="${folder.src.api}">
 				<include name="**/*"/>
 				<exclude name="**/*.java"/>
-				<exclude name="**/.cvsignore"/>
-				<exclude name="**/CVS"/>
-				<exclude name="**/CVS/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<fileset dir="${folder.src.impl}">
 				<include name="**/*"/>
 				<exclude name="**/*.java"/>
-				<exclude name="**/.cvsignore"/>
-				<exclude name="**/CVS"/>
-				<exclude name="**/CVS/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<fileset dir="${folder.src.standard}">
 				<include name="**/*"/>
 				<exclude name="**/*.java"/>
-				<exclude name="**/.cvsignore"/>
-				<exclude name="**/CVS"/>
-				<exclude name="**/CVS/**/*"/>
-			</fileset>
-			<fileset dir="${folder.src.sample}">
-				<include name="**/*"/>
-				<exclude name="**/*.java"/>
-				<exclude name="**/.cvsignore"/>
-				<exclude name="**/CVS"/>
-				<exclude name="**/CVS/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 		</copy>
 	</target>
@@ -100,16 +87,12 @@
 	<target name="mayajar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.core}">
 			<fileset dir="${folder.classes}">
-				<include name="javax/servlet/jsp/el/*.class"/>
-				<include name="org/seasar/maya/**/*.class"/>
-				<include name="org/seasar/maya/**/*.dtd"/>
-				<include name="org/seasar/maya/**/*.lst"/>
-				<exclude name="org/seasar/maya/**/CVS"/>
-				<exclude name="org/seasar/maya/**/CVS/**/*"/>
+				<include name="javax/**/*"/>
+				<include name="org/seasar/maya/**/*"/>
 				<exclude name="org/seasar/maya/standard"/>
 				<exclude name="org/seasar/maya/standard/**/*"/>
-				<exclude name="org/seasar/maya/sample"/>
-				<exclude name="org/seasar/maya/sample/**/*"/>
+				<exclude name="org/seasar/maya/**/.svn"/>
+				<exclude name="org/seasar/maya/**/.svn/**/*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="Maya API and Impl"/>
@@ -122,11 +105,9 @@
 	<target name="standardjar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.standard}">
 			<fileset dir="${folder.classes}">
-				<include name="org/seasar/maya/standard/**/*.class"/>
-				<include name="org/seasar/maya/standard/**/*.dtd"/>
-				<include name="org/seasar/maya/standard/**/*.xsd"/>
-				<exclude name="org/seasar/maya/standard/**/CVS"/>
-				<exclude name="org/seasar/maya/standard/**/CVS/**/*"/>
+				<include name="org/seasar/maya/standard/**/*"/>
+				<exclude name="org/seasar/maya/standard/**/.svn"/>
+				<exclude name="org/seasar/maya/standard/**/.svn/**/*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="Maya Standard"/>
@@ -134,21 +115,6 @@
 			</manifest>
 			<metainf dir="${folder.mld}" includes="jstl-core.mld"/>
 			<metainf dir="${folder.mld}" includes="jstl-fmt.mld"/>
-		</jar>
-	</target>
-
-	<target name="samplejar" depends="cleanjar, javabuild">
-		<jar jarfile="${folder.lib}/${maya.jar.sample}">
-			<fileset dir="${folder.classes}">
-				<include name="org/seasar/maya/sample/**/*.class"/>
-				<exclude name="org/seasar/maya/sample/**/CVS"/>
-				<exclude name="org/seasar/maya/sample/**/CVS/**/*"/>
-			</fileset>
-			<manifest>
-				<attribute name="Title" value="Maya Sample"/>
-				<attribute name="Version" value="${maya.ver}"/>
-			</manifest>
-			<metainf dir="${folder.classes}" includes="maya-sample.tld"/>
 		</jar>
 	</target>
 
@@ -182,19 +148,19 @@
        	</javadoc>
     </target>
 
-	<target name="make" depends="mayajar, standardjar, samplejar, javadoc"/>
+	<target name="make" depends="mayajar, standardjar, javadoc"/>
 
 	<target name="distro" depends="make">
 		<zip destfile="../${maya.distro.bin}">
 			<fileset dir=".">
 				<include name="${folder.context}/resource/*"/>
-				<include name="${folder.webinf}/web.xml.sample"/>
+				<include name="${folder.webinf}/web.xml"/>
 				<include name="${folder.webinf}/default.maya"/>
 				<include name="${folder.webinf}/maya.conf"/>
 				<include name="${folder.webinf}/error/*"/>
 				<include name="${folder.webinf}/lib/*"/>
-				<exclude name="${folder.webinf}/lib/maya-sample-*.jar"/>
-				<exclude name="./**/.svn"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 		</zip>
 		<zip destfile="../${maya.distro.src}">
@@ -208,6 +174,7 @@
 				<exclude name="maya/${folder.classes}"/>
 				<exclude name="maya/${folder.classes}/**/*"/>
 				<exclude name="maya/**/.svn"/>
+				<exclude name="maya/**/.svn/**/*"/>
 			</fileset>
 		</zip>
 	</target>

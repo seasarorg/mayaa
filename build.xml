@@ -87,12 +87,13 @@
 	<target name="mayajar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.core}">
 			<fileset dir="${folder.classes}">
-				<include name="META-INF/**/*"/>
+				<include name="META-INF/*"/>
 				<include name="org/seasar/maya/**/*"/>
+				<exclude name="META-INF/jstl"/>
 				<exclude name="org/seasar/maya/standard"/>
 				<exclude name="org/seasar/maya/standard/**/*"/>
-				<exclude name="org/seasar/maya/**/.svn"/>
-				<exclude name="org/seasar/maya/**/.svn/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="Maya API and Impl"/>
@@ -104,9 +105,10 @@
 	<target name="standardjar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.standard}">
 			<fileset dir="${folder.classes}">
+				<include name="META-INF/jstl/*"/>
 				<include name="org/seasar/maya/standard/**/*"/>
-				<exclude name="org/seasar/maya/standard/**/.svn"/>
-				<exclude name="org/seasar/maya/standard/**/.svn/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="Maya Standard"/>

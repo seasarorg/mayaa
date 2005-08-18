@@ -27,6 +27,7 @@ import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
+ * TODO noscan.lst ‚ğ—˜—p‚·‚éB
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class InternalMetaInfSourceScanner implements SourceScanner {

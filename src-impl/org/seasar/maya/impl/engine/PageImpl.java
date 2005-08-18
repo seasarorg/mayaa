@@ -28,15 +28,13 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -118,10 +116,7 @@ public class PageImpl extends SpecificationImpl
             if(StringUtil.hasValue(extension)) {
                 name.append(".").append(extension);
             }
-            String path = PREFIX_PAGE + name.toString();
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-	        SourceFactory factory = provider.getSourceFactory();
-            SourceDescriptor source = factory.createSourceDescriptor(path);
+            SourceDescriptor source = new PageSourceDescriptor(name.toString());
             if(source.exists()) {
                 template = new TemplateImpl(this, suffix);
                 template.setSource(source);

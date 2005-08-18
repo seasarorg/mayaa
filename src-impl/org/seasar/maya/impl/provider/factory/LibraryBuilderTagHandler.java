@@ -15,41 +15,41 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.factory.DescriptorEntry;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceEntryTagHandler extends AbstractParameterizableTagHandler {
+public class LibraryBuilderTagHandler extends AbstractParameterizableTagHandler {
     
-    private SourceTagHandler _parent;
-    private DescriptorEntry _sourceEntry;
+    private LibraryTagHandler _parent;
+    private DefinitionBuilder _builder;
     
-    public SourceEntryTagHandler(SourceTagHandler parent) {
+    public LibraryBuilderTagHandler(LibraryTagHandler parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
 
-    protected void start(Attributes attributes) {
-        _sourceEntry = (DescriptorEntry)XmlUtil.getObjectValue(
-                attributes, "class", null, DescriptorEntry.class);
-        _parent.getSourceFactory().putDescriptorEntry(_sourceEntry);
+    public void start(Attributes attributes) {
+        _builder = (DefinitionBuilder)XmlUtil.getObjectValue(
+                attributes, "class", null, DefinitionBuilder.class);
+        _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }
-
-    protected void end(String body) {
-        _sourceEntry = null;
+    
+    public void end(String body) {
+        _builder = null;
     }
     
     public Parameterizable getParameterizable() {
-        if(_sourceEntry == null) {
+        if(_builder == null) {
             throw new IllegalStateException();
         }
-        return _sourceEntry;
+        return _builder;
     }
 
 }

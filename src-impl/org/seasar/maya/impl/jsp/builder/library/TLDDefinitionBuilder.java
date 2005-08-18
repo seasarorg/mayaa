@@ -13,21 +13,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.maya.impl.jsp.builder.library;
 
 import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.mld.MLDHandler;
+import org.seasar.maya.impl.jsp.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDLibraryDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
+public class TLDDefinitionBuilder implements DefinitionBuilder {
 
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
@@ -37,11 +36,12 @@ public class MLDLibraryDefinitionBuilder implements DefinitionBuilder, CONST_IMP
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".mld")) {
-            MLDHandler handler = new MLDHandler();
+        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();
-            XmlUtil.parse(handler, stream, PUBLIC_MLD10, systemID, true, true, false);
+            TLDHandler handler = new TLDHandler(systemID);
+            // FIXME validation="true" ÇæÇ∆ÅAJSTLÇÃc.tld/x.tldÇ»Ç«XSDÇóòópÇ∑ÇÈÇ‡ÇÃÇ≈SAXó·äO
+            XmlUtil.parse(handler, stream, "tld", systemID, true, false, false);
             return handler.getLibraryDefinition();
         }
         return null;

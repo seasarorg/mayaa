@@ -21,13 +21,11 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.PageImpl;
+import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.ComponentUtil;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceFactory;
 
 /**
  * テンプレートへのページ埋め込み機能を実現するプロセッサ。「startComponent」および
@@ -75,10 +73,8 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         }
         String[] pagePath = ComponentUtil.parsePath(_path);
         Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[1]);
-        String sourcePath = PREFIX_PAGE + pagePath[0] + ".maya";
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        SourceFactory factory = provider.getSourceFactory();
-        SourceDescriptor source = factory.createSourceDescriptor(sourcePath);
+        String sourcePath = pagePath[0] + ".maya";
+        SourceDescriptor source = new PageSourceDescriptor(sourcePath);
         if(source.exists()) {
             page.setSource(source);
         }

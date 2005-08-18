@@ -23,14 +23,11 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.builder.library.scanner.LibraryScanner;
+import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.builder.library.scanner.CompositeLibraryScanner;
-import org.seasar.maya.impl.builder.library.scanner.MLDLibraryScanner;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.SourceScanner;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -40,56 +37,18 @@ public class LibraryManagerImpl implements LibraryManager {
 	private List _scanners;
 	private List _builders;
     private List _libraries;
-    private boolean _scaned;
     
     public LibraryManagerImpl() {
     	_scanners = new ArrayList();
     	_builders = new ArrayList();
-        _libraries = new ArrayList();
-//++        
-        prepareLibraryScanner();
-//--
     }
     
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 
-//++    
-	private CompositeLibraryScanner _libraryScanner;
-    
-    protected void prepareLibraryScanner() {
-        _libraryScanner = new CompositeLibraryScanner();
-        _libraryScanner.add(new MLDLibraryScanner());
-    }
- 	
-    public void addLibraryScanner(LibraryScanner scanner) {
-        if(scanner == null) {
-            throw new IllegalArgumentException();
-        }
-        _libraryScanner.add(scanner);
-    }
-    
-    public LibraryScanner getLibraryScanner() {
-        return _libraryScanner;
-    }
-
-    public void addLibraryDefinition(LibraryDefinition library) {
-        if(library == null) {
-            throw new IllegalArgumentException();
-        }
-        _libraries.add(library);
-    }
-    
-    private void scanLibrary() {
-        if(_scaned == false) {
-            _scaned = true;
-            _libraryScanner.scanLibrary(this);
-        }
-    }
-//--
-
     protected void buildAll() {
+        _libraries = new ArrayList();
     	for(int i = 0; i < _scanners.size(); i++) {
 	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
 	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
@@ -125,7 +84,9 @@ public class LibraryManagerImpl implements LibraryManager {
     }
     
     public Iterator iterateLibraryDefinition() {
-        scanLibrary();
+        if(_libraries == null) {
+            buildAll();
+        }
         return _libraries.iterator();
     }
     

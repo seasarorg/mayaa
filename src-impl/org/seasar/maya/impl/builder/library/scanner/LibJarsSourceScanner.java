@@ -13,27 +13,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.source.factory;
+package org.seasar.maya.impl.builder.library.scanner;
 
-import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.SourceScanner;
+import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 
 /**
- * スキャナ毎のファクトリエントリ。  
+ * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ScannerEntry extends Parameterizable {
-    
-    /**
-     * プロトコル名の取得。
-     * @return プロトコル名。
-     */
-    String getProtocol();
-    
-    /**
-     * ソーススキャナの生成。
-     * @param systemID スキャナのSystemID。
-     * @return ソーススキャナ。
-     */
-    SourceScanner createSourceScanner(String systemID);
+public class LibJarsSourceScanner extends InternalMetaInfSourceScanner {
+
+    public LibJarsSourceScanner() {
+        super(new InternalApplicationSourceScanner(
+                new ApplicationSourceDescriptor("/WEB-INF", "/lib")));
+    }
     
 }

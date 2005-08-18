@@ -87,7 +87,7 @@
 	<target name="mayajar" depends="cleanjar, javabuild">
 		<jar jarfile="${folder.lib}/${maya.jar.core}">
 			<fileset dir="${folder.classes}">
-				<!--include name="META-INF/**/*"/-->
+				<include name="META-INF/**/*"/>
 				<include name="org/seasar/maya/**/*"/>
 				<exclude name="org/seasar/maya/standard"/>
 				<exclude name="org/seasar/maya/standard/**/*"/>
@@ -98,8 +98,6 @@
 				<attribute name="Title" value="Maya API and Impl"/>
 				<attribute name="Version" value="${maya.ver}"/>
 			</manifest>
-			<metainf dir="${folder.mld}" includes="maya.mld"/>
-			<metainf dir="${folder.webinf}" includes="maya.conf"/>
 		</jar>
 	</target>
 

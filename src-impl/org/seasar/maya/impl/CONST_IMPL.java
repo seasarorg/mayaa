@@ -37,16 +37,6 @@ public interface CONST_IMPL {
     String PUBLIC_MLD10 = "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
     String PUBLIC_CONF10 = "-//The Seasar Foundation//DTD Maya Config 1.0//EN";
     
-    String PROTOCOL_JAVA = "java";
-    String PROTOCOL_PAGE = "page";
-    String PROTOCOL_META_INF = "meta-inf";
-    String PROTOCOL_CONTEXT = "context";
-    String PROTOCOL_WEB_INF = "web-inf";
-    
-    String PREFIX_PAGE = PROTOCOL_PAGE + ":";
-    String PREFIX_CONTEXT = PROTOCOL_CONTEXT + ":";
-    String PREFIX_WEB_INF = PROTOCOL_WEB_INF + ":";
-    
     QName QH_HTML = new QName(URI_HTML, "html");
     QName QH_META = new QName(URI_HTML, "meta");
     QName QH_ID = new QName(URI_HTML, ATTR_ID);

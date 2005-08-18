@@ -36,7 +36,6 @@ import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.source.factory.SourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -46,7 +45,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     private ServletContext _servletContext;
     private Application _application;
     private Engine _engine;
-    private SourceFactory _sourceFactory;
     private ScriptCompiler _scriptCompiler;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
@@ -73,28 +71,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         return _application;
     }
     
-    public boolean hasSourceFactory() {
-        return _sourceFactory != null;
-    }
-    
-    public void setSourceFactory(SourceFactory sourceFactory) {
-        if(sourceFactory == null) {
-            throw new IllegalArgumentException();
-        }
-        _sourceFactory = sourceFactory;
-    }
-    
-    public SourceFactory getSourceFactory() {
-        if(_sourceFactory == null) {
-            throw new IllegalStateException();
-        }
-    	return _sourceFactory;
-    }
-    
-    public boolean hasEngine() {
-        return _engine != null;
-    }
-    
     public void setEngine(Engine engine) {
         if(engine == null) {
             throw new IllegalArgumentException();
@@ -107,10 +83,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     	    throw new IllegalStateException();
     	}
         return _engine;
-    }
-    
-    public boolean hasScriptCompiler() {
-        return _scriptCompiler != null;
     }
     
     public void setScriptCompiler(ScriptCompiler scriptCompiler) {
@@ -127,10 +99,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
         return _scriptCompiler;
     }
     
-    public boolean hasSpecificationBuilder() {
-        return _specificationBuilder != null;
-    }
-    
     public void setSpecificationBuilder(SpecificationBuilder specificationBuilder) {
         if(specificationBuilder == null) {
             throw new IllegalArgumentException();
@@ -143,10 +111,6 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
             throw new IllegalStateException();
     	}
         return _specificationBuilder;
-    }
-    
-    public boolean hasTemplateBuilder() {
-        return _templateBuilder != null;
     }
     
     public void setTemplateBuilder(TemplateBuilder templateBuilder) {

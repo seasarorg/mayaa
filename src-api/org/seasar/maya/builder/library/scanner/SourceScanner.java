@@ -13,30 +13,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.source.factory;
+package org.seasar.maya.builder.library.scanner;
+
+import java.util.Iterator;
 
 import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.SourceScanner;
 
 /**
- * SourceDescriptorのファクトリクラス。
+ * ライブラリ定義ソースの検索スキャナ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceFactory extends Parameterizable {
+public interface SourceScanner extends Parameterizable {
 
-	/**
-	 * テンプレートや設定XMLのソースディスクリプタの取得。
-	 * @param path ソースパス。プロトコル＋SystemID。
-	 * @return 指定パスのソースディスクリプタ。常にインスタンスを新たに生成する。
-	 */
-	SourceDescriptor createSourceDescriptor(String path);
-    
     /**
-     * ソーススキャナの取得。
-     * @param path ソースパス。プロトコル＋SystemID。
-     * @return 指定パスのソーススキャナ。常にインスタンスを新たに生成する。
+     * ライブラリ定義ソースをイテレートする。
+     * @return ソース（SourceDescriptor）のイテレータ。
      */
-    SourceScanner createSouceScanner(String path);
-	
+    Iterator scan();
+    
 }

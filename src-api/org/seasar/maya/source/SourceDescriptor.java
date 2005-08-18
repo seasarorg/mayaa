@@ -18,19 +18,12 @@ package org.seasar.maya.source;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 
 /**
  * テンプレートファイルや設定XMLファイルのディスクリプタ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SourceDescriptor extends Serializable {
-    
-    /**
-     * ソースパス中のプロトコル名。
-     * @return プロトコル名。
-     */
-    String getProtocol();
     
     /**
      * ソースパス中のSystemID。
@@ -55,22 +48,5 @@ public interface SourceDescriptor extends Serializable {
      * @return ファイルの最終更新日付。ファイルが無い場合は「new Date(0)」を返す。
      */
     Date getTimestamp();
-
-    /**
-     * 子ノードのファイル群をすべてイテレートする。
-     * @return SourceDescriptorのイテレータ。子ノードが無かったり、
-     * 自身がファイルだと非nullゼロ長のイテレータを返す。
-     * @deprecated
-     */
-    Iterator iterateChildren();
-
-    /**
-     * 指定拡張子の子ノードファイル群をすべてイテレートする。
-     * @param extension イテレートする子ノードの指定拡張子。
-     * @return SourceDescriptorのイテレータ。子ノードが無かったり、
-     * 自身がファイルだと非nullゼロ長のイテレータを返す。
-     * @deprecated
-     */
-    Iterator iterateChildren(String extension);
 
 }

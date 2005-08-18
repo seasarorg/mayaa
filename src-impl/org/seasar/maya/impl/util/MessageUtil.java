@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.seasar.maya.impl.source.JavaSourceDescriptor;
+import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -37,7 +37,8 @@ public class MessageUtil {
         Package key = clazz.getPackage();
         Properties properties =  (Properties)_propFiles.get(key);
         if(properties == null) {
-            SourceDescriptor source = new JavaSourceDescriptor("message.properties", clazz);
+            SourceDescriptor source = new ClassLoaderSourceDescriptor(
+                    null, "message.properties", clazz);
             properties = new Properties();
             _propFiles.put(key, properties);
             if(source.exists()) {

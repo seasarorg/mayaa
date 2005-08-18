@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.source.DelaySourceDescriptor;
+import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
@@ -40,8 +40,7 @@ public class SpecificationTagHandler extends TagHandler
     protected void start(Attributes attributes) {
         String path = XmlUtil.getStringValue(attributes, "path", null);
         if(StringUtil.hasValue(path)) {
-            path = PREFIX_PAGE + path;
-            _parent.getEngine().setSource(new DelaySourceDescriptor(path));
+            _parent.getEngine().setSource(new PageSourceDescriptor(path));
         }
     }
     

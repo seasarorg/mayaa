@@ -13,32 +13,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.source;
+package org.seasar.maya.impl.jsp.builder.library.scanner;
 
-import java.util.Iterator;
+import org.seasar.maya.impl.builder.library.scanner.InternalApplicationSourceScanner;
+import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 
 /**
- * ライブラリ定義ソースの検索スキャナ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceScanner {
+public class TldFolderSourceScanner extends InternalApplicationSourceScanner {
 
-    /**
-     * スキャナルートのプロトコル名。
-     * @return プロトコル名。
-     */
-    String getProtocol();
-    
-    /**
-     * スキャナルートのSystemID。
-     * @return SystemID。
-     */
-    String getSystemID();
-
-    /**
-     * ライブラリ定義ソースをイテレートする。
-     * @return ソース（SourceDescriptor）のイテレータ。
-     */
-    Iterator scan();
+    public TldFolderSourceScanner() {
+        super(new ApplicationSourceDescriptor("/WEB-INF", "tld"));
+    }
     
 }

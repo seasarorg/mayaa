@@ -17,9 +17,7 @@ package org.seasar.maya.impl.source;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Iterator;
 
-import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -37,10 +35,6 @@ public class NullSourceDescriptor implements SourceDescriptor {
         return null;
     }
     
-    public String getProtocol() {
-        return "null";
-    }
-    
     public String getSystemID() {
         return "/";
     }
@@ -49,15 +43,4 @@ public class NullSourceDescriptor implements SourceDescriptor {
         return new Date(0);
     }
 
-    public Iterator iterateChildren() {
-        return NullIterator.getInstance();
-    }
-    
-    public Iterator iterateChildren(String extension) {
-        return NullIterator.getInstance();
-    }
-
-    public String toString() {
-        return getSystemID();
-    }
 }

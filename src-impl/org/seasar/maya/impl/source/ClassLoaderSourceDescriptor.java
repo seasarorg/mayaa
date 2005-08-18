@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.source.SourceDescriptor;
@@ -27,49 +26,38 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
+public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     
 	private static final long serialVersionUID = -4924522601395047024L;
 
-	private Class _neighbor;
-    private String _className;
+    private String _root;
+    private Class _neighbor;
+    private String _systemID;
     private InputStream _inputStream;
 
-    public JavaSourceDescriptor(String systemID, Class neighbor) {
-        if(StringUtil.isEmpty(systemID)) {
-            throw new IllegalArgumentException();
-        }
+    public ClassLoaderSourceDescriptor(String root, String systemID, Class neighbor) {
+        _root = StringUtil.preparePath(root);
+        _systemID = StringUtil.preparePath(systemID);
         _neighbor = neighbor;
-        if(systemID.startsWith("/")) {
-            systemID = systemID.substring(1);
-        }
-        _className = systemID;
-    }
-    
-    public JavaSourceDescriptor(String systemID) {
-        this(systemID, null);
     }
 
-    protected void prepareLoadedSource() {
-        if(_neighbor != null) {
-            _inputStream = _neighbor.getResourceAsStream(_className);
-        }
-        if (_inputStream == null) {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            _inputStream = loader.getResourceAsStream(_className);
-        }
-    }
-
-    public String getProtocol() {
-        return PROTOCOL_JAVA;
+    protected String getRoot() {
+        return _root;
     }
 
     public String getSystemID() {
-        return "/" + _className;
+        return _systemID;
     }
     
     public boolean exists() {
-        prepareLoadedSource();
+        String path = (_root + _systemID).substring(1);
+        if(_neighbor != null) {
+            _inputStream = _neighbor.getResourceAsStream(path);
+        }
+        if (_inputStream == null) {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            _inputStream = loader.getResourceAsStream(path);
+        }
         return _inputStream != null;
     }
 
@@ -83,20 +71,9 @@ public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
     public Date getTimestamp() {
         return new Date(0);
     }
-
-    public Iterator iterateChildren() {
-        return NullIterator.getInstance();
-    }
     
     public Iterator iterateChildren(String extension) {
         return NullIterator.getInstance();
-    }
-
-    public String toString() {
-        if(exists()) {
-            return getSystemID();
-        }
-        return super.toString();
     }
     
 }

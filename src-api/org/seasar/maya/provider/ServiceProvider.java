@@ -24,7 +24,6 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.source.factory.SourceFactory;
 
 /**
  * アプリケーションスコープでのサービス提供オブジェクト。
@@ -38,12 +37,6 @@ public interface ServiceProvider {
      */
     Application getApplication();
     
-	/**
-	 * ソースディスクリプタのファクトリ取得。
-	 * @return ソースディスクリプタのファクトリオブジェクト。
-	 */
-	SourceFactory getSourceFactory(); 
-
     /**
      * エンジンの生成を行う。
      * @return	エンジン

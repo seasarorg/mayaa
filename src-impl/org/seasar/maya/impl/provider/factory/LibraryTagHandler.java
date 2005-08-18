@@ -32,7 +32,8 @@ public class LibraryTagHandler extends AbstractParameterizableTagHandler {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("builder", new LibraryScannerTagHandler(this));
+        putHandler("source", new LibrarySourceTagHandler(this));
+        putHandler("builder", new LibraryBuilderTagHandler(this));
     }
     
     public void start(Attributes attributes) {

@@ -17,30 +17,15 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
-import org.seasar.maya.builder.library.scanner.LibraryScanner;
+import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.SourceScanner;
 
 /**
  * MLDモデルオブジェクトのルート。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface LibraryManager extends Parameterizable {
-    
-    /**
-     * ルートのライブラリスキャナの取得。
-     * @return ライブラリスキャナ。
-     * @deprecated
-     */
-    LibraryScanner getLibraryScanner();
-    
-    /**
-     * ライブラリの追加を行う。
-     * @param library ライブラリ。
-     * @deprecated
-     */
-    void addLibraryDefinition(LibraryDefinition library);    
 
     /**
      * ライブラリ定義ソーススキャナの追加。

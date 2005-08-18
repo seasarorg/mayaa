@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.builder.library.scanner.LibraryScanner;
+import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -23,12 +23,12 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryScannerTagHandler extends AbstractParameterizableTagHandler {
+public class LibrarySourceTagHandler extends AbstractParameterizableTagHandler {
     
     private LibraryTagHandler _parent;
-    private LibraryScanner _libraryScanner;
+    private SourceScanner _scanner;
     
-    public LibraryScannerTagHandler(LibraryTagHandler parent) {
+    public LibrarySourceTagHandler(LibraryTagHandler parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
@@ -36,20 +36,20 @@ public class LibraryScannerTagHandler extends AbstractParameterizableTagHandler 
     }
 
     public void start(Attributes attributes) {
-        _libraryScanner = (LibraryScanner)XmlUtil.getObjectValue(
-                attributes, "class", null, LibraryScanner.class);
-        _parent.getLibraryManager().addLibraryScanner(_libraryScanner);
+        _scanner = (SourceScanner)XmlUtil.getObjectValue(
+                attributes, "class", null, SourceScanner.class);
+        _parent.getLibraryManager().addSourceScanner(_scanner);
     }
     
     public void end(String body) {
-        _libraryScanner = null;
+        _scanner = null;
     }
     
     public Parameterizable getParameterizable() {
-        if(_libraryScanner == null) {
+        if(_scanner == null) {
             throw new IllegalStateException();
         }
-        return _libraryScanner;
+        return _scanner;
     }
 
 }

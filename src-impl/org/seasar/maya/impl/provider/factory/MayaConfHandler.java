@@ -18,7 +18,7 @@ package org.seasar.maya.impl.provider.factory;
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.source.JavaSourceDescriptor;
+import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.SourceDescriptor;
@@ -47,8 +47,8 @@ public class MayaConfHandler extends DefaultHandler implements CONST_IMPL {
     
 	public InputSource resolveEntity(String publicId, String systemId) {
         if(PUBLIC_CONF10.equals(publicId)) {
-            SourceDescriptor source = new JavaSourceDescriptor(
-                    "maya-conf_1_0.dtd", MayaConfHandler.class);
+            SourceDescriptor source = new ClassLoaderSourceDescriptor(
+                    null, "maya-conf_1_0.dtd", MayaConfHandler.class);
             if(source.exists()) {
                 return new InputSource(source.getInputStream());
             }

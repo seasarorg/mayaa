@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.jsp.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.source.JavaSourceDescriptor;
+import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -96,8 +96,8 @@ public class TLDHandler extends DefaultHandler {
         } else {
             return null;
         }
-        JavaSourceDescriptor source = 
-            new JavaSourceDescriptor(path, TLDHandler.class);
+        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor(
+                null, path, TLDHandler.class);
         if(source.exists()) {
             InputSource ret = new InputSource(source.getInputStream());
             ret.setPublicId(publicId);

@@ -3,16 +3,11 @@
 <!NOTATION maya.conf_1_0 PUBLIC
         "-//The Seasar Foundation//DTD Maya Config 1.0//EN">
 
-<!ELEMENT service (description?, source?, engine?, script?, specificationBuilder?, templateBuilder?) >
+<!ELEMENT service (description?, engine?, script?, specificationBuilder?, templateBuilder?) >
 
 <!ELEMENT description (#PCDATA)>
 
-<!ELEMENT source (description?, entry*, parameter*)>
-
-<!ELEMENT entry (description?, parameter*)>
-<!ATTLIST entry class CDATA #REQUIRED>
-
-<!ELEMENT engine (description?, pageContext?, specification?, errorHandler?, parameter*)>
+<!ELEMENT engine (description?, specification?, errorHandler?, parameter*)>
 <!ATTLIST engine checkTimestamp (true | false) "true">
 <!ATTLIST engine outputWhitespace (true | false) "true">
 <!ATTLIST engine suffixSeparator CDATA #IMPLIED>
@@ -35,7 +30,10 @@
 
 <!ELEMENT templateBuilder (description?, resolver*, library?, parameter*)>
 
-<!ELEMENT library (description?, entry*, builder*, parameter*)>
+<!ELEMENT library (description?, source*, builder*, parameter*)>
+
+<!ELEMENT source (description?, parameter*)>
+<!ATTLIST source class CDATA #REQUIRED>
 
 <!ELEMENT builder (description?, parameter*)>
 <!ATTLIST builder class CDATA #REQUIRED>

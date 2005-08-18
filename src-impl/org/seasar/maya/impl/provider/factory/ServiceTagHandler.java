@@ -35,7 +35,6 @@ public class ServiceTagHandler extends TagHandler {
         }
         _context = context;
         putHandler("engine", new EngineTagHandler(this));
-        putHandler("source", new SourceTagHandler(this));
         putHandler("script", new ScriptTagHandler(this));
         putHandler("specificationBuilder", new SpecificationBuilderTagHandler(this));
         putHandler("templateBuilder", new TemplateBuilderTagHandler(this));
@@ -43,32 +42,6 @@ public class ServiceTagHandler extends TagHandler {
 
     protected void start(Attributes attributes) {
         _provider = new SimpleServiceProvider(_context);
-    }
-    
-    protected void end(String body) {
-        if(_provider == null) {
-            throw new IllegalStateException();
-        }
-        if(_provider.hasEngine() == false) {
-            TagHandler handler = startElement("engine", NULL_ATTR);
-            handler.endElement();
-        }
-        if(_provider.hasSourceFactory() == false) {
-            TagHandler handler = startElement("source", NULL_ATTR);
-            handler.endElement();
-        }
-        if(_provider.hasScriptCompiler() == false) {
-            TagHandler handler = startElement("expression", NULL_ATTR);
-            handler.endElement();
-        }
-        if(_provider.hasSpecificationBuilder() == false) {
-            TagHandler handler = startElement("specificationBuilder", NULL_ATTR);
-            handler.endElement();
-        }
-        if(_provider.hasTemplateBuilder() == false) {
-            TagHandler handler = startElement("templateBuilder", NULL_ATTR);
-            handler.endElement();
-        }
     }
     
     public SimpleServiceProvider getServiceProvider() {

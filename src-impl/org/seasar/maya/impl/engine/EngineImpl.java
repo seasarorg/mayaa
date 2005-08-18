@@ -20,19 +20,16 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.EngineSetting;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceFactory;
 
 /**
  * Engineの実装クラス。ファクトリを通じて生成される。
@@ -71,7 +68,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 
     public ErrorHandler getErrorHandler() {
 	    if(_errorHandler == null) {
-	        _errorHandler = new SimpleErrorHandler();
+	        throw new IllegalStateException();
 	    }
         return _errorHandler;
     }
@@ -95,10 +92,8 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         String key = SpecificationUtil.createPageKey(pageName, extension);
         Page page = SpecificationUtil.getPage(this, key);
         if(page == null) {
-            String path = PREFIX_PAGE + pageName + ".maya";
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SourceFactory factory = provider.getSourceFactory();
-            SourceDescriptor source = factory.createSourceDescriptor(path);
+            String path = pageName + ".maya";
+            SourceDescriptor source = new PageSourceDescriptor(path);
             page = new PageImpl(this, pageName, extension);
             page.setSource(source);
             addChildSpecification(page);

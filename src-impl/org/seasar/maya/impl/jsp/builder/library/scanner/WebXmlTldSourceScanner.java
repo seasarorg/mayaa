@@ -13,27 +13,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.source.factory;
-
-import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.SourceDescriptor;
+package org.seasar.maya.impl.jsp.builder.library.scanner;
 
 /**
- * プロトコル毎のファクトリエントリ。  
+ * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface DescriptorEntry extends Parameterizable {
-    
-    /**
-     * プロトコル名の取得。
-     * @return プロトコル名。
-     */
-    String getProtocol();
-    
-    /**
-     * ソースディスクリプタの生成。
-     * @param systemID ソースのSystemID。
-     * @return ソースディスクリプタ。
-     */
-    SourceDescriptor createSourceDescriptor(String systemID);
+public class WebXmlTldSourceScanner {
+
+    // TODO 実装
     
 }

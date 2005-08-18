@@ -114,8 +114,6 @@
 				<attribute name="Title" value="Maya Standard"/>
 				<attribute name="Version" value="${maya.ver}"/>
 			</manifest>
-			<metainf dir="${folder.mld}" includes="jstl-core.mld"/>
-			<metainf dir="${folder.mld}" includes="jstl-fmt.mld"/>
 		</jar>
 	</target>
 

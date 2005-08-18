@@ -19,6 +19,7 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.SimpleServiceProvider;
+import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -36,8 +37,11 @@ public class SimpleProviderFactory extends ProviderFactory
 	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
-    	SourceDescriptor source = new ClassLoaderSourceDescriptor(
-                "/META-INF", "/maya.conf", null); 
+    	SourceDescriptor source = 
+            new ApplicationSourceDescriptor("/META-INF", "/maya.conf");
+        if(source.exists() == false) {
+            source = new ClassLoaderSourceDescriptor("/META-INF", "/maya.conf", null);
+        }
     	if(source.exists()) {
 	    	MayaConfHandler handler = new MayaConfHandler(servletContext);
 	        XmlUtil.parse(handler, source.getInputStream(), 

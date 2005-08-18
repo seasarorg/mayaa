@@ -20,12 +20,12 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.ServletSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.factory.DescriptorEntry;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ContextSourceEntry implements SourceEntry, CONST_IMPL {
+public class ContextSourceEntry implements DescriptorEntry, CONST_IMPL {
 
     private Application _application;
     

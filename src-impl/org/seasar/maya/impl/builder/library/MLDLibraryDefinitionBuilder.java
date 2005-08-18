@@ -37,7 +37,7 @@ public class MLDLibraryDefinitionBuilder implements DefinitionBuilder, CONST_IMP
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && source.getPath().toLowerCase().endsWith(".mld")) {
+        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".mld")) {
             MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();

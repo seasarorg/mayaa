@@ -17,7 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.factory.DescriptorEntry;
 import org.xml.sax.Attributes;
 
 /**
@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
 public class SourceEntryTagHandler extends AbstractParameterizableTagHandler {
     
     private SourceTagHandler _parent;
-    private SourceEntry _sourceEntry;
+    private DescriptorEntry _sourceEntry;
     
     public SourceEntryTagHandler(SourceTagHandler parent) {
         if(parent == null) {
@@ -36,9 +36,9 @@ public class SourceEntryTagHandler extends AbstractParameterizableTagHandler {
     }
 
     protected void start(Attributes attributes) {
-        _sourceEntry = (SourceEntry)XmlUtil.getObjectValue(
-                attributes, "class", null, SourceEntry.class);
-        _parent.getSourceFactory().putSourceEntry(_sourceEntry);
+        _sourceEntry = (DescriptorEntry)XmlUtil.getObjectValue(
+                attributes, "class", null, DescriptorEntry.class);
+        _parent.getSourceFactory().putDescriptorEntry(_sourceEntry);
     }
 
     protected void end(String body) {

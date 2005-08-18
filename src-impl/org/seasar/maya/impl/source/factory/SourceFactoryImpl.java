@@ -20,7 +20,9 @@ import java.util.Map;
 
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.SourceScanner;
+import org.seasar.maya.source.factory.DescriptorEntry;
+import org.seasar.maya.source.factory.ScannerEntry;
 import org.seasar.maya.source.factory.SourceFactory;
 
 /**
@@ -30,35 +32,27 @@ import org.seasar.maya.source.factory.SourceFactory;
 public class SourceFactoryImpl
 		implements SourceFactory, CONST_IMPL {
 	
-	private Map _sourceEntries;
+	private Map _descriptorEntries;
+    private Map _scannerEntries;
 
 	public SourceFactoryImpl() {
+        _descriptorEntries = new HashMap();
+        _scannerEntries = new HashMap();
 	    prepareSourceFactory();
 	}
-    
-    protected void prepareSourceFactory() {
-        _sourceEntries = new HashMap();
-        _sourceEntries.put(PROTOCOL_PAGE, new PageSourceEntry());
-        _sourceEntries.put(PROTOCOL_WEB_INF, new WebInfSourceEntry());
-        _sourceEntries.put(PROTOCOL_CONTEXT, new ContextSourceEntry());
-        _sourceEntries.put(PROTOCOL_JAVA, new JavaSourceEntry());
-        _sourceEntries.put(PROTOCOL_META_INF, new MetaInfSourceEntry());
-    }
 
+//TODO maya.conf Ç…ãLèq ++    
+    protected void prepareSourceFactory() {
+        _descriptorEntries.put(PROTOCOL_PAGE, new PageSourceEntry());
+        _descriptorEntries.put(PROTOCOL_WEB_INF, new WebInfSourceEntry());
+        _descriptorEntries.put(PROTOCOL_CONTEXT, new ContextSourceEntry());
+        _descriptorEntries.put(PROTOCOL_JAVA, new JavaSourceEntry());
+        _descriptorEntries.put(PROTOCOL_META_INF, new MetaInfSourceEntry());
+    }
+//--
+    
     public void putParameter(String name, String value) {
         throw new UnsupportedOperationException();
-    }
-
-    public SourceEntry[] getSourceEntries() {
-        return (SourceEntry[])_sourceEntries.values().toArray(
-                new SourceEntry[_sourceEntries.size()]);
-    }
-    
-    public void putSourceEntry(SourceEntry entry) {
-        if(entry == null) {
-            throw new IllegalArgumentException();
-        }
-        _sourceEntries.put(entry.getProtocol(), entry);
     }
     
     protected String[] parseSourcePath(String path) {
@@ -73,16 +67,41 @@ public class SourceFactoryImpl
         }
         throw new IllegalStateException();
     }
+
+    public void putDescriptorEntry(DescriptorEntry entry) {
+        if(entry == null) {
+            throw new IllegalArgumentException();
+        }
+        _descriptorEntries.put(entry.getProtocol(), entry);
+    }
     
     public SourceDescriptor createSourceDescriptor(String path) {
     	String[] parsed = parseSourcePath(path);
     	String protocol = parsed[0];
     	String systemID = parsed[1];
-    	SourceEntry entry = (SourceEntry)_sourceEntries.get(protocol);
+        DescriptorEntry entry = (DescriptorEntry)_descriptorEntries.get(protocol);
     	if(entry == null) {
     	    throw new IllegalStateException();
     	}
         return entry.createSourceDescriptor(systemID);
     }
-   
+
+    public void putScannerEntry(ScannerEntry entry) {
+        if(entry == null) {
+            throw new IllegalArgumentException();
+        }
+        _scannerEntries.put(entry.getProtocol(), entry);
+    }
+
+    public SourceScanner createSouceScanner(String path) {
+        String[] parsed = parseSourcePath(path);
+        String protocol = parsed[0];
+        String systemID = parsed[1];
+        ScannerEntry entry = (ScannerEntry)_scannerEntries.get(protocol);
+        if(entry == null) {
+            throw new IllegalStateException();
+        }
+        return entry.createSourceScanner(systemID);
+    }
+    
 }

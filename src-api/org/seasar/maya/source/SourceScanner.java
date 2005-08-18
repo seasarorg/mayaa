@@ -24,6 +24,18 @@ import java.util.Iterator;
 public interface SourceScanner {
 
     /**
+     * スキャナルートのプロトコル名。
+     * @return プロトコル名。
+     */
+    String getProtocol();
+    
+    /**
+     * スキャナルートのSystemID。
+     * @return SystemID。
+     */
+    String getSystemID();
+
+    /**
      * ライブラリ定義ソースをイテレートする。
      * @return ソース（SourceDescriptor）のイテレータ。
      */

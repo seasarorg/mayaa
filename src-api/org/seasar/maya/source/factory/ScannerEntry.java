@@ -16,12 +16,12 @@
 package org.seasar.maya.source.factory;
 
 import org.seasar.maya.provider.Parameterizable;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.maya.source.SourceScanner;
 
 /**
- * プロトコル毎のファクトリエントリ。  
+ * スキャナ毎のファクトリエントリ。  
  */
-public interface SourceEntry extends Parameterizable {
+public interface ScannerEntry extends Parameterizable {
     
     /**
      * プロトコル名の取得。
@@ -30,10 +30,10 @@ public interface SourceEntry extends Parameterizable {
     String getProtocol();
     
     /**
-     * ソースディスクリプタの生成。
-     * @param systemID ソースのSystemID。
-     * @return ソースディスクリプタ。
+     * ソーススキャナの生成。
+     * @param systemID スキャナのSystemID。
+     * @return ソーススキャナ。
      */
-    SourceDescriptor createSourceDescriptor(String systemID);
+    SourceScanner createSourceScanner(String systemID);
     
 }

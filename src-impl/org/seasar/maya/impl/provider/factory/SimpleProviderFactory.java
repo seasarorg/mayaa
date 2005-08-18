@@ -25,7 +25,7 @@ import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.factory.DescriptorEntry;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -40,12 +40,12 @@ public class SimpleProviderFactory extends ProviderFactory
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
         WebApplication startupApplication = new WebApplication();
         startupApplication.setServletContext(servletContext);
-        SourceEntry entry = new WebInfSourceEntry(startupApplication);
+        DescriptorEntry entry = new WebInfSourceEntry(startupApplication);
     	SourceDescriptor source = entry.createSourceDescriptor("/maya.conf"); 
     	if(source.exists()) {
 	    	MayaConfHandler handler = new MayaConfHandler(servletContext);
 	        XmlUtil.parse(handler, source.getInputStream(), 
-	                PUBLIC_CONF10, source.getPath(), true, true, false);
+	                PUBLIC_CONF10, source.getSystemID(), true, true, false);
             return handler.getResult();
     	}
     	return new SimpleServiceProvider(servletContext);

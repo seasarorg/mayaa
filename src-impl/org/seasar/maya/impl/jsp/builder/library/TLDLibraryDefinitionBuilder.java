@@ -36,7 +36,7 @@ public class TLDLibraryDefinitionBuilder implements DefinitionBuilder {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && source.getPath().toLowerCase().endsWith(".tld")) {
+        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();
             TLDHandler handler = new TLDHandler(systemID);

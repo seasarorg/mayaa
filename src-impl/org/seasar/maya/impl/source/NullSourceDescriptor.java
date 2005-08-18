@@ -36,10 +36,6 @@ public class NullSourceDescriptor implements SourceDescriptor {
     public InputStream getInputStream() {
         return null;
     }
-
-    public String getPath() {
-        return "null:/";
-    }
     
     public String getProtocol() {
         return "null";
@@ -62,6 +58,6 @@ public class NullSourceDescriptor implements SourceDescriptor {
     }
 
     public String toString() {
-        return "null:/";
+        return getSystemID();
     }
 }

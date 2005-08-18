@@ -18,12 +18,12 @@ package org.seasar.maya.impl.source.factory;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.JavaSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.factory.DescriptorEntry;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JavaSourceEntry implements SourceEntry, CONST_IMPL {
+public class JavaSourceEntry implements DescriptorEntry, CONST_IMPL {
 
     public String getProtocol() {
         return PROTOCOL_JAVA;

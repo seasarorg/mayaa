@@ -24,7 +24,15 @@ import org.seasar.maya.source.SourceScanner;
  */
 public class MetaInfSourceScanner implements SourceScanner {
 
-	public Iterator scan() {
+	public String getProtocol() {
+        return null;
+    }
+
+    public String getSystemID() {
+        return null;
+    }
+
+    public Iterator scan() {
 		return null;
 	}
 

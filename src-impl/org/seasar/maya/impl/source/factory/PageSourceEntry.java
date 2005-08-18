@@ -20,12 +20,12 @@ import org.seasar.maya.impl.source.CompositeSourceDescriptor;
 import org.seasar.maya.impl.source.JavaSourceDescriptor;
 import org.seasar.maya.impl.source.MetaInfSourceDescriptor;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceEntry;
+import org.seasar.maya.source.factory.DescriptorEntry;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceEntry implements SourceEntry, CONST_IMPL {
+public class PageSourceEntry implements DescriptorEntry, CONST_IMPL {
 
     private WebInfSourceEntry _webInfEntry = new WebInfSourceEntry();
     private ContextSourceEntry _contextEntry = new ContextSourceEntry();

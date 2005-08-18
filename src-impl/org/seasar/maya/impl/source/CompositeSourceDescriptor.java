@@ -54,10 +54,6 @@ public class CompositeSourceDescriptor implements SourceDescriptor {
         }
     }
 
-    public String getPath() {
-        return _protocol + ":" + _systemID;
-    }
-
     public String getProtocol() {
         return _protocol;
     }
@@ -109,7 +105,7 @@ public class CompositeSourceDescriptor implements SourceDescriptor {
 
     public String toString() {
         if(exists()) {
-            return getPath();
+            return getSystemID();
         }
         return super.toString();
     }

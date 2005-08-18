@@ -35,10 +35,10 @@
 
 <!ELEMENT templateBuilder (description?, resolver*, library?, parameter*)>
 
-<!ELEMENT library (description?, scanner*, parameter*)>
+<!ELEMENT library (description?, entry*, builder*, parameter*)>
 
-<!ELEMENT scanner (description?, parameter*)>
-<!ATTLIST scanner class CDATA #REQUIRED>
+<!ELEMENT builder (description?, parameter*)>
+<!ATTLIST builder class CDATA #REQUIRED>
 
 <!ELEMENT parameter (description?)>
 <!ATTLIST parameter name CDATA #REQUIRED>

@@ -17,26 +17,23 @@ package org.seasar.maya.source.factory;
 
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.SourceScanner;
 
 /**
- * SourceDescriptorのファクトリクラス。
- * @author Masataka Kurihara (Gluegent, Inc.)
+ * プロトコル毎のファクトリエントリ。  
  */
-public interface SourceFactory extends Parameterizable {
-
-	/**
-	 * テンプレートや設定XMLのソースディスクリプタの取得。
-	 * @param path ソースパス。プロトコル＋SystemID。
-	 * @return 指定パスのソースディスクリプタ。常にインスタンスを新たに生成する。
-	 */
-	SourceDescriptor createSourceDescriptor(String path);
+public interface DescriptorEntry extends Parameterizable {
     
     /**
-     * ソーススキャナの取得。
-     * @param path ソースパス。プロトコル＋SystemID。
-     * @return 指定パスのソーススキャナ。常にインスタンスを新たに生成する。
+     * プロトコル名の取得。
+     * @return プロトコル名。
      */
-    SourceScanner createSouceScanner(String path);
-	
+    String getProtocol();
+    
+    /**
+     * ソースディスクリプタの生成。
+     * @param systemID ソースのSystemID。
+     * @return ソースディスクリプタ。
+     */
+    SourceDescriptor createSourceDescriptor(String systemID);
+    
 }

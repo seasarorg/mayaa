@@ -27,12 +27,6 @@ import java.util.Iterator;
 public interface SourceDescriptor extends Serializable {
     
     /**
-     * ソースのパス。Protocol + SystemID。
-     * @return ソースパス。
-     */
-    String getPath();
-
-    /**
      * ソースパス中のプロトコル名。
      * @return プロトコル名。
      */

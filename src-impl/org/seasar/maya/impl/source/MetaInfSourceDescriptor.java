@@ -79,10 +79,6 @@ public class MetaInfSourceDescriptor
         }
         return null;
     }
-    
-    public String getPath() {
-        return PROTOCOL_META_INF + ":" + _systemID;
-    }
 
     public String getProtocol() {
         return PROTOCOL_META_INF;

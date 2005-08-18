@@ -56,10 +56,6 @@ public class DelaySourceDescriptor extends NullSourceDescriptor {
         }
         return super.getInputStream();
     }
-
-    public String getPath() {
-        return _path;
-    }
     
     public String getProtocol() {
         if(exists()) {

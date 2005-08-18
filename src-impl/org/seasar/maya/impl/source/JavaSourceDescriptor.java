@@ -60,10 +60,6 @@ public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
         }
     }
 
-    public String getPath() {
-        return  PROTOCOL_JAVA + ":/" + _className;
-    }
-
     public String getProtocol() {
         return PROTOCOL_JAVA;
     }
@@ -98,7 +94,7 @@ public class JavaSourceDescriptor implements SourceDescriptor, CONST_IMPL {
 
     public String toString() {
         if(exists()) {
-            return getPath();
+            return getSystemID();
         }
         return super.toString();
     }

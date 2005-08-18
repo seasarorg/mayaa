@@ -30,7 +30,15 @@ public class ServletSourceScanner implements SourceScanner {
     private String _protocol;
     private String _root;
 	
-	public Iterator scan() {
+	public String getProtocol() {
+        return null;
+    }
+
+    public String getSystemID() {
+        return null;
+    }
+
+    public Iterator scan() {
 		return null;
 	}
 

@@ -41,9 +41,17 @@ public class FolderSourceScanner implements SourceScanner {
         }
     }
 
+    public String getFolder() {
+        if(StringUtil.isEmpty(_folder)) {
+            // TODO 不正なパラメータの例外。
+            throw new IllegalStateException();
+        }
+        return _folder;
+    }
+    
     public Iterator scan() {
         if(_source == null) {
-            _source = new ApplicationSourceDescriptor(null, _folder);
+            _source = new ApplicationSourceDescriptor(null, getFolder());
         }
         if(_source.exists() && _source.getFile().isDirectory()) {
             return new FileToSourceIterator(FileUtil.iterateFiles(_source.getFile()));

@@ -16,8 +16,10 @@
 package org.seasar.maya.impl.builder.library.scanner;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -32,7 +34,9 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class JarsSourceScanner implements SourceScanner {
 
-    private FolderSourceScanner _folder = new FolderSourceScanner();
+    private static Map _cache = new HashMap();
+    
+    private FolderSourceScanner _folderSourceScanner = new FolderSourceScanner();
     private Set _ignores = new HashSet();
     
     public void setParameter(String name, String value) {
@@ -43,7 +47,7 @@ public class JarsSourceScanner implements SourceScanner {
             }
             _ignores.add(value);
         } else {
-            _folder.setParameter(name, value);
+            _folderSourceScanner.setParameter(name, value);
         }
     }
     
@@ -92,8 +96,7 @@ public class JarsSourceScanner implements SourceScanner {
         }
     }
     
-    // TODO キャッシュする。
-    protected Iterator scanAll(SourceScanner scanner) {
+    protected Set scanAll(SourceScanner scanner) {
         if(scanner == null) {
             throw new IllegalArgumentException();
         }
@@ -102,11 +105,17 @@ public class JarsSourceScanner implements SourceScanner {
             SourceDescriptor source = (SourceDescriptor)it.next();
             scanSource(source, aliases);
         }
-        return aliases.iterator();
+        return aliases;
     }
 
     public Iterator scan() {
-        return new MetaInfSourceIterator(scanAll(_folder));
+        String folder = _folderSourceScanner.getFolder();
+        Set aliases = (Set)_cache.get(folder);
+        if(aliases == null) {
+            aliases = scanAll(_folderSourceScanner);
+            _cache.put(folder, aliases);
+        }
+        return new MetaInfSourceIterator(aliases.iterator());
 	}
     
     private class MetaInfSourceIterator implements Iterator {

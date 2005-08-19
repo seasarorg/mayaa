@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.builder.library;
+package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,8 +28,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
-import org.seasar.maya.impl.jsp.engine.processor.JspCustomTagProcessor;
+import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

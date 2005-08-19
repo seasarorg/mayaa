@@ -13,22 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.implicit;
+package org.seasar.maya.impl.cycle.implicit;
 
-import javax.servlet.jsp.PageContext;
+import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageContextResolver implements ImplicitObjectResolver {
+public class SessionResolver implements ImplicitObjectResolver {
 
 	public Object resolve() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-		return cycle.getAttribute(PageContext.PAGECONTEXT);
+        Session session = cycle.getRequest().getSession();
+        Object obj = session.getUnderlyingObject();
+        if(obj instanceof HttpSession) {
+            return obj;
+        }
+        throw new IllegalStateException();
 	}
 
 }

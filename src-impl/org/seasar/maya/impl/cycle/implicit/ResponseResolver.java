@@ -13,28 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.script;
+package org.seasar.maya.impl.cycle.implicit;
 
-import javax.servlet.jsp.el.ELException;
-import javax.servlet.jsp.el.Expression;
-import javax.servlet.jsp.el.VariableResolver;
+import javax.servlet.http.HttpServletResponse;
 
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.util.ScriptUtil;
+import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleExpression extends Expression {
+public class ResponseResolver implements ImplicitObjectResolver {
 
-    private CompiledScript _script;
-    
-    public CycleExpression(CompiledScript script) {
-        _script = script;
-    }
-    
-    public Object evaluate(VariableResolver vResolver) throws ELException {
-        return ScriptUtil.execute(_script);
-    }
+	public Object resolve() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Response response = cycle.getResponse();
+        Object obj = response.getUnderlyingObject();
+        if(obj instanceof HttpServletResponse) {
+            return obj;
+        }
+        throw new IllegalStateException();
+	}
 
 }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.script;
+package org.seasar.maya.impl.cycle;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.VariableResolver;
@@ -26,9 +26,9 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleVariableResolver implements VariableResolver {
+public class VariableResolverImpl implements VariableResolver {
 
-    private static VariableResolver _instance = new CycleVariableResolver();
+    private static VariableResolver _instance = new VariableResolverImpl();
 
     public static VariableResolver getInstance() {
         return _instance;

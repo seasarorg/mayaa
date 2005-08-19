@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.builder.library.tld;
+package org.seasar.maya.impl.builder.library.tld;
 
-import org.seasar.maya.impl.jsp.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.jsp.builder.library.JspProcessorDefinition;
+import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
+import org.seasar.maya.impl.builder.library.JspProcessorDefinition;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 

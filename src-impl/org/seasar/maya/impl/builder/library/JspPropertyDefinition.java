@@ -13,14 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.builder.library;
+package org.seasar.maya.impl.builder.library;
 
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
+import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
-import org.seasar.maya.impl.jsp.engine.processor.JspCustomTagProcessor;
 import org.seasar.maya.impl.util.ScriptUtil;
 
 /**

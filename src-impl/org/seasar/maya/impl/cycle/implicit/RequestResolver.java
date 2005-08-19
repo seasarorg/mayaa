@@ -13,13 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle.implicit;
+package org.seasar.maya.impl.cycle.implicit;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**

@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.builder.library.tld;
+package org.seasar.maya.impl.builder.library.tld;
 
-import org.seasar.maya.impl.jsp.builder.library.TagVariableInfoImpl;
+import org.seasar.maya.impl.builder.library.TagVariableInfoImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;

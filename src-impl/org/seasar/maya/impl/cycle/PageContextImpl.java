@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle;
+package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -37,8 +37,6 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.impl.jsp.cycle.script.CycleExpressionEvaluator;
-import org.seasar.maya.impl.jsp.cycle.script.CycleVariableResolver;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.JspUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
@@ -47,7 +45,7 @@ import org.seasar.maya.impl.util.collection.NullEnumeration;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CyclePageContext extends PageContext {
+public class PageContextImpl extends PageContext {
 
     private static final int[] JSP_SCOPES = {
             PageContext.PAGE_SCOPE,
@@ -64,12 +62,6 @@ public class CyclePageContext extends PageContext {
 
     private ServletConfig _config;
 
-    public CyclePageContext() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.putAttributeScope(
-                JspImplicitScope.SCOPE_JSP_IMPLICIT, new JspImplicitScope());
-    }
-
     public void initialize(Servlet servlet, ServletRequest request,
             ServletResponse response, String errorPageURL,
             boolean needsSession, int bufferSize, boolean autoFlush) {
@@ -85,19 +77,19 @@ public class CyclePageContext extends PageContext {
     public JspWriter getOut() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-        return new CycleJspWriter(response.getWriter());
+        return new JspWriterImpl(response.getWriter());
     }
 
     public JspWriter popBody() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-    	return new CycleJspWriter(response.popWriter());
+    	return new JspWriterImpl(response.popWriter());
     }
 
     public BodyContent pushBody() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-        return new CycleBodyContent(response.pushWriter());
+        return new BodyContentImpl(response.pushWriter());
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
@@ -186,11 +178,11 @@ public class CyclePageContext extends PageContext {
 	}
 
 	public ExpressionEvaluator getExpressionEvaluator() {
-        return CycleExpressionEvaluator.getInstance();
+        return ExpressionEvaluatorImpl.getInstance();
 	}
 
 	public VariableResolver getVariableResolver() {
-        return CycleVariableResolver.getInstance();
+        return VariableResolverImpl.getInstance();
 	}
 
 	// Attributes ------------------------------------------------------------

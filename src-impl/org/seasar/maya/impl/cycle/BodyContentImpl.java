@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.cycle;
+package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,13 +27,13 @@ import org.seasar.maya.cycle.CycleWriter;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleBodyContent extends BodyContent {
+public class BodyContentImpl extends BodyContent {
     
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private CycleWriter _writer;
     
-    public CycleBodyContent(CycleWriter writer) {
+    public BodyContentImpl(CycleWriter writer) {
         super(null);
         if(writer == null) {
             throw new IllegalArgumentException();
@@ -46,7 +46,7 @@ public class CycleBodyContent extends BodyContent {
     }
 
     public JspWriter getEnclosingWriter() {
-        return new CycleJspWriter(_writer.getEnclosingWriter());
+        return new JspWriterImpl(_writer.getEnclosingWriter());
     }
 
     public int getBufferSize() {

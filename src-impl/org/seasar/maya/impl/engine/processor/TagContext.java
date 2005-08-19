@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.engine.processor;
+package org.seasar.maya.impl.engine.processor;
 
 import java.util.Collection;
 import java.util.HashMap;

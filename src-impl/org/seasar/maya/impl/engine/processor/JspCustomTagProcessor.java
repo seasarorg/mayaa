@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.jsp.engine.processor;
+package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +41,8 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.jsp.cycle.CycleBodyContent;
-import org.seasar.maya.impl.jsp.cycle.CyclePageContext;
+import org.seasar.maya.impl.cycle.BodyContentImpl;
+import org.seasar.maya.impl.cycle.PageContextImpl;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.JspUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -192,7 +192,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         PageContext pageContext = (PageContext)cycle.getAttribute(PageContext.PAGECONTEXT);
         if(pageContext == null) {
-            pageContext = new CyclePageContext();
+            pageContext = new PageContextImpl();
             cycle.setAttribute(PageContext.PAGECONTEXT, pageContext);
         }
         return pageContext;
@@ -262,7 +262,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
         Tag tag = getLoadedTag();
         if(tag instanceof BodyTag) {
-            ((BodyTag)tag).setBodyContent(new CycleBodyContent(body));
+            ((BodyTag)tag).setBodyContent(new BodyContentImpl(body));
         }
     }
 

@@ -13,14 +13,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.maya.impl.builder.library.mld;
 
 import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.mld.MLDHandler;
+import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
 import org.seasar.maya.impl.util.ObjectUtil;

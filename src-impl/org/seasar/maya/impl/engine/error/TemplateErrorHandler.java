@@ -26,17 +26,17 @@ import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * 例外クラス名に応じたテンプレートによって例外情報を表示する。
- * errorTemplateRoot値のフォルダ直下に置かれた、例外クラス名ページを利用する。たとえば、
- * /WEB-INF/error/java.lang.IllegalArgumentException.html など。
- * テンプレートページ中では、ページスコープのオブジェクト「THROWABLE」
- * で発生した例外を取得することができる。
+ * folderパラメータ値の示すフォルダ直下に置かれた、例外クラス名ページを利用する。
+ * たとえば、/WEB-INF/errorPage/java.lang.IllegalArgumentException.html など。
+ * テンプレートページ中では、ページスコープのオブジェクト「THROWABLE」で発生した
+ * 例外を取得することができる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateErrorHandler  implements ErrorHandler {
 
     public static final String THROWABLE = "THROWABLE";
     
-    private String _folder = "/error"; 
+    private String _folder = "/errorPage"; 
     
     private String getPageName(Class throwableClass) {
     	return _folder + "/" + throwableClass.getName();

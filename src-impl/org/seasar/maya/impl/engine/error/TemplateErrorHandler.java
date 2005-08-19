@@ -36,18 +36,18 @@ public class TemplateErrorHandler  implements ErrorHandler {
 
     public static final String THROWABLE = "THROWABLE";
     
-    private String _errorTemplateRoot = "/WEB-INF/error"; 
+    private String _folder = "/error"; 
     
     private String getPageName(Class throwableClass) {
-    	return _errorTemplateRoot + "/" + throwableClass.getName();
+    	return _folder + "/" + throwableClass.getName();
     }
     
     public void setParameter(String name, String value) {
-        if("errorTemplateRoot".equals(name)) {
+        if("folder".equals(name)) {
         	if(StringUtil.isEmpty(value)) {
         		throw new IllegalArgumentException();
         	}
-            _errorTemplateRoot = StringUtil.preparePath(value);
+            _folder = StringUtil.preparePath(value);
         }
     }
     
@@ -63,7 +63,8 @@ public class TemplateErrorHandler  implements ErrorHandler {
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
-                	Page page = engine.getPage(getPageName(throwableClass), "html");
+                    String pageName = getPageName(throwableClass);
+                	Page page = engine.getPage(pageName, "html");
                     page.doPageRender();
     	            break;
                 } catch(PageNotFoundException ignore) {

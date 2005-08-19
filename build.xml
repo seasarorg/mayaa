@@ -154,8 +154,6 @@
 			<fileset dir=".">
 				<include name="${folder.context}/resource/*"/>
 				<include name="${folder.webinf}/web.xml"/>
-				<include name="${folder.webinf}/default.maya"/>
-				<include name="${folder.webinf}/maya.conf"/>
 				<include name="${folder.webinf}/error/*"/>
 				<include name="${folder.webinf}/lib/*"/>
 				<exclude name="**/.svn"/>

@@ -48,23 +48,21 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         _lineno = lineno;
     }
     
-    private Scriptable getScope(Object root) {
+    private Scriptable getScope(Context cx, Object root) {
         Scriptable scope = (Scriptable)_scope.get();
         if(scope == null) {
-            Context cx = Context.getCurrentContext();
             if(_standardObjects == null) {
                 _standardObjects = cx.initStandardObjects(null, true);
             }
             scope = new ResolverScope(_resolver);
             scope.setPrototype(_standardObjects);
-            if(root != null) {
-                Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, scope, root, root.getClass());
-                rootScope.setPrototype(scope);
-                _scope.set(rootScope);
-                return rootScope;
-            }
             _scope.set(scope);
+        }
+        if(root != null) {
+            Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
+                    cx, scope, root, root.getClass());
+            rootScope.setPrototype(scope);
+            return rootScope;
         }
         return scope;
     }
@@ -77,7 +75,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
             if(_script == null) {
                 _script = cx.compileString(getText(), _sourceName, _lineno, null);
             }
-            Object value = _script.exec(cx, getScope(root));
+            Object value = _script.exec(cx, getScope(cx, root));
             ret = JavaAdapter.convertResult(value, expectedType);
         } finally {
             Context.exit();

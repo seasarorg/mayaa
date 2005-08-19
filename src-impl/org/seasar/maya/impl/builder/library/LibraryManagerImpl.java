@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
@@ -34,6 +36,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class LibraryManagerImpl implements LibraryManager {
 
+    private static Log LOG = LogFactory.getLog(LibraryManagerImpl.class);
+    
 	private List _scanners;
 	private List _builders;
     private List _libraries;
@@ -58,6 +62,10 @@ public class LibraryManagerImpl implements LibraryManager {
 			    	LibraryDefinition library = builder.build(source);
 			    	if(library != null) {
 			            _libraries.add(library);
+                        if(LOG.isTraceEnabled()) {
+                            LOG.trace("load library - " + source.getSystemID() + 
+                                    ": " + library.getNamespaceURI());
+                        }
 			            break;
 			    	}
 		    	}
@@ -70,6 +78,10 @@ public class LibraryManagerImpl implements LibraryManager {
 			throw new IllegalArgumentException();
 		}
 		synchronized (_scanners) {
+            if(LOG.isTraceEnabled()) {
+                LOG.trace("add SourceScanner[" + _scanners.size() + "] - " +
+                        scanner.getClass());
+            }
 			_scanners.add(scanner);
 		}
 	}
@@ -79,6 +91,10 @@ public class LibraryManagerImpl implements LibraryManager {
     		throw new IllegalArgumentException();
     	}
     	synchronized(_builders) {
+            if(LOG.isTraceEnabled()) {
+                LOG.trace("add DefinitionBuilder[" + _scanners.size() + "] - " +
+                        builder.getClass());
+            }
     		_builders.add(builder);
     	}
     }

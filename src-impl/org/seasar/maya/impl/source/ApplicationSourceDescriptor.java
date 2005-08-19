@@ -37,24 +37,36 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private String _root;
     private String _systemID;
     private File _file;
+    private Application _application;
 
     public ApplicationSourceDescriptor(String root, String systemID) {
-        this(root, systemID, null);
-    }
-    
-    private ApplicationSourceDescriptor(String root, String systemID, File file) {
         _root = StringUtil.preparePath(root);
         _systemID = StringUtil.preparePath(systemID);
-        _file = file;
+    }
+    
+    // use while building ServiceProvider.
+    public void setApplication(Application application) {
+        if(application == null) {
+            throw new IllegalArgumentException();
+        }
+        _application = application;
     }
     
     public Application getApplication() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        return cycle.getApplication();
+        if(_application == null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            _application = cycle.getApplication();
+        }
+        return _application;
     }
 
     public String getRoot() {
         return _root;
+    }
+    
+    // use at InternalApplicationSourceScanner.FileToSourceIterator
+    public void setFile(File file) {
+        _file = file;
     }
     
     public File getFile() {

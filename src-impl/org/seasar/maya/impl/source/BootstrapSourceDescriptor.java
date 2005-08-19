@@ -15,18 +15,25 @@
  */
 package org.seasar.maya.impl.source;
 
+import javax.servlet.ServletContext;
+
+import org.seasar.maya.impl.cycle.web.WebApplication;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceDescriptor extends CompositeSourceDescriptor {
+public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
 
-	private static final long serialVersionUID = -6124718310228340001L;
+    private static final long serialVersionUID = -7436518426506691163L;
 
-    public PageSourceDescriptor(String systemID) {
+    public BootstrapSourceDescriptor(String systemID, ServletContext context) {
         super(systemID);
-        addSourceDescriptor(new ApplicationSourceDescriptor(null, systemID));
-        addSourceDescriptor(new ApplicationSourceDescriptor("/WEB-INF", systemID));
-        addSourceDescriptor(new ClassLoaderSourceDescriptor(null, systemID, null));
+        ApplicationSourceDescriptor appSource = 
+            new ApplicationSourceDescriptor("/WEB-INF", systemID);
+        WebApplication application = new WebApplication();
+        application.setServletContext(context);
+        appSource.setApplication(application);
+        addSourceDescriptor(appSource);
         addSourceDescriptor(new ClassLoaderSourceDescriptor("/META-INF", systemID, null));
     }
 

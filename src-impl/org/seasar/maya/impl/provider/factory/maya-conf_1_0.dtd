@@ -8,6 +8,7 @@
 <!ELEMENT description (#PCDATA)>
 
 <!ELEMENT engine (description?, specification?, errorHandler?, parameter*)>
+<!ATTLIST engine class CDATA #REQUIRED>
 <!ATTLIST engine checkTimestamp (true | false) "true">
 <!ATTLIST engine outputWhitespace (true | false) "true">
 <!ATTLIST engine suffixSeparator CDATA #IMPLIED>
@@ -22,15 +23,19 @@
 <!ATTLIST errorHandler class CDATA #REQUIRED>
 
 <!ELEMENT script (description?, resolver*)>
+<!ATTLIST script class CDATA #REQUIRED>
 
 <!ELEMENT resolver (description?, parameter*)>
 <!ATTLIST resolver class CDATA #REQUIRED>
 
 <!ELEMENT specificationBuilder (description?, parameter*)>
+<!ATTLIST specificationBuilder class CDATA #REQUIRED>
 
 <!ELEMENT templateBuilder (description?, resolver*, library?, parameter*)>
+<!ATTLIST templateBuilder class CDATA #REQUIRED>
 
 <!ELEMENT library (description?, source*, builder*, parameter*)>
+<!ATTLIST library class CDATA #REQUIRED>
 
 <!ELEMENT source (description?, parameter*)>
 <!ATTLIST source class CDATA #REQUIRED>

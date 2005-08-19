@@ -74,7 +74,10 @@ public class InternalApplicationSourceScanner implements SourceScanner {
             if(ret instanceof File) {
                 File file = (File)ret;
                 String systemID = getSystemID(file);
-                return new ApplicationSourceDescriptor(_source.getRoot(), systemID);
+                ApplicationSourceDescriptor source =
+                    new ApplicationSourceDescriptor(_source.getRoot(), systemID);
+                source.setFile(file);
+                return source;
             }
             throw new IllegalStateException();
         }

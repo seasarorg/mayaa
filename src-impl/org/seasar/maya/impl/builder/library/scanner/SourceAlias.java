@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.builder.library.scanner;
 
+import java.util.Date;
+
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -26,13 +28,15 @@ public class SourceAlias {
     
     private String _alias;
     private String _systemID;
+    private Date _timestamp;
     
-    public SourceAlias(String alias, String systemID) {
+    public SourceAlias(String alias, String systemID, Date timestamp) {
         if(StringUtil.isEmpty(alias) || StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
         _alias = alias;
         _systemID = systemID;
+        _timestamp = timestamp;
     }
     
     public String getAlias() {
@@ -41,6 +45,10 @@ public class SourceAlias {
     
     public String getSystemID() {
         return _systemID;
+    }
+    
+    public Date getTimestamp() {
+    	return _timestamp;
     }
     
 }

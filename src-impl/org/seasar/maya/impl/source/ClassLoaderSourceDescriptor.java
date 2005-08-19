@@ -35,6 +35,7 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     private String _systemID;
     private InputStream _inputStream;
     private Map _attributes;
+    private Date _timestamp;
 
     public ClassLoaderSourceDescriptor(String root, String systemID, Class neighbor) {
         _root = StringUtil.preparePath(root);
@@ -69,7 +70,17 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
         return null;
     }
     
+    public void setTimestamp(Date timestamp) {
+    	if(timestamp == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	_timestamp = timestamp;
+    }
+    
     public Date getTimestamp() {
+    	if(_timestamp != null) {
+    		return _timestamp;
+    	}
         return new Date(0);
     }
 

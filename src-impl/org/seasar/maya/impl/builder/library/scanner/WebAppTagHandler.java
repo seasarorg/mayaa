@@ -59,7 +59,7 @@ public class WebAppTagHandler extends TagHandler {
                     // TODO WEB.XMLの記述ミスの例外。
                     throw new IllegalStateException();
                 }
-                _locations.add(new SourceAlias(_taglibURI, _taglibLocation));
+                _locations.add(new SourceAlias(_taglibURI, _taglibLocation, null));
             }
         });
     }

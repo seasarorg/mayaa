@@ -36,7 +36,7 @@ public class JarsSourceScanner implements SourceScanner {
 
     private static Map _cache = new HashMap();
     
-    private FolderSourceScanner _folderSourceScanner = new FolderSourceScanner();
+    private FolderSourceScanner _folderScanner = new FolderSourceScanner();
     private Set _ignores = new HashSet();
     
     public void setParameter(String name, String value) {
@@ -47,12 +47,13 @@ public class JarsSourceScanner implements SourceScanner {
             }
             _ignores.add(value);
         } else {
-            _folderSourceScanner.setParameter(name, value);
+            _folderScanner.setParameter(name, value);
         }
     }
     
     protected String getJarName(String systemID) {
-        if(StringUtil.hasValue(systemID) && systemID.toLowerCase().endsWith(".jar")) {
+        if(StringUtil.hasValue(systemID) && 
+        		systemID.toLowerCase().endsWith(".jar")) {
             int pos = systemID.lastIndexOf("/");
             if(pos != -1) {
                 return systemID.substring(pos + 1);
@@ -87,7 +88,8 @@ public class JarsSourceScanner implements SourceScanner {
                     String entryName = entry.getName();
                     if(entryName.startsWith("META-INF/") && 
                             "META-INF/MANIFEST.MF".equals(entryName) == false) {
-                        aliases.add(new SourceAlias(jarName, entryName));
+                        aliases.add(new SourceAlias(
+                        		jarName, entryName, source.getTimestamp()));
                     }
                 }
             } catch(IOException e) {
@@ -109,10 +111,10 @@ public class JarsSourceScanner implements SourceScanner {
     }
 
     public Iterator scan() {
-        String folder = _folderSourceScanner.getFolder();
+        String folder = _folderScanner.getFolder();
         Set aliases = (Set)_cache.get(folder);
         if(aliases == null) {
-            aliases = scanAll(_folderSourceScanner);
+            aliases = scanAll(_folderScanner);
             _cache.put(folder, aliases);
         }
         return new MetaInfSourceIterator(aliases.iterator());
@@ -138,6 +140,7 @@ public class JarsSourceScanner implements SourceScanner {
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor(null, alias.getSystemID(), null);
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
+            source.setTimestamp(alias.getTimestamp());
             return source;
         }
 

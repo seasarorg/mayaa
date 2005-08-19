@@ -17,10 +17,10 @@ package org.seasar.maya.impl.source;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -34,6 +34,7 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     private Class _neighbor;
     private String _systemID;
     private InputStream _inputStream;
+    private Map _attributes;
 
     public ClassLoaderSourceDescriptor(String root, String systemID, Class neighbor) {
         _root = StringUtil.preparePath(root);
@@ -71,9 +72,22 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     public Date getTimestamp() {
         return new Date(0);
     }
-    
-    public Iterator iterateChildren(String extension) {
-        return NullIterator.getInstance();
+
+    public void setAttribute(String name, String value) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributes == null) {
+            _attributes = new HashMap();
+        }
+        _attributes.put(name, value);
     }
     
+    public String getAttribute(String name) {
+        if(_attributes == null) {
+            return null;
+        }
+        return (String)_attributes.get(name);
+    }
+
 }

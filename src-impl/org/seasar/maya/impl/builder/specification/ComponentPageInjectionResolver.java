@@ -34,7 +34,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 public class ComponentPageInjectionResolver 
 		implements InjectionResolver, CONST_IMPL {
 
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

@@ -76,11 +76,9 @@ public class TLDHandler extends DefaultHandler {
 	}
 	
 	private TagHandlerStack _stack;
-	private String _systemID;
 	
-    public TLDHandler(String systemID) {
+    public TLDHandler() {
         _stack = new TagHandlerStack("taglib", new TaglibTagHandler());
-        _systemID = systemID;
     }
     
     public JspLibraryDefinition getLibraryDefinition() {
@@ -128,11 +126,17 @@ public class TLDHandler extends DefaultHandler {
 	}
 
 	public void error(SAXParseException e) {
-        throw new RuntimeException(_systemID);
+        if(LOG.isErrorEnabled()) {
+            LOG.error(e.getMessage(), e);
+        }
+        throw new RuntimeException(e);
 	}
 
 	public void fatalError(SAXParseException e) {
-        error(e);
+        if(LOG.isFatalEnabled()) {
+            LOG.fatal(e.getMessage(), e);
+        }
+        throw new RuntimeException(e);
 	}
 	
 }

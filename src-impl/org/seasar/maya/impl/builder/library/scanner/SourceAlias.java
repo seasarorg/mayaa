@@ -13,30 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.builder.library.scanner;
 
-import org.seasar.maya.impl.util.XmlUtil;
-import org.seasar.maya.impl.util.xml.TagHandler;
-import org.xml.sax.Attributes;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ParameterTagHandler extends TagHandler {
+public class SourceAlias {
+
+    public static String ALIAS = SourceAlias.class + ".ALIAS";
     
-    private AbstractParameterizableTagHandler _parent;
+    private String _alias;
+    private String _systemID;
     
-    public ParameterTagHandler(AbstractParameterizableTagHandler parent) {
-        if(parent == null) {
+    public SourceAlias(String alias, String systemID) {
+        if(StringUtil.isEmpty(alias) || StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        _parent = parent;
+        _alias = alias;
+        _systemID = systemID;
     }
     
-    protected void start(Attributes attributes) {
-        String name = XmlUtil.getStringValue(attributes, "name", null);
-        String value = XmlUtil.getStringValue(attributes, "value", null);
-        _parent.getParameterizable().setParameter(name, value);
+    public String getAlias() {
+        return _alias;
+    }
+    
+    public String getSystemID() {
+        return _systemID;
     }
     
 }

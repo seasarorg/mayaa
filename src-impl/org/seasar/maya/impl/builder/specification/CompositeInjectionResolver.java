@@ -87,7 +87,7 @@ public class CompositeInjectionResolver implements InjectionResolver {
 
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

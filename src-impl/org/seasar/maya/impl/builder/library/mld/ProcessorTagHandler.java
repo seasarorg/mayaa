@@ -45,7 +45,6 @@ public class ProcessorTagHandler extends TagHandler {
 	        _processorDefinition.setName(name);
 	        _processorDefinition.setClassName(className);
 	        LibraryDefinitionImpl library = _parent.getLibraryDefinition();
-	        _processorDefinition.setLibraryDefinition(library);
 	        library.addProcessorDefinition(_processorDefinition);
         }
     }

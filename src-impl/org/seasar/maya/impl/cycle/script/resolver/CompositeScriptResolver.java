@@ -36,7 +36,7 @@ public class CompositeScriptResolver implements ScriptResolver {
         }
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

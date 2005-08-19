@@ -53,7 +53,7 @@ public class JspImplicitObjectScriptResolver implements ScriptResolver {
         throw new PropertyNotWritableException(name);
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

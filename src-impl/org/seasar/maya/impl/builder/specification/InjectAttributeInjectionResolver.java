@@ -48,7 +48,7 @@ public class InjectAttributeInjectionResolver implements InjectionResolver, CONS
         return chain.getNode(template, original);
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

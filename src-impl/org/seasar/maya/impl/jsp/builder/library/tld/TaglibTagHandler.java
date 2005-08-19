@@ -50,7 +50,6 @@ public class TaglibTagHandler extends TagHandler {
 
     public void addProcessorDefinition(JspProcessorDefinition processor) {
         _library.addProcessorDefinition(processor);
-        processor.setLibraryDefinition(_library);
     }
     
     public JspLibraryDefinition getLibraryDefinition() {

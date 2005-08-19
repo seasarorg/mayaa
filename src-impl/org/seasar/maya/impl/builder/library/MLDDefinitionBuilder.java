@@ -21,6 +21,9 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.mld.MLDHandler;
+import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
+import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -29,7 +32,7 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class MLDDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
 
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
     
@@ -42,7 +45,13 @@ public class MLDDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();
             XmlUtil.parse(handler, stream, PUBLIC_MLD10, systemID, true, true, false);
-            return handler.getLibraryDefinition();
+            LibraryDefinitionImpl library = handler.getLibraryDefinition();
+            boolean assigned = ObjectUtil.booleanValue(
+                    source.getAttribute(WebXmlAliasSourceScanner.ASSIGNED), false);
+            if(assigned) {
+                library.setAssignedURI(source.getAttribute(SourceAlias.ALIAS));
+            }            
+            return library;
         }
         return null;
     }

@@ -38,7 +38,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  */
 public class DirectInjectionResolver implements InjectionResolver {
 
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

@@ -46,7 +46,7 @@ public class NamespacesSetter implements InjectionResolver, CONST_IMPL {
         return injected;
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

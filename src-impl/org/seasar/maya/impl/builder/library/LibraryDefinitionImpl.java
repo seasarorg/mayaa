@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -30,7 +29,6 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class LibraryDefinitionImpl implements LibraryDefinition {
 
-    private LibraryManager _libraryManager;
     private String _namespaceURI;
     private String _assignedURI;
     private Map _processors;
@@ -42,28 +40,11 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         _namespaceURI = namespaceURI;
     }
     
-    public LibraryManager getLibraryManager() {
-        if(_libraryManager == null) {
-            throw new IllegalStateException();
-        }
-        return _libraryManager;
-    }
-
-    public void setLibraryManager(LibraryManager parent) {
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
-        _libraryManager = parent;
-    }
-    
     public String getNamespaceURI() {
         return _namespaceURI;
     }
     
     public void setAssignedURI(String uri) {
-        if(StringUtil.isEmpty(uri)) {
-            throw new IllegalArgumentException();
-        }
         _assignedURI = uri;
     }
     

@@ -49,4 +49,11 @@ public interface SourceDescriptor extends Serializable {
      */
     Date getTimestamp();
 
+    /**
+     * ソースの付加属性の取得。
+     * @param name 属性名。
+     * @return 属性値。
+     */
+    String getAttribute(String name);
+    
 }

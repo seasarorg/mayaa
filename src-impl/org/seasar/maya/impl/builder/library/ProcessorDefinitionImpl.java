@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.processor.ProcessorFactory;
@@ -45,7 +44,6 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
 
     private static final Map _factoryInstances = new HashMap();
     
-    private LibraryDefinition _libraryDefinition;
     private String _name;
     private String _className;
     private List _properties;
@@ -55,20 +53,6 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             throw new IllegalArgumentException();
         }
         _name = name;
-    }
-
-    public LibraryDefinition getLibraryDefinition() {
-        if(_libraryDefinition == null) {
-            throw new IllegalStateException();
-        }
-        return _libraryDefinition;
-    }
-    
-    public void setLibraryDefinition(LibraryDefinition libraryDefinition) {
-        if(libraryDefinition == null) {
-            throw new IllegalArgumentException();
-        }
-        _libraryDefinition = libraryDefinition;
     }
     
     public String getName() {

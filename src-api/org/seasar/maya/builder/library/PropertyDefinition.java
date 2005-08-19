@@ -25,12 +25,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public interface PropertyDefinition {
     
     /**
-     * 所属する、定義オブジェクト（<code>ProcessorDefinition</code>）の取得。
-     * @return 所属定義オブジェクト。
-     */
-    ProcessorDefinition getProcessorDefinition(); 
-    
-    /**
      * MLDのname属性、であるプロパティ名。
      * テンプレートや設定XML上の属性と、テンプレートプロセッサのプロパティを
      * バインディングする名前となる。

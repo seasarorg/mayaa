@@ -25,12 +25,6 @@ import java.util.Iterator;
 public interface LibraryDefinition {
     
     /**
-     * 所属ライブラリマネージャの取得。
-     * @return 所属ライブラリマネージャー。
-     */
-    LibraryManager getLibraryManager();
-    
-    /**
      * 当該ライブラリの名前空間URI。uri属性値で指定されたもの。
      * @return 名前空間URI。
      */

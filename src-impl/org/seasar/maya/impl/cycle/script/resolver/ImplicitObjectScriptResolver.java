@@ -26,7 +26,7 @@ import org.seasar.maya.impl.util.CycleUtil;
  */
 public class ImplicitObjectScriptResolver implements ScriptResolver {
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

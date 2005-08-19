@@ -21,27 +21,30 @@ import java.util.Iterator;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.FileUtil;
+import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InternalApplicationSourceScanner implements SourceScanner {
+public class FolderSourceScanner implements SourceScanner {
 
     private ApplicationSourceDescriptor _source;
+    private String _folder;
     
-    public InternalApplicationSourceScanner(ApplicationSourceDescriptor source) {
-        if(source == null) {
+    public void setParameter(String name, String value) {
+        if("folder".equals(name) && StringUtil.hasValue(value)) {
+            _folder = value;
+        } else {
+            // TODO 不正なパラメータの例外。
             throw new IllegalArgumentException();
         }
-        _source = source;
-    }
-
-    public void putParameter(String name, String value) {
-        throw new UnsupportedOperationException();
     }
 
     public Iterator scan() {
+        if(_source == null) {
+            _source = new ApplicationSourceDescriptor(null, _folder);
+        }
         if(_source.exists() && _source.getFile().isDirectory()) {
             return new FileToSourceIterator(FileUtil.iterateFiles(_source.getFile()));
         }
@@ -64,9 +67,14 @@ public class InternalApplicationSourceScanner implements SourceScanner {
         }
 
         private String getSystemID(File file) {
-            String root = _source.getApplication().getRealPath(_source.getRoot());
+            String sourceRoot = _source.getRoot();
+            if(StringUtil.isEmpty(sourceRoot)) {
+                sourceRoot = "/";
+            }
+            String root = _source.getApplication().getRealPath(sourceRoot);
             String absolutePath = file.getAbsolutePath();
-            return absolutePath.substring(root.length());
+            String path = absolutePath.substring(root.length());
+            return StringUtil.preparePath(path);
         }
         
         public Object next() {

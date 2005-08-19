@@ -22,7 +22,7 @@ import org.seasar.maya.cycle.script.resolver.ScriptResolver;
  */
 public class AttributeScriptResolver implements ScriptResolver {
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

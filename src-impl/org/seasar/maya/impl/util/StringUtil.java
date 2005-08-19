@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.util;
 
+import java.io.File;
+
 import org.cyberneko.html.HTMLEntities;
 
 /**
@@ -54,7 +56,7 @@ public final class StringUtil {
             return "";
         }
         path = path.trim();
-        path.replace('\\', '/');
+        path = path.replace(File.separatorChar, '/');
         if(path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }

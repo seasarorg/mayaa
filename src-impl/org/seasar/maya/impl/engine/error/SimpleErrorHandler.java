@@ -29,7 +29,7 @@ public class SimpleErrorHandler  implements ErrorHandler {
 
     private static final Log LOG = LogFactory.getLog(SimpleErrorHandler.class);
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
     }
     
     public void doErrorHandle(Throwable t) {

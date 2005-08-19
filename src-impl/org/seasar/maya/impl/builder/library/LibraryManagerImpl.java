@@ -47,7 +47,7 @@ public class LibraryManagerImpl implements LibraryManager {
     	_builders = new ArrayList();
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 
@@ -63,8 +63,8 @@ public class LibraryManagerImpl implements LibraryManager {
 			    	if(library != null) {
 			            _libraries.add(library);
                         if(LOG.isTraceEnabled()) {
-                            LOG.trace("load library - " + source.getSystemID() + 
-                                    ": " + library.getNamespaceURI());
+                            LOG.trace("loaded library - " + source.getSystemID() + 
+                                    " - " + library.getNamespaceURI());
                         }
 			            break;
 			    	}
@@ -79,7 +79,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 		synchronized (_scanners) {
             if(LOG.isTraceEnabled()) {
-                LOG.trace("add SourceScanner[" + _scanners.size() + "] - " +
+                LOG.trace("adding SourceScanner[" + _scanners.size() + "] - " +
                         scanner.getClass());
             }
 			_scanners.add(scanner);
@@ -92,7 +92,7 @@ public class LibraryManagerImpl implements LibraryManager {
     	}
     	synchronized(_builders) {
             if(LOG.isTraceEnabled()) {
-                LOG.trace("add DefinitionBuilder[" + _scanners.size() + "] - " +
+                LOG.trace("adding DefinitionBuilder[" + _builders.size() + "] - " +
                         builder.getClass());
             }
     		_builders.add(builder);

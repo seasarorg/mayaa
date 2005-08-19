@@ -42,7 +42,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
     	return _errorTemplateRoot + "/" + throwableClass.getName();
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         if("errorTemplateRoot".equals(name)) {
         	if(StringUtil.isEmpty(value)) {
         		throw new IllegalArgumentException();

@@ -48,7 +48,6 @@ public class PropertyTagHandler extends TagHandler {
 	        property.setExpectedType(expectedType);
 	        property.setDefaultValue(defaultValue);
 	        ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
-	        property.setProcessorDefinition(processor);
 	        processor.addPropertyDefinitiion(property);
         }
     }

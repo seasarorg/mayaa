@@ -18,6 +18,8 @@ package org.seasar.maya.impl.source;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -38,6 +40,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private String _systemID;
     private File _file;
     private Application _application;
+    private Map _attributes;
 
     public ApplicationSourceDescriptor(String root, String systemID) {
         _root = StringUtil.preparePath(root);
@@ -103,6 +106,23 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
             return new Date(_file.lastModified());
         }
         return new Date(0);
+    }
+
+    public void setAttribute(String name, String value) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributes == null) {
+            _attributes = new HashMap();
+        }
+        _attributes.put(name, value);
+    }
+    
+    public String getAttribute(String name) {
+        if(_attributes == null) {
+            return null;
+        }
+        return (String)_attributes.get(name);
     }
 
 }

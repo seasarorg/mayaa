@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.library;
 
 import java.util.Iterator;
 
-import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -37,25 +36,10 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class PropertyDefinitionImpl implements PropertyDefinition {
 
-    private ProcessorDefinition _processorDefinition;
     private String _name;
     private boolean _required;
     private String _expectedType;
     private String _defaultValue;
-    
-    public void setProcessorDefinition(ProcessorDefinition processorDefinition) {
-        if(processorDefinition == null) {
-            throw new IllegalArgumentException();
-        }
-        _processorDefinition = processorDefinition;
-    }
-
-    public ProcessorDefinition getProcessorDefinition() {
-        if(_processorDefinition == null) {
-            throw new IllegalStateException();
-        }
-        return _processorDefinition;
-    }
     
     protected String getPrefix(Namespaceable namespaceable, QName qName) {
         Iterator it = namespaceable.iterateNamespace(qName.getNamespaceURI());

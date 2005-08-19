@@ -26,6 +26,6 @@ public interface Parameterizable {
 	 * @param name İ’è–¼B
 	 * @param value İ’è’lB
 	 */
-	void putParameter(String name, String value);
+	void setParameter(String name, String value);
 
 }

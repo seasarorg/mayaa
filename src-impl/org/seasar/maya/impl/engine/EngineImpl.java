@@ -73,7 +73,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         return _errorHandler;
     }
     
-	public void putParameter(String name, String value) {
+	public void setParameter(String name, String value) {
 	    if(StringUtil.isEmpty(name) || StringUtil.isEmpty(value)) {
 	        throw new IllegalArgumentException();
 	    }

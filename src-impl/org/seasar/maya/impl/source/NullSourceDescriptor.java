@@ -43,4 +43,8 @@ public class NullSourceDescriptor implements SourceDescriptor {
         return new Date(0);
     }
 
+    public String getAttribute(String name) {
+        return null;
+    }
+
 }

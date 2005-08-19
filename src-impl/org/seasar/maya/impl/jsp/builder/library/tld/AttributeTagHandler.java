@@ -56,7 +56,6 @@ public class AttributeTagHandler extends TagHandler {
     protected void end(String body) {
         JspProcessorDefinition processor = _parent.getProcessorDefinition();
         processor.addPropertyDefinitiion(_property);
-        _property.setProcessorDefinition(processor);
     }
 
     private class RequiredSetter extends TagHandler {

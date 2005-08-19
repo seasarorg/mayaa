@@ -36,7 +36,7 @@ public class WalkaroundSourceScanner implements SourceScanner {
         _sources.add(new ClassLoaderSourceDescriptor("/META-INF/jstl", "fmt.mld", null));
     }
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

@@ -25,7 +25,7 @@ import org.seasar.maya.impl.cycle.script.ScriptBlock;
  */
 public class RhinoScriptCompiler extends AbstractScriptCompiler {
     
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
 

@@ -19,7 +19,10 @@ import java.io.InputStream;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
+import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
+import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
 import org.seasar.maya.impl.jsp.builder.library.tld.TLDHandler;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -28,7 +31,7 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class TLDDefinitionBuilder implements DefinitionBuilder {
 
-    public void putParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
     
@@ -36,13 +39,18 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".tld")) {
+        String systemID = source.getSystemID();
+        if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
-            String systemID = source.getSystemID();
-            TLDHandler handler = new TLDHandler(systemID);
-            // FIXME validation="true" ÇæÇ∆ÅAJSTLÇÃc.tld/x.tldÇ»Ç«XSDÇóòópÇ∑ÇÈÇ‡ÇÃÇ≈SAXó·äO
+            TLDHandler handler = new TLDHandler();
             XmlUtil.parse(handler, stream, "tld", systemID, true, false, false);
-            return handler.getLibraryDefinition();
+            JspLibraryDefinition library = handler.getLibraryDefinition();
+            boolean assigned = ObjectUtil.booleanValue(
+                    source.getAttribute(WebXmlAliasSourceScanner.ASSIGNED), false);
+            if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
+                library.setAssignedURI(source.getAttribute(SourceAlias.ALIAS));
+            }
+            return library;
         }
         return null;
     }

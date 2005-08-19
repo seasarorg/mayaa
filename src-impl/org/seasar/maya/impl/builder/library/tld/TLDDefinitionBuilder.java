@@ -43,6 +43,7 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
         if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             TLDHandler handler = new TLDHandler();
+            // TODO Validおよびスキーマをtrueにすると動作しない。
             XmlUtil.parse(handler, stream, "tld", systemID, true, false, false);
             JspLibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(

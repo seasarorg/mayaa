@@ -24,7 +24,7 @@ import java.util.Locale;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Request extends Serializable, AttributeScope, Underlyable {
-    
+
     /**
      * リクエストされたページ名を取得する。
      * @return リクエストページ名。

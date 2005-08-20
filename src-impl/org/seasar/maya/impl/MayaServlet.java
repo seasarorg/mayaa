@@ -17,15 +17,15 @@ package org.seasar.maya.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.provider.factory.SimpleProviderFactory;
@@ -55,6 +55,16 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         _engine = provider.getEngine();
     }
 
+    private String getRequestedPath(ServiceCycle cycle) {
+        Request request = cycle.getRequest();
+        String path = request.getPageName();
+        String extention = request.getExtension();
+        if(StringUtil.hasValue(extention)) {
+            path = path + "." + extention;
+        }
+        return path;
+    }
+    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         doPost(request, response);
@@ -62,20 +72,20 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String uri = request.getRequestURI();
-    	String mimeType = getServletContext().getMimeType(uri);
-    	if(mimeType != null && mimeType.startsWith("text/")) {
-    		doMayaService(request, response);
-    	} else {
-    		doResourceService(request, response);
-    	}
-    }
-    
-    protected ServiceCycle getServiceCycle(
-    		HttpServletRequest request, HttpServletResponse response) {
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         provider.initialize(request, response);
-        return provider.getServiceCycle();
+        ServiceCycle cycle = provider.getServiceCycle();
+        String path = getRequestedPath(cycle);
+        String mimeType = cycle.getApplication().getMimeType(path);
+    	if(mimeType != null && (
+                mimeType.startsWith("text/html") || 
+                mimeType.startsWith("text/xhtml") ||
+                mimeType.startsWith("text/xml"))) {
+            prepareResponse(response);
+    		doMayaService(cycle);
+    	} else {
+    		doResourceService(cycle);
+    	}
     }
     
     protected void handleError(Throwable t) {
@@ -100,13 +110,10 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         }
     }
 
-    protected void doMayaService(
-            HttpServletRequest request, HttpServletResponse response) {
-        if(request == null || response == null) {
+    protected void doMayaService(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        prepareResponse(response);
-        ServiceCycle cycle = getServiceCycle(request, response);
         try {
             _engine.doService();
         } catch(Throwable t) {
@@ -120,43 +127,25 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         cycle.getResponse().flush();
     }
     
-    private String getRequestedPath(ServletRequest request) {
-        if(request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(StringUtil.preparePath(httpRequest.getServletPath()));
-            String pathInfo = httpRequest.getPathInfo();
-            buffer.append(StringUtil.preparePath(pathInfo));
-            if(buffer.toString().endsWith("/")) {
-                buffer.append(StringUtil.preparePath(_engine.getWelcomeFileName()));
-            }
-            return buffer.toString();
-        }
-        throw new IllegalStateException();
-    }
-    
-    protected void doResourceService(ServletRequest request, ServletResponse response) {
-        if(request == null || response == null) {
+    protected void doResourceService(ServiceCycle cycle) {
+        if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        String path = getRequestedPath(request);
+        String path = getRequestedPath(cycle);
         SourceDescriptor source = new PageSourceDescriptor(path);
         InputStream stream = source.getInputStream();
+        Response response = cycle.getResponse();
         if(stream != null) {
             try {
-                Writer out = response.getWriter();
                 for(int i = stream.read(); i != -1; i = stream.read()) {
-                    out.write(i);
+                    response.write(i);
                 }
-                out.flush();
+                response.flush();
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            if(response instanceof HttpServletResponse) {
-                HttpServletResponse httpResponse = (HttpServletResponse)response;
-                httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            }
+            response.setStatus(404);
         }
     }
     

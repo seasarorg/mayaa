@@ -98,9 +98,13 @@ public class CycleWriterImpl extends CycleWriter {
 		if(newUsed <= currentSize) {
 			return currentSize;
 		}
+        if (_maxBlockNum * _blockSize < newUsed) {
+            _maxBlockNum = _maxBlockNum * 2;
+        }
 		for(int blockNum = _currentBlockNum; blockNum <= _maxBlockNum; blockNum++) {
 			int newSize = blockNum * _blockSize;
 			if(newSize >= newUsed) {
+                _currentBlockNum = blockNum;
 				char[] newBuffer = new char[newSize];
                 System.arraycopy(_buffer, 0, newBuffer, 0, _usedBufferSize);
                 _buffer = newBuffer;

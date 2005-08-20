@@ -15,13 +15,11 @@
  */
 package org.seasar.maya.impl.builder.library.scanner;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.builder.library.entity.J2eeEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -35,23 +33,6 @@ public class WebXMLHandler extends DefaultHandler {
 
     private static final Log LOG = LogFactory.getLog(WebXMLHandler.class);
 
-    private static final String WEB_DTD_PUBLIC_ID_22 = "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN";
-    private static final String WEB_DTD_RESOURCE_PATH_22 = "/web-app_2_2.dtd";
-
-    private static final String WEB_DTD_PUBLIC_ID_23 = "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN";
-    private static final String WEB_DTD_RESOURCE_PATH_23 = "/web-app_2_3.dtd";
-
-    private static final String WEB_DTD_PUBLIC_ID_24 = "web-app_2_4.xsd";
-    private static final String WEB_DTD_RESOURCE_PATH_24 = "/web-app_2_4.xsd";
-    
-    private static Map _entities;
-    static {
-        _entities = new HashMap();
-        _entities.put(WEB_DTD_PUBLIC_ID_22, WEB_DTD_RESOURCE_PATH_22);
-        _entities.put(WEB_DTD_PUBLIC_ID_23, WEB_DTD_RESOURCE_PATH_23);
-        _entities.put(WEB_DTD_PUBLIC_ID_24, WEB_DTD_RESOURCE_PATH_24);
-    }
-    
     private TagHandlerStack _stack;
     private WebAppTagHandler _handler;
 
@@ -59,26 +40,13 @@ public class WebXMLHandler extends DefaultHandler {
         _handler = new WebAppTagHandler();
         _stack = new TagHandlerStack("web-app", _handler);
     }
+    
+    public Iterator iterateTaglibLocations() {
+        return _handler.iterateTaglibLocation();
+    }
 
     public InputSource resolveEntity(String publicId, String systemId) {
-        String path;
-        if(_entities.containsKey(publicId)) {
-            path = (String)_entities.get(publicId);
-        } else {
-            return null;
-        }
-        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor(
-                null, path, WebXMLHandler.class);
-        if(source.exists()) {
-            InputSource ret = new InputSource(source.getInputStream());
-            ret.setPublicId(publicId);
-            ret.setSystemId(path);
-            return ret;
-        }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("cann't resolve locally, publicId=" + publicId + ", systemId=" + systemId);
-        }
-        return null;
+        return J2eeEntityResolver.resolveEntity(publicId, systemId);
     }
     
     public void startElement(
@@ -110,10 +78,6 @@ public class WebXMLHandler extends DefaultHandler {
             LOG.fatal(e.getMessage(), e);
         }
         throw new RuntimeException(e);
-    }
-    
-    public Iterator iterateTaglibLocations() {
-        return _handler.iterateTaglibLocation();
     }
     
 }

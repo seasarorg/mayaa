@@ -198,17 +198,6 @@ public class TemplateImpl extends SpecificationImpl
         }
         return ret;
     }
-
-    public String getMimeType(Page page) {
-        String extension = page.getPageName() + "." + page.getExtension();
-        String ret = null ;
-        if(StringUtil.hasValue(extension)) {
-            Application application = CycleUtil.getApplication();
-            ret = application.getMimeType(extension);
-        }
-        if( ret == null ) ret = "text/html" ;
-        return ret ;
-    }
     
     private String getContentType() {
         SpecificationNode maya = SpecificationUtil.getMayaNode(this);

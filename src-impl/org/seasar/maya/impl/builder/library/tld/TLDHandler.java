@@ -15,13 +15,10 @@
  */
 package org.seasar.maya.impl.builder.library.tld;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.builder.library.entity.J2eeEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -34,78 +31,21 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TLDHandler extends DefaultHandler {
     
     private static final Log LOG = LogFactory.getLog(TLDHandler.class);
-
-    private static final String PUBLIC_ID_11 = "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN";
-    private static final String DTD_PATH_11 = "web-jsptaglibrary_1_1.dtd";
-
-    private static final String PUBLIC_ID_12 = "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN";
-    private static final String DTD_PATH_12 = "web-jsptaglibrary_1_2.dtd";
-
-    private static final String SCHEMA_LOCATION_20 = "http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd";
-    private static final String SCHEMA_PATH_20 = "web-jsptaglibrary_2_0.xsd";
-
-    private static final String DATATYPES_PUBLIC_ID = "datatypes";
-    private static final String DATATYPES_PATH = "datatypes.dtd";
-    
-    private static final String XML_SCHEMA_DTD_PUBLIC_ID = "-//W3C//DTD XMLSCHEMA 200102//EN";
-    private static final String XML_SCHEMA_DTD_PATH = "XMLSchema.dtd";
-    
-    private static final String XML_SCHEMA_LOCATION = "http://www.w3.org/2001/xml.xsd";
-    private static final String XML_SCHEMA_PATH = "xml.xsd";
-    
-    private static final String WEB_SERVICE_CLIENT_LOCATION = "http://www.ibm.com/webservices/xsd/j2ee_web_services_client_1_1.xsd";
-    private static final String WEB_SERVICE_CLIENT_PATH = "j2ee_web_services_client_1_1.xsd";
-
-    private static final String J2EE_LOCATION = "http://java.sun.com/xml/ns/j2ee/j2ee_1_4.xsd";
-    private static final String J2EE_PATH = "j2ee_1_4.xsd";
-    
-    private static Map _entities;
-	static {
-	    _entities = new HashMap();
-	    _entities.put(PUBLIC_ID_11, DTD_PATH_11);
-	    _entities.put(PUBLIC_ID_12, DTD_PATH_12);
-	    _entities.put(SCHEMA_LOCATION_20, SCHEMA_PATH_20);
-	    _entities.put(XML_SCHEMA_DTD_PUBLIC_ID, XML_SCHEMA_DTD_PATH);
-	    _entities.put(XML_SCHEMA_LOCATION, XML_SCHEMA_PATH);
-	    _entities.put(XML_SCHEMA_PATH, XML_SCHEMA_PATH);
-	    _entities.put(WEB_SERVICE_CLIENT_LOCATION, WEB_SERVICE_CLIENT_PATH);
-	    _entities.put(WEB_SERVICE_CLIENT_PATH, WEB_SERVICE_CLIENT_PATH);
-	    _entities.put(J2EE_LOCATION, J2EE_PATH);
-	    _entities.put(J2EE_PATH, J2EE_PATH);
-	    _entities.put(DATATYPES_PUBLIC_ID, DATATYPES_PATH);
-	}
 	
 	private TagHandlerStack _stack;
+    private TaglibTagHandler _handler;
 	
     public TLDHandler() {
-        _stack = new TagHandlerStack("taglib", new TaglibTagHandler());
+        _handler = new TaglibTagHandler();
+        _stack = new TagHandlerStack("taglib", _handler);
     }
     
     public JspLibraryDefinition getLibraryDefinition() {
-        return ((TaglibTagHandler)_stack.getRoot()).getLibraryDefinition();
+        return _handler.getLibraryDefinition();
     }
 
     public InputSource resolveEntity(String publicId, String systemId) {
-        String path;
-        if(_entities.containsKey(publicId)) {
-            path = (String)_entities.get(publicId);
-        } else if(_entities.containsKey(systemId)) {
-            path = (String)_entities.get(systemId);
-        } else {
-            return null;
-        }
-        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor(
-                null, path, TLDHandler.class);
-        if(source.exists()) {
-            InputSource ret = new InputSource(source.getInputStream());
-            ret.setPublicId(publicId);
-            ret.setSystemId(path);
-            return ret;
-        }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("cann't resolve locally, publicId=" + publicId + ", systemId=" + systemId);
-        }
-        return null;
+        return J2eeEntityResolver.resolveEntity(publicId, systemId);
     }
 
 	public void startElement(

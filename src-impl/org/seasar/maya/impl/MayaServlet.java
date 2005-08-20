@@ -17,6 +17,7 @@ package org.seasar.maya.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.provider.factory.SimpleProviderFactory;
@@ -134,18 +134,18 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         String path = getRequestedPath(cycle);
         SourceDescriptor source = new PageSourceDescriptor(path);
         InputStream stream = source.getInputStream();
-        Response response = cycle.getResponse();
         if(stream != null) {
+            OutputStream out = cycle.getResponse().getUnderlyingOutputStream();
             try {
                 for(int i = stream.read(); i != -1; i = stream.read()) {
-                    response.write(i);
+                    out.write(i);
                 }
-                response.flush();
+                out.flush();
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            response.setStatus(404);
+            cycle.getResponse().setStatus(404);
         }
     }
     

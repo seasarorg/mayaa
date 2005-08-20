@@ -27,6 +27,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
+import org.seasar.maya.standard.engine.processor.util.ProcessorPropertyUtil;
 
 /**
  * JSTL の fmt:formatNumber にあたるネイティブプロセッサ.
@@ -37,30 +38,26 @@ import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 public class FormatNumberProcessor extends AbstractBodyProcessor {
 
     private static final long serialVersionUID = 2352354341113789083L;
-    private static final String NUMBER 	= "number";
-    private static final String CURRENCY 	= "currency";
-    private static final String PERCENT 	= "percent";
+    private static final String NUMBER   = "number";
+    private static final String CURRENCY = "currency";
+    private static final String PERCENT  = "percent";
     
     private ProcessorProperty _typeAttr;
     private ProcessorProperty _patternAttr;
     private ProcessorProperty _currencyCodeAttr;
     private ProcessorProperty _currencySymbolAttr;
-    private ProcessorProperty	_groupingUsedAttr;
+    private ProcessorProperty _groupingUsedAttr;
+    
     private ProcessorProperty _maxIntegerDigitsAttr;
-    private ProcessorProperty	_minIntegerDigitsAttr;
+    private ProcessorProperty _minIntegerDigitsAttr;
     private ProcessorProperty _maxFractionDigitsAttr;
     private ProcessorProperty _minFractionDigitsAttr;
 
-    
     private String _type;
     private String _pattern;
     private String _currencyCode;
     private String _currencySymbol;
     private boolean	_groupingUsed = true;
-    private int _maxIntegerDigits = -1;
-    private int	_minIntegerDigits = -1;
-    private int _maxFractionDigits = -1;
-    private int _minFractionDigits = -1;
 
     private String _var;
     private String _scope;
@@ -78,6 +75,243 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         }
     }
 
+    private void initParameter() {
+        _type           = ProcessorPropertyUtil.getString(_typeAttr);
+        _pattern        = ProcessorPropertyUtil.getString(_patternAttr);
+        _currencyCode   = ProcessorPropertyUtil.getString(_currencyCodeAttr);
+        _currencySymbol = ProcessorPropertyUtil.getString(_currencySymbolAttr);
+
+        _groupingUsed = true;
+        if(_groupingUsedAttr != null){
+            Object obj = _groupingUsedAttr.getValue();
+        	if(obj instanceof Boolean) {
+        	    _groupingUsed = ((Boolean)obj).booleanValue();
+        	} else if(obj instanceof String) {
+        	    _groupingUsed = Boolean.valueOf((String)obj).booleanValue();
+        	}
+        }
+    }
+    
+    protected ProcessStatus process(Object obj) {
+
+        if (obj instanceof String && obj.equals("")){
+        	return EVAL_PAGE;
+        }
+
+        initParameter();
+
+        String formatted   = getFormatedString(obj);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        if (_var != null) {
+            AttributeScope scope = cycle.getAttributeScope(_scope);
+            scope.setAttribute(_var, formatted);
+        } else {
+            cycle.getResponse().write(formatted);
+        }
+        return EVAL_PAGE;
+    }
+
+	private String getFormatedString(Object obj) {
+        Number input  = createNumberObject(obj);
+        Locale locale = getLocale();
+		if (locale == null) return input.toString(); 
+
+		// Create formatter
+        NumberFormat formatter = null;
+        if(StringUtil.isEmpty(_pattern) == false) {
+            // if 'pattern' is specified, 'type' is ignored
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+            formatter = new DecimalFormat(_pattern, symbols);
+        } else {
+            formatter = createFormatter(locale);
+        }
+        if(StringUtil.isEmpty(_pattern) == false
+                || CURRENCY.equalsIgnoreCase(_type)) {
+            try {
+                setCurrency(formatter);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        configureFormatter(formatter);
+        return formatter.format(input);
+	}
+
+	private Number createNumberObject(Object obj) {
+        if (obj instanceof String) {
+            try {
+            	if (((String) obj).indexOf('.') != -1) {
+                    return Double.valueOf((String)obj);
+                } else {
+                    return Long.valueOf(  (String)obj);
+                }
+            } catch (NumberFormatException nfe) {
+                throw new IllegalTagAttributeException(getTemplate(),
+                		"formatNumber", "value", obj, null);
+            }
+        } else if(obj instanceof Number){
+        	return (Number)obj;
+        } else {
+            throw new IllegalTagAttributeException(getTemplate(),
+                    "formatNumber", "value", obj, null);
+        }
+	}
+ 
+    /**
+     * NumberFormatを作成します。<br>
+     * typeがセットされていなければ<br>
+     * typeは "number" "currency" "persent"<br>
+     * typeの指定がなければ "number"
+     * @param locale
+     * @return NumberFormat
+     */
+    private NumberFormat createFormatter(Locale locale) {
+
+        NumberFormat formatter = null;
+
+        if ((_type == null) || NUMBER.equalsIgnoreCase(_type)) {
+            formatter = NumberFormat.getNumberInstance(locale);
+        } else if (CURRENCY.equalsIgnoreCase(_type)) {
+        	formatter = NumberFormat.getCurrencyInstance(locale);
+        } else if (PERCENT.equalsIgnoreCase(_type)) {
+            formatter = NumberFormat.getPercentInstance(locale);
+        } else {
+            throw new IllegalTagAttributeException(getTemplate(),
+                    "formatNumber", "type", _type, null);
+        }
+
+        return formatter;
+
+    }
+
+    /**
+     * フォーマットを設定します。
+     * 
+     * @param formatter
+     */
+    private void configureFormatter(NumberFormat formatter) {
+        formatter.setGroupingUsed(_groupingUsed);
+        Integer maxIntegerDigits = ProcessorPropertyUtil.getInteger(_maxIntegerDigitsAttr);
+		if (maxIntegerDigits != null) {
+            formatter.setMaximumIntegerDigits(maxIntegerDigits.intValue());
+        }
+        Integer minIntegerDigits = ProcessorPropertyUtil.getInteger(_minIntegerDigitsAttr);
+		if (minIntegerDigits != null) {
+            formatter.setMinimumIntegerDigits(minIntegerDigits.intValue());
+        }
+        Integer maxFractionDigits = ProcessorPropertyUtil.getInteger(_maxFractionDigitsAttr);
+		if (maxFractionDigits != null) {
+            formatter.setMaximumFractionDigits(maxFractionDigits.intValue());
+        }
+        Integer minFractionDigits = ProcessorPropertyUtil.getInteger(_minFractionDigitsAttr);
+		if (minFractionDigits != null) {
+            formatter.setMinimumFractionDigits(minFractionDigits.intValue());
+        }
+    }
+
+    /**
+     * Locale を取得する。 ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。 無ければデフォルト Locale を返す。
+     * @return Locale
+     */
+    protected Locale getLocale() {
+        Object locale = CycleUtil.findAttribute(FMT_LOCALE);
+
+        if (locale instanceof Locale) {
+            return (Locale) locale;
+        } else if (locale instanceof String) {
+            return parseLocale((String) locale);
+        } else {
+            return Locale.getDefault();
+        }
+    }
+
+    /**
+     * Locale文字列をパースし、Localeオブジェクトを返す。
+     * 
+     * @param localeString
+     *            Locale文字列
+     * @return LocaleObject
+     * @throws IllegalArgumentException
+     *             形式不正の場合
+     */
+    protected Locale parseLocale(String localeString) {
+        int index = -1;
+        String language;
+        String country;
+
+        if (( index = localeString.indexOf('-')) >= 0 ||
+            ( index = localeString.indexOf('_')) >= 0 ){
+            language = localeString.substring(0, index);
+            country  = localeString.substring(index+1);
+        } else {
+            language = localeString;
+            country = null;
+        }
+
+        if (StringUtil.isEmpty(language)
+                || (country != null && country.length() == 0)) {
+            throw new IllegalArgumentException("invalid Locale: " + localeString);
+        }
+
+        if (country == null) {
+            country = "";
+        }
+
+        return new Locale(language, country);
+    }
+
+    /**
+     * 通貨値を設定します。 <br>
+     * J2SE1.4以降の場合はjava.util.Currencyを用います。 <br>
+     * 1.4以前の場合はDecimalFormatterを用います。
+     * 
+     * @param formatter
+     * @throws Exception
+     */
+    private void setCurrency(NumberFormat formatter) throws Exception {
+
+        String code   = _currencyCode;
+        String symbol = _currencySymbol;
+
+        if (currencyClass != null && code != null) {
+            /*
+			 * java.util.Currency.getInstance()
+			 */
+            Method methodGetInstance = currencyClass.getMethod(
+            								"getInstance",
+            								GET_INSTANCE_PARAM_TYPES);
+            Object currency          = methodGetInstance.invoke(
+            								null, 
+            								new Object[]{code});
+
+            /*
+             * java.text.NumberFormat.setCurrency()
+             */
+            Class  numberFormatClass = Class.forName(
+            								"java.text.NumberFormat");
+            Method methodSetCurrency = numberFormatClass.getMethod(
+            								"setCurrency", 
+            								new Class[]{currencyClass});
+            methodSetCurrency.invoke(
+            								formatter, 
+            								new Object[]{currency});
+        } else if( symbol != null ){
+            /*
+             * Let potential ClassCastException propagate up (will almost never
+             * happen)
+             */
+            DecimalFormat        df  = (DecimalFormat) formatter;
+            DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+            dfs.setCurrencySymbol(symbol);
+            df.setDecimalFormatSymbols(dfs);
+        }
+    }
+
+    public boolean isChildEvaluation() {
+        return true;
+    }
+    
+    // setter 
     public void setValue(ProcessorProperty value) {
     	super.setValue(value);
     }
@@ -125,288 +359,4 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
     public void setScope(String scope) {
 		_scope = scope;
     }
-    
-    private int parseInt(ProcessorProperty prop) {
-        if(prop != null) {
-            Object obj = prop.getValue();
-            if(obj instanceof Integer) {
-                return ((Integer)obj).intValue();
-            } else if(obj instanceof String) {
-                return Integer.parseInt((String)obj);
-            }
-        }
-        return -1;
-    }
-
-    private String parseString(ProcessorProperty prop) {
-        if(prop != null) {
-            Object obj = prop.getValue();
-            if(obj instanceof String){
-                return (String)obj;
-            }
-        }
-        return null;
-    }
-    
-    private void initParameter() {
-        _type = parseString(_typeAttr);
-        _pattern = parseString(_patternAttr);
-        _currencyCode = parseString(_currencyCodeAttr);
-        _currencySymbol = parseString(_currencySymbolAttr);
-        
-        if(_groupingUsedAttr != null){
-            Object obj = _groupingUsedAttr.getValue();
-        	if(obj instanceof Boolean) {
-        	    _groupingUsed = ((Boolean)obj).booleanValue();
-        	} else if(obj instanceof String) {
-        	    _groupingUsed = Boolean.valueOf((String)obj).booleanValue();
-        	}
-        } else {
-            //デフォルト true
-            _groupingUsed = true;
-        }
-        _maxIntegerDigits = parseInt(_maxIntegerDigitsAttr);
-        _minIntegerDigits = parseInt(_minIntegerDigitsAttr);
-        _maxFractionDigits = parseInt(_maxFractionDigitsAttr);
-        _minFractionDigits = parseInt(_minFractionDigitsAttr);
-        
-    }
-    
-    protected ProcessStatus process(Object obj) {
-        String formatted = null;
-        Object input = obj;
-        
-        initParameter();
-
-        if (input instanceof String) {
-            
-            if(input.equals("")){
-                return EVAL_PAGE;
-            }
-            
-            try {
-                if (((String) input).indexOf('.') != -1) {
-                    input = Double.valueOf((String) input);
-                } else {
-                    input = Long.valueOf((String) input);
-                }
-            } catch (NumberFormatException nfe) {
-                throw new IllegalTagAttributeException(getTemplate(),
-                		"formatNumber", "value", obj, null);
-            }
-        } else if(input instanceof Number){
-                input = obj;
-        } else {
-            throw new IllegalTagAttributeException(getTemplate(),
-                    "formatNumber", "value", obj, null);
-        }
-
-        Locale locale = getLocale();
-
-        if (locale != null) {
-            // Create formatter
-            NumberFormat formatter = null;
-            if ((_pattern != null) && !_pattern.equals("")) {
-                // if 'pattern' is specified, 'type' is ignored
-                DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-                formatter = new DecimalFormat(_pattern, symbols);
-            } else {
-                formatter = createFormatter(locale);
-            }
-            if (((_pattern != null) && !_pattern.equals(""))
-                    || CURRENCY.equalsIgnoreCase(_type)) {
-                try {
-                    setCurrency(formatter);
-                } catch (Exception e) {
-                    //TODO
-                }
-            }
-            configureFormatter(formatter);
-            formatted = formatter.format(input);
-        } else {
-            // no formatting locale available, use toString()
-            formatted = input.toString();
-        }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if (_var != null) {
-            AttributeScope scope = cycle.getAttributeScope(_scope);
-            scope.setAttribute(_var, formatted);
-        } else {
-            cycle.getResponse().write(formatted);
-        }
-        return EVAL_PAGE;
-    }
- 
-    /**
-     * NumberFormatを作成します。<br>
-     * typeがセットされていなければ<br>
-     * typeは "number" "currency" "persent"<br>
-     * typeの指定がなければ "number"
-     * @param locale
-     * @return NumberFormat
-     */
-    private NumberFormat createFormatter(Locale locale) {
-
-        NumberFormat formatter = null;
-
-        if ((_type == null) || NUMBER.equalsIgnoreCase(_type)) {
-            formatter = NumberFormat.getNumberInstance(locale);
-        } else if (CURRENCY.equalsIgnoreCase(_type)) {
-            formatter = NumberFormat.getCurrencyInstance(locale);
-        } else if (PERCENT.equalsIgnoreCase(_type)) {
-            formatter = NumberFormat.getPercentInstance(locale);
-        } else {
-            throw new IllegalTagAttributeException(getTemplate(),
-                    "formatNumber", "type", _type, null);
-        }
-
-        return formatter;
-
-    }
-
-    /**
-     * フォーマットを設定します。
-     * 
-     * @param formatter
-     */
-    private void configureFormatter(NumberFormat formatter) {
-        formatter.setGroupingUsed(_groupingUsed);
-        if (_maxIntegerDigits > -1) {
-            formatter.setMaximumIntegerDigits(_maxIntegerDigits);
-        }
-        if (_minIntegerDigits > -1) {
-            formatter.setMinimumIntegerDigits(_minIntegerDigits);
-                    
-        }
-        if (_maxFractionDigits > -1) {
-            formatter.setMaximumFractionDigits(_maxFractionDigits);
-        }
-        if (_minFractionDigits > -1) {
-            formatter.setMinimumFractionDigits(_minFractionDigits);
-        }
-    }
-
-    /**
-     * Locale を取得する。 ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。 無ければデフォルト Locale を返す。
-     * @return Locale
-     */
-    protected Locale getLocale() {
-        // TODO Localization
-        Object locale = CycleUtil.findAttribute(FMT_LOCALE);
-
-        if (locale instanceof Locale) {
-            return (Locale) locale;
-        } else if (locale instanceof String) {
-            return parseLocale((String) locale);
-        } else {
-            // TODO Locale のデフォルトの決定 (null or getDefault)
-            // return null;
-            return Locale.getDefault();
-        }
-    }
-
-    /**
-     * Locale文字列をパースし、Localeオブジェクトを返す。
-     * 
-     * @param localeString
-     *            Locale文字列
-     * @return LocaleObject
-     * @throws IllegalArgumentException
-     *             形式不正の場合
-     */
-    protected Locale parseLocale(String localeString) {
-        int index = -1;
-        String language;
-        String country;
-
-        if ((index = localeString.indexOf('-')) >= 0
-                || (index = localeString.indexOf('_')) >= 0) {
-            language = localeString.substring(0, index);
-            country = localeString.substring(index + 1);
-        } else {
-            language = localeString;
-            country = null;
-        }
-
-        if (StringUtil.isEmpty(language)
-                || (country != null && country.length() == 0)) {
-            throw new IllegalArgumentException("invalid Locale: "
-                    + localeString);
-        }
-
-        if (country == null) {
-            country = "";
-        }
-
-        return new Locale(language, country);
-    }
-
-    /**
-     * 通貨値を設定します。 <br>
-     * J2SE1.4以降の場合はjava.util.Currencyを用います。 <br>
-     * 1.4以前の場合はDecimalFormatterを用います。
-     * 
-     * @param formatter
-     * @throws Exception
-     */
-    private void setCurrency(NumberFormat formatter) throws Exception {
-        String code = null;
-        String symbol = null;
-
-        if ((_currencyCode == null) && (_currencySymbol == null)) {
-			return;
-		}
-
-		if ((_currencyCode != null) && (_currencySymbol != null)) {
-			if (currencyClass != null) {
-				code = _currencyCode;
-			} else {
-				symbol = _currencySymbol;
-			}
-		} else if (_currencyCode == null) {
-			symbol = _currencySymbol;
-		} else {
-			if (currencyClass != null) {
-				code = _currencyCode;
-			} else {
-				symbol = _currencyCode;
-			}
-		}
-
-        if (code != null) {
-            Object[] methodArgs = new Object[1];
-
-            /*
-			 * java.util.Currency.getInstance()
-			 */
-            Method m = currencyClass.getMethod("getInstance",
-                    GET_INSTANCE_PARAM_TYPES);
-            methodArgs[0] = code;
-            Object currency = m.invoke(null, methodArgs);
-
-            /*
-             * java.text.NumberFormat.setCurrency()
-             */
-            Class[] paramTypes = new Class[1];
-            paramTypes[0] = currencyClass;
-            Class numberFormatClass = Class.forName("java.text.NumberFormat");
-            m = numberFormatClass.getMethod("setCurrency", paramTypes);
-            methodArgs[0] = currency;
-            m.invoke(formatter, methodArgs);
-        } else {
-            /*
-             * Let potential ClassCastException propagate up (will almost never
-             * happen)
-             */
-            DecimalFormat df = (DecimalFormat) formatter;
-            DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
-            dfs.setCurrencySymbol(symbol);
-            df.setDecimalFormatSymbols(dfs);
-        }
-    }
-
-    public boolean isChildEvaluation() {
-        return true;
-    }
-    
 }

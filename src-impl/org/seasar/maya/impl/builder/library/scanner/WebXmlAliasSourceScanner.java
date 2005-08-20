@@ -43,7 +43,7 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
         }
         InputStream stream = source.getInputStream();
         WebXMLHandler handler = new WebXMLHandler();
-        XmlUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, false, false);
+        XmlUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, true, true);
         return handler.iterateTaglibLocations();
     }
     

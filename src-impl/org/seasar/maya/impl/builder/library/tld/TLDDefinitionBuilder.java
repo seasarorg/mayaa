@@ -17,6 +17,8 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import java.io.InputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
@@ -31,6 +33,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class TLDDefinitionBuilder implements DefinitionBuilder {
 
+    private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
@@ -43,11 +47,17 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
         if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             TLDHandler handler = new TLDHandler();
-            // TODO Validおよびスキーマをtrueにすると動作しない。
-            XmlUtil.parse(handler, stream, "tld", systemID, true, false, false);
+            try {
+                XmlUtil.parse(handler, stream, "tld", systemID, true, true, true);
+            } catch(Throwable t) {
+                if(LOG.isErrorEnabled()) {
+                    LOG.error("TLD parse error on " + systemID, t);
+                }
+                return null;
+            }
             JspLibraryDefinition library = handler.getLibraryDefinition();
-            boolean assigned = ObjectUtil.booleanValue(
-                    source.getAttribute(WebXmlAliasSourceScanner.ASSIGNED), false);
+            boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
+                    WebXmlAliasSourceScanner.ASSIGNED), false);
             if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
                 library.setAssignedURI(source.getAttribute(SourceAlias.ALIAS));
             }

@@ -54,13 +54,16 @@ public class J2eeEntityResolver implements CONST_J2EE {
     }
     
     public static InputSource resolveEntity(String publicId, String systemId) {
-        String path;
+        String path = systemId;
         if(_entities.containsKey(publicId)) {
             path = (String)_entities.get(publicId);
         } else if(_entities.containsKey(systemId)) {
             path = (String)_entities.get(systemId);
         } else {
-            path = systemId;
+            int pos = systemId.lastIndexOf('/');
+            if(pos != -1) {
+                path = systemId.substring(pos);
+            }
         }
         ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor(
                 null, path, J2eeEntityResolver.class);

@@ -17,6 +17,8 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import java.io.InputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -30,8 +32,11 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
+public class MLDDefinitionBuilder
+        implements DefinitionBuilder, CONST_IMPL {
 
+    private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedOperationException();
     }
@@ -40,14 +45,23 @@ public class MLDDefinitionBuilder implements DefinitionBuilder, CONST_IMPL {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() && source.getSystemID().toLowerCase().endsWith(".mld")) {
+        if(source.exists() &&
+                source.getSystemID().toLowerCase().endsWith(".mld")) {
             MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
             String systemID = source.getSystemID();
-            XmlUtil.parse(handler, stream, PUBLIC_MLD10, systemID, true, true, false);
+            try {
+                XmlUtil.parse(handler, stream, PUBLIC_MLD10, 
+                        systemID, true, true, false);
+            } catch(Throwable t) {
+                if(LOG.isErrorEnabled()) {
+                    LOG.error("MLD parse error on " + systemID, t);
+                }
+                return null;
+            }
             LibraryDefinitionImpl library = handler.getLibraryDefinition();
-            boolean assigned = ObjectUtil.booleanValue(
-                    source.getAttribute(WebXmlAliasSourceScanner.ASSIGNED), false);
+            boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
+                    WebXmlAliasSourceScanner.ASSIGNED), false);
             if(assigned) {
                 library.setAssignedURI(source.getAttribute(SourceAlias.ALIAS));
             }            

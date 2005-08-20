@@ -27,7 +27,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public final class XmlUtil {
-
+    
     private XmlUtil() {
     }
 

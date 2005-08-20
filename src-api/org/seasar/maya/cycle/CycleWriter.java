@@ -31,9 +31,9 @@ public abstract class CycleWriter extends Writer {
     public static final int BLOCK_SIZE = 1024;
     
     /**
-     * デフォルトの最大ブロックサイズ。32。 
+     * デフォルトの最大ブロックサイズ。1024。 
      */
-    public static final int MAX_BLOCK_NUM = 32; 
+    public static final int MAX_BLOCK_NUM = 1024; 
 
     /**
      * コンストラクタで渡された、上位のWriterを返す。nullの場合もありえる。

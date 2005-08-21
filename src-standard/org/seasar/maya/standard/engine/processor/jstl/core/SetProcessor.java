@@ -15,11 +15,9 @@
  */
 package org.seasar.maya.standard.engine.processor.jstl.core;
 
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.standard.engine.processor.AttributeValue;
+import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
 /**
@@ -30,16 +28,13 @@ public class SetProcessor extends BodyValueProcessor {
     private static final long serialVersionUID = 6211369730749002956L;
 
     private ProcessorProperty _value;
-    private ProcessorProperty _var;
-    private String            _scope;
+    private String _var;
+    private String _scope;
     
     protected ProcessStatus process() {
-        String varName = (String)_var.getValue();
-        if(StringUtil.hasValue(varName)) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            AttributeScope scope = cycle.getAttributeScope(_scope);
-            scope.setAttribute(varName, getVarValue());
-        }
+        String varName = _var;
+        AttributeValue attributeValue = AttributeValueFactory.create(varName,_scope);
+		attributeValue.setValue(getVarValue());
         return EVAL_PAGE;
     }
 
@@ -54,7 +49,7 @@ public class SetProcessor extends BodyValueProcessor {
         _value = value ;
     }
 
-    public void setVar(ProcessorProperty var) {
+    public void setVar(String var) {
         _var = var;
     }
     

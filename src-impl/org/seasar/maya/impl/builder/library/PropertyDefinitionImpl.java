@@ -112,10 +112,9 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
 	        Class propertyType = ObjectUtil.getPropertyType(processor, _name);
-            if( propertyType == null ) {
-                throw new IllegalStateException(
-                		processor.getClass().getName()+":publicメソッドset"+
-                		_name.toUpperCase().substring(0,1)+_name.substring(1)+"が見つからない。orz");
+            if(propertyType == null) {
+            	// TODO プロセッサ実装クラスに、MLD定義のプロパティが見つからないとき。
+                throw new IllegalStateException();
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	        	Class clazz = ObjectUtil.loadClass(_expectedType);

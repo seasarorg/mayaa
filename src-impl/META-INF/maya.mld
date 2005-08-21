@@ -34,12 +34,12 @@
 
 	<processor name="characters" class="org.seasar.maya.impl.engine.processor.CharactersProcessor">
 		<description>text on the template</description>
-		<property name="text"/>
+		<property name="text" expectedType="java.lang.String"/>
 	</processor>
 	
 	<processor name="comment" class="org.seasar.maya.impl.engine.processor.CommentProcessor">
 		<description>comment on the template</description>
-		<property name="text"/>
+		<property name="text" expectedType="java.lang.String"/>
 	</processor>
 
 	<processor name="doctype" class="org.seasar.maya.impl.engine.processor.DOCTYPEProcessor">

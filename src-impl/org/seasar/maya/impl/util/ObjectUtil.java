@@ -39,12 +39,30 @@ public class ObjectUtil {
         if(expectedType.isAssignableFrom(clazz)) {
             return clazz;
         }
+        // TODO 期待する型にキャストできない型をロードした例外。
         throw new IllegalArgumentException();
     }
     
     public static Class loadClass(String className) {
         if(StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
+        }
+        if("short".equals(className)) {
+        	return Short.TYPE;
+        } else if("int".equals(className)) {
+        	return Integer.TYPE;
+        } else if("long".equals(className)) {
+        	return Long.TYPE;
+        } else if("float".equals(className)) {
+        	return Float.TYPE;
+        } else if("double".equals(className)) {
+        	return Double.TYPE;
+        } else if("byte".equals(className)) {
+        	return Byte.TYPE;
+        } else if("char".equals(className)) {
+        	return Character.TYPE;
+        } else if("boolean".equals(className)) {
+        	return Boolean.TYPE;
         }
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {

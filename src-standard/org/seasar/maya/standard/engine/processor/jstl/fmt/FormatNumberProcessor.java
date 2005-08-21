@@ -21,12 +21,12 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
+import org.seasar.maya.standard.engine.processor.AttributeValue;
+import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
 import org.seasar.maya.standard.engine.processor.util.ProcessorPropertyUtil;
 
 /**
@@ -100,14 +100,11 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
 
         initParameter();
 
-        String formatted   = getFormatedString(obj);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if (_var != null) {
-            AttributeScope scope = cycle.getAttributeScope(_scope);
-            scope.setAttribute(_var, formatted);
-        } else {
-            cycle.getResponse().write(formatted);
-        }
+        String formatted = getFormatedString(obj);
+        
+        AttributeValue attributeValue = AttributeValueFactory.createForceOutputer(_var,_scope);
+		attributeValue.setValue(formatted);
+        
         return EVAL_PAGE;
     }
 
@@ -219,46 +216,12 @@ public class FormatNumberProcessor extends AbstractBodyProcessor {
         if (locale instanceof Locale) {
             return (Locale) locale;
         } else if (locale instanceof String) {
-            return parseLocale((String) locale);
+            return FormatUtil.parseLocale((String) locale);
         } else {
             return Locale.getDefault();
         }
     }
 
-    /**
-     * Locale文字列をパースし、Localeオブジェクトを返す。
-     * 
-     * @param localeString
-     *            Locale文字列
-     * @return LocaleObject
-     * @throws IllegalArgumentException
-     *             形式不正の場合
-     */
-    protected Locale parseLocale(String localeString) {
-        int index = -1;
-        String language;
-        String country;
-
-        if (( index = localeString.indexOf('-')) >= 0 ||
-            ( index = localeString.indexOf('_')) >= 0 ){
-            language = localeString.substring(0, index);
-            country  = localeString.substring(index+1);
-        } else {
-            language = localeString;
-            country = null;
-        }
-
-        if (StringUtil.isEmpty(language)
-                || (country != null && country.length() == 0)) {
-            throw new IllegalArgumentException("invalid Locale: " + localeString);
-        }
-
-        if (country == null) {
-            country = "";
-        }
-
-        return new Locale(language, country);
-    }
 
     /**
      * 通貨値を設定します。 <br>

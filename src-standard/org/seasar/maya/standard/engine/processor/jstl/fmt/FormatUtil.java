@@ -1,10 +1,24 @@
 package org.seasar.maya.standard.engine.processor.jstl.fmt;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.seasar.maya.impl.util.StringUtil;
 
 public class FormatUtil {
+    public static NumberFormat getFormat(Locale locale,String pattern, String type) {
+        if( StringUtil.isEmpty(pattern) == false )
+            return new DecimalFormat(pattern);
+        if("NUMBER".equals(type))
+            return NumberFormat.getNumberInstance(locale);
+        if("CURRENCY".equals(type))
+            return NumberFormat.getCurrencyInstance(locale);
+        if("PERCENT".equals(type))
+            return NumberFormat.getPercentInstance(locale);        
+        return NumberFormat.getInstance(locale);
+    }
+
     /**
      * Locale文字列をパースし、Localeオブジェクトを返す。
      * 

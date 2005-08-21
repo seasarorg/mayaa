@@ -111,4 +111,7 @@ public final class StringUtil {
         return blockString;
     }
     
+    public static boolean isContain(String str, int c){
+    	return str.indexOf(c) >= 0 ;
+    }
 }

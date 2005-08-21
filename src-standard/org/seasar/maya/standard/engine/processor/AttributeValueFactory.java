@@ -38,7 +38,20 @@ public class AttributeValueFactory {
         }
         return new AttributeValue_Basic(name, scope);
     }
+
+    public static AttributeValue createForceOutputer(String name){
+        if( StringUtil.isEmpty(name)){
+            return new AttributeValue_Output();
+        }
+        return new AttributeValue_Basic(name);
+    }
     
+    public static AttributeValue createForceOutputer(String name, String scope){
+        if( StringUtil.isEmpty(name)){
+            return new AttributeValue_Output();
+        }
+        return new AttributeValue_Basic(name, scope);
+    }
 }
 
 class AttributeValue_Basic implements AttributeValue {
@@ -99,3 +112,8 @@ class AttributeValue_Null implements AttributeValue {
 
 }
 
+class AttributeValue_Output extends AttributeValue_Null{
+    public void setValue(Object value){
+        CycleUtil.getServiceCycle().getResponse().write(value.toString());
+    }
+}

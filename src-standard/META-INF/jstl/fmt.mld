@@ -36,4 +36,15 @@
 		<property name="scope"/>
 	</processor>
 
+	<processor name="parseNumber"
+			class="org.seasar.maya.standard.engine.processor.jstl.fmt.ParseNumberProcessor">
+		<property name="value"/>
+		<property name="type"/>
+		<property name="parseLocale"/>
+		<property name="pattern"/>
+		<property name="integerOnly"/>
+		<property name="var"/>
+		<property name="scope"/>
+	</processor>
+
 </library>

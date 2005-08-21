@@ -5,14 +5,15 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
-import org.seasar.maya.standard.engine.processor.BodyValueProcessor;
 
 /**
  * 
  * @author maruo_syunsuke
  */
-public class ParseDateProcessor extends BodyValueProcessor {
+public class ParseDateProcessor extends TemplateProcessorSupport {
 
 	private ProcessorProperty _value;
 
@@ -25,12 +26,12 @@ public class ParseDateProcessor extends BodyValueProcessor {
     private String _var;
     private String _scope;
 
-    protected ProcessStatus process() {
+    public ProcessStatus doStartProcess() {
 		try {
 			DateFormat dateFormat = FormatUtil.createFormat(
 					FormatUtil.parseLocale(_parseLocale),
 					_type,_pattern,_dateStyle,_timeStyle);
-			dateFormat.setTimeZone(FormatUtil.getTimeZone(_timeZone));
+			dateFormat.setTimeZone(FormatUtil.parseTimeZone(_timeZone));
 			
 	    	Date date = dateFormat.parse((String)_value.getValue());
 			AttributeValueFactory.createForceOutputer(_var,_scope).setValue(date);		

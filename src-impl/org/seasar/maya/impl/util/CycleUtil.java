@@ -53,6 +53,30 @@ public class CycleUtil {
         return null;
     }
 
+    public static void removeAttribute(String name) {
+	    getServiceCycle().removeAttribute(name);
+    }
+    public static void removeAttribute(String name, String scopeString) {
+    	try {
+			AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
+			scope.removeAttribute(name);
+		} catch (RuntimeException e) {
+		    removeAttribute(name);
+		}
+    }
+
+    public static void setAttribute(String name, Object value) {
+	    getServiceCycle().setAttribute(name, value);
+    }
+    public static void setAttribute(String name, Object value, String scopeString) {
+    	try {
+			AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
+			scope.setAttribute(name, value);
+		} catch (RuntimeException e) {
+		    setAttribute(name, value);
+		}
+    }
+
     public static void rewriteAttribute(String name, Object value) {
     	ServiceCycle cycle = getServiceCycle();
         for (int i = 0; i < SCOPES.length; i++) {

@@ -36,84 +36,36 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -9118340781420704614L;
 
-    protected static final String DATE 		= "date";
-    protected static final String TIME 		= "time";
-    protected static final String DATETIME 	= "both";
-
-    protected static final String DEFAULT 	= "default";
-    protected static final String SHORT 	= "short";
-    protected static final String MEDIUM 	= "medium";
-    protected static final String LONG 		= "long";
-    protected static final String FULL 		= "full";
-
-    protected static final String FMT_LOCALE =
-        "javax.servlet.jsp.jstl.fmt.locale";
-
-    protected static final int INVALID_STYLE = Integer.MIN_VALUE;
-
     /* rtexprvalue */
-    protected ProcessorProperty _value;
-    protected ProcessorProperty _type;
-    protected ProcessorProperty _pattern;
-    protected ProcessorProperty _timeZone;
-    protected ProcessorProperty _dateStyle;
-    protected ProcessorProperty _timeStyle;
+    private ProcessorProperty _value;
 
     /* not rtexprvalue */
-    protected String _var;
-    protected String _scopeString;
-    protected String _scope;
+    private String _var;
+    private String _scope;
 
-    public void setValue(ProcessorProperty value) {
-        if(value == null) {
-            throw new IllegalArgumentException();
-        }
-        _value = value;
-    }
+    private String _type;
+    private String _pattern;
+    private String _timeZone;
+    private String _dateStyle;
+    private String _timeStyle;
 
-    public void setType(ProcessorProperty type) {
-        _type = type;
-    }
-
-    public void setPattern(ProcessorProperty pattern) {
-        _pattern = pattern;
-    }
-
-    public void setTimeZone(ProcessorProperty timeZone) {
-        _timeZone = timeZone;
-    }
-
-    public void setDateStyle(ProcessorProperty dateStyle) {
-        _dateStyle = dateStyle;
-    }
-
-    public void setTimeStyle(ProcessorProperty timeStyle) {
-        _timeStyle = timeStyle;
-    }
-
-    public void setVar(String var) {
-        _var = var;
-    }
-
-    public void setScope(String scope) {
-        _scope = scope;
-    }
-
+    
     public ProcessStatus doStartProcess() {
         Date value = getDateValue();
         if (value == null) {
             return EVAL_PAGE;
         }
 
-        Locale locale = getLocale();
+        Locale locale = FormatUtil.getLocale();
 
         String formatted = null;
         if (locale == null) {
             formatted = value.toString();
         } else {
-            DateFormat format = createFormat(locale);
+            DateFormat format = FormatUtil.createFormat(
+            			locale,_type,_pattern,_dateStyle,_timeStyle);
     
-            TimeZone timeZone = getTimeZone();
+            TimeZone timeZone = FormatUtil.parseTimeZone(_timeZone);
             if (timeZone != null) {
                 format.setTimeZone(timeZone);
             }
@@ -148,203 +100,6 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
                 getTemplate(), "formatDate", "value", _value, null);
     }
 
-    /**
-     * DateFormat を作成する。
-     * type がセットされているなら type の評価結果を元に作成する。 
-     * type は "date", "time", "both" のいずれか。
-     * type がセットされておらず、pattern がセットされているなら
-     *  pattern の評価結果を元に作成する。
-     * type も pattern もセットされていないなら、type="date" がセットされていると
-     * 見なす。
-     * @param locale 環境の Locale
-     * @return DateFormat
-     * @throws IllegalTagAttributeException typeが不正な場合
-     */
-    protected DateFormat createFormat(Locale locale) {
-        String type = null;
-        if (_type != null) {
-            type = (String)_type.getValue();
-        } else if (_pattern != null) {
-            String pattern = (String) _pattern.getValue();
-            if (pattern != null) {
-                return new SimpleDateFormat(pattern, locale);
-            }
-        }
-
-        if ((type == null) || DATE.equalsIgnoreCase(type)) {
-            return DateFormat.getDateInstance(getDateStyle(), locale);
-        } else if (TIME.equalsIgnoreCase(type)) {
-            return DateFormat.getTimeInstance(getTimeStyle(), locale);
-        } else if (DATETIME.equalsIgnoreCase(type)) {
-            return DateFormat.getDateTimeInstance(
-                    getDateStyle(), getTimeStyle(), locale);
-        } else {
-            throw new IllegalTagAttributeException(
-                    getTemplate(), "formatDate", "type", _type, null);
-        }
-    }
-
-    /**
-     * 日付のフォーマットスタイルを取得する。
-     * (DateFormat#getXxxInstance で利用する定数値)
-     * 未定義の場合は DateFormat.DEFAULT を返す。
-     * @return 日付のフォーマットスタイル
-     * @throws IllegalTagAttributeException dateStyleが不正な場合
-     */
-    protected int getDateStyle()
-            throws IllegalTagAttributeException {
-        int dateStyle = getStyle(_dateStyle);
-        if (dateStyle == INVALID_STYLE) {
-            throw new IllegalTagAttributeException(
-                    getTemplate(), "formatDate", "style", _dateStyle, null);
-        }
-
-        return dateStyle;
-    }
-
-    /**
-     * 時刻のフォーマットスタイルを取得する。
-     * (DateFormat#getXxxInstance で利用する定数値)
-     * 未定義の場合は DateFormat.DEFAULT を返す。
-     * @return 時刻のフォーマットスタイル
-     * @throws IllegalTagAttributeException timeStyleが不正な場合
-     */
-    protected int getTimeStyle()
-            throws IllegalTagAttributeException {
-        int timeStyle = getStyle(_timeStyle);
-        if (timeStyle == INVALID_STYLE) {
-            throw new IllegalTagAttributeException(
-                    getTemplate(), "formatDate", "style", _timeStyle, null);
-        }
-
-        return timeStyle;
-    }
-
-    /**
-     * style を評価し、日付または時刻のフォーマットスタイルを取得する。
-     * (DateFormat#getXxxInstance で利用する定数値)
-     * style が null の場合は DateFormat.DEFAULT を返す。
-     * @param style 評価対象の式。
-     * @return 日付または時刻のフォーマットスタイル。
-     *          style の評価結果が不正な場合は INVALID_STYLE を返す。
-     */
-    protected int getStyle(ProcessorProperty style) {
-        if (style == null) {
-            return DateFormat.DEFAULT;
-        }
-        return getStyle((String) style.getValue());
-    }
-
-    /**
-     * styleName を元に日付または時刻のフォーマットスタイルを取得する。
-     * (DateFormat#getXxxInstance で利用する定数値)
-     * styleName が null の場合は DateFormat.DEFAULT を返す。
-     * styleName は "date", "time", "both" のいずれか。
-     *
-     * @param styleName 日付または時刻のフォーマットスタイル名。
-     * @return 日付または時刻のフォーマットスタイル。
-     *          styleName が不正な場合は INVALID_STYLE を返す。
-     */
-    protected int getStyle(String styleName) {
-        if (styleName == null) {
-            return DateFormat.DEFAULT;
-        }
-
-        int ret;
-        if (styleName == null || DEFAULT.equalsIgnoreCase(styleName)) {
-            ret = DateFormat.DEFAULT;
-        } else if (SHORT.equalsIgnoreCase(styleName)) {
-            ret = DateFormat.SHORT;
-        } else if (MEDIUM.equalsIgnoreCase(styleName)) {
-            ret = DateFormat.MEDIUM;
-        } else if (LONG.equalsIgnoreCase(styleName)) {
-            ret = DateFormat.LONG;
-        } else if (FULL.equalsIgnoreCase(styleName)) {
-            ret = DateFormat.FULL;
-        } else {
-            ret = INVALID_STYLE;
-        }
-
-        return ret;
-    }
-
-    /**
-     * timeZone がセットされているなら TimeZone オブジェクトを取得する。
-     * timeZone の評価結果が TimeZone オブジェクトならそのまま返す。
-     * String なら TimeZone の文字列表現として評価して返す。
-     * @return TimeZone
-     * @throws IllegalTagAttributeException timeZoneが不正な場合
-     */
-    protected TimeZone getTimeZone() {
-        if (_timeZone == null) {
-            return null;
-        }
-        Object timeZone = _timeZone.getValue();
-        if (timeZone == null) {
-            return null;
-        } else if (timeZone instanceof String) {
-            return TimeZone.getTimeZone((String) timeZone);
-        } else if (timeZone instanceof TimeZone) {
-            return (TimeZone) timeZone;
-        }
-
-        throw new IllegalTagAttributeException(
-                getTemplate(), "formatDate", "timeZone", _timeZone, null);
-    }
-
-    /**
-     * Locale を取得する。
-     * ページコンテキスト内の FMT_LOCALE を探し、あればそれを返す。
-     * 無ければデフォルト Locale を返す。
-     * @return Locale
-     */
-    protected Locale getLocale() {
-        // TODO Localization
-        Object locale = CycleUtil.findAttribute(FMT_LOCALE);
-
-        if (locale instanceof Locale) {
-            return (Locale) locale;
-        } else if (locale instanceof String) {
-            return parseLocale((String) locale);
-        } else {
-            // TODO Locale のデフォルトの決定 (null or getDefault)
-            // return null;
-            return Locale.getDefault();
-        }
-    }
-
-    /**
-     * Locale文字列をパースし、Localeオブジェクトを返す。
-     *
-     * @param localeString Locale文字列
-     * @return LocaleObject
-     * @throws IllegalArgumentException 形式不正の場合
-     */
-    protected Locale parseLocale(String localeString) {
-        int index = -1;
-        String language;
-        String country;
-
-        if ((index = localeString.indexOf('-')) >= 0 ||
-                (index = localeString.indexOf('_')) >= 0) {
-            language = localeString.substring(0, index);
-            country = localeString.substring(index + 1);
-        } else {
-            language = localeString;
-            country = null;
-        }
-
-        if (StringUtil.isEmpty(language) ||
-                (country != null && country.length() == 0)) {
-            throw new IllegalArgumentException("invalid Locale: " + localeString);
-        }
-
-        if (country == null) {
-            country = "";
-        }
-
-        return new Locale(language, country);
-    }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -363,9 +118,43 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
         sb.append(_timeStyle);
         sb.append(", var=");
         sb.append(_var);
-        sb.append(", scope=");
-        sb.append(_scopeString);
         return new String(sb);
     }
 
+    
+    // setter
+    public void setValue(ProcessorProperty value) {
+        if(value == null) {
+            throw new IllegalArgumentException();
+        }
+        _value = value;
+    }
+
+    public void setType(String type) {
+        _type = type;
+    }
+
+    public void setPattern(String pattern) {
+        _pattern = pattern;
+    }
+
+    public void setTimeZone(String timeZone) {
+        _timeZone = timeZone;
+    }
+
+    public void setDateStyle(String dateStyle) {
+        _dateStyle = dateStyle;
+    }
+
+    public void setTimeStyle(String timeStyle) {
+        _timeStyle = timeStyle;
+    }
+
+    public void setVar(String var) {
+        _var = var;
+    }
+
+    public void setScope(String scope) {
+        _scope = scope;
+    }
 }

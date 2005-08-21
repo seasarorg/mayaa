@@ -6,19 +6,6 @@
 
 	<description>The native JSTL core processors</description>
 
-	<processor name="formatDate"
-			class="org.seasar.maya.standard.engine.processor.jstl.fmt.FormatDateProcessor">
-		<property name="value" required="true"/>
-		<property name="type"/>
-		<property name="pattern"/>
-		<property name="timeZone"/>
-		<property name="dateStyle"/>
-		<property name="timeStyle"/>
-		<property name="var"/>
-		<property name="scopeString"/>
-		<property name="scope"/>
-	</processor>
-
 	<processor name="formatNumber"
 			class="org.seasar.maya.standard.engine.processor.jstl.fmt.FormatNumberProcessor">
 		<property name="value"/>
@@ -47,4 +34,40 @@
 		<property name="scope"/>
 	</processor>
 
+	<processor name="formatDate"
+			class="org.seasar.maya.standard.engine.processor.jstl.fmt.FormatDateProcessor">
+		<property name="value" required="true"/>
+		<property name="type"/>
+		<property name="pattern"/>
+		<property name="timeZone"/>
+		<property name="dateStyle"/>
+		<property name="timeStyle"/>
+		<property name="var"/>
+		<property name="scope"/>
+	</processor>
+
+	<processor name="parseDate"
+			class="org.seasar.maya.standard.engine.processor.jstl.fmt.ParseDateProcessor">
+		<property name="value" required="true"/>
+		<property name="type"/>
+		<property name="pattern"/>
+		<property name="parseLocale"/>
+		<property name="timeZone"/>
+		<property name="dateStyle"/>
+		<property name="timeStyle"/>
+		<property name="var"/>
+		<property name="scope"/>
+	</processor>
+
+	<processor name="setLocale"
+			class="org.seasar.maya.standard.engine.processor.jstl.fmt.SetLocaleProcessor">
+		<property name="value" required="true"/>
+		<property name="valiant"/>
+		<property name="scope"/>
+	</processor>
+
+	<processor name="timeZone"
+			class="org.seasar.maya.standard.engine.processor.jstl.fmt.TimeZoneProcessor">
+		<property name="value" required="true"/>
+	</processor>
 </library>

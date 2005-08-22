@@ -103,7 +103,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     }
     
     public Object execute(Object root) {
-        Object ret;
+        Object ret = null;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
         cx.setWrapFactory(new MayaWrapFactory());
@@ -112,7 +112,9 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
                 _script = compile(cx);
             }
             Object value = _script.exec(cx, getScope(cx, root));
-            ret = JavaAdapter.convertResult(value, expectedType);
+            if(expectedType != Void.class) {
+                ret = JavaAdapter.convertResult(value, expectedType);
+            }
         } finally {
             Context.exit();
         }

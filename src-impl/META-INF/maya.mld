@@ -84,4 +84,11 @@
 		<property name="index"/>
 	</processor>
 
+	<processor name="scriptlet"
+			class="org.seasar.maya.impl.engine.processor.ScriptletProcessor">
+		<property name="src"/>
+		<property name="encoding"/>
+		<property name="exec" expectedType="java.lang.String"/>
+	</processor>		
+
 </library>

@@ -34,7 +34,7 @@ public class ScriptUtil implements CONST_IMPL {
 
 	private ScriptUtil() {
 	}
-
+    
     public static CompiledScript compile(String text, Class expectedType) {
         if(expectedType == null) {
         	throw new IllegalArgumentException();
@@ -52,16 +52,13 @@ public class ScriptUtil implements CONST_IMPL {
     }
     
     public static Object execute(Object obj) {
-        Object value = null;
         if (obj instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)obj;
             Specification specification = SpecificationUtil.findSpecification();
             Object model = SpecificationUtil.findSpecificationModel(specification);
-            value = script.execute(model);
-        } else {
-            value = obj;
+            return script.execute(model);
         }
-        return value;
+        return obj;
     }
     
     public static  void execEvent(Specification specification, QName eventName) {

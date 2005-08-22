@@ -39,7 +39,7 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
     private String _src;
     private CompiledScript _script;
     private String _encoding;
-    private ThreadLocal _loaded;
+    private ThreadLocal _loaded = new ThreadLocal();
     
     // MLD property
     public void setSrc(String src) {
@@ -64,7 +64,7 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
                 ScriptCompiler compiler = provider.getScriptCompiler();
                 _script = compiler.compile(source, _encoding, Void.class);
             }
-            if(_loaded.get() != null) {
+            if(_loaded.get() == null) {
                 ScriptUtil.execute(_script);
                 _loaded.set(LOADED);
             }

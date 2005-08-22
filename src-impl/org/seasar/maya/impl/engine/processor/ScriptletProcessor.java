@@ -33,11 +33,13 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 public class ScriptletProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -3442033812529712223L;
+    private static final Object LOADED = new Object();
 
     private ProcessorProperty _exec;
     private String _src;
     private CompiledScript _script;
     private String _encoding;
+    private ThreadLocal _loaded;
     
     // MLD property
     public void setSrc(String src) {
@@ -62,7 +64,10 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
                 ScriptCompiler compiler = provider.getScriptCompiler();
                 _script = compiler.compile(source, _encoding, Void.class);
             }
-            ScriptUtil.execute(_script);            
+            if(_loaded.get() != null) {
+                ScriptUtil.execute(_script);
+                _loaded.set(LOADED);
+            }
         }
         if(_exec != null) {
             String ret = (String)_exec.getValue();

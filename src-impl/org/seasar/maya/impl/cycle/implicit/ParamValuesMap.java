@@ -18,24 +18,24 @@ package org.seasar.maya.impl.cycle.implicit;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ParamValuesMap extends AbstractAttributeMap {
-    
-    private final Request _request;
 
-    public ParamValuesMap(Request request) {
-        if (request == null) {
-            throw new IllegalArgumentException();
-        }
-        _request = request;
-    }
-
+	public static ImplicitObjectResolver RESOLVER = 
+		new ImplicitObjectResolver() {
+			public Object resolve() {
+		        return new ParamValuesMap();
+			}
+		};
+	
     protected Object getAttribute(String key) {
-        return _request.getParameterValues(key);
+    	Request request = CycleUtil.getRequest();
+        return request.getParameterValues(key);
     }
 
     protected void setAttribute(String key, Object value) {
@@ -43,7 +43,8 @@ public class ParamValuesMap extends AbstractAttributeMap {
     }
 
     protected Iterator getAttributeNames() {
-        return _request.iterateParameterNames();
+    	Request request = CycleUtil.getRequest();
+        return request.iterateParameterNames();
     }
 
 }

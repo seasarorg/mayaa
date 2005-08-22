@@ -21,12 +21,12 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.cycle.implicit.HeaderResolver;
-import org.seasar.maya.impl.cycle.implicit.HeaderValuesResolver;
+import org.seasar.maya.impl.cycle.implicit.HeaderMap;
+import org.seasar.maya.impl.cycle.implicit.HeaderValuesMap;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
 import org.seasar.maya.impl.cycle.implicit.PageContextResolver;
-import org.seasar.maya.impl.cycle.implicit.ParamResolver;
-import org.seasar.maya.impl.cycle.implicit.ParamValuesResolver;
+import org.seasar.maya.impl.cycle.implicit.ParamMap;
+import org.seasar.maya.impl.cycle.implicit.ParamValuesMap;
 import org.seasar.maya.impl.cycle.implicit.RequestResolver;
 import org.seasar.maya.impl.cycle.implicit.ResponseResolver;
 import org.seasar.maya.impl.cycle.implicit.ServiceCycleResolver;
@@ -48,10 +48,10 @@ public class ImplicitScope implements AttributeScope {
     static {
     	_resolverMap = new HashMap();
     	_resolverMap.put(SERVICE_CYCLE , new ServiceCycleResolver());
-    	_resolverMap.put(PARAM , new ParamResolver());
-    	_resolverMap.put(PARAM_VALUES , new ParamValuesResolver());
-    	_resolverMap.put(HEADER , new HeaderResolver());
-    	_resolverMap.put(HEADER_VALUES , new HeaderValuesResolver());
+    	_resolverMap.put(PARAM , ParamMap.RESOLVER);
+    	_resolverMap.put(PARAM_VALUES , ParamValuesMap.RESOLVER);
+    	_resolverMap.put(HEADER , HeaderMap.RESOLVER);
+    	_resolverMap.put(HEADER_VALUES , HeaderValuesMap.RESOLVER);
         _resolverMap.put("pageContext", new PageContextResolver());
         _resolverMap.put("request", new RequestResolver());
         _resolverMap.put("response", new ResponseResolver());

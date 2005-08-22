@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.implicit;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
 
 /**
@@ -25,17 +26,16 @@ import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
  */
 public class HeaderMap extends AbstractAttributeMap {
     
-    private final Request _request;
-
-    public HeaderMap(Request request) {
-        if(request == null) {
-            throw new IllegalArgumentException();
-        }
-        _request = request;
-    }
-
+	public static ImplicitObjectResolver RESOLVER = 
+		new ImplicitObjectResolver() {
+			public Object resolve() {
+		        return new HeaderMap();
+			}
+		};
+	
     protected Object getAttribute(String key) {
-        String[] attrs = _request.getHeaderValues(key);
+    	Request request = CycleUtil.getRequest();
+    	String[] attrs = request.getHeaderValues(key);
         if(attrs != null && attrs.length > 0) {
         	return attrs[0];
         }
@@ -47,7 +47,8 @@ public class HeaderMap extends AbstractAttributeMap {
     }
 
     protected Iterator getAttributeNames() {
-        return _request.iterateHeaderNames();
+    	Request request = CycleUtil.getRequest();
+        return request.iterateHeaderNames();
     }
     
 }

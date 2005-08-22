@@ -89,6 +89,7 @@
 		<property name="src"/>
 		<property name="encoding"/>
 		<property name="exec" expectedType="java.lang.String"/>
+		<property name="default"/> 
 	</processor>		
 
 </library>

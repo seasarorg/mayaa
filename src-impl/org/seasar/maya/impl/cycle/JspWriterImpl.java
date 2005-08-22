@@ -28,6 +28,8 @@ public class JspWriterImpl extends JspWriter {
     
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
+    private boolean _closed;
+    private boolean _flushed;
     private CycleWriter _writer;
     
     public JspWriterImpl(CycleWriter writer) {
@@ -39,6 +41,9 @@ public class JspWriterImpl extends JspWriter {
     }
 
     public void write(char cbuf[], int off, int len) throws IOException {
+        if(_closed) {
+            throw new IOException();
+        }
         if(len == 0) {
             return;
         }
@@ -46,6 +51,9 @@ public class JspWriterImpl extends JspWriter {
     }
 
     public final void clear() throws IOException {
+        if(_closed || _flushed) {
+            throw new IOException();
+        }
         _writer.clearBuffer();
     }
 
@@ -54,10 +62,15 @@ public class JspWriterImpl extends JspWriter {
     }
 
     public void close() throws IOException {
+        _closed = true;
     }
 
     public void flush() throws IOException {
+        if(_closed) {
+            throw new IOException();
+        }
         _writer.flush();
+        _flushed = true;
     }
 
     public int getRemaining() {

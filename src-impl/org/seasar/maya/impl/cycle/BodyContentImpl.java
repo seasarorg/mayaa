@@ -17,6 +17,7 @@ package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 
 import javax.servlet.jsp.JspWriter;
@@ -54,7 +55,7 @@ public class BodyContentImpl extends BodyContent {
     }
 
     public Reader getReader() {
-        return _writer.getReader();
+        return new StringReader(getString());
     } 
     
     public String getString() {

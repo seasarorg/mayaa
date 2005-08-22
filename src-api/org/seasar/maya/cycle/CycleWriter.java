@@ -16,7 +16,6 @@
 package org.seasar.maya.cycle;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 
 /**
@@ -24,16 +23,6 @@ import java.io.Writer;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class CycleWriter extends Writer {
-
-    /**
-     * デフォルトのブロックサイズ。1024。
-     */
-    public static final int BLOCK_SIZE = 1024;
-    
-    /**
-     * デフォルトの最大ブロック数。1024。 
-     */
-    public static final int MAX_BLOCK_NUM = 1024; 
 
     /**
      * コンストラクタで渡された、上位のWriterを返す。nullの場合もありえる。
@@ -52,12 +41,6 @@ public abstract class CycleWriter extends Writer {
 	 */
     public abstract String getString();
 	
-    /**
-     * バッファの内容をReaderで取得する。
-     * @return バッファ内容。
-     */
-    public abstract Reader getReader();
-    
     /**
      * 指定Writerにバッファ内容を書き出す。
      * @param writer 書き出し先のWriter。

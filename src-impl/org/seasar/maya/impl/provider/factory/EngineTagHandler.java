@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.util.XmlUtil;
@@ -46,14 +45,10 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
         boolean outputWhitespace = XmlUtil.getBooleanValue(attributes, "outputWhitespace", true);
         String suffixSeparator = XmlUtil.getStringValue(attributes, "suffixSeparator", "$");
         boolean reportUnresolvedID = XmlUtil.getBooleanValue(attributes, "reportUnresolvedID", true);
-        int blockSize = XmlUtil.getIntValue(attributes, "blockSize", CycleWriter.BLOCK_SIZE);
-        int maxBlockNum = XmlUtil.getIntValue(attributes, "maxBlockNum", CycleWriter.MAX_BLOCK_NUM);
         engineSetting.setCheckTimestamp(checkTimestamp);
         engineSetting.setOutputWhitespace(outputWhitespace);
         engineSetting.setSuffixSeparator(suffixSeparator);
         engineSetting.setReportUnresolvedID(reportUnresolvedID);
-        engineSetting.setBlockSize(blockSize);
-        engineSetting.setMaxBlockNum(maxBlockNum);
         return engineSetting;
     }
     

@@ -17,7 +17,6 @@ package org.seasar.maya.impl.cycle;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Stack;
@@ -80,10 +79,6 @@ public abstract class AbstractResponse implements Response {
         return getWriter().getString();
     }
     
-    public Reader getReader() {
-        return getWriter().getReader();
-    }
-
     public CycleWriter pushWriter() {
         CycleWriter writer = new CycleWriterImpl(getWriter()); 
         _stack.push(writer);
@@ -140,6 +135,7 @@ public abstract class AbstractResponse implements Response {
                 Writer underlyingWriter = new OutputStreamWriter(
                         getUnderlyingOutputStream(), _encoding);
                 writer.writeOut(underlyingWriter);
+                underlyingWriter.flush();
             } else {
                 getWriter().flush();
             }

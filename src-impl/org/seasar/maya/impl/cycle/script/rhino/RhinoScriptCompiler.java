@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,8 +30,8 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         throw new UnsupportedOperationException();
     }
 
-    protected CompiledScript compile(
-            ScriptBlock scriptBlock, Class expectedType, String sourceName, int lineno) {
+    protected CompiledScript compile(ScriptBlock scriptBlock, 
+            Class expectedType, String sourceName, int lineno) {
         if(scriptBlock == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
@@ -41,5 +42,15 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         return new RhinoCompiledScript(getScriptResolver(), 
                 text, expectedType, sourceName, lineno);
     }
+
+    public CompiledScript compile(
+            SourceDescriptor source, String encoding, Class expectedType) {
+        if(source == null || expectedType == null) {
+            throw new IllegalArgumentException();
+        }
+        return new RhinoCompiledScript(
+                getScriptResolver(), source, encoding, expectedType);
+    }
+    
     
 }

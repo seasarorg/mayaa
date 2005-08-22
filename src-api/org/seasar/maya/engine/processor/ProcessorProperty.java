@@ -36,16 +36,10 @@ public interface ProcessorProperty {
     String getPrefix();
     
     /**
-     * 静的なプロパティ値取得を行う。
-     * @return プロパティ値。
+     * 静的値かどうかを返す。
+     * @return trueだと静的値。
      */
-    String getLiteral();
-    
-    /**
-     * 動的値かどうかを返す。
-     * @return trueだと動的値。
-     */
-    boolean isDynamic();
+    boolean isStatic();
     
     /**
      * プロセッサの実行時に、プロパティ値取得を行う。

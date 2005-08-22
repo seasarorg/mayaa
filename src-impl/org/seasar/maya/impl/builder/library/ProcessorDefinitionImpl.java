@@ -87,7 +87,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         return _properties.iterator();
     }
 
-    protected TemplateProcessor newInstance(Template template, SpecificationNode injected) {
+    protected TemplateProcessor newInstance(
+            Template template, SpecificationNode injected) {
         Object obj = _factoryInstances.get(_className);
         if(obj == null) {
             Class defineClass = ObjectUtil.loadClass(_className);
@@ -128,7 +129,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
 	            if(script == null) {
 	            	obj = "";
 	            } else if(script.isLiteral()) {
-	                obj = script.getText();
+	                obj = script.execute(null);
 	            }
 	            acceptable.addInformalProperty(new ProcessorPropertyImpl(qName, prefix, obj));
             }

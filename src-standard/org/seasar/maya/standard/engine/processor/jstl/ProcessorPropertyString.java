@@ -22,12 +22,8 @@ public class ProcessorPropertyString implements ProcessorProperty {
         return null;
     }
 
-    public String getLiteral() {
-        return _value.toString() ;
-    }
-
-    public boolean isDynamic() {
-        return false;
+    public boolean isStatic() {
+        return true;
     }
 
     public Object getValue() {

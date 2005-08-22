@@ -34,7 +34,7 @@ public interface CompiledScript extends Serializable {
      * スクリプトの取得。
      * @return スクリプト文字列。
      */
-    String getText();
+//    String getText();
     
     /**
      * スクリプト実行結果への期待型。

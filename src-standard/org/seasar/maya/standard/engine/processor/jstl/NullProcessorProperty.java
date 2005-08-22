@@ -13,8 +13,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.maya.standard.engine.processor.jstl;
 
+import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
 
 public class NullProcessorProperty implements ProcessorProperty {
@@ -32,12 +33,8 @@ public class NullProcessorProperty implements ProcessorProperty {
         return null;
     }
     
-    public String getLiteral() {
-        return null;
-    }
-    
-    public boolean isDynamic() {
-        return false;
+    public boolean isStatic() {
+        return true;
     }
     
     public Object getValue() {

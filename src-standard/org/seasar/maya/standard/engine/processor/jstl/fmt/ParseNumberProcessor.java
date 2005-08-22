@@ -19,12 +19,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import org.seasar.maya.engine.processor.NullProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.standard.engine.processor.AbstractBodyProcessor;
 import org.seasar.maya.standard.engine.processor.AttributeValue;
 import org.seasar.maya.standard.engine.processor.AttributeValueFactory;
+import org.seasar.maya.standard.engine.processor.jstl.NullProcessorProperty;
 
 public class ParseNumberProcessor extends AbstractBodyProcessor {
     

@@ -17,6 +17,7 @@ package org.seasar.maya.cycle.script;
 
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * スクリプトコンパイラ。
@@ -48,4 +49,14 @@ public interface ScriptCompiler extends Parameterizable {
     CompiledScript compile(
             String script, Class expectedType, String sourceName, int lineno);
 
+    /**
+     * スクリプトソースファイルを読み込んでコンパイルする。
+     * @param source スクリプトソースファイル。
+     * @param encoding スクリプトソースファイルのエンコーディング。
+     * @param expectedType 期待する結果型。Void.classの場合、リターンはなし。
+     * @return コンパイル済みスクリプトオブジェクト。
+     */
+    CompiledScript compile(
+            SourceDescriptor source, String encoding, Class expectedType);
+    
 }

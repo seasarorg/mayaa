@@ -23,6 +23,7 @@ import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -66,11 +67,14 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	    for(int i = 0; i < processor.getChildProcessorSize(); i++) {
 	        TemplateProcessor child = processor.getChildProcessor(i);
 		    if(child instanceof CharactersProcessor) {
-		        String value = ((CharactersProcessor)child).getText().getLiteral();
-		        if(StringUtil.hasValue(value.trim())) {
-			        // .maya上のノードにボディテキストがあるとき
-		            return null;
-		        }
+                ProcessorProperty prop = ((CharactersProcessor)child).getText(); 
+		        if(prop.isStatic()) {
+                    String value = (String)prop.getValue();
+    		        if(StringUtil.hasValue(value.trim())) {
+    			        // .maya上のノードにボディテキストがあるとき
+    		            return null;
+    		        }
+                }
 	        } else if(child instanceof AttributeProcessor == false) {
 	            // .maya上のノードに改行や空白のm:charactersもしくは、
 	            // m:attribute以外のネストした子ノードがあるとき

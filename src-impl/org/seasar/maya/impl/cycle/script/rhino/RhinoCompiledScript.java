@@ -15,6 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Script;
@@ -22,6 +27,7 @@ import org.mozilla.javascript.Scriptable;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
 import org.seasar.maya.impl.cycle.script.ConversionException;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -48,6 +54,17 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         _lineno = lineno;
     }
     
+    public RhinoCompiledScript(ScriptResolver resolver,
+            SourceDescriptor source, String encoding, Class expectedType) {
+        super(source, encoding, expectedType);
+        if(resolver == null) {
+            throw new IllegalArgumentException();
+        }
+        _resolver = resolver;
+        _sourceName = source.getSystemID();
+        _lineno = 1;
+    }
+    
     private Scriptable getScope(Context cx, Object root) {
         Scriptable scope = (Scriptable)_scope.get();
         if(scope == null) {
@@ -67,13 +84,32 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         return scope;
     }
     
+    protected Script compile(Context cx) {
+        if(usingSource()) {
+            SourceDescriptor source = getSource();
+            if(source.exists()) {
+                InputStream stream = source.getInputStream();
+                try {
+                    Reader reader = new InputStreamReader(stream, getEncoding());
+                    return cx.compileReader(reader, _sourceName, _lineno, null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // JSのファイルがみつからない例外。
+            throw new IllegalStateException();
+        }
+        return cx.compileString(getText(), _sourceName, _lineno, null);
+    }
+    
     public Object execute(Object root) {
         Object ret;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
+        cx.setWrapFactory(new MayaWrapFactory());
         try {
             if(_script == null) {
-                _script = cx.compileString(getText(), _sourceName, _lineno, null);
+                _script = compile(cx);
             }
             Object value = _script.exec(cx, getScope(cx, root));
             ret = JavaAdapter.convertResult(value, expectedType);

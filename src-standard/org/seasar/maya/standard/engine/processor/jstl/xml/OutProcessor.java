@@ -42,11 +42,8 @@ public class OutProcessor
             public String getPrefix() {
                 return null;
             }
-            public String getLiteral() {
-                return getDocumentVariantName(select) ;
-            }
-            public boolean isDynamic() {
-                return true;
+            public boolean isStatic() {
+                return false;
             }
             public Object getValue() {
                 return getNode(select).getNodeValue() ;

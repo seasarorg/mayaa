@@ -46,17 +46,11 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         return _prefix;
     }
     
-    public String getLiteral() {
+    public boolean isStatic() {
         if(_value instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript)_value;
-            return script.getText();
+            return ((CompiledScript)_value).isLiteral();
         }
-        return String.valueOf(_value);
-    }
-    
-    public boolean isDynamic() {
-        return _value instanceof CompiledScript &&
-        		((CompiledScript)_value).isLiteral() == false;
+        return true;
     }
 
     public Object getValue() {
@@ -77,11 +71,6 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     
     public int hashCode() {
         return _qName.hashCode();
-    }
-
-    public String toString() {
-        Object obj = getLiteral();
-        return obj != null ? obj.toString() : "";
     }
     
 }

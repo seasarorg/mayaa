@@ -26,7 +26,14 @@ import org.seasar.maya.source.SourceDescriptor;
 public class NullSourceDescriptor implements SourceDescriptor {
 
 	private static final long serialVersionUID = -6864473214459610814L;
+    private static final Date ZERO = new Date(0); 
 
+    private static NullSourceDescriptor _instance = new NullSourceDescriptor();
+    
+    public static NullSourceDescriptor getInstance() {
+        return _instance;
+    }
+    
 	public boolean exists() {
         return false;
     }
@@ -40,7 +47,7 @@ public class NullSourceDescriptor implements SourceDescriptor {
     }
     
     public Date getTimestamp() {
-        return new Date(0);
+        return ZERO;
     }
 
     public String getAttribute(String name) {

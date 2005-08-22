@@ -41,7 +41,7 @@ public class AttributeProcessorFactory implements ProcessorFactory, CONST_IMPL {
         CompiledScript script = ScriptUtil.compile(value, Object.class);
         Object obj = script; 
         if(script.isLiteral()) {
-            obj = script.getText();
+            obj = script.execute(null);
         }
         processor.setAttribute(new ProcessorPropertyImpl(
                 qNameable.getQName(), qNameable.getPrefix(), obj));

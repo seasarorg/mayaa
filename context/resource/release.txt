@@ -77,6 +77,8 @@ WEBƒRƒ“ƒeƒi‹N“®ƒvƒ‰ƒOƒCƒ““™‚É‚ÄŠm”F‚Å‚«‚Ü‚·B‚Ü‚½AƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“ƒ‹[ƒgƒ
 
 -Ž®Œ¾Œê‚ÌŽg—p‚ð”pŽ~‚µA‘ã‚¦‚ÄƒXƒNƒŠƒvƒgŒ¾Œê‚ð—˜—p‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½BŽÀ‘•‚Å‚ÍA
  JavaScript‚ÌƒGƒ“ƒWƒ“‚Å‚ ‚éARhino‚ðÌ—p‚µ‚Ä‚¢‚Ü‚·B
+ 
+-ŠO•”‚ÌƒXƒNƒŠƒvƒgƒ\[ƒXƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ÝŽÀs‚·‚é‹@”\‚ð’Ç‰Á‚µ‚Ü‚µ‚½B
 
 -ƒeƒ“ƒvƒŒ[ƒg‚âÝ’èƒtƒ@ƒCƒ‹“™‚ÌƒŠƒ\[ƒX“Ç‚Ýž‚ÝƒƒJƒjƒYƒ€‚ð‘S–ÊüV‚µ‚Ü‚µ‚½B
   maya.confƒtƒ@ƒCƒ‹‚ðJar‚ÌMETA-INFƒtƒHƒ‹ƒ_‚É”z’u‚µ‚Ä‚¢‚Ü‚·B‚±‚Ì‚±‚Æ‚É‚æ‚èA

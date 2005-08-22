@@ -39,6 +39,7 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
     private String _src;
     private CompiledScript _script;
     private String _encoding;
+    private String _default;
     private ThreadLocal _loaded = new ThreadLocal();
     
     // MLD property
@@ -56,6 +57,10 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
         _exec = exec;
     }
     
+    public void setDefault(String defaultValue) {
+    	_default = defaultValue;
+    }
+    
     public ProcessStatus doStartProcess() {
         if(StringUtil.hasValue(_src)) {
             if(_script == null) {
@@ -71,6 +76,9 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
         }
         if(_exec != null) {
             String ret = (String)_exec.getValue();
+            if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
+            	ret = _default;
+            }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(ret);
         }

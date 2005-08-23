@@ -42,7 +42,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
 
 	private static final long serialVersionUID = 5182757427194256698L;
 	private static boolean _inithialized;
-    private Engine _engine;
 
     public void init() throws ServletException {
     	if(_inithialized == false) {
@@ -50,8 +49,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             ProviderFactory.setServletContext(getServletContext());
             _inithialized = true;
     	}
-    	ServiceProvider provider = ProviderFactory.getServiceProvider();
-        _engine = provider.getEngine();
     }
 
     private String getRequestedPath(ServiceCycle cycle) {
@@ -78,8 +75,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         String mimeType = cycle.getApplication().getMimeType(path);
     	if(mimeType != null && (
                 mimeType.startsWith("text/html") || 
-                mimeType.startsWith("text/xhtml") ||
-                mimeType.startsWith("text/xml"))) {
+                mimeType.startsWith("text/xhtml")))  {
             prepareResponse(response);
     		doMayaService(cycle);
     	} else {
@@ -99,16 +95,11 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     }
     
     protected void handleError(Throwable t) {
-        try {
-            t = removeWrapperRuntimeException(t);
-            t.printStackTrace();
-            _engine.getErrorHandler().doErrorHandle(t);
-        } catch(Throwable tx) {
-            if(tx instanceof RuntimeException) {
-                throw (RuntimeException)tx;
-            }
-            throw new RuntimeException(tx);
-        }
+        t = removeWrapperRuntimeException(t);
+        t.printStackTrace();
+    	ServiceProvider provider = ProviderFactory.getServiceProvider();
+        Engine engine = provider.getEngine();
+        engine.getErrorHandler().doErrorHandle(t);
     }
     
     protected void prepareResponse(ServletResponse response) {
@@ -125,7 +116,9 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             throw new IllegalArgumentException();
         }
         try {
-            _engine.doService();
+        	ServiceProvider provider = ProviderFactory.getServiceProvider();
+            Engine engine = provider.getEngine();
+            engine.doService();
         } catch(Throwable t) {
             if(t instanceof MayaException) {
                 ((MayaException)t).setCurrentNode(cycle.getCurrentNode());

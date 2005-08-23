@@ -61,6 +61,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return _namespaceURI;
     }
     
+    // TODO WebRequestのパス処理機能との共有を考える。
     private String[] parsePath(String path) {
         if(StringUtil.isEmpty(path)) {
             throw new IllegalArgumentException();

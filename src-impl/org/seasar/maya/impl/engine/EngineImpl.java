@@ -113,6 +113,7 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
 	}
 	
+	// TODO ウェルカムファイルの利用。現在は利用してない。
     public String getWelcomeFileName() {
         if(StringUtil.hasValue(_welcomeFileName)) {
             return _welcomeFileName;

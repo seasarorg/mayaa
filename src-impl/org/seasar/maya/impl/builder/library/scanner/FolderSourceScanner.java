@@ -17,10 +17,10 @@ package org.seasar.maya.impl.builder.library.scanner;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -54,11 +54,53 @@ public class FolderSourceScanner implements SourceScanner {
             _source = new ApplicationSourceDescriptor(null, getFolder());
         }
         if(_source.exists() && _source.getFile().isDirectory()) {
-            return new FileToSourceIterator(FileUtil.iterateFiles(_source.getFile()));
+            return new FileToSourceIterator(iterateFiles(_source.getFile()));
         }
         return NullIterator.getInstance();
     }
 
+    protected Iterator iterateFiles(File dir) {
+        if(dir.exists()) {
+            File[] files;
+            if(dir.isDirectory()) {
+                files = dir.listFiles();
+            } else {
+                files = new File[] { dir };
+            }
+            return new FileArrayIterator(files);
+        }
+        return NullIterator.getInstance();
+    }
+    
+    private static class FileArrayIterator implements Iterator {
+        
+        private File[] _files;
+        private int _index;
+        
+        private FileArrayIterator(File[] files) {
+            if(files == null) {
+                throw new IllegalArgumentException();
+            }
+            _files = files;
+        }
+        
+        public boolean hasNext() {
+            return _index < _files.length;
+        }
+        
+        public Object next() {
+            if(hasNext() == false) {
+                throw new NoSuchElementException();
+            }
+            return _files[_index++];
+        }
+        
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
+    
     private class FileToSourceIterator implements Iterator {
         
         private Iterator _iterator;

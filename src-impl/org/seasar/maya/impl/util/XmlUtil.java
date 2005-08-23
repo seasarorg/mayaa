@@ -77,7 +77,8 @@ public final class XmlUtil {
         return ObjectUtil.booleanValue(value, defaultValue);
 	}
 
-	public static Class getClassValue(Attributes attr, String localName, Class defaultValue) {
+	public static Class getClassValue(Attributes attr, 
+            String localName, Class defaultValue) {
         String className = attr.getValue(localName);
         if(StringUtil.hasValue(className)) {
             return ObjectUtil.loadClass(className);
@@ -87,7 +88,7 @@ public final class XmlUtil {
 	
 	public static Object getObjectValue(Attributes attr, 
 	        String localName, Class defaultValue, Class expectedType) {
-        Class clazz = XmlUtil.getClassValue(attr, localName, defaultValue);
+        Class clazz = getClassValue(attr, localName, defaultValue);
         if(clazz == null) {
             throw new NoTypeValueException();
         }

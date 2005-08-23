@@ -36,6 +36,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
+import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -44,7 +45,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.BodyContentImpl;
 import org.seasar.maya.impl.cycle.PageContextImpl;
 import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.JspUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -197,6 +197,23 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
         return pageContext;
     }
+
+    private ProcessStatus getProcessStatus(int status, boolean doStart) {
+        if(status == Tag.EVAL_BODY_INCLUDE) {
+            return TemplateProcessor.EVAL_BODY_INCLUDE;
+        } else if(status == Tag.SKIP_BODY) {
+            return TemplateProcessor.SKIP_BODY;
+        } else if(status == Tag.EVAL_PAGE) {
+            return TemplateProcessor.EVAL_PAGE;
+        } else if(status == Tag.SKIP_PAGE) {
+            return TemplateProcessor.SKIP_PAGE;
+        } else if(!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
+            return IterationProcessor.EVAL_BODY_AGAIN;
+        } else if(doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
+            return ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
+        }
+        throw new IllegalArgumentException();
+    }
     
     public ProcessStatus doStartProcess() {
         if(_tagClass == null) {
@@ -234,7 +251,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         try {
             final int result = customTag.doStartTag();
             tagContext.putLoadedTag(this, customTag);
-            return JspUtil.getProcessStatus(result, true);
+            return getProcessStatus(result, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
         }
@@ -284,7 +301,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             IterationTag iterationTag = (IterationTag)tag;
             try {
             	int ret = iterationTag.doAfterBody();
-                return JspUtil.getProcessStatus(ret, false);
+                return getProcessStatus(ret, false);
             } catch (JspException e) {
                 throw new RuntimeException(e);
             }
@@ -296,7 +313,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag();
         try {
         	int ret = customTag.doEndTag();
-            return JspUtil.getProcessStatus(ret, true);
+            return getProcessStatus(ret, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
         } finally {

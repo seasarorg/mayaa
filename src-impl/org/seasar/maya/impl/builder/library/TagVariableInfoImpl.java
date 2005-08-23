@@ -18,8 +18,6 @@ package org.seasar.maya.impl.builder.library;
 import javax.servlet.jsp.tagext.TagVariableInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.seasar.maya.impl.util.JspUtil;
-
 /**
  * @author suga
  */
@@ -72,7 +70,15 @@ public class TagVariableInfoImpl extends TagVariableInfo {
     }
 
     public void setScopeType(String scope) {
-        _scope = JspUtil.getVariableScopeFromString(scope);
+        if("AT_BEGIN".equalsIgnoreCase(scope)) {
+            _scope =  VariableInfo.AT_BEGIN;
+        } else if("AT_END".equalsIgnoreCase(scope)) {
+            _scope =  VariableInfo.AT_END;
+        } if("NESTED".equalsIgnoreCase(scope)) {
+            _scope =  VariableInfo.NESTED;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 }

@@ -16,6 +16,8 @@
 package org.seasar.maya.impl.source;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +26,6 @@ import java.util.Map;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.FileUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -96,7 +97,11 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
 
     public InputStream getInputStream() {
         if(exists() && _file.isFile()) {
-	        return FileUtil.getInputStream(_file);
+            try {
+                return new FileInputStream(_file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

@@ -23,14 +23,11 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.PageImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.util.ComponentUtil;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * テンプレートへのページ埋め込み機能を実現するプロセッサ。「startComponent」および
- * 「endComponent」と連動する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ComponentPageProcessor extends AbstractAttributableProcessor
@@ -64,15 +61,27 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return _namespaceURI;
     }
     
-    /**
-     * パス指定されたコンポーネントページを生成する。
-     * @return コンポーネントページ。
-     */
+    private String[] parsePath(String path) {
+        if(StringUtil.isEmpty(path)) {
+            throw new IllegalArgumentException();
+        }
+        String[] pagePath = new String[2];
+        int dotPos = path.lastIndexOf(".");
+        if(dotPos > 0 && dotPos < path.length() - 1) {
+            pagePath[0] = StringUtil.preparePath(path.substring(0, dotPos));
+            pagePath[1] = path.substring(dotPos + 1);
+        } else {
+            pagePath[0] = StringUtil.preparePath(path);
+            pagePath[1] = "";
+        }
+        return pagePath;
+    }
+
     protected Page preparePage() {
         if(StringUtil.isEmpty(_path)) {
             throw new IllegalStateException();
         }
-        String[] pagePath = ComponentUtil.parsePath(_path);
+        String[] pagePath = parsePath(_path);
         Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[1]);
         String sourcePath = pagePath[0] + ".maya";
         SourceDescriptor source = new PageSourceDescriptor(sourcePath);
@@ -82,11 +91,6 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return page;
     }
     
-    /**
-     * 「p:startComponent」を再帰で探す。
-     * @param processor 再帰で渡されるプロセッサ。
-     * @return 見つけたstartComponentもしくはnull。
-     */
     protected StartComponentProcessor findStart(TemplateProcessor processor) {
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
             TemplateProcessor childProcessor = processor.getChildProcessor(i);
@@ -101,10 +105,6 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return null;
     }
     
-    /**
-     * 「p:endComponent」の内側の描画。
-     * @return Template#doTemplateRender()の戻り値。
-     */
     public ProcessStatus renderChildren() {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {

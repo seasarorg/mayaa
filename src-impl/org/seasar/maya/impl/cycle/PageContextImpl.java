@@ -38,7 +38,6 @@ import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.CycleUtil;
-import org.seasar.maya.impl.util.JspUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.impl.util.collection.NullEnumeration;
 
@@ -62,6 +61,19 @@ public class PageContextImpl extends PageContext {
 
     private ServletConfig _config;
 
+    private String getScopeFromInt(int scope) {
+        if(scope == PageContext.APPLICATION_SCOPE) {
+            return ServiceCycle.SCOPE_APPLICATION;
+        } else if(scope == PageContext.SESSION_SCOPE) {
+            return ServiceCycle.SCOPE_SESSION;
+        } else if(scope == PageContext.REQUEST_SCOPE) {
+            return ServiceCycle.SCOPE_REQUEST;
+        } else if(scope == PageContext.PAGE_SCOPE) {
+            return ServiceCycle.SCOPE_PAGE;
+        }
+        throw new IllegalArgumentException();
+    }
+    
     public void initialize(Servlet servlet, ServletRequest request,
             ServletResponse response, String errorPageURL,
             boolean needsSession, int bufferSize, boolean autoFlush) {
@@ -202,7 +214,7 @@ public class PageContextImpl extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = JspUtil.getScopeFromInt(scope);
+        String scopeName = getScopeFromInt(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return attrScope.getAttribute(name);
@@ -216,7 +228,7 @@ public class PageContextImpl extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = JspUtil.getScopeFromInt(scope);
+        String scopeName = getScopeFromInt(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         attrScope.removeAttribute(name);
@@ -237,7 +249,7 @@ public class PageContextImpl extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = JspUtil.getScopeFromInt(scope);
+        String scopeName = getScopeFromInt(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         attrScope.setAttribute(name, value);
@@ -248,7 +260,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public Enumeration getAttributeNamesInScope(int scope) {
-        String scopeName = JspUtil.getScopeFromInt(scope);
+        String scopeName = getScopeFromInt(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());

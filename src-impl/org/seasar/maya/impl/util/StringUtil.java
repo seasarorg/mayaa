@@ -20,7 +20,6 @@ import java.io.File;
 import org.cyberneko.html.HTMLEntities;
 
 /**
- * 文字列操作に関わるユーティリティ
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public final class StringUtil {
@@ -28,29 +27,14 @@ public final class StringUtil {
     private StringUtil() {
     }
 
-    /**
-     * 空白文字列かどうかのテスト。
-     * @param test テスト文字列。
-     * @return	nullもしくはゼロ長だとtrue。
-     */
     public static boolean isEmpty(String test) {
         return test == null || test.length() == 0;
     }
 
-    /**
-     * 文字列値があるかどうかのテスト。
-     * @param test テスト文字列。
-     * @return nullもしくはゼロ長だとfalse。
-     */
     public static boolean hasValue(String test) {
         return !isEmpty(test);
     }
     
-    /**
-     * パス文字列の整形。先頭に「/」をつけ、末尾は「/」なしとする。
-     * @param path 整形前パス文字列。
-     * @return 整形後パス文字列。
-     */
     public static String preparePath(String path) {
         if(path == null) {
             return "";
@@ -101,17 +85,5 @@ public final class StringUtil {
         }
         return buffer.toString();
     }
-    
-    public static String escapeEntity(String blockString) {
-        blockString = blockString.replaceAll("&", "&amp;");
-        blockString = blockString.replaceAll("<", "&lt;");
-        blockString = blockString.replaceAll(">", "&gt;");
-        blockString = blockString.replaceAll("\"", "&quot;");
-        blockString = blockString.replaceAll("'", "&apos;");
-        return blockString;
-    }
-    
-    public static boolean isContain(String str, int c){
-    	return str.indexOf(c) >= 0 ;
-    }
+
 }

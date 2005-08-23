@@ -31,7 +31,6 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.provider.factory.SimpleProviderFactory;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.ThrowableUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -87,10 +86,21 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     		doResourceService(cycle);
     	}
     }
+
+    private Throwable removeWrapperRuntimeException(Throwable t) {
+        Throwable throwable = t ;
+        while(throwable.getClass().equals(RuntimeException.class)) {
+            if( throwable.getCause() == null ) {
+                break;
+            }
+            throwable = throwable.getCause();
+        }
+        return throwable ;
+    }
     
     protected void handleError(Throwable t) {
         try {
-            t = ThrowableUtil.removeWrapperRuntimeException(t);
+            t = removeWrapperRuntimeException(t);
             t.printStackTrace();
             _engine.getErrorHandler().doErrorHandle(t);
         } catch(Throwable tx) {

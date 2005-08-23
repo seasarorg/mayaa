@@ -13,8 +13,6 @@
 <!ATTLIST engine outputWhitespace (true | false) "true">
 <!ATTLIST engine suffixSeparator CDATA #IMPLIED>
 <!ATTLIST engine reportUnresolvedID (true | false) "true">
-<!ATTLIST engine blockSize CDATA #IMPLIED>
-<!ATTLIST engine maxBlockNum CDATA #IMPLIED>
 
 <!ELEMENT specification (description?)>
 <!ATTLIST specification path CDATA #IMPLIED>

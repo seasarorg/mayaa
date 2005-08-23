@@ -42,6 +42,11 @@ public class CycleUtil {
     	return provider.getServiceCycle();
     }
     
+    public static Application getApplication() {
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        return provider.getApplication();
+    }
+    
     public static Request getRequest() {
     	ServiceCycle cycle = getServiceCycle();
     	return cycle.getRequest();
@@ -94,10 +99,6 @@ public class CycleUtil {
             }
         }
         cycle.setAttribute(name, value);
-    }
-    
-    public static Application getApplication() {
-        return ProviderFactory.getServiceProvider().getApplication();
     }
     
 }

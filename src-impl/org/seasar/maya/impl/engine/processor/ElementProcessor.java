@@ -75,7 +75,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     
     private boolean needsCloseElement(QName qName) {
         if(isXHTML(qName)) {
-            return true;
+            return getChildProcessorSize() > 0;
         }
         String localName = qName.getLocalName();
         HTMLElements.Element element = HTMLElements.getElement(localName);
@@ -132,12 +132,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
     
     protected void writeEndElement() {
         if(needsCloseElement(_qName)) {
-	        StringBuffer buffer = new StringBuffer("</");
-	        if(StringUtil.hasValue(_prefix)) {
-	            buffer.append(_prefix).append(":");
-	        }
-	        buffer.append(_qName.getLocalName()).append(">");
-	        write(buffer);
+            StringBuffer buffer = new StringBuffer("</");
+            if(StringUtil.hasValue(_prefix)) {
+                buffer.append(_prefix).append(":");
+            }
+            buffer.append(_qName.getLocalName()).append(">");
+            write(buffer);
         }
         removeProcesstimeInfo();
     }

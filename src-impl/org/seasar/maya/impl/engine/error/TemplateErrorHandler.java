@@ -36,10 +36,11 @@ public class TemplateErrorHandler  implements ErrorHandler {
 
     public static final String THROWABLE = "THROWABLE";
     
-    private String _folder = "/errorPage"; 
+    private String _folder = "/"; 
     
     private String getPageName(Class throwableClass) {
-    	return _folder + "/" + throwableClass.getName();
+        String name = throwableClass.getName();
+    	return StringUtil.preparePath(_folder) + StringUtil.preparePath(name);
     }
     
     public void setParameter(String name, String value) {
@@ -47,7 +48,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
         	if(StringUtil.isEmpty(value)) {
         		throw new IllegalArgumentException();
         	}
-            _folder = StringUtil.preparePath(value);
+            _folder = value;
         }
     }
     

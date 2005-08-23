@@ -63,12 +63,12 @@ public class WebResponse extends AbstractResponse {
         _httpServletResponse.setStatus(code);
     }
 
-    protected void setMimeTypeToUnderlyingObject(String mimeType) {
+    protected void setContentTypeToUnderlyingObject(String contentType) {
         check();
-        if(StringUtil.isEmpty(mimeType)) {
+        if(StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
-        _httpServletResponse.setContentType(mimeType);
+        _httpServletResponse.setContentType(contentType);
     }
 
     public OutputStream getUnderlyingOutputStream() {

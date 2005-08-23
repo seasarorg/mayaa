@@ -26,9 +26,9 @@ public interface Response extends Serializable, Underlyable  {
     
     /**
      * コンテンツタイプの指定を行う。
-     * @param mimeType コンテンツタイプ。MIME型およびエンコーディング情報。
+     * @param contentType コンテンツタイプ。MIME型およびエンコーディング情報。
      */
-    void setMimeType(String mimeType);
+    void setContentType(String contentType);
     
     /**
      * HTTPステータスコードの設定。

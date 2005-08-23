@@ -57,14 +57,15 @@ public abstract class AbstractResponse implements Response {
         return "UTF-8";
     }
 
-    protected abstract void setMimeTypeToUnderlyingObject(String mimeType);
+    protected abstract void setContentTypeToUnderlyingObject(
+            String contentType);
     
-    public void setMimeType(String mimeType) {
-        if(StringUtil.isEmpty(mimeType)) {
+    public void setContentType(String contentType) {
+        if(StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
-        _encoding = parseCharacterEncoding(mimeType);
-        setMimeTypeToUnderlyingObject(mimeType);
+        _encoding = parseCharacterEncoding(contentType);
+        setContentTypeToUnderlyingObject(contentType);
     }
     
     public CycleWriter getWriter() {

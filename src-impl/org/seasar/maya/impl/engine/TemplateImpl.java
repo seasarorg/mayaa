@@ -224,7 +224,7 @@ public class TemplateImpl extends SpecificationImpl
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	Response response = cycle.getResponse();
         String contentType = getContentType();
-        response.setMimeType(contentType);
+        response.setContentType(contentType);
     }
     
     public ProcessStatus doTemplateRender(TemplateProcessor renderRoot) {

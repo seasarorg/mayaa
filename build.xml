@@ -6,26 +6,24 @@
 	<property name="maya.distro.src" value="maya-src-${maya.ver}.zip"/>
 	<property name="maya.distro.bin" value="maya-bin-${maya.ver}.zip"/>
 
-	<property name="maya.jar.core" value="maya-${maya.ver}.jar"/>
-	<property name="maya.jar.standard" value="maya-standard-${maya.ver}.jar"/>
+	<property name="maya.jar" value="maya-${maya.ver}.jar"/>
 
 	<property name="maya.packages" value="org.seasar.maya.*"/>
 
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
-	<property name="folder.src.standard"  value="src-standard"/>
 
 	<property name="folder.context" value="context"/>
+	<property name="folder.javadoc" value="${folder.context}/javadoc"/>
 	<property name="folder.webinf" value="${folder.context}/WEB-INF"/>
-	<property name="folder.mld" value="${folder.webinf}/mld"/>
 	<property name="folder.classes" value="${folder.webinf}/classes"/>
 	<property name="folder.lib" value="${folder.webinf}/lib"/>
-	<property name="folder.javadoc" value="${folder.context}/javadoc"/>
+	<property name="folder.lib.servlet" value="${folder.webinf}/lib-servlet"/>
 
 	<fileset id="classpath" dir=".">
-		<include name="${folder.webinf}/lib/*.jar"/>
-		<include name="${folder.webinf}/lib-servlet/*.jar"/>
-		<exclude name="${folder.webinf}/lib/maya-*.jar"/>
+		<include name="${folder.lib}/*.jar"/>
+		<include name="${folder.lib.servlet}/*.jar"/>
+		<exclude name="${folder.lib}/maya-*.jar"/>
 	</fileset>
 
 	<target name="cleanbuild">
@@ -42,7 +40,6 @@
 				<dirset dir=".">
 					<include name="${folder.src.api}"/>
 					<include name="${folder.src.impl}"/>
-					<include name="${folder.src.standard}"/>
 				</dirset>
 			</src>
 			<classpath>
@@ -65,12 +62,6 @@
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
-			<fileset dir="${folder.src.standard}">
-				<include name="**/*"/>
-				<exclude name="**/*.java"/>
-				<exclude name="**/.svn"/>
-				<exclude name="**/.svn/**/*"/>
-			</fileset>
 		</copy>
 	</target>
 
@@ -85,34 +76,15 @@
 	</target>
 
 	<target name="mayajar" depends="cleanjar, javabuild">
-		<jar jarfile="${folder.lib}/${maya.jar.core}">
+		<jar jarfile="${folder.lib}/${maya.jar}">
 			<fileset dir="${folder.classes}">
 				<include name="META-INF/**/*"/>
 				<include name="org/seasar/maya/**/*"/>
-				<exclude name="META-INF/jstl"/>
-				<exclude name="META-INF/jstl/**/*"/>
-				<exclude name="org/seasar/maya/standard"/>
-				<exclude name="org/seasar/maya/standard/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="Maya API and Impl"/>
-				<attribute name="Version" value="${maya.ver}"/>
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="standardjar" depends="cleanjar, javabuild">
-		<jar jarfile="${folder.lib}/${maya.jar.standard}">
-			<fileset dir="${folder.classes}">
-				<include name="META-INF/jstl/**/*"/>
-				<include name="org/seasar/maya/standard/**/*"/>
-				<exclude name="**/.svn"/>
-				<exclude name="**/.svn/**/*"/>
-			</fileset>
-			<manifest>
-				<attribute name="Title" value="Maya Standard"/>
 				<attribute name="Version" value="${maya.ver}"/>
 			</manifest>
 		</jar>
@@ -148,15 +120,16 @@
        	</javadoc>
     </target>
 
-	<target name="make" depends="mayajar, standardjar, javadoc"/>
+	<target name="make" depends="mayajar, javadoc"/>
 
 	<target name="distro" depends="make">
 		<zip destfile="../${maya.distro.bin}">
 			<fileset dir=".">
-				<include name="${folder.context}/resource/*"/>
-				<include name="${folder.webinf}/web.xml"/>
-				<include name="${folder.webinf}/error/*"/>
-				<include name="${folder.webinf}/lib/*"/>
+				<include name="${folder.context}/*/**"/>
+				<exclude name="${folder.classes}"/>
+				<exclude name="${folder.classes}/**/*"/>
+				<exclude name="${folder.lib.servlet}"/>
+				<exclude name="${folder.lib.servlet}/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
@@ -164,13 +137,11 @@
 		<zip destfile="../${maya.distro.src}">
 			<fileset dir="../">
 				<include name="maya/**/*"/>
-				<exclude name="maya/${folder.webinf}/debug"/>
-				<exclude name="maya/${folder.webinf}/debug/**/*"/>
-				<exclude name="maya/${folder.webinf}/lib/maya-*.jar"/>
 				<exclude name="maya/${folder.javadoc}"/>
 				<exclude name="maya/${folder.javadoc}/**/*"/>
 				<exclude name="maya/${folder.classes}"/>
 				<exclude name="maya/${folder.classes}/**/*"/>
+				<exclude name="maya/${folder.lib}/maya-*.jar"/>
 				<exclude name="maya/**/.svn"/>
 				<exclude name="maya/**/.svn/**/*"/>
 			</fileset>

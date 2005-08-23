@@ -96,7 +96,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
                     throw new RuntimeException(e);
                 }
             }
-            // JSのファイルがみつからない例外。
+            // TODO JSのファイルがみつからない例外。
             throw new IllegalStateException();
         }
         return cx.compileString(getText(), _sourceName, _lineno, null);

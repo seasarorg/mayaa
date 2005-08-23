@@ -65,7 +65,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
             docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
         }
         if(StringUtil.hasValue(_systemID)) {
-            docTypeDecl.append(" SYSTEM \"").append(_systemID).append("\"");
+            docTypeDecl.append(" \"").append(_systemID).append("\"");
         }
         docTypeDecl.append(">");
         ServiceCycle cycle = CycleUtil.getServiceCycle();

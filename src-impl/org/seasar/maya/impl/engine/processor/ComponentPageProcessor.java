@@ -20,6 +20,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.PageImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.ComponentUtil;
@@ -123,6 +124,9 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Template template = _page.getTemplate(cycle.getRequest().getRequestedSuffix());
+        if(template == null) {
+            throw new PageNotFoundException(_page.getKey());
+        }
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);
         if(start != null) {

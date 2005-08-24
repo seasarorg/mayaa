@@ -49,10 +49,10 @@ public class WebRequest implements Request, CONST_IMPL {
         }
     }
 
-    protected String getRequestedPath() {
+    public String getRequestedPath() {
         String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
-        if("/".equals(path)) {
+        if(StringUtil.isEmpty(path) || "/".equals(path)) {
             return SpecificationUtil.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
         }

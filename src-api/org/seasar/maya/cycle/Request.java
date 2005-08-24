@@ -25,6 +25,12 @@ import java.util.Locale;
  */
 public interface Request extends Serializable, AttributeScope, Underlyable {
 
+	/**
+	 * リクエストされたパス文字列を取得する。
+	 * @return パス文字列。
+	 */
+	String getRequestedPath();
+	
     /**
      * リクエストされたページ名を取得する。
      * @return リクエストページ名。

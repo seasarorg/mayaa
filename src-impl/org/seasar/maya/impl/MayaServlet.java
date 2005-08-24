@@ -25,12 +25,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.provider.factory.WebProviderFactory;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -51,16 +49,6 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
     	}
     }
 
-    private String getRequestedPath(ServiceCycle cycle) {
-        Request request = cycle.getRequest();
-        String path = request.getPageName();
-        String extention = request.getExtension();
-        if(StringUtil.hasValue(extention)) {
-            path = path + "." + extention;
-        }
-        return path;
-    }
-    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         doPost(request, response);
@@ -71,7 +59,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         provider.initialize(request, response);
         ServiceCycle cycle = provider.getServiceCycle();
-        String path = getRequestedPath(cycle);
+        String path = cycle.getRequest().getRequestedPath();
         String mimeType = cycle.getApplication().getMimeType(path);
     	if(mimeType != null && (
                 mimeType.startsWith("text/html") || 
@@ -134,7 +122,7 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        String path = getRequestedPath(cycle);
+        String path = cycle.getRequest().getRequestedPath();
         SourceDescriptor source = new PageSourceDescriptor(path);
         InputStream stream = source.getInputStream();
         if(stream != null) {

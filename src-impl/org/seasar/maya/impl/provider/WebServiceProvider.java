@@ -29,10 +29,10 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
-import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -151,9 +151,9 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
                 response instanceof HttpServletResponse == false) {
 			throw new IllegalArgumentException();
 		}
-    	WebServiceCycle cycle = (WebServiceCycle)_currentServiceCycle.get();
+    	ServiceCycleImpl cycle = (ServiceCycleImpl)_currentServiceCycle.get();
     	if(cycle == null) {
-    		cycle = new WebServiceCycle(getApplication());
+    		cycle = new ServiceCycleImpl(getApplication());
             SpecificationUtil.setEngine(cycle, getEngine());
     		_currentServiceCycle.set(cycle);
     	}

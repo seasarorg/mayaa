@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 import org.jaxen.JaxenException;
 import org.jaxen.XPath;
 import org.seasar.maya.builder.SpecificationBuilder;
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
@@ -32,6 +33,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
@@ -72,20 +74,17 @@ public abstract class SpecificationImpl
         return _buildTimestamp;
     }
     
-    /**
-     * ビルド時の設定を行う。
-     * @param buildTimestamp ビルド時もしくはnull。
-     */
     protected void setTimestamp(Date buildTimestamp) {
     	_buildTimestamp = buildTimestamp;
     }
 	
-    /**
-     * 設定XMLの保存日付をチェックして、再ビルドの必要の有無を調べる。
-     * @return ファイルが前回ビルド時より更新されていたら、trueを返す。
-     */
     protected boolean isOldSpecification() {
-    	Date buildTimestamp = getTimestamp();
+    	boolean check = SpecificationUtil.getEngineSettingBoolean(
+                Engine.CHECK_TIMESTAMP, true);
+        if(check == false) {
+            return false;
+        }
+        Date buildTimestamp = getTimestamp();
         if(buildTimestamp == null) {
             return true;
         }
@@ -94,9 +93,6 @@ public abstract class SpecificationImpl
         return source.after(buildTimestamp) && now.after(source);
     }
 
-    /**
-     * 設定XMLをパースする。
-     */
     protected void parseSpecification() {
 		setTimestamp(new Date());
         if(getSource().exists()) {

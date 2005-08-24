@@ -252,5 +252,20 @@ public class SpecificationUtil implements CONST_IMPL {
         }
         return node;
     }
-	
+	 
+    public static String getEngineSetting(String name, String defaultValue) {
+        Engine engine = getEngine();
+        String value = engine.getParameter(name);
+        if(value != null) {
+            return value;
+        }
+        return defaultValue;
+    }
+    
+    public static boolean getEngineSettingBoolean(String name, boolean defaultValue) {
+        Engine engine = getEngine();
+        String value = engine.getParameter(name);
+        return ObjectUtil.booleanValue(value, defaultValue);
+    }
+    
 }

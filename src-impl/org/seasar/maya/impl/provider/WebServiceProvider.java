@@ -130,7 +130,7 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     	if(request == null) {
     		throw new IllegalArgumentException();
     	}
-        String suffixSeparator = _engine.getEngineSetting().getSuffixSeparator();
+        String suffixSeparator = _engine.getParameter(Engine.SUFFIX_SEPARATOR);
     	WebRequest webRequest = new WebRequest(suffixSeparator);
     	webRequest.setHttpServletRequest(request);
     	return webRequest;

@@ -9,10 +9,6 @@
 
 <!ELEMENT engine (description?, specification?, errorHandler?, parameter*)>
 <!ATTLIST engine class CDATA #REQUIRED>
-<!ATTLIST engine checkTimestamp (true | false) "true">
-<!ATTLIST engine outputWhitespace (true | false) "true">
-<!ATTLIST engine suffixSeparator CDATA #IMPLIED>
-<!ATTLIST engine reportUnresolvedID (true | false) "true">
 
 <!ELEMENT specification (description?)>
 <!ATTLIST specification path CDATA #IMPLIED>

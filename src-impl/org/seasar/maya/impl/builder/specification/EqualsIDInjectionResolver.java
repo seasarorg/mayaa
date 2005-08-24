@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -30,7 +31,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.IDNotResolvedException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.EngineSetting;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -76,8 +76,9 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 	            }
 	            return injected.copyTo(_idFilter);
 	        }
-	        EngineSetting setting = SpecificationUtil.getEngine(template).getEngineSetting();
-            if(setting.isReportUnresolvedID()) { 
+            boolean reportUnresolvedID = SpecificationUtil.getEngineSettingBoolean(
+                    Engine.REPORT_UNRESOLVED_ID, true);
+            if(reportUnresolvedID) { 
 		        throw new IDNotResolvedException(template, original, id);
             }
         }

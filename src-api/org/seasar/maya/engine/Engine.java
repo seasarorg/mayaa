@@ -19,7 +19,6 @@ import java.io.Serializable;
 
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
@@ -28,25 +27,25 @@ import org.seasar.maya.provider.Parameterizable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Engine extends Parameterizable, Specification, Serializable {
+
+    String CHECK_TIMESTAMP = "checkTimestamp";
+    String OUTPUT_WHITE_SPACE = "outputWhitespace";
+    String REPORT_UNRESOLVED_ID = "reportUnresolvedID";
+    String SUFFIX_SEPARATOR = "suffixSeparator";
+    String WELCOME_FILE_NAME = "welcomeFileName";
+    
+    /**
+     * カスタム設定項目の取得メソッド。
+     * @param name 設定名。
+     * @return 設定された項目。
+     */
+    String getParameter(String name);
     
     /**
      * エラーハンドラの取得。
      * @return エラーハンドラ。
      */
     ErrorHandler getErrorHandler();
-    
-    /**
-     * 設定の取得。
-     * @return 設定。
-     */
-    EngineSetting getEngineSetting();    
-
-    /**
-     * ユーザーリクエストが「/」で終わるディレクトリアクセスの際に
-     * 補完するウェルカムファイル名を取得する。
-     * @return ウェルカムファイル名。
-     */
-    String getWelcomeFileName();
     
 	/**
 	 * Pageオブジェクトのインスタンスを返す。

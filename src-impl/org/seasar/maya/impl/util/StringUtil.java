@@ -85,5 +85,36 @@ public final class StringUtil {
         }
         return buffer.toString();
     }
+    
+    public static String[] parsePath(String path, String suffixSeparator) {
+        String[] ret = new String[3];
+        int paramOffset = path.indexOf('?');
+        if(paramOffset >= 0) {
+            path = path.substring(0, paramOffset);
+        }
+        int lastSlashOffset = path.lastIndexOf('/');
+        String folder =  "";
+        String file = path;
+        if(lastSlashOffset >= 0) {
+            folder = path.substring(0, lastSlashOffset + 1);
+            file = path.substring(lastSlashOffset + 1);
+        }
+        int lastDotOffset = file.lastIndexOf('.');
+        if(lastDotOffset > 0) {
+            ret[2] = file.substring(lastDotOffset + 1);
+            file = file.substring(0, lastDotOffset);
+        } else {
+            ret[2] = "";
+        }
+        int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
+        if(suffixSeparatorOffset > 0) {
+            ret[0] = folder + file.substring(0, suffixSeparatorOffset);
+            ret[1] = file.substring(suffixSeparatorOffset + suffixSeparator.length());
+        } else {
+            ret[0] = folder + file;
+            ret[1] = "";
+        }
+        return ret;
+    }
 
 }

@@ -55,54 +55,16 @@ public class WebRequest implements Request {
         }
     }
 
-    public String getServletPath() {
-        return _httpServletRequest.getServletPath();
-    }
-
-    protected String getHttpRequestPath() {
+    protected String getRequestedPath() {
         return StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
     }
     
-    public void setForwardPath(String relativeUrlPath) {
-        if(StringUtil.isEmpty(relativeUrlPath)) {
-            throw new IllegalArgumentException();
-        }
-        setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
-    }
-    
-    protected void setRequestedPageInfo(String path, String suffixSeparator) {
-        int paramOffset = path.indexOf('?');
-        if(paramOffset >= 0) {
-            path = path.substring(0, paramOffset);
-        }
-        int lastSlashOffset = path.lastIndexOf('/');
-        String folder =  "";
-        String file = path;
-        if(lastSlashOffset >= 0) {
-            folder = path.substring(0, lastSlashOffset + 1);
-            file = path.substring(lastSlashOffset + 1);
-        }
-        int lastDotOffset = file.lastIndexOf('.');
-        if(lastDotOffset > 0) {
-            _extension = file.substring(lastDotOffset + 1);
-            file = file.substring(0, lastDotOffset);
-        } else {
-            _extension = "";
-        }
-        int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
-        if(suffixSeparatorOffset > 0) {
-            _pageName = folder + file.substring(0, suffixSeparatorOffset);
-            _requestedSuffix = file.substring(suffixSeparatorOffset + suffixSeparator.length());
-        } else {
-            _pageName = folder + file;
-            _requestedSuffix = "";
-        }
-    }
-    
-    public Object getUnderlyingObject() {
-        check();
-        return _httpServletRequest;
+    protected void parsePath(String path) {
+        String[] parsed = StringUtil.parsePath(path, _suffixSeparator);
+        _pageName = parsed[0];
+        _requestedSuffix = parsed[1];
+        _extension = parsed[2];
     }
     
     public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
@@ -111,11 +73,23 @@ public class WebRequest implements Request {
         }
         _httpServletRequest = httpServletRequest;
     }
+    
+    public void setForwardPath(String relativeUrlPath) {
+        if(StringUtil.isEmpty(relativeUrlPath)) {
+            throw new IllegalArgumentException();
+        }
+        parsePath(relativeUrlPath);
+    }
+    
+    public Object getUnderlyingObject() {
+        check();
+        return _httpServletRequest;
+    }
 
     public String getPageName() {
         if(_pageName == null) {
             check();
-            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+            parsePath(getRequestedPath());
         }
         return _pageName;
     }
@@ -123,7 +97,7 @@ public class WebRequest implements Request {
     public String getRequestedSuffix() {
         if(_requestedSuffix == null) {
             check();
-            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+            parsePath(getRequestedPath());
         }
         return _requestedSuffix;
     }
@@ -131,7 +105,7 @@ public class WebRequest implements Request {
     public String getExtension() {
         if(_extension == null) {
             check();
-            setRequestedPageInfo(getHttpRequestPath(), _suffixSeparator);
+            parsePath(getRequestedPath());
         }
         return _extension;
     }

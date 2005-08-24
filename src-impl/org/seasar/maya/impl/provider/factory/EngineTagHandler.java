@@ -16,8 +16,6 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.impl.engine.EngineImpl;
-import org.seasar.maya.impl.provider.EngineSettingImpl;
-import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -28,7 +26,6 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
     private EngineImpl _engine;
-    private EngineSettingImpl _engineSetting;
     
     public EngineTagHandler(ServiceTagHandler parent) {
         if(parent == null) {
@@ -38,37 +35,14 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
         putHandler("specification", new SpecificationTagHandler(this));
         putHandler("errorHandler", new ErrorHandlerTagHandler(this));
     }
-
-    private EngineSettingImpl createEngineSetting(Attributes attributes) {
-        EngineSettingImpl engineSetting = new EngineSettingImpl();
-        boolean checkTimestamp = XmlUtil.getBooleanValue(attributes, "checkTimestamp", true);
-        boolean outputWhitespace = XmlUtil.getBooleanValue(attributes, "outputWhitespace", true);
-        String suffixSeparator = XmlUtil.getStringValue(attributes, "suffixSeparator", "$");
-        boolean reportUnresolvedID = XmlUtil.getBooleanValue(attributes, "reportUnresolvedID", true);
-        engineSetting.setCheckTimestamp(checkTimestamp);
-        engineSetting.setOutputWhitespace(outputWhitespace);
-        engineSetting.setSuffixSeparator(suffixSeparator);
-        engineSetting.setReportUnresolvedID(reportUnresolvedID);
-        return engineSetting;
-    }
     
     protected void start(Attributes attributes) {
         _engine = new EngineImpl();
-        _engineSetting = createEngineSetting(attributes);
-        _engine.setEngineSetting(_engineSetting);
         _parent.getServiceProvider().setEngine(_engine);
     }
     
     protected void end(String body) {
-        _engineSetting = null;
         _engine = null;
-    }
-    
-    public EngineSettingImpl getEngineSetting() {
-        if(_engineSetting == null) {
-            throw new IllegalStateException();
-        }
-        return _engineSetting;
     }
     
     public EngineImpl getEngine() {

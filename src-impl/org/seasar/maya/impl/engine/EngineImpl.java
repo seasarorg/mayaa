@@ -15,20 +15,23 @@
  */
 package org.seasar.maya.impl.engine;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.provider.EngineSettingImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -36,13 +39,23 @@ import org.seasar.maya.source.SourceDescriptor;
  * 生成後、デフォルト設定XMLのSourceDescriptorをセットする。 
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL {
+public class EngineImpl extends SpecificationImpl
+        implements Engine, CONST_IMPL {
     
 	private static final long serialVersionUID = 1428444571422324206L;
 
-    private EngineSetting _engineSetting;
+    private static Set _paramNames;
+    static {
+        _paramNames = new HashSet();
+        _paramNames.add(CHECK_TIMESTAMP);
+        _paramNames.add(OUTPUT_WHITE_SPACE);
+        _paramNames.add(REPORT_UNRESOLVED_ID);
+        _paramNames.add(SUFFIX_SEPARATOR);
+        _paramNames.add(WELCOME_FILE_NAME);
+    }
+
+    private Map _parameters;
     private ErrorHandler _errorHandler;
-    private String _welcomeFileName;
     
     /**
      * ファクトリにて呼び出される。
@@ -50,16 +63,29 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
     public EngineImpl() {
         super(QM_ENGINE, null);
     }
-
-    public void setEngineSetting(EngineSetting engineSetting) {
-        _engineSetting = engineSetting;
-    }
     
-    public EngineSetting getEngineSetting() {
-        if(_engineSetting == null) {
-            _engineSetting = new EngineSettingImpl();
+    public void setParameter(String name, String value) {
+        if(StringUtil.isEmpty(name) || value == null) {
+            throw new IllegalArgumentException();
         }
-        return _engineSetting;
+        if(_paramNames.contains(name)) {
+            if(_parameters == null) {
+                _parameters = new HashMap();
+            }
+            _parameters.put(name, value);
+        } else {
+            throw new UnsupportedParameterException(name);
+        }
+    }
+
+    public String getParameter(String name) {
+        if(_paramNames.contains(name)) {
+            if(_parameters == null) {
+                return null;
+            }
+            return (String)_parameters.get(name);
+        }
+        throw new UnsupportedParameterException(name);
     }
     
     public void setErrorHandler(ErrorHandler errorHandler) {
@@ -71,17 +97,6 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
 	        throw new IllegalStateException();
 	    }
         return _errorHandler;
-    }
-    
-	public void setParameter(String name, String value) {
-	    if(StringUtil.isEmpty(name) || StringUtil.isEmpty(value)) {
-	        throw new IllegalArgumentException();
-	    }
-        if("welcomeFileName".equalsIgnoreCase(name)) {
-            _welcomeFileName = value;
-            return;
-        }
-        throw new UnsupportedParameterException(name);
     }
     
     public String getKey() {
@@ -112,13 +127,5 @@ public class EngineImpl extends SpecificationImpl implements Engine, CONST_IMPL 
         cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
 	}
-	
-	// TODO ウェルカムファイルの利用。現在は利用してない。
-    public String getWelcomeFileName() {
-        if(StringUtil.hasValue(_welcomeFileName)) {
-            return _welcomeFileName;
-        }
-        return "index.html";
-    }
 
 }

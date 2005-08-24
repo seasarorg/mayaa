@@ -33,7 +33,6 @@ import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.EngineSetting;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -108,9 +107,9 @@ public class PageImpl extends SpecificationImpl
         if(template == null) {
             StringBuffer name = new StringBuffer(_pageName);
             if(StringUtil.hasValue(suffix)) {
-                EngineSetting setting = getEngine().getEngineSetting();
-                name.append(setting.getSuffixSeparator());
-                name.append(suffix);
+                String separator = SpecificationUtil.getEngineSetting(
+                        Engine.SUFFIX_SEPARATOR, "$");
+                name.append(separator).append(suffix);
             }
             String extension = getExtension();
             if(StringUtil.hasValue(extension)) {

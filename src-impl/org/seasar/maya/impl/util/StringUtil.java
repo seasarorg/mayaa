@@ -16,14 +16,22 @@
 package org.seasar.maya.impl.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.cyberneko.html.HTMLEntities;
+import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public final class StringUtil {
 
+    private static Map _propFiles = new HashMap();
+	
     private StringUtil() {
     }
 
@@ -117,4 +125,32 @@ public final class StringUtil {
         return ret;
     }
 
+    
+    public static String getMessage(Class clazz, int index) {
+        Package key = clazz.getPackage();
+        Properties properties =  (Properties)_propFiles.get(key);
+        if(properties == null) {
+            SourceDescriptor source = new ClassLoaderSourceDescriptor(
+                    null, "message.properties", clazz);
+            properties = new Properties();
+            _propFiles.put(key, properties);
+            if(source.exists()) {
+	            try {
+	                properties.load(source.getInputStream());
+	            } catch (IOException e) {
+	                throw new RuntimeException(e);
+	            }
+            }
+        }
+        StringBuffer propertyName = new StringBuffer(clazz.getName());
+        if(index > 0) {
+            propertyName.append(".").append(index); 
+        }
+        String message = properties.getProperty(propertyName.toString());
+        if(isEmpty(message)) {
+        	message = "!" + clazz.getName() +  "!";
+        }
+        return message;
+    }
+    
 }

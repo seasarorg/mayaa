@@ -16,7 +16,6 @@
 package org.seasar.maya.impl;
 
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.util.MessageUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -42,7 +41,7 @@ public class MayaException extends RuntimeException {
     }
     
     public String getMessage() {
-        String message = MessageUtil.getMessage(getClass(), _messageID);
+        String message = StringUtil.getMessage(getClass(), _messageID);
         if(StringUtil.isEmpty(message)) {
             Throwable cause = getCause();
             if(cause != null) {

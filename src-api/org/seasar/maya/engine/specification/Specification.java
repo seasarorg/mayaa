@@ -23,6 +23,7 @@ import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * スペック情報にアクセスするためのインターフェイス
+ * TODO XPath関連のAPIを分離する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Specification extends SpecificationNode {

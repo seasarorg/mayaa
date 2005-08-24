@@ -22,6 +22,7 @@ import org.xml.sax.Locator;
 
 /**
  * 	設定XMLの構成物。
+ * TODO XPath関連のAPIを分離する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationNode extends QNameable {

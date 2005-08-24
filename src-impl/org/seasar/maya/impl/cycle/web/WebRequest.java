@@ -25,13 +25,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
+import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebRequest implements Request {
+public class WebRequest implements Request, CONST_IMPL {
 
     private static final long serialVersionUID = 8377365781441987529L;
 
@@ -56,8 +58,13 @@ public class WebRequest implements Request {
     }
 
     protected String getRequestedPath() {
-        return StringUtil.preparePath(_httpServletRequest.getServletPath()) +
+        String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
+        if("/".equals(path)) {
+            return SpecificationUtil.getEngineSetting(
+                    WELCOME_FILE_NAME, "/index.html");
+        }
+        return path;
     }
     
     protected void parsePath(String path) {

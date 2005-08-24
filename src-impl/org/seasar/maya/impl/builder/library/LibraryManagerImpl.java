@@ -27,6 +27,7 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.source.SourceDescriptor;
@@ -48,7 +49,7 @@ public class LibraryManagerImpl implements LibraryManager {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     protected void buildAll() {

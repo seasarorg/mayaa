@@ -27,6 +27,7 @@ import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -68,7 +69,7 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
     
     private class CheckXPathCopyToFilter implements CopyToFilter {

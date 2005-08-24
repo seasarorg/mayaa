@@ -20,16 +20,13 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
- * 例外クラス名に応じたテンプレートによって例外情報を表示する。
- * folderパラメータ値の示すフォルダ直下に置かれた、例外クラス名ページを利用する。
- * たとえば、/WEB-INF/errorPage/java.lang.IllegalArgumentException.html など。
- * テンプレートページ中では、ページスコープのオブジェクト「THROWABLE」で発生した
- * 例外を取得することができる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateErrorHandler  implements ErrorHandler {
@@ -46,9 +43,11 @@ public class TemplateErrorHandler  implements ErrorHandler {
     public void setParameter(String name, String value) {
         if("folder".equals(name)) {
         	if(StringUtil.isEmpty(value)) {
-        		throw new IllegalArgumentException();
+                throw new IllegalParameterValueException(name);
         	}
             _folder = value;
+        } else {
+            throw new UnsupportedParameterException(name);
         }
     }
     

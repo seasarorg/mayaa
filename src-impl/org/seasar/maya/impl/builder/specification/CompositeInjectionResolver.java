@@ -22,6 +22,7 @@ import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -88,7 +89,7 @@ public class CompositeInjectionResolver implements InjectionResolver {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
 }

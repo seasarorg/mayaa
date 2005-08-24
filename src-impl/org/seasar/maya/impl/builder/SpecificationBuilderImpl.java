@@ -21,6 +21,7 @@ import org.apache.xerces.parsers.SAXParser;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
@@ -53,7 +54,7 @@ public class SpecificationBuilderImpl
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     protected XMLReader createXMLReader() {

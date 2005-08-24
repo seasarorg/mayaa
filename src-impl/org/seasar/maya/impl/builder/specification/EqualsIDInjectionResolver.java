@@ -28,6 +28,7 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.IDNotResolvedException;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -85,7 +86,7 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
     
     private class CheckIDCopyToFilter implements CopyToFilter {

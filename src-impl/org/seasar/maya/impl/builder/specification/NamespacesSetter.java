@@ -23,6 +23,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * オリジナルノードの名前空間モデルを、インジェクト結果にコピーする。
@@ -47,7 +48,7 @@ public class NamespacesSetter implements InjectionResolver, CONST_IMPL {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 
 /**
@@ -35,7 +36,7 @@ public class WalkaroundSourceScanner implements SourceScanner {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     public Iterator scan() {

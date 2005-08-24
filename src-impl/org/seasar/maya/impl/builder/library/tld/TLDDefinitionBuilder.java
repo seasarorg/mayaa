@@ -24,6 +24,7 @@ import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -36,7 +37,7 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
     private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
     
     public LibraryDefinition build(SourceDescriptor source) {

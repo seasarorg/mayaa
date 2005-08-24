@@ -26,6 +26,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
@@ -65,12 +66,12 @@ public class EngineImpl extends SpecificationImpl
     }
     
     public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
-            throw new IllegalArgumentException();
-        }
         if(_paramNames.contains(name)) {
             if(_parameters == null) {
                 _parameters = new HashMap();
+            }
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(name);
             }
             _parameters.put(name, value);
         } else {

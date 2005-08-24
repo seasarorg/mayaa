@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
@@ -30,6 +31,7 @@ public class SimpleErrorHandler  implements ErrorHandler {
     private static final Log LOG = LogFactory.getLog(SimpleErrorHandler.class);
     
     public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
     public void doErrorHandle(Throwable t) {

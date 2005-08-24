@@ -25,6 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -42,8 +43,7 @@ public class JarsSourceScanner implements SourceScanner {
     public void setParameter(String name, String value) {
         if("ignore".equals(name)) {
             if(StringUtil.isEmpty(value)) {
-                // TODO 不正なパラメータの例外。
-                throw new IllegalArgumentException();
+                throw new IllegalParameterValueException(name);
             }
             _ignores.add(value);
         } else {

@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.PropertyNotWritableException;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
@@ -27,7 +28,7 @@ import org.seasar.maya.impl.util.CycleUtil;
 public class ImplicitObjectScriptResolver implements ScriptResolver {
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     public Object getVariable(String name) {

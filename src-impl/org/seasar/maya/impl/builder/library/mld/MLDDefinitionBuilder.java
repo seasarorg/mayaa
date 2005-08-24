@@ -25,6 +25,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -38,7 +39,7 @@ public class MLDDefinitionBuilder
     private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
     
     public LibraryDefinition build(SourceDescriptor source) {

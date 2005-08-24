@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,7 +38,7 @@ public class CompositeScriptResolver implements ScriptResolver {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     public Object getVariable(String name) {

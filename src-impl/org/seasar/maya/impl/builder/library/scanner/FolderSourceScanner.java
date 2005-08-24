@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -33,17 +35,18 @@ public class FolderSourceScanner implements SourceScanner {
     private String _folder;
     
     public void setParameter(String name, String value) {
-        if("folder".equals(name) && StringUtil.hasValue(value)) {
+        if("folder".equals(name)) {
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(name);
+            }
             _folder = value;
         } else {
-            // TODO 不正なパラメータの例外。
-            throw new IllegalArgumentException();
+            throw new UnsupportedParameterException(name);
         }
     }
 
     public String getFolder() {
         if(StringUtil.isEmpty(_folder)) {
-            // TODO 不正なパラメータの例外。
             throw new IllegalStateException();
         }
         return _folder;

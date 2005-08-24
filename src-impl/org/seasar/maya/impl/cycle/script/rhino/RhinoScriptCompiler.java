@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -27,7 +28,7 @@ import org.seasar.maya.source.SourceDescriptor;
 public class RhinoScriptCompiler extends AbstractScriptCompiler {
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     protected CompiledScript compile(ScriptBlock scriptBlock, 

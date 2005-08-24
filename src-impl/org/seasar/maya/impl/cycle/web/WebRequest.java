@@ -39,17 +39,9 @@ public class WebRequest implements Request, CONST_IMPL {
 
     private WebSession _session;
     private HttpServletRequest _httpServletRequest;
-    private String _suffixSeparator;
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;
-    
-    public WebRequest(String suffixSeparator) {
-        if(StringUtil.isEmpty(suffixSeparator)) {
-            throw new IllegalArgumentException();
-        }
-        _suffixSeparator = suffixSeparator;
-    }
     
     private void check() {
         if(_httpServletRequest == null) {
@@ -68,7 +60,9 @@ public class WebRequest implements Request, CONST_IMPL {
     }
     
     protected void parsePath(String path) {
-        String[] parsed = StringUtil.parsePath(path, _suffixSeparator);
+        String suffixSeparator = SpecificationUtil.getEngineSetting(
+                SUFFIX_SEPARATOR, "$");
+        String[] parsed = StringUtil.parsePath(path, suffixSeparator);
         _pageName = parsed[0];
         _requestedSuffix = parsed[1];
         _extension = parsed[2];

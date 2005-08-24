@@ -21,6 +21,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.implicit.ParamMap;
 import org.seasar.maya.impl.cycle.script.PropertyNotWritableException;
 import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
@@ -29,7 +30,7 @@ import org.seasar.maya.impl.util.SpecificationUtil;
 public class ComponentBindingScriptResolver implements ScriptResolver {
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     public Object getVariable(String name) {

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -31,7 +32,7 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
     public static final String ASSIGNED = WebXmlAliasSourceScanner.class + ".ASSIGNED";
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedParameterException(name);
     }
 
     protected Iterator scanWebXml(SourceDescriptor source) {

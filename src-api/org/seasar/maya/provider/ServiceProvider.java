@@ -15,9 +15,6 @@
  */
 package org.seasar.maya.provider;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
@@ -62,11 +59,11 @@ public interface ServiceProvider {
     TemplateBuilder getTemplateBuilder();
 
     /**
-     * サーブレットAPIのコンテキストオブジェクト設定。
-     * @param request カレントのHTTPリクエスト。
-     * @param response カレントのHTTPレスポンス。
+     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
+     * @param request カレントのリクエストオブジェクト。
+     * @param response カレントのレスポンスオブジェクト。
      */
-    void initialize(HttpServletRequest request, HttpServletResponse response);
+    void initialize(Object request, Object response);
     
     /**
      * サービスサイクルの取得

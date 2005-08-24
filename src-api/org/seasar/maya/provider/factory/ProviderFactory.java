@@ -17,8 +17,6 @@ package org.seasar.maya.provider.factory;
 
 import java.io.Serializable;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.provider.ServiceProvider;
 
 /**
@@ -28,7 +26,7 @@ import org.seasar.maya.provider.ServiceProvider;
 public abstract class ProviderFactory implements Serializable {
 
 	private static ProviderFactory _factory;
-	private static ServletContext _servletContext;
+	private static Object _context;
 	
 	/**
 	 * ファクトリのカスタマイズ用。 
@@ -42,14 +40,14 @@ public abstract class ProviderFactory implements Serializable {
 	}
 	
 	/**
-     * サーブレットAPIのコンテキストオブジェクト設定。
-	 * @param servletContext カレントのサーブレットコンテキスト。
+     * コンテキストオブジェクト設定。
+	 * @param context カレントアプリケーションのコンテキストオブジェクト。
 	 */
-	public static void setServletContext(ServletContext servletContext) {
-	    if(servletContext == null) {
+	public static void setContext(Object context) {
+	    if(context == null) {
 	        throw new IllegalArgumentException();
 	    }
-	    _servletContext = servletContext;
+	    _context = context;
 	}
 	 
 	/**
@@ -57,18 +55,17 @@ public abstract class ProviderFactory implements Serializable {
 	 * @return サービスプロバイダ。
 	 */
 	public static ServiceProvider getServiceProvider() {
-	    if(_factory == null || _servletContext == null) {
+	    if(_factory == null || _context == null) {
 	        throw new IllegalStateException();
 	    }
-		return _factory.getServiceProvider(_servletContext);
+		return _factory.getServiceProvider(_context);
 	}
 	
 	/**
-	 * サービスプロバイダの取得。生成もしくはServletContext中にサーブレット名を
-	 * キーとして保存しているプロバイダを取り出す。
-	 * @param servletContext サーブレットコンテキスト。
-	 * @return エンジンカスタマイズ用コンテキスト。
+	 * サービスプロバイダの取得。生成もしくはキャッシュしているプロバイダを取り出す。
+	 * @param context コンテキストオブジェクト。
+	 * @return サービスプロバイダ。
 	 */
-	protected abstract ServiceProvider getServiceProvider(ServletContext servletContext);
+	protected abstract ServiceProvider getServiceProvider(Object context);
 	
 }

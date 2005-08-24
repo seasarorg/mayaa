@@ -17,7 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import javax.servlet.ServletContext;
 
-import org.seasar.maya.impl.provider.SimpleServiceProvider;
+import org.seasar.maya.impl.provider.WebServiceProvider;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -27,7 +27,7 @@ import org.xml.sax.Attributes;
 public class ServiceTagHandler extends TagHandler {
     
     private ServletContext _context;
-    private SimpleServiceProvider _provider;
+    private WebServiceProvider _provider;
     
     public ServiceTagHandler(ServletContext context) {
         if(context == null) {
@@ -41,10 +41,10 @@ public class ServiceTagHandler extends TagHandler {
     }
 
     protected void start(Attributes attributes) {
-        _provider = new SimpleServiceProvider(_context);
+        _provider = new WebServiceProvider(_context);
     }
     
-    public SimpleServiceProvider getServiceProvider() {
+    public WebServiceProvider getServiceProvider() {
         if(_provider == null) {
             throw new IllegalStateException();
         }

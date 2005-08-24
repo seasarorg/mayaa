@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.provider.factory.SimpleProviderFactory;
+import org.seasar.maya.impl.provider.factory.WebProviderFactory;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -45,8 +45,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
 
     public void init() throws ServletException {
     	if(_inithialized == false) {
-            ProviderFactory.setDefaultFactory(new SimpleProviderFactory());
-            ProviderFactory.setServletContext(getServletContext());
+            ProviderFactory.setDefaultFactory(new WebProviderFactory());
+            ProviderFactory.setContext(getServletContext());
             _inithialized = true;
     	}
     }

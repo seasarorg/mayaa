@@ -40,32 +40,31 @@ import org.seasar.maya.provider.ServiceProvider;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
+public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     
-    private ServletContext _servletContext;
+    private Object _context;
     private Application _application;
     private Engine _engine;
     private ScriptCompiler _scriptCompiler;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
-	private ThreadLocal _currentServiceCycle;
+	private ThreadLocal _currentServiceCycle = new ThreadLocal();
 	
-    public SimpleServiceProvider(ServletContext servletContext) {
-        if(servletContext == null) {
+    public WebServiceProvider(Object context) {
+        if(context == null) {
             throw new IllegalArgumentException();
         }
-        _servletContext = servletContext;
-        _currentServiceCycle = new ThreadLocal();
-    }
-    
-    public ServletContext getServletContext() {
-        return _servletContext;
+        _context = context;
     }
     
     public Application getApplication() {
         if(_application == null) {
+            if(_context instanceof ServletContext == false) {
+                throw new IllegalStateException();
+            }
+            ServletContext servletContext = (ServletContext)_context;
             WebApplication application = new WebApplication();
-            application.setServletContext(_servletContext);
+            application.setServletContext(servletContext);
             _application = application;
         }
         return _application;
@@ -146,8 +145,10 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
     	return webResponse;
     }
     
-	public void initialize(HttpServletRequest request, HttpServletResponse response) {
-		if(request == null || response == null) {
+	public void initialize(Object request, Object response) {
+		if(request == null || response == null ||
+                request instanceof HttpServletRequest == false ||
+                response instanceof HttpServletResponse == false) {
 			throw new IllegalArgumentException();
 		}
     	WebServiceCycle cycle = (WebServiceCycle)_currentServiceCycle.get();
@@ -156,8 +157,10 @@ public class SimpleServiceProvider implements ServiceProvider, CONST_IMPL {
             SpecificationUtil.setEngine(cycle, getEngine());
     		_currentServiceCycle.set(cycle);
     	}
-		cycle.setRequest(createRequest(request));
-        cycle.setResponse(createResponse(response));
+        HttpServletRequest httpRequest = (HttpServletRequest)request;
+        HttpServletResponse httpResponse = (HttpServletResponse)response;
+		cycle.setRequest(createRequest(httpRequest));
+        cycle.setResponse(createResponse(httpResponse));
 	}
 
 	public ServiceCycle getServiceCycle() {

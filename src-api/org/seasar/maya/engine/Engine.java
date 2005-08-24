@@ -28,12 +28,6 @@ import org.seasar.maya.provider.Parameterizable;
  */
 public interface Engine extends Parameterizable, Specification, Serializable {
 
-    String CHECK_TIMESTAMP = "checkTimestamp";
-    String OUTPUT_WHITE_SPACE = "outputWhitespace";
-    String REPORT_UNRESOLVED_ID = "reportUnresolvedID";
-    String SUFFIX_SEPARATOR = "suffixSeparator";
-    String WELCOME_FILE_NAME = "welcomeFileName";
-    
     /**
      * カスタム設定項目の取得メソッド。
      * @param name 設定名。

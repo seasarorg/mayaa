@@ -20,7 +20,6 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -74,7 +73,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         _charactersBuffer = new StringBuffer(128);
         _namespaces = new NamespaceableImpl();
         _outputWhitespace = SpecificationUtil.getEngineSettingBoolean(
-                Engine.OUTPUT_WHITE_SPACE, true);
+                OUTPUT_WHITE_SPACE, true);
         _current = _specification;
     }
 

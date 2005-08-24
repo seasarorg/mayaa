@@ -108,7 +108,7 @@ public class PageImpl extends SpecificationImpl
             StringBuffer name = new StringBuffer(_pageName);
             if(StringUtil.hasValue(suffix)) {
                 String separator = SpecificationUtil.getEngineSetting(
-                        Engine.SUFFIX_SEPARATOR, "$");
+                        SUFFIX_SEPARATOR, "$");
                 name.append(separator).append(suffix);
             }
             String extension = getExtension();

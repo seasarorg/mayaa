@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.seasar.maya.builder.specification.InjectionChain;
 import org.seasar.maya.builder.specification.InjectionResolver;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -77,7 +76,7 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 	            return injected.copyTo(_idFilter);
 	        }
             boolean reportUnresolvedID = SpecificationUtil.getEngineSettingBoolean(
-                    Engine.REPORT_UNRESOLVED_ID, true);
+                    REPORT_UNRESOLVED_ID, true);
             if(reportUnresolvedID) { 
 		        throw new IDNotResolvedException(template, original, id);
             }

@@ -25,7 +25,6 @@ import java.util.NoSuchElementException;
 import org.jaxen.JaxenException;
 import org.jaxen.XPath;
 import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
@@ -80,7 +79,7 @@ public abstract class SpecificationImpl
 	
     protected boolean isOldSpecification() {
     	boolean check = SpecificationUtil.getEngineSettingBoolean(
-                Engine.CHECK_TIMESTAMP, true);
+                CHECK_TIMESTAMP, true);
         if(check == false) {
             return false;
         }

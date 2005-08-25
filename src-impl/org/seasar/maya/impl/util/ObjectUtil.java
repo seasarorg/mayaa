@@ -62,6 +62,8 @@ public class ObjectUtil {
         	return Character.TYPE;
         } else if("boolean".equals(className)) {
         	return Boolean.TYPE;
+        } else if("void".equals(className)) {
+        	return Void.TYPE;
         }
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {

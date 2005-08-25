@@ -15,14 +15,11 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -30,57 +27,49 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScriptletProcessor extends TemplateProcessorSupport {
+public class ExecProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -3442033812529712223L;
-    private static final Object LOADED = new Object();
+	private static final long serialVersionUID = -1413583265341468324L;
+	private static final Object LOADED = new Object();
 
     private ProcessorProperty _exec;
-    private String _src;
-    private CompiledScript _script;
-    private String _encoding;
-    private String _default;
+    private ProcessorProperty _src;
+    private CompiledScript _compiled;
+    private ProcessorProperty _encoding;
     private ThreadLocal _loaded = new ThreadLocal();
     
-    // MLD property
-    public void setSrc(String src) {
+    // MLD property, expectedType=java.lang.String
+    public void setSrc(ProcessorProperty src) {
         _src = src;
     }
     
-    // MLD property
-    public void setEncoding(String encoding) {
+    // MLD property, expectedType=java.lang.String
+    public void setEncoding(ProcessorProperty encoding) {
         _encoding = encoding;
     }
 
-    // MLD property, expectedType=java.lang.String
-    public void setExec(ProcessorProperty exec) {
-        _exec = exec;
-    }
-    
-    public void setDefault(String defaultValue) {
-    	_default = defaultValue;
+    // MLD property, expectedType=void
+    public void setScript(ProcessorProperty script) {
+        _exec = script;
     }
     
     public ProcessStatus doStartProcess() {
-        if(StringUtil.hasValue(_src)) {
-            if(_script == null) {
+        if(_src != null) {
+            if(_compiled == null) {
                 ServiceProvider provider = ProviderFactory.getServiceProvider();
-                SourceDescriptor source = provider.getPageSourceDescriptor(_src);
+                String srcValue = (String)_src.getValue();
+                SourceDescriptor source = provider.getPageSourceDescriptor(srcValue);
                 ScriptCompiler compiler = provider.getScriptCompiler();
-                _script = compiler.compile(source, _encoding, Void.class);
+                String encValue = (String)_encoding.getValue();
+                _compiled = compiler.compile(source, encValue, Void.class);
             }
             if(_loaded.get() == null) {
-                ScriptUtil.execute(_script);
+                ScriptUtil.execute(_compiled);
                 _loaded.set(LOADED);
             }
         }
         if(_exec != null) {
-            String ret = (String)_exec.getValue();
-            if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
-            	ret = _default;
-            }
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.getResponse().write(ret);
+            _exec.getValue();
         }
         return SKIP_BODY;
     }

@@ -84,12 +84,29 @@
 		<property name="index"/>
 	</processor>
 
-	<processor name="scriptlet"
-			class="org.seasar.maya.impl.engine.processor.ScriptletProcessor">
-		<property name="src"/>
-		<property name="encoding"/>
-		<property name="exec" expectedType="java.lang.String"/>
+	<processor name="exec"
+			class="org.seasar.maya.impl.engine.processor.ExecProcessor">
+		<property name="script" expectedType="void"/>
+		<property name="src" expectedType="java.lang.String"/> 
+		<property name="encoding" expectedType="java.lang.String"/> 
+	</processor>		
+
+	<processor name="write"
+			class="org.seasar.maya.impl.engine.processor.WriteProcessor">
+		<property name="value" required="true" expectedType="java.lang.String"/>
 		<property name="default"/> 
+	</processor>		
+
+	<processor name="for"
+			class="org.seasar.maya.impl.engine.processor.ForProcessor">
+		<property name="init" expectedType="void"/>
+		<property name="test" required="true" expectedType="boolean"/>
+		<property name="after" expectedType="void"/>
+	</processor>		
+
+	<processor name="if"
+			class="org.seasar.maya.impl.engine.processor.IfProcessor">
+		<property name="test" required="true" expectedType="boolean"/>
 	</processor>		
 
 </library>

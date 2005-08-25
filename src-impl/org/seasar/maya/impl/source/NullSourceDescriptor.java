@@ -47,6 +47,9 @@ public class NullSourceDescriptor implements SourceDescriptor {
         return null;
     }
     
+    public void setSystemID(String systemID) {
+    }
+
     public String getSystemID() {
         return "/";
     }

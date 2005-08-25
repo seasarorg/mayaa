@@ -28,11 +28,12 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -115,7 +116,8 @@ public class PageImpl extends SpecificationImpl
             if(StringUtil.hasValue(extension)) {
                 name.append(".").append(extension);
             }
-            SourceDescriptor source = new PageSourceDescriptor(name.toString());
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            SourceDescriptor source = provider.getPageSourceDescriptor(name.toString());
             if(source.exists()) {
                 template = new TemplateImpl(this, suffix);
                 template.setSource(source);

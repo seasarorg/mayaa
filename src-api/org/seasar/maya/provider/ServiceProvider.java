@@ -21,6 +21,7 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * アプリケーションスコープでのサービス提供オブジェクト。
@@ -58,6 +59,13 @@ public interface ServiceProvider {
      */
     TemplateBuilder getTemplateBuilder();
 
+    /**
+     * テンプレートや設定XMLを読み出すソースを生成する。
+     * @param systemID ソースのSystemID。
+     * @return 指定SystemIDのソース。
+     */
+    SourceDescriptor getPageSourceDescriptor(String systemID);
+    
     /**
      * リクエストおよびレスポンスのコンテキストオブジェクト設定。
      * @param request カレントのリクエストオブジェクト。

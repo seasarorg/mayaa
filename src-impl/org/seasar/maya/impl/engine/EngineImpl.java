@@ -28,11 +28,12 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -109,7 +110,8 @@ public class EngineImpl extends SpecificationImpl
         Page page = SpecificationUtil.getPage(this, key);
         if(page == null) {
             String path = pageName + ".maya";
-            SourceDescriptor source = new PageSourceDescriptor(path);
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            SourceDescriptor source = provider.getPageSourceDescriptor(path);
             page = new PageImpl(this, pageName, extension);
             page.setSource(source);
             addChildSpecification(page);

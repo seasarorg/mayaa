@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import java.io.InputStream;
+
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
@@ -23,7 +25,6 @@ import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,12 +37,14 @@ public class WebProviderFactory extends ProviderFactory
 	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
-        SourceDescriptor source = new BootstrapSourceDescriptor(
-                "/maya.provider", servletContext); 
+        BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
+        source.setServletContext(servletContext);
+        source.setSystemID("/maya.provider"); 
     	if(source.exists()) {
 	    	WebProviderHandler handler = new WebProviderHandler(servletContext);
-	        XmlUtil.parse(handler, source.getInputStream(), 
-	                PUBLIC_PROVIDER10, source.getSystemID(), true, true, false);
+            InputStream stream = source.getInputStream();
+	        XmlUtil.parse(handler, stream, PUBLIC_PROVIDER10, 
+                    source.getSystemID(), true, true, false);
             return handler.getResult();
     	}
     	return new WebServiceProvider(servletContext);

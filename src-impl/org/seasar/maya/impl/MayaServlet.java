@@ -31,7 +31,6 @@ import org.seasar.maya.impl.provider.factory.WebProviderFactory;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -123,7 +122,8 @@ public class MayaServlet extends HttpServlet implements CONST_IMPL {
             throw new IllegalArgumentException();
         }
         String path = cycle.getRequest().getRequestedPath();
-        SourceDescriptor source = new PageSourceDescriptor(path);
+        PageSourceDescriptor source = new PageSourceDescriptor();
+        source.setSystemID(path);
         InputStream stream = source.getInputStream();
         if(stream != null) {
             OutputStream out = cycle.getResponse().getUnderlyingOutputStream();

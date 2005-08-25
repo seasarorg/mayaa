@@ -15,6 +15,10 @@
  */
 package org.seasar.maya.impl.provider;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +39,9 @@ import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -48,6 +54,8 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     private ScriptCompiler _scriptCompiler;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
+    private Class _pageSourceClass;
+    private Map _pageParams;
 	private ThreadLocal _currentServiceCycle = new ThreadLocal();
 	
     public WebServiceProvider(Object context) {
@@ -124,6 +132,43 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     	    throw new IllegalStateException();
     	}
         return _templateBuilder;
+    }
+    
+    public void setPageSourceClass(Class pageSourceClass) {
+        if(pageSourceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _pageSourceClass = pageSourceClass;
+    }
+
+    public void putPageSourceParameter(String name, String value) {
+        if(StringUtil.isEmpty(name) || value == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_pageParams == null) {
+            _pageParams = new HashMap();
+        }
+        _pageParams.put(name, value);
+    }
+    
+    public SourceDescriptor getPageSourceDescriptor(String systemID) {
+        if(StringUtil.isEmpty(systemID)) {
+            throw new IllegalArgumentException();
+        }
+        if(_pageSourceClass == null) {
+            throw new IllegalStateException();
+        }
+        SourceDescriptor source = 
+            (SourceDescriptor)ObjectUtil.newInstance(_pageSourceClass);
+        source.setSystemID(systemID);
+        if(_pageParams != null) {
+            for(Iterator it = _pageParams.keySet().iterator(); it.hasNext(); ) {
+                String key = (String)it.next();
+                String value = (String)_pageParams.get(key);
+                source.setParameter(key, value);
+            }
+        }
+        return source;
     }
 
     private Request createRequest(HttpServletRequest request) {

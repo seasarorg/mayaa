@@ -26,9 +26,15 @@ import org.seasar.maya.provider.Parameterizable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SourceDescriptor extends Serializable, Parameterizable {
+
+    /**
+     * ソースSystemIDを設定する。
+     * @param systemID
+     */
+    void setSystemID(String systemID);
     
     /**
-     * ソースパス中のSystemID。
+     * ソースSystemIDを取得する。
      * @return SystemID。
      */
     String getSystemID();

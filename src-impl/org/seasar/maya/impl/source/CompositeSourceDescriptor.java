@@ -31,12 +31,11 @@ public class CompositeSourceDescriptor implements SourceDescriptor {
 
     private static final long serialVersionUID = 7557914925525488748L;
 
-    private List _descriptors;
+    private List _descriptors = new ArrayList();
     private String _systemID;
     
-    public CompositeSourceDescriptor(String systemID) {
+    public void setSystemID(String systemID) {
         _systemID = StringUtil.preparePath(systemID);
-        _descriptors = new ArrayList();
     }
 
     public void addSourceDescriptor(SourceDescriptor source) {

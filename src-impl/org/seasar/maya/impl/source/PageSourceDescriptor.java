@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.source;
 
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
@@ -24,26 +25,32 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
 
 	private static final long serialVersionUID = -6124718310228340001L;
 
+    private String _folder = "/WEB-INF/page";
+    
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        if("folder".equals(name)) {
+            if(value == null) {
+                throw new IllegalParameterValueException(name);
+            }
+            _folder = value;
+        } else {
+            throw new UnsupportedParameterException(name);
+        }
     }
     
-    public PageSourceDescriptor(String systemID) {
-        super(systemID);
+    public void setSystemID(String systemID) {
+        super.setSystemID(systemID);
         ApplicationSourceDescriptor app1 = new ApplicationSourceDescriptor();
         app1.setSystemID(systemID);
         addSourceDescriptor(app1);
         ApplicationSourceDescriptor app2 = new ApplicationSourceDescriptor();
-        app2.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        app2.setRoot(_folder);
         app2.setSystemID(systemID);
         addSourceDescriptor(app2);
-        ClassLoaderSourceDescriptor loader1 = new ClassLoaderSourceDescriptor();
-        loader1.setSystemID(systemID);
-        addSourceDescriptor(loader1);
-        ClassLoaderSourceDescriptor loader2 = new ClassLoaderSourceDescriptor();
-        loader2.setRoot(ClassLoaderSourceDescriptor.META_INF);
-        loader2.setSystemID(systemID);
-        addSourceDescriptor(loader2);
+        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
+        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setSystemID(systemID);
+        addSourceDescriptor(loader);
     }
 
 }

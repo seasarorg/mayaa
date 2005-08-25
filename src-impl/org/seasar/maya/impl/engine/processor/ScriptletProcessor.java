@@ -20,12 +20,12 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptCompiler;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -64,8 +64,8 @@ public class ScriptletProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess() {
         if(StringUtil.hasValue(_src)) {
             if(_script == null) {
-                PageSourceDescriptor source = new PageSourceDescriptor(_src);
                 ServiceProvider provider = ProviderFactory.getServiceProvider();
+                SourceDescriptor source = provider.getPageSourceDescriptor(_src);
                 ScriptCompiler compiler = provider.getScriptCompiler();
                 _script = compiler.compile(source, _encoding, Void.class);
             }

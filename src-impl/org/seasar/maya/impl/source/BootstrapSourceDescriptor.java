@@ -25,14 +25,25 @@ import org.seasar.maya.impl.cycle.web.WebApplication;
 public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -7436518426506691163L;
+    private ServletContext _servletContext;
 
-    public BootstrapSourceDescriptor(String systemID, ServletContext context) {
-        super(systemID);
+    public void setServletContext(ServletContext servletContext) {
+        if(servletContext == null) {
+            throw new IllegalArgumentException();
+        }
+        _servletContext = servletContext;
+    }
+    
+    public void setSystemID(String systemID) {
+        if(_servletContext == null) {
+            throw new IllegalStateException();
+        }
+        super.setSystemID(systemID);
         ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
         appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         appSource.setSystemID(systemID);
         WebApplication application = new WebApplication();
-        application.setServletContext(context);
+        application.setServletContext(_servletContext);
         appSource.setApplication(application);
         addSourceDescriptor(appSource);
         ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();

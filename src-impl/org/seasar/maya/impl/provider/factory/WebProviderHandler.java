@@ -63,16 +63,10 @@ public class WebProviderHandler extends DefaultHandler
 
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
-        if(LOG.isTraceEnabled()) {
-            LOG.trace("start " + qName);
-        }
         _stack.startElement(localName, attributes);
     }
     
     public void endElement(String namespaceURI, String localName, String qName) {
-        if(LOG.isTraceEnabled()) {
-            LOG.trace("end " + qName);
-        }
         _stack.endElement();
     }
 

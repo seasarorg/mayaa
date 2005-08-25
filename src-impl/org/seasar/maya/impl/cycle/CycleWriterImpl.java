@@ -57,12 +57,12 @@ public class CycleWriterImpl extends CycleWriter {
     }
     
 	public void flush() throws IOException {
-        if(_enclosingWriter != null) {
-            _enclosingWriter.write(_buffer.toCharArray());
-            // don't flush.
-            _buffer.reset();
+        if(_enclosingWriter == null) {
+            throw new IllegalStateException();
         }
-        throw new IllegalStateException();
+        _enclosingWriter.write(_buffer.toCharArray());
+        // don't flush.
+        _buffer.reset();
 	}
 
     public void writeOut(Writer writer) throws IOException {

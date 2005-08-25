@@ -29,6 +29,7 @@ public class LibraryBuilderTagHandler extends AbstractParameterizableTagHandler 
     private DefinitionBuilder _builder;
     
     public LibraryBuilderTagHandler(LibraryTagHandler parent) {
+        super("builder");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

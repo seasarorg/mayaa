@@ -30,28 +30,29 @@ public class VariableTagHandler extends TagHandler {
     private TagTagHandler _parent;
 
     public VariableTagHandler(TagTagHandler parent) {
+        super("variable");
         _parent = parent;
-        putHandler("name-given", new TagHandler() {
+        putHandler(new TagHandler("name-given") {
             public void end(String body) {
                 _variable.setNameGiven(body);
             }
         });
-        putHandler("name-from-attribute", new TagHandler() {
+        putHandler(new TagHandler("name-from-attribute") {
             public void end(String body) {
                 _variable.setNameFromAttribute(body);
             }
         });
-        putHandler("variable-class", new TagHandler() {
+        putHandler(new TagHandler("variable-class") {
             public void end(String body) {
                 _variable.setClassName(body);
             }
         });
-        putHandler("declare", new TagHandler() {
+        putHandler(new TagHandler("declare") {
             public void end(String body) {
                 _variable.setDeclare(ObjectUtil.booleanValue(body, false));
             }
         });
-        putHandler("scope", new TagHandler() {
+        putHandler(new TagHandler("scope") {
             public void end(String body) {
                 _variable.setScopeType(body);
             }

@@ -29,6 +29,7 @@ public class LibrarySourceTagHandler extends AbstractParameterizableTagHandler {
     private SourceScanner _scanner;
     
     public LibrarySourceTagHandler(LibraryTagHandler parent) {
+        super("source");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

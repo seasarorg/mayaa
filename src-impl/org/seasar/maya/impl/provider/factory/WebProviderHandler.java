@@ -42,7 +42,7 @@ public class WebProviderHandler extends DefaultHandler
         if(context == null) {
             throw new IllegalArgumentException();
         }
-        _stack = new TagHandlerStack("service", new ServiceTagHandler(context));
+        _stack = new TagHandlerStack(new ServiceTagHandler(context));
     }
     
 	public InputSource resolveEntity(String publicId, String systemId) {

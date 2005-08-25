@@ -31,8 +31,9 @@ public class ProcessorTagHandler extends TagHandler {
     private ProcessorDefinitionImpl _processorDefinition;
     
     public ProcessorTagHandler(LibraryTagHandler parent) {
+        super("processor");
         _parent = parent;
-        putHandler("property", new PropertyTagHandler(this));
+        putHandler(new PropertyTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

@@ -28,12 +28,13 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
     private EngineImpl _engine;
     
     public EngineTagHandler(ServiceTagHandler parent) {
+        super("engine");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("specification", new SpecificationTagHandler(this));
-        putHandler("errorHandler", new ErrorHandlerTagHandler(this));
+        putHandler(new SpecificationTagHandler(this));
+        putHandler(new ErrorHandlerTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

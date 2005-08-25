@@ -30,6 +30,7 @@ public class PropertyTagHandler extends TagHandler {
     private ProcessorTagHandler _parent;
     
     public PropertyTagHandler(ProcessorTagHandler parent) {
+        super("property");
         _parent = parent;
     }
 

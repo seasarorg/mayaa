@@ -37,19 +37,20 @@ public class TagTagHandler extends TagHandler {
     private JspProcessorDefinition _processor;
     
     public TagTagHandler(TaglibTagHandler parent) {
+        super("tag");
         _parent = parent;
-        putHandler("attribute", new AttributeTagHandler(this));
-        putHandler("variable", new VariableTagHandler(this));
-        putHandler("name", new TagHandler() {
+        putHandler(new AttributeTagHandler(this));
+        putHandler(new VariableTagHandler(this));
+        putHandler(new TagHandler("name") {
             protected void end(String body) {
                 _processor.setName(body);
             }
         });
-        putHandler("tag-class", new TagClassSetter(this));
-        putHandler("tei-class", new TeiClassSetter(this));
+        putHandler(new TagClassSetter("tag-class", this));
+        putHandler(new TeiClassSetter("tei-class", this));
         // JSP1.1
-        putHandler("tagclass", new TagClassSetter(this));
-        putHandler("teiclass", new TeiClassSetter(this));
+        putHandler(new TagClassSetter("tagclass", this));
+        putHandler(new TeiClassSetter("teiclass", this));
     }
 
     protected void start(Attributes attributes) {
@@ -72,7 +73,8 @@ public class TagTagHandler extends TagHandler {
 
         private TagTagHandler _parent;
         
-        private TagClassSetter(TagTagHandler parent) {
+        private TagClassSetter(String name, TagTagHandler parent) {
+            super(name);
             _parent = parent;
         }
         
@@ -94,7 +96,8 @@ public class TagTagHandler extends TagHandler {
 
         private TagTagHandler _parent;
         
-        private TeiClassSetter(TagTagHandler parent) {
+        private TeiClassSetter(String name, TagTagHandler parent) {
+            super(name);
             _parent = parent;
         }
         

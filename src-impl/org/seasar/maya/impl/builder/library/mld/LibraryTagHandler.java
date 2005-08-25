@@ -27,7 +27,8 @@ public class LibraryTagHandler extends TagHandler {
     private LibraryDefinitionImpl _libraryDefinition;
     
     public LibraryTagHandler() {
-        putHandler("processor", new ProcessorTagHandler(this));
+        super("library");
+        putHandler( new ProcessorTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

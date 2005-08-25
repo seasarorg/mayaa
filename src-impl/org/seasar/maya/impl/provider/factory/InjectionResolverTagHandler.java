@@ -29,6 +29,7 @@ public class InjectionResolverTagHandler extends AbstractParameterizableTagHandl
     private InjectionResolver _resolver;
     
     public InjectionResolverTagHandler(TemplateBuilderTagHandler parent) {
+        super("resolver");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

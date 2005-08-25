@@ -23,8 +23,9 @@ import org.seasar.maya.provider.Parameterizable;
  */
 public abstract class AbstractParameterizableTagHandler extends TagHandler {
     
-    public AbstractParameterizableTagHandler() {
-        putHandler("parameter", new ParameterTagHandler(this));
+    public AbstractParameterizableTagHandler(String name) {
+        super(name);
+        putHandler(new ParameterTagHandler(this));
     }
 
     public abstract Parameterizable getParameterizable(); 

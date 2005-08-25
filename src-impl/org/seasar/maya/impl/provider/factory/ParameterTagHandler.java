@@ -27,6 +27,7 @@ public class ParameterTagHandler extends TagHandler {
     private AbstractParameterizableTagHandler _parent;
     
     public ParameterTagHandler(AbstractParameterizableTagHandler parent) {
+        super("parameter");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

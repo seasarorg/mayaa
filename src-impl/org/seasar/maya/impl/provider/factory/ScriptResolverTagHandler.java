@@ -29,6 +29,7 @@ public class ScriptResolverTagHandler extends AbstractParameterizableTagHandler 
     private ScriptResolver _resolver;
     
     public ScriptResolverTagHandler(ScriptTagHandler parent) {
+        super("resolver");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

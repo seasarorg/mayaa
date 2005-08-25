@@ -29,12 +29,13 @@ public class TemplateBuilderTagHandler extends AbstractParameterizableTagHandler
     private TemplateBuilderImpl _templateBuilder;
     
     public TemplateBuilderTagHandler(ServiceTagHandler parent) {
+        super("templateBuilder");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("resolver", new InjectionResolverTagHandler(this));
-        putHandler("library", new LibraryTagHandler(this));
+        putHandler(new InjectionResolverTagHandler(this));
+        putHandler(new LibraryTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

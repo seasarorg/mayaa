@@ -28,6 +28,7 @@ public class PageSourceTagHandler
     private ServiceTagHandler _parent;
     
     public PageSourceTagHandler(ServiceTagHandler parent) {
+        super("pageSource");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

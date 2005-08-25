@@ -29,6 +29,7 @@ public class ErrorHandlerTagHandler extends AbstractParameterizableTagHandler {
     private ErrorHandler _handler;
     
     public ErrorHandlerTagHandler(EngineTagHandler parent) {
+        super("errorHandler");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

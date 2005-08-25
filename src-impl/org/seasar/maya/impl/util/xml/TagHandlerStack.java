@@ -29,12 +29,12 @@ public class TagHandlerStack {
     private TagHandler _rootHandler;
     private Stack _stack;
 
-    public TagHandlerStack(String rootName, TagHandler rootHandler) {
-    	if(StringUtil.isEmpty(rootName) || rootHandler == null) {
+    public TagHandlerStack(TagHandler rootHandler) {
+    	if(rootHandler == null) {
     		throw new IllegalArgumentException();
     	}
         _stack = new Stack();
-        _rootName = rootName;
+        _rootName = rootHandler.getName();
         _rootHandler = rootHandler; 
     }
     

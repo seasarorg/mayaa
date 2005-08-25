@@ -37,7 +37,7 @@ public class TLDHandler extends DefaultHandler {
 	
     public TLDHandler() {
         _handler = new TaglibTagHandler();
-        _stack = new TagHandlerStack("taglib", _handler);
+        _stack = new TagHandlerStack(_handler);
     }
     
     public JspLibraryDefinition getLibraryDefinition() {

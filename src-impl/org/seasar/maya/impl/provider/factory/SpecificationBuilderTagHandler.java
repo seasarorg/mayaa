@@ -28,6 +28,7 @@ public class SpecificationBuilderTagHandler extends AbstractParameterizableTagHa
     private SpecificationBuilderImpl _specificationBuilder;
     
     public SpecificationBuilderTagHandler(ServiceTagHandler parent) {
+        super("specificationBuilder");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

@@ -33,15 +33,16 @@ public class TaglibTagHandler extends TagHandler {
      * @param loader Tagクラスなどを取得するクラスローダー
      */
     public TaglibTagHandler() {
-        putHandler("tag", new TagTagHandler(this));
-        putHandler("jsp-version", new JspVersionSetter());
-        putHandler("uri", new TagHandler() {
+        super("taglib");
+        putHandler(new TagTagHandler(this));
+        putHandler(new JspVersionSetter("jsp-version"));
+        putHandler(new TagHandler("uri") {
             protected void end(String body) {
                 _library.setNamespaceURI(body);
             }
         });
         // JSP1.1
-        putHandler("jspversion", new JspVersionSetter());
+        putHandler(new JspVersionSetter("jspversion"));
     }
     
     protected void start(Attributes attributes) {
@@ -58,6 +59,10 @@ public class TaglibTagHandler extends TagHandler {
 
     private class JspVersionSetter extends TagHandler {
 
+        private JspVersionSetter(String name) {
+            super(name);
+        }
+        
         protected void end(String body) {
             _library.setRequiredVersion(body);
         }

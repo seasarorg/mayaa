@@ -36,7 +36,7 @@ public class MLDHandler extends DefaultHandler implements CONST_IMPL {
     }
     
     public MLDHandler() {
-        _stack = new TagHandlerStack("library", new LibraryTagHandler());
+        _stack = new TagHandlerStack(new LibraryTagHandler());
     }
     
 	public InputSource resolveEntity(String publicId, String systemId) {

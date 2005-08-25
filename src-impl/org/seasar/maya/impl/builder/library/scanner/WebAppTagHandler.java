@@ -31,18 +31,19 @@ public class WebAppTagHandler extends TagHandler {
     private List _locations = new ArrayList();
     
     public WebAppTagHandler() {
-        putHandler("taglib", new TagHandler() {
+        super("web-app");
+        putHandler(new TagHandler("taglib") {
             private String _taglibURI;
             private String _taglibLocation;
             
             // initialize
             {
-                putHandler("taglib-uri", new TagHandler() {
+                putHandler(new TagHandler("taglib-uri") {
                     protected void end(String body) {
                         _taglibURI = body;
                     }
                 });
-                putHandler("taglib-location", new TagHandler() {
+                putHandler(new TagHandler("taglib-location") {
                     protected void end(String body) {
                         _taglibLocation = body;
                     }

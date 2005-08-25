@@ -29,11 +29,12 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     private AbstractScriptCompiler _scriptCompiler;
     
     public ScriptTagHandler(ServiceTagHandler parent) {
+        super("script");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("resolver", new ScriptResolverTagHandler(this));
+        putHandler(new ScriptResolverTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

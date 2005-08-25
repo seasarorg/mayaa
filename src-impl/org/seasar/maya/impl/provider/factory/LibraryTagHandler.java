@@ -28,12 +28,13 @@ public class LibraryTagHandler extends AbstractParameterizableTagHandler {
     private LibraryManagerImpl _libraryManager;
     
     public LibraryTagHandler(TemplateBuilderTagHandler parent) {
+        super("library");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler("source", new LibrarySourceTagHandler(this));
-        putHandler("builder", new LibraryBuilderTagHandler(this));
+        putHandler(new LibrarySourceTagHandler(this));
+        putHandler(new LibraryBuilderTagHandler(this));
     }
     
     public void start(Attributes attributes) {

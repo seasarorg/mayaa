@@ -30,15 +30,16 @@ public class ServiceTagHandler extends TagHandler {
     private WebServiceProvider _provider;
     
     public ServiceTagHandler(ServletContext context) {
+        super("service");
         if(context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
-        putHandler("pageSource", new PageSourceTagHandler(this));
-        putHandler("engine", new EngineTagHandler(this));
-        putHandler("script", new ScriptTagHandler(this));
-        putHandler("specificationBuilder", new SpecificationBuilderTagHandler(this));
-        putHandler("templateBuilder", new TemplateBuilderTagHandler(this));
+        putHandler(new PageSourceTagHandler(this));
+        putHandler(new EngineTagHandler(this));
+        putHandler(new ScriptTagHandler(this));
+        putHandler(new SpecificationBuilderTagHandler(this));
+        putHandler(new TemplateBuilderTagHandler(this));
     }
 
     protected void start(Attributes attributes) {

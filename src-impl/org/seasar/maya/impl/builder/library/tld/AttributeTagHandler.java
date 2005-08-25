@@ -35,14 +35,15 @@ public class AttributeTagHandler extends TagHandler {
     private TagTagHandler _parent;
 
     public AttributeTagHandler(TagTagHandler parent) {
+        super("attribute");
         _parent = parent;
-        putHandler("name", new TagHandler() {
+        putHandler(new TagHandler("name") {
             protected void end(String body) {
                 _property.setName(body);
             }
         });
-        putHandler("required", new RequiredSetter(this));
-        putHandler("type", new TagHandler() {
+        putHandler(new RequiredSetter(this));
+        putHandler(new TagHandler("type") {
             protected void end(String body) {
                 _property.setExpectedType(body);
             }
@@ -63,6 +64,7 @@ public class AttributeTagHandler extends TagHandler {
         private AttributeTagHandler _parent;
         
         private RequiredSetter(AttributeTagHandler parent) {
+            super("required");
             _parent = parent;
         }
         

@@ -33,6 +33,7 @@ public class SpecificationTagHandler extends TagHandler
     private EngineTagHandler _parent;
     
     public SpecificationTagHandler(EngineTagHandler parent) {
+        super("specification");
         if(parent == null) {
             throw new IllegalArgumentException();
         }

@@ -38,7 +38,7 @@ public class WebXMLHandler extends DefaultHandler {
 
     public WebXMLHandler() {
         _handler = new WebAppTagHandler();
-        _stack = new TagHandlerStack("web-app", _handler);
+        _stack = new TagHandlerStack(_handler);
     }
     
     public Iterator iterateTaglibLocations() {

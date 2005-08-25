@@ -4,9 +4,9 @@
     "http://maya.seasar.org/dtd/maya-provider_1_0.dtd">
 <service>
 
-	<!--pageSource class="org.seasar.maya.impl.source.PageSourceDescriptor">
+	<pageSource class="org.seasar.maya.impl.source.PageSourceDescriptor">
 		<parameter name="folder" value="/WEB-INF/page"/>
-	</pageSource-->
+	</pageSource>
 
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
 		<specification path="/default.maya"/>

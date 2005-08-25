@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -28,23 +29,35 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     
+    public static final String META_INF = "/META-INF";
+    
 	private static final long serialVersionUID = -4924522601395047024L;
 
-    private String _root;
+    private String _root = "";
     private Class _neighbor;
-    private String _systemID;
+    private String _systemID = "";
     private InputStream _inputStream;
     private Map _attributes;
     private Date _timestamp;
 
-    public ClassLoaderSourceDescriptor(String root, String systemID, Class neighbor) {
+    public void setRoot(String root) {
         _root = StringUtil.preparePath(root);
-        _systemID = StringUtil.preparePath(systemID);
-        _neighbor = neighbor;
     }
 
+    public void setSystemID(String systemID) {
+        _systemID = StringUtil.preparePath(systemID);
+    }
+
+    public void setNeighborClass(Class neighbor) {
+        _neighbor = neighbor;
+    }
+    
     protected String getRoot() {
         return _root;
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
     public String getSystemID() {

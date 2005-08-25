@@ -13,7 +13,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.tld;
+package org.seasar.maya.impl.builder.library;
 
 import java.io.InputStream;
 
@@ -21,9 +21,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
+import org.seasar.maya.impl.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;

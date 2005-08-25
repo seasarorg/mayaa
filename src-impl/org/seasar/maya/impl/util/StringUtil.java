@@ -17,13 +17,13 @@ package org.seasar.maya.impl.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.cyberneko.html.HTMLEntities;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -124,14 +124,14 @@ public final class StringUtil {
         }
         return ret;
     }
-
     
-    public static String getMessage(Class clazz, int index) {
+    public static String getMessage(Class clazz, int index, Object[] params) {
         Package key = clazz.getPackage();
         Properties properties =  (Properties)_propFiles.get(key);
         if(properties == null) {
-            SourceDescriptor source = new ClassLoaderSourceDescriptor(
-                    null, "message.properties", clazz);
+            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            source.setSystemID("message.properties");
+            source.setNeighborClass(clazz);
             properties = new Properties();
             _propFiles.put(key, properties);
             if(source.exists()) {
@@ -150,7 +150,10 @@ public final class StringUtil {
         if(isEmpty(message)) {
         	message = "!" + clazz.getName() +  "!";
         }
-        return message;
+        if(params == null) {
+            params = new Object[0];
+        }
+        return MessageFormat.format(message, params);
     }
     
 }

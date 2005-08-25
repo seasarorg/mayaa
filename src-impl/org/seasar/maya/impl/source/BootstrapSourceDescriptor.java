@@ -26,19 +26,19 @@ public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -7436518426506691163L;
 
-    public BootstrapSourceDescriptor(String systemID, 
-            ServletContext context, boolean webInf) {
+    public BootstrapSourceDescriptor(String systemID, ServletContext context) {
         super(systemID);
-        if(webInf) {
-            ApplicationSourceDescriptor appSource = 
-                new ApplicationSourceDescriptor("/WEB-INF", systemID);
-            WebApplication application = new WebApplication();
-            application.setServletContext(context);
-            appSource.setApplication(application);
-            addSourceDescriptor(appSource);
-        }
-        addSourceDescriptor(new ClassLoaderSourceDescriptor(
-                "/META-INF", systemID, null));
+        ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
+        appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        appSource.setSystemID(systemID);
+        WebApplication application = new WebApplication();
+        application.setServletContext(context);
+        appSource.setApplication(application);
+        addSourceDescriptor(appSource);
+        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
+        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setSystemID(systemID);
+        addSourceDescriptor(loader);
     }
 
 }

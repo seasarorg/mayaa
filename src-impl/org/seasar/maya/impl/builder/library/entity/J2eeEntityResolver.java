@@ -65,8 +65,9 @@ public class J2eeEntityResolver implements CONST_J2EE {
                 path = systemId.substring(pos);
             }
         }
-        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor(
-                null, path, J2eeEntityResolver.class);
+        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+        source.setSystemID(path);
+        source.setNeighborClass(J2eeEntityResolver.class);
         if(source.exists()) {
             InputSource ret = new InputSource(source.getInputStream());
             ret.setPublicId(publicId);

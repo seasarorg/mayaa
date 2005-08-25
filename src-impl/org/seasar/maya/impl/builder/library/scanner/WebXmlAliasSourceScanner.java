@@ -49,8 +49,9 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
     }
     
     public Iterator scan() {
-        SourceDescriptor source = 
-            new ApplicationSourceDescriptor("/WEB-INF", "web.xml"); 
+        ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
+        source.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        source.setSystemID("web.xml"); 
         return new TaglibLocationIterator(scanWebXml(source));
     }
 
@@ -74,7 +75,9 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
             String systemID = alias.getSystemID();
             String root = systemID.startsWith("/") ? null : "/WEB-INF";
             ApplicationSourceDescriptor source = 
-                new ApplicationSourceDescriptor(root, systemID);
+                new ApplicationSourceDescriptor();
+            source.setRoot(root);
+            source.setSystemID(systemID);
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
             source.setAttribute(ASSIGNED, "true");
             return source;

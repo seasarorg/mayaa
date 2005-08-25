@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -91,6 +92,10 @@ public class CompositeSourceDescriptor implements SourceDescriptor {
             return descriptor.getAttribute(name);
         }
         return null;
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
 }

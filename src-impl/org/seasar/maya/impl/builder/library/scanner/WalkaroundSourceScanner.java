@@ -32,7 +32,10 @@ public class WalkaroundSourceScanner implements SourceScanner {
     
     public WalkaroundSourceScanner() {
         _sources = new HashSet();
-        _sources.add(new ClassLoaderSourceDescriptor("/META-INF", "maya.mld", null));
+        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
+        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setSystemID("maya.mld");
+        _sources.add(loader);
     }
     
     public void setParameter(String name, String value) {

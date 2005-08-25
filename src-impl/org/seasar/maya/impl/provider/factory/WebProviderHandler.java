@@ -21,7 +21,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -30,7 +29,8 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MayaConfHandler extends DefaultHandler implements CONST_IMPL {
+public class WebProviderHandler extends DefaultHandler
+        implements CONST_IMPL {
 
     private TagHandlerStack _stack;
     
@@ -38,7 +38,7 @@ public class MayaConfHandler extends DefaultHandler implements CONST_IMPL {
         return ((ServiceTagHandler)_stack.getRoot()).getServiceProvider();
     }
     
-    public MayaConfHandler(ServletContext context) {
+    public WebProviderHandler(ServletContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
@@ -46,9 +46,10 @@ public class MayaConfHandler extends DefaultHandler implements CONST_IMPL {
     }
     
 	public InputSource resolveEntity(String publicId, String systemId) {
-        if(PUBLIC_CONF10.equals(publicId)) {
-            SourceDescriptor source = new ClassLoaderSourceDescriptor(
-                    null, "maya-conf_1_0.dtd", MayaConfHandler.class);
+        if(PUBLIC_PROVIDER10.equals(publicId)) {
+            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            source.setSystemID("maya-provider_1_0.dtd");
+            source.setNeighborClass(WebProviderHandler.class);
             if(source.exists()) {
                 return new InputSource(source.getInputStream());
             }

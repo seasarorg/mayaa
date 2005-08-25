@@ -27,7 +27,6 @@ public class MayaException extends RuntimeException {
 	private static final long serialVersionUID = -9103534239273385474L;
 
     private SpecificationNode _node;
-    private int _messageID;
     
 	public MayaException() {
     }
@@ -36,12 +35,17 @@ public class MayaException extends RuntimeException {
         super(cause);
     }
     
-    protected void setMessageID(int messageID) {
-        _messageID = messageID;
+    protected int getMessageID() {
+        return 0;
+    }
+    
+    protected Object[] getMessageParams() {
+        return null;
     }
     
     public String getMessage() {
-        String message = StringUtil.getMessage(getClass(), _messageID);
+        String message = StringUtil.getMessage(
+                getClass(), getMessageID(), getMessageParams());
         if(StringUtil.isEmpty(message)) {
             Throwable cause = getCause();
             if(cause != null) {

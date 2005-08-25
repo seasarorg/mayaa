@@ -137,8 +137,8 @@ public class JarsSourceScanner implements SourceScanner {
 
         public Object next() {
             SourceAlias alias = (SourceAlias)_it.next();
-            ClassLoaderSourceDescriptor source =
-                new ClassLoaderSourceDescriptor(null, alias.getSystemID(), null);
+            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            source.setSystemID(alias.getSystemID());
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
             source.setTimestamp(alias.getTimestamp());
             return source;

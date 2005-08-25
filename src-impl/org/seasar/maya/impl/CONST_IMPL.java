@@ -37,7 +37,7 @@ public interface CONST_IMPL {
     String ATTR_INJECT = "inject";
 
     String PUBLIC_MLD10 = "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
-    String PUBLIC_CONF10 = "-//The Seasar Foundation//DTD Maya Config 1.0//EN";
+    String PUBLIC_PROVIDER10 = "-//The Seasar Foundation//DTD Maya Provider 1.0//EN";
     
     QName QH_HTML = new QName(URI_HTML, "html");
     QName QH_META = new QName(URI_HTML, "meta");

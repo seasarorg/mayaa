@@ -18,6 +18,7 @@ package org.seasar.maya.impl.source;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -32,6 +33,10 @@ public class NullSourceDescriptor implements SourceDescriptor {
     
     public static NullSourceDescriptor getInstance() {
         return _instance;
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
 	public boolean exists() {

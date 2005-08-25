@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -35,17 +36,29 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class ApplicationSourceDescriptor implements SourceDescriptor {
 
+    public static final String WEB_INF = "/WEB-INF";
+    
 	private static final long serialVersionUID = -2775274363708858237L;
 
-    private String _root;
-    private String _systemID;
+    private String _root = "";
+    private String _systemID = "";
     private File _file;
     private Application _application;
     private Map _attributes;
 
-    public ApplicationSourceDescriptor(String root, String systemID) {
-        _root = StringUtil.preparePath(root);
+    public void setSystemID(String systemID) {
+        if(systemID != null && systemID.indexOf("/WEB-INF") != -1) {
+            throw new ForbiddenPathException(systemID);
+        }
         _systemID = StringUtil.preparePath(systemID);
+    }
+
+    public void setRoot(String root) {
+        _root = StringUtil.preparePath(root);
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
     // use while building ServiceProvider.

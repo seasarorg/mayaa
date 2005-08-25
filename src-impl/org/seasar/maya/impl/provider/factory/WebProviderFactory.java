@@ -20,7 +20,6 @@ import javax.servlet.ServletContext;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.WebServiceProvider;
 import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
-import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -36,18 +35,13 @@ public class WebProviderFactory extends ProviderFactory
 
 	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
     
-    private boolean loadUserConf(ServletContext servletContext) {
-        String value = servletContext.getInitParameter("loadUserConf");
-        return ObjectUtil.booleanValue(value, false);
-    }
-    
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
         SourceDescriptor source = new BootstrapSourceDescriptor(
-                "/maya.conf", servletContext, loadUserConf(servletContext)); 
+                "/maya.provider", servletContext); 
     	if(source.exists()) {
-	    	MayaConfHandler handler = new MayaConfHandler(servletContext);
+	    	WebProviderHandler handler = new WebProviderHandler(servletContext);
 	        XmlUtil.parse(handler, source.getInputStream(), 
-	                PUBLIC_CONF10, source.getSystemID(), true, true, false);
+	                PUBLIC_PROVIDER10, source.getSystemID(), true, true, false);
             return handler.getResult();
     	}
     	return new WebServiceProvider(servletContext);

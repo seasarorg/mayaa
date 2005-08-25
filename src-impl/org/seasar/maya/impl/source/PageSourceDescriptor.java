@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.source;
 
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -22,12 +24,26 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
 
 	private static final long serialVersionUID = -6124718310228340001L;
 
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
+    }
+    
     public PageSourceDescriptor(String systemID) {
         super(systemID);
-        addSourceDescriptor(new ApplicationSourceDescriptor(null, systemID));
-        addSourceDescriptor(new ApplicationSourceDescriptor("/WEB-INF", systemID));
-        addSourceDescriptor(new ClassLoaderSourceDescriptor(null, systemID, null));
-        addSourceDescriptor(new ClassLoaderSourceDescriptor("/META-INF", systemID, null));
+        ApplicationSourceDescriptor app1 = new ApplicationSourceDescriptor();
+        app1.setSystemID(systemID);
+        addSourceDescriptor(app1);
+        ApplicationSourceDescriptor app2 = new ApplicationSourceDescriptor();
+        app2.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        app2.setSystemID(systemID);
+        addSourceDescriptor(app2);
+        ClassLoaderSourceDescriptor loader1 = new ClassLoaderSourceDescriptor();
+        loader1.setSystemID(systemID);
+        addSourceDescriptor(loader1);
+        ClassLoaderSourceDescriptor loader2 = new ClassLoaderSourceDescriptor();
+        loader2.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader2.setSystemID(systemID);
+        addSourceDescriptor(loader2);
     }
 
 }

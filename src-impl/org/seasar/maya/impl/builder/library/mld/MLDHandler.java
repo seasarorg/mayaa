@@ -19,7 +19,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
-import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -42,8 +41,9 @@ public class MLDHandler extends DefaultHandler implements CONST_IMPL {
     
 	public InputSource resolveEntity(String publicId, String systemId) {
         if(PUBLIC_MLD10.equals(publicId)) {
-            SourceDescriptor source = new ClassLoaderSourceDescriptor(
-                    null, "mld_1_0.dtd", MLDHandler.class);
+            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            source.setSystemID("mld_1_0.dtd");
+            source.setNeighborClass(MLDHandler.class);
             if(source.exists()) {
                 return new InputSource(source.getInputStream());
             }

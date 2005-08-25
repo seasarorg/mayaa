@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE service
-	PUBLIC "-//The Seasar Foundation//DTD Maya Config 1.0//EN"
+	PUBLIC "-//The Seasar Foundation//DTD Maya Provider 1.0//EN"
     "http://maya.seasar.org/dtd/maya-conf_1_0.dtd">
 <service>
 
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
-		<specification path="/WEB-INF/default.maya"/>
+		<specification path="/default.maya"/>
 		<errorHandler class="org.seasar.maya.impl.engine.error.TemplateErrorHandler">
 			<parameter name="folder" value="/"/>
 		</errorHandler>
@@ -55,8 +55,8 @@
 				<parameter name="ignore" value="rhino-"/>
 			</source>
 			<source class="org.seasar.maya.impl.builder.library.scanner.WalkaroundSourceScanner"/>
-			<builder class="org.seasar.maya.impl.builder.library.mld.MLDDefinitionBuilder"/>
-			<builder class="org.seasar.maya.impl.builder.library.tld.TLDDefinitionBuilder"/>
+			<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
+			<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
 		</library>
 	</templateBuilder>
 	

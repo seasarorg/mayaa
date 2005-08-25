@@ -54,7 +54,8 @@ public class FolderSourceScanner implements SourceScanner {
     
     public Iterator scan() {
         if(_source == null) {
-            _source = new ApplicationSourceDescriptor(null, getFolder());
+            _source = new ApplicationSourceDescriptor();
+            _source.setRoot(getFolder());
         }
         if(_source.exists() && _source.getFile().isDirectory()) {
             return new FileToSourceIterator(iterateFiles(_source.getFile()));
@@ -135,8 +136,10 @@ public class FolderSourceScanner implements SourceScanner {
             if(ret instanceof File) {
                 File file = (File)ret;
                 String systemID = getSystemID(file);
-                ApplicationSourceDescriptor source =
-                    new ApplicationSourceDescriptor(_source.getRoot(), systemID);
+                ApplicationSourceDescriptor source = 
+                    new ApplicationSourceDescriptor();
+                source.setRoot(_source.getRoot());
+                source.setSystemID(systemID);
                 source.setFile(file);
                 return source;
             }

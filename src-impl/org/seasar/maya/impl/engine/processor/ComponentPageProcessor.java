@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -23,6 +24,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
 import org.seasar.maya.impl.engine.PageImpl;
 import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -62,29 +64,14 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return _namespaceURI;
     }
     
-    // TODO WebRequestのパス処理機能との共有を考える。
-    private String[] parsePath(String path) {
-        if(StringUtil.isEmpty(path)) {
-            throw new IllegalArgumentException();
-        }
-        String[] pagePath = new String[2];
-        int dotPos = path.lastIndexOf(".");
-        if(dotPos > 0 && dotPos < path.length() - 1) {
-            pagePath[0] = StringUtil.preparePath(path.substring(0, dotPos));
-            pagePath[1] = path.substring(dotPos + 1);
-        } else {
-            pagePath[0] = StringUtil.preparePath(path);
-            pagePath[1] = "";
-        }
-        return pagePath;
-    }
-
     protected Page preparePage() {
         if(StringUtil.isEmpty(_path)) {
             throw new IllegalStateException();
         }
-        String[] pagePath = parsePath(_path);
-        Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[1]);
+        Engine engine = SpecificationUtil.getEngine(getTemplate());
+        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+        String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+        Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[2]);
         String sourcePath = pagePath[0] + ".maya";
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         SourceDescriptor source = provider.getPageSourceDescriptor(sourcePath);

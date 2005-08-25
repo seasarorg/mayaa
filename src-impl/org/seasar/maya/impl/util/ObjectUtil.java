@@ -39,8 +39,7 @@ public class ObjectUtil {
         if(expectedType.isAssignableFrom(clazz)) {
             return clazz;
         }
-        // TODO 期待する型にキャストできない型をロードした例外。
-        throw new IllegalArgumentException();
+        throw new IllegalTypeException(expectedType, clazz);
     }
     
     public static Class loadClass(String className) {

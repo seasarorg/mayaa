@@ -17,6 +17,8 @@ package org.seasar.maya.impl.provider.factory;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
@@ -32,6 +34,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class WebProviderHandler extends DefaultHandler
         implements CONST_IMPL {
 
+    private static Log LOG = LogFactory.getLog(WebProviderHandler.class); 
+    
     private TagHandlerStack _stack;
     
     public ServiceProvider getResult() {
@@ -59,19 +63,37 @@ public class WebProviderHandler extends DefaultHandler
 
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
+        if(LOG.isTraceEnabled()) {
+            LOG.trace("start " + qName);
+        }
         _stack.startElement(localName, attributes);
     }
     
     public void endElement(String namespaceURI, String localName, String qName) {
+        if(LOG.isTraceEnabled()) {
+            LOG.trace("end " + qName);
+        }
         _stack.endElement();
     }
 
     public void fatalError(SAXParseException e) {
+        if(LOG.isFatalEnabled()) {
+            LOG.fatal(e.getMessage(), e);
+        }
         error(e);
     }
 
     public void error(SAXParseException e) {
+        if(LOG.isErrorEnabled()) {
+            LOG.error(e.getMessage(), e);
+        }
         throw new RuntimeException(e);
+    }
+    
+    public void warning(SAXParseException e) {
+        if(LOG.isWarnEnabled()) {
+            LOG.warn(e.getMessage(), e);
+        }
     }
     
 }

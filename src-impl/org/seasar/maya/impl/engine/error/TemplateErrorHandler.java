@@ -34,6 +34,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
     public static final String THROWABLE = "THROWABLE";
     
     private String _folder = "/"; 
+    private String _extension = "html";
     
     private String getPageName(Class throwableClass) {
         String name = throwableClass.getName();
@@ -41,11 +42,13 @@ public class TemplateErrorHandler  implements ErrorHandler {
     }
     
     public void setParameter(String name, String value) {
+        if(StringUtil.isEmpty(value)) {
+            throw new IllegalParameterValueException(name);
+        }
         if("folder".equals(name)) {
-        	if(StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
-        	}
             _folder = value;
+        } else if("extension".equals(name)) {
+            _extension = value;
         } else {
             throw new UnsupportedParameterException(name);
         }
@@ -64,8 +67,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
                     String pageName = getPageName(throwableClass);
-                    // TODO ägí£éqÇåàÇﬂÇ§ÇøÇµÇ»Ç¢ÅB
-                	Page page = engine.getPage(pageName, "html");
+                	Page page = engine.getPage(pageName, _extension);
                     page.doPageRender();
     	            break;
                 } catch(PageNotFoundException ignore) {

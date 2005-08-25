@@ -12,6 +12,7 @@
 		<specification path="/default.maya"/>
 		<errorHandler class="org.seasar.maya.impl.engine.error.TemplateErrorHandler">
 			<parameter name="folder" value="/"/>
+			<parameter name="extension" value="html"/>
 		</errorHandler>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="outputWhitespace" value="true"/>

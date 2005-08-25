@@ -71,16 +71,10 @@ public class WebProviderHandler extends DefaultHandler
     }
 
     public void fatalError(SAXParseException e) {
-        if(LOG.isFatalEnabled()) {
-            LOG.fatal(e.getMessage(), e);
-        }
         error(e);
     }
 
     public void error(SAXParseException e) {
-        if(LOG.isErrorEnabled()) {
-            LOG.error(e.getMessage(), e);
-        }
         throw new RuntimeException(e);
     }
     

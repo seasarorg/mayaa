@@ -71,7 +71,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
         if(_exec != null) {
             _exec.getValue();
         }
-        return SKIP_BODY;
+        return EVAL_BODY_INCLUDE;
     }
     
 }

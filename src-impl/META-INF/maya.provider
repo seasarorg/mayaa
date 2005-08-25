@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE service
 	PUBLIC "-//The Seasar Foundation//DTD Maya Provider 1.0//EN"
-    "http://maya.seasar.org/dtd/maya-conf_1_0.dtd">
+    "http://maya.seasar.org/dtd/maya-provider_1_0.dtd">
 <service>
 
-	<pageSource class="org.seasar.maya.impl.source.PageSourceDescriptor">
+	<!--pageSource class="org.seasar.maya.impl.source.PageSourceDescriptor">
 		<parameter name="folder" value="/WEB-INF/page"/>
-	</pageSource>
+	</pageSource-->
 
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
 		<specification path="/default.maya"/>

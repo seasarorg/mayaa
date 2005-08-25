@@ -18,7 +18,6 @@ package org.seasar.maya.impl.builder;
 import org.seasar.maya.impl.MayaException;
 
 /**
- * プレフィックスから名前空間URIを引けなかったとき。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PrefixMappingNotFoundException extends MayaException {
@@ -31,12 +30,12 @@ public class PrefixMappingNotFoundException extends MayaException {
     	_prefix = prefix;
     }
     
-    /**
-     * 不正だったプレフィックスを取得する。
-     * @return 不正なプレフィックス。
-     */
     public String getPrefix() {
         return _prefix;
     }
-    
+
+    protected Object[] getMessageParams() {
+        return new Object[] { _prefix };
+    }
+
 }

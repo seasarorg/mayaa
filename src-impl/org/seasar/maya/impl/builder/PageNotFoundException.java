@@ -18,7 +18,6 @@ package org.seasar.maya.impl.builder;
 import org.seasar.maya.impl.MayaException;
 
 /**
- * 指定URLに対するページやテンプレートが見つからないときの例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PageNotFoundException extends MayaException {
@@ -27,19 +26,16 @@ public class PageNotFoundException extends MayaException {
 
 	private String _pageName;
     
-    /**
-	 * @param pageName ページ名もしくは、埋め込みページ名。
-	 */
 	public PageNotFoundException(String pageName) {
 	    _pageName = pageName;
     }
 
-	/**
-	 * ページ名を取得する。
-	 * @return 問題のあるページの名前。
-	 */
 	public String getPageName() {
 		return _pageName;
 	}
-	
+
+    protected Object[] getMessageParams() {
+        return new Object[] { _pageName };
+    }
+    
 }

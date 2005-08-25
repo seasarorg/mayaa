@@ -20,7 +20,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.MayaException;
 
 /**
- * テンプレート上に記述したノードが解決されなかったときの例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class NodeNotResolvedException extends MayaException {
@@ -30,63 +29,40 @@ public class NodeNotResolvedException extends MayaException {
 	private Template _template;
 	private SpecificationNode _specificationNode;
 	
-	/**
-	 * @param template テンプレートファイルもしくは、埋め込みページ。
-	 * @param locator 例外発生箇所。
-	 * @param specificationNode 解決できなかったノード。
-	 */
 	public NodeNotResolvedException(
 	        Template template, SpecificationNode specificationNode) {
 	    _template = template;
 	    _specificationNode = specificationNode;
     }
 
-	/**
-	 * 解決されなかったノードの所属するテンプレートを取得。
-	 * @return 解決されなかったノードの所属するテンプレート。
-	 */
 	public Template getTemplete() {
 	    return _template;
 	}
 	
-	/**
-	 * 解決されなかったノードを取得する。
-	 * @return 解決されなかったノード。
-	 */
 	public SpecificationNode getSpecificationNode() {
 		return _specificationNode;
 	}
 
-	/**
-	 * 例外発生列の取得。
-	 * @return 例外発生列もしくは0。
-	 */
 	public int getColumnNumber() {
 		return _specificationNode.getLocator().getColumnNumber();
 	}
 	
-	/**
-	 * 例外発生行の取得。
-	 * @return 例外発生行もしくは0。
-	 */
 	public int getLineNumber() {
 		return _specificationNode.getLocator().getLineNumber();
 	}
 	
-	/**
-	 * ソースのPublicIDの取得。
-	 * @return ソースのPublicIDもしくはnull。
-	 */
 	public String getPublicID() {
 		return _specificationNode.getLocator().getPublicId();
 	}
 	
-	/**
-	 * ソースのSystemIDの取得。
-	 * @return ソースのSystemIDもしくはnull。
-	 */
 	public String getSystemID() {
 		return _specificationNode.getLocator().getSystemId();
 	}
-	
+
+    protected Object[] getMessageParams() {
+        return new Object[] { _template, getSpecificationNode(), 
+                new Integer(getColumnNumber()), new Integer(getLineNumber()),
+                getPublicID(), getSystemID() };
+    }
+    
 }

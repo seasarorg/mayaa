@@ -35,4 +35,8 @@ public class TooManyDoBodyException extends MayaException {
         return _node;
     }
     
+    protected Object[] getMessageParams() {
+        return new Object[] { _node };
+    }
+
 }

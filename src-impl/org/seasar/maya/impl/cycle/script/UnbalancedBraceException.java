@@ -38,4 +38,8 @@ public class UnbalancedBraceException extends ScriptException {
 		return _offset;
 	}
 	
+    protected Object[] getMessageParams() {
+        return new Object[] { _script, new Integer(_offset) };
+    }
+    
 }

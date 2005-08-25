@@ -41,5 +41,9 @@ public class NoRequiredPropertyException extends MayaException {
     public QName getQName() {
         return _qName;
     }
+ 
+    protected Object[] getMessageParams() {
+        return new Object[] { _injected, _qName };
+    }
     
 }

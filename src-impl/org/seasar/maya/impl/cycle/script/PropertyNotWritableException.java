@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.cycle.script;
 
 /**
- * プロパティがリードオンリーの場合に発生する例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PropertyNotWritableException extends ScriptException {
@@ -31,6 +30,10 @@ public class PropertyNotWritableException extends ScriptException {
     
     public Object getName() {
         return _name;
+    }
+    
+    protected Object[] getMessageParams() {
+        return new Object[] { _name };
     }
 
 }

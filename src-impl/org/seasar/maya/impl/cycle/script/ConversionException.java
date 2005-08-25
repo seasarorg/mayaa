@@ -40,4 +40,8 @@ public class ConversionException extends ScriptException {
         return _executedType;
     }
     
+    protected Object[] getMessageParams() {
+        return new Object[] { _compiled, _executedType };
+    }
+    
 }

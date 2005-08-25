@@ -34,4 +34,8 @@ public class StartComponentNotFoundException extends MayaException {
         return _template;
     }
     
+    protected Object[] getMessageParams() {
+        return new Object[] { _template };
+    }
+    
 }

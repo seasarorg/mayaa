@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.cycle.script;
 
 /**
- * 式コンパイル時の文法例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SyntaxException extends ScriptException {
@@ -33,4 +32,8 @@ public class SyntaxException extends ScriptException {
         return _script;
     }
     
+    protected Object[] getMessageParams() {
+        return new Object[] { _script };
+    }
+
 }

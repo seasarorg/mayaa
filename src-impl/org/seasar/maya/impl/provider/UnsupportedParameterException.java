@@ -34,4 +34,8 @@ public class UnsupportedParameterException extends MayaException {
         return _parameterName;
     }
     
+    protected Object[] getMessageParams() {
+        return new Object[] { _parameterName };
+    }
+
 }

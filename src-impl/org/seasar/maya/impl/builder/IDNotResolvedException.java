@@ -19,7 +19,6 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
- * テンプレート上のmayaIDもしくはidが解決できなかったときの例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class IDNotResolvedException extends NodeNotResolvedException {
@@ -28,23 +27,18 @@ public class IDNotResolvedException extends NodeNotResolvedException {
 
 	private String _mayaID;
     
-    /**
-	 * @param template テンプレートファイルもしくは、埋め込みページ。
-	 * @param specificationNode 例外発生ノード。
-     * @param mayaID 解決できなかったID。
-     */
     public IDNotResolvedException(
             Template template, SpecificationNode specificationNode, String mayaID) {
         super(template, specificationNode);
     	_mayaID = mayaID;
     }
     
-    /**
-     * 解決できなかったIDを取得する。
-     * @return 解決できなかったID。
-     */
     public String getID() {
         return _mayaID;
     }
-    
+
+    protected Object[] getMessageParams() {
+        return new Object[] { _mayaID };
+    }
+
 }

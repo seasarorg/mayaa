@@ -16,11 +16,10 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.Attributes;
 
@@ -43,8 +42,8 @@ public class SpecificationTagHandler extends TagHandler
     protected void start(Attributes attributes) {
         String path = XmlUtil.getStringValue(attributes, "path", null);
         if(StringUtil.hasValue(path)) {
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SourceDescriptor source = provider.getPageSourceDescriptor(path);
+            SourceDescriptor source = new DelaySourceDescriptor();
+            source.setSystemID(path);
             _parent.getEngine().setSource(source);
         }
     }

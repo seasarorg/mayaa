@@ -30,6 +30,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.MayaException;
+import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -97,7 +98,7 @@ public class EngineImpl extends SpecificationImpl
 
     public ErrorHandler getErrorHandler() {
 	    if(_errorHandler == null) {
-	        throw new IllegalStateException();
+	        _errorHandler = new SimpleErrorHandler();
 	    }
         return _errorHandler;
     }
@@ -122,12 +123,9 @@ public class EngineImpl extends SpecificationImpl
    
 	public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(this);
         String path = cycle.getRequest().getRequestedPath();
         String mimeType = cycle.getApplication().getMimeType(path);
-        if(mimeType != null && (
-                mimeType.startsWith("text/html") || 
-                mimeType.startsWith("text/xhtml")))  {
+        if(mimeType != null && mimeType.indexOf("html") != -1) {
             prepareResponse(cycle.getResponse());
             doPageService(cycle);
         } else {
@@ -160,6 +158,7 @@ public class EngineImpl extends SpecificationImpl
     
     protected void doPageService(ServiceCycle cycle) {
         try {
+            cycle.setCurrentNode(this);
             ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
             String pageName = cycle.getRequest().getPageName();
             String extension = cycle.getRequest().getExtension();

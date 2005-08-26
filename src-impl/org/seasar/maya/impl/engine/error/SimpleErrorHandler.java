@@ -38,8 +38,8 @@ public class SimpleErrorHandler  implements ErrorHandler {
         if(t == null) {
             throw new IllegalArgumentException();
         }
-        if(LOG.isTraceEnabled()) {
-            LOG.trace(t);
+        if(LOG.isErrorEnabled()) {
+            LOG.error(t);
         }
         int code = 500;
         if(t instanceof PageNotFoundException) {

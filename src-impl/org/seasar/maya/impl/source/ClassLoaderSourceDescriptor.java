@@ -40,24 +40,27 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
     private Map _attributes;
     private Date _timestamp;
 
-    public void setRoot(String root) {
-        _root = StringUtil.preparePath(root);
-    }
-
-    public void setSystemID(String systemID) {
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
     public void setNeighborClass(Class neighbor) {
         _neighbor = neighbor;
     }
+
+    public Class getNeighborClass() {
+        return _neighbor;
+    }
     
-    protected String getRoot() {
+    public void setRoot(String root) {
+        _root = StringUtil.preparePath(root);
+    }
+    
+    public String getRoot() {
         return _root;
     }
 
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+    public void setSystemID(String systemID) {
+        if(systemID != null && systemID.indexOf(META_INF) != -1) {
+            throw new ForbiddenPathException(systemID);
+        }
+        _systemID = StringUtil.preparePath(systemID);
     }
 
     public String getSystemID() {
@@ -112,6 +115,10 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
             return null;
         }
         return (String)_attributes.get(name);
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

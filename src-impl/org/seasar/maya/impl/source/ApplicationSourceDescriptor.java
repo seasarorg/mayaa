@@ -45,21 +45,6 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private File _file;
     private Application _application;
     private Map _attributes;
-
-    public void setSystemID(String systemID) {
-        if(systemID != null && systemID.indexOf("/WEB-INF") != -1) {
-            throw new ForbiddenPathException(systemID);
-        }
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
-    public void setRoot(String root) {
-        _root = StringUtil.preparePath(root);
-    }
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
-    }
     
     // use while building ServiceProvider.
     public void setApplication(Application application) {
@@ -76,10 +61,6 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
         }
         return _application;
     }
-
-    public String getRoot() {
-        return _root;
-    }
     
     // use at InternalApplicationSourceScanner.FileToSourceIterator
     public void setFile(File file) {
@@ -89,6 +70,21 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     public File getFile() {
         exists();
         return _file;
+    }
+
+    public void setRoot(String root) {
+        _root = StringUtil.preparePath(root);
+    }
+
+    public String getRoot() {
+        return _root;
+    }
+
+    public void setSystemID(String systemID) {
+        if(systemID != null && systemID.indexOf(WEB_INF) != -1) {
+            throw new ForbiddenPathException(systemID);
+        }
+        _systemID = StringUtil.preparePath(systemID);
     }
     
     public String getSystemID() {
@@ -141,6 +137,10 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
             return null;
         }
         return (String)_attributes.get(name);
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

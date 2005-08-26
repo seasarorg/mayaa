@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,8 +97,8 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
                     throw new RuntimeException(e);
                 }
             }
-            // TODO JSのファイルがみつからない例外。
-            throw new IllegalStateException();
+            throw new RuntimeException(
+                    new FileNotFoundException(source.getSystemID()));
         }
         return cx.compileString(getText(), _sourceName, _lineno, null);
     }

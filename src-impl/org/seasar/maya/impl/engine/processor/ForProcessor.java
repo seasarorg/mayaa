@@ -55,7 +55,7 @@ public class ForProcessor extends TemplateProcessorSupport
 	}
 
 	protected boolean execTest() {
-        if(_test != null) {
+        if(_test == null) {
         	throw new IllegalStateException();
         }
         return ObjectUtil.booleanValue(_test.getValue(), false);

@@ -37,7 +37,7 @@ public class IfProcessor extends TemplateProcessorSupport {
     }
     
     public ProcessStatus doStartProcess() {
-        if(_test != null) {
+        if(_test == null) {
         	throw new IllegalStateException();
         }
         boolean test = ObjectUtil.booleanValue(_test.getValue(), false);

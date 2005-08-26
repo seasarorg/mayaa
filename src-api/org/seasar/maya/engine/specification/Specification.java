@@ -17,13 +17,11 @@ package org.seasar.maya.engine.specification;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * スペック情報にアクセスするためのインターフェイス
- * TODO XPath関連のAPIを分離する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Specification extends SpecificationNode {
@@ -74,42 +72,5 @@ public interface Specification extends SpecificationNode {
      * @return 子スペック(<code>Specification</code>)のイテレータ。
      */
     Iterator iterateChildSpecification();
-
-    /**
-     * XPath式を評価して、boolean値を返す。
-     * @param xpathExpr 評価XPath式文字列。
-	 * @param namespaces 式文字列中の名前空間を、プレフィックス=URIの表記で登録したマップ
-	 * もしくはnull。
-     * @return 評価結果。
-     */
-    boolean booleanValueOf(String xpathExpr, Map namespaces);
-    
-    /**
-     * XPath式を評価して、Number値を返す。
-     * @param xpathExpr 評価XPath式文字列。
-	 * @param namespaces 式文字列中の名前空間を、プレフィックス=URIの表記で登録したマップ
-	 * もしくはnull。
-     * @return 評価結果。
-     */
-    Number numberValueOf(String xpathExpr, Map namespaces);
-
-    /**
-     * XPath式を評価して、文字列値を返す。
-     * @param xpathExpr 評価XPath式文字列。
-	 * @param namespaces 式文字列中の名前空間を、プレフィックス=URIの表記で登録したマップ
-	 * もしくはnull。
-     * @return 評価結果。
-     */
-    String stringValueOf(String xpathExpr, Map namespaces);
-
-    /**
-     * XPath式を評価して、マッチするノードセットを返す。
-     * @param xpathExpr 評価XPath式文字列。
-	 * @param namespaces 式文字列中の名前空間を、プレフィックス=URIの表記で登録したマップ
-	 * もしくはnull。
-     * @param cascade カスケードスイッチ。trueで親Specificationもカスケードして検索する。
-     * @return 評価結果の<code>SpecificationNode</code>を保持するイテレータ。
-     */
-    Iterator selectChildNodes(String xpathExpr, Map namespaces, boolean cascade);
     
 }

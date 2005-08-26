@@ -206,7 +206,8 @@ public class SpecificationUtil implements CONST_IMPL {
 	public static SpecificationNode getMayaNode(Specification specification) {
 	    Map namespaces = new HashMap();
 	    namespaces.put("m", URI_MAYA);
-	    Iterator it = specification.selectChildNodes("/m:maya", namespaces, false);
+	    Iterator it = XPathUtil.selectChildNodes(
+                specification, "/m:maya", namespaces, false);
 	    if(it.hasNext()) {
 	        return (SpecificationNode)it.next();
 	    }

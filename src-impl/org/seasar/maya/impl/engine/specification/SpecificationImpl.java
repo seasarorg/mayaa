@@ -19,11 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
@@ -33,7 +29,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -158,102 +153,8 @@ public abstract class SpecificationImpl
         return getKey();
     }
 
-    public boolean booleanValueOf(String xpathExpr, Map namespaces) {
-        XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaces);
-        try {
-            return xpath.booleanValueOf(this);
-        } catch(JaxenException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Number numberValueOf(String xpathExpr, Map namespaces) {
-        XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaces);
-        try {
-            return xpath.numberValueOf(this);
-        } catch(JaxenException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public String stringValueOf(String xpathExpr, Map namespaces) {
-        XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaces);
-        try {
-            return xpath.stringValueOf(this);
-        } catch(JaxenException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public Iterator selectChildNodes(String xpathExpr, Map namespaces, boolean cascade) {
-    	if(StringUtil.isEmpty(xpathExpr)) {
-    		throw new IllegalArgumentException();
-    	}
-        if(cascade) {
-        	return new CascadeSelectNodesIterator(this, xpathExpr, namespaces);
-        }
-        try {
-            XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaces);
-            return xpath.selectNodes(this).iterator();
-        } catch(JaxenException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
     public SpecificationNode copyTo() {
         throw new UnsupportedOperationException();
-    }
-
-    private class CascadeSelectNodesIterator implements Iterator {
-
-    	private Specification _specification;
-    	private String _xpathExpr;
-        private Map _namespaces;
-        private Iterator _iterator;
-    	
-    	private CascadeSelectNodesIterator(Specification specification, 
-    	        String xpathExpr, Map namespaces) {
-    		if(specification == null || StringUtil.isEmpty(xpathExpr)) {
-    			throw new IllegalArgumentException();
-    		}
-    		_specification = specification;
-    		_xpathExpr = xpathExpr;
-    		_namespaces = namespaces;
-    	}
-    	
-        public boolean hasNext() {
-        	while(true) {
-    	        if(_iterator == null) {
-    	        	XPath xpath = SpecificationXPath.createXPath(_xpathExpr, _namespaces);
-    	            try {
-    					_iterator = xpath.selectNodes(_specification).iterator();
-    				} catch (JaxenException e) {
-    					throw new RuntimeException(e);
-    				}
-    	        }
-    	        if(_iterator.hasNext()) {
-    	        	return true;
-    	        }
-                Specification parent = _specification.getParentSpecification();
-                if(parent == null) {
-                    return false;
-                }
-                _specification = parent;
-                _iterator = null;
-        	}
-        }
-    	
-    	public Object next() {
-    		if(hasNext()) {
-    			return _iterator.next();
-    		}
-    		throw new NoSuchElementException();
-    	}
-    	
-    	public void remove() {
-    		throw new UnsupportedOperationException();
-    	}
-    	
     }
 
 }

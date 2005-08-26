@@ -31,6 +31,7 @@ import org.seasar.maya.impl.builder.IDNotResolvedException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.XPathUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -68,7 +69,8 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
             Map namespaces = new HashMap();
             namespaces.put("m", URI_MAYA);
             String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
-            Iterator it = template.selectChildNodes(xpathExpr, namespaces, true);
+            Iterator it = XPathUtil.selectChildNodes(
+                    template, xpathExpr, namespaces, true);
 	        if(it.hasNext()) {
 	            SpecificationNode injected = (SpecificationNode)it.next();
 	            if(QM_IGNORE.equals(injected.getQName())) {

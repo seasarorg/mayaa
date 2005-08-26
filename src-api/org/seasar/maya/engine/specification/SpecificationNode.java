@@ -16,13 +16,11 @@
 package org.seasar.maya.engine.specification;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import org.xml.sax.Locator;
 
 /**
  * 	設定XMLの構成物。
- * TODO XPath関連のAPIを分離する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationNode extends QNameable {
@@ -77,15 +75,6 @@ public interface SpecificationNode extends QNameable {
      */
     Locator getLocator();
     
-	/**
-	 * XPath式に条件マッチするかをテストする。
-	 * @param xpathExpr 評価XPath式文字列。
-	 * @param namespaces 式文字列中の名前空間を、プレフィックス=URIの表記で登録したマップ
-	 * もしくはnull。
-	 * @return trueならマッチ。
-	 */
-    boolean matches(String xpathExpr, Map namespaces);
-
     /**
      * 自分のコピーを生成して返す。ただし、親ノードは設定されていない。
      * @return 自分のコピー。

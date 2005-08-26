@@ -21,15 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jaxen.Context;
-import org.jaxen.ContextSupport;
-import org.jaxen.JaxenException;
-import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.SimpleVariableContext;
-import org.jaxen.XPathFunctionContext;
-import org.jaxen.pattern.Pattern;
-import org.jaxen.pattern.PatternParser;
-import org.jaxen.saxpath.SAXPathException;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
@@ -164,32 +155,6 @@ public class SpecificationNodeImpl extends QNameableImpl
 	
     public Locator getLocator() {
         return _locator;
-    }
-    
-    public boolean matches(String xpathExpr, Map namespaces) {
-        if(StringUtil.isEmpty(xpathExpr)) {
-            throw new IllegalArgumentException();
-        }
-        SimpleNamespaceContext nsContext;
-        if(namespaces == null) {
-            nsContext = new SimpleNamespaceContext();
-        } else {
-            nsContext = new SimpleNamespaceContext(namespaces);
-        }
-        ContextSupport support = new ContextSupport(
-                nsContext,
-                XPathFunctionContext.getInstance(),
-                new SimpleVariableContext(),
-                SpecificationNavigator.getInstance());
-        Context context = new Context(support);
-        try {
-            Pattern pattern = PatternParser.parse(xpathExpr);
-	        return pattern.matches(this, context);
-        } catch(JaxenException e) {
-            throw new RuntimeException(e);
-        } catch(SAXPathException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public SpecificationNode copyTo(CopyToFilter filter) {

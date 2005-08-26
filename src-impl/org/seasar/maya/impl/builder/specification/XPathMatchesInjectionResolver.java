@@ -30,6 +30,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.XPathUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -55,10 +56,11 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
         Map namespaces = new HashMap();
         namespaces.put("m", URI_MAYA);
         String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
-        for(Iterator it = template.selectChildNodes(xpathExpr, namespaces, true); it.hasNext(); ) {
+        for(Iterator it = XPathUtil.selectChildNodes(
+                template, xpathExpr, namespaces, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
             String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
-            if(original.matches(mayaPath, getNamespaceMap(injected))) {
+            if(XPathUtil.matches(original, mayaPath, getNamespaceMap(injected))) {
                 if(QM_IGNORE.equals(injected)) {
                     return chain.getNode(template, original);
                 }

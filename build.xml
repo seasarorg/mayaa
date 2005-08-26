@@ -3,8 +3,8 @@
 
 	<property file="project.properties"/>
 
-	<property name="maya.distro.src" value="maya-src-${maya.ver}.zip"/>
-	<property name="maya.distro.bin" value="maya-bin-${maya.ver}.zip"/>
+	<property name="maya.src.zip" value="maya-src-${maya.ver}.zip"/>
+	<property name="maya.blank.war" value="maya-blank-${maya.ver}.war"/>
 
 	<property name="maya.jar" value="maya-${maya.ver}.jar"/>
 
@@ -122,23 +122,10 @@
 
 	<target name="make" depends="mayajar, javadoc"/>
 
-	<target name="distro" depends="make">
-		<zip destfile="../${maya.distro.bin}">
-			<fileset dir=".">
-				<include name="${folder.context}/*/**"/>
-				<exclude name="${folder.classes}"/>
-				<exclude name="${folder.classes}/**/*"/>
-				<exclude name="${folder.lib.servlet}"/>
-				<exclude name="${folder.lib.servlet}/**/*"/>
-				<exclude name="**/.svn"/>
-				<exclude name="**/.svn/**/*"/>
-			</fileset>
-		</zip>
-		<zip destfile="../${maya.distro.src}">
+	<target name="zipsrc" depends="make">
+		<zip destfile="../${maya.src.zip}">
 			<fileset dir="../">
 				<include name="maya/**/*"/>
-				<exclude name="maya/${folder.javadoc}"/>
-				<exclude name="maya/${folder.javadoc}/**/*"/>
 				<exclude name="maya/${folder.classes}"/>
 				<exclude name="maya/${folder.classes}/**/*"/>
 				<exclude name="maya/${folder.lib}/maya-*.jar"/>
@@ -147,5 +134,28 @@
 			</fileset>
 		</zip>
 	</target>
+	
+	<target name="warblank" depends="make">
+		<war destfile="../${maya.blank.war}" webxml="${folder.webinf}/web.xml">
+			<fileset dir="${folder.context}">
+				<include name="**/*"/>
+				<exclude name="javadoc"/>
+				<exclude name="javadoc/**/*"/>
+				<exclude name="WEB-INF/web.xml"/>
+				<exclude name="WEB-INF/classes"/>
+				<exclude name="WEB-INF/classes/**/*"/>
+				<exclude name="WEB-INF/lib-servlet"/>
+				<exclude name="WEB-INF/lib-servlet/**/*"/>
+				<exclude name="**/.svn"/>
+				<exclude name="**/.svn/**/*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Title" value="Maya Blank Application"/>
+				<attribute name="Version" value="${maya.ver}"/>
+			</manifest>
+		</war>
+	</target>
 
+	<target name="distro" depends="zipsrc, warblank"/>
+	
 </project>

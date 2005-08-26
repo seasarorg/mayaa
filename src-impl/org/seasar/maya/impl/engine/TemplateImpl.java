@@ -44,6 +44,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * TODO ScriptCompiler#startScope()‚¨‚æ‚ÑendScope‚ğ‘Î‰B
  */
 public class TemplateImpl extends SpecificationImpl
 		implements Template, CONST_IMPL {

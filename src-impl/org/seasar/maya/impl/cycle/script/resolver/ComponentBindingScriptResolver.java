@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.script.resolver;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -47,7 +48,7 @@ public class ComponentBindingScriptResolver implements ScriptResolver {
 				throw new IllegalStateException();
 			}
 		}
-		return UNDEFINED;
+		return AttributeScope.UNDEFINED;
 	}
 
     public boolean setVariable(String name, Object value) {

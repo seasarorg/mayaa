@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.script.resolver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
@@ -45,11 +46,11 @@ public class CompositeScriptResolver implements ScriptResolver {
         for(int i = 0; i < _resolvers.size(); i++) {
             ScriptResolver resolver = (ScriptResolver)_resolvers.get(i);
             Object obj = resolver.getVariable(name);
-            if(UNDEFINED.equals(obj) == false) {
+            if(AttributeScope.UNDEFINED.equals(obj) == false) {
                 return obj;
             }
         }
-        return UNDEFINED;
+        return AttributeScope.UNDEFINED;
     }
 
 	public boolean setVariable(String name, Object value) {

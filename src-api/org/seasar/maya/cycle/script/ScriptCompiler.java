@@ -59,4 +59,14 @@ public interface ScriptCompiler extends Parameterizable {
     CompiledScript compile(
             SourceDescriptor source, String encoding, Class expectedType);
     
+    /**
+     * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
+     */
+    void startScope();
+    
+    /**
+     * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。
+     */
+    void endScope();
+    
 }

@@ -51,41 +51,51 @@ public class CycleUtil {
     	ServiceCycle cycle = getServiceCycle();
     	return cycle.getRequest();
     }
+
+    public static Object getAttribute(String name) {
+        return getAttribute(name, ServiceCycle.SCOPE_PAGE);
+    }
+    
+    public static Object getAttribute(String name, String scopeString) {
+        AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
+        if(scope == null) {
+            throw new IllegalArgumentException();
+        }
+        return scope.getAttribute(name);
+    }
+
+    public static void removeAttribute(String name) {
+	    removeAttribute(name, ServiceCycle.SCOPE_PAGE);
+    }
+    
+    public static void removeAttribute(String name, String scopeString) {
+		AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
+        if(scope == null) {
+            throw new IllegalArgumentException();
+        }
+		scope.removeAttribute(name);
+    }
+
+    public static void setAttribute(String name, Object value) {
+	    setAttribute(name, value, ServiceCycle.SCOPE_PAGE);
+    }
+    
+    public static void setAttribute(String name, Object value, String scopeString) {
+		AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
+        if(scope == null) {
+            throw new IllegalArgumentException();
+        }
+		scope.setAttribute(name, value);
+    }
     
     public static Object findAttribute(String name) {
-    	ServiceCycle cycle = getServiceCycle();
         for (int i = 0; i < SCOPES.length; i++) {
-            AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
-            Object obj = scope.getAttribute(name);
+            Object obj = getAttribute(name, SCOPES[i]);
             if (obj != null) {
                 return obj;
             }
         }
         return null;
-    }
-
-    public static void removeAttribute(String name) {
-	    getServiceCycle().removeAttribute(name);
-    }
-    public static void removeAttribute(String name, String scopeString) {
-    	try {
-			AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
-			scope.removeAttribute(name);
-		} catch (RuntimeException e) {
-		    removeAttribute(name);
-		}
-    }
-
-    public static void setAttribute(String name, Object value) {
-	    getServiceCycle().setAttribute(name, value);
-    }
-    public static void setAttribute(String name, Object value, String scopeString) {
-    	try {
-			AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
-			scope.setAttribute(name, value);
-		} catch (RuntimeException e) {
-		    setAttribute(name, value);
-		}
     }
 
     public static void rewriteAttribute(String name, Object value) {
@@ -98,7 +108,6 @@ public class CycleUtil {
                 return;
             }
         }
-        cycle.setAttribute(name, value);
     }
     
 }

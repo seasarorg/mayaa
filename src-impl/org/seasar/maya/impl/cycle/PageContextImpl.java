@@ -199,10 +199,8 @@ public class PageContextImpl extends PageContext {
 
 	// Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope scope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
-            Object ret = scope.getAttribute(name);
+            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return ret;
             }
@@ -215,9 +213,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
-        return attrScope.getAttribute(name);
+        return CycleUtil.getAttribute(name, scopeName);
     }
 
     public Object getAttribute(String name) {
@@ -229,19 +225,15 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
-        attrScope.removeAttribute(name);
+        CycleUtil.removeAttribute(name, scopeName);
     }
 
     public void removeAttribute(String name) {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope attrScope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
-            attrScope.removeAttribute(name);
+            CycleUtil.removeAttribute(name, CYCLE_SCOPES[i]);
         }
     }
 
@@ -250,9 +242,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
-        attrScope.setAttribute(name, value);
+        CycleUtil.setAttribute(name, value, scopeName);
     }
 
     public void setAttribute(String name, Object value) {
@@ -267,10 +257,8 @@ public class PageContextImpl extends PageContext {
     }
 
     public int getAttributesScope(String name) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AttributeScope attrScope = cycle.getAttributeScope(CYCLE_SCOPES[i]);
-            Object ret = attrScope.getAttribute(name);
+            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return JSP_SCOPES[i];
             }

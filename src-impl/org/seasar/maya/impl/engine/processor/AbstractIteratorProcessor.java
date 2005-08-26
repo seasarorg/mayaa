@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine.processor;
 
 import java.util.Iterator;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -73,41 +72,36 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
     }
     
     protected final Iterator getIterator() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-		Iterator it = (Iterator)cycle.getAttribute(getKey());
+		Iterator it = (Iterator)CycleUtil.getAttribute(getKey());
 		return it;
 	}
 
 	protected final void removeIndexValue() {
 		if(StringUtil.hasValue(_index)) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.removeAttribute(_index);
+            CycleUtil.removeAttribute(_index);
         }
 	}
 
     protected final void removeVarItem() {
 		if(StringUtil.hasValue(_var)) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.removeAttribute(_var);
+            CycleUtil.removeAttribute(_var);
         }
 	}
 
     protected final void incrimentIndex() {
 		if(StringUtil.hasValue(_index)) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-		    Integer index = (Integer)cycle.getAttribute(_index);
+		    Integer index = (Integer)CycleUtil.getAttribute(_index);
 		    if(index == null) {
-		        cycle.setAttribute(_index, new Integer(0));
+		        CycleUtil.setAttribute(_index, new Integer(0));
 		    } else {
-		        cycle.setAttribute(_index, new Integer(index.intValue() + 1));
+		        CycleUtil.setAttribute(_index, new Integer(index.intValue() + 1));
 		    }
 		}
 	}
 
     protected final void setVarItem(Object next) {
 		if(StringUtil.hasValue(_var)) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-		    cycle.setAttribute(_var, next);
+		    CycleUtil.setAttribute(_var, next);
 		}
 	}
 
@@ -119,8 +113,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
         if(it == null) {
             it = NullIterator.getInstance();
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-		cycle.setAttribute(getKey(), it);
+		CycleUtil.setAttribute(getKey(), it);
         return nextArrayItem() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     
@@ -129,8 +122,7 @@ public abstract class AbstractIteratorProcessor extends TemplateProcessorSupport
     }
     
     public ProcessStatus doEndProcess() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.removeAttribute(getKey());
+        CycleUtil.removeAttribute(getKey());
         return EVAL_PAGE;
     }
 

@@ -23,7 +23,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceCycle extends Serializable, AttributeScope {
+public interface ServiceCycle extends Serializable {
 
     /**
      * 組み込みオブジェクト取得のための特別スコープ。

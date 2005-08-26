@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -37,6 +36,7 @@ import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
 import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -221,14 +221,11 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
         }
         Class modelClass = (Class)modelKey;
         String modelName = modelClass.getName();
-        ServiceCycle cycle = getServiceCycle(); 
-        AttributeScope attrScope = cycle.getAttributeScope(modelScope);
-        Object model = attrScope.getAttribute(modelName); 
-        if(model != null) {
-            return model;
+        Object model = CycleUtil.getAttribute(modelName, modelScope); 
+        if(model == null) {
+            model = ObjectUtil.newInstance(modelClass);
+            CycleUtil.setAttribute(modelName, model, modelScope);
         }
-        model = ObjectUtil.newInstance(modelClass);
-        attrScope.setAttribute(modelName, model);
         return model;
 	}
 

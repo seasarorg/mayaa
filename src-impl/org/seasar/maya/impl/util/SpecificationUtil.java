@@ -58,9 +58,8 @@ public class SpecificationUtil implements CONST_IMPL {
     } 
     
     public static Template getTemplate() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
         Template template = 
-            (Template)cycle.getAttribute(KEY_TEMPLATE);
+            (Template)CycleUtil.getAttribute(KEY_TEMPLATE);
         if(template == null) {
             throw new IllegalStateException();
         }
@@ -68,8 +67,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static void setTemplate(Template template) {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	cycle.setAttribute(KEY_TEMPLATE, template);
+    	CycleUtil.setAttribute(KEY_TEMPLATE, template);
     }
     
     public static String createPageKey(String pageName, String extension) {
@@ -95,8 +93,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
     
     public static Page getPage() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Page page = (Page)cycle.getAttribute(KEY_PAGE);
+        Page page = (Page)CycleUtil.getAttribute(KEY_PAGE);
         if(page == null) {
             throw new IllegalStateException();
         }
@@ -104,8 +101,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static void setPage(Page page) {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	cycle.setAttribute(KEY_PAGE, page);
+    	CycleUtil.setAttribute(KEY_PAGE, page);
     }
 
     public static Engine getEngine(Specification specification) {
@@ -120,8 +116,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
     
     public static Engine getEngine() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Engine engine = (Engine)cycle.getAttribute(KEY_ENGINE);
+        Engine engine = (Engine)CycleUtil.getAttribute(KEY_ENGINE);
         if(engine == null) {
             throw new IllegalStateException();
         }
@@ -132,7 +127,7 @@ public class SpecificationUtil implements CONST_IMPL {
         if(cycle == null || engine == null) {
             throw new IllegalArgumentException();
         }
-        cycle.setAttribute(KEY_ENGINE, engine);
+        CycleUtil.setAttribute(KEY_ENGINE, engine);
     }
     
     public static String getAttributeValue(SpecificationNode node, QName qName) {
@@ -176,12 +171,12 @@ public class SpecificationUtil implements CONST_IMPL {
      * @return みつかったSpecification（テンプレート/ページ/エンジン）。
      */
     public static Specification findSpecification() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	Specification specification = (Template)cycle.getAttribute(KEY_TEMPLATE);
+    	Specification specification = 
+            (Template)CycleUtil.getAttribute(KEY_TEMPLATE);
         if(specification == null) {
-            specification = (Page)cycle.getAttribute(KEY_PAGE);
+            specification = (Page)CycleUtil.getAttribute(KEY_PAGE);
             if(specification == null) {
-                specification = (Engine)cycle.getAttribute(KEY_ENGINE);
+                specification = (Engine)CycleUtil.getAttribute(KEY_ENGINE);
         	}
         }
         return specification;

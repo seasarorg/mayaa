@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -133,18 +132,16 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     
     protected ProcesstimeInfo getProcesstimeInfo() {
         String key = getRuntimeKey();
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ProcesstimeInfo info = (ProcesstimeInfo)cycle.getAttribute(key);
+        ProcesstimeInfo info = (ProcesstimeInfo)CycleUtil.getAttribute(key);
         if(info == null) {
             info = new ProcesstimeInfo();
-            cycle.setAttribute(key, info);
+            CycleUtil.setAttribute(key, info);
         }
         return info;
     }
     
     protected void removeProcesstimeInfo() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.removeAttribute(getRuntimeKey());
+        CycleUtil.removeAttribute(getRuntimeKey());
     }
     
     protected class ProcesstimeInfo {

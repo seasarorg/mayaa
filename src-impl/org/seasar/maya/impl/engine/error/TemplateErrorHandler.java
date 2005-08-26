@@ -58,8 +58,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
         if(t == null) {
             throw new IllegalArgumentException();
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setAttribute(THROWABLE, t);
+        CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
         Engine engine = SpecificationUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 
@@ -74,7 +73,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 }
             }
         } finally {
-            cycle.removeAttribute(THROWABLE);
+            CycleUtil.removeAttribute(THROWABLE, ServiceCycle.SCOPE_REQUEST);
         }
     }
     

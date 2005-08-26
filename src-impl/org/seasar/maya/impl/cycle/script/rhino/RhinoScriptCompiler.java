@@ -15,11 +15,15 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import org.mozilla.javascript.Scriptable;
+import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -52,6 +56,33 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         return new RhinoCompiledScript(
                 getScriptResolver(), source, encoding, expectedType);
     }
-    
+
+    public void startScope() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope scope = cycle.getAttributeScope("page");
+        if(scope == null || scope instanceof PageAttributeScope) {
+            PageAttributeScope pageScope = (PageAttributeScope)scope;
+            PageAttributeScope newScope = new PageAttributeScope();
+            newScope.setParentScope(pageScope);
+            cycle.putAttributeScope("page", newScope);
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    public void endScope() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope scope = cycle.getAttributeScope("page");
+        if(scope instanceof PageAttributeScope) {
+            PageAttributeScope pageScope = (PageAttributeScope)scope;
+            Scriptable parent = pageScope.getParentScope();
+            if(parent instanceof PageAttributeScope) {
+                PageAttributeScope parentScope = (PageAttributeScope)parent;
+                cycle.putAttributeScope("page", parentScope);
+                return;
+            }
+        }
+        throw new IllegalStateException();
+    }
     
 }

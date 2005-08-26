@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.servlet.jsp.tagext.Tag;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.util.CycleUtil;
 
@@ -38,11 +37,11 @@ public class TagContext {
      */
     public static TagContext getTagContext() {
         final String KEY_TAG_CONTEXT = TagContext.class.getName();
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        TagContext tagContext = (TagContext)cycle.getAttribute(KEY_TAG_CONTEXT);
+        TagContext tagContext = 
+            (TagContext)CycleUtil.getAttribute(KEY_TAG_CONTEXT);
         if(tagContext == null) {
             tagContext = new TagContext();
-            cycle.setAttribute(KEY_TAG_CONTEXT, tagContext);
+            CycleUtil.setAttribute(KEY_TAG_CONTEXT, tagContext);
         }
         return tagContext;
     }

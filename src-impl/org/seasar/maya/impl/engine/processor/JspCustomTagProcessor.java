@@ -34,7 +34,6 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -52,12 +51,15 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * カスタムタグ用プロセッサ.
  * @author suga
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * TODO スコープメカニズムの変更によって、AT_BEGINスコープ、
+ *          AT_ENDスコープの動作が変わり、NESTEDスコープは処理をしなくてよくなった。
  */
 public class JspCustomTagProcessor extends TemplateProcessorSupport
         implements ChildEvaluationProcessor, TryCatchFinallyProcessor, 
 				CONST_IMPL {
     
 	private static final long serialVersionUID = -4416320364576454337L;
+	private static PageContext _pageContext = new PageContextImpl();
     
     private Class _tagClass;
     private TagExtraInfo _tei;
@@ -166,8 +168,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             Map nestedVariables = new HashMap();
             for(Iterator it = vars.iterator(); it.hasNext(); ) {
                 String var = (String)it.next();
-                ServiceCycle cycle = CycleUtil.getServiceCycle();
-                nestedVariables.put(var, cycle.getAttribute(var));
+                nestedVariables.put(var, CycleUtil.getAttribute(var));
             }
             tagContext.putNestedVariables(customTag, nestedVariables);
         }
@@ -181,23 +182,12 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             for(Iterator it = vars.iterator(); it.hasNext(); ) {
                 String var = (String)it.next();
                 Object previousValue = nestedVariables.get(var);
-                ServiceCycle cycle = CycleUtil.getServiceCycle();
-                cycle.setAttribute(var, previousValue);
+                CycleUtil.setAttribute(var, previousValue);
             }
             nestedVariables.clear();
         }
     }
     
-    protected PageContext getPageContext() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        PageContext pageContext = (PageContext)cycle.getAttribute(PageContext.PAGECONTEXT);
-        if(pageContext == null) {
-            pageContext = new PageContextImpl();
-            cycle.setAttribute(PageContext.PAGECONTEXT, pageContext);
-        }
-        return pageContext;
-    }
-
     private ProcessStatus getProcessStatus(int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
             return TemplateProcessor.EVAL_BODY_INCLUDE;
@@ -234,7 +224,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             }
         }
         tagContext.putNestedVariableNames(customTag, getNestedVariableNames(tagData));
-        customTag.setPageContext(getPageContext());
+        customTag.setPageContext(_pageContext);
         saveForNestedVariable(customTag);
         TemplateProcessor processor = this;
         while ((processor = processor.getParentProcessor()) != null) {

@@ -32,18 +32,16 @@ public class ImplicitObjectScriptResolver implements ScriptResolver {
     }
 
     public Object getVariable(String name) {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope implicitScope = cycle.getAttributeScope(ServiceCycle.SCOPE_IMPLICIT);
-        Object obj = implicitScope.getAttribute(name);
+        Object obj = CycleUtil.getAttribute(name, ServiceCycle.SCOPE_IMPLICIT);
         if(obj != null) {
             return obj;
         }
-        return UNDEFINED;
+        return AttributeScope.UNDEFINED;
     }
 
 	public boolean setVariable(String name, Object value) {
 		Object obj = getVariable(name);
-		if(UNDEFINED.equals(obj)) {
+		if(AttributeScope.UNDEFINED.equals(obj)) {
 			return false;
 		}
 		throw new PropertyNotWritableException(name);

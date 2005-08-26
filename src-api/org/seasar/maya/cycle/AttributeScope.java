@@ -24,6 +24,11 @@ import java.util.Iterator;
 public interface AttributeScope {
 
     /**
+     * 未定義時を示すオブジェクト。
+     */
+    Object UNDEFINED = new Object(); 
+
+    /**
      * スコープ識別の取得を行う補助メソッド。
      * @return スコープ識別。
      */

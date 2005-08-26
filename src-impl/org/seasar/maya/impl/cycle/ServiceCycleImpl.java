@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.cycle;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.maya.cycle.Application;
@@ -43,7 +42,6 @@ public class ServiceCycleImpl implements ServiceCycle {
     private Request _request;
     private Response _response;
     private Map _scopes;
-    private Map _attributes;
     private SpecificationNode _node;
 
     public ServiceCycleImpl(Application application) {
@@ -52,13 +50,8 @@ public class ServiceCycleImpl implements ServiceCycle {
         }
         _application = application;
         _scopes = new HashMap();
-        putAttributeScope(SCOPE_APPLICATION, application);
-        putAttributeScope(SCOPE_PAGE, this);
         putAttributeScope(SCOPE_IMPLICIT, new ImplicitScope());
-    }
-    
-    public String getScopeName() {
-        return SCOPE_PAGE;
+        putAttributeScope(SCOPE_APPLICATION, application);
     }
 
     public boolean hasAttributeScope(String scope) {
@@ -87,40 +80,7 @@ public class ServiceCycleImpl implements ServiceCycle {
     }
     
     public void resetPageScope() {
-        Object engine = _attributes.get("engine");
-        _attributes.clear();
-        _attributes.put("engine", engine);
-    }
-
-    public Iterator iterateAttributeNames() {
-        return _attributes.keySet().iterator();
-    }
-
-    public Object getAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
-            return null;
-        }
-        if(_attributes != null) {
-            return _attributes.get(name);
-        }
-        return null;
-    }
-
-    public void setAttribute(String name, Object attribute) {
-        if(StringUtil.isEmpty(name)) {
-            return;
-        }
-        if(_attributes == null) {
-            _attributes = new HashMap();
-        }
-        _attributes.put(name, attribute);
-    }
-    
-    public void removeAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
-            return;
-        }
-        _attributes.remove(name);
+        _scopes.remove(SCOPE_PAGE);
     }
 
     public void setCurrentNode(SpecificationNode node) {

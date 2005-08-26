@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.script.resolver;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
@@ -33,7 +34,7 @@ public class ScopedAttributeScriptResolver implements ScriptResolver {
         if(value != null) {
             return value;
         }
-        return UNDEFINED; 
+        return AttributeScope.UNDEFINED; 
     }
 
 	public boolean setVariable(String name, Object value) {

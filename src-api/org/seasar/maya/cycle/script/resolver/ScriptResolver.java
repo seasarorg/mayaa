@@ -25,11 +25,6 @@ import org.seasar.maya.provider.Parameterizable;
 public interface ScriptResolver extends Parameterizable {
 
     /**
-     * 未定義時を示すオブジェクト。
-     */
-    Object UNDEFINED = new Object(); 
-    
-    /**
      * 値取得のためのリゾルバメソッド。
      * @param name 取得する値の名前文字列。
      * @return 評価結果もしくは、UNDEFINED。

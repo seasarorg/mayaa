@@ -49,6 +49,7 @@ public class SpecificationNodeImpl extends QNameableImpl
 	    if(systemID == null) {
 	    	throw new IllegalArgumentException();
 	    }
+	    _systemID = systemID;
 	    _lineNumber = lineNumber;
     }
     

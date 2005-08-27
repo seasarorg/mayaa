@@ -34,7 +34,8 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 	private TemplateProcessor _parent;
     private int _index;
     private List _children = new ArrayList();
-    private SpecificationNode _node;
+    private SpecificationNode _originalNode;
+    private SpecificationNode _injectedNode;
     
     public void setParentProcessor(TemplateProcessor parent, int index) {
         if(parent == null) {
@@ -93,15 +94,26 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return (TemplateProcessor)_children.get(index);
     }
 
+    public void setOriginalNode(SpecificationNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        _originalNode = node;
+    }
+
+    public SpecificationNode getOriginalNode() {
+        return _originalNode;
+    }
+
     public void setInjectedNode(SpecificationNode node) {
         if(node == null) {
             throw new IllegalArgumentException();
         }
-        _node = node;
+        _injectedNode = node;
     }
 
     public SpecificationNode getInjectedNode() {
-        return _node;
+        return _injectedNode;
     }
 
 }

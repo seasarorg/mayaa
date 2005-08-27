@@ -85,7 +85,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	}
     
     private TemplateProcessor resolveInjectedNode(Template template, Stack stack,  
-            SpecificationNode injected) {
+            SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
@@ -94,6 +94,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         ProcessorDefinition def = _libraryManger.getProcessorDefinition(injected.getQName());
         if(def != null) {
             processor = def.createTemplateProcessor(template, injected);
+            processor.setOriginalNode(original);
             processor.setInjectedNode(injected);
         }
         if(processor == null) {
@@ -111,7 +112,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         while(it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode)it.next();
             saveToCycle(childNode);
-            TemplateProcessor childProcessor = resolveInjectedNode(template, stack, childNode);
+            TemplateProcessor childProcessor = resolveInjectedNode(
+                    template, stack, original, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
                     throw new TooManyDoBodyException(childNode);
@@ -126,7 +128,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         return getConnectPoint(processor);
     }
     
-    private void resolveChildren(Template template, Stack stack, SpecificationNode original) {
+    private void resolveChildren(
+            Template template, Stack stack, SpecificationNode original) {
         if(original == null) {
             throw new IllegalArgumentException();
         }
@@ -143,7 +146,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	        if(injected == null) {
 	            throw new NodeNotResolvedException(template, child);
 	        }
-	        TemplateProcessor processor = resolveInjectedNode(template, stack, injected);
+	        TemplateProcessor processor = resolveInjectedNode(
+                    template, stack, original, injected);
 	        saveToCycle(child);
             if(processor != null) {
 	            stack.push(processor);

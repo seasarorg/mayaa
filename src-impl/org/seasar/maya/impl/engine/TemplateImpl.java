@@ -135,7 +135,7 @@ public class TemplateImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(current.getInjectedNode());
+        cycle.setCurrentNode(current.getOriginalNode());
         ProcessStatus ret = EVAL_PAGE;
         try { 
             ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
@@ -296,6 +296,14 @@ public class TemplateImpl extends SpecificationImpl
 
     public ProcessStatus doEndProcess() {
         return EVAL_PAGE;
+    }
+
+    public void setOriginalNode(SpecificationNode node) {
+        throw new IllegalStateException();
+    }
+
+    public SpecificationNode getOriginalNode() {
+        return this;
     }
 
     public void setInjectedNode(SpecificationNode node) {

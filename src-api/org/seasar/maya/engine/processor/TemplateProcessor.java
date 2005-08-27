@@ -100,13 +100,25 @@ public interface TemplateProcessor extends Serializable {
     ProcessStatus doEndProcess();
 
     /**
-     * インジェクションされたノード情報の設定。開発時の例外やデバッグに用いる情報。
+     * テンプレート上の該当するノード情報を設定する。
+     * @param node テンプレートノード。
+     */
+    void setOriginalNode(SpecificationNode node);
+    
+    /**
+     * テンプレート上の該当するノード情報の取得。
+     * @return テンプレートノード。
+     */
+    SpecificationNode getOriginalNode();
+    
+    /**
+     * インジェクションされたノード情報の設定。
      * @param node インジェクトされたノード。
      */
     void setInjectedNode(SpecificationNode node);
     
     /**
-     * インジェクションされたノード情報の取得。開発時の例外やデバッグに用いる情報。
+     * インジェクションされたノード情報の取得。
      * @return インジェクトされたノード。
      */    
     SpecificationNode getInjectedNode();

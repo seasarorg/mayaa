@@ -43,7 +43,7 @@ public class PageAttributeScope extends ScriptableObject
         List list = new ArrayList();
         for(Scriptable scope = this;
                 scope instanceof PageAttributeScope; 
-                scope.getParentScope()) {
+                scope = scope.getParentScope()) {
             Object[] ids = scope.getIds();
             for(int i = 0; i < ids.length; i++) {
                 if(ids[i] instanceof String && list.contains(ids[i]) == false) {
@@ -55,7 +55,15 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public Object getAttribute(String name) {
-        return get(name, this);
+        for(Scriptable scope = this;
+                scope instanceof PageAttributeScope; 
+                scope = scope.getParentScope()) {
+            Object obj = scope.get(name, scope);
+            if(obj != UNDEFINED) {
+                return obj;
+            }
+        }
+        return null;
     }
 
     public void setAttribute(String name, Object attribute) {
@@ -63,7 +71,11 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public void removeAttribute(String name) {
-        delete(name);
+        for(Scriptable scope = this;
+                scope instanceof PageAttributeScope; 
+                scope = scope.getParentScope()) {
+            scope.delete(name);
+        }
     }
     
 }

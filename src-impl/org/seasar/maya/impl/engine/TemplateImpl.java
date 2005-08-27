@@ -23,6 +23,7 @@ import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
@@ -44,27 +45,22 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
- * TODO ScriptCompiler#startScope()およびendScopeを対応。
  */
 public class TemplateImpl extends SpecificationImpl
 		implements Template, CONST_IMPL {
 
 	private static final long serialVersionUID = -5368325487192629078L;
-	private static final NodeNamespace NS_HTML = new NodeNamespaceImpl("", URI_HTML);
+	private static final NodeNamespace NS_HTML = 
+        new NodeNamespaceImpl("", URI_HTML);
     
     private String _suffix ;
     private TemplateProcessor _parentNode;
     private int _index;
     private List _childProcessors = new ArrayList();
 
-    /**
-     * @param page 所属するPageオブジェクト。
-     * @param suffix このテンプレートの接尾辞。デフォルトテンプレートの場合は、空白文字列。
-     */
     public TemplateImpl(Page page, String suffix) {
         super(QM_TEMPLATE, page);
         if(suffix == null) {
-            // suffixは空白文字列でもよい
             throw new IllegalArgumentException();
         }
         _suffix = suffix;
@@ -85,9 +81,6 @@ public class TemplateImpl extends SpecificationImpl
         return (Page)getParentSpecification();
     }
 
-    /**
-     * テンプレートファイルをパースする。
-     */
     protected void parseSpecification() {
         setTimestamp(new Date());
         clear();
@@ -145,6 +138,8 @@ public class TemplateImpl extends SpecificationImpl
         cycle.setCurrentNode(current.getInjectedNode());
         ProcessStatus ret = EVAL_PAGE;
         try { 
+            ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
+            scriptEnvironment.startScope();
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
@@ -182,6 +177,7 @@ public class TemplateImpl extends SpecificationImpl
                 cycle.getResponse().popWriter();
             }
             ret = current.doEndProcess();
+            scriptEnvironment.endScope();
         } catch (RuntimeException e) {
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);

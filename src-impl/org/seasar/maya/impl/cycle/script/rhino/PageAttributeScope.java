@@ -59,7 +59,7 @@ public class PageAttributeScope extends ScriptableObject
                 scope instanceof PageAttributeScope; 
                 scope = scope.getParentScope()) {
             Object obj = scope.get(name, scope);
-            if(obj != UNDEFINED) {
+            if(obj != NOT_FOUND) {
                 return obj;
             }
         }

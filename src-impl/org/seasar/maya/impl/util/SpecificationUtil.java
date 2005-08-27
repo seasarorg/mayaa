@@ -167,8 +167,8 @@ public class SpecificationUtil implements CONST_IMPL {
     
     public static SpecificationNode createInjectedNode(
             QName qName, String uri, SpecificationNode original) {
-        SpecificationNodeImpl node =  
-            new SpecificationNodeImpl(qName, original.getLocator());
+        SpecificationNodeImpl node = new SpecificationNodeImpl(
+        		qName, original.getSystemID(), original.getLineNumber());
         for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(uri.equals(attr.getQName().getNamespaceURI())) {

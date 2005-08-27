@@ -98,7 +98,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             processor.setInjectedNode(injected);
         }
         if(processor == null) {
-            throw new NodeNotResolvedException(template, injected);
+            throw new NodeNotResolvedException(original, injected);
         }
         TemplateProcessor parent = (TemplateProcessor)stack.peek();
         parent.addChildProcessor(processor);
@@ -144,7 +144,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	        SpecificationNode injected = _injectionResolver.getNode(
 	                template, child, DefaultInjectionChain.getInstance());
 	        if(injected == null) {
-	            throw new NodeNotResolvedException(template, child);
+	            throw new NodeNotResolvedException(original, child);
 	        }
 	        TemplateProcessor processor = resolveInjectedNode(
                     template, stack, original, injected);
@@ -165,7 +165,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         Stack stack = new Stack();
         stack.push(template);
 	    SpecificationNode maya = new SpecificationNodeImpl(
-                QM_MAYA, template.getLocator());
+                QM_MAYA, template.getSystemID(), 0);
 	    template.addChildNode(maya);
         resolveChildren(template, stack, template);
         if(template.equals(stack.peek()) == false) {

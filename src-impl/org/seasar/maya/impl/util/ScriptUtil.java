@@ -25,7 +25,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
-import org.xml.sax.Locator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -60,9 +59,8 @@ public class ScriptUtil implements CONST_IMPL {
 	        ScriptEnvironment environment = getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             SpecificationNode node = cycle.getCurrentNode();
-            Locator locator = node.getLocator();
             return environment.compile(text, expectedType,
-                    locator.getSystemId(), locator.getLineNumber());
+                    node.getSystemID(), node.getLineNumber());
         }
         return null;
     }

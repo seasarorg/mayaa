@@ -17,8 +17,6 @@ package org.seasar.maya.engine.specification;
 
 import java.util.Iterator;
 
-import org.xml.sax.Locator;
-
 /**
  * 	設定XMLの構成物。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -70,10 +68,16 @@ public interface SpecificationNode extends QNameable {
     Iterator iterateChildNode();
     
     /**
-     * ソース上の位置を取得。
+     * ソース上の行位置を取得。
      * @return 位置情報
      */
-    Locator getLocator();
+    int getLineNumber();
+    
+    /**
+     * ソースのSystemIDを取得。
+     * @return ソースSystemID。
+     */
+    String getSystemID();
     
     /**
      * 自分のコピーを生成して返す。ただし、親ノードは設定されていない。

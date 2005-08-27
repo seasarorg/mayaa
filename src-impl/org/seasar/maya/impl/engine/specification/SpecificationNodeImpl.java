@@ -31,11 +31,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.xml.sax.Locator;
-import org.xml.sax.helpers.LocatorImpl;
 
 /**
- * SpecificationNodeの実装クラス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationNodeImpl extends QNameableImpl
@@ -44,15 +41,15 @@ public class SpecificationNodeImpl extends QNameableImpl
     private Map _attributes;
     private SpecificationNode _parent;
     private List _childNodes;
-	private Locator _locator;
+    private String _systemID;
+    private int _lineNumber;
 
-	public SpecificationNodeImpl(QName qName, Locator locator) {
+	public SpecificationNodeImpl(QName qName, String systemID, int lineNumber) {
 	    super(qName);
-	    if(locator != null) {
-	        _locator = new LocatorImpl(locator);
-	    } else {
-            _locator = LOCATOR_NULL;
+	    if(systemID == null) {
+	    	throw new IllegalArgumentException();
 	    }
+	    _lineNumber = lineNumber;
     }
     
 	public void addAttribute(QName qName, String value) {
@@ -123,9 +120,6 @@ public class SpecificationNodeImpl extends QNameableImpl
         return _childNodes.iterator();
     }
     
-    /**
-	 * 属性と子ノードのクリア。
-	 */
 	protected void clear() {
 	    synchronized(this) {
 		    super.clear();
@@ -149,16 +143,21 @@ public class SpecificationNodeImpl extends QNameableImpl
 	        path.append(prefix).append(":");
 	    }
 	    path.append(getQName().getLocalName());
-        path.append(" (line: ").append(_locator.getLineNumber()).append(")");
+        path.append(" (line: ").append(_lineNumber).append(")");
         return path.toString();
 	}
-	
-    public Locator getLocator() {
-        return _locator;
-    }
 
-    public SpecificationNode copyTo(CopyToFilter filter) {
-        SpecificationNodeImpl copy = new SpecificationNodeImpl(getQName(), getLocator());
+    public int getLineNumber() {
+		return 0;
+	}
+
+	public String getSystemID() {
+		return null;
+	}
+
+	public SpecificationNode copyTo(CopyToFilter filter) {
+        SpecificationNodeImpl copy = new SpecificationNodeImpl(
+        		getQName(), _systemID, _lineNumber);
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(filter.accept(attr)) {
@@ -192,31 +191,6 @@ public class SpecificationNodeImpl extends QNameableImpl
             return true;
         }
         
-    }
-    
-    private static final Locator LOCATOR_NULL = new NullLocator();
-    
-    private static class NullLocator implements Locator {
-        
-        private NullLocator() {
-        }
-        
-        public int getColumnNumber() {
-            return 0;
-        }
-
-        public int getLineNumber() {
-            return 0;
-        }
-        
-        public String getPublicId() {
-            return "";
-        }
-        
-        public String getSystemId() {
-            return "";
-        }
-
     }
 
 }

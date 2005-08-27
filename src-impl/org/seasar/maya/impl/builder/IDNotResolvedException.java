@@ -15,22 +15,26 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IDNotResolvedException extends NodeNotResolvedException {
+public class IDNotResolvedException extends MayaException {
 
 	private static final long serialVersionUID = 4245540599314570281L;
 
+	private SpecificationNode _originalNode;
 	private String _mayaID;
     
-    public IDNotResolvedException(
-            Template template, SpecificationNode specificationNode, String mayaID) {
-        super(template, specificationNode);
+    public IDNotResolvedException(SpecificationNode originalNode, String mayaID) {
+        _originalNode = originalNode;
     	_mayaID = mayaID;
+    }
+    
+    public SpecificationNode getOriginalNode() {
+    	return _originalNode;
     }
     
     public String getID() {
@@ -38,7 +42,7 @@ public class IDNotResolvedException extends NodeNotResolvedException {
     }
 
     protected Object[] getMessageParams() {
-        return new Object[] { _mayaID };
+        return new Object[] { _mayaID, _originalNode };
     }
 
 }

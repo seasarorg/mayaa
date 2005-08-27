@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.MayaException;
 
@@ -26,43 +25,25 @@ public class NodeNotResolvedException extends MayaException {
 
 	private static final long serialVersionUID = 4560512867759109674L;
 
-	private Template _template;
-	private SpecificationNode _specificationNode;
+	private SpecificationNode _originalNode;
+	private SpecificationNode _injectedNode;
 	
-	public NodeNotResolvedException(
-	        Template template, SpecificationNode specificationNode) {
-	    _template = template;
-	    _specificationNode = specificationNode;
+	public NodeNotResolvedException( 
+			SpecificationNode originalNode, SpecificationNode injectiedNode) {
+	    _originalNode = originalNode; 
+	    _injectedNode = injectiedNode;
     }
 
-	public Template getTemplete() {
-	    return _template;
+	public SpecificationNode getOriginalNode() {
+		return _originalNode;
 	}
 	
-	public SpecificationNode getSpecificationNode() {
-		return _specificationNode;
-	}
-
-	public int getColumnNumber() {
-		return _specificationNode.getLocator().getColumnNumber();
+	public SpecificationNode getInjectedNode() {
+		return _injectedNode;
 	}
 	
-	public int getLineNumber() {
-		return _specificationNode.getLocator().getLineNumber();
-	}
-	
-	public String getPublicID() {
-		return _specificationNode.getLocator().getPublicId();
-	}
-	
-	public String getSystemID() {
-		return _specificationNode.getLocator().getSystemId();
-	}
-
     protected Object[] getMessageParams() {
-        return new Object[] { _template, getSpecificationNode(), 
-                new Integer(getColumnNumber()), new Integer(getLineNumber()),
-                getPublicID(), getSystemID() };
+        return new Object[] { _originalNode, _injectedNode };
     }
     
 }

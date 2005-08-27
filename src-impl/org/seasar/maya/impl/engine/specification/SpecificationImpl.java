@@ -49,7 +49,7 @@ public abstract class SpecificationImpl
     private List _children;
     
     public SpecificationImpl(QName qName, Specification parent) {
-        super(qName, null);
+        super(qName, "", 0);
         _parent = parent;
     }
 
@@ -149,7 +149,14 @@ public abstract class SpecificationImpl
         return super.iterateChildNode();
     }
     
-    public SpecificationNode copyTo() {
+    public String getSystemID() {
+    	if(_source != null) {
+    		return _source.getSystemID();
+    	}
+		return null;
+	}
+
+	public SpecificationNode copyTo() {
         throw new UnsupportedOperationException();
     }
 

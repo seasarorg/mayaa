@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.cycle.implicit.AttributeScopeMap;
 import org.seasar.maya.impl.cycle.implicit.HeaderMap;
 import org.seasar.maya.impl.cycle.implicit.HeaderValuesMap;
 import org.seasar.maya.impl.cycle.implicit.ImplicitObjectResolver;
@@ -39,6 +40,9 @@ public class ImplicitScope implements AttributeScope {
     public static final String PARAM_VALUES = "paramValues";
     public static final String HEADER = "header";
     public static final String HEADER_VALUES = "headerValues";
+    public static final String APPLICATION = "application";
+    public static final String SESSION = "session";
+    public static final String REQUEST = "request";
     
 	private static Map _resolverMap;
     static {
@@ -48,6 +52,9 @@ public class ImplicitScope implements AttributeScope {
     	_resolverMap.put(PARAM_VALUES , ParamValuesMap.RESOLVER);
     	_resolverMap.put(HEADER , HeaderMap.RESOLVER);
     	_resolverMap.put(HEADER_VALUES , HeaderValuesMap.RESOLVER);
+        _resolverMap.put(APPLICATION, AttributeScopeMap.RESOLVER_APPLICATION);
+        _resolverMap.put(SESSION, AttributeScopeMap.RESOLVER_SESSION);
+        _resolverMap.put(REQUEST, AttributeScopeMap.RESOLVER_REQUEST);
     }
     
     private Map _instanceMap = new HashMap();

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.util;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -52,6 +53,11 @@ public class CycleUtil {
     	return cycle.getRequest();
     }
 
+    public static Response getResponse() {
+        ServiceCycle cycle = getServiceCycle();
+        return cycle.getResponse();
+    }
+    
     public static Object getAttribute(String name) {
         return getAttribute(name, ServiceCycle.SCOPE_PAGE);
     }

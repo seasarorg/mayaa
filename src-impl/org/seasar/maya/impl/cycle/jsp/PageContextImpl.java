@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.cycle.jsp;
 
 import java.io.IOException;
 import java.util.Enumeration;

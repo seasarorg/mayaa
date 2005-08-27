@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.cycle.jsp;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.Expression;
@@ -22,6 +22,7 @@ import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.impl.cycle.ExpressionImpl;
 import org.seasar.maya.impl.util.ScriptUtil;
 
 /**

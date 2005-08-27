@@ -37,8 +37,8 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class SpecificationImpl 
-		extends SpecificationNodeImpl implements Specification, CONST_IMPL {
+public class SpecificationImpl extends SpecificationNodeImpl
+		implements Specification, CONST_IMPL {
     
     private static final NodeNamespace NS_MAYA = 
         new NodeNamespaceImpl(PREFIX_MAYA, URI_MAYA);

@@ -46,11 +46,10 @@ public class MLDDefinitionBuilder
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() &&
-                source.getSystemID().toLowerCase().endsWith(".mld")) {
+        String systemID = source.getSystemID();
+        if(source.exists() && systemID.toLowerCase().endsWith(".mld")) {
             MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
-            String systemID = source.getSystemID();
             try {
                 XmlUtil.parse(handler, stream, PUBLIC_MLD10, 
                         systemID, true, true, false);

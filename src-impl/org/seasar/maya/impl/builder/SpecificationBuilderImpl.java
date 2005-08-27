@@ -108,7 +108,7 @@ public class SpecificationBuilderImpl
             setContentHander(xmlReader, handler);
             InputSource input = new InputSource(source.getInputStream());
             input.setPublicId(getPublicID());
-            input.setSystemId(source.toString());
+            input.setSystemId(source.getSystemID());
             try {
                 xmlReader.parse(input);
             } catch(Throwable t) {

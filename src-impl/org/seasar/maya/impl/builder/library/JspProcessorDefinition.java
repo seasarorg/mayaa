@@ -15,13 +15,9 @@
  */
 package org.seasar.maya.impl.builder.library;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
 
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.Template;
@@ -36,8 +32,6 @@ import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
 public class JspProcessorDefinition extends ProcessorDefinitionImpl {
 
     private Class _tagClass;
-    private List _tagVariableInfo;
-    private TagExtraInfo _tei;
 
     public void setClassName(String className) {
         throw new UnsupportedOperationException();
@@ -58,37 +52,12 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
         return _tagClass;
     }
     
-    public void setTEI(TagExtraInfo tei) {
-        // TODO TagExtraInfo#setTagInfo(TagInfo)にて、TagInfoをセットする必要があるか？
-        _tei = tei;
-    }
-    
-    public TagExtraInfo getTEI() {
-        return _tei;
-    }
-
-    public void addTagVariableInfo(TagVariableInfo tagVariableInfo) {
-        if(tagVariableInfo == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_tagVariableInfo == null) {
-            _tagVariableInfo = new ArrayList();
-        }
-        _tagVariableInfo.add(tagVariableInfo);
-    }
-    
-    public Iterator iterateTagVariableInfo() {
-        return _tagVariableInfo.iterator();
-    }
-    
     protected TemplateProcessor newInstance(Template template, SpecificationNode injected) {
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
         JspCustomTagProcessor processor = new JspCustomTagProcessor();
         processor.setTagClass(_tagClass);
-        processor.setTEI(_tei);
-        processor.setTagVariableInfo(_tagVariableInfo);
         return processor;
     }
     

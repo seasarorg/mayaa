@@ -16,11 +16,8 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -28,10 +25,7 @@ import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagData;
-import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.TagVariableInfo;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
@@ -43,7 +37,6 @@ import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.maya.impl.cycle.jsp.PageContextImpl;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -51,19 +44,14 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * カスタムタグ用プロセッサ.
  * @author suga
  * @author Masataka Kurihara (Gluegent, Inc.)
- * TODO スコープメカニズムの変更によって、AT_BEGINスコープ、
- *          AT_ENDスコープの動作が変わり、NESTEDスコープは処理をしなくてよくなった。
  */
 public class JspCustomTagProcessor extends TemplateProcessorSupport
-        implements ChildEvaluationProcessor, TryCatchFinallyProcessor, 
-				CONST_IMPL {
+        implements ChildEvaluationProcessor, TryCatchFinallyProcessor, CONST_IMPL {
     
 	private static final long serialVersionUID = -4416320364576454337L;
 	private static PageContext _pageContext = new PageContextImpl();
     
     private Class _tagClass;
-    private TagExtraInfo _tei;
-    private List _variableInfo;
     private List _properties;
     private String _attributesKey;
 
@@ -73,16 +61,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
-    }
-    
-    // MLD method
-    public void setTEI(TagExtraInfo tei) {
-        _tei = tei;
-    }
-
-    // MLD method
-    public void setTagVariableInfo(List variableInfo) {
-        _variableInfo = variableInfo;
     }
     
     // MLD method
@@ -106,40 +84,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return _properties.iterator();
     }
 
-    protected Collection getNestedVariableNames(TagData tagData) {
-        List list = new ArrayList();
-        if(_tei != null) {
-            VariableInfo[] _variableInfos = _tei.getVariableInfo(tagData);
-            if (_variableInfos.length > 0) {
-                for (int i = 0; i < _variableInfos.length; i++) {
-                    if (_variableInfos[i].getScope() == VariableInfo.NESTED) {
-                        list.add(_variableInfos[i].getVarName());
-                    }
-                }
-            }
-            return list;
-        }
-        if(_variableInfo != null) {
-	        for(Iterator it = _variableInfo.iterator(); it.hasNext(); ) {
-	            TagVariableInfo tagVariableInfo = (TagVariableInfo)it.next();
-	            if (tagVariableInfo.getScope() != VariableInfo.NESTED) {
-	                continue;
-	            }
-	            String name = tagVariableInfo.getNameGiven();
-	            String nameFromAttribute = tagVariableInfo.getNameFromAttribute();
-	            if (name == null) {
-	                name = tagData.getAttributeString(nameFromAttribute);
-	            } else if (nameFromAttribute != null) {
-	                continue;
-	            }
-	            if (name != null) {
-	                list.add(name);
-	            }
-	        }
-        }
-        return list;
-    }
-
     protected String getAttributesKey() {
         if (_attributesKey == null) {
             StringBuffer buffer = new StringBuffer();
@@ -159,33 +103,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             throw new IllegalStateException();
         }
         return tag;
-    }
-
-    protected void saveForNestedVariable(Tag customTag) {
-        TagContext tagContext = TagContext.getTagContext();
-        Collection vars = tagContext.getNestedVariableNames(customTag);
-        if (vars != null) {
-            Map nestedVariables = new HashMap();
-            for(Iterator it = vars.iterator(); it.hasNext(); ) {
-                String var = (String)it.next();
-                nestedVariables.put(var, CycleUtil.getAttribute(var));
-            }
-            tagContext.putNestedVariables(customTag, nestedVariables);
-        }
-    }
-
-    protected void restoreForNestedVariable(Tag customTag) {
-        TagContext tagContext = TagContext.getTagContext();
-        Collection vars = tagContext.getNestedVariableNames(customTag);
-        if (vars != null) {
-            Map nestedVariables = tagContext.getNestedVariables(customTag);
-            for(Iterator it = vars.iterator(); it.hasNext(); ) {
-                String var = (String)it.next();
-                Object previousValue = nestedVariables.get(var);
-                CycleUtil.setAttribute(var, previousValue);
-            }
-            nestedVariables.clear();
-        }
     }
     
     private ProcessStatus getProcessStatus(int status, boolean doStart) {
@@ -223,9 +140,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
                 tagData.setAttribute(propertyName, Void.class);
             }
         }
-        tagContext.putNestedVariableNames(customTag, getNestedVariableNames(tagData));
         customTag.setPageContext(_pageContext);
-        saveForNestedVariable(customTag);
         TemplateProcessor processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspCustomTagProcessor) {
@@ -247,20 +162,23 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
+    public ProcessStatus doEndProcess() {
+        Tag customTag = getLoadedTag();
+        try {
+            int ret = customTag.doEndTag();
+            return getProcessStatus(ret, true);
+        } catch (JspException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (!canCatch()) {
+                TagContext tagContext = TagContext.getTagContext();
+                tagContext.releaseTag(customTag, getAttributesKey());
+            }
+        }
+    }
+    
     public boolean isChildEvaluation() {
         return getLoadedTag() instanceof BodyTag;
-    }
-
-    public boolean isIteration() {
-        return getLoadedTag() instanceof IterationTag;
-    }
-
-    public boolean canCatch() {
-        try {
-            return getLoadedTag() instanceof TryCatchFinally;
-        } catch(Exception e) {
-            return false;
-        }
     }
 
     public void setBodyContent(CycleWriter body) {
@@ -269,7 +187,10 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
         Tag tag = getLoadedTag();
         if(tag instanceof BodyTag) {
-            ((BodyTag)tag).setBodyContent(new BodyContentImpl(body));
+            BodyTag bodyTag = (BodyTag)tag;
+            bodyTag.setBodyContent(new BodyContentImpl(body));
+        } else {
+            throw new IllegalStateException();
         }
     }
 
@@ -282,7 +203,13 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             } catch (JspException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            throw new IllegalStateException();
         }
+    }
+
+    public boolean isIteration() {
+        return getLoadedTag() instanceof IterationTag;
     }
 
     public ProcessStatus doAfterChildProcess() {
@@ -296,22 +223,14 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
                 throw new RuntimeException(e);
             }
         }
-        return SKIP_BODY;
+        throw new IllegalStateException();
     }
 
-    public ProcessStatus doEndProcess() {
-        Tag customTag = getLoadedTag();
+    public boolean canCatch() {
         try {
-        	int ret = customTag.doEndTag();
-            return getProcessStatus(ret, true);
-        } catch (JspException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (!canCatch()) {
-                restoreForNestedVariable(customTag);
-                TagContext tagContext = TagContext.getTagContext();
-                tagContext.releaseTag(customTag, getAttributesKey());
-            }
+            return getLoadedTag() instanceof TryCatchFinally;
+        } catch(Exception e) {
+            return false;
         }
     }
 
@@ -319,24 +238,33 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         if (t == null) {
             throw new IllegalArgumentException();
         }
-        Tag customTag = getLoadedTag();
-        try {
-            ((TryCatchFinally) customTag).doCatch(t);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        Tag tag = getLoadedTag();
+        if(tag instanceof TryCatchFinally) {
+            TryCatchFinally tryCatch = (TryCatchFinally)tag;
+            try {
+                tryCatch.doCatch(t);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new IllegalStateException();
         }
     }
 
     public void doFinallyProcess() {
-        Tag customTag = getLoadedTag();
-        try {
-            ((TryCatchFinally) customTag).doFinally();
-        } finally {
-            restoreForNestedVariable(customTag);
-            TagContext tagContext = TagContext.getTagContext();
-            tagContext.releaseTag(customTag, getAttributesKey());
+        Tag tag = getLoadedTag();
+        if(tag instanceof TryCatchFinally) {
+            TryCatchFinally tryCatch = (TryCatchFinally)tag;
+            try {
+                tryCatch.doFinally();
+            } finally {
+                TagContext tagContext = TagContext.getTagContext();
+                tagContext.releaseTag(tag, getAttributesKey());
+            }
+        } else {
+            throw new IllegalStateException();
         }
     }
 

@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.builder.library.tld;
 
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagExtraInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,17 +39,14 @@ public class TagTagHandler extends TagHandler {
         super("tag");
         _parent = parent;
         putHandler(new AttributeTagHandler(this));
-        putHandler(new VariableTagHandler(this));
         putHandler(new TagHandler("name") {
             protected void end(String body) {
                 _processor.setName(body);
             }
         });
         putHandler(new TagClassSetter("tag-class", this));
-        putHandler(new TeiClassSetter("tei-class", this));
         // JSP1.1
         putHandler(new TagClassSetter("tagclass", this));
-        putHandler(new TeiClassSetter("teiclass", this));
     }
 
     protected void start(Attributes attributes) {
@@ -90,30 +86,6 @@ public class TagTagHandler extends TagHandler {
             }
         }
     
-    }
-    
-    private class TeiClassSetter extends TagHandler {
-
-        private TagTagHandler _parent;
-        
-        private TeiClassSetter(String name, TagTagHandler parent) {
-            super(name);
-            _parent = parent;
-        }
-        
-        protected void end(String body) {
-			try {
-                Class clazz = ObjectUtil.loadClass(body, TagExtraInfo.class);
-                TagExtraInfo tei = (TagExtraInfo)ObjectUtil.newInstance(clazz);
-                _processor.setTEI(tei);
-            } catch (RuntimeException e) {
-                if(LOG.isErrorEnabled()) {
-                    LOG.error(e.getMessage());
-                }
-                _parent.invalidate();
-            }
-        }
-        
     }
     
 }

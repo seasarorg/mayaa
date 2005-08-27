@@ -15,7 +15,9 @@
  */
 package org.seasar.maya.impl;
 
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -26,9 +28,13 @@ public class MayaException extends RuntimeException {
 
 	private static final long serialVersionUID = -9103534239273385474L;
 
-    private SpecificationNode _node;
+    private SpecificationNode _originalNode;
+    private SpecificationNode _injectedNode;
     
 	public MayaException() {
+		ServiceCycle cycle = CycleUtil.getServiceCycle();
+		_originalNode = cycle.getOriginalNode();
+		_injectedNode = cycle.getInjectedNode();
     }
 
     public MayaException(Throwable cause) {
@@ -40,7 +46,7 @@ public class MayaException extends RuntimeException {
     }
     
     protected Object[] getMessageParams() {
-        return null;
+        return new Object[] { _originalNode, _injectedNode };
     }
     
     public String getMessage() {
@@ -55,12 +61,12 @@ public class MayaException extends RuntimeException {
         return message;
     }
     
-    public void setCurrentNode(SpecificationNode node) {
-        _node = node;
+    public SpecificationNode getOriginalNode() {
+    	return _originalNode;
     }
     
-    public SpecificationNode getCurrentNode() {
-        return _node;
+    public SpecificationNode getInjectedNode() {
+    	return _injectedNode;
     }
     
 }

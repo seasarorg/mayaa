@@ -42,7 +42,8 @@ public class ServiceCycleImpl implements ServiceCycle {
     private Request _request;
     private Response _response;
     private Map _scopes;
-    private SpecificationNode _node;
+    private SpecificationNode _originalNode;
+    private SpecificationNode _injectedNode;
 
     public ServiceCycleImpl(Application application) {
         if (application == null) {
@@ -83,18 +84,26 @@ public class ServiceCycleImpl implements ServiceCycle {
         _scopes.remove(SCOPE_PAGE);
     }
 
-    public void setCurrentNode(SpecificationNode node) {
-        if(node == null) {
+    public void setOriginalNode(SpecificationNode originalNode) {
+        if(originalNode == null) {
             throw new IllegalArgumentException();
         }
-        _node = node;
+        _originalNode = originalNode;
     }    
 
-    public SpecificationNode getCurrentNode() {
-        return _node;
+    public SpecificationNode getOriginalNode() {
+        return _originalNode;
     }
     
-    public Application getApplication() {
+	public void setInjectedNode(SpecificationNode injectedNode) {
+		_injectedNode = injectedNode;
+	}
+    
+    public SpecificationNode getInjectedNode() {
+		return _injectedNode;
+	}
+
+	public Application getApplication() {
         return _application;
     }
 

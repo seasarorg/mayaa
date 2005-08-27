@@ -77,7 +77,7 @@ public class SpecificationUtil implements CONST_IMPL {
     
     public static Specification findSpecification() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        SpecificationNode current = cycle.getCurrentNode();
+        SpecificationNode current = cycle.getOriginalNode();
         return findSpecification(current);
     }
 

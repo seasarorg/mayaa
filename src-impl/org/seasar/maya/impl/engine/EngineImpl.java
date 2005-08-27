@@ -31,7 +31,6 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.MayaException;
 import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
@@ -172,20 +171,23 @@ public class EngineImpl extends SpecificationImpl
         response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
     }
     
+    private void saveToCycle() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(this);
+        cycle.setInjectedNode(this);
+    }
+    
     protected void doPageService(ServiceCycle cycle) {
         try {
-            cycle.setCurrentNode(this);
+        	saveToCycle();
             ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
             String pageName = cycle.getRequest().getPageName();
             String extension = cycle.getRequest().getExtension();
             Page page = getPage(this, pageName, extension);
             page.doPageRender();
-            cycle.setCurrentNode(this);
+            saveToCycle();
             ScriptUtil.execEvent(this, QM_AFTER_RENDER);
         } catch(Throwable t) {
-            if(t instanceof MayaException) {
-                ((MayaException)t).setCurrentNode(cycle.getCurrentNode());
-            }
             cycle.getResponse().clearBuffer();
             handleError(t);
         }

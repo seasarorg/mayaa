@@ -58,7 +58,7 @@ public class ScriptUtil implements CONST_IMPL {
         if(StringUtil.hasValue(text)) {
 	        ScriptEnvironment environment = getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            SpecificationNode node = cycle.getCurrentNode();
+            SpecificationNode node = cycle.getOriginalNode();
             return environment.compile(text, expectedType,
                     node.getSystemID(), node.getLineNumber());
         }

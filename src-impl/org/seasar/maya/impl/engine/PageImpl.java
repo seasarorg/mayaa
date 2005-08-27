@@ -156,16 +156,22 @@ public class PageImpl extends SpecificationImpl
         }
         return template;
     }
+    
+    private void saveToCycle() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(this);
+        cycle.setInjectedNode(this);
+    }
 
     public ProcessStatus doPageRender() {
+        saveToCycle();
         ScriptUtil.initScope();
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         Template template = getTemplate();
         ProcessStatus ret = template.doTemplateRender(null);
-        cycle.setCurrentNode(this);
+        saveToCycle();
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.resetPageScope();
         return ret;
     }

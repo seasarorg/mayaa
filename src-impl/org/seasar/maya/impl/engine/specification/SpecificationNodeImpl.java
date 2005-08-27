@@ -144,7 +144,6 @@ public class SpecificationNodeImpl extends QNameableImpl
 	        path.append(prefix).append(":");
 	    }
 	    path.append(getQName().getLocalName());
-        path.append(" (line: ").append(_lineNumber).append(")");
         return path.toString();
 	}
 

@@ -104,9 +104,9 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     	}
     }
     
-    private void saveToCycle(SpecificationNode node) {
+    private void saveToCycle(SpecificationNode originalNode) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(node);
+        cycle.setOriginalNode(originalNode);
     }
     
     public void startElement(

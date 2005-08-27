@@ -107,15 +107,27 @@ public interface ServiceCycle extends Serializable {
     void redirect(String url);
 
     /**
-     * 現在処理中のノードを設定する。例外情報やデバッグなどで開発者に提供する情報。
-     * @param node 処理中のノード。
-     */    
-    void setCurrentNode(SpecificationNode node);
+     * 現在処理中のテンプレート上ノード情報を設定する。
+     * @param node テンプレートノード。
+     */
+    void setOriginalNode(SpecificationNode node);
     
     /**
-     * 現在処理中のノードを取得する。例外情報やデバッグなどで開発者に提供する情報。
-     * @return 処理中のノード。
+     * 現在処理中のテンプレート上ノード情報の取得。
+     * @return テンプレートノード。
      */
-    SpecificationNode getCurrentNode();
+    SpecificationNode getOriginalNode();
     
+    /**
+     * 現在処理中のインジェクションされたノード情報の設定。
+     * @param node インジェクトされたノード。
+     */
+    void setInjectedNode(SpecificationNode node);
+    
+    /**
+     * 現在処理中のインジェクションされたノード情報の取得。
+     * @return インジェクトされたノード。
+     */    
+    SpecificationNode getInjectedNode();
+   
 }

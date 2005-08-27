@@ -53,9 +53,11 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         _libraryManger = libraryManager;
     }
     
-    private void saveToCycle(SpecificationNode node) {
+    private void saveToCycle(SpecificationNode originalNode,
+    		SpecificationNode injectedNode) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(node);
+        cycle.setOriginalNode(originalNode);
+        cycle.setInjectedNode(injectedNode);
     }
 	
 	private TemplateProcessor getConnectPoint(TemplateProcessor processor) {
@@ -89,7 +91,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
-        saveToCycle(injected);
+        saveToCycle(original, injected);
         TemplateProcessor processor = null;
         ProcessorDefinition def = _libraryManger.getProcessorDefinition(injected.getQName());
         if(def != null) {
@@ -111,7 +113,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         TemplateProcessor connectionPoint = null;
         while(it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode)it.next();
-            saveToCycle(childNode);
+            saveToCycle(original, childNode);
             TemplateProcessor childProcessor = resolveInjectedNode(
                     template, stack, original, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
@@ -137,7 +139,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         it = original.iterateChildNode();
         while(it.hasNext()) {
             SpecificationNode child = (SpecificationNode)it.next();
-            saveToCycle(child);
+            saveToCycle(original, child);
             if(QM_MAYA.equals(child.getQName())) {
                 continue;
             }
@@ -148,7 +150,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	        }
 	        TemplateProcessor processor = resolveInjectedNode(
                     template, stack, original, injected);
-	        saveToCycle(child);
+	        saveToCycle(original, child);
             if(processor != null) {
 	            stack.push(processor);
 	            resolveChildren(template, stack, child);
@@ -161,7 +163,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(template == null) {
             throw new IllegalArgumentException();
         }
-        saveToCycle(template);
+        saveToCycle(template, template);
         Stack stack = new Stack();
         stack.push(template);
 	    SpecificationNode maya = new SpecificationNodeImpl(
@@ -171,7 +173,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(template.equals(stack.peek()) == false) {
             throw new IllegalStateException();
         }
-        saveToCycle(template);
+        saveToCycle(template, template);
     }
     
 }

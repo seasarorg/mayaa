@@ -135,11 +135,11 @@ public class TemplateImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(current.getOriginalNode());
         ProcessStatus ret = EVAL_PAGE;
         try { 
             ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
             scriptEnvironment.startScope();
+            saveToCycle(current);
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
@@ -162,20 +162,21 @@ public class TemplateImpl extends SpecificationImpl
                     }
                     afterRet = SKIP_BODY;
                     if(isIteration(current)) {
+                        saveToCycle(current);
                         afterRet = getIteration(current).doAfterChildProcess();
                     	TemplateProcessor parent = current.getParentProcessor();
-                        cycle.setCurrentNode(parent.getInjectedNode());
                     	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN && isDuplicated(parent)) {
+                            saveToCycle(parent);
                             parent.doEndProcess();
                             parent.doStartProcess();
                     	}
                     }
-                    cycle.setCurrentNode(current.getInjectedNode());
                 } while(afterRet == IterationProcessor.EVAL_BODY_AGAIN);
             }
             if(buffered) {
                 cycle.getResponse().popWriter();
             }
+            saveToCycle(current);
             ret = current.doEndProcess();
             scriptEnvironment.endScope();
         } catch (RuntimeException e) {
@@ -219,10 +220,15 @@ public class TemplateImpl extends SpecificationImpl
         String contentType = getContentType();
         response.setContentType(contentType);
     }
+
+    private void saveToCycle(TemplateProcessor processor) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(processor.getOriginalNode());
+        cycle.setInjectedNode(processor.getInjectedNode());
+    }
     
     public ProcessStatus doTemplateRender(TemplateProcessor renderRoot) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setCurrentNode(this);
+        saveToCycle(this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
             processor = this;
@@ -232,7 +238,7 @@ public class TemplateImpl extends SpecificationImpl
         }
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
-        cycle.setCurrentNode(this);
+        saveToCycle(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
         return ret;
     }

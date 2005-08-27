@@ -18,7 +18,7 @@ package org.seasar.maya.impl.cycle;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -37,8 +37,8 @@ public class VariableResolverImpl implements VariableResolver {
     public Object resolveVariable(String pName) throws ELException {
         if(StringUtil.hasValue(pName)) {
             ServiceProvider provider = ProviderFactory.getServiceProvider();
-            ScriptCompiler compiler = provider.getScriptCompiler();
-            return compiler.getScriptResolver().getVariable(pName);
+            ScriptEnvironment environment = provider.getScriptEnvironment();
+            return environment.getScriptResolver().getVariable(pName);
         }
         return null;
     }

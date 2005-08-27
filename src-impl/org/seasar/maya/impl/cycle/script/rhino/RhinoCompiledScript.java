@@ -25,9 +25,11 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
-import org.seasar.maya.cycle.script.resolver.ScriptResolver;
+import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
 import org.seasar.maya.impl.cycle.script.ConversionException;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -36,53 +38,38 @@ import org.seasar.maya.source.SourceDescriptor;
 public class RhinoCompiledScript extends AbstractCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
-    private static ThreadLocal _scope = new ThreadLocal();
-    private static Scriptable _standardObjects;
     
-    private ScriptResolver _resolver;
     private Script _script;
     private String _sourceName;
     int _lineno;
     
-    public RhinoCompiledScript(ScriptResolver resolver,
+    public RhinoCompiledScript(
     		String text, Class expectedType, String sourceName, int lineno) {
         super(text, expectedType);
-        if(resolver == null) {
-            throw new IllegalArgumentException();
-        }
-        _resolver = resolver;
         _sourceName = sourceName;
         _lineno = lineno;
     }
     
-    public RhinoCompiledScript(ScriptResolver resolver,
+    public RhinoCompiledScript(
             SourceDescriptor source, String encoding, Class expectedType) {
         super(source, encoding, expectedType);
-        if(resolver == null) {
-            throw new IllegalArgumentException();
-        }
-        _resolver = resolver;
         _sourceName = source.getSystemID();
         _lineno = 1;
     }
     
-    private Scriptable getScope(Context cx, Object root) {
-        Scriptable scope = (Scriptable)_scope.get();
-        if(scope == null) {
-            if(_standardObjects == null) {
-                _standardObjects = cx.initStandardObjects(null, true);
+    protected Scriptable getScope(Context cx, Object root) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        AttributeScope attrs = cycle.getAttributeScope(ServiceCycle.SCOPE_PAGE);
+        if(attrs instanceof PageAttributeScope) {
+            Scriptable scope = (Scriptable)attrs;
+            if(root != null) {
+                Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
+                        cx, scope, root, root.getClass());
+                scope.setPrototype(rootScope);
             }
-            scope = new ResolverScope(_resolver);
-            scope.setPrototype(_standardObjects);
-            _scope.set(scope);
+            return scope;
         }
-        if(root != null) {
-            Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
-                    cx, scope, root, root.getClass());
-            rootScope.setPrototype(scope);
-            return rootScope;
-        }
-        return scope;
+        throw new IllegalStateException();
     }
     
     protected Script compile(Context cx) {

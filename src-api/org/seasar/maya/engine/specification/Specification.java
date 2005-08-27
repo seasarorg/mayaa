@@ -60,11 +60,17 @@ public interface Specification extends SpecificationNode {
 	 * @return 親スペックもしくはnull。
 	 */
     Specification getParentSpecification();
-    
+
     /**
      * 子スペックのイテレート。
-     * @return 子スペック(<code>Specification</code>)のイテレータ。
+     * @return 子スペック(Specification)のイテレータ。
      */
     Iterator iterateChildSpecification();
+
+    /**
+     * 子スペックの追加。
+     * @param child 子スペック。
+     */
+    void addChildSpecification(Specification child);
     
 }

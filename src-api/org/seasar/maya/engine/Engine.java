@@ -43,11 +43,12 @@ public interface Engine extends Parameterizable, Specification, Serializable {
     
 	/**
 	 * Pageオブジェクトのインスタンスを返す。
+     * @param parent Pageの親スペック。EngineもしくはTemplate。
      * @param pageName ページ名。
      * @param extension ページ拡張子。
 	 * @return Pageオブジェクト。
 	 */
-    Page getPage(String pageName, String extension);
+    Page getPage(Specification parent, String pageName, String extension);
 
     /**
      * サービスメソッド。

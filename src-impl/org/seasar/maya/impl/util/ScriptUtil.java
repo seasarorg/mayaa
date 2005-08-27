@@ -17,7 +17,7 @@ package org.seasar.maya.impl.util;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
@@ -35,17 +35,33 @@ public class ScriptUtil implements CONST_IMPL {
 	private ScriptUtil() {
 	}
     
+    public static ScriptEnvironment getScriptEnvironment() {
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        return provider.getScriptEnvironment();
+    }
+    
+    public static void initScope() {
+        getScriptEnvironment().initScope();
+    }
+    
+    public static void startScope() {
+        getScriptEnvironment().startScope();
+    }
+    
+    public static void endScope() {
+        getScriptEnvironment().endScope();
+    }
+    
     public static CompiledScript compile(String text, Class expectedType) {
         if(expectedType == null) {
         	throw new IllegalArgumentException();
         }
         if(StringUtil.hasValue(text)) {
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-	        ScriptCompiler compiler = provider.getScriptCompiler();
-            ServiceCycle cycle = provider.getServiceCycle();
+	        ScriptEnvironment environment = getScriptEnvironment();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             SpecificationNode node = cycle.getCurrentNode();
             Locator locator = node.getLocator();
-            return compiler.compile(text, expectedType,
+            return environment.compile(text, expectedType,
                     locator.getSystemId(), locator.getLineNumber());
         }
         return null;

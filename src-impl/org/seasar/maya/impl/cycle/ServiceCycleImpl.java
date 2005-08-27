@@ -130,11 +130,11 @@ public class ServiceCycleImpl implements ServiceCycle {
     }
 
     public void forward(String relativeUrlPath) {
-    	resetPageScope();
         _request.setForwardPath(relativeUrlPath);
         _response.clearBuffer();
         Engine engine = SpecificationUtil.getEngine();
-        Page page = engine.getPage(_request.getPageName(), _request.getExtension());
+        Page page = engine.getPage(
+                engine, _request.getPageName(), _request.getExtension());
         page.doPageRender();
     }
 

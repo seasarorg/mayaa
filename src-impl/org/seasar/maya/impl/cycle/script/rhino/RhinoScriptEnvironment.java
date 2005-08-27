@@ -15,11 +15,12 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -29,7 +30,10 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RhinoScriptCompiler extends AbstractScriptCompiler {
+public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
+
+    private static ThreadLocal _scope = new ThreadLocal();
+    private static Scriptable _standardObjects;
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(name);
@@ -44,8 +48,7 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text, expectedType);
         }
-        return new RhinoCompiledScript(getScriptResolver(), 
-                text, expectedType, sourceName, lineno);
+        return new RhinoCompiledScript(text, expectedType, sourceName, lineno);
     }
 
     public CompiledScript compile(
@@ -53,18 +56,35 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
         if(source == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
-        return new RhinoCompiledScript(
-                getScriptResolver(), source, encoding, expectedType);
+        return new RhinoCompiledScript(source, encoding, expectedType);
+    }
+
+    public void initScope() {
+        Scriptable scope = (Scriptable)_scope.get();
+        if(scope == null) {
+            if(_standardObjects == null) {
+                Context cx = Context.enter(); 
+                _standardObjects = cx.initStandardObjects(null, true);
+                Context.exit();
+            }
+            scope = new ResolverScope(getScriptResolver());
+            scope.setPrototype(_standardObjects);
+            _scope.set(scope);
+        }
+        PageAttributeScope newScope = new PageAttributeScope();
+        newScope.setParentScope(scope);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.putAttributeScope(ServiceCycle.SCOPE_PAGE, newScope);
     }
 
     public void startScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getAttributeScope("page");
-        if(scope == null || scope instanceof PageAttributeScope) {
+        AttributeScope scope = cycle.getAttributeScope(ServiceCycle.SCOPE_PAGE);
+        if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
             PageAttributeScope newScope = new PageAttributeScope();
             newScope.setParentScope(pageScope);
-            cycle.putAttributeScope("page", newScope);
+            cycle.putAttributeScope(ServiceCycle.SCOPE_PAGE, newScope);
         } else {
             throw new IllegalStateException();
         }
@@ -72,13 +92,13 @@ public class RhinoScriptCompiler extends AbstractScriptCompiler {
 
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getAttributeScope("page");
+        AttributeScope scope = cycle.getAttributeScope(ServiceCycle.SCOPE_PAGE);
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
             Scriptable parent = pageScope.getParentScope();
             if(parent instanceof PageAttributeScope) {
                 PageAttributeScope parentScope = (PageAttributeScope)parent;
-                cycle.putAttributeScope("page", parentScope);
+                cycle.putAttributeScope(ServiceCycle.SCOPE_PAGE, parentScope);
                 return;
             }
         }

@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.cycle.script.AbstractScriptCompiler;
-import org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompiler;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.rhino.RhinoScriptEnvironment;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
 public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
-    private AbstractScriptCompiler _scriptCompiler;
+    private AbstractScriptEnvironment _scriptEnvironment;
     
     public ScriptTagHandler(ServiceTagHandler parent) {
         super("script");
@@ -38,23 +38,23 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     }
     
     protected void start(Attributes attributes) {
-        _scriptCompiler = new RhinoScriptCompiler();
-        _parent.getServiceProvider().setScriptCompiler(_scriptCompiler);
+        _scriptEnvironment = new RhinoScriptEnvironment();
+        _parent.getServiceProvider().setScriptCompiler(_scriptEnvironment);
     }
     
     protected void end(String body) {
-        _scriptCompiler = null;
+        _scriptEnvironment = null;
     }
     
-    public AbstractScriptCompiler getScriptCompiler() {
-        if(_scriptCompiler == null) {
+    public AbstractScriptEnvironment getScriptEnvironment() {
+        if(_scriptEnvironment == null) {
             throw new IllegalStateException();
         }
-        return _scriptCompiler;
+        return _scriptEnvironment;
     }
     
     public Parameterizable getParameterizable() {
-        return getScriptCompiler();
+        return getScriptEnvironment();
     }
 
 }

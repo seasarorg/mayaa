@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ScriptUtil;
@@ -59,9 +59,9 @@ public class ExecProcessor extends TemplateProcessorSupport {
                 ServiceProvider provider = ProviderFactory.getServiceProvider();
                 String srcValue = (String)_src.getValue();
                 SourceDescriptor source = provider.getPageSourceDescriptor(srcValue);
-                ScriptCompiler compiler = provider.getScriptCompiler();
+                ScriptEnvironment environment = provider.getScriptEnvironment();
                 String encValue = (String)_encoding.getValue();
-                _compiled = compiler.compile(source, encValue, Void.class);
+                _compiled = environment.compile(source, encValue, Void.class);
             }
             if(_loaded.get() == null) {
                 ScriptUtil.execute(_compiled);

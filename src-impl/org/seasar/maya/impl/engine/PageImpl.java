@@ -158,6 +158,7 @@ public class PageImpl extends SpecificationImpl
     }
 
     public ProcessStatus doPageRender() {
+        ScriptUtil.initScope();
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
@@ -165,6 +166,7 @@ public class PageImpl extends SpecificationImpl
         ProcessStatus ret = template.doTemplateRender(null);
         cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+        cycle.resetPageScope();
         return ret;
     }
 

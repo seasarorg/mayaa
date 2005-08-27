@@ -20,10 +20,10 @@ import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * スクリプトコンパイラ。
+ * スクリプトの実行環境。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ScriptCompiler extends Parameterizable {
+public interface ScriptEnvironment extends Parameterizable {
 
     /**
      * ルートのスクリプトレゾルバの取得。
@@ -61,11 +61,21 @@ public interface ScriptCompiler extends Parameterizable {
     
     /**
      * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
+     * カレントServiceCycleのページスコープを初期化する。
+     */
+    void initScope();
+    
+    /**
+     * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
+     * カレントServiceCycleのページスコープに、スクリプトのスコープオブジェクトを
+     * プッシュする。
      */
     void startScope();
     
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。
+     * カレントServiceCycleのページスコープから、スクリプトのスコープオブジェクト
+     * をポップする。
      */
     void endScope();
     

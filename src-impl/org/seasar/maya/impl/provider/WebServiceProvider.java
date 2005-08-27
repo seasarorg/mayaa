@@ -29,7 +29,7 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.ServiceCycleImpl;
@@ -50,7 +50,7 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     private Object _context;
     private Application _application;
     private Engine _engine;
-    private ScriptCompiler _scriptCompiler;
+    private ScriptEnvironment _scriptCompiler;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
     private Class _pageSourceClass;
@@ -91,14 +91,14 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
         return _engine;
     }
     
-    public void setScriptCompiler(ScriptCompiler scriptCompiler) {
+    public void setScriptCompiler(ScriptEnvironment scriptCompiler) {
         if(scriptCompiler == null) {
             throw new IllegalArgumentException();
         }
         _scriptCompiler = scriptCompiler;
     }
     
-    public ScriptCompiler getScriptCompiler() {
+    public ScriptEnvironment getScriptEnvironment() {
         if(_scriptCompiler == null) {
             throw new IllegalStateException();
         }

@@ -22,13 +22,9 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.PageNotFoundException;
-import org.seasar.maya.impl.engine.PageImpl;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -71,13 +67,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         Engine engine = SpecificationUtil.getEngine();
         String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
         String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-        Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[2]);
-        String sourcePath = pagePath[0] + ".maya";
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        SourceDescriptor source = provider.getPageSourceDescriptor(sourcePath);
-        if(source.exists()) {
-            page.setSource(source);
-        }
+        Page page = engine.getPage(getTemplate(), pagePath[0], pagePath[2]);  
         return page;
     }
     

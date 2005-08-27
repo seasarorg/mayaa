@@ -39,7 +39,7 @@ public class ScriptResolverTagHandler extends AbstractParameterizableTagHandler 
     protected void start(Attributes attributes) {
         _resolver = (ScriptResolver)XmlUtil.getObjectValue(
                 attributes, "class", null, ScriptResolver.class);
-        _parent.getScriptCompiler().addScriptResolver(_resolver);
+        _parent.getScriptEnvironment().addScriptResolver(_resolver);
     }
     
     protected void end(String body) {

@@ -66,7 +66,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
             		throwableClass = throwableClass.getSuperclass()) {
                 try {
                     String pageName = getPageName(throwableClass);
-                	Page page = engine.getPage(pageName, _extension);
+                	Page page = engine.getPage(engine, pageName, _extension);
                     page.doPageRender();
     	            break;
                 } catch(PageNotFoundException ignore) {

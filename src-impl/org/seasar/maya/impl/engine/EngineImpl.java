@@ -29,6 +29,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.MayaException;
 import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
@@ -115,9 +116,10 @@ public class EngineImpl extends SpecificationImpl
         return false;
     }
     
-    public synchronized Page getPage(String pageName, String extension) {
+    public synchronized Page getPage(Specification parent,
+            String pageName, String extension) {
         Page page;
-        for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
+        for(Iterator it = parent.iterateChildSpecification(); it.hasNext(); ) {
             Object child = it.next();
             if(child instanceof Page) {
                 page = (Page)child;
@@ -127,11 +129,11 @@ public class EngineImpl extends SpecificationImpl
             }
         }
         String path = pageName + ".maya";
-        page = new PageImpl(this, pageName, extension);
+        page = new PageImpl(parent, pageName, extension);
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         SourceDescriptor source = provider.getPageSourceDescriptor(path);
         page.setSource(source);
-        addChildSpecification(page);
+        parent.addChildSpecification(page);
         return page;
     }
    
@@ -176,7 +178,7 @@ public class EngineImpl extends SpecificationImpl
             ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
             String pageName = cycle.getRequest().getPageName();
             String extension = cycle.getRequest().getExtension();
-            Page page = getPage(pageName, extension);
+            Page page = getPage(this, pageName, extension);
             page.doPageRender();
             cycle.setCurrentNode(this);
             ScriptUtil.execEvent(this, QM_AFTER_RENDER);
@@ -185,7 +187,6 @@ public class EngineImpl extends SpecificationImpl
                 ((MayaException)t).setCurrentNode(cycle.getCurrentNode());
             }
             cycle.getResponse().clearBuffer();
-            cycle.resetPageScope();
             handleError(t);
         }
         cycle.getResponse().flush();

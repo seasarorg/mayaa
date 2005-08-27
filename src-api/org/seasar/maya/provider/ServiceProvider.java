@@ -19,7 +19,7 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -42,10 +42,10 @@ public interface ServiceProvider {
     Engine getEngine();
     
     /**
-     * スクリプトコンパイラの取得。
-     * @return スクリプトコンパイラ。
+     * スクリプト実行環境の取得。
+     * @return スクリプト実行環境。
      */
-    ScriptCompiler getScriptCompiler();
+    ScriptEnvironment getScriptEnvironment();
     
     /**
      * 設定XMLのビルダを取得する。

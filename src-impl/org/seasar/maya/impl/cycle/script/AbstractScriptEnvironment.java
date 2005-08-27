@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptCompiler;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.impl.cycle.script.resolver.CompositeScriptResolver;
 import org.seasar.maya.impl.util.StringUtil;
@@ -29,7 +29,7 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractScriptCompiler implements ScriptCompiler {
+public abstract class AbstractScriptEnvironment implements ScriptEnvironment {
     
     private String _blockSign = ScriptBlockIterator.BLOCK_SIGN_JSP;
     private CompositeScriptResolver _scriptResolver = new CompositeScriptResolver();;

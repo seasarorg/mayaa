@@ -148,12 +148,12 @@ public class SpecificationNodeImpl extends QNameableImpl
         return path.toString();
 	}
 
-    public int getLineNumber() {
-		return 0;
+	public String getSystemID() {
+		return _systemID;
 	}
 
-	public String getSystemID() {
-		return null;
+    public int getLineNumber() {
+		return _lineNumber;
 	}
 
 	public SpecificationNode copyTo(CopyToFilter filter) {

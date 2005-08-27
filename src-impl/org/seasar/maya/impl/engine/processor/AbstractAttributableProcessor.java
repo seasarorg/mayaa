@@ -126,22 +126,15 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
 
     //helper class, methods ----------------------------------------
     
-    private String getRuntimeKey() {
-        return hashCode() + "@" + AbstractAttributableProcessor.class + ".RuntimeInfo";
-    }
+    private static final String KEY = ProcesstimeInfo.class.toString();
     
     protected ProcesstimeInfo getProcesstimeInfo() {
-        String key = getRuntimeKey();
-        ProcesstimeInfo info = (ProcesstimeInfo)CycleUtil.getAttribute(key);
+        ProcesstimeInfo info = (ProcesstimeInfo)CycleUtil.getAttribute(KEY);
         if(info == null) {
             info = new ProcesstimeInfo();
-            CycleUtil.setAttribute(key, info);
+            CycleUtil.setAttribute(KEY, info);
         }
         return info;
-    }
-    
-    protected void removeProcesstimeInfo() {
-        CycleUtil.removeAttribute(getRuntimeKey());
     }
     
     protected class ProcesstimeInfo {

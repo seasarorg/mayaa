@@ -139,7 +139,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(_qName.getLocalName()).append(">");
             write(buffer);
         }
-        removeProcesstimeInfo();
     }
     
 }

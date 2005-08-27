@@ -22,10 +22,7 @@ import org.seasar.maya.engine.specification.Specification;
 
 /**
  * テンプレートのレンダリングエントリーポイント。アプリケーションを構成する各ページのモデル
- * であり、リクエストに対してはステートレスなオブジェクトである。Engine#doService(PageContext)
- * で、テンプレートを初期化をした後、doTemplate(ProcessorContext)が呼ばれる。また、
- * TemplateCustomTag#doStartTag()でdoTemplate(ProcessorContext)が呼ばれる。
- * シリアライズ可能。
+ * であり、リクエストに対してはステートレスなオブジェクトである。シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Page extends Specification, Serializable {

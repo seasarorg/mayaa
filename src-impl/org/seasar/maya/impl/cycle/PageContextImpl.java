@@ -122,13 +122,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public Exception getException() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Request request = cycle.getRequest();
-        Throwable throwable = (Throwable)request.getAttribute(EXCEPTION);
-        if(throwable != null && !(throwable instanceof Exception)) {
-            throwable = new Exception(throwable);
-        }
-        return (Exception) throwable;
+        throw new UnsupportedOperationException();
     }
 
     // Underlying object -----------------------------------------------

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,6 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -103,21 +103,35 @@ public class EngineImpl extends SpecificationImpl
         return _errorHandler;
     }
     
-    public String getKey() {
-        return "/engine";
+    private boolean match(Page page, String name, String extension) {
+        String pageName = page.getPageName();
+        String pageExt = page.getExtension();
+        if(pageName.equals(name)) {
+            if((StringUtil.isEmpty(pageExt) && StringUtil.isEmpty(extension)) ||
+                    pageExt.equals(extension)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public synchronized Page getPage(String pageName, String extension) {
-        String key = SpecificationUtil.createPageKey(pageName, extension);
-        Page page = SpecificationUtil.getPage(this, key);
-        if(page == null) {
-            String path = pageName + ".maya";
-            page = new PageImpl(this, pageName, extension);
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SourceDescriptor source = provider.getPageSourceDescriptor(path);
-            page.setSource(source);
-            addChildSpecification(page);
+        Page page;
+        for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
+            Object child = it.next();
+            if(child instanceof Page) {
+                page = (Page)child;
+                if(match(page, pageName, extension)) {
+                    return page;
+                }
+            }
         }
+        String path = pageName + ".maya";
+        page = new PageImpl(this, pageName, extension);
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        SourceDescriptor source = provider.getPageSourceDescriptor(path);
+        page.setSource(source);
+        addChildSpecification(page);
         return page;
     }
    

@@ -70,10 +70,6 @@ public class PageImpl extends SpecificationImpl
         _extension = extension;
     }
     
-    public String getKey() {
-        return SpecificationUtil.createPageKey(getPageName(), getExtension());
-    }
-    
     public Engine getEngine() {
         return _engine;
     }
@@ -86,13 +82,17 @@ public class PageImpl extends SpecificationImpl
         return _extension;
     }
 
+    private boolean match(Template template, String suffix) {
+        
+        return false;
+    }
+    
     protected Template findTemplate(String suffix) {
-        String key = SpecificationUtil.createTemplateKey(suffix);
         for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
             Object obj = it.next();
             if(obj instanceof Template) {
 	            Template template = (Template)obj;
-	            if(key.equals(template.getKey())) {
+	            if(match(template, suffix)) {
 	                return template;
 	            }
             }
@@ -151,7 +151,8 @@ public class PageImpl extends SpecificationImpl
             template = getTemplate("");
         }
         if(template == null) {
-            throw new PageNotFoundException(getKey());
+            throw new PageNotFoundException(
+                    _pageName, requestedSuffix, _extension);
         }
         return template;
     }
@@ -159,13 +160,11 @@ public class PageImpl extends SpecificationImpl
     public ProcessStatus doPageRender() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setCurrentNode(this);
-        SpecificationUtil.setPage(this);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         Template template = getTemplate();
         ProcessStatus ret = template.doTemplateRender(null);
         cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-        SpecificationUtil.setPage(null);
         return ret;
     }
 

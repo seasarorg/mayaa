@@ -62,12 +62,6 @@ public interface Specification extends SpecificationNode {
     Specification getParentSpecification();
     
     /**
-     * 親スペックへの登録キー取得。
-     * @return 登録キー。
-     */
-    String getKey();
-    
-    /**
      * 子スペックのイテレート。
      * @return 子スペック(<code>Specification</code>)のイテレータ。
      */

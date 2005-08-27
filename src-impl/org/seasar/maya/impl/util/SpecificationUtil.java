@@ -42,93 +42,9 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
-
-    private static final String KEY_ENGINE = "engine";
-    private static final String KEY_PAGE = "page";
-    private static final String KEY_TEMPLATE = "template";
     
 	private SpecificationUtil() {
 	}
-
-    public static String createTemplateKey(String suffix) {
-        if(suffix == null) {
-            throw new IllegalArgumentException();
-        }
-        return "/template[@suffix='" + suffix + "']";
-    } 
-    
-    public static Template getTemplate() {
-        Template template = 
-            (Template)CycleUtil.getAttribute(KEY_TEMPLATE);
-        if(template == null) {
-            throw new IllegalStateException();
-        }
-        return template;
-    }
-
-    public static void setTemplate(Template template) {
-    	CycleUtil.setAttribute(KEY_TEMPLATE, template);
-    }
-    
-    public static String createPageKey(String pageName, String extension) {
-        if(StringUtil.isEmpty(pageName)) {
-            throw new IllegalArgumentException();
-        }
-        StringBuffer key = new StringBuffer();
-        key.append("/page[@pageName='").append(pageName).append("']");
-        if(StringUtil.hasValue(extension)) {
-            key.append("[@extension='").append(extension).append("']");
-        }
-        return key.toString();
-    }
-    
-    public static Page getPage(Engine engine, String key) {
-        for(Iterator it = engine.iterateChildSpecification(); it.hasNext(); ) {
-            Page page = (Page)it.next();
-            if(key.equals(page.getKey())) {
-                return page;
-            }
-        }
-        return null;
-    }
-    
-    public static Page getPage() {
-        Page page = (Page)CycleUtil.getAttribute(KEY_PAGE);
-        if(page == null) {
-            throw new IllegalStateException();
-        }
-        return page;
-    }
-
-    public static void setPage(Page page) {
-    	CycleUtil.setAttribute(KEY_PAGE, page);
-    }
-
-    public static Engine getEngine(Specification specification) {
-        if(specification instanceof Template) {
-            return ((Template)specification).getPage().getEngine();
-        } else if(specification instanceof Page) {
-            return ((Page)specification).getEngine();
-        } else if(specification instanceof Engine) {
-            return (Engine)specification;
-        }
-        throw new IllegalArgumentException();
-    }
-    
-    public static Engine getEngine() {
-        Engine engine = (Engine)CycleUtil.getAttribute(KEY_ENGINE);
-        if(engine == null) {
-            throw new IllegalStateException();
-        }
-        return engine;
-    }
-    
-    public static void setEngine(ServiceCycle cycle, Engine engine) {
-        if(cycle == null || engine == null) {
-            throw new IllegalArgumentException();
-        }
-        CycleUtil.setAttribute(KEY_ENGINE, engine);
-    }
     
     public static String getAttributeValue(SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);
@@ -148,56 +64,34 @@ public class SpecificationUtil implements CONST_IMPL {
         }
         return null;
     }
-    
-    public static Class getModelClass(SpecificationNode node) {
-        NodeAttribute classAttr = node.getAttribute(QM_CLASS);
-        if(classAttr != null) {
-	        String className = classAttr.getValue();
-            return ObjectUtil.loadClass(className);
-        }
-        return null;
-    }
-    
-    public static String getModelScope(SpecificationNode node) {
-        NodeAttribute scopeAttr = node.getAttribute(QM_SCOPE);
-        if(scopeAttr != null) {
-            return scopeAttr.getValue();
-        }
-        return ServiceCycle.SCOPE_PAGE;
-    }
-    
-    /**
-     * コンテキストから、より下位のSpecificationを探す。見つからないとnullを返す。
-     * @return みつかったSpecification（テンプレート/ページ/エンジン）。
-     */
-    public static Specification findSpecification() {
-    	Specification specification = 
-            (Template)CycleUtil.getAttribute(KEY_TEMPLATE);
-        if(specification == null) {
-            specification = (Page)CycleUtil.getAttribute(KEY_PAGE);
-            if(specification == null) {
-                specification = (Engine)CycleUtil.getAttribute(KEY_ENGINE);
-        	}
-        }
-        return specification;
-    }
-    
-    public static Object findSpecificationModel(Specification specification) {
-        while(specification != null) {
-            SpecificationNode maya = getMayaNode(specification);
-            if(maya != null) {
-		        Class modelClass = getModelClass(maya);
-		        if(modelClass != null) {
-		            String scope = SpecificationUtil.getModelScope(maya);
-		            ServiceProvider provider = ProviderFactory.getServiceProvider();
-		           	return provider.getModel(modelClass, scope);
-		        }
+
+    private static Specification findSpecification(SpecificationNode current) {
+        while(current instanceof Specification == false) {
+            current = current.getParentNode();
+            if(current == null) {
+                return null;
             }
-            specification = specification.getParentSpecification();
         }
-        return null;
+        return (Specification)current;
     }
-	
+    
+    public static Specification findSpecification() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        SpecificationNode current = cycle.getCurrentNode();
+        return findSpecification(current);
+    }
+
+    public static Template getTemplate() {
+        Specification spec = findSpecification();
+        if(spec instanceof Page) {
+            spec = findSpecification(spec.getParentNode());
+        }
+        if(spec instanceof Template) {
+            return (Template)spec;
+        }
+        throw new IllegalStateException();
+    }
+    
 	public static SpecificationNode getMayaNode(Specification specification) {
 	    Map namespaces = new HashMap();
 	    namespaces.put("m", URI_MAYA);
@@ -208,6 +102,40 @@ public class SpecificationUtil implements CONST_IMPL {
 	    }
 	    return null;
 	}
+    
+    private static Class getModelClass(SpecificationNode node) {
+        NodeAttribute classAttr = node.getAttribute(QM_CLASS);
+        if(classAttr != null) {
+            String className = classAttr.getValue();
+            return ObjectUtil.loadClass(className);
+        }
+        return null;
+    }
+    
+    private static String getModelScope(SpecificationNode node) {
+        NodeAttribute scopeAttr = node.getAttribute(QM_SCOPE);
+        if(scopeAttr != null) {
+            return scopeAttr.getValue();
+        }
+        return ServiceCycle.SCOPE_PAGE;
+    }
+
+    public static Object findSpecificationModel(Specification specification) {
+        while (specification != null) {
+            SpecificationNode maya = getMayaNode(specification);
+            if (maya != null) {
+                Class modelClass = getModelClass(maya);
+                if (modelClass != null) {
+                    String scope = SpecificationUtil.getModelScope(maya);
+                    ServiceProvider provider = ProviderFactory
+                            .getServiceProvider();
+                    return provider.getModel(modelClass, scope);
+                }
+            }
+            specification = specification.getParentSpecification();
+        }
+        return null;
+    }
 	
     public static QNameable parseName(
             Namespaceable namespaces, String qName, String defaultURI) {
@@ -239,7 +167,8 @@ public class SpecificationUtil implements CONST_IMPL {
     
     public static SpecificationNode createInjectedNode(
             QName qName, String uri, SpecificationNode original) {
-        SpecificationNodeImpl node =  new SpecificationNodeImpl(qName, original.getLocator());
+        SpecificationNodeImpl node =  
+            new SpecificationNodeImpl(qName, original.getLocator());
         for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(uri.equals(attr.getQName().getNamespaceURI())) {
@@ -248,7 +177,12 @@ public class SpecificationUtil implements CONST_IMPL {
         }
         return node;
     }
-	 
+	
+    public static Engine getEngine() {
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        return provider.getEngine();
+    }
+    
     public static String getEngineSetting(String name, String defaultValue) {
         Engine engine = getEngine();
         String value = engine.getParameter(name);

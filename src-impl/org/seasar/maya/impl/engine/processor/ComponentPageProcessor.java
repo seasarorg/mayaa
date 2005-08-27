@@ -68,7 +68,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         if(StringUtil.isEmpty(_path)) {
             throw new IllegalStateException();
         }
-        Engine engine = SpecificationUtil.getEngine(getTemplate());
+        Engine engine = SpecificationUtil.getEngine();
         String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
         String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
         Page page =  new PageImpl(getTemplate(), pagePath[0], pagePath[2]);
@@ -113,9 +113,11 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
             }
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Template template = _page.getTemplate(cycle.getRequest().getRequestedSuffix());
+        String requiredSuffix = cycle.getRequest().getRequestedSuffix();
+        Template template = _page.getTemplate(requiredSuffix);
         if(template == null) {
-            throw new PageNotFoundException(_page.getKey());
+            throw new PageNotFoundException(
+                    _page.getPageName(), requiredSuffix, _page.getExtension());
         }
         template.setParentProcessor(this, 0);
         StartComponentProcessor start = findStart(template);

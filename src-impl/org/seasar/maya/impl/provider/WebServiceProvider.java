@@ -38,7 +38,6 @@ import org.seasar.maya.impl.cycle.web.WebRequest;
 import org.seasar.maya.impl.cycle.web.WebResponse;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.source.SourceDescriptor;
@@ -198,7 +197,6 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     	ServiceCycleImpl cycle = (ServiceCycleImpl)_currentServiceCycle.get();
     	if(cycle == null) {
     		cycle = new ServiceCycleImpl(getApplication());
-            SpecificationUtil.setEngine(cycle, getEngine());
     		_currentServiceCycle.set(cycle);
     	}
         HttpServletRequest httpRequest = (HttpServletRequest)request;

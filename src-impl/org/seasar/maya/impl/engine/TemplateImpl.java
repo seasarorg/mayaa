@@ -81,10 +81,6 @@ public class TemplateImpl extends SpecificationImpl
         return NS_HTML;
     }
     
-    public String getKey() {
-        return SpecificationUtil.createTemplateKey(getSuffix());
-    }
-
     public Page getPage() {
         return (Page)getParentSpecification();
     }
@@ -231,7 +227,6 @@ public class TemplateImpl extends SpecificationImpl
     public ProcessStatus doTemplateRender(TemplateProcessor renderRoot) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setCurrentNode(this);
-        SpecificationUtil.setTemplate(this);
         TemplateProcessor processor = renderRoot;
         if(renderRoot == null) {
             processor = this;
@@ -243,7 +238,6 @@ public class TemplateImpl extends SpecificationImpl
         ProcessStatus ret = render(processor);
         cycle.setCurrentNode(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-        SpecificationUtil.setTemplate(null);
         return ret;
     }
 

@@ -149,10 +149,6 @@ public abstract class SpecificationImpl
         return super.iterateChildNode();
     }
     
-    public String toString() {
-        return getKey();
-    }
-
     public SpecificationNode copyTo() {
         throw new UnsupportedOperationException();
     }

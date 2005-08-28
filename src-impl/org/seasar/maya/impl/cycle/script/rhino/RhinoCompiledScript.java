@@ -30,6 +30,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
 import org.seasar.maya.impl.cycle.script.ConversionException;
 import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -89,6 +90,10 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         }
         return cx.compileString(getText(), _sourceName, _lineno, null);
     }
+
+    protected Object convertToPrimitive(Object obj) {
+    	return obj;
+    }
     
     public Object execute(Object root) {
         Object ret = null;
@@ -108,7 +113,9 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         }
         if(expectedType == Void.class || ret == null) {
             return null;
-        } else if(expectedType.isAssignableFrom(ret.getClass())) {
+        }
+        ret = ObjectUtil.convert(expectedType, ret);
+        if(expectedType.isAssignableFrom(ret.getClass())) {
             return ret;
         }
         throw new ConversionException(this, ret.getClass());

@@ -98,13 +98,18 @@ public class ObjectUtil {
         }
     }
     
+    public static Object convert(Class expectedType, Object value) {
+        Converter converter = ConvertUtils.lookup(expectedType);
+        if(converter != null) {
+            return converter.convert(expectedType, value);
+        }
+        return value;
+    }
+    
     public static void setProperty(Object obj, String propertyName, Object value) {
-        try {
-            Class type = getPropertyType(obj, propertyName);
-            Converter converter = ConvertUtils.lookup(type);
-            if(converter != null) {
-                value = converter.convert(type, value);
-            }
+    	try {
+            Class propertyType = getPropertyType(obj, propertyName);
+            value = convert(propertyType, value);
             PropertyUtils.setProperty(obj, propertyName, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);

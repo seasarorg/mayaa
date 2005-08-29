@@ -16,14 +16,11 @@
 package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.builder.processor.ProcessorFactory;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -40,8 +37,6 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorDefinitionImpl implements ProcessorDefinition {
-
-    private static final Map _factoryInstances = new HashMap();
     
     private String _name;
     private Class _processorClass;
@@ -59,7 +54,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     }
     
     public void setProcessorClass(Class processorClass) {
-        if(processorClass == null) {
+        if(processorClass == null || 
+                TemplateProcessor.class.isAssignableFrom(processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _processorClass = processorClass;
@@ -87,22 +83,15 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     }
 
     protected TemplateProcessor newInstance(SpecificationNode injected) {
-        Object obj = _factoryInstances.get(_processorClass);
-        if(obj == null) {
-            obj = ObjectUtil.newInstance(_processorClass);
-        }
-        if(obj instanceof TemplateProcessor) {
-            return (TemplateProcessor)obj;
-        } else if(obj instanceof ProcessorFactory) {
-            _factoryInstances.put(_processorClass, obj);
-            ProcessorFactory factory = (ProcessorFactory)obj;
-            return factory.createProcessor(injected);
-        }
-        throw new IllegalStateException();
+        return (TemplateProcessor)ObjectUtil.newInstance(_processorClass);
     }
 
-    protected void settingProperties(
-            SpecificationNode injected, TemplateProcessor processor) {
+    protected Class getTargetType(TemplateProcessor processor) {
+        return processor.getClass();
+    }
+    
+    protected void settingProperties(SpecificationNode injected, 
+            TemplateProcessor processor) {
         for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
             Object prop = property.createProcessorProperty(injected);
@@ -132,6 +121,9 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     }
     
     public TemplateProcessor createTemplateProcessor(SpecificationNode injected) {
+        if(injected == null) {
+            throw new IllegalArgumentException();
+        }
         TemplateProcessor processor = newInstance(injected);
         settingProperties(injected, processor);
         if(processor instanceof InformalPropertyAcceptable) {

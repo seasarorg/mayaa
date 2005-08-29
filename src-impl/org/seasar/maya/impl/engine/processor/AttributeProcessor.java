@@ -18,6 +18,7 @@ package org.seasar.maya.impl.engine.processor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.engine.specification.QNameable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,6 +27,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = -3985340947416654455L;
 
+    private QNameable _name;
 	private ProcessorProperty _value;
     
     private AbstractAttributableProcessor findParentAttributable() {
@@ -39,8 +41,16 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         throw new IllegalStateException();
     }
     
-    // Factory property
-    public void setAttribute(ProcessorProperty value) {
+    // MLD property
+    public void setName(QNameable name) {
+        if(name == null) {
+            throw new IllegalArgumentException();
+        }
+        _name = name;
+    }
+    
+    // MLD property
+    public void setValue(ProcessorProperty value) {
         if(value == null) {
             throw new IllegalArgumentException();
         }
@@ -52,7 +62,8 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
-        parent.addProcesstimeProperty(_value);
+        parent.addProcesstimeProperty(new ProcessorPropertyImpl(
+                _name.getQName(), _name.getPrefix(), _value.getValue()));
         return SKIP_BODY;
     }
     

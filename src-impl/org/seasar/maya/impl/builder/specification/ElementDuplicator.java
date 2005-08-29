@@ -25,6 +25,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -61,8 +62,13 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = SpecificationUtil.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original);
-   	        element.addAttribute(QM_NAMESPACE_URI, uri);
-   	        element.addAttribute(QM_LOCAL_NAME, qName.getLocalName());
+            StringBuffer name = new StringBuffer();
+   		    String prefix = original.getPrefix();
+            if(StringUtil.hasValue(prefix)) {
+                name.append(prefix).append(":");
+            }
+            name.append(qName.getLocalName());
+            element.addAttribute(QM_NAME, name.toString());
    			element.addChildNode(injected);
    			return element;
    		}

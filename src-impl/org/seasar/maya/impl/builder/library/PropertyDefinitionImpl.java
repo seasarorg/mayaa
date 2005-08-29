@@ -24,16 +24,20 @@ import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertyDefinitionImpl implements PropertyDefinition {
+public class PropertyDefinitionImpl 
+        implements PropertyDefinition, CONST_IMPL {
 
     private String _name;
     private boolean _required;
@@ -102,7 +106,11 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         if(_processorClass == null) {
             throw new IllegalStateException();
         }
-        return ObjectUtil.getPropertyType(_processorClass, getName());
+        Class ret = ObjectUtil.getPropertyType(_processorClass, getName());
+        if(ret == null) {
+            throw new IllegalStateException();
+        }
+        return ret;
     }
 
     protected QName getQName(SpecificationNode injected) {
@@ -128,13 +136,14 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
 	        Class propertyType = getPropertyType();
-	        if(propertyType == null || 
-                    propertyType.equals(ProcessorProperty.class)) {
+	        if(propertyType.equals(ProcessorProperty.class)) {
 	            CompiledScript script  = 
                     ScriptUtil.compile(stringValue, getExpectedType());
 	            String prefix = getPrefix(injected, qName);
 	            return new ProcessorPropertyImpl(qName, prefix, script);
-	        }
+	        } else if(propertyType.equals(QNameable.class)) {
+                return SpecificationUtil.parseName(injected, stringValue, URI_HTML); 
+            }
 	        return stringValue;
         }
         return null;

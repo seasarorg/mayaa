@@ -6,21 +6,26 @@
 
 	<description>The Maya core processors</description>
 
-	<processor name="attribute" class="org.seasar.maya.impl.builder.processor.AttributeProcessorFactory">
+	<processor name="attribute" class="org.seasar.maya.impl.engine.processor.AttributeProcessor">
 		<description>m:attribute injection</description>
+		<property name="name" required="true"/>
+		<property name="value" required="true" expectedType="java.lang.String"/>
 	</processor>
 
-	<processor name="element" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+	<processor name="element" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>m:element injection</description>
+		<property name="name" required="true"/>
 		<property name="childEvaluation" defaultValue="true"/>
 	</processor>
 	
-	<processor name="templateElement" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+	<processor name="templateElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>element on the template</description>
+		<property name="name" required="true"/>
 	</processor>
 	
-	<processor name="duplecatedElement" class="org.seasar.maya.impl.builder.processor.ElementProcessorFactory">
+	<processor name="duplecatedElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>duplecated element on the template by m:rendered="true"</description>
+		<property name="name" required="true"/>
 		<property name="duplicated" defaultValue="true"/>
 	</processor>
 

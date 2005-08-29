@@ -62,9 +62,7 @@ public interface CONST_IMPL {
     QName QM_XPATH = new QName("xpath");
     QName QM_RENDERED = new QName("rendered");
     QName QM_ELEMENT = new QName("element");
-    QName QM_Q_NAME = new QName("qName");
-    QName QM_NAMESPACE_URI = new QName("namespaceURI");
-    QName QM_LOCAL_NAME = new QName("localName");
+    QName QM_NAME = new QName("name");
     QName QM_VALUE = new QName("value");
     QName QM_TEMPLATE_ELEMENT = new QName("templateElement");
     QName QM_DUPLECATED_ELEMENT = new QName("duplecatedElement");
@@ -77,7 +75,6 @@ public interface CONST_IMPL {
     QName QM_COMMENT = new QName("comment");
     QName QM_CDATA = new QName("cdata");
     QName QM_DOCTYPE = new QName("doctype");
-    QName QM_NAME = new QName("name");
     QName QM_PUBLIC_ID = new QName("publicID");
     QName QM_SYSTEM_ID = new QName("systemID");
     QName QM_CODELET = new QName("codelet");
@@ -96,5 +93,6 @@ public interface CONST_IMPL {
 
     QName QM_COMPONENT_PAGE = new QName("componentPage");
     QName QM_PATH = new QName("path");
+    QName QM_NAMESPACE_URI = new QName("namespaceURI");
     
 }

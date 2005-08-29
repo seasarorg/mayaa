@@ -22,6 +22,7 @@ import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -34,8 +35,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
 	private static final long serialVersionUID = 923306412062075314L;
 
-	private QName _qName;
-    private String _prefix;
+	private QNameable _name;
     private boolean _duplicated;
 
     // exported property
@@ -48,24 +48,19 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _duplicated = duplicated;
     }
     
-    public String getInformalAttrituteURI() {
-        if(_qName == null) {
-            throw new IllegalStateException();
-        }
-        return _qName.getNamespaceURI();
-    }
-    
-    // Factory property
-    public void setQName(QName qName) {
-        if(qName == null) {
+    // MLD property
+    public void setName(QNameable name) {
+        if(name == null) {
             throw new IllegalArgumentException();
         }
-        _qName = qName;
+        _name = name;
     }
     
-    // Factory property
-    public void setPrefix(String prefix) {
-        _prefix = prefix;
+    public String getInformalAttrituteURI() {
+        if(_name == null) {
+            throw new IllegalStateException();
+        }
+        return _name.getQName().getNamespaceURI();
     }
     
     private boolean isXHTML(QName qName) {
@@ -98,14 +93,16 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected ProcessStatus writeStartElement() {
-        if(_qName == null) {
+        if(_name == null) {
             throw new IllegalStateException();
         }
         StringBuffer buffer = new StringBuffer("<");
-        if(StringUtil.hasValue(_prefix)) {
-            buffer.append(_prefix).append(":");
+        String prefix = _name.getPrefix();
+        if(StringUtil.hasValue(prefix)) {
+            buffer.append(prefix).append(":");
         }
-        buffer.append(_qName.getLocalName());
+        QName qName = _name.getQName();
+        buffer.append(qName.getLocalName());
         List additionalAttributes = getProcesstimeProperties();
         for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
@@ -121,7 +118,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 appendAttributeString(buffer, prop);
             }
         }
-        if(isXHTML(_qName) && getChildProcessorSize() == 0) {
+        if(isXHTML(qName) && getChildProcessorSize() == 0) {
             buffer.append("/>");
         } else {
             buffer.append(">");
@@ -131,12 +128,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected void writeEndElement() {
-        if(needsCloseElement(_qName)) {
+        if(_name == null) {
+            throw new IllegalStateException();
+        }
+        QName qName = _name.getQName();
+        if(needsCloseElement(qName)) {
             StringBuffer buffer = new StringBuffer("</");
-            if(StringUtil.hasValue(_prefix)) {
-                buffer.append(_prefix).append(":");
+            String prefix = _name.getPrefix();
+            if(StringUtil.hasValue(prefix)) {
+                buffer.append(prefix).append(":");
             }
-            buffer.append(_qName.getLocalName()).append(">");
+            buffer.append(qName.getLocalName()).append(">");
             write(buffer);
         }
     }

@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.processor;
 
 import org.seasar.maya.builder.processor.ProcessorFactory;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -32,7 +31,7 @@ import org.seasar.maya.impl.util.SpecificationUtil;
  */
 public class AttributeProcessorFactory implements ProcessorFactory, CONST_IMPL {
     
-    public TemplateProcessor createProcessor(Template template, SpecificationNode injected) {
+    public TemplateProcessor createProcessor(SpecificationNode injected) {
         AttributeProcessor processor = new AttributeProcessor();
         String qNameString = SpecificationUtil.getAttributeValue(injected, QM_Q_NAME);
         QNameable qNameable = SpecificationUtil.parseName(

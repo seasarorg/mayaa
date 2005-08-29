@@ -28,28 +28,30 @@ public abstract class AbstractCompiledScript
     private String _text;
     private SourceDescriptor _source;
     private String _encoding;
-    private Class _expectedType;
+    private Class _expectedType = Object.class;
     
-    public AbstractCompiledScript(String text, Class expectedType) {
-        if(StringUtil.isEmpty(text) || expectedType == null) {
+    public AbstractCompiledScript(String text) {
+        if(StringUtil.isEmpty(text)) {
             throw new IllegalArgumentException();
         }
         _text = text;
+    }
+
+    public AbstractCompiledScript(SourceDescriptor source, String encoding) {
+        if(source == null) {
+            throw new IllegalArgumentException();
+        }
+        _source = source;
+        _encoding = encoding;
+    }
+    
+    public void setExpectedType(Class expectedType) {
+        if(expectedType == null) {
+            throw new IllegalArgumentException();
+        }
         _expectedType = expectedType;
     }
 
-    public AbstractCompiledScript(
-            SourceDescriptor source, String encoding, Class expectedType) {
-        if(source == null || expectedType == null) {
-            throw new IllegalArgumentException();
-        }
-        if(StringUtil.isEmpty(encoding)) {
-            
-        }
-        _source = source;
-        _expectedType = expectedType;
-    }
-    
     public Class getExpectedType() {
         return _expectedType;
     }

@@ -40,15 +40,18 @@ public class PropertyTagHandler extends TagHandler {
             // ÉçÉOèoóÕ
             _parent.invalidate();
         } else {
-	        boolean required = XmlUtil.getBooleanValue(attributes, "required", false);
-	        String expectedType = attributes.getValue("expectedType");
+	        boolean required = XmlUtil.getBooleanValue(
+                    attributes, "required", false);
+	        Class expectedType = XmlUtil.getClassValue(
+                    attributes, "expectedType", Object.class);
 	        String defaultValue = attributes.getValue("defaultValue");
 	        PropertyDefinitionImpl property = new PropertyDefinitionImpl();
 	        property.setName(name);
 	        property.setRequired(required);
 	        property.setExpectedType(expectedType);
 	        property.setDefaultValue(defaultValue);
-	        ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
+            ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
+            property.setProcessorClass(processor.getProcessorClass());
 	        processor.addPropertyDefinitiion(property);
         }
     }

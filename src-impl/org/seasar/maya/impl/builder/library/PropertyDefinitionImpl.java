@@ -20,7 +20,6 @@ import java.util.Iterator;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
@@ -38,8 +37,9 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
 
     private String _name;
     private boolean _required;
-    private String _expectedType;
+    private Class _expectedType;
     private String _defaultValue;
+    private Class _processorClass;    
     
     protected String getPrefix(Namespaceable namespaceable, QName qName) {
         Iterator it = namespaceable.iterateNamespace(qName.getNamespaceURI());
@@ -58,6 +58,9 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
     }
     
     public String getName() {
+        if(StringUtil.isEmpty(_name)) {
+            throw new IllegalStateException();
+        }
         return _name;
     }
 
@@ -69,14 +72,14 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         return _required;
     }
 
-    public void setExpectedType(String expectedType) {
-    	if(StringUtil.isEmpty(expectedType)) {
-    		expectedType = "java.lang.Object";
-    	}
+    public void setExpectedType(Class expectedType) {
         _expectedType = expectedType;
     }
 
-    public String getExpectedType() {
+    public Class getExpectedType() {
+        if(_expectedType == null) {
+            return Object.class;
+        }
         return _expectedType;
     }
     
@@ -86,6 +89,20 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
     
     public String getDefaultValue() {
         return _defaultValue;
+    }
+    
+    public void setProcessorClass(Class processorClass) {
+        if(processorClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _processorClass = processorClass;
+    }
+    
+    protected Class getPropertyType() {
+        if(_processorClass == null) {
+            throw new IllegalStateException();
+        }
+        return ObjectUtil.getPropertyType(_processorClass, getName());
     }
 
     protected QName getQName(SpecificationNode injected) {
@@ -106,19 +123,15 @@ public class PropertyDefinitionImpl implements PropertyDefinition {
         return value;
     }
     
-    public Object getProcessorProperty(SpecificationNode injected, 
-            TemplateProcessor processor) {
+    public Object createProcessorProperty(SpecificationNode injected) {
         QName qName = getQName(injected);
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
-	        Class propertyType = ObjectUtil.getPropertyType(processor, _name);
-            if(propertyType == null) {
-            	// TODO プロセッサ実装クラスに、MLD定義のプロパティが見つからないとき。
-                throw new IllegalStateException();
-            }
-	        if(propertyType.equals(ProcessorProperty.class)) {
-	        	Class clazz = ObjectUtil.loadClass(_expectedType);
-	            CompiledScript script  = ScriptUtil.compile(stringValue, clazz);
+	        Class propertyType = getPropertyType();
+	        if(propertyType == null || 
+                    propertyType.equals(ProcessorProperty.class)) {
+	            CompiledScript script  = 
+                    ScriptUtil.compile(stringValue, getExpectedType());
 	            String prefix = getPrefix(injected, qName);
 	            return new ProcessorPropertyImpl(qName, prefix, script);
 	        }

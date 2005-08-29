@@ -20,7 +20,6 @@ import java.util.Iterator;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -33,12 +32,12 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
 
     private Class _tagClass;
 
-    public void setClassName(String className) {
+    public void setProcessorClass(Class processorClass) {
         throw new UnsupportedOperationException();
     }
     
-    public String getClassName() {
-        return JspCustomTagProcessor.class.getName();
+    public Class getProcessorClass() {
+        return JspCustomTagProcessor.class;
     }
     
     public void setTagClass(Class tagClass) {
@@ -52,7 +51,7 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
         return _tagClass;
     }
     
-    protected TemplateProcessor newInstance(Template template, SpecificationNode injected) {
+    protected TemplateProcessor newInstance(SpecificationNode injected) {
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
@@ -65,7 +64,7 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
             SpecificationNode injected, TemplateProcessor processor) {
         for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = property.getProcessorProperty(injected, processor);
+            Object prop = property.createProcessorProperty(injected);
             if(prop != null) {
     	        JspCustomTagProcessor jspProcessor = (JspCustomTagProcessor)processor;
     	        jspProcessor.addProcessorProperty((ProcessorProperty)prop);

@@ -25,7 +25,6 @@ import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.processor.ProcessorFactory;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -45,7 +44,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     private static final Map _factoryInstances = new HashMap();
     
     private String _name;
-    private String _className;
+    private Class _processorClass;
     private List _properties;
 
     public void setName(String name) {
@@ -59,15 +58,15 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         return _name;
     }
     
-    public void setClassName(String className) {
-        if(StringUtil.isEmpty(className)) {
+    public void setProcessorClass(Class processorClass) {
+        if(processorClass == null) {
             throw new IllegalArgumentException();
         }
-        _className = className;
+        _processorClass = processorClass;
     }
 
-    public String getClassName() {
-        return _className;
+    public Class getProcessorClass() {
+        return _processorClass;
     }
     
     public void addPropertyDefinitiion(PropertyDefinition property) {
@@ -87,30 +86,26 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         return _properties.iterator();
     }
 
-    protected TemplateProcessor newInstance(
-            Template template, SpecificationNode injected) {
-        Object obj = _factoryInstances.get(_className);
+    protected TemplateProcessor newInstance(SpecificationNode injected) {
+        Object obj = _factoryInstances.get(_processorClass);
         if(obj == null) {
-            Class defineClass = ObjectUtil.loadClass(_className);
-            if(TemplateProcessor.class.isAssignableFrom(defineClass) == false && 
-                    ProcessorFactory.class.isAssignableFrom(defineClass) == false) {
-                throw new IllegalStateException();
-            }
-            obj = ObjectUtil.newInstance(defineClass);
+            obj = ObjectUtil.newInstance(_processorClass);
         }
         if(obj instanceof TemplateProcessor) {
             return (TemplateProcessor)obj;
+        } else if(obj instanceof ProcessorFactory) {
+            _factoryInstances.put(_processorClass, obj);
+            ProcessorFactory factory = (ProcessorFactory)obj;
+            return factory.createProcessor(injected);
         }
-        _factoryInstances.put(_className, obj);
-        ProcessorFactory factory = (ProcessorFactory)obj;
-        return factory.createProcessor(template, injected);
+        throw new IllegalStateException();
     }
 
     protected void settingProperties(
             SpecificationNode injected, TemplateProcessor processor) {
         for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = property.getProcessorProperty(injected, processor);
+            Object prop = property.createProcessorProperty(injected);
             if(prop != null) {
                 ObjectUtil.setProperty(processor, property.getName(), prop);
             }
@@ -136,9 +131,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         }
     }
     
-    public TemplateProcessor createTemplateProcessor(
-            Template template, SpecificationNode injected) {
-        TemplateProcessor processor = newInstance(template, injected);
+    public TemplateProcessor createTemplateProcessor(SpecificationNode injected) {
+        TemplateProcessor processor = newInstance(injected);
         settingProperties(injected, processor);
         if(processor instanceof InformalPropertyAcceptable) {
             settingInformalProperties(injected, (InformalPropertyAcceptable)processor);

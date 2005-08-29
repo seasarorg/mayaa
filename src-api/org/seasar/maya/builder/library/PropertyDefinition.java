@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.builder.library;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
@@ -39,10 +38,10 @@ public interface PropertyDefinition {
     boolean isRequired();
     
     /**
-     * MLDにexpectedType属性で記述された属性型の完全修飾名。デフォルトはjava.lang.Object。
-     * @return 属性型名。
+     * MLDにexpectedType属性で記述された属性型。デフォルトはjava.lang.Object。
+     * @return 属性型。
      */
-    String getExpectedType();
+    Class getExpectedType();
     
     /**
      * MLDのdefaultValue属性値。カスタマイズで渡すプロパティのデフォルト値。
@@ -51,11 +50,10 @@ public interface PropertyDefinition {
     String getDefaultValue();
 
     /**
-     * プロセッサにプロパティオブジェクトを取得する。
+     * プロパティオブジェクトを生成する。
      * @param injected インジェクションするノード。
-     * @param processor プロパティ設定先のプロセッサ。
      * @return プロパティオブジェクト。
      */
-    Object getProcessorProperty(SpecificationNode injected, TemplateProcessor processor);
+    Object createProcessorProperty(SpecificationNode injected);
     
 }

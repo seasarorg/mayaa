@@ -17,7 +17,6 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -38,7 +37,7 @@ public interface ProcessorDefinition {
      * 実装もしくは<code>ProcessorFactory</code>の実装クラス完全修飾名。
      * @return 実装クラス名。
      */
-    String getClassName();
+    Class getProcessorClass();
     
     /**
      * プロセッサへのバインディング情報モデル（=<code>PropertyDefinition</code>）
@@ -49,10 +48,9 @@ public interface ProcessorDefinition {
     
     /**
      * 当該設定より、テンプレートプロセッサを生成する。 
-     * @param template カレントのテンプレート。
      * @param injected インジェクションするスペックノード。
      * @return テンプレートプロセッサ。
      */
-    TemplateProcessor createTemplateProcessor(Template template, SpecificationNode injected);
+    TemplateProcessor createTemplateProcessor(SpecificationNode injected);
     
 }

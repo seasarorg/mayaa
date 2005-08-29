@@ -42,10 +42,29 @@ public class AttributeTagHandler extends TagHandler {
                 _property.setName(body);
             }
         });
-        putHandler(new RequiredSetter(this));
+        putHandler(new TagHandler("required") {
+            protected void end(String body) {
+                try {
+                    _property.setRequired(ObjectUtil.booleanValue(body, false));
+                } catch (RuntimeException e) {
+                    if(LOG.isErrorEnabled()) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                    _parent.invalidate();
+                }
+            }
+        });
         putHandler(new TagHandler("type") {
             protected void end(String body) {
-                _property.setExpectedType(body);
+                try {
+                    Class expetedType = ObjectUtil.loadClass(body);
+                    _property.setExpectedType(expetedType);
+                } catch (RuntimeException e) {
+                    if(LOG.isErrorEnabled()) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                    _parent.invalidate();
+                } 
             }
         });
     }
@@ -56,29 +75,8 @@ public class AttributeTagHandler extends TagHandler {
 
     protected void end(String body) {
         JspProcessorDefinition processor = _parent.getProcessorDefinition();
+        _property.setProcessorClass(processor.getTagClass());
         processor.addPropertyDefinitiion(_property);
     }
 
-    private class RequiredSetter extends TagHandler {
-        
-        private AttributeTagHandler _parent;
-        
-        private RequiredSetter(AttributeTagHandler parent) {
-            super("required");
-            _parent = parent;
-        }
-        
-        protected void end(String body) {
-            try {
-                _property.setRequired(ObjectUtil.booleanValue(body, false));
-            } catch (RuntimeException e) {
-                if(LOG.isErrorEnabled()) {
-                    LOG.error(e.getMessage(), e);
-                }
-                _parent.invalidate();
-            }
-        }
-        
-    }
-    
 }

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.util;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.ConvertUtils;
@@ -133,9 +134,19 @@ public class ObjectUtil {
         }
     }
     
-    public static Class getPropertyType(Object obj, String name) {
+    public static Class getPropertyType(Class beanClass, String propertyName) {
+        PropertyDescriptor[] descs = PropertyUtils.getPropertyDescriptors(beanClass);
+        for(int i = 0; i < descs.length; i++) {
+            if(descs[i].getName().equals(propertyName)) {
+                return descs[i].getPropertyType();
+            }
+        }
+        return null;
+    }
+    
+    public static Class getPropertyType(Object bean, String propertyName) {
         try {
-            return PropertyUtils.getPropertyType(obj, name);
+            return PropertyUtils.getPropertyType(bean, propertyName);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -145,7 +156,7 @@ public class ObjectUtil {
         }
     }
     
-    protected static Object convert(Class expectedType, Object value) {
+    public static Object convert(Class expectedType, Object value) {
         Converter converter = ConvertUtils.lookup(expectedType);
         if(converter != null) {
             return converter.convert(expectedType, value);
@@ -153,11 +164,14 @@ public class ObjectUtil {
         return value;
     }
     
-    public static void setProperty(Object obj, String propertyName, Object value) {
+    public static void setProperty(Object bean, String propertyName, Object value) {
     	try {
-            Class propertyType = getPropertyType(obj, propertyName);
+            Class propertyType = getPropertyType(bean, propertyName);
+            if(propertyType == null) {
+                throw new NoSuchPropertyException(bean.getClass(), propertyName);
+            }
             value = convert(propertyType, value);
-            PropertyUtils.setProperty(obj, propertyName, value);
+            PropertyUtils.setProperty(bean, propertyName, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {

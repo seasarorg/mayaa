@@ -31,17 +31,17 @@ public interface CompiledScript extends Serializable {
     Object execute(Object root);
     
     /**
-     * スクリプトの取得。
-     * @return スクリプト文字列。
-     */
-//    String getText();
-    
-    /**
-     * スクリプト実行結果への期待型。
-     * @return 期待されるクラス型。
+     * スクリプト実行結果への期待型の取得。
+     * @return 実行結果に期待されるクラス型。
      */
     Class getExpectedType();
- 
+
+    /**
+     * スクリプト実行結果への期待型の設定。
+     * @param expectedType 実行結果に期待するクラス型。
+     */
+    void setExpectedType(Class expectedType);
+    
     /**
      * リテラルテキストかどうか。
      * @return コンパイル結果が、リテラルだったらtrue。

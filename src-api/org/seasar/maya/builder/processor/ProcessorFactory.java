@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.builder.processor;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -27,10 +26,9 @@ public interface ProcessorFactory {
 
     /**
      * カスタマイズされたプロセッサ生成を行う際のオプショナルなファクトリAPI。
-     * @param template テンプレート。
      * @param injected インジェクトするノード情報。
      * @return 処理を委譲するTemplateProcessor。
      */
-    TemplateProcessor createProcessor(Template template, SpecificationNode injected);
+    TemplateProcessor createProcessor(SpecificationNode injected);
     
 }

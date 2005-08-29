@@ -95,7 +95,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         TemplateProcessor processor = null;
         ProcessorDefinition def = _libraryManger.getProcessorDefinition(injected.getQName());
         if(def != null) {
-            processor = def.createTemplateProcessor(template, injected);
+            processor = def.createTemplateProcessor(injected);
             processor.setOriginalNode(original);
             processor.setInjectedNode(injected);
         }

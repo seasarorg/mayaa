@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.script;
 
 import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -26,30 +27,31 @@ public class LiteralScript  implements CompiledScript {
 	private static final long serialVersionUID = -3791475287481727514L;
 
 	private String _text;
-    private Class _expectedType;
+    private Class _expectedType = Object.class;
     
-    public LiteralScript(String text, Class expectedType) {
+    public LiteralScript(String text) {
         if(StringUtil.isEmpty(text)) {
             throw new IllegalArgumentException();
         }
         _text = text;
-        _expectedType = expectedType;
     }
     
+    public void setExpectedType(Class expectedType) {
+        if(expectedType == null) {
+            throw new IllegalArgumentException();
+        }
+        _expectedType = expectedType;
+    }
+
     public Class getExpectedType() {
         return _expectedType;
     }
     
     public Object execute(Object root) {
-        if(_expectedType != Void.class &&
-                _expectedType != String.class &&
-                _expectedType != Object.class) {
-            throw new ConversionException(this, _expectedType);
-        }
         if(_expectedType == Void.class) {
             return null;
         }
-        return _text;
+        return ObjectUtil.convert(_expectedType, _text);
     }
     
     public String getText() {

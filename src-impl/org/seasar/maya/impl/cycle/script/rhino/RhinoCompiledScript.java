@@ -42,16 +42,14 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     private String _sourceName;
     int _lineno;
     
-    public RhinoCompiledScript(
-    		String text, Class expectedType, String sourceName, int lineno) {
-        super(text, expectedType);
+    public RhinoCompiledScript(String text, String sourceName, int lineno) {
+        super(text);
         _sourceName = sourceName;
         _lineno = lineno;
     }
     
-    public RhinoCompiledScript(
-            SourceDescriptor source, String encoding, Class expectedType) {
-        super(source, encoding, expectedType);
+    public RhinoCompiledScript(SourceDescriptor source, String encoding) {
+        super(source, encoding);
         _sourceName = source.getSystemID();
         _lineno = 1;
     }

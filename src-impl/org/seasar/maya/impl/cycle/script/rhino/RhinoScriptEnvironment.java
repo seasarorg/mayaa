@@ -46,9 +46,13 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         }
         String text = scriptBlock.getBlockString();
         if(scriptBlock.isLiteral()) {
-            return new LiteralScript(text, expectedType);
+            CompiledScript literal = new LiteralScript(text);
+            literal.setExpectedType(expectedType);
+            return literal;
         }
-        return new RhinoCompiledScript(text, expectedType, sourceName, lineno);
+        CompiledScript compiled = new RhinoCompiledScript(text, sourceName, lineno);
+        compiled.setExpectedType(expectedType);
+        return compiled;
     }
 
     public CompiledScript compile(
@@ -56,7 +60,9 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         if(source == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
-        return new RhinoCompiledScript(source, encoding, expectedType);
+        CompiledScript compiled = new RhinoCompiledScript(source, encoding);
+        compiled.setExpectedType(expectedType);
+        return compiled;
     }
 
     public void initScope() {

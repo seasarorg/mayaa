@@ -15,10 +15,8 @@
  */
 package org.seasar.maya.impl.builder.library;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.util.ScriptUtil;
 
@@ -27,15 +25,15 @@ import org.seasar.maya.impl.util.ScriptUtil;
  */
 public class JspPropertyDefinition extends PropertyDefinitionImpl {
     
-    public Object getProcessorProperty(
-            SpecificationNode injected, TemplateProcessor processor) {
-        if(processor instanceof JspCustomTagProcessor == false) {
-            throw new IllegalStateException();
-        }
+    public Object createProcessorProperty(SpecificationNode injected) {
         QName qName = getQName(injected);
         String stringValue = getProcessValue(injected, qName);
         if(stringValue != null) {
-            Object value = ScriptUtil.compile(stringValue, Object.class);
+            Class propertyType = getPropertyType();
+            if(propertyType == null) {
+                throw new IllegalStateException();
+            }
+            Object value = ScriptUtil.compile(stringValue, propertyType);
             String prefix = getPrefix(injected, qName);
             return new ProcessorPropertyImpl(qName, prefix, value);
         }

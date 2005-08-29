@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.script;
 
 import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -26,17 +27,22 @@ public class ComplexScript implements CompiledScript {
  	private static final long serialVersionUID = -7356099026354564155L;
 
  	private String _script;
-    private Class _expectedType;
+    private Class _expectedType = Object.class;
     private CompiledScript[] _compiled;
     
-    public ComplexScript(
-            String script,  Class expectedType, CompiledScript[] compiled) {
-        if(StringUtil.isEmpty(script) || expectedType == null || compiled == null) {
+    public ComplexScript(String script,  CompiledScript[] compiled) {
+        if(StringUtil.isEmpty(script) || compiled == null) {
             throw new IllegalArgumentException();
         }
         _script = script;
-        _expectedType = expectedType;
         _compiled = compiled;
+    }
+    
+    public void setExpectedType(Class expectedType) {
+        if(expectedType == null) {
+            throw new IllegalArgumentException();
+        }
+        _expectedType = expectedType;
     }
     
     public Class getExpectedType() {
@@ -44,11 +50,6 @@ public class ComplexScript implements CompiledScript {
     }
     
     public Object execute(Object root) {
-        if(_expectedType != Void.class &&
-                _expectedType != String.class &&
-                _expectedType != Object.class) {
-            throw new ConversionException(this, _expectedType);
-        }
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].execute(root));
@@ -56,7 +57,7 @@ public class ComplexScript implements CompiledScript {
         if(_expectedType == Void.class) {
             return null;
         }
-         return buffer.toString();
+        return ObjectUtil.convert(_expectedType, buffer.toString());
     }
 
     public String getText() {

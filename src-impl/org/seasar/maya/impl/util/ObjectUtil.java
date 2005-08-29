@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.converters.BooleanConverter;
 
@@ -29,6 +28,85 @@ import org.apache.commons.beanutils.converters.BooleanConverter;
 public class ObjectUtil {
 
     private ObjectUtil() {
+    }
+    
+    protected static String getClassSignature(String className) {
+        if(StringUtil.isEmpty(className)) {
+            throw new IllegalArgumentException();
+        }
+        if(className.endsWith("[]") == false) {
+            return className;
+        }
+        StringBuffer buffer = new StringBuffer();
+        while(className.endsWith("[]")) {
+            buffer.append("[");
+            className = className.substring(0, className.length() - 2);
+        }
+        if("short".equals(className)) {
+            buffer.append("S");
+        } else if("int".equals(className)) {
+            buffer.append("I");
+        } else if("long".equals(className)) {
+            buffer.append("J");
+        } else if("float".equals(className)) {
+            buffer.append("F");
+        } else if("double".equals(className)) {
+            buffer.append("D");
+        } else if("byte".equals(className)) {
+            buffer.append("B");
+        } else if("char".equals(className)) {
+            buffer.append("C");
+        } else if("boolean".equals(className)) {
+            buffer.append("Z");
+        } else if("void".equals(className)) {
+            throw new IllegalArgumentException();
+        } else {
+            buffer.append("L").append(className).append(";");
+        }
+        return buffer.toString();
+    }
+    
+    protected static Class loadPrimitiveClass(String className) {
+        if(StringUtil.isEmpty(className)) {
+            throw new IllegalArgumentException();
+        }
+        if("short".equals(className)) {
+            return Short.TYPE;
+        } else if("int".equals(className)) {
+            return Integer.TYPE;
+        } else if("long".equals(className)) {
+            return Long.TYPE;
+        } else if("float".equals(className)) {
+            return Float.TYPE;
+        } else if("double".equals(className)) {
+            return Double.TYPE;
+        } else if("byte".equals(className)) {
+            return Byte.TYPE;
+        } else if("char".equals(className)) {
+            return Character.TYPE;
+        } else if("boolean".equals(className)) {
+            return Boolean.TYPE;
+        } else if("void".equals(className)) {
+            return Void.TYPE;
+        }
+        return null;
+    }
+    
+    public static Class loadClass(String className) {
+        if(StringUtil.isEmpty(className)) {
+            throw new IllegalArgumentException();
+        }
+        Class primitive = loadPrimitiveClass(className);
+        if(primitive != null) {
+            return primitive;
+        }
+        className = getClassSignature(className);
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try {
+            return loader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Class loadClass(String className, Class expectedType) {
@@ -40,37 +118,6 @@ public class ObjectUtil {
             return clazz;
         }
         throw new IllegalTypeException(expectedType, clazz);
-    }
-    
-    public static Class loadClass(String className) {
-        if(StringUtil.isEmpty(className)) {
-            throw new IllegalArgumentException();
-        }
-        if("short".equals(className)) {
-        	return Short.TYPE;
-        } else if("int".equals(className)) {
-        	return Integer.TYPE;
-        } else if("long".equals(className)) {
-        	return Long.TYPE;
-        } else if("float".equals(className)) {
-        	return Float.TYPE;
-        } else if("double".equals(className)) {
-        	return Double.TYPE;
-        } else if("byte".equals(className)) {
-        	return Byte.TYPE;
-        } else if("char".equals(className)) {
-        	return Character.TYPE;
-        } else if("boolean".equals(className)) {
-        	return Boolean.TYPE;
-        } else if("void".equals(className)) {
-        	return Void.TYPE;
-        }
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try {
-            return loader.loadClass(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
     
     public static Object newInstance(Class clazz) {
@@ -98,7 +145,7 @@ public class ObjectUtil {
         }
     }
     
-    public static Object convert(Class expectedType, Object value) {
+    protected static Object convert(Class expectedType, Object value) {
         Converter converter = ConvertUtils.lookup(expectedType);
         if(converter != null) {
             return converter.convert(expectedType, value);
@@ -116,18 +163,6 @@ public class ObjectUtil {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static Object invoke(Object obj, String methodName, Object[] args) {
-        try {
-            return MethodUtils.invokeMethod(obj, methodName, args);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

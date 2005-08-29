@@ -25,23 +25,23 @@ public class ConversionException extends ScriptException {
 	private static final long serialVersionUID = -485430528770416298L;
 
     private CompiledScript _compiled;
-    private Class _executedType;
+    private Class _expectedType;
     
-    public ConversionException(CompiledScript compiled, Class executedType) {
+    public ConversionException(CompiledScript compiled, Class expectedType) {
         _compiled = compiled;
-        _executedType = executedType;
+        _expectedType = expectedType;
     }
     
     public Object getCompiled() {
         return _compiled;
     }
     
-    public Class getExecutedType() {
-        return _executedType;
+    public Class getExpectedType() {
+        return _expectedType;
     }
     
     protected Object[] getMessageParams() {
-        return new Object[] { _compiled, _executedType };
+        return new Object[] { _compiled, _expectedType };
     }
     
 }

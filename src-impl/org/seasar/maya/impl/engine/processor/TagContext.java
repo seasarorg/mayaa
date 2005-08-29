@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +28,6 @@ import org.seasar.maya.impl.util.CycleUtil;
  */
 public class TagContext {
 
-    /**
-     * ステートフル情報を保持するコンテキストオブジェクトの取得を行う。
-     * @param cycle カレントのテンプレートコンテキスト。
-     * @return コンテキストオブジェクト。
-     *          テンプレートコンテキスト中に保持していないときには生成する。
-     */
     public static TagContext getTagContext() {
         final String KEY_TAG_CONTEXT = TagContext.class.getName();
         TagContext tagContext = 
@@ -47,10 +40,7 @@ public class TagContext {
     }
 
     private Map _tagPoolEntries = new HashMap();
-    
     private Map _loadedTagMap = new HashMap();
-    private Map _nestedVariableMap = new HashMap();
-    private Map _nestedVariableNameMap = new HashMap();
 
     private TagPoolEntry getEntry(Class tagClass, String attributesKey) {
         synchronized (_tagPoolEntries) {
@@ -64,78 +54,20 @@ public class TagContext {
         }
     }
     
-    /**
-     * クラス名を指定してカスタムタグを取得する。
-     * @param tagClass カスタムタグのクラス名。
-     * @param attributesKey 属性の組み合わせ識別キー
-     * @return カスタムタグのインスタンス。
-     */
     public Tag loadTag(Class tagClass, String attributesKey) {
         TagPoolEntry entry = getEntry(tagClass, attributesKey);
         return entry.request();
     }
     
-    /**
-     * ロードしたJSPカスタムタグを保存する。TemplateProcessorがリクエストに対して
-     * ステートレスなつくりのために、ステートフルなJSPカスタムタグをコンテキストで
-     * ハンドルする必要がある。
-     * @param templateProcessor 処理を行うTemplateProcessor。
-     * @param customTag	インジェクトされたJSPカスタムタグ。
-     */
-    public void putLoadedTag(TemplateProcessor templateProcessor, Tag customTag) {
+    public void putLoadedTag(TemplateProcessor templateProcessor,
+            Tag customTag) {
         _loadedTagMap.put(templateProcessor, customTag);
     }
     
-    /**
-     * ロード済みのJSPカスタムタグを取得する。
-     * @param templateProcessor 処理を行うTemplateProcessor。
-     * @return インジェクトされたJSPカスタムタグ。
-     */
     public Tag getLoadedTag(TemplateProcessor templateProcessor) {
         return (Tag)_loadedTagMap.get(templateProcessor);
     }
 
-    /**
-     * JSPカスタムタグネスト時に一時待避するNESTED変数Mapを保存する。
-     * @param customTag インジェクトされたJSPカスタムタグ。
-     * @param variables カスタムタグのNESTED変数の値。
-     */
-    public void putNestedVariables(Tag customTag, Map variables) {
-        _nestedVariableMap.put(customTag, variables);
-    }
-
-    /**
-     * 一時待避したJSPカスタムタグのNESTED変数Mapを取得する。
-     * @param customTag インジェクトされたJSPカスタムタグ。
-     * @return カスタムタグのNESTED変数の値。
-     */
-    public Map getNestedVariables(Tag customTag) {
-        return (Map)_nestedVariableMap.get(customTag);
-    }
-
-    /**
-     * JSPカスタムタグのNESTED変数名を保存する。
-     * @param customTag インジェクトされたJSPカスタムタグ。
-     * @param variableNames カスタムタグ用のNESTED変数名
-     */
-    public void putNestedVariableNames(Tag customTag, Collection variableNames) {
-        _nestedVariableNameMap.put(customTag, variableNames);
-    }
-
-    /**
-     * JSPカスタムタグのNESTED変数名を取得する。
-     * @param customTag インジェクトされたJSPカスタムタグ。
-     * @return JSPカスタムタグの変数名。
-     */
-    public Collection getNestedVariableNames(Tag customTag) {
-        return (Collection)_nestedVariableNameMap.get(customTag);
-    }
-
-    /**
-     * カスタムタグをプールに戻す.
-     * @param tag プールに戻すカスタムタグ
-     * @param attributesKey 属性の組み合わせ識別キー
-     */
     public void releaseTag(Tag tag, String attributesKey) {
         TagPoolEntry entry = getEntry(tag.getClass(), attributesKey);
         entry.release(tag);

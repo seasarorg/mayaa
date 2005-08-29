@@ -44,7 +44,7 @@ public class LiteralScript  implements CompiledScript {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
-            throw new ConversionException(this, String.class);
+            throw new ConversionException(this, _expectedType);
         }
         if(_expectedType == Void.class) {
             return null;

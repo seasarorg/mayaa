@@ -47,7 +47,7 @@ public class ComplexScript implements CompiledScript {
         if(_expectedType != Void.class &&
                 _expectedType != String.class &&
                 _expectedType != Object.class) {
-            throw new ConversionException(this, null);
+            throw new ConversionException(this, _expectedType);
         }
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {

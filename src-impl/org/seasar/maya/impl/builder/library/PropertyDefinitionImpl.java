@@ -113,17 +113,15 @@ public class PropertyDefinitionImpl
         return ret;
     }
 
-    protected QName getQName(SpecificationNode injected) {
+    protected QName getPropertyQName(SpecificationNode injected) {
         return new QName(injected.getQName().getNamespaceURI(), _name);
     }
     
     protected String getProcessValue(SpecificationNode injected, QName qName) {
         String value = _defaultValue;
-        if(injected != null) {
-            NodeAttribute attribute = injected.getAttribute(qName);
-            if(attribute != null) {
-                value = attribute.getValue();
-            }
+        NodeAttribute attribute = injected.getAttribute(qName);
+        if(attribute != null) {
+            value = attribute.getValue();
         }
         if(value == null && _required) {
             throw new NoRequiredPropertyException(injected, qName);
@@ -132,15 +130,18 @@ public class PropertyDefinitionImpl
     }
     
     public Object createProcessorProperty(SpecificationNode injected) {
-        QName qName = getQName(injected);
-        String stringValue = getProcessValue(injected, qName);
+    	if(injected == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	QName propertyQName = getPropertyQName(injected);
+        String stringValue = getProcessValue(injected, propertyQName);
         if(stringValue != null) {
 	        Class propertyType = getPropertyType();
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	            CompiledScript script  = 
                     ScriptUtil.compile(stringValue, getExpectedType());
-	            String prefix = getPrefix(injected, qName);
-	            return new ProcessorPropertyImpl(qName, prefix, script);
+	            String prefix = getPrefix(injected, propertyQName);
+	            return new ProcessorPropertyImpl(propertyQName, prefix, script);
 	        } else if(propertyType.equals(QNameable.class)) {
                 return SpecificationUtil.parseName(injected, stringValue, URI_HTML); 
             }

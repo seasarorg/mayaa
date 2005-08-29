@@ -30,14 +30,14 @@
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
 	
 	<templateBuilder class="org.seasar.maya.impl.builder.TemplateBuilderImpl">
-		<resolver class="org.seasar.maya.impl.builder.specification.ContentTypeSetter"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.HtmlAttributesSetter"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.NamespacesSetter"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.ElementDuplicator"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.ComponentPageInjectionResolver"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.InjectAttributeInjectionResolver"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.EqualsIDInjectionResolver"/>
-		<resolver class="org.seasar.maya.impl.builder.specification.XPathMatchesInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.ContentTypeSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.HtmlAttributesSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.NamespacesSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.ElementDuplicator"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.ComponentPageInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.InjectAttributeInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.EqualsIDInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.XPathMatchesInjectionResolver"/>
 		<library class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
 			<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>
 			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">

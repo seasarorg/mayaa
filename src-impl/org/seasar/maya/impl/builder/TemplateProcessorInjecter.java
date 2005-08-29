@@ -18,16 +18,16 @@ package org.seasar.maya.impl.builder;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.specification.DefaultInjectionChain;
+import org.seasar.maya.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.maya.impl.engine.processor.AttributeProcessor;
 import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;

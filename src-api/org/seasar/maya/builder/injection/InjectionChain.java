@@ -13,28 +13,26 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.builder.specification;
+package org.seasar.maya.builder.injection;
 
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * テンプレートに記述されたHTMLタグに、追加的な情報を保持するノードを
- * インジェクションするレゾルバ。このインターフェイスを実装してエンジンの挙動
- * をカスタマイズすることができる。
+ * インジェクションするレゾルバチェーン。このインターフェイスの実装オブジェクトは
+ * エンジンが提供する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface InjectionResolver extends Parameterizable {
+public interface InjectionChain {
 
     /**
-     * テンプレート上のオリジナルなノードにインジェクションするノードを決定する。
+     * テンプレート上のオリジナルなノードにインジェクションするノードを決定する際の
+     * チェーンメソッド。
      * @param template テンプレート。
      * @param original テンプレート上のオリジナルなノード。
-     * @param chain 次のリゾルバへ処理を委譲するチェーン。
      * @return インジェクションするノードもしくはnull。
      */
-    SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain);
+    SpecificationNode getNode(Template template, SpecificationNode original);
     
 }

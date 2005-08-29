@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.builder;
 
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.builder.specification.InjectionResolver;
 
 /**
  * HTMLテンプレートのビルダ

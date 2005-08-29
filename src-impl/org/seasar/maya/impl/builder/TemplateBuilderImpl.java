@@ -16,15 +16,15 @@
 package org.seasar.maya.impl.builder;
 
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.builder.specification.InjectionResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.injection.CompositeInjectionResolver;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.builder.parser.TemplateParser;
 import org.seasar.maya.impl.builder.parser.TemplateScanner;
-import org.seasar.maya.impl.builder.specification.CompositeInjectionResolver;
 import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

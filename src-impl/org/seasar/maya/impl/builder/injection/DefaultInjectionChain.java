@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.builder.specification;
+package org.seasar.maya.impl.builder.injection;
 
-import org.seasar.maya.builder.specification.InjectionChain;
+import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;

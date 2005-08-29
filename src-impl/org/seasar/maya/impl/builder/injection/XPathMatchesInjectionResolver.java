@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.builder.specification;
+package org.seasar.maya.impl.builder.injection;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.builder.specification.InjectionChain;
-import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.builder.injection.InjectionChain;
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeNamespace;

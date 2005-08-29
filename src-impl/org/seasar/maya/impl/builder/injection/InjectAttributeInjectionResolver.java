@@ -13,38 +13,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.builder.specification;
+package org.seasar.maya.impl.builder.injection;
 
-import java.util.Iterator;
-
-import org.seasar.maya.builder.specification.InjectionChain;
-import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.builder.injection.InjectionChain;
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
- * オリジナルノードの名前空間モデルを、インジェクト結果にコピーする。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NamespacesSetter implements InjectionResolver, CONST_IMPL {
-    
+public class InjectAttributeInjectionResolver implements InjectionResolver, CONST_IMPL {
+	
     public SpecificationNode getNode(
             Template template, SpecificationNode original, InjectionChain chain) {
         if(template == null || original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-        SpecificationNode injected =  chain.getNode(template, original);
-        for(Iterator it = original.iterateNamespace(); it.hasNext(); ) {
-            NodeNamespace namespace = (NodeNamespace)it.next();
-            String uri = namespace.getNamespaceURI();
-            if(URI_MAYA.equals(uri) == false) { 
-                injected.addNamespace(namespace.getPrefix(), uri);
+    	String injectName = SpecificationUtil.getAttributeValue(original, QM_INJECT);
+        if(StringUtil.hasValue(injectName)) {
+            QNameable qNameable = SpecificationUtil.parseName(
+                    original, injectName, URI_MAYA);
+            QName qName = qNameable.getQName();
+            if(QM_IGNORE.equals(qName) == false) {
+	            String uri = qName.getNamespaceURI();
+	            return SpecificationUtil.createInjectedNode(qName, uri, original); 
             }
         }
-        return injected;
+        return chain.getNode(template, original);
     }
     
     public void setParameter(String name, String value) {

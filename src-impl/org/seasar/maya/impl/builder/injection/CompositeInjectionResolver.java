@@ -13,13 +13,13 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.specification;
+package org.seasar.maya.impl.builder.injection;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.builder.specification.InjectionChain;
-import org.seasar.maya.builder.specification.InjectionResolver;
+import org.seasar.maya.builder.injection.InjectionChain;
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;

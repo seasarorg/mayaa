@@ -33,15 +33,13 @@ public interface ProcessorDefinition {
     String getName();
     
     /**
-     * class属性で指定した、<code>TemplateProcessor</code>の
-     * 実装もしくは<code>ProcessorFactory</code>の実装クラス完全修飾名。
+     * class属性で指定した、TemplateProcessorの実装クラス完全修飾名。
      * @return 実装クラス名。
      */
     Class getProcessorClass();
     
     /**
-     * プロセッサへのバインディング情報モデル（=<code>PropertyDefinition</code>）
-     * オブジェクトのイテレート。
+     * プロセッサへのバインディング情報モデル（PropertyDefinition）オブジェクトのイテレート。
      * @return バインディング情報イテレーター。
      */
     Iterator iteratePropertyDefinition();        

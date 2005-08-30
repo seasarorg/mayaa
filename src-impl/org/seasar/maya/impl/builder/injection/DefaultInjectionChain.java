@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -53,8 +52,8 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         return false;
     }
     
-    public SpecificationNode getNode(Template template, SpecificationNode original) {
-        if(template == null || original == null) {
+    public SpecificationNode getNode(SpecificationNode original) {
+        if(original == null) {
             throw new IllegalArgumentException();
         }
         if(isSpecialNode(original.getQName())) {

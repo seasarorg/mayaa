@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -31,14 +30,14 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
 
-    private void setContentType(Template template, SpecificationNode specificationNode,
+    private void setContentType(SpecificationNode original,
             QName httpEquivName, QName contentName) {
-        NodeAttribute equiv = specificationNode.getAttribute(httpEquivName);
+        NodeAttribute equiv = original.getAttribute(httpEquivName);
         if(equiv != null && "Content-Type".equalsIgnoreCase(equiv.getValue())) {
-            NodeAttribute content = specificationNode.getAttribute(contentName);
+            NodeAttribute content = original.getAttribute(contentName);
             String value = content.getValue();
             if(StringUtil.hasValue(value)) {
-        		SpecificationNode maya = SpecificationUtil.getMayaNode(template);
+        		SpecificationNode maya = SpecificationUtil.getMayaNode(original);
         		if(maya == null) {
         		    throw new IllegalStateException();
         		}
@@ -47,18 +46,18 @@ public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
         }
     }
     
-    public SpecificationNode getNode(Template template, 
+    public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(template == null) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         QName originalName = original.getQName();
         if(QH_META.equals(originalName)) {
-            setContentType(template, original, QH_HTTP_EQUIV, QH_CONTENT);
+            setContentType(original, QH_HTTP_EQUIV, QH_CONTENT);
         } else if(QX_META.equals(originalName)) {
-            setContentType(template, original, QX_HTTP_EQUIV, QX_CONTENT);
+            setContentType(original, QX_HTTP_EQUIV, QX_CONTENT);
         }
-        return chain.getNode(template, original);
+        return chain.getNode(original);
     }
     
     public void setParameter(String name, String value) {

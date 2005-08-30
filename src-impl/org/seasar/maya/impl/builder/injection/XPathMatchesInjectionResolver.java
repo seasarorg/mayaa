@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.NodeObject;
@@ -35,9 +34,11 @@ import org.seasar.maya.impl.util.XPathUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_IMPL {
+public class XPathMatchesInjectionResolver 
+        implements InjectionResolver, CONST_IMPL {
 
-    private final CheckXPathCopyToFilter _xpathFilter = new CheckXPathCopyToFilter(); 
+    private final CheckXPathCopyToFilter _xpathFilter = 
+        new CheckXPathCopyToFilter(); 
     
 	private Map getNamespaceMap(SpecificationNode node) {
 		Map namespaces  = new HashMap();
@@ -49,25 +50,25 @@ public class XPathMatchesInjectionResolver implements InjectionResolver, CONST_I
 	}
 	
     public SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain) {
-        if(template == null || original == null || chain == null) {
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         Map namespaces = new HashMap();
         namespaces.put("m", URI_MAYA);
         String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
         for(Iterator it = XPathUtil.selectChildNodes(
-                template, xpathExpr, namespaces, true); it.hasNext(); ) {
+                original, xpathExpr, namespaces, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
             String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, getNamespaceMap(injected))) {
                 if(QM_IGNORE.equals(injected)) {
-                    return chain.getNode(template, original);
+                    return chain.getNode(original);
                 }
                 return injected.copyTo(_xpathFilter);
             }
         }
-        return chain.getNode(template, original);
+        return chain.getNode(original);
     }
     
     public void setParameter(String name, String value) {

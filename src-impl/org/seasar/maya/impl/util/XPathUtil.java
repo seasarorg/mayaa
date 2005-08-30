@@ -69,8 +69,9 @@ public class XPathUtil {
         }
     }
     
-    public static Iterator selectChildNodes(Specification specification,
+    public static Iterator selectChildNodes(SpecificationNode node,
             String xpathExpr, Map namespaces, boolean cascade) {
+        Specification specification = SpecificationUtil.findSpecification(node);
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }

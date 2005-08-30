@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -48,12 +47,12 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
 	    return isRendered(original) || isRendered(injected);
 	}
 	
-	public SpecificationNode getNode(Template template, 
+	public SpecificationNode getNode( 
 	        SpecificationNode original, InjectionChain chain) {
-		if(template == null) {
+		if(original == null || chain == null) {
 			throw new IllegalArgumentException();
 		}
-		SpecificationNode injected = chain.getNode(template, original);
+		SpecificationNode injected = chain.getNode(original);
 	    if(injected == null) {
 	    	return null;
 	    }

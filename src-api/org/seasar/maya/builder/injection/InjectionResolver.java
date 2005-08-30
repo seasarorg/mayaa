@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.builder.injection;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.provider.Parameterizable;
 
@@ -29,12 +28,10 @@ public interface InjectionResolver extends Parameterizable {
 
     /**
      * テンプレート上のオリジナルなノードにインジェクションするノードを決定する。
-     * @param template テンプレート。
      * @param original テンプレート上のオリジナルなノード。
      * @param chain 次のリゾルバへ処理を委譲するチェーン。
      * @return インジェクションするノード。
      */
-    SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain);
+    SpecificationNode getNode(SpecificationNode original, InjectionChain chain);
     
 }

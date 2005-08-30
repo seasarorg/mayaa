@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
@@ -60,8 +59,8 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
     }
 	
     public SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain) {
-        if(template == null || original == null || chain == null) {
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         String id = getID(original);
@@ -70,11 +69,11 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
             namespaces.put("m", URI_MAYA);
             String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
             Iterator it = XPathUtil.selectChildNodes(
-                    template, xpathExpr, namespaces, true);
+                    original, xpathExpr, namespaces, true);
 	        if(it.hasNext()) {
 	            SpecificationNode injected = (SpecificationNode)it.next();
 	            if(QM_IGNORE.equals(injected.getQName())) {
-	                return chain.getNode(template, original);
+	                return chain.getNode(original);
 	            }
 	            return injected.copyTo(_idFilter);
 	        }
@@ -84,7 +83,7 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 		        throw new IDNotResolvedException(original, id);
             }
         }
-        return chain.getNode(template, original);
+        return chain.getNode(original);
     }
 
     public void setParameter(String name, String value) {

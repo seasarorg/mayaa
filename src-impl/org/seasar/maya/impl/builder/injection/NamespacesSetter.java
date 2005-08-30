@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -29,14 +28,15 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
  * オリジナルノードの名前空間モデルを、インジェクト結果にコピーする。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NamespacesSetter implements InjectionResolver, CONST_IMPL {
+public class NamespacesSetter 
+        implements InjectionResolver, CONST_IMPL {
     
     public SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain) {
-        if(template == null || original == null || chain == null) {
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-        SpecificationNode injected =  chain.getNode(template, original);
+        SpecificationNode injected =  chain.getNode(original);
         for(Iterator it = original.iterateNamespace(); it.hasNext(); ) {
             NodeNamespace namespace = (NodeNamespace)it.next();
             String uri = namespace.getNamespaceURI();

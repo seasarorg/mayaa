@@ -39,30 +39,23 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         throw new UnsupportedParameterException(name);
     }
 
-    protected CompiledScript compile(ScriptBlock scriptBlock, 
-            Class expectedType, String sourceName, int lineno) {
-        if(scriptBlock == null || expectedType == null) {
+    protected CompiledScript compile(
+            ScriptBlock scriptBlock, String sourceName, int lineno) {
+        if(scriptBlock == null) {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
         if(scriptBlock.isLiteral()) {
-            CompiledScript literal = new LiteralScript(text);
-            literal.setExpectedType(expectedType);
-            return literal;
+            return new LiteralScript(text);
         }
-        CompiledScript compiled = new RhinoCompiledScript(text, sourceName, lineno);
-        compiled.setExpectedType(expectedType);
-        return compiled;
+        return new RhinoCompiledScript(text, sourceName, lineno);
     }
 
-    public CompiledScript compile(
-            SourceDescriptor source, String encoding, Class expectedType) {
-        if(source == null || expectedType == null) {
+    public CompiledScript compile(SourceDescriptor source, String encoding) {
+        if(source == null) {
             throw new IllegalArgumentException();
         }
-        CompiledScript compiled = new RhinoCompiledScript(source, encoding);
-        compiled.setExpectedType(expectedType);
-        return compiled;
+        return new RhinoCompiledScript(source, encoding);
     }
 
     public void initScope() {

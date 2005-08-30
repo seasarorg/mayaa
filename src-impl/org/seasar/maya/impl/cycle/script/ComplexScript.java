@@ -36,6 +36,9 @@ public class ComplexScript implements CompiledScript {
         }
         _script = script;
         _compiled = compiled;
+        for(int i = 0; i < compiled.length; i++) {
+            compiled[i].setExpectedType(String.class);
+        }
     }
     
     public void setExpectedType(Class expectedType) {

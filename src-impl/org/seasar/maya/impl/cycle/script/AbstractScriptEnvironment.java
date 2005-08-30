@@ -52,32 +52,27 @@ public abstract class AbstractScriptEnvironment implements ScriptEnvironment {
     	return _scriptResolver;
     }
     
-    protected abstract CompiledScript compile(ScriptBlock scriptBlock, 
-            Class expectedType, String sourceName, int lineno);
+    protected abstract CompiledScript compile(
+            ScriptBlock scriptBlock, String sourceName, int lineno);
     
-    public CompiledScript compile(String script, 
-            Class expectedType, String sourceName, int lineno) {
-        if(StringUtil.isEmpty(script) || expectedType == null) {
+    public CompiledScript compile(String script, String sourceName, int lineno) {
+        if(StringUtil.isEmpty(script)) {
             throw new IllegalArgumentException();
         }
         List list = new ArrayList();
         for(Iterator it = new ScriptBlockIterator(script, _blockSign);
         	it.hasNext();) {
             ScriptBlock block = (ScriptBlock)it.next();
-            list.add(compile(block, expectedType, sourceName, lineno));
+            list.add(compile(block, sourceName, lineno));
         }
         if(list.size() == 0) {
     	    throw new SyntaxException(script);
         } else if(list.size() == 1) {
             return (CompiledScript)list.get(0);
     	}
-	    CompiledScript[] compiled = 
-	        (CompiledScript[])list.toArray(new CompiledScript[list.size()]);
-        for(int i = 0; i < compiled.length; i++) {
-            compiled[i].setExpectedType(String.class);
-        }
+	    CompiledScript[] compiled = (CompiledScript[])list.toArray(
+                new CompiledScript[list.size()]);
         CompiledScript complex = new ComplexScript(script, compiled);
-        complex.setExpectedType(expectedType);
         return complex;
     }
 

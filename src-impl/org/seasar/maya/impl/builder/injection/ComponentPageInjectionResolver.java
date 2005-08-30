@@ -18,7 +18,6 @@ package org.seasar.maya.impl.builder.injection;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -35,13 +34,12 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 public class ComponentPageInjectionResolver 
 		implements InjectionResolver, CONST_IMPL {
 
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
-    }
-
-    public SpecificationNode getNode(Template template,
+    public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        SpecificationNode injected = chain.getNode(template, original);
+        if(original == null || chain == null) {
+            throw new IllegalArgumentException();
+        }
+        SpecificationNode injected = chain.getNode(original);
         QName qName = injected.getQName();
         String uri = qName.getNamespaceURI();
         if(uri.startsWith("/")) {
@@ -58,6 +56,10 @@ public class ComponentPageInjectionResolver
 	        }
         }
         return injected;
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

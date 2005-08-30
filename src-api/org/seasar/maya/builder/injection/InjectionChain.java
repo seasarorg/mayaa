@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.builder.injection;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
@@ -28,11 +27,11 @@ public interface InjectionChain {
 
     /**
      * テンプレート上のオリジナルなノードにインジェクションするノードを決定する際の
-     * チェーンメソッド。
-     * @param template テンプレート。
+     * チェーンメソッド。InjectionResolver#getNode()の引数として渡される。
+     * InjectionResolverの各実装はこのInjectionChainからノードの解決を得る。
      * @param original テンプレート上のオリジナルなノード。
      * @return インジェクションするノードもしくはnull。
      */
-    SpecificationNode getNode(Template template, SpecificationNode original);
+    SpecificationNode getNode(SpecificationNode original);
     
 }

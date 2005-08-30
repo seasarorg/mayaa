@@ -65,7 +65,7 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
-    private static Specification findSpecification(SpecificationNode current) {
+    public static Specification findSpecification(SpecificationNode current) {
         while(current instanceof Specification == false) {
             current = current.getParentNode();
             if(current == null) {
@@ -92,7 +92,8 @@ public class SpecificationUtil implements CONST_IMPL {
         throw new IllegalStateException();
     }
     
-	public static SpecificationNode getMayaNode(Specification specification) {
+	public static SpecificationNode getMayaNode(SpecificationNode node) {
+        Specification specification = findSpecification(node);
 	    Map namespaces = new HashMap();
 	    namespaces.put("m", URI_MAYA);
 	    Iterator it = XPathUtil.selectChildNodes(

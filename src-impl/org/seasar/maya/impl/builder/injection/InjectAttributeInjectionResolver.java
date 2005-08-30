@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -29,11 +28,12 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InjectAttributeInjectionResolver implements InjectionResolver, CONST_IMPL {
+public class InjectAttributeInjectionResolver 
+        implements InjectionResolver, CONST_IMPL {
 	
     public SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain chain) {
-        if(template == null || original == null || chain == null) {
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
     	String injectName = SpecificationUtil.getAttributeValue(original, QM_INJECT);
@@ -46,7 +46,7 @@ public class InjectAttributeInjectionResolver implements InjectionResolver, CONS
 	            return SpecificationUtil.createInjectedNode(qName, uri, original); 
             }
         }
-        return chain.getNode(template, original);
+        return chain.getNode(original);
     }
     
     public void setParameter(String name, String value) {

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
@@ -44,16 +43,15 @@ public class CompositeInjectionResolver implements InjectionResolver {
         }
     }
     
-    public SpecificationNode getNode(
-            Template template, SpecificationNode original, InjectionChain external) {
-        if(template == null || original == null || external == null) {
+    public SpecificationNode getNode(SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         if(_resolvers.size() > 0) {
-            InjectionChainImpl first = new InjectionChainImpl(external);
-            return first.getNode(template, original);
+            InjectionChainImpl first = new InjectionChainImpl(chain);
+            return first.getNode(original);
         }
-        return external.getNode(template, original);
+        return chain.getNode(original);
     }
 
     private class InjectionChainImpl implements InjectionChain {
@@ -68,8 +66,8 @@ public class CompositeInjectionResolver implements InjectionResolver {
             _external = external;
         }
         
-        public SpecificationNode getNode(Template template, SpecificationNode original) {
-            if(template == null || original == null) {
+        public SpecificationNode getNode(SpecificationNode original) {
+            if(original == null) {
                 throw new IllegalArgumentException();
             }
             if(_index < _resolvers.size()) {
@@ -81,7 +79,7 @@ public class CompositeInjectionResolver implements InjectionResolver {
                 } else {
                     chain = this;
                 }
-                return resolver.getNode(template, original, chain);
+                return resolver.getNode(original, chain);
             }
             throw new IndexOutOfBoundsException();
         }

@@ -61,7 +61,8 @@ public class ExecProcessor extends TemplateProcessorSupport {
                 SourceDescriptor source = provider.getPageSourceDescriptor(srcValue);
                 ScriptEnvironment environment = provider.getScriptEnvironment();
                 String encValue = (String)_encoding.getValue();
-                _compiled = environment.compile(source, encValue, Void.class);
+                _compiled = environment.compile(source, encValue);
+                _compiled.setExpectedType(Void.class);
             }
             if(_loaded.get() == null) {
                 ScriptUtil.execute(_compiled);

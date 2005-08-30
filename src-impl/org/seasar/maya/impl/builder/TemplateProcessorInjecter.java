@@ -18,6 +18,7 @@ package org.seasar.maya.impl.builder;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
@@ -143,8 +144,8 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             if(QM_MAYA.equals(child.getQName())) {
                 continue;
             }
-	        SpecificationNode injected = _injectionResolver.getNode(
-	                template, child, DefaultInjectionChain.getInstance());
+            InjectionChain chain = DefaultInjectionChain.getInstance(); 
+	        SpecificationNode injected = _injectionResolver.getNode(child, chain);
 	        if(injected == null) {
 	            throw new NodeNotResolvedException(original, child);
 	        }

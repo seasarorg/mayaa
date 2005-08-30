@@ -45,7 +45,7 @@ public class PageSourceTagHandler
         return new Parameterizable() {
 
             public void setParameter(String name, String value) {
-                _parent.getServiceProvider().putPageSourceParameter(name, value);
+                _parent.getServiceProvider().setPageSourceParameter(name, value);
             }
             
         };

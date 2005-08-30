@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.provider.factory.WebProviderFactory;
+import org.seasar.maya.impl.provider.factory.XmlProviderFactory;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -34,7 +34,7 @@ public class MayaServlet extends HttpServlet {
     
     public void init() {
     	if(_inithialized == false) {
-            ProviderFactory.setDefaultFactory(new WebProviderFactory());
+            ProviderFactory.setDefaultFactory(new XmlProviderFactory());
             ProviderFactory.setContext(getServletContext());
             _inithialized = true;
     	}

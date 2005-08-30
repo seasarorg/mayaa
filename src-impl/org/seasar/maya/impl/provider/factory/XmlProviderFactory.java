@@ -15,12 +15,12 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.provider.WebServiceProvider;
 import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -29,7 +29,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebProviderFactory extends ProviderFactory
+public class XmlProviderFactory extends ProviderFactory
 		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 3581634661222113559L;
@@ -47,7 +47,8 @@ public class WebProviderFactory extends ProviderFactory
                     source.getSystemID(), true, true, false);
             return handler.getResult();
     	}
-    	return new WebServiceProvider(servletContext);
+    	throw new RuntimeException(
+                new FileNotFoundException(source.getSystemID()));
     }
     
     public ServiceProvider getServiceProvider(Object context) {

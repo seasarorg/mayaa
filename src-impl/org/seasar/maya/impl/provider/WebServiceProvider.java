@@ -50,7 +50,7 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     private Object _context;
     private Application _application;
     private Engine _engine;
-    private ScriptEnvironment _scriptCompiler;
+    private ScriptEnvironment _scriptEnvironment;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
     private Class _pageSourceClass;
@@ -91,18 +91,18 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
         return _engine;
     }
     
-    public void setScriptCompiler(ScriptEnvironment scriptCompiler) {
-        if(scriptCompiler == null) {
+    public void setScriptEnvironment(ScriptEnvironment scriptEnvironment) {
+        if(scriptEnvironment == null) {
             throw new IllegalArgumentException();
         }
-        _scriptCompiler = scriptCompiler;
+        _scriptEnvironment = scriptEnvironment;
     }
     
     public ScriptEnvironment getScriptEnvironment() {
-        if(_scriptCompiler == null) {
+        if(_scriptEnvironment == null) {
             throw new IllegalStateException();
         }
-        return _scriptCompiler;
+        return _scriptEnvironment;
     }
     
     public void setSpecificationBuilder(SpecificationBuilder specificationBuilder) {
@@ -140,7 +140,7 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
         _pageSourceClass = pageSourceClass;
     }
 
-    public void putPageSourceParameter(String name, String value) {
+    public void setPageSourceParameter(String name, String value) {
         if(StringUtil.isEmpty(name) || value == null) {
             throw new IllegalArgumentException();
         }

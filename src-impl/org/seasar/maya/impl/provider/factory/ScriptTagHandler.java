@@ -39,7 +39,7 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     
     protected void start(Attributes attributes) {
         _scriptEnvironment = new RhinoScriptEnvironment();
-        _parent.getServiceProvider().setScriptCompiler(_scriptEnvironment);
+        _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
     }
     
     protected void end(String body) {

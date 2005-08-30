@@ -33,30 +33,23 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
     private Class _tagClass;
 
     public void setProcessorClass(Class processorClass) {
-        throw new UnsupportedOperationException();
-    }
-    
-    public Class getProcessorClass() {
-        return JspCustomTagProcessor.class;
-    }
-    
-    public void setTagClass(Class tagClass) {
-        if(tagClass == null || Tag.class.isAssignableFrom(tagClass) == false) {
+        if(processorClass == null || 
+                Tag.class.isAssignableFrom(processorClass) == false) {
             throw new IllegalArgumentException();
         }
-        _tagClass = tagClass;
+        _tagClass = processorClass;
     }
-    
-    public Class getTagClass() {
-        return _tagClass;
-    }
-    
-    protected TemplateProcessor newInstance(SpecificationNode injected) {
+
+    public Class getProcessorClass() {
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
+        return _tagClass;
+    }
+
+    protected TemplateProcessor newInstance(SpecificationNode injected) {
         JspCustomTagProcessor processor = new JspCustomTagProcessor();
-        processor.setTagClass(_tagClass);
+        processor.setTagClass(getProcessorClass());
         return processor;
     }
     

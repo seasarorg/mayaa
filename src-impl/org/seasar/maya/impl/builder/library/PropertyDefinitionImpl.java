@@ -17,6 +17,7 @@ package org.seasar.maya.impl.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -39,11 +40,11 @@ import org.seasar.maya.impl.util.StringUtil;
 public class PropertyDefinitionImpl 
         implements PropertyDefinition, CONST_IMPL {
 
+    private ProcessorDefinition _processor;
     private String _name;
     private boolean _required;
     private Class _expectedType;
     private String _defaultValue;
-    private Class _processorClass;    
     
     protected String getPrefix(Namespaceable namespaceable, QName qName) {
         Iterator it = namespaceable.iterateNamespace(qName.getNamespaceURI());
@@ -54,6 +55,20 @@ public class PropertyDefinitionImpl
         return prefix;
     }
 
+    public void setProcessorDefinition(ProcessorDefinition processor) {
+        if(processor == null) {
+            throw new IllegalArgumentException();
+        }
+        _processor = processor;
+    }
+    
+    public ProcessorDefinition getProcessorDefinition() {
+        if(_processor == null) {
+            throw new IllegalStateException();
+        }
+        return _processor;
+    }
+    
     public void setName(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
@@ -95,18 +110,9 @@ public class PropertyDefinitionImpl
         return _defaultValue;
     }
     
-    public void setProcessorClass(Class processorClass) {
-        if(processorClass == null) {
-            throw new IllegalArgumentException();
-        }
-        _processorClass = processorClass;
-    }
-    
     protected Class getPropertyType() {
-        if(_processorClass == null) {
-            throw new IllegalStateException();
-        }
-        Class ret = ObjectUtil.getPropertyType(_processorClass, getName());
+        Class processorClass = getProcessorDefinition().getProcessorClass();
+        Class ret = ObjectUtil.getPropertyType(processorClass, getName());
         if(ret == null) {
             throw new IllegalStateException();
         }

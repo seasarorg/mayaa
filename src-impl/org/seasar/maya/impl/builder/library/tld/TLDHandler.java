@@ -32,8 +32,8 @@ public class TLDHandler extends DefaultHandler {
     
     private static final Log LOG = LogFactory.getLog(TLDHandler.class);
 	
-	private TagHandlerStack _stack;
     private TaglibTagHandler _handler;
+	private TagHandlerStack _stack;
 	
     public TLDHandler() {
         _handler = new TaglibTagHandler();

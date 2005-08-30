@@ -75,7 +75,7 @@ public class AttributeTagHandler extends TagHandler {
 
     protected void end(String body) {
         JspProcessorDefinition processor = _parent.getProcessorDefinition();
-        _property.setProcessorClass(processor.getTagClass());
+        _property.setProcessorDefinition(_parent.getProcessorDefinition());
         processor.addPropertyDefinitiion(_property);
     }
 

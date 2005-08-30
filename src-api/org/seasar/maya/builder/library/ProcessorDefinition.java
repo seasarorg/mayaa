@@ -27,6 +27,12 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public interface ProcessorDefinition {
     
     /**
+     * 所属ライブラリの情報モデル取得。
+     * @return ライブラリ情報。
+     */
+    LibraryDefinition getLibraryDefinition();
+    
+    /**
      * プロセッサ名の取得。
      * @return プロセッサ名。
      */

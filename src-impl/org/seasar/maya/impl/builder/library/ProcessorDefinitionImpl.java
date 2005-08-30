@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -38,10 +39,25 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class ProcessorDefinitionImpl implements ProcessorDefinition {
     
+    private LibraryDefinition _library;
     private String _name;
     private Class _processorClass;
     private List _properties;
 
+    public void setLibraryDefinition(LibraryDefinition library) {
+        if(library == null) {
+            throw new IllegalArgumentException();
+        }
+        _library = library;
+    }
+    
+    public LibraryDefinition getLibraryDefinition() {
+        if(_library == null) {
+            throw new IllegalStateException();
+        }
+        return _library;
+    }
+    
     public void setName(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
@@ -50,6 +66,9 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     }
     
     public String getName() {
+        if(StringUtil.isEmpty(_name)) {
+            throw new IllegalStateException();
+        }
         return _name;
     }
     

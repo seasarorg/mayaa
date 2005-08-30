@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
@@ -29,14 +31,18 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MLDHandler extends DefaultHandler implements CONST_IMPL {
 
-    private TagHandlerStack _stack;    
-
-    public LibraryDefinitionImpl getLibraryDefinition() {
-        return ((LibraryTagHandler)_stack.getRoot()).getLibraryDefinition();
-    }
+    private static final Log LOG = LogFactory.getLog(MLDHandler.class);
+    
+    private LibraryTagHandler _handler;
+    private TagHandlerStack _stack;
     
     public MLDHandler() {
-        _stack = new TagHandlerStack(new LibraryTagHandler());
+        _handler = new LibraryTagHandler();
+        _stack = new TagHandlerStack(_handler);
+    }
+
+    public LibraryDefinitionImpl getLibraryDefinition() {
+        return _handler.getLibraryDefinition();
     }
     
 	public InputSource resolveEntity(String publicId, String systemId) {
@@ -60,11 +66,21 @@ public class MLDHandler extends DefaultHandler implements CONST_IMPL {
         _stack.endElement();
     }
     
-    public void fatalError(SAXParseException e) {
-        error(e);
+    public void warning(SAXParseException e) {
+        LOG.warn(e.getMessage(), e);
     }
 
     public void error(SAXParseException e) {
+        if(LOG.isErrorEnabled()) {
+            LOG.error(e.getMessage(), e);
+        }
+        throw new RuntimeException(e);
+    }
+
+    public void fatalError(SAXParseException e) {
+        if(LOG.isFatalEnabled()) {
+            LOG.fatal(e.getMessage(), e);
+        }
         throw new RuntimeException(e);
     }
 

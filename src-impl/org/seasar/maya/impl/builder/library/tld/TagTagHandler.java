@@ -19,6 +19,7 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
 import org.seasar.maya.impl.builder.library.JspProcessorDefinition;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
@@ -54,7 +55,9 @@ public class TagTagHandler extends TagHandler {
     }
 
     protected void end(String body) {
-        _parent.getLibraryDefinition().addProcessorDefinition(_processor);
+        JspLibraryDefinition library = _parent.getLibraryDefinition();
+        library.addProcessorDefinition(_processor);
+        _processor.setLibraryDefinition(library);
         _processor = null;
     }
     
@@ -77,7 +80,7 @@ public class TagTagHandler extends TagHandler {
         protected void end(String body) {
 			try {
                 Class clazz = ObjectUtil.loadClass(body, Tag.class);
-                _processor.setTagClass(clazz);
+                _processor.setProcessorClass(clazz);
             } catch (RuntimeException e) {
                 if(LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());

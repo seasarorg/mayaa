@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.builder.library.tld;
 
 import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.builder.library.JspProcessorDefinition;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -49,10 +48,6 @@ public class TaglibTagHandler extends TagHandler {
         _library = new JspLibraryDefinition();
     }
 
-    public void addProcessorDefinition(JspProcessorDefinition processor) {
-        _library.addProcessorDefinition(processor);
-    }
-    
     public JspLibraryDefinition getLibraryDefinition() {
         return _library;
     }

@@ -24,6 +24,12 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public interface PropertyDefinition {
     
     /**
+     * 所属するプロセッサ情報モデルの取得。
+     * @return プロセッサ情報モデル。 
+     */
+    ProcessorDefinition getProcessorDefinition();
+    
+    /**
      * MLDのname属性、であるプロパティ名。
      * テンプレートや設定XML上の属性と、テンプレートプロセッサのプロパティを
      * バインディングする名前となる。

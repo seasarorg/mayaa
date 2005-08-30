@@ -42,8 +42,9 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     private String _sourceName;
     int _lineno;
     
-    public RhinoCompiledScript(String text, String sourceName, int lineno) {
-        super(text);
+    public RhinoCompiledScript(String text,
+            String blockSign, String sourceName, int lineno) {
+        super(text, blockSign);
         _sourceName = sourceName;
         _lineno = lineno;
     }

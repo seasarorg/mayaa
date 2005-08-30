@@ -39,8 +39,8 @@ public class IllegalTypeException extends MayaException {
         return _value;
     }
     
-    protected Object[] getMessageParams() {
-        return new Object[] { _expectedType, _value };
+    protected String[] getMessageParams() {
+        return new String[] { _expectedType.getName(), _value.getName() };
     }
     
 }

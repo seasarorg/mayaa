@@ -48,4 +48,10 @@ public interface CompiledScript extends Serializable {
      */
     boolean isLiteral();
     
+    /**
+     * スクリプトソースコードの取得。ソースが外部ファイルの場合は、SystemID。
+     * @return スクリプトソースコードもしくは外部ソースコードファイルのSystemID。
+     */
+    String getScript();
+    
 }

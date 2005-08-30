@@ -125,7 +125,7 @@ public final class StringUtil {
         return ret;
     }
     
-    public static String getMessage(Class clazz, int index, Object[] params) {
+    public static String getMessage(Class clazz, int index, String[] params) {
         Package key = clazz.getPackage();
         Properties properties =  (Properties)_propFiles.get(key);
         if(properties == null) {
@@ -151,7 +151,7 @@ public final class StringUtil {
         	message = "!" + clazz.getName() +  "!";
         }
         if(params == null) {
-            params = new Object[0];
+            params = new String[0];
         }
         return MessageFormat.format(message, params);
     }

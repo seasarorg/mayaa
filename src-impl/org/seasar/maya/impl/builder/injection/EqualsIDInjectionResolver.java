@@ -77,10 +77,10 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 	            }
 	            return injected.copyTo(_idFilter);
 	        }
-            boolean reportUnresolvedID = SpecificationUtil.getEngineSettingBoolean(
+            boolean report = SpecificationUtil.getEngineSettingBoolean(
                     REPORT_UNRESOLVED_ID, true);
-            if(reportUnresolvedID) { 
-		        throw new IDNotResolvedException(original, id);
+            if(report) { 
+		        throw new IDNotResolvedException(id);
             }
         }
         return chain.getNode(original);

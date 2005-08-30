@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.builder.library;
 
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.MayaException;
 
 /**
@@ -26,24 +25,18 @@ public class NoRequiredPropertyException extends MayaException {
 
 	private static final long serialVersionUID = -8388715165180536210L;
 
-	private SpecificationNode _injected;
     private QName _qName; 
     
-    public NoRequiredPropertyException(SpecificationNode injected, QName qName) {
-        _injected = injected;
+    public NoRequiredPropertyException(QName qName) {
         _qName = qName;
-    }
-    
-    public SpecificationNode getInjected() {
-        return _injected;
     }
     
     public QName getQName() {
         return _qName;
     }
  
-    protected Object[] getMessageParams() {
-        return new Object[] { _injected, _qName };
+    protected String[] getMessageParams() {
+        return new String[] { _qName.getNamespaceURI(), _qName.getLocalName() };
     }
     
 }

@@ -17,7 +17,6 @@ package org.seasar.maya.impl.cycle.script;
 
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,15 +25,13 @@ public class ComplexScript implements CompiledScript {
 
  	private static final long serialVersionUID = -7356099026354564155L;
 
- 	private String _script;
     private Class _expectedType = Object.class;
     private CompiledScript[] _compiled;
     
-    public ComplexScript(String script,  CompiledScript[] compiled) {
-        if(StringUtil.isEmpty(script) || compiled == null) {
+    public ComplexScript(CompiledScript[] compiled) {
+        if(compiled == null) {
             throw new IllegalArgumentException();
         }
-        _script = script;
         _compiled = compiled;
         for(int i = 0; i < compiled.length; i++) {
             compiled[i].setExpectedType(String.class);
@@ -63,12 +60,16 @@ public class ComplexScript implements CompiledScript {
         return ObjectUtil.convert(_expectedType, buffer.toString());
     }
 
-    public String getText() {
-        return _script;
-    }
-
     public boolean isLiteral() {
         return false;
+    }
+
+    public String getScript() {
+        StringBuffer buffer = new StringBuffer();
+        for(int i = 0; i < _compiled.length; i++) {
+            buffer.append(_compiled[i].getScript());
+        }
+        return buffer.toString();
     }
     
 }

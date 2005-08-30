@@ -24,24 +24,30 @@ public class ScriptBlock {
 
 	private String _blockString;
 	private boolean _literal; 
+    private String _blockSign;
 
-	public ScriptBlock(String blockString, boolean literal) {
-		if (StringUtil.isEmpty(blockString)) {
+	public ScriptBlock(String blockString, boolean literal, String blockSign) {
+		if (blockString == null || StringUtil.isEmpty(blockSign)) {
 			throw new IllegalArgumentException();
 		}
 		_blockString = blockString;
 		_literal = literal;
+        _blockSign = blockSign;
 	}
+    
+    public String getBlockString() {
+        if(_literal) {
+            return _blockString;
+        }
+        return StringUtil.resolveEntity(_blockString);      
+    }
 
 	public boolean isLiteral() {
 	    return _literal;
 	}
-	
-	public String getBlockString() {
-	    if(_literal) {
-	        return _blockString;
-	    }
-	    return StringUtil.resolveEntity(_blockString);	    
-	}
 
+    public String getBlockSign() {
+        return _blockSign;
+    }
+    
 }

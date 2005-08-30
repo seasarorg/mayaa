@@ -90,7 +90,7 @@ public final class XmlUtil {
 	        String localName, Class defaultValue, Class expectedType) {
         Class clazz = getClassValue(attr, localName, defaultValue);
         if(clazz == null) {
-            throw new NoTypeValueException();
+            throw new NoTypeValueException(localName);
         }
         if(expectedType.isAssignableFrom(clazz)) {
             return ObjectUtil.newInstance(clazz);

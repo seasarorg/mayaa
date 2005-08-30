@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.MayaException;
 
 /**
@@ -25,25 +24,8 @@ public class NodeNotResolvedException extends MayaException {
 
 	private static final long serialVersionUID = 4560512867759109674L;
 
-	private SpecificationNode _originalNode;
-	private SpecificationNode _injectedNode;
-	
-	public NodeNotResolvedException( 
-			SpecificationNode originalNode, SpecificationNode injectiedNode) {
-	    _originalNode = originalNode; 
-	    _injectedNode = injectiedNode;
-    }
-
-	public SpecificationNode getOriginalNode() {
-		return _originalNode;
-	}
-	
-	public SpecificationNode getInjectedNode() {
-		return _injectedNode;
-	}
-	
-    protected Object[] getMessageParams() {
-        return new Object[] { _originalNode, _injectedNode };
+    protected String[] getMessageParams() {
+        return ZERO_PARAM;
     }
     
 }

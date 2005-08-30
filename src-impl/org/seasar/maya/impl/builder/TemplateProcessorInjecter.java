@@ -101,7 +101,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             processor.setInjectedNode(injected);
         }
         if(processor == null) {
-            throw new NodeNotResolvedException(original, injected);
+            throw new NodeNotResolvedException();
         }
         TemplateProcessor parent = (TemplateProcessor)stack.peek();
         parent.addChildProcessor(processor);
@@ -119,7 +119,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
                     template, stack, original, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
-                    throw new TooManyDoBodyException(childNode);
+                    throw new TooManyDoBodyException();
                 }
                 connectionPoint = childProcessor;
             }
@@ -148,7 +148,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             InjectionChain chain = DefaultInjectionChain.getInstance(); 
 	        SpecificationNode injected = _injectionResolver.getNode(child, chain);
 	        if(injected == null) {
-	            throw new NodeNotResolvedException(original, child);
+	            throw new NodeNotResolvedException();
 	        }
             saveToCycle(child, injected);
 	        TemplateProcessor processor = resolveInjectedNode(

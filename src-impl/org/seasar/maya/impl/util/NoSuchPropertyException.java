@@ -40,8 +40,10 @@ public class NoSuchPropertyException extends MayaException {
         return _propertyName;
     }
 
-    protected Object[] getMessageParams() {
-        return new Object[] { _beanClass, _propertyName };
+    protected String[] getMessageParams() {
+        return new String[] { 
+                _beanClass.getName(),
+                _propertyName };
     }
     
 }

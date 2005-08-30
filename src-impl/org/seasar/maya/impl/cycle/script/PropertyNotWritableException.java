@@ -22,7 +22,7 @@ public class PropertyNotWritableException extends ScriptException {
     
 	private static final long serialVersionUID = -4086709979130925980L;
 
-    private Object _name;
+    private String _name;
     
     public PropertyNotWritableException(String name) {
         _name = name;
@@ -32,8 +32,8 @@ public class PropertyNotWritableException extends ScriptException {
         return _name;
     }
     
-    protected Object[] getMessageParams() {
-        return new Object[] { _name };
+    protected String[] getMessageParams() {
+        return new String[] { _name };
     }
 
 }

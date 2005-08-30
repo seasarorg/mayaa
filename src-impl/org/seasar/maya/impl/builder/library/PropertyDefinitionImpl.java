@@ -124,7 +124,7 @@ public class PropertyDefinitionImpl
             value = attribute.getValue();
         }
         if(value == null && _required) {
-            throw new NoRequiredPropertyException(injected, qName);
+            throw new NoRequiredPropertyException(qName);
         }
         return value;
     }

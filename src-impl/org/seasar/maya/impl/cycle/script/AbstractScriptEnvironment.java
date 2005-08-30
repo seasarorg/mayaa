@@ -65,15 +65,12 @@ public abstract class AbstractScriptEnvironment implements ScriptEnvironment {
             ScriptBlock block = (ScriptBlock)it.next();
             list.add(compile(block, sourceName, lineno));
         }
-        if(list.size() == 0) {
-    	    throw new SyntaxException(script);
-        } else if(list.size() == 1) {
+        if(list.size() == 1) {
             return (CompiledScript)list.get(0);
     	}
-	    CompiledScript[] compiled = (CompiledScript[])list.toArray(
-                new CompiledScript[list.size()]);
-        CompiledScript complex = new ComplexScript(script, compiled);
-        return complex;
+	    CompiledScript[] compiled = 
+            (CompiledScript[])list.toArray(new CompiledScript[list.size()]);
+        return new ComplexScript(compiled);
     }
 
 }

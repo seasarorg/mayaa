@@ -47,8 +47,8 @@ public class PageNotFoundException extends MayaException {
         return _extension;
     }
     
-    protected Object[] getMessageParams() {
-        return new Object[] { _pageName, _requiredSuffix, _extension };
+    protected String[] getMessageParams() {
+        return new String[] { _pageName, _requiredSuffix, _extension };
     }
     
 }

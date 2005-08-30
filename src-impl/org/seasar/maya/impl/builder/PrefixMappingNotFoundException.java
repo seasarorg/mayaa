@@ -34,8 +34,8 @@ public class PrefixMappingNotFoundException extends MayaException {
         return _prefix;
     }
 
-    protected Object[] getMessageParams() {
-        return new Object[] { _prefix };
+    protected String[] getMessageParams() {
+        return new String[] { _prefix };
     }
 
 }

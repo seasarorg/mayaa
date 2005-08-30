@@ -24,4 +24,18 @@ public class NoTypeValueException extends MayaException {
 
 	private static final long serialVersionUID = -7529751328645602630L;
 
+    private String _localName;
+    
+    public NoTypeValueException(String localName) {
+        _localName = localName;
+    }
+    
+    public String getLocalName() {
+        return _localName;
+    }
+    
+    protected String[] getMessageParams() {
+        return new String[] { _localName };
+    }
+
 }

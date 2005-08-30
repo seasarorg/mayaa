@@ -34,8 +34,8 @@ public class ForbiddenPathException extends MayaException {
         return _path;
     }
     
-    protected Object[] getMessageParams() {
-        return new Object[] { _path };
+    protected String[] getMessageParams() {
+        return new String[] { _path };
     }
     
 }

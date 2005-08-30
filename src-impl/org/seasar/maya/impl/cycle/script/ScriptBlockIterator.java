@@ -82,17 +82,17 @@ public class ScriptBlockIterator implements Iterator {
                 }
                 String text = _text.substring(_offset + blockStart.length(), close);
                 _offset = close + 1;
-                return new ScriptBlock(text, false);
+                return new ScriptBlock(text, false, _blockSign);
             }
             // literal
             String lastLiteralBlock = _text.substring(_offset, sign);
             _offset = sign;
-            return new ScriptBlock(lastLiteralBlock, true);
+            return new ScriptBlock(lastLiteralBlock, true, _blockSign);
 		}
         // tail literal
         String lastLiteralBlock = _text.substring(_offset);
         _offset = _text.length();
-        return new ScriptBlock(lastLiteralBlock, true);
+        return new ScriptBlock(lastLiteralBlock, true, _blockSign);
 	}
 
 	public void remove() {

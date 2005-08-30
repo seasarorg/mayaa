@@ -23,5 +23,15 @@ import org.seasar.maya.impl.MayaException;
 public class ScopeNotWritableException extends MayaException {
 
     private static final long serialVersionUID = -1404330731952054283L;
+
+    private String _scopeName;
+    
+    public ScopeNotWritableException(String scopeName) {
+        _scopeName = scopeName;
+    }
+    
+    protected String[] getMessageParams() {
+        return new String[] { _scopeName };
+    }
     
 }

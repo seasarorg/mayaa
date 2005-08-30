@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.impl.MayaException;
 
 /**
@@ -24,18 +23,9 @@ import org.seasar.maya.impl.MayaException;
 public class StartComponentNotFoundException extends MayaException {
 
 	private static final long serialVersionUID = -8123490579795977124L;
-	private Template _template;
     
-    public StartComponentNotFoundException(Template template) {
-        _template = template;
-    }
-    
-    public Template getTemplate() {
-        return _template;
-    }
-    
-    protected Object[] getMessageParams() {
-        return new Object[] { _template };
+    protected String[] getMessageParams() {
+        return ZERO_PARAM;
     }
     
 }

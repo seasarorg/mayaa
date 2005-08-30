@@ -20,15 +20,5 @@ import org.seasar.maya.impl.MayaException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScriptException extends MayaException {
-    
-	private static final long serialVersionUID = -1469436031110451569L;
-
-	protected ScriptException() {
-    }
-
-    public ScriptException(Exception e) {
-        super(e);
-    }
-    
+public abstract class ScriptException extends MayaException {
 }

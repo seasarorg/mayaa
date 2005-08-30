@@ -42,8 +42,8 @@ public class IllegalNameException extends MayaException {
 		return _qName;
 	}
 
-    protected Object[] getMessageParams() {
-        return new Object[] { _qName };
+    protected String[] getMessageParams() {
+        return new String[] { _qName };
     }
     
 }

@@ -48,7 +48,8 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new RhinoCompiledScript(text, sourceName, lineno);
+        return new RhinoCompiledScript(text,
+                scriptBlock.getBlockSign(), sourceName, lineno);
     }
 
     public CompiledScript compile(SourceDescriptor source, String encoding) {

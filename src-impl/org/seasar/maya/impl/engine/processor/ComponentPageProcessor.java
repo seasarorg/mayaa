@@ -115,7 +115,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
             template.doTemplateRender(start);
             return SKIP_BODY;
         }
-        throw new StartComponentNotFoundException(template);
+        throw new StartComponentNotFoundException();
     }
     
 	protected void writeEndElement() {

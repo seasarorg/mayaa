@@ -53,13 +53,13 @@ public class LiteralScript  implements CompiledScript {
         }
         return ObjectUtil.convert(_expectedType, _text);
     }
-    
-    public String getText() {
-        return _text;
-    }
 
     public boolean isLiteral() {
         return true;
+    }
+    
+    public String getScript() {
+        return _text;
     }
     
 }

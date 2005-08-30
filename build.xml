@@ -26,47 +26,6 @@
 		<exclude name="${folder.lib}/maya-*.jar"/>
 	</fileset>
 
-	<target name="cleanbuild">
-		<delete dir="${folder.classes}" verbose="${maya.verbose}"/>
-		<mkdir dir="${folder.classes}"/>
-	</target>
-
-	<target name="compile" depends="cleanbuild">
-		<javac
-			destdir="${folder.classes}"
-			debug="${maya.debug}"
-			verbose="${maya.verbose}">
-			<src>
-				<dirset dir=".">
-					<include name="${folder.src.api}"/>
-					<include name="${folder.src.impl}"/>
-				</dirset>
-			</src>
-			<classpath>
-				<fileset refid="classpath"/>
-			</classpath>
-		</javac>
-	</target>
-
-	<target name="copy" depends="cleanbuild">
-		<copy todir="${folder.classes}" verbose="${maya.verbose}">
-			<fileset dir="${folder.src.api}">
-				<include name="**/*"/>
-				<exclude name="**/*.java"/>
-				<exclude name="**/.svn"/>
-				<exclude name="**/.svn/**/*"/>
-			</fileset>
-			<fileset dir="${folder.src.impl}">
-				<include name="**/*"/>
-				<exclude name="**/*.java"/>
-				<exclude name="**/.svn"/>
-				<exclude name="**/.svn/**/*"/>
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="javabuild" depends="compile, copy"/>
-
 	<target name="cleanjar">
 		<delete verbose="${maya.verbose}">
 			<fileset dir=".">
@@ -75,7 +34,7 @@
 		</delete>
 	</target>
 
-	<target name="mayajar" depends="cleanjar, javabuild">
+	<target name="mayajar" depends="cleanjar">
 		<jar jarfile="${folder.lib}/${maya.jar}">
 			<fileset dir="${folder.classes}">
 				<include name="META-INF/**/*"/>
@@ -96,7 +55,7 @@
 		<mkdir dir="${folder.javadoc}"/>
 	</target>
 
-	<target name="javadoc" depends="cleandoc, compile">
+	<target name="javadoc" depends="cleandoc">
         <javadoc
         	charset="Shift_JIS"
         	destdir="${folder.javadoc}"

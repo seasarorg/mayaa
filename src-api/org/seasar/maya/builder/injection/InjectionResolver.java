@@ -32,7 +32,7 @@ public interface InjectionResolver extends Parameterizable {
      * @param template テンプレート。
      * @param original テンプレート上のオリジナルなノード。
      * @param chain 次のリゾルバへ処理を委譲するチェーン。
-     * @return インジェクションするノードもしくはnull。
+     * @return インジェクションするノード。
      */
     SpecificationNode getNode(
             Template template, SpecificationNode original, InjectionChain chain);

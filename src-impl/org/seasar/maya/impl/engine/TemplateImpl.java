@@ -134,18 +134,19 @@ public class TemplateImpl extends SpecificationImpl
         if(current == null) {
             throw new IllegalArgumentException();
         }
+        saveToCycle(current);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
             ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
             scriptEnvironment.startScope();
-            saveToCycle(current);
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
             boolean buffered = false;
-            if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && isEvaluation(current)) {
+            if(startRet == ChildEvaluationProcessor.EVAL_BODY_BUFFERED && 
+                    isEvaluation(current)) {
                 buffered = true;
                 getEvaluation(current).setBodyContent(cycle.getResponse().pushWriter());
                 getEvaluation(current).doInitChildProcess();
@@ -161,11 +162,12 @@ public class TemplateImpl extends SpecificationImpl
                         }
                     }
                     afterRet = SKIP_BODY;
+                    saveToCycle(current);
                     if(isIteration(current)) {
-                        saveToCycle(current);
                         afterRet = getIteration(current).doAfterChildProcess();
                     	TemplateProcessor parent = current.getParentProcessor();
-                    	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN && isDuplicated(parent)) {
+                    	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN &&
+                                isDuplicated(parent)) {
                             saveToCycle(parent);
                             parent.doEndProcess();
                             parent.doStartProcess();
@@ -180,12 +182,14 @@ public class TemplateImpl extends SpecificationImpl
             ret = current.doEndProcess();
             scriptEnvironment.endScope();
         } catch (RuntimeException e) {
+            saveToCycle(current);
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);
             } else {
                 throw e;
             }
         } finally {
+            saveToCycle(current);
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }
@@ -196,7 +200,8 @@ public class TemplateImpl extends SpecificationImpl
     private String getContentType() {
         SpecificationNode maya = SpecificationUtil.getMayaNode(this);
 		if(maya != null) {
-	        String contentType = SpecificationUtil.getAttributeValue(maya, QM_CONTENT_TYPE);
+	        String contentType = SpecificationUtil.getAttributeValue(
+                    maya, QM_CONTENT_TYPE);
 	        if(StringUtil.hasValue(contentType)) {
 	            return contentType;
 	        }

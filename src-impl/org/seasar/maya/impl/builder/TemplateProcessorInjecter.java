@@ -125,6 +125,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             }
         }
         stack.pop();
+        saveToCycle(original, injected);
         if(connectionPoint != null) {
             return connectionPoint;
         }
@@ -140,7 +141,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         it = original.iterateChildNode();
         while(it.hasNext()) {
             SpecificationNode child = (SpecificationNode)it.next();
-            saveToCycle(original, child);
+            saveToCycle(child, child);
             if(QM_MAYA.equals(child.getQName())) {
                 continue;
             }
@@ -149,9 +150,9 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	        if(injected == null) {
 	            throw new NodeNotResolvedException(original, child);
 	        }
+            saveToCycle(child, injected);
 	        TemplateProcessor processor = resolveInjectedNode(
                     template, stack, original, injected);
-	        saveToCycle(original, child);
             if(processor != null) {
 	            stack.push(processor);
 	            resolveChildren(template, stack, child);

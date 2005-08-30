@@ -25,18 +25,24 @@ public class NoRequiredPropertyException extends MayaException {
 
 	private static final long serialVersionUID = -8388715165180536210L;
 
-    private QName _qName; 
+    String _namespaceURI; 
+    String _propertyName;
     
     public NoRequiredPropertyException(QName qName) {
-        _qName = qName;
+        _namespaceURI = qName.getNamespaceURI();
+        _propertyName = qName.getLocalName();
+    }
+   
+    public String getNamespaceURI() {
+        return _namespaceURI;
     }
     
-    public QName getQName() {
-        return _qName;
+    public String getPropertyName() {
+        return _propertyName;
     }
  
     protected String[] getMessageParams() {
-        return new String[] { _qName.getNamespaceURI(), _qName.getLocalName() };
+        return new String[] { _namespaceURI, _propertyName };
     }
     
 }

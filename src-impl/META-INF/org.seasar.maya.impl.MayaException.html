@@ -3,9 +3,16 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	</head>
 	<body>
-		<h1>${ THROWABLE.message }</h1>
+		<h2>${ THROWABLE.message }</h2>
+		<h3>properties:</h3>
+		<p>
+			originalSystemID: ${ THROWABLE.originalSystemID }<br>
+			originalLineNumber: ${ THROWABLE.originalLineNumber }<br>
+			injectedSystemID: ${ THROWABLE.injectedSystemID }<br>
+			injectedLineNumber: ${ THROWABLE.injectedLineNumber }<br>
+		</p>
 		<h3>stackTrace:</h3>
-		<p>			
+		<p>
 			<span m:inject="m:for"
 					m:init="${ var trace = THROWABLE.stackTrace; var i = 0 }"
 					m:test="${ i &lt; trace.length }" m:after="${ i++ }">

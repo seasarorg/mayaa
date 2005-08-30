@@ -23,7 +23,7 @@ import org.seasar.maya.impl.MayaException;
 public class TooManyDoBodyException extends MayaException {
 
 	private static final long serialVersionUID = 5164593430185077800L;
-
+    
     protected String[] getMessageParams() {
         return ZERO_PARAM;
     }

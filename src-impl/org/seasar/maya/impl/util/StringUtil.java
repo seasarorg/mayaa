@@ -142,7 +142,12 @@ public final class StringUtil {
 	            }
             }
         }
-        StringBuffer propertyName = new StringBuffer(clazz.getName());
+        String className = clazz.getName();
+        int pos = className.lastIndexOf('.');
+        if(pos != -1) {
+            className = className.substring(pos + 1);
+        }
+        StringBuffer propertyName = new StringBuffer(className);
         if(index > 0) {
             propertyName.append(".").append(index); 
         }

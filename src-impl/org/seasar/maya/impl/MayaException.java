@@ -90,6 +90,10 @@ public abstract class MayaException extends RuntimeException {
         return message;
     }
     
+    public String getClassName() {
+        return getClass().getName();
+    }
+    
     public String getOriginalSystemID() {
     	return _originalSystemID;
     }

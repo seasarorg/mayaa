@@ -31,8 +31,6 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.IllegalNameException;
-import org.seasar.maya.impl.builder.PrefixMappingNotFoundException;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;

@@ -19,7 +19,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;

@@ -13,19 +13,29 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.maya.impl.util;
 
 import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NodeNotResolvedException extends MayaException {
+public class IllegalNameException extends MayaException {
 
-	private static final long serialVersionUID = 4560512867759109674L;
+	private static final long serialVersionUID = 2431120366863355234L;
+
+	private String _qName;
+	
+	public IllegalNameException(String qName) {
+		_qName = qName;
+    }
+	
+	public String getQName() {
+		return _qName;
+	}
 
     protected String[] getMessageParams() {
-        return ZERO_PARAM;
+        return new String[] { _qName };
     }
     
 }

@@ -21,7 +21,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.PageNotFoundException;
+import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;

@@ -13,42 +13,29 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageNotFoundException extends MayaException {
+public class IDNotResolvedException extends MayaException {
 
-	private static final long serialVersionUID = 3750171533372115950L;
+	private static final long serialVersionUID = 4245540599314570281L;
 
-	private String _pageName;
-    private String _requiredSuffix;
-    private String _extension;
+	private String _mayaID;
     
-	public PageNotFoundException(String pageName, 
-            String requeiredSuffix, String extension) {
-	    _pageName = pageName;
-        _requiredSuffix = requeiredSuffix;
-        _extension = extension;
-    }
-
-	public String getPageName() {
-		return _pageName;
-	}
-
-    public String getRequiredSuffix() {
-        return _requiredSuffix;
+    public IDNotResolvedException(String mayaID) {
+    	_mayaID = mayaID;
     }
     
-    public String getExtension() {
-        return _extension;
+    public String getID() {
+        return _mayaID;
     }
-    
+
     protected String[] getMessageParams() {
-        return new String[] { _pageName, _requiredSuffix, _extension };
+        return new String[] { _mayaID };
     }
-    
+
 }

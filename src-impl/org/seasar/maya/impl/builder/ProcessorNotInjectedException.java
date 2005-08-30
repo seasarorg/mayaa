@@ -15,27 +15,17 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.maya.engine.specification.QNameable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixMappingNotFoundException extends MayaException {
+public class ProcessorNotInjectedException extends NodeNotResolvedException {
 
-	private static final long serialVersionUID = -9114023056056051237L;
+    private static final long serialVersionUID = -6422698028264082995L;
 
-	private String _prefix;
-    
-    public PrefixMappingNotFoundException(String prefix) {
-    	_prefix = prefix;
+    public ProcessorNotInjectedException(QNameable qNameable) {
+        super(qNameable);
     }
     
-    public String getPrefix() {
-        return _prefix;
-    }
-
-    protected String[] getMessageParams() {
-        return new String[] { _prefix };
-    }
-
 }

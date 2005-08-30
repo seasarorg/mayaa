@@ -23,6 +23,7 @@ import org.seasar.maya.impl.builder.library.entity.J2eeEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -41,6 +42,10 @@ public class WebXMLHandler extends DefaultHandler {
         _stack = new TagHandlerStack(_handler);
     }
     
+    public void setDocumentLocator(Locator locator) {
+        _handler.setLocator(locator);
+    }
+
     public Iterator iterateTaglibLocations() {
         return _handler.iterateTaglibLocation();
     }

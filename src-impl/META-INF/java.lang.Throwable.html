@@ -1,9 +1,11 @@
 <html xmlns:m="http://maya.seasar.org">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>${ THROWABLE.getClass().getName() }</title>
 	</head>
-	<body>
-		<h1>${ THROWABLE.message }</h1>
+	<body m:inject="m:exec" 
+			m:script="${ var msg = THROWABLE.message; if(msg == null) { msg = THROWABLE.getClass().getName(); } }">
+		<h1>${ msg }</h1>
 		<h3>stackTrace:</h3>
 		<p>			
 			<span m:inject="m:for"

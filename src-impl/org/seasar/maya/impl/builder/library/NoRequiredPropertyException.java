@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.builder.library;
 
-import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.MayaException;
 
 /**
@@ -25,16 +24,23 @@ public class NoRequiredPropertyException extends MayaException {
 
 	private static final long serialVersionUID = -8388715165180536210L;
 
-    String _namespaceURI; 
+    String _libraryURI;
+    String _processorName;
     String _propertyName;
     
-    public NoRequiredPropertyException(QName qName) {
-        _namespaceURI = qName.getNamespaceURI();
-        _propertyName = qName.getLocalName();
+    public NoRequiredPropertyException(String libraryURI, 
+            String processorName, String propertyName) {
+        _libraryURI = libraryURI;
+        _processorName = processorName;
+        _propertyName = propertyName;
     }
    
     public String getNamespaceURI() {
-        return _namespaceURI;
+        return _libraryURI;
+    }
+    
+    public String getProcessorName() {
+        return _processorName;
     }
     
     public String getPropertyName() {
@@ -42,7 +48,7 @@ public class NoRequiredPropertyException extends MayaException {
     }
  
     protected String[] getMessageParams() {
-        return new String[] { _namespaceURI, _propertyName };
+        return new String[] { _libraryURI, _processorName, _propertyName };
     }
     
 }

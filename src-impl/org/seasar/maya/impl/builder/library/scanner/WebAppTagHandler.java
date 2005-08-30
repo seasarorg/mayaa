@@ -22,6 +22,7 @@ import java.util.List;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,6 +30,7 @@ import org.xml.sax.Attributes;
 public class WebAppTagHandler extends TagHandler {
 
     private List _locations = new ArrayList();
+    private Locator _locator;
     
     public WebAppTagHandler() {
         super("web-app");
@@ -57,12 +59,21 @@ public class WebAppTagHandler extends TagHandler {
             
             protected void end(String body) {
                 if(StringUtil.isEmpty(_taglibURI) || StringUtil.isEmpty(_taglibLocation)) {
-                    // TODO WEB.XMLの記述ミスの例外。
-                    throw new IllegalStateException();
+                    String systemID = "/WEB-INF/web.xml";
+                    int lineNumber = -1;
+                    if(_locator != null) {
+                        systemID = _locator.getSystemId();
+                        lineNumber = _locator.getLineNumber();
+                    }
+                    throw new IllegalTaglibDefinition(systemID, lineNumber);
                 }
                 _locations.add(new SourceAlias(_taglibURI, _taglibLocation, null));
             }
         });
+    }
+    
+    public void setLocator(Locator locator) {
+        _locator = locator;
     }
     
     protected void start(Attributes attributes) {

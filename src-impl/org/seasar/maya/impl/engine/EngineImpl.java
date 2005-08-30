@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
@@ -31,7 +33,6 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.error.SimpleErrorHandler;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -50,7 +51,7 @@ public class EngineImpl extends SpecificationImpl
         implements Engine, CONST_IMPL {
     
 	private static final long serialVersionUID = 1428444571422324206L;
-
+    private static final Log LOG = LogFactory.getLog(EngineImpl.class);
     private static Set _paramNames;
     static {
         _paramNames = new HashSet();
@@ -98,7 +99,7 @@ public class EngineImpl extends SpecificationImpl
 
     public ErrorHandler getErrorHandler() {
 	    if(_errorHandler == null) {
-	        _errorHandler = new SimpleErrorHandler();
+            throw new IllegalStateException();
 	    }
         return _errorHandler;
     }
@@ -161,8 +162,19 @@ public class EngineImpl extends SpecificationImpl
     
     protected void handleError(Throwable t) {
         t = removeWrapperRuntimeException(t);
-        t.printStackTrace();
-        getErrorHandler().doErrorHandle(t);
+        try {
+            getErrorHandler().doErrorHandle(t);
+        } catch(Throwable internal) {
+            if(LOG.isFatalEnabled()) {
+                String fatalMsg = StringUtil.getMessage(
+                        EngineImpl.class, 0, new String[] { internal.getMessage() });
+                LOG.fatal(fatalMsg, internal);
+            }
+            if(t instanceof RuntimeException) {
+                throw (RuntimeException)t;
+            }
+            throw new RuntimeException(t);
+        }
     }
     
     protected void prepareResponse(Response response) {

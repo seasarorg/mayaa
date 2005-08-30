@@ -130,7 +130,9 @@ public class PropertyDefinitionImpl
             value = attribute.getValue();
         }
         if(value == null && _required) {
-            throw new NoRequiredPropertyException(qName);
+            String processorName = getProcessorDefinition().getName();
+            throw new NoRequiredPropertyException(
+                    qName.getNamespaceURI(), processorName, _name);
         }
         return value;
     }

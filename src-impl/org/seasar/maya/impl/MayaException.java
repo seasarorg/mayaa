@@ -33,8 +33,8 @@ public class MayaException extends RuntimeException {
     
 	public MayaException() {
 		ServiceCycle cycle = CycleUtil.getServiceCycle();
-		_originalNode = cycle.getOriginalNode().copyTo();
-		_injectedNode = cycle.getInjectedNode().copyTo();
+		_originalNode = cycle.getOriginalNode();
+		_injectedNode = cycle.getInjectedNode();
     }
 
     public MayaException(Throwable cause) {

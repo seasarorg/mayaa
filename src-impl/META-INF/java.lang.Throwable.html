@@ -4,13 +4,13 @@
 	</head>
 	<body>
 		<h2>${ THROWABLE.message }</h2>
-		<span m:inject="m:beanProperties" m:bean="${ THROWABLE }" m:var="prop"
-			m:ignore="cause, stackTrace, class"> 
-			${ prop.name }: ${ prop.value }<br>
-		</span>
-		<h3>stackTrace:</h3>
-		<span m:inject="m:stackTraceElements" m:throwable="${ THROWABLE }" m:var="trace">
-			${ trace.className }.${ trace.methodName }(${ trace.lineNumber })<br>
-		</span>
+		<p>
+			stackTrace:<br>
+			<span m:inject="m:for"
+					m:init="${ var trace = THROWABLE.stackTrace; var i = 0 }"
+					m:test="${ i &lt; trace.length }" m:after="${ i++ }">
+				${ trace[i].className }.${ trace[i].methodName }(${ trace[i].lineNumber })<br>
+			</span>
+		</p>
 	</body>
 </html>

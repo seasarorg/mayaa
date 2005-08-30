@@ -74,21 +74,6 @@
 			class="org.seasar.maya.impl.engine.processor.EndComponentProcessor">
 	</processor>
 
-	<processor name="beanProperties"
-			class="org.seasar.maya.impl.engine.processor.BeanPropertiesProcessor">
-		<property name="bean" required="true"/>
-		<property name="var"/>
-		<property name="index"/>
-		<property name="ignore"/>
-	</processor>
-
-	<processor name="stackTraceElements"
-			class="org.seasar.maya.impl.engine.processor.StackTraceElementsProcessor">
-		<property name="throwable" required="true" expectedType="java.lang.Throwable"/>
-		<property name="var"/>
-		<property name="index"/>
-	</processor>
-
 	<processor name="exec"
 			class="org.seasar.maya.impl.engine.processor.ExecProcessor">
 		<property name="script" expectedType="void"/>

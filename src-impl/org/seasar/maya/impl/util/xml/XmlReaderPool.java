@@ -27,7 +27,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlReaderPool extends AbstractSoftReferencePool {
 
-    private static XmlReaderPool _xmlReaderPool;
+	private static final long serialVersionUID = 1736077679163143852L;
+
+	private static XmlReaderPool _xmlReaderPool;
     
     public static XmlReaderPool getPool() {
         if(_xmlReaderPool == null) {

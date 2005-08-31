@@ -16,15 +16,16 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.seasar.maya.cycle.CycleWriter;
@@ -38,6 +39,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.maya.impl.cycle.jsp.PageContextImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
@@ -50,14 +52,17 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
     
 	private static final long serialVersionUID = -4416320364576454337L;
 	private static PageContext _pageContext = new PageContextImpl();
+    private static Map _tagPoolEntries = new HashMap();
     
     private Class _tagClass;
     private List _properties;
     private String _attributesKey;
+    private ThreadLocal _loadedTag = new ThreadLocal();
 
     // MLD method
     public void setTagClass(Class tagClass) {
-        if(tagClass == null) {
+        if(tagClass == null || 
+    			Tag.class.isAssignableFrom(tagClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
@@ -96,13 +101,31 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return _attributesKey;
     }
     
-    protected Tag getLoadedTag() {
-        TagContext tagContext = TagContext.getTagContext();
-        Tag tag = tagContext.getLoadedTag(this);
+    private Tag getLoadedTag() {
+        Tag tag = (Tag)_loadedTag.get();
         if(tag == null) {
-            throw new IllegalStateException();
+            tag = getTagPool().borrowTag();
+            _loadedTag.set(tag);
         }
         return tag;
+    }
+    
+    private void releaseLoadedTag() {
+        Tag tag = (Tag)_loadedTag.get();
+        _loadedTag.set(null);
+        getTagPool().returnTag(tag);
+    }
+    
+    private TagPool getTagPool() {
+        synchronized (_tagPoolEntries) {
+	        String key = _tagClass.getName() + getAttributesKey();
+	        TagPool pool = (TagPool)_tagPoolEntries.get(key);
+	        if(pool == null) {
+                pool = new TagPool(_tagClass);
+                _tagPoolEntries.put(key, pool);
+            }
+	        return pool;
+        }
     }
     
     private ProcessStatus getProcessStatus(int status, boolean doStart) {
@@ -126,25 +149,20 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
-        TagContext tagContext = TagContext.getTagContext();
-        Tag customTag = tagContext.loadTag(_tagClass, getAttributesKey());
-        TagData tagData = new TagData((Object[][])null);
+        Tag customTag = getLoadedTag();
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
             String propertyName = property.getQName().getLocalName();
             Object value = property.getValue();
             ObjectUtil.setProperty(customTag, propertyName, value);
-            if(value != null) {
-                tagData.setAttribute(propertyName, value);
-            } else {
-                tagData.setAttribute(propertyName, Void.class);
-            }
         }
         customTag.setPageContext(_pageContext);
         TemplateProcessor processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspCustomTagProcessor) {
-                Tag parentTag = tagContext.getLoadedTag(processor);
+            	JspCustomTagProcessor jspProcessor = 
+            		(JspCustomTagProcessor)processor;
+                Tag parentTag = jspProcessor.getLoadedTag();
                 if(parentTag == null) {
                     throw new IllegalStateException(
                             "the parent processor has no custom tag.");
@@ -155,7 +173,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
         try {
             final int result = customTag.doStartTag();
-            tagContext.putLoadedTag(this, customTag);
             return getProcessStatus(result, true);
         } catch (JspException e) {
             throw new RuntimeException(e);
@@ -171,8 +188,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             throw new RuntimeException(e);
         } finally {
             if (!canCatch()) {
-                TagContext tagContext = TagContext.getTagContext();
-                tagContext.releaseTag(customTag, getAttributesKey());
+                releaseLoadedTag();
             }
         }
     }
@@ -260,12 +276,45 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             try {
                 tryCatch.doFinally();
             } finally {
-                TagContext tagContext = TagContext.getTagContext();
-                tagContext.releaseTag(tag, getAttributesKey());
+                releaseLoadedTag();
             }
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    private class TagPool extends AbstractSoftReferencePool {
+
+		private static final long serialVersionUID = -4519484537723904500L;
+
+		private Class _clazz;
+
+        private TagPool(Class clazz) {
+        	if(clazz == null || 
+        			Tag.class.isAssignableFrom(clazz) == false) {
+        		throw new IllegalArgumentException();
+        	}
+            _clazz = clazz;
+        }
+
+        protected Object createObject() {
+            return ObjectUtil.newInstance(_clazz);
+        }
+
+        protected boolean validateObject(Object object) {
+            return object instanceof Tag;
+        }
+        
+        private Tag borrowTag() {
+        	return (Tag)borrowObject();
+        }
+        
+        private void returnTag(Tag tag) {
+        	if(tag != null) {
+        		super.returnObject(tag);
+        	}
+        }
+        
     }
 
 }

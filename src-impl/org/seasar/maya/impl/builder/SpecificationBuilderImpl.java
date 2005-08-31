@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.builder;
 
-import java.io.Serializable;
-
 import org.apache.xerces.parsers.SAXParser;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
@@ -123,7 +121,7 @@ public class SpecificationBuilderImpl
         }
     }
 
-    private class XMLReaderPool extends AbstractSoftReferencePool implements Serializable {
+    private class XMLReaderPool extends AbstractSoftReferencePool {
 
 		private static final long serialVersionUID = -1131927232092623848L;
 

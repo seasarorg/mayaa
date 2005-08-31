@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.util.collection;
 
+import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractSoftReferencePool {
+public abstract class AbstractSoftReferencePool implements Serializable {
 
     private List _pool = new ArrayList();
     private int _numActive;

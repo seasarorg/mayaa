@@ -48,7 +48,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());
         }
-        return EVAL_BODY_INCLUDE;
+        return SKIP_BODY;
     }
 
 }

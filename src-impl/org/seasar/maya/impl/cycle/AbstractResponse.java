@@ -73,7 +73,8 @@ public abstract class AbstractResponse implements Response {
     }
     
     public void clearBuffer() {
-        getWriter().clearBuffer();
+        _stack.clear();
+        _stack.push(new CycleWriterImpl(null));
     }
 
     public String getString() {

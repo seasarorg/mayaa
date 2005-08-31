@@ -74,12 +74,15 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 		        if(prop.isStatic()) {
                     String value = (String)prop.getValue();
     		        if(StringUtil.hasValue(value.trim())) {
-    			        // .maya上のノードにボディテキストがあるとき
+    			        // .maya上のノードボディが空白でないとき
     		            return null;
     		        }
+                } else {
+                    // .maya上のノードボディに、動的式が書かれているとき
+                    return null;
                 }
 	        } else if(child instanceof AttributeProcessor == false) {
-	            // .maya上のノードに改行や空白のm:charactersもしくは、
+	            // .maya上のノードにm:charactersもしくは、
 	            // m:attribute以外のネストした子ノードがあるとき
 	            return null;
 	        }

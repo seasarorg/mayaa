@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="maya" default="distro" basedir=".">
+<project default="distro" basedir=".">
 
-	<property name="project" value="maya"/>
-	<property name="project-title" value="Maya"/>
 	<property file="project.properties"/>
 
-	<property name="maya.zip.name" value="${project}-src-${maya.ver}.zip"/>
-	
-	<property name="maya.war.name" value="${project}-blank-${maya.ver}.war"/>
-	<property name="maya.war.title" value="${project-title} Blank Application"/>
+	<property name="zip.name" value="${project.name}-src-${project.ver}.zip"/>
+	<property name="war.name" value="${project.name}-${project.ver}.war"/>
+	<property name="war.title" value="${project.title} Blank Application"/>
+	<property name="jar.name" value="${project.name}-${project.ver}.jar"/>
+	<property name="jar.title" value="${project.title} API &amp; Impl"/>
 
-	<property name="maya.jar.name" value="${project}-${maya.ver}.jar"/>
-	<property name="maya.jar.title" value="${project-title} API &amp; Impl"/>
-
-	<property name="maya.javadoc.charset" value="Shift_JIS"/>
-	<property name="maya.javadoc.packages" value="*"/>
-	<property name="maya.javadoc.source" value="1.4"/>
-	<property name="maya.javadoc.access" value="protected"/>
-	<property name="maya.javadoc.title" value="${project-title} ${maya.ver} API"/>
+	<property name="javadoc.charset" value="Shift_JIS"/>
+	<property name="javadoc.packages" value="*"/>
+	<property name="javadoc.source" value="1.4"/>
+	<property name="javadoc.access" value="protected"/>
+	<property name="javadoc.title" value="${project.title} ${project.ver} API"/>
 
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
 
-	<property name="license" value="resource"/>
+	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
 	<property name="webinf" value="WEB-INF"/>
 	<property name="webinf.classes" value="${webinf}/classes"/>
@@ -31,39 +27,39 @@
 	<property name="webinf.lib-servlet" value="${webinf}/lib-servlet"/>
 
 	<target name="cleanjar">
-		<delete verbose="${maya.verbose}">
-			<fileset dir=".">
-				<include name="${folder.context}/${webinf.lib}/${project}-*.jar"/>
+		<delete verbose="${project.verbose}">
+			<fileset dir="${folder.context}/${webinf.lib}">
+				<include name="${project.name}-*.jar"/>
 			</fileset>
 		</delete>
 	</target>
 
-	<target name="mayajar" depends="cleanjar">
-		<jar jarfile="${folder.context}/${webinf.lib}/${maya.jar.name}">
+	<target name="makejar" depends="cleanjar">
+		<jar jarfile="${folder.context}/${webinf.lib}/${jar.name}">
 			<fileset dir="${folder.context}/${webinf.classes}">
 				<include name="**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<manifest>
-				<attribute name="Title" value="${maya.jar.title}"/>
-				<attribute name="Version" value="${maya.ver}"/>
+				<attribute name="Title" value="${jar.title}"/>
+				<attribute name="Version" value="${project.ver}"/>
 			</manifest>
-			<metainf dir="${folder.context}" includes="${license}"/>
+			<metainf dir="${folder.context}" includes="${resource}"/>
 		</jar>
 	</target>
 
 	<target name="cleandoc">
-		<delete dir="${folder.context}/${javadoc}" verbose="${maya.verbose}"/>
+		<delete dir="${folder.context}/${javadoc}" verbose="${project.verbose}"/>
 		<mkdir dir="${folder.context}/${javadoc}"/>
 	</target>
 
 	<target name="javadoc" depends="cleandoc">
         <javadoc
-        	charset="${maya.javadoc.charset}"
+        	charset="${javadoc.charset}"
         	destdir="${folder.context}/${javadoc}"
-        	access="${maya.javadoc.access}"
-        	source="${maya.javadoc.source}"
+        	access="${javadoc.access}"
+        	source="${javadoc.source}"
         	use="false"
         	notree="true"
         	nonavbar="false"
@@ -73,37 +69,37 @@
         	version="false"
         	nodeprecatedlist="false"
         	nodeprecated="false"
-        	packagenames="${maya.javadoc.packages}"
+        	packagenames="${javadoc.packages}"
         	sourcepath="${folder.src.api}"
-        	doctitle="${maya.javadoc.title}"
-        	verbose="${maya.verbose}">
+        	doctitle="${javadoc.title}"
+        	verbose="${project.verbose}">
         	<classpath>
         		<fileset dir=".">
 	        		<include name="${folder.context}/${webinf.lib}/*.jar"/>
 	        		<include name="${folder.context}/${webinf.lib-servlet}/*.jar"/>
-	        		<exclude name="${folder.context}/${webinf.lib}/${project}-*.jar"/>
+	        		<exclude name="${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
         		</fileset>
        		</classpath>
        	</javadoc>
     </target>
 
-	<target name="make" depends="mayajar, javadoc"/>
+	<target name="make" depends="makejar, javadoc"/>
 
 	<target name="zipsrc" depends="make">
-		<zip destfile="../${maya.zip.name}">
+		<zip destfile="../${zip.name}">
 			<fileset dir="../">
-				<include name="${project}/**/*"/>
-				<exclude name="${project}/${folder.context}/${webinf.classes}"/>
-				<exclude name="${project}/${folder.context}/${webinf.classes}/**/*"/>
-				<exclude name="${project}/${folder.context}/${webinf.lib}/${project}-*.jar"/>
-				<exclude name="${project}/**/.svn"/>
-				<exclude name="${project}/**/.svn/**/*"/>
+				<include name="${project.folder}/**/*"/>
+				<exclude name="${project.folder}/${folder.context}/${webinf.classes}"/>
+				<exclude name="${project.folder}/${folder.context}/${webinf.classes}/**/*"/>
+				<exclude name="${project.folder}/${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
+				<exclude name="${project.folder}/**/.svn"/>
+				<exclude name="${project.folder}/**/.svn/**/*"/>
 			</fileset>
 		</zip>
 	</target>
 	
 	<target name="warblank" depends="make">
-		<war destfile="../${maya.war.name}" webxml="${folder.context}/${webinf}/web.xml">
+		<war destfile="../${war.name}" webxml="${folder.context}/${webinf}/web.xml">
 			<fileset dir="${folder.context}">
 				<include name="${webinf}/**/*"/>
 				<exclude name="${webinf}/web.xml"/>
@@ -115,8 +111,8 @@
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<manifest>
-				<attribute name="Title" value="${maya.war.title}"/>
-				<attribute name="Version" value="${maya.ver}"/>
+				<attribute name="Title" value="${war.title}"/>
+				<attribute name="Version" value="${project.ver}"/>
 			</manifest>
 		</war>
 	</target>

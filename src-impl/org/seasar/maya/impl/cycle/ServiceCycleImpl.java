@@ -70,8 +70,7 @@ public class ServiceCycleImpl implements ServiceCycle {
         if(attr != null) {
             return attr;
         }
-        // TODO —áŠO‚ð‚«‚¿‚ñ‚Æ‚·‚é
-        throw new IllegalArgumentException();
+        throw new ScopeNotFoundException(scope);
     }
 
     public void putAttributeScope(String scope, AttributeScope attrScope) {

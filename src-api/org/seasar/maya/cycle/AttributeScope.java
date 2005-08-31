@@ -41,12 +41,26 @@ public interface AttributeScope {
     Iterator iterateAttributeNames();
     
     /**
+     * このスコープ中に指定された名前に対応したオブジェクトがあるかをテストする。
+     * @param name 指定オブジェクト名。
+     * @return テスト結果。
+     */
+    boolean hasAttribute(String name);
+
+    /**
      * このスコープ中から指定された名前に対応したオブジェクトを返す。
-     * 名前文字列がnullもしくは空白文字列、もしくは該当オブジェクトが無い場合には、nullを返す。
+     * 名前文字列がnullもしくは空白文字列、もしくは該当オブジェクトが無い場合には、
+     * UNDEFINEDを返す。
      * @param name 指定オブジェクト名。
      * @return 指定オブジェクト。
      */
     Object getAttribute(String name);
+    
+    /**
+     * このスコープ中にオブジェクトの書き込みおよび削除ができるかを返す。
+     * @return テスト結果。
+     */
+    boolean isAttributeWritable();
     
     /**
      * このスコープ中に、指定名でオブジェクトを保存する。

@@ -74,7 +74,11 @@ public class ImplicitScope implements AttributeScope {
         return (ImplicitObjectResolver)_resolverMap.get(name);
     }
     
-    public Object getAttribute(String name) {
+    public boolean hasAttribute(String name) {
+		return _resolverMap.containsKey(name);
+	}
+
+	public Object getAttribute(String name) {
 		if(StringUtil.isEmpty(name)) {
 			return null;
 		}
@@ -89,6 +93,10 @@ public class ImplicitScope implements AttributeScope {
         return object;
 	}
 
+    public boolean isAttributeWritable() {
+		return false;
+	}
+	
 	public void setAttribute(String name, Object attribute) {
 		throw new ScopeNotWritableException(getScopeName());
 	}

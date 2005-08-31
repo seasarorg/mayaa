@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +69,19 @@ public class WebSession implements Session {
     public Iterator iterateAttributeNames() {
         return EnumerationIterator.getInstance(_session.getAttributeNames());
     }
+    public boolean hasAttribute(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return false;
+        }
+        for(Enumeration e = _session.getAttributeNames();
+        		e.hasMoreElements(); ) {
+			if(e.nextElement().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     public Object getAttribute(String name) {
         check();
@@ -76,6 +90,10 @@ public class WebSession implements Session {
         }
         return _session.getAttribute(name);
     }
+
+    public boolean isAttributeWritable() {
+		return true;
+	}
 
     public void setAttribute(String name, Object attribute) {
         check();

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -81,13 +82,31 @@ public class WebApplication implements Application {
         return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
     }
 
-    public Object getAttribute(String name) {
+    public boolean hasAttribute(String name) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return false;
+        }
+        for(Enumeration e = _servletContext.getAttributeNames();
+        		e.hasMoreElements(); ) {
+        	if(e.nextElement().equals(name)) {
+        		return true;
+        	}
+        }
+        return false;
+	}
+
+	public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
         return _servletContext.getAttribute(name);
     }
+
+    public boolean isAttributeWritable() {
+		return true;
+	}
 
     public void setAttribute(String name, Object attribute) {
         check();

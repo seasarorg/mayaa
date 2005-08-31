@@ -21,6 +21,7 @@ import java.util.Map;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
+import org.seasar.maya.cycle.AttributeScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,6 +34,10 @@ public class MayaWrapFactory extends WrapFactory {
             return new NativeJavaMap(scope, (Map)javaObject);
         } else if(javaObject instanceof List) {
             return new NativeJavaList(scope, (List)javaObject);
+        } else if(javaObject instanceof AttributeScope &&
+        		javaObject instanceof Scriptable == false) {
+        	AttributeScope attrs = (AttributeScope)javaObject;
+        	return new NativeJavaAttributeScope(scope, attrs);
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
     }

@@ -54,19 +54,38 @@ public class PageAttributeScope extends ScriptableObject
         return list.iterator();
     }
 
-    public Object getAttribute(String name) {
+    protected Scriptable findScope(String name) {
         for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
-                scope = scope.getParentScope()) {
-            Object obj = scope.get(name, scope);
-            if(obj != NOT_FOUND) {
-                return obj;
-            }
+		        scope instanceof PageAttributeScope; 
+		        scope = scope.getParentScope()) {
+        	if(scope.has(name, this)) {
+        		return scope;
+        	}
+        }
+		return null;
+	}
+
+    public boolean hasAttribute(String name) {
+        Scriptable scope = findScope(name);
+        if(scope != null) {
+            return true;
+        }
+        return false;
+    }
+    
+	public Object getAttribute(String name) {
+        Scriptable scope = findScope(name);
+        if(scope != null) {
+            return scope.get(name, this);
         }
         return null;
     }
 
-    public void setAttribute(String name, Object attribute) {
+    public boolean isAttributeWritable() {
+		return true;
+	}
+
+	public void setAttribute(String name, Object attribute) {
         put(name, this, attribute);
     }
 

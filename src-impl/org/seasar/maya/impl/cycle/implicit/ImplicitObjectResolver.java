@@ -17,6 +17,7 @@ package org.seasar.maya.impl.cycle.implicit;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @deprecated using AttributeScope
  */
 public interface ImplicitObjectResolver {
 

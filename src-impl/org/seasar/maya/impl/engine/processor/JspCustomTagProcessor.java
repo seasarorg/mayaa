@@ -52,7 +52,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
     
 	private static final long serialVersionUID = -4416320364576454337L;
 	private static PageContext _pageContext = new PageContextImpl();
-    private static Map _tagPoolEntries = new HashMap();
+    private static Map _tagPools = new HashMap();
     
     private Class _tagClass;
     private List _properties;
@@ -82,7 +82,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         _properties.add(property);
     }
     
-    private Iterator iterateProperties() {
+    protected Iterator iterateProperties() {
         if(_properties == null) {
             return NullIterator.getInstance();
         }
@@ -101,34 +101,36 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         return _attributesKey;
     }
     
-    private Tag getLoadedTag() {
-        Tag tag = (Tag)_loadedTag.get();
-        if(tag == null) {
-            tag = getTagPool().borrowTag();
-            _loadedTag.set(tag);
-        }
-        return tag;
-    }
-    
-    private void releaseLoadedTag() {
-        Tag tag = (Tag)_loadedTag.get();
-        _loadedTag.set(null);
-        getTagPool().returnTag(tag);
-    }
-    
-    private TagPool getTagPool() {
-        synchronized (_tagPoolEntries) {
+    protected TagPool getTagPool() {
+        synchronized (_tagPools) {
 	        String key = _tagClass.getName() + getAttributesKey();
-	        TagPool pool = (TagPool)_tagPoolEntries.get(key);
+	        TagPool pool = (TagPool)_tagPools.get(key);
 	        if(pool == null) {
                 pool = new TagPool(_tagClass);
-                _tagPoolEntries.put(key, pool);
+                _tagPools.put(key, pool);
             }
 	        return pool;
         }
     }
     
-    private ProcessStatus getProcessStatus(int status, boolean doStart) {
+    protected Tag getLoadedTag() {
+        Tag tag = (Tag)_loadedTag.get();
+        if(tag == null) {
+            tag = getTagPool().borrowTag();
+            tag.setPageContext(_pageContext);
+            _loadedTag.set(tag);
+        }
+        return tag;
+    }
+    
+    protected void releaseLoadedTag() {
+        Tag tag = (Tag)_loadedTag.get();
+        _loadedTag.set(null);
+        tag.release();
+        getTagPool().returnTag(tag);
+    }
+    
+    protected ProcessStatus getProcessStatus(int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
             return TemplateProcessor.EVAL_BODY_INCLUDE;
         } else if(status == Tag.SKIP_BODY) {
@@ -156,7 +158,6 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             Object value = property.getValue();
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
-        customTag.setPageContext(_pageContext);
         TemplateProcessor processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspCustomTagProcessor) {
@@ -283,13 +284,13 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
     }
 
-    private class TagPool extends AbstractSoftReferencePool {
+    protected class TagPool extends AbstractSoftReferencePool {
 
 		private static final long serialVersionUID = -4519484537723904500L;
 
 		private Class _clazz;
 
-        private TagPool(Class clazz) {
+		protected TagPool(Class clazz) {
         	if(clazz == null || 
         			Tag.class.isAssignableFrom(clazz) == false) {
         		throw new IllegalArgumentException();
@@ -305,13 +306,13 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             return object instanceof Tag;
         }
         
-        private Tag borrowTag() {
+        protected Tag borrowTag() {
         	return (Tag)borrowObject();
         }
         
-        private void returnTag(Tag tag) {
+        protected void returnTag(Tag tag) {
         	if(tag != null) {
-        		super.returnObject(tag);
+        		returnObject(tag);
         	}
         }
         

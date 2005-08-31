@@ -15,7 +15,7 @@
 	<processor name="element" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>m:element injection</description>
 		<property name="name" required="true"/>
-		<property name="childEvaluation" defaultValue="true"/>
+		<property name="childEvaluation" default="true"/>
 	</processor>
 	
 	<processor name="templateElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
@@ -26,7 +26,7 @@
 	<processor name="duplecatedElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>duplecated element on the template by m:rendered="true"</description>
 		<property name="name" required="true"/>
-		<property name="duplicated" defaultValue="true"/>
+		<property name="duplicated" default="true"/>
 	</processor>
 
 	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
@@ -92,6 +92,7 @@
 		<property name="init" expectedType="void"/>
 		<property name="test" required="true" expectedType="boolean"/>
 		<property name="after" expectedType="void"/>
+		<property name="max" default="256"/>
 	</processor>		
 
 	<processor name="if"

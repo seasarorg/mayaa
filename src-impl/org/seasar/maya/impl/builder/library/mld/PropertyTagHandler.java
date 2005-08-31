@@ -44,7 +44,7 @@ public class PropertyTagHandler extends TagHandler {
                     attributes, "required", false);
 	        Class expectedType = XmlUtil.getClassValue(
                     attributes, "expectedType", Object.class);
-	        String defaultValue = attributes.getValue("defaultValue");
+	        String defaultValue = attributes.getValue("default");
 	        PropertyDefinitionImpl property = new PropertyDefinitionImpl();
 	        property.setName(name);
 	        property.setRequired(required);

@@ -31,6 +31,8 @@ public class ForProcessor extends TemplateProcessorSupport
 	private ProcessorProperty _init;
 	private ProcessorProperty _test;
 	private ProcessorProperty _after;
+    private int _max = 256;
+    private ThreadLocal _counter = new ThreadLocal();
     
     // MLD property, expectedType=void
     public void setInit(ProcessorProperty init) {
@@ -50,6 +52,11 @@ public class ForProcessor extends TemplateProcessorSupport
         _after = after;
     }
 
+    // MLD property
+    public void setMax(int max) {
+        _max = max;
+    }
+    
 	public boolean isIteration() {
 		return true;
 	}
@@ -58,11 +65,18 @@ public class ForProcessor extends TemplateProcessorSupport
         if(_test == null) {
         	throw new IllegalStateException();
         }
+        int count = ((Integer)_counter.get()).intValue();
+        if(count > _max) {
+            throw new TooManyLoopException(_max);
+        }
+        count++;
+        _counter.set(new Integer(count));
         return ObjectUtil.booleanValue(_test.getValue(), false);
 	}
 	
     public ProcessStatus doStartProcess() {
-    	if(_init != null) {
+    	_counter.set(new Integer(0));
+        if(_init != null) {
     		_init.getValue();
     	}
         return execTest() ? EVAL_BODY_INCLUDE : SKIP_BODY;

@@ -25,6 +25,7 @@
 	<property name="webinf.classes" value="${webinf}/classes"/>
 	<property name="webinf.lib" value="${webinf}/lib"/>
 	<property name="webinf.lib-servlet" value="${webinf}/lib-servlet"/>
+	<property name="webinf.debug" value="${webinf}/page/debug"/>
 
 	<target name="cleanjar">
 		<delete verbose="${project.verbose}">
@@ -85,7 +86,7 @@
 
 	<target name="make" depends="makejar, javadoc"/>
 
-	<target name="zipsrc" depends="make">
+	<target name="makezip" depends="make">
 		<zip destfile="../${zip.name}">
 			<fileset dir="../">
 				<include name="${project.folder}/**/*"/>
@@ -98,7 +99,7 @@
 		</zip>
 	</target>
 	
-	<target name="warblank" depends="make">
+	<target name="makewar" depends="make">
 		<war destfile="../${war.name}" webxml="${folder.context}/${webinf}/web.xml">
 			<fileset dir="${folder.context}">
 				<include name="${webinf}/**/*"/>
@@ -107,6 +108,8 @@
 				<exclude name="${webinf.classes}/**/*"/>
 				<exclude name="${webinf.lib-servlet}"/>
 				<exclude name="${webinf.lib-servlet}/**/*"/>
+				<exclude name="${webinf.debug}"/>
+				<exclude name="${webinf.debug}/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
@@ -117,6 +120,6 @@
 		</war>
 	</target>
 
-	<target name="distro" depends="zipsrc, warblank"/>
+	<target name="distro" depends="makezip, makewar"/>
 	
 </project>

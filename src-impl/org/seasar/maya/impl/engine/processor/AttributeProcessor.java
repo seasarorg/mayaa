@@ -63,7 +63,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
         AbstractAttributableProcessor parent = findParentAttributable();
         parent.addProcesstimeProperty(new ProcessorPropertyImpl(
-                _name.getQName(), _name.getPrefix(), _value.getValue()));
+                _name.getQName(), _name.getPrefix(), _value));
         return SKIP_BODY;
     }
     

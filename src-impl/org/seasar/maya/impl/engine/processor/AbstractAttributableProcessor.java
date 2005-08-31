@@ -24,7 +24,6 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -34,6 +33,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
 
     private boolean _childEvaluation;
     private List _attributes;
+    private ThreadLocal _processtimeInfo = new ThreadLocal();
 
     // MLD property
     public void setChildEvaluation(boolean childEvaluation) {
@@ -126,13 +126,11 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
 
     //helper class, methods ----------------------------------------
     
-    private static final String KEY = ProcesstimeInfo.class.toString();
-    
     protected ProcesstimeInfo getProcesstimeInfo() {
-        ProcesstimeInfo info = (ProcesstimeInfo)CycleUtil.getAttribute(KEY);
+        ProcesstimeInfo info = (ProcesstimeInfo)_processtimeInfo.get();
         if(info == null) {
             info = new ProcesstimeInfo();
-            CycleUtil.setAttribute(KEY, info);
+            _processtimeInfo.set(info);
         }
         return info;
     }

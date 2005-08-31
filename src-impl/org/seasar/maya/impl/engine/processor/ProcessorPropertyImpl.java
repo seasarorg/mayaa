@@ -47,14 +47,20 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     }
     
     public boolean isStatic() {
-        if(_value instanceof CompiledScript) {
+        if(_value instanceof ProcessorProperty) {
+            ProcessorProperty property = (ProcessorProperty)_value;
+            return property.isStatic();
+        } else if(_value instanceof CompiledScript) {
             return ((CompiledScript)_value).isLiteral();
         }
         return true;
     }
 
     public Object getValue() {
-        if(_value instanceof CompiledScript) {
+        if(_value instanceof ProcessorProperty) {
+            ProcessorProperty property = (ProcessorProperty)_value;
+            return property.getValue();
+        } else if(_value instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)_value;
             return ScriptUtil.execute(script);
         }

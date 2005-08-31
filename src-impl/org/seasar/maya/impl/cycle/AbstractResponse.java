@@ -95,7 +95,9 @@ public abstract class AbstractResponse implements Response {
     }
 
     public void write(char[] cbuf) {
-        write(cbuf, 0, cbuf.length);
+        if(cbuf != null) {
+            write(cbuf, 0, cbuf.length);
+        }
     }
 
     public void write(char[] cbuf, int off, int len) {
@@ -115,7 +117,9 @@ public abstract class AbstractResponse implements Response {
     }
 
     public void write(String str) {
-        write(str, 0, str.length());
+        if(str != null) {
+            write(str, 0, str.length());
+        }
     }
 
     public void write(String str, int off, int len) {

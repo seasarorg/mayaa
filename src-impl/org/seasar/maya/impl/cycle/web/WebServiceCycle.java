@@ -43,8 +43,6 @@ public class WebServiceCycle extends AbstractServiceCycle {
             throw new IllegalArgumentException();
         }
         _application = application;
-    	_request = new WebRequest();
-        _response = new WebResponse();
     }
 
     public void inithialize(
@@ -52,8 +50,16 @@ public class WebServiceCycle extends AbstractServiceCycle {
     	if(request == null || response == null) {
     		throw new IllegalArgumentException();
     	}
+    	_request = new WebRequest();
     	_request.setHttpServletRequest(request);
+        _response = new WebResponse();
     	_response.setHttpServletResponse(response);
+    }
+    
+    private void check() {
+    	if(_request == null || _response == null) {
+    		throw new IllegalStateException();
+    	}
     }
     
     public Application getApplication() {
@@ -61,18 +67,22 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
     
     public Request getRequest() {
-        return _request;
+    	check();
+    	return _request;
     }
 
     public Session getSession() {
+    	check();
 		return _request.getSession();
 	}
 
 	public Response getResponse() {
+    	check();
         return _response;
     }
 
     public void forward(String relativeUrlPath) {
+    	check();
         _request.setForwardPath(relativeUrlPath);
         _response.clearBuffer();
         Engine engine = SpecificationUtil.getEngine();
@@ -82,6 +92,7 @@ public class WebServiceCycle extends AbstractServiceCycle {
     }
 
     public void redirect(String url) {
+    	check();
 		_response.redirect(url);
     }
     

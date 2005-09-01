@@ -22,67 +22,19 @@ import java.util.List;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.cycle.web.WebResponse;
-import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceCycleImpl implements ServiceCycle {
+public abstract class AbstractServiceCycle implements ServiceCycle {
 
-    private static final long serialVersionUID = 5971443264903384152L;
-
-    private Application _application;
-    private Request _request;
-    private Response _response;
     private AttributeScope _page;
     private List _scopes;
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
-
-    public ServiceCycleImpl(Application application) {
-        if (application == null) {
-            throw new IllegalArgumentException();
-        }
-        _application = application;
-    }
-
-    public Application getApplication() {
-        return _application;
-    }
-
-    public void setRequest(Request request) {
-        if (request == null) {
-            throw new IllegalArgumentException();
-        }
-        _request = request;
-    }
-
-    public Request getRequest() {
-        if(_request == null) {
-            throw new IllegalStateException();
-        }
-        return _request;
-    }
-
-    public void setResponse(Response response) {
-        if (response == null) {
-            throw new IllegalArgumentException();
-        }
-        _response = response;
-    }
-
-    public Response getResponse() {
-        if(_response == null) {
-            throw new IllegalStateException();
-        }
-        return _response;
-    }
 
     public void addAttributeScope(AttributeScope attrs) {
         if(attrs == null) {
@@ -104,11 +56,18 @@ public class ServiceCycleImpl implements ServiceCycle {
         if(_scopes != null) {
             list.addAll(_scopes);
         }
-        if(_request != null) {
-            list.add(_request);
-            list.add(_request.getSession());
+        Request request = getRequest();
+        if(request != null) {
+            list.add(request);
         }
-        list.add(_application);
+        Session session = getSession();
+        if(session != null) {
+            list.add(session);
+        }
+        Application application = getApplication();
+        if(application != null) {
+        	list.add(application);
+        }
         return list.iterator();
     }
 
@@ -144,21 +103,5 @@ public class ServiceCycleImpl implements ServiceCycle {
     public SpecificationNode getInjectedNode() {
 		return _injectedNode;
 	}
-
-    public void forward(String relativeUrlPath) {
-        _request.setForwardPath(relativeUrlPath);
-        _response.clearBuffer();
-        Engine engine = SpecificationUtil.getEngine();
-        Page page = engine.getPage(
-                engine, _request.getPageName(), _request.getExtension());
-        page.doPageRender();
-    }
-
-    public void redirect(String url) {
-    	if( _response instanceof WebResponse) {
-        	WebResponse webResponse = (WebResponse)_response;
-   			webResponse.redirect(url);
-    	}
-    }
     
 }

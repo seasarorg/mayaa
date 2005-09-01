@@ -26,16 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.ServiceCycleImpl;
 import org.seasar.maya.impl.cycle.web.WebApplication;
-import org.seasar.maya.impl.cycle.web.WebRequest;
-import org.seasar.maya.impl.cycle.web.WebResponse;
+import org.seasar.maya.impl.cycle.web.WebServiceCycle;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -170,39 +166,20 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
         return source;
     }
 
-    private Request createRequest(HttpServletRequest request) {
-    	if(request == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	WebRequest webRequest = new WebRequest();
-    	webRequest.setHttpServletRequest(request);
-    	return webRequest;
-    }
-    
-    private Response createResponse(HttpServletResponse response) {
-    	if(response == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	WebResponse webResponse = new WebResponse();
-    	webResponse.setHttpServletResponse(response);
-    	return webResponse;
-    }
-    
 	public void initialize(Object request, Object response) {
 		if(request == null || response == null ||
                 request instanceof HttpServletRequest == false ||
                 response instanceof HttpServletResponse == false) {
 			throw new IllegalArgumentException();
 		}
-    	ServiceCycleImpl cycle = (ServiceCycleImpl)_currentServiceCycle.get();
+		WebServiceCycle cycle = (WebServiceCycle)_currentServiceCycle.get();
     	if(cycle == null) {
-    		cycle = new ServiceCycleImpl(getApplication());
+    		cycle = new WebServiceCycle(getApplication());
     		_currentServiceCycle.set(cycle);
     	}
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
-		cycle.setRequest(createRequest(httpRequest));
-        cycle.setResponse(createResponse(httpResponse));
+		cycle.inithialize(httpRequest, httpResponse);
 	}
 
 	public ServiceCycle getServiceCycle() {

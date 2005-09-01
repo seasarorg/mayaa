@@ -49,12 +49,6 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
     String getExtension();
     
     /**
-     * セッションの取得。
-     * @return セッションオブジェクト。
-     */
-    Session getSession();
-    
-    /**
      * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはString。
      * @return クエリパラメータスコープ。
      */

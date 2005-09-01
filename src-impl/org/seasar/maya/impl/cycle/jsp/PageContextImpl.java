@@ -148,7 +148,7 @@ public class PageContextImpl extends PageContext {
     
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Session session = cycle.getRequest().getSession();
+        Session session = cycle.getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;

@@ -82,6 +82,7 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         }
         PageAttributeScope scope = new PageAttributeScope();
         scope.setPrototype(parent);
+        scope.setParentScope(_standardObjects);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(scope);
     }
@@ -96,7 +97,7 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
             if(model != null) {
                 Context cx = Context.enter(); 
                 Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, null, model, model.getClass());
+                        cx, _standardObjects, model, model.getClass());
                 newScope.setPrototype(prototype);
                 Context.exit();
             }

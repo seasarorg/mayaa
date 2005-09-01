@@ -43,6 +43,10 @@ public class WebRequest implements Request, CONST_IMPL {
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;
+    private ParamScope _param;
+    private ParamValuesScope _paramValues;
+    private HeaderScope _header;
+    private HeaderValuesScope _headerValues;
     
     private void check() {
         if(_httpServletRequest == null) {
@@ -134,23 +138,31 @@ public class WebRequest implements Request, CONST_IMPL {
     }
 
     public AttributeScope getParam() {
-        // TODO ŽÀ‘•
-        return null;
+        if(_param == null) {
+        	_param = new ParamScope(_httpServletRequest);
+        }
+        return _param;
     }
 
     public AttributeScope getParamValues() {
-        // TODO ŽÀ‘•
-        return null;
+        if(_paramValues == null) {
+        	_paramValues = new ParamValuesScope(_httpServletRequest);
+        }
+        return _paramValues;
     }
 
     public AttributeScope getHeader() {
-        // TODO ŽÀ‘•
-        return null;
+        if(_header == null) {
+        	_header = new HeaderScope(_httpServletRequest);
+        }
+        return _header;
     }
 
     public AttributeScope getHeaderValues() {
-        // TODO ŽÀ‘•
-        return null;
+        if(_headerValues == null) {
+        	_headerValues = new HeaderValuesScope(_httpServletRequest);
+        }
+        return _headerValues;
     }
 
     public String getScopeName() {

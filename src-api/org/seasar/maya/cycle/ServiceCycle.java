@@ -59,6 +59,12 @@ public interface ServiceCycle extends Serializable {
     Request getRequest();
     
     /**
+     * セッションの取得。
+     * @return セッションオブジェクト。
+     */
+    Session getSession();
+    
+    /**
      * レスポンスオブジェクトの取得。
      * @return レスポンス。
      */

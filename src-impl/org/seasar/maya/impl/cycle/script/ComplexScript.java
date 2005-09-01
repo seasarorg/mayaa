@@ -49,10 +49,10 @@ public class ComplexScript implements CompiledScript {
         return _expectedType;
     }
     
-    public Object execute(Object root) {
+    public Object execute() {
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].execute(root));
+            buffer.append(_compiled[i].execute());
         }
         if(_expectedType == Void.class) {
             return null;

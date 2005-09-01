@@ -55,17 +55,11 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         _lineno = 1;
     }
     
-    protected Scriptable getScope(Context cx, Object root) {
+    protected Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope attrs = cycle.getAttributeScope(ServiceCycle.SCOPE_PAGE);
-        if(attrs instanceof PageAttributeScope) {
-            Scriptable scope = (Scriptable)attrs;
-            if(root != null) {
-                Scriptable rootScope = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, scope, root, root.getClass());
-                scope.setPrototype(rootScope);
-            }
-            return scope;
+        AttributeScope attrs = cycle.getPageScope();
+        if(attrs instanceof Scriptable) {
+            return (Scriptable)attrs;
         }
         throw new IllegalStateException();
     }
@@ -92,7 +86,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     	return obj;
     }
     
-    public Object execute(Object root) {
+    public Object execute() {
         Object ret = null;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
@@ -101,7 +95,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
             if(_script == null) {
                 _script = compile(cx);
             }
-            Object value = _script.exec(cx, getScope(cx, root));
+            Object value = _script.exec(cx, getScope());
             if(expectedType != Void.class) {
                 ret = JavaAdapter.convertResult(value, expectedType);
             }

@@ -34,7 +34,6 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new ScriptResolverTagHandler(this));
     }
     
     protected void start(Attributes attributes) {

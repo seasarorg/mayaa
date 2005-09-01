@@ -16,7 +16,6 @@
 package org.seasar.maya.cycle;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -50,44 +49,40 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
     String getExtension();
     
     /**
-     * リクエストのクエリパラメータの名前一覧。
-     * @return クエリパラメータ名（String）を保持するイテレータ。
+     * セッションの取得。
+     * @return セッションオブジェクト。
      */
-    Iterator iterateParameterNames();
+    Session getSession();
+    
+    /**
+     * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはString。
+     * @return クエリパラメータスコープ。
+     */
+    AttributeScope getParam();
 
     /**
-     * 指定名のリクエストのクエリパラメータ値を返す。
-     * 該当するクエリパラメータ名が無い場合はnullを返す。
-     * @param name 指定クエリパラメータ名。
-     * @return 指定クエリパラメータ値。
+     * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはStringの配列。
+     * @return クエリパラメータスコープ。
      */
-    String[] getParameterValues(String name);
+    AttributeScope getParamValues();
 
     /**
-     * リクエストヘッダの名前一覧。
-     * @return ヘッダ名（String）を保持するイテレータ。
+     * リクエストヘッダを含むスコープを取得する。内包するオブジェクトはString。
+     * @return クエリパラメータスコープ。
      */
-    Iterator iterateHeaderNames();
+    AttributeScope getHeader();
 
     /**
-     * 指定名のリクエストヘッダ値を返す。
-     * 該当するヘッダ名が無い場合はnullを返す。
-     * @param name 指定ヘッダ名。
-     * @return 指定ヘッダの値。
+     * リクエストヘッダを含むスコープを取得する。内包するオブジェクトはStringの配列。
+     * @return クエリパラメータスコープ。
      */
-    String[] getHeaderValues(String name);
+    AttributeScope getHeaderValues();
 
     /**
      * リクエストのロケールを返す。
      * @return リクエストロケール。
      */
     Locale[] getLocales();
-    
-    /**
-     * セッションの取得。
-     * @return セッションオブジェクト。
-     */
-    Session getSession();
 
     /**
      * フォワード先のパスを設定する。

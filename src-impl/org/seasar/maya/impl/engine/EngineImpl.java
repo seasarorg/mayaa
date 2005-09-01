@@ -192,6 +192,7 @@ public class EngineImpl extends SpecificationImpl
     protected void doPageService(ServiceCycle cycle) {
         try {
         	saveToCycle();
+            ScriptUtil.initScope();
             ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
             String pageName = cycle.getRequest().getPageName();
             String extension = cycle.getRequest().getExtension();

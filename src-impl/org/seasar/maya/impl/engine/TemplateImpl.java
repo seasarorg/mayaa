@@ -139,7 +139,7 @@ public class TemplateImpl extends SpecificationImpl
         ProcessStatus ret = EVAL_PAGE;
         try { 
             ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
-            scriptEnvironment.startScope();
+            scriptEnvironment.startScope(null);
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
@@ -241,10 +241,13 @@ public class TemplateImpl extends SpecificationImpl
         if(getParentProcessor() == null) {
             prepareEncoding();
         }
+        Object model = SpecificationUtil.findSpecificationModel(this);
+        ScriptUtil.startScope(model);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
         saveToCycle(this);
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+        ScriptUtil.endScope();
         return ret;
     }
 

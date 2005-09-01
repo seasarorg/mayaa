@@ -20,17 +20,17 @@
 <!ELEMENT errorHandler (description?, parameter*)>
 <!ATTLIST errorHandler class CDATA #REQUIRED>
 
-<!ELEMENT script (description?, resolver*, parameter*)>
+<!ELEMENT script (description?, parameter*)>
 <!ATTLIST script class CDATA #REQUIRED>
-
-<!ELEMENT resolver (description?, parameter*)>
-<!ATTLIST resolver class CDATA #REQUIRED>
 
 <!ELEMENT specificationBuilder (description?, parameter*)>
 <!ATTLIST specificationBuilder class CDATA #REQUIRED>
 
 <!ELEMENT templateBuilder (description?, resolver*, library?, parameter*)>
 <!ATTLIST templateBuilder class CDATA #REQUIRED>
+
+<!ELEMENT resolver (description?, parameter*)>
+<!ATTLIST resolver class CDATA #REQUIRED>
 
 <!ELEMENT library (description?, source*, builder*, parameter*)>
 <!ATTLIST library class CDATA #REQUIRED>

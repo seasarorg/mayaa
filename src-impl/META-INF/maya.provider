@@ -21,11 +21,7 @@
 		<parameter name="welcomeFileName" value="index.html"/>
 	</engine>
 	
-	<script class="org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompiler">
-		<resolver class="org.seasar.maya.impl.cycle.script.resolver.ImplicitObjectScriptResolver"/>
-		<resolver class="org.seasar.maya.impl.cycle.script.resolver.ComponentBindingScriptResolver"/>
-		<resolver class="org.seasar.maya.impl.cycle.script.resolver.ScopedAttributeScriptResolver"/>
-	</script>
+	<script class="org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompiler"/>
 	
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
 	

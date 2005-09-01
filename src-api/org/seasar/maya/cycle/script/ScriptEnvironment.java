@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.cycle.script;
 
-import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -25,12 +24,6 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public interface ScriptEnvironment extends Parameterizable {
 
-    /**
-     * ルートのスクリプトレゾルバの取得。
-     * @return スクリプトレゾルバ。
-     */
-    ScriptResolver getScriptResolver();
-    
     /**
      * スクリプト文字列ブロックの開きクオートに前置される識別文字列の設定。
      * デフォルトでは、JSP仕様と同じく、「$」。
@@ -65,8 +58,9 @@ public interface ScriptEnvironment extends Parameterizable {
      * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
      * カレントServiceCycleのページスコープに、スクリプトのスコープオブジェクトを
      * プッシュする。
+     * @param model モデルオブジェクト、もしくはnull。
      */
-    void startScope();
+    void startScope(Object model);
     
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。

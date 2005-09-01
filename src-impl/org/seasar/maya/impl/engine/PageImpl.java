@@ -164,14 +164,14 @@ public class PageImpl extends SpecificationImpl
 
     public ProcessStatus doPageRender() {
         saveToCycle();
-        ScriptUtil.initScope();
+        Object model = SpecificationUtil.findSpecificationModel(this);
+        ScriptUtil.startScope(model);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
         Template template = getTemplate();
         ProcessStatus ret = template.doTemplateRender(null);
         saveToCycle();
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.resetPageScope();
+        ScriptUtil.endScope();
         return ret;
     }
 

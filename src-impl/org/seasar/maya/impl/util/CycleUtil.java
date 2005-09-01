@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.util;
 
+import java.util.Iterator;
+
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
@@ -30,13 +32,6 @@ public class CycleUtil {
     
     private CycleUtil() {
     }
-
-    private static final String[] SCOPES = {
-        ServiceCycle.SCOPE_PAGE,
-        ServiceCycle.SCOPE_REQUEST,
-        ServiceCycle.SCOPE_SESSION,
-        ServiceCycle.SCOPE_APPLICATION
-    };
     
     public static ServiceCycle getServiceCycle() {
     	ServiceProvider provider = ProviderFactory.getServiceProvider();
@@ -57,63 +52,73 @@ public class CycleUtil {
         ServiceCycle cycle = getServiceCycle();
         return cycle.getResponse();
     }
-    
-    public static Object getAttribute(String name) {
-        return getAttribute(name, ServiceCycle.SCOPE_PAGE);
+
+    public static AttributeScope getAttributeScope(String scopeName) {
+        if(StringUtil.isEmpty(scopeName)) {
+            scopeName = ServiceCycle.SCOPE_PAGE;
+        }
+        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+            AttributeScope scope = (AttributeScope)it.next();
+            if(scope.getScopeName().equals(scopeName)) {
+                return scope;
+            }
+        }
+        throw new ScopeNotFoundException(scopeName);
     }
     
-    public static Object getAttribute(String name, String scopeString) {
-        AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
-        if(scope == null) {
-            throw new IllegalArgumentException();
+    public static boolean hasAttributeScope(String scopeName) {
+        if(StringUtil.isEmpty(scopeName)) {
+            scopeName = ServiceCycle.SCOPE_PAGE;
         }
+        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+            AttributeScope scope = (AttributeScope)it.next();
+            if(scope.getScopeName().equals(scopeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static Object getAttribute(String name) {
+        return getAttribute(name, null);
+    }
+    
+    public static Object getAttribute(String name, String scopeName) {
+        AttributeScope scope = getAttributeScope(scopeName);
         return scope.getAttribute(name);
     }
 
     public static void removeAttribute(String name) {
-	    removeAttribute(name, ServiceCycle.SCOPE_PAGE);
+	    removeAttribute(name, null);
     }
     
-    public static void removeAttribute(String name, String scopeString) {
-		AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
-        if(scope == null) {
-            throw new IllegalArgumentException();
-        }
-		scope.removeAttribute(name);
+    public static void removeAttribute(String name, String scopeName) {
+		AttributeScope scope = getAttributeScope(scopeName);
+        scope.removeAttribute(name);
     }
 
     public static void setAttribute(String name, Object value) {
-	    setAttribute(name, value, ServiceCycle.SCOPE_PAGE);
+	    setAttribute(name, value, null);
     }
     
-    public static void setAttribute(String name, Object value, String scopeString) {
-		AttributeScope scope = getServiceCycle().getAttributeScope(scopeString);
-        if(scope == null) {
-            throw new IllegalArgumentException();
-        }
+    public static void setAttribute(String name, Object value, String scopeName) {
+		AttributeScope scope = getAttributeScope(scopeName);
 		scope.setAttribute(name, value);
     }
     
     public static Object findAttribute(String name) {
-        for (int i = 0; i < SCOPES.length; i++) {
-            Object obj = getAttribute(name, SCOPES[i]);
-            if (obj != null) {
+        if(StringUtil.isEmpty(name)) {
+            return AttributeScope.UNDEFINED;
+        }
+        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+            AttributeScope scope = (AttributeScope)it.next();
+            Object obj = scope.getAttribute(name);
+            if (obj != AttributeScope.UNDEFINED) {
                 return obj;
             }
         }
+        //return AttributeScope.UNDEFINED;
         return null;
     }
 
-    public static void rewriteAttribute(String name, Object value) {
-    	ServiceCycle cycle = getServiceCycle();
-        for (int i = 0; i < SCOPES.length; i++) {
-            AttributeScope scope = cycle.getAttributeScope(SCOPES[i]);
-            Object obj = scope.getAttribute(name);
-            if (obj != null) {
-                scope.setAttribute(name, value);
-                return;
-            }
-        }
-    }
-    
 }

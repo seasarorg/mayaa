@@ -47,7 +47,7 @@ public class LiteralScript  implements CompiledScript {
         return _expectedType;
     }
     
-    public Object execute(Object root) {
+    public Object execute() {
         if(_expectedType == Void.class) {
             return null;
         }

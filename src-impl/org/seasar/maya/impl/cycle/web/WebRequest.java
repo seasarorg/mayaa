@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
@@ -111,40 +112,6 @@ public class WebRequest implements Request, CONST_IMPL {
         return _extension;
     }
 
-    public Iterator iterateParameterNames() {
-        check();
-        return _httpServletRequest.getParameterMap().keySet().iterator();
-    }
-    
-    public String[] getParameterValues(String name) {
-        check();
-        if(StringUtil.isEmpty(name)) {
-        	return null;
-        }
-        return _httpServletRequest.getParameterValues(name);
-    }
-
-    public Iterator iterateHeaderNames() {
-        check();
-		return EnumerationIterator.getInstance(_httpServletRequest.getHeaderNames());
-	}
-
-	public String[] getHeaderValues(String name) {
-        check();
-        if(StringUtil.isEmpty(name)) {
-        	return null;
-        }
-        Enumeration values = _httpServletRequest.getHeaders(name);
-        if(values == null) {
-        	return null;
-        }
-        ArrayList list = new ArrayList(); 
-        while(values.hasMoreElements()) {
-        	list.add(values.nextElement());
-        }
-        return (String[])list.toArray(new String[list.size()]);
-	}
-
     public Locale[] getLocales() {
         check();
         Enumeration locales = _httpServletRequest.getLocales();
@@ -164,6 +131,26 @@ public class WebRequest implements Request, CONST_IMPL {
             _session.setHttpServletRequest(_httpServletRequest);
         }
         return _session;
+    }
+
+    public AttributeScope getParam() {
+        // TODO ŽÀ‘•
+        return null;
+    }
+
+    public AttributeScope getParamValues() {
+        // TODO ŽÀ‘•
+        return null;
+    }
+
+    public AttributeScope getHeader() {
+        // TODO ŽÀ‘•
+        return null;
+    }
+
+    public AttributeScope getHeaderValues() {
+        // TODO ŽÀ‘•
+        return null;
     }
 
     public String getScopeName() {

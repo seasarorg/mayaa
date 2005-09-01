@@ -132,9 +132,10 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
 	            if(script == null) {
 	            	obj = "";
 	            } else if(script.isLiteral()) {
-	                obj = script.execute(null);
+	                obj = script.execute();
 	            }
-	            acceptable.addInformalProperty(new ProcessorPropertyImpl(qName, prefix, obj));
+	            acceptable.addInformalProperty(
+                        new ProcessorPropertyImpl(qName, prefix, obj));
             }
         }
     }

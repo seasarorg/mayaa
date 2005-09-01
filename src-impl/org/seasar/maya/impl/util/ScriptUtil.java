@@ -43,8 +43,8 @@ public class ScriptUtil implements CONST_IMPL {
         getScriptEnvironment().initScope();
     }
     
-    public static void startScope() {
-        getScriptEnvironment().startScope();
+    public static void startScope(Object model) {
+        getScriptEnvironment().startScope(model);
     }
     
     public static void endScope() {
@@ -70,9 +70,7 @@ public class ScriptUtil implements CONST_IMPL {
     public static Object execute(Object obj) {
         if (obj instanceof CompiledScript) {
             CompiledScript script = (CompiledScript)obj;
-            Specification specification = SpecificationUtil.findSpecification();
-            Object model = SpecificationUtil.findSpecificationModel(specification);
-            return script.execute(model);
+            return script.execute();
         }
         return obj;
     }

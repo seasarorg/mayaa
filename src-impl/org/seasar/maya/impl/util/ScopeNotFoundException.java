@@ -13,17 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle.implicit;
+package org.seasar.maya.impl.util;
 
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceCycleResolver implements ImplicitObjectResolver {
+public class ScopeNotFoundException extends MayaException {
 
-	public Object resolve() {
-        return CycleUtil.getServiceCycle();
-	}
+    private static final long serialVersionUID = -5868339344208637137L;
 
+    private String _scope;
+    
+    public ScopeNotFoundException(String scope) {
+        _scope = scope;
+    }
+    
+    public String getScope() {
+        return _scope;
+    }
+    
+    public String[] getMessageParams() {
+        return new String[] { _scope };
+    }
+    
 }

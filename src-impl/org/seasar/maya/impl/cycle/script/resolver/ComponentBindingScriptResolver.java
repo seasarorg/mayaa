@@ -16,19 +16,19 @@
 package org.seasar.maya.impl.cycle.script.resolver;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.script.resolver.ScriptResolver;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.impl.cycle.implicit.ParamMap;
 import org.seasar.maya.impl.cycle.script.PropertyNotWritableException;
 import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @deprecated
  */
-public class ComponentBindingScriptResolver implements ScriptResolver {
+public class ComponentBindingScriptResolver {
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(name);
@@ -39,7 +39,7 @@ public class ComponentBindingScriptResolver implements ScriptResolver {
 			Template template = SpecificationUtil.getTemplate();
 			TemplateProcessor parent = template.getParentProcessor();
 			if (parent == null) {
-				return new ParamMap();
+				return CycleUtil.getRequest().getParam();
 			} else if (parent instanceof ComponentPageProcessor) {
 				ComponentPageProcessor processor = 
 					(ComponentPageProcessor) parent;

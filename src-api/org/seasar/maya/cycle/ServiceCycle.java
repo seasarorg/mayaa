@@ -16,6 +16,7 @@
 package org.seasar.maya.cycle;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -24,26 +25,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle extends Serializable {
-
-    /**
-     * 組み込みオブジェクト取得のための特別スコープ。
-     */
-    String SCOPE_IMPLICIT = "implicit";
-    
-    /**
-     * ページレベルスコープ。 
-     */
-    String SCOPE_PAGE = "page";
-    
-    /**
-     * リクエストレベルスコープ。
-     */
-    String SCOPE_REQUEST = "request";
-    
-    /**
-     * セッションレベルスコープ。
-     */
-    String SCOPE_SESSION = "session";
     
     /**
      * アプリケーションレベルスコープ。
@@ -51,14 +32,29 @@ public interface ServiceCycle extends Serializable {
     String SCOPE_APPLICATION = "application";
     
     /**
-     * 「application」スコープオブジェクトの取得。
-     * @return 「application」スコープ。 
+     * セッションレベルスコープ。
+     */
+    String SCOPE_SESSION = "session";
+    
+    /**
+     * リクエストレベルスコープ。
+     */
+    String SCOPE_REQUEST = "request";
+    
+    /**
+     * ページレベルスコープ。 
+     */
+    String SCOPE_PAGE = "page";
+    
+    /**
+     * アプリケーションスコープオブジェクトの取得。
+     * @return アプリケーション。 
      */
     Application getApplication();
     
     /**
-     * 「request」スコープオブジェクトの取得。
-     * @return 「request」スコープ。
+     * リクエストオブジェクトの取得。
+     * @return リクエスト。
      */
     Request getRequest();
     
@@ -69,42 +65,22 @@ public interface ServiceCycle extends Serializable {
     Response getResponse();
     
     /**
-     * 指定スコープが存在するかをテストする。
-     * @param scope スコープ名もしくはnull。nullの場合は「page」とする。
-     * @return 指定スコープの存在テスト結果。
+     * スコープをイテレートする。
+     * @return スコープ（AttributeScope）のイテレータ。
      */
-    boolean hasAttributeScope(String scope);
-    
-    /**
-     * スコープ空間オブジェクトの取得。
-     * @param scope スコープ名もしくはnull。nullの場合は「page」とする。
-     * @return スコープ空間オブジェクト。
-     */
-    AttributeScope getAttributeScope(String scope);
-    
-    /**
-     * スコープ空間オブジェクトの追加。エンジンカスタマイズ用のAPI。
-     * @param scope スコープ名。非nullのみ許される。
-     * @param attrScope スコープ空間オブジェクト。
-     */
-    void putAttributeScope(String scope, AttributeScope attrScope);
+    Iterator iterateAttributeScope();
 
     /**
-     * ページスコープ空間をリセットする。
+     * 「page」スコープオブジェクトの設定。
+     * @param page 「page」スコープ。 
      */
-    void resetPageScope();
+    void setPageScope(AttributeScope page);
     
     /**
-     * フォワードを行う。
-     * @param relativeUrlPath パス文字列。
+     * 「page」スコープオブジェクトの取得。
+     * @return 「page」スコープ。 
      */
-    void forward(String relativeUrlPath);
-    
-    /**
-     * リダイレクトを行う。
-     * @param url リダイレクトを行うURL文字列。
-     */
-    void redirect(String url);
+    AttributeScope getPageScope();
 
     /**
      * 現在処理中のテンプレート上ノード情報を設定する。
@@ -129,5 +105,17 @@ public interface ServiceCycle extends Serializable {
      * @return インジェクトされたノード。
      */    
     SpecificationNode getInjectedNode();
+    
+    /**
+     * フォワードを行う。
+     * @param relativeUrlPath パス文字列。
+     */
+    void forward(String relativeUrlPath);
+    
+    /**
+     * リダイレクトを行う。
+     * @param url リダイレクトを行うURL文字列。
+     */
+    void redirect(String url);
    
 }

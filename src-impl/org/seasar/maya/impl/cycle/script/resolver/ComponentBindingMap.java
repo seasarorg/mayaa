@@ -23,6 +23,7 @@ import org.seasar.maya.impl.util.collection.AbstractAttributeMap;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
+ * @deprecated
  */
 public class ComponentBindingMap extends AbstractAttributeMap {
 

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
@@ -40,23 +41,27 @@ public class ParamValuesScope implements AttributeScope {
 		return "paramValues";
 	}
 
-	public Iterator iterateAttributeNames() {
-		return EnumerationIterator.getInstance(_request.getParameterNames());
-	}
 
-	public boolean hasAttribute(String name) {
-		for(Iterator it = iterateAttributeNames(); it.hasNext(); ) {
-			String paramName = (String)it.next();
-			if(paramName.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public Iterator iterateAttributeNames() {
+        return EnumerationIterator.getInstance(_request.getParameterNames());
+    }
 
-	public Object getAttribute(String name) {
-		return _request.getParameterValues(name);
-	}
+    public boolean hasAttribute(String name) {
+        for(Iterator it = iterateAttributeNames(); it.hasNext(); ) {
+            String paramName = (String)it.next();
+            if(paramName.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Object getAttribute(String name) {
+        if(hasAttribute(name)) {
+            return _request.getParameterValues(name);
+        }
+        return null;
+    }
 
 	public boolean isAttributeWritable() {
 		return false;
@@ -67,5 +72,9 @@ public class ParamValuesScope implements AttributeScope {
 
 	public void removeAttribute(String name) {
 	}
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
+    }
 
 }

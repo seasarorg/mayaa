@@ -60,7 +60,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     public void initScope() {
         Scriptable parent = (Scriptable)_parent.get();
         if(parent == null) {
-            Context cx = Context.enter(); 
+            Context cx = Context.enter();
+            cx.setWrapFactory(new WrapFactoryImpl());
             if(_standardObjects == null) {
                 _standardObjects = cx.initStandardObjects(null, true);
             }
@@ -77,8 +78,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             Context.exit();
         }
         PageAttributeScope scope = new PageAttributeScope();
-        scope.setParentScope(_standardObjects);
-        scope.setPrototype(parent);
+        scope.setParentScope(parent);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(scope);
     }
@@ -91,7 +91,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             PageAttributeScope newScope = new PageAttributeScope();
             newScope.setParentScope(pageScope);
             if(model != null) {
-                Context cx = Context.enter(); 
+                Context cx = Context.enter();
+                cx.setWrapFactory(new WrapFactoryImpl());
                 Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
                         cx, _standardObjects, model, model.getClass());
                 newScope.setPrototype(prototype);

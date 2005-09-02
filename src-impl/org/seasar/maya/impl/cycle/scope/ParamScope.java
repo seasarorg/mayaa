@@ -49,7 +49,7 @@ public class ParamScope implements AttributeScope {
             }
             return params[0];
         }
-        return UNDEFINED;
+        return null;
     }
 
     public boolean isAttributeWritable() {

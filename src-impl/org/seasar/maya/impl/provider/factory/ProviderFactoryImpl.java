@@ -41,7 +41,7 @@ public class ProviderFactoryImpl extends ProviderFactory
         source.setServletContext(servletContext);
         source.setSystemID("/maya.provider"); 
     	if(source.exists()) {
-	    	WebProviderHandler handler = new WebProviderHandler(servletContext);
+	    	ProviderHandler handler = new ProviderHandler(servletContext);
             InputStream stream = source.getInputStream();
 	        XmlUtil.parse(handler, stream, PUBLIC_PROVIDER10, 
                     source.getSystemID(), true, true, false);

@@ -49,7 +49,7 @@ public class HeaderScope implements AttributeScope {
             }
             return headers[0];
         }
-        return UNDEFINED;
+        return null;
     }
 
     public boolean isAttributeWritable() {

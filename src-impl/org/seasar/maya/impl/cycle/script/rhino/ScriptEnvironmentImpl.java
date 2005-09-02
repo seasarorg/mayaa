@@ -77,7 +77,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             Context.exit();
         }
         PageAttributeScope scope = new PageAttributeScope();
-        scope.setParentScope(parent);
+        scope.setParentScope(_standardObjects);
+        scope.setPrototype(parent);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(scope);
     }

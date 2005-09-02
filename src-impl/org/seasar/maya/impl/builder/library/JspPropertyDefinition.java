@@ -34,6 +34,10 @@ public class JspPropertyDefinition extends PropertyDefinitionImpl {
         String stringValue = getProcessValue(injected, propertyQName);
         if(stringValue != null) {
             Class propertyType = getPropertyType();
+            if(propertyType == null) {
+                // real property not found on the tag.
+                return null;
+            }
             CompiledScript script = ScriptUtil.compile(stringValue, propertyType);
             String prefix = getPrefix(injected, propertyQName);
             return new ProcessorPropertyImpl(propertyQName, prefix, script);

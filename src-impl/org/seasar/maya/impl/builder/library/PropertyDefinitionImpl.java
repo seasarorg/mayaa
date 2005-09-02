@@ -17,6 +17,8 @@ package org.seasar.maya.impl.builder.library;
 
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -40,6 +42,8 @@ import org.seasar.maya.impl.util.StringUtil;
 public class PropertyDefinitionImpl 
         implements PropertyDefinition, CONST_IMPL {
 
+    private static final Log LOG =LogFactory.getLog(PropertyDefinitionImpl.class);
+    
     private ProcessorDefinition _processor;
     private String _name;
     private boolean _required;
@@ -114,7 +118,11 @@ public class PropertyDefinitionImpl
         Class processorClass = getProcessorDefinition().getProcessorClass();
         Class ret = ObjectUtil.getPropertyType(processorClass, getName());
         if(ret == null) {
-            throw new IllegalStateException();
+            if(LOG.isWarnEnabled()) {
+                LOG.warn(StringUtil.getMessage(
+                        PropertyDefinitionImpl.class, 0, 
+                        new String[] { getProcessorDefinition().getName(), getName() }));
+            }
         }
         return ret;
     }
@@ -145,6 +153,10 @@ public class PropertyDefinitionImpl
         String stringValue = getProcessValue(injected, propertyQName);
         if(stringValue != null) {
 	        Class propertyType = getPropertyType();
+            if(propertyType == null) {
+                // real property not found on the processor.
+                return null;
+            }
 	        if(propertyType.equals(ProcessorProperty.class)) {
 	            CompiledScript script  = 
                     ScriptUtil.compile(stringValue, getExpectedType());

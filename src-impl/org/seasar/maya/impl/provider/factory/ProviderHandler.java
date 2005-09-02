@@ -31,10 +31,10 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebProviderHandler extends DefaultHandler
+public class ProviderHandler extends DefaultHandler
         implements CONST_IMPL {
 
-    private static Log LOG = LogFactory.getLog(WebProviderHandler.class); 
+    private static Log LOG = LogFactory.getLog(ProviderHandler.class); 
     
     private TagHandlerStack _stack;
     
@@ -42,7 +42,7 @@ public class WebProviderHandler extends DefaultHandler
         return ((ServiceTagHandler)_stack.getRoot()).getServiceProvider();
     }
     
-    public WebProviderHandler(ServletContext context) {
+    public ProviderHandler(ServletContext context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
@@ -53,7 +53,7 @@ public class WebProviderHandler extends DefaultHandler
         if(PUBLIC_PROVIDER10.equals(publicId)) {
             ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
             source.setSystemID("maya-provider_1_0.dtd");
-            source.setNeighborClass(WebProviderHandler.class);
+            source.setNeighborClass(ProviderHandler.class);
             if(source.exists()) {
                 return new InputSource(source.getInputStream());
             }

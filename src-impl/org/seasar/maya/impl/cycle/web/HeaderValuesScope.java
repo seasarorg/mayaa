@@ -59,7 +59,7 @@ public class HeaderValuesScope implements AttributeScope {
         if(hasAttribute(name)) {
             return _request.getHeaders(name);
         }
-        return UNDEFINED;
+        return null;
 	}
 
 	public boolean isAttributeWritable() {

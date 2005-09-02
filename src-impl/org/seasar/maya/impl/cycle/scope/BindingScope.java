@@ -58,17 +58,31 @@ public class BindingScope implements AttributeScope {
 	}
 
     public boolean hasAttribute(String name) {
-        return false;
+        ComponentPageProcessor processor = getComponentPageProcessor();
+        if(processor != null) {
+            for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
+                ProcessorProperty prop = (ProcessorProperty)it.next();
+                if(prop.getQName().getLocalName().equals(name)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        AttributeScope param = CycleUtil.getAttributeScope("param");
+        return param.hasAttribute(name);
     }
 
 	public Object getAttribute(String name) {
-		ComponentPageProcessor processor = getComponentPageProcessor(); 
-		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
-			ProcessorProperty prop = (ProcessorProperty)it.next();
-			if(prop.getQName().getLocalName().equals(name)) {
-				return prop.getValue();
-			}
-		}
+		ComponentPageProcessor processor = getComponentPageProcessor();
+        if(processor != null) {
+    		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
+    			ProcessorProperty prop = (ProcessorProperty)it.next();
+    			if(prop.getQName().getLocalName().equals(name)) {
+    				return prop.getValue();
+    			}
+    		}
+            return null;
+        }
         AttributeScope param = CycleUtil.getAttributeScope("param");
 		return param.getAttribute(name);
 	}

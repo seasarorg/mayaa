@@ -108,16 +108,14 @@ public class CycleUtil {
     
     public static Object findAttribute(String name) {
         if(StringUtil.isEmpty(name)) {
-            return AttributeScope.UNDEFINED;
+            return null;
         }
         for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
-            Object obj = scope.getAttribute(name);
-            if (obj != AttributeScope.UNDEFINED) {
-                return obj;
+            if(scope.hasAttribute(name)) {
+                return scope.getAttribute(name);
             }
         }
-        //return AttributeScope.UNDEFINED;
         return null;
     }
 

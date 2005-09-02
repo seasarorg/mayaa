@@ -34,7 +34,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RhinoCompiledScript extends AbstractCompiledScript {
+public class CompiledScriptImpl extends AbstractCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
     
@@ -42,14 +42,14 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
     private String _sourceName;
     int _lineno;
     
-    public RhinoCompiledScript(String text,
+    public CompiledScriptImpl(String text,
             String blockSign, String sourceName, int lineno) {
         super(text, blockSign);
         _sourceName = sourceName;
         _lineno = lineno;
     }
     
-    public RhinoCompiledScript(SourceDescriptor source, String encoding) {
+    public CompiledScriptImpl(SourceDescriptor source, String encoding) {
         super(source, encoding);
         _sourceName = source.getSystemID();
         _lineno = 1;
@@ -90,7 +90,7 @@ public class RhinoCompiledScript extends AbstractCompiledScript {
         Object ret = null;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
-        cx.setWrapFactory(new MayaWrapFactory());
+        cx.setWrapFactory(new WrapFactoryImpl());
         try {
             if(_script == null) {
                 _script = compile(cx);

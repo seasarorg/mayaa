@@ -24,12 +24,12 @@ import org.mozilla.javascript.Undefined;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NativeJavaList extends NativeJavaObject {
+public class NativeList extends NativeJavaObject {
 
     private static final long serialVersionUID = -1963435161453782180L;
     private List _list;
     
-    public NativeJavaList(Scriptable scope, List list) {
+    public NativeList(Scriptable scope, List list) {
         super(scope, list, List.class);
         if(list == null) {
             throw new IllegalArgumentException();

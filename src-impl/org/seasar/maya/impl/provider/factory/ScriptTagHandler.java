@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
-import org.seasar.maya.impl.cycle.script.rhino.RhinoScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -37,7 +37,7 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     }
     
     protected void start(Attributes attributes) {
-        _scriptEnvironment = new RhinoScriptEnvironment();
+        _scriptEnvironment = new ScriptEnvironmentImpl();
         _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
     }
     

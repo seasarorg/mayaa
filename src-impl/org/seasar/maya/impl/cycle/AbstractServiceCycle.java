@@ -19,11 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
@@ -56,18 +53,9 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(_scopes != null) {
             list.addAll(_scopes);
         }
-        Request request = getRequest();
-        if(request != null) {
-            list.add(request);
-        }
-        Session session = getSession();
-        if(session != null) {
-            list.add(session);
-        }
-        Application application = getApplication();
-        if(application != null) {
-        	list.add(application);
-        }
+        list.add(getRequest());
+        list.add(getSession());
+       	list.add(getApplication());
         return list.iterator();
     }
 

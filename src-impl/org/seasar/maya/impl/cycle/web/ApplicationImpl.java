@@ -18,77 +18,90 @@ package org.seasar.maya.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebSession implements Session {
+public class ApplicationImpl implements Application {
 
-    private static final long serialVersionUID = -3211729351966533995L;
+    private ServletContext _servletContext;
 
-    private HttpServletRequest _httpServletRequest;
-    private HttpSession _session;
-    
     private void check() {
-        if(_httpServletRequest == null) {
+        if(_servletContext == null) {
             throw new IllegalStateException();
-        }
-        if(_session == null) {
-            _session = _httpServletRequest.getSession(true);
         }
     }
 
     public Object getUnderlyingObject() {
         check();
-        return _session;
+        return _servletContext;
     }
     
-    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
-        if(httpServletRequest == null) {
+    public void setServletContext(ServletContext servletContext) {
+        if(servletContext == null) {
             throw new IllegalArgumentException();
         }
-        _httpServletRequest = httpServletRequest;
+        _servletContext = servletContext;
     }
     
-    public String getID() {
+    public ServletContext getContext() {
+        return _servletContext;
+    }
+    public ServletContext getContext(String urlPath) {
+        return _servletContext.getContext(urlPath);
+    }
+    
+    public String getMimeType(String fileName) {
         check();
-        return _session.getId();
+        if(StringUtil.isEmpty(fileName)) {
+            throw new IllegalArgumentException();
+        }
+        return _servletContext.getMimeType(fileName);
+    }
+
+    public String getRealPath(String contextRelatedPath) {
+        check();
+        if(StringUtil.isEmpty(contextRelatedPath)) {
+            throw new IllegalArgumentException();
+        }
+        return _servletContext.getRealPath(contextRelatedPath);
     }
 
     public String getScopeName() {
-        return ServiceCycle.SCOPE_SESSION;
+        return ServiceCycle.SCOPE_APPLICATION;
     }
     
     public Iterator iterateAttributeNames() {
-        return EnumerationIterator.getInstance(_session.getAttributeNames());
+        check();
+        return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
     }
+
     public boolean hasAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
-        for(Enumeration e = _session.getAttributeNames();
+        for(Enumeration e = _servletContext.getAttributeNames();
         		e.hasMoreElements(); ) {
-			if(e.nextElement().equals(name)) {
-				return true;
-			}
-		}
-		return false;
+        	if(e.nextElement().equals(name)) {
+        		return true;
+        	}
+        }
+        return false;
 	}
 
-    public Object getAttribute(String name) {
+	public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        return _session.getAttribute(name);
+        return _servletContext.getAttribute(name);
     }
 
     public boolean isAttributeWritable() {
@@ -100,7 +113,7 @@ public class WebSession implements Session {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _session.setAttribute(name, attribute);
+        _servletContext.setAttribute(name, attribute);
     }
     
     public void removeAttribute(String name) {
@@ -108,7 +121,7 @@ public class WebSession implements Session {
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _session.removeAttribute(name);
+        _servletContext.removeAttribute(name);
     }
-
+        
 }

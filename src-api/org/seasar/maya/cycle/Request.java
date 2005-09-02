@@ -49,22 +49,10 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
     String getExtension();
     
     /**
-     * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはString。
-     * @return クエリパラメータスコープ。
-     */
-    AttributeScope getParam();
-
-    /**
      * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはStringの配列。
      * @return クエリパラメータスコープ。
      */
     AttributeScope getParamValues();
-
-    /**
-     * リクエストヘッダを含むスコープを取得する。内包するオブジェクトはString。
-     * @return クエリパラメータスコープ。
-     */
-    AttributeScope getHeader();
 
     /**
      * リクエストヘッダを含むスコープを取得する。内包するオブジェクトはStringの配列。

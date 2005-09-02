@@ -26,18 +26,18 @@ import org.seasar.maya.cycle.AttributeScope;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MayaWrapFactory extends WrapFactory {
+public class WrapFactoryImpl extends WrapFactory {
 
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
             Object javaObject, Class staticType) {
         if(javaObject instanceof Map) {
-            return new NativeJavaMap(scope, (Map)javaObject);
+            return new NativeMap(scope, (Map)javaObject);
         } else if(javaObject instanceof List) {
-            return new NativeJavaList(scope, (List)javaObject);
+            return new NativeList(scope, (List)javaObject);
         } else if(javaObject instanceof AttributeScope &&
         		javaObject instanceof Scriptable == false) {
         	AttributeScope attrs = (AttributeScope)javaObject;
-        	return new NativeJavaAttributeScope(scope, attrs);
+        	return new NativeAttributeScope(scope, attrs);
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
     }

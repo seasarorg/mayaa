@@ -29,13 +29,13 @@ import org.seasar.maya.impl.util.CycleUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NativeJavaServiceCycle extends NativeJavaObject {
+public class NativeServiceCycle extends NativeJavaObject {
 
 	private static final long serialVersionUID = 326309209323166932L;
 
 	private ServiceCycle _cycle;
     
-    public NativeJavaServiceCycle(Scriptable scope, ServiceCycle cycle) {
+    public NativeServiceCycle(Scriptable scope, ServiceCycle cycle) {
         super(scope, cycle, Map.class);
         if(cycle == null) {
             throw new IllegalArgumentException();

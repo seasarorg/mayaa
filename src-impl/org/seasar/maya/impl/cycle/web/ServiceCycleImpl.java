@@ -30,15 +30,15 @@ import org.seasar.maya.impl.util.SpecificationUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebServiceCycle extends AbstractServiceCycle {
+public class ServiceCycleImpl extends AbstractServiceCycle {
 
     private static final long serialVersionUID = 5971443264903384152L;
 
     private Application _application;
-    private WebRequest _request;
-    private WebResponse _response;
+    private RequestImpl _request;
+    private ResponseImpl _response;
 
-    public WebServiceCycle(Application application) {
+    public ServiceCycleImpl(Application application) {
         if (application == null) {
             throw new IllegalArgumentException();
         }
@@ -50,9 +50,9 @@ public class WebServiceCycle extends AbstractServiceCycle {
     	if(request == null || response == null) {
     		throw new IllegalArgumentException();
     	}
-    	_request = new WebRequest();
+    	_request = new RequestImpl();
     	_request.setHttpServletRequest(request);
-        _response = new WebResponse();
+        _response = new ResponseImpl();
     	_response.setHttpServletResponse(response);
     }
     

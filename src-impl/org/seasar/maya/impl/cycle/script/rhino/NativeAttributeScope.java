@@ -27,13 +27,13 @@ import org.seasar.maya.cycle.AttributeScope;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NativeJavaAttributeScope extends NativeJavaObject {
+public class NativeAttributeScope extends NativeJavaObject {
 
 	private static final long serialVersionUID = 326309209323166932L;
 
 	private AttributeScope _attrs;
     
-    public NativeJavaAttributeScope(Scriptable scope, AttributeScope attrs) {
+    public NativeAttributeScope(Scriptable scope, AttributeScope attrs) {
         super(scope, attrs, Map.class);
         if(attrs == null) {
             throw new IllegalArgumentException();

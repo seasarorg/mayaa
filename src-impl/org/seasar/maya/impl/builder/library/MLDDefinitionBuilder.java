@@ -19,8 +19,8 @@ import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.DefinitionBuilder;
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.mld.MLDHandler;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;

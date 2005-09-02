@@ -13,28 +13,24 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.web;
+package org.seasar.maya.impl.cycle.scope;
 
 import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
+import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class BindingScope extends ParamScope {
-	
-	public BindingScope(HttpServletRequest request) {
-		super(request);
-	}
+public class BindingScope implements AttributeScope {
 
-	private ComponentPageProcessor getComponentPageProcessor() {
+    private ComponentPageProcessor getComponentPageProcessor() {
 		Template template = SpecificationUtil.getTemplate();
 		TemplateProcessor parent = template.getParentProcessor();
 		if (parent == null) {
@@ -56,8 +52,13 @@ public class BindingScope extends ParamScope {
 			return new ComponentBindingIterator(
 					processor.getInformalProperties().iterator());
 		}
-		return super.iterateAttributeNames();
+        AttributeScope param = CycleUtil.getAttributeScope("param");
+		return param.iterateAttributeNames();
 	}
+
+    public boolean hasAttribute(String name) {
+        return false;
+    }
 
 	public Object getAttribute(String name) {
 		ComponentPageProcessor processor = getComponentPageProcessor(); 
@@ -67,8 +68,19 @@ public class BindingScope extends ParamScope {
 				return prop.getValue();
 			}
 		}
-		return super.getAttribute(name);
+        AttributeScope param = CycleUtil.getAttributeScope("param");
+		return param.getAttribute(name);
 	}
+
+    public boolean isAttributeWritable() {
+        return false;
+    }
+
+    public void removeAttribute(String name) {
+    }
+
+    public void setAttribute(String name, Object attribute) {
+    }
 	
 	private class ComponentBindingIterator implements Iterator {
 		

@@ -26,7 +26,7 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebResponse extends AbstractResponse {
+public class ResponseImpl extends AbstractResponse {
 
     private static final long serialVersionUID = -4653384671998376182L;
 

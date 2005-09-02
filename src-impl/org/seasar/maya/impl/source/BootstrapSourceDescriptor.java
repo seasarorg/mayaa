@@ -17,7 +17,7 @@ package org.seasar.maya.impl.source;
 
 import javax.servlet.ServletContext;
 
-import org.seasar.maya.impl.cycle.web.WebApplication;
+import org.seasar.maya.impl.cycle.web.ApplicationImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -42,7 +42,7 @@ public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
         ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
         appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         appSource.setSystemID(systemID);
-        WebApplication application = new WebApplication();
+        ApplicationImpl application = new ApplicationImpl();
         application.setServletContext(_servletContext);
         appSource.setApplication(application);
         addSourceDescriptor(appSource);

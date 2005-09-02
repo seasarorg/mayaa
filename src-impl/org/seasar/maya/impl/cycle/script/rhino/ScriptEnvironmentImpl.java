@@ -32,7 +32,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
+public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     private static Scriptable _standardObjects;
     private static ThreadLocal _parent = new ThreadLocal();
@@ -50,7 +50,7 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new RhinoCompiledScript(text,
+        return new CompiledScriptImpl(text,
                 scriptBlock.getBlockSign(), sourceName, lineno);
     }
 
@@ -58,7 +58,7 @@ public class RhinoScriptEnvironment extends AbstractScriptEnvironment {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        return new RhinoCompiledScript(source, encoding);
+        return new CompiledScriptImpl(source, encoding);
     }
 
     public void initScope() {

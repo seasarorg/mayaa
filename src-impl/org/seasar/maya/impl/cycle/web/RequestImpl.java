@@ -34,18 +34,16 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebRequest implements Request, CONST_IMPL {
+public class RequestImpl implements Request, CONST_IMPL {
 
     private static final long serialVersionUID = 8377365781441987529L;
 
-    private WebSession _session;
+    private SessionImpl _session;
     private HttpServletRequest _httpServletRequest;
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;
-    private ParamScope _param;
     private ParamValuesScope _paramValues;
-    private HeaderScope _header;
     private HeaderValuesScope _headerValues;
     
     private void check() {
@@ -131,17 +129,10 @@ public class WebRequest implements Request, CONST_IMPL {
     
     public Session getSession() {
         if(_session == null) {
-            _session = new WebSession();
+            _session = new SessionImpl();
             _session.setHttpServletRequest(_httpServletRequest);
         }
         return _session;
-    }
-
-    public AttributeScope getParam() {
-        if(_param == null) {
-        	_param = new ParamScope(_httpServletRequest);
-        }
-        return _param;
     }
 
     public AttributeScope getParamValues() {
@@ -149,13 +140,6 @@ public class WebRequest implements Request, CONST_IMPL {
         	_paramValues = new ParamValuesScope(_httpServletRequest);
         }
         return _paramValues;
-    }
-
-    public AttributeScope getHeader() {
-        if(_header == null) {
-        	_header = new HeaderScope(_httpServletRequest);
-        }
-        return _header;
     }
 
     public AttributeScope getHeaderValues() {

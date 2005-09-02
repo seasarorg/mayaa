@@ -25,13 +25,13 @@ import org.mozilla.javascript.Scriptable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NativeJavaMap extends NativeJavaObject {
+public class NativeMap extends NativeJavaObject {
 
     private static final long serialVersionUID = -3987211835989098780L;
     
     private Map _map;
     
-    public NativeJavaMap(Scriptable scope, Map map) {
+    public NativeMap(Scriptable scope, Map map) {
         super(scope, map, Map.class);
         if(map == null) {
             throw new IllegalArgumentException();

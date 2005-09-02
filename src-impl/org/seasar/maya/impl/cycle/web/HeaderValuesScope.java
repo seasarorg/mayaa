@@ -55,7 +55,10 @@ public class HeaderValuesScope implements AttributeScope {
 	}
 
 	public Object getAttribute(String name) {
-		return _request.getHeaders(name);
+        if(hasAttribute(name)) {
+            return _request.getHeaders(name);
+        }
+        return UNDEFINED;
 	}
 
 	public boolean isAttributeWritable() {

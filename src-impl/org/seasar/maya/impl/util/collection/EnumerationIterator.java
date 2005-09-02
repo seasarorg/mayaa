@@ -27,7 +27,7 @@ public class EnumerationIterator implements Iterator {
     
     public static Iterator getInstance(Enumeration enumration) {
         if(enumration == null) {
-            throw new IllegalArgumentException();
+            return NullIterator.getInstance();
         }
         if(enumration instanceof IteratorEnumeration) {
             return ((IteratorEnumeration)enumration).getInternalIterator();

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.scope;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
@@ -59,6 +60,10 @@ public class HeaderScope implements AttributeScope {
     }
 
     public void removeAttribute(String name) {
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

@@ -34,11 +34,14 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     private static final long serialVersionUID = 5971443264903384152L;
 
-    private Application _application;
+    private ApplicationImpl _application;
+    private boolean _inithialize;
+    private HttpServletRequest _httpServletRequest;
     private RequestImpl _request;
     private ResponseImpl _response;
+    private SessionImpl _session;
 
-    public ServiceCycleImpl(Application application) {
+    public ServiceCycleImpl(ApplicationImpl application) {
         if (application == null) {
             throw new IllegalArgumentException();
         }
@@ -50,19 +53,21 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     	if(request == null || response == null) {
     		throw new IllegalArgumentException();
     	}
-    	_request = new RequestImpl();
-    	_request.setHttpServletRequest(request);
-        _response = new ResponseImpl();
-    	_response.setHttpServletResponse(response);
+        _inithialize = true;
+        _httpServletRequest = request;
+    	_request = new RequestImpl(_application, request);
+        _response = new ResponseImpl(response);
+        _session = null;
     }
     
     private void check() {
-    	if(_request == null || _response == null) {
+    	if(_inithialize == false) {
     		throw new IllegalStateException();
     	}
     }
     
     public Application getApplication() {
+        // no check.
         return _application;
     }
     
@@ -72,8 +77,11 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     }
 
     public Session getSession() {
-    	check();
-		return _request.getSession();
+        check();
+        if(_session == null) {
+            _session = new SessionImpl(_httpServletRequest);
+        }
+        return _session;
 	}
 
 	public Response getResponse() {

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
@@ -70,5 +71,9 @@ public class HeaderValuesScope implements AttributeScope {
 
 	public void removeAttribute(String name) {
 	}
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
+    }
 
 }

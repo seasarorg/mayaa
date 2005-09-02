@@ -139,8 +139,7 @@ public class EngineImpl extends SpecificationImpl
    
 	public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String path = cycle.getRequest().getRequestedPath();
-        String mimeType = cycle.getApplication().getMimeType(path);
+        String mimeType = cycle.getRequest().getMimeType();
         if(mimeType != null && mimeType.indexOf("html") != -1) {
             prepareResponse(cycle.getResponse());
             doPageService(cycle);

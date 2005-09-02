@@ -36,10 +36,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     private static Scriptable _standardObjects;
     private static ThreadLocal _parent = new ThreadLocal();
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
-    }
 
     protected CompiledScript compile(
             ScriptBlock scriptBlock, String sourceName, int lineno) {
@@ -81,8 +77,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             Context.exit();
         }
         PageAttributeScope scope = new PageAttributeScope();
-        scope.setPrototype(parent);
-        scope.setParentScope(_standardObjects);
+        scope.setParentScope(parent);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(scope);
     }
@@ -120,6 +115,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             }
         }
         throw new IllegalStateException();
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
 }

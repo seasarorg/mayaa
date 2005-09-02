@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,7 +32,27 @@ import org.seasar.maya.impl.util.StringUtil;
 public abstract class AbstractScriptEnvironment
         implements ScriptEnvironment {
     
-    private String _blockSign = ScriptBlockIterator.BLOCK_SIGN_JSP;
+    private List _attributeScopes;
+    private String _blockSign = "$";
+
+    public void addAttributeScope(AttributeScope attrs) {
+        if(attrs == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributeScopes == null) {
+            _attributeScopes = new ArrayList();
+        }
+        synchronized(_attributeScopes) {
+            _attributeScopes.add(attrs);
+        }
+    }
+    
+    public Iterator iterateAttributeScope() {
+        if(_attributeScopes == null) {
+            return NullIterator.getInstance();
+        }
+        return _attributeScopes.iterator();
+    }
 
     public void setBlockSign(String blockSign) {
         if(StringUtil.isEmpty(blockSign)) {

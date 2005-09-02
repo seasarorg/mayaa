@@ -29,7 +29,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XmlProviderFactory extends ProviderFactory
+public class ProviderFactoryImpl extends ProviderFactory
 		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 3581634661222113559L;

@@ -37,13 +37,13 @@ public class WalkaroundSourceScanner implements SourceScanner {
         loader.setSystemID("maya.mld");
         _sources.add(loader);
     }
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
-    }
 
     public Iterator scan() {
         return _sources.iterator();
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

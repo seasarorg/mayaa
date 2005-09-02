@@ -22,6 +22,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -38,6 +39,9 @@ public class WrapFactoryImpl extends WrapFactory {
         		javaObject instanceof Scriptable == false) {
         	AttributeScope attrs = (AttributeScope)javaObject;
         	return new NativeAttributeScope(scope, attrs);
+        } else if(javaObject instanceof ServiceCycle) {
+            ServiceCycle cycle = (ServiceCycle)javaObject;
+            return new NativeServiceCycle(scope, cycle);
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
     }

@@ -22,6 +22,7 @@ import java.util.List;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -95,6 +96,10 @@ public class PageAttributeScope extends ScriptableObject
                 scope = scope.getParentScope()) {
             scope.delete(name);
         }
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
     
 }

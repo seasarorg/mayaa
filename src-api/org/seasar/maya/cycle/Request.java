@@ -47,6 +47,18 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      * @return リクエスト拡張子。
      */
     String getExtension();
+
+    /**
+     * リクエストされたパスより類推できるMIME型を返す。
+     * @return リクエストされたパスから類推されるMIME型。 
+     */
+    String getMimeType();
+
+    /**
+     * リクエストのロケールを返す。
+     * @return リクエストロケール。
+     */
+    Locale[] getLocales();
     
     /**
      * リクエストパラメータを含むスコープを取得する。内包するオブジェクトはStringの配列。
@@ -59,17 +71,5 @@ public interface Request extends Serializable, AttributeScope, Underlyable {
      * @return クエリパラメータスコープ。
      */
     AttributeScope getHeaderValues();
-
-    /**
-     * リクエストのロケールを返す。
-     * @return リクエストロケール。
-     */
-    Locale[] getLocales();
-
-    /**
-     * フォワード先のパスを設定する。
-     * @param relativeUrlPath コンテキスト相対のパス。
-     */
-    void setForwardPath(String relativeUrlPath);
     
 }

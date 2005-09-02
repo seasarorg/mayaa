@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -31,34 +32,19 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 public class ApplicationImpl implements Application {
 
     private ServletContext _servletContext;
-
-    private void check() {
-        if(_servletContext == null) {
-            throw new IllegalStateException();
-        }
-    }
-
-    public Object getUnderlyingObject() {
-        check();
-        return _servletContext;
-    }
     
-    public void setServletContext(ServletContext servletContext) {
+    public ApplicationImpl(ServletContext servletContext) {
         if(servletContext == null) {
             throw new IllegalArgumentException();
         }
         _servletContext = servletContext;
     }
-    
-    public ServletContext getContext() {
+
+    public Object getUnderlyingObject() {
         return _servletContext;
     }
-    public ServletContext getContext(String urlPath) {
-        return _servletContext.getContext(urlPath);
-    }
     
-    public String getMimeType(String fileName) {
-        check();
+    protected String getMimeType(String fileName) {
         if(StringUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException();
         }
@@ -66,7 +52,6 @@ public class ApplicationImpl implements Application {
     }
 
     public String getRealPath(String contextRelatedPath) {
-        check();
         if(StringUtil.isEmpty(contextRelatedPath)) {
             throw new IllegalArgumentException();
         }
@@ -78,12 +63,10 @@ public class ApplicationImpl implements Application {
     }
     
     public Iterator iterateAttributeNames() {
-        check();
         return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
@@ -97,7 +80,6 @@ public class ApplicationImpl implements Application {
 	}
 
 	public Object getAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
@@ -109,7 +91,6 @@ public class ApplicationImpl implements Application {
 	}
 
     public void setAttribute(String name, Object attribute) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -117,11 +98,14 @@ public class ApplicationImpl implements Application {
     }
     
     public void removeAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
         _servletContext.removeAttribute(name);
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
         
 }

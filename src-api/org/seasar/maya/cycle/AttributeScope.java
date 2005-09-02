@@ -17,11 +17,13 @@ package org.seasar.maya.cycle;
 
 import java.util.Iterator;
 
+import org.seasar.maya.provider.Parameterizable;
+
 /**
  * 名前つきでオブジェクトを保存できる「スコープ」概念インターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface AttributeScope {
+public interface AttributeScope extends Parameterizable {
 
     /**
      * 未定義時を示すオブジェクト。

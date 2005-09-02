@@ -15,13 +15,13 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,34 +29,12 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public abstract class AbstractServiceCycle implements ServiceCycle {
 
     private AttributeScope _page;
-    private List _scopes;
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
 
-    public void addAttributeScope(AttributeScope attrs) {
-        if(attrs == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_scopes == null) {
-            _scopes = new ArrayList();
-        }
-        synchronized(_scopes) {
-            _scopes.add(attrs);
-        }
-    }
-
     public Iterator iterateAttributeScope() {
-        List list = new ArrayList();
-        if(_page != null) {
-            list.add(_page);
-        }
-        if(_scopes != null) {
-            list.addAll(_scopes);
-        }
-        list.add(getRequest());
-        list.add(getSession());
-       	list.add(getApplication());
-        return list.iterator();
+        Iterator it = ScriptUtil.getScriptEnvironment().iterateAttributeScope();
+        return new ScopeIterator(it);
     }
 
     public void setPageScope(AttributeScope page) {
@@ -91,5 +69,57 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     public SpecificationNode getInjectedNode() {
 		return _injectedNode;
 	}
+    
+    private class ScopeIterator implements Iterator {
+
+        private Iterator _it;
+        private String _current;
+        
+        public ScopeIterator(Iterator it) {
+            if(it == null) {
+                throw new IllegalArgumentException();
+            }
+            _it = it;
+        }
+        
+        public boolean hasNext() {
+            return SCOPE_APPLICATION.equals(_current) == false; 
+        }
+
+        public Object next() {
+            AttributeScope scope = null;
+            if(_current == null) {
+                if(_page != null) {
+                    scope = _page;
+                    _current = SCOPE_PAGE;
+                } else if(_it.hasNext()) {
+                    scope = (AttributeScope)_it.next();
+                    _current = scope.getScopeName();
+                }
+            } else if(SCOPE_REQUEST.equals(_current)) {
+                scope = getSession();
+                _current = SCOPE_SESSION;
+            } else if(SCOPE_SESSION.equals(_current)) {
+                scope = getApplication();
+                _current = SCOPE_APPLICATION;
+            } else if(SCOPE_APPLICATION.equals(_current)) {
+                throw new NoSuchElementException();
+            } else {
+                if(_it.hasNext()) {
+                    scope = (AttributeScope)_it.next();
+                    _current = scope.getScopeName();
+                } else {
+                    scope = getRequest();
+                    _current = SCOPE_REQUEST;
+                }
+            }
+            return scope;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
     
 }

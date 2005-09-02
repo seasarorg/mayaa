@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.cycle.script;
 
+import java.util.Iterator;
+
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -23,6 +25,12 @@ import org.seasar.maya.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ScriptEnvironment extends Parameterizable {
+    
+    /**
+     * ユーザー定義スコープオブジェクトをイテレートする。
+     * @return スコープオブジェクト（AttributeScope）のイテレータ。
+     */
+    Iterator iterateAttributeScope();
 
     /**
      * スクリプト文字列ブロックの開きクオートに前置される識別文字列の設定。

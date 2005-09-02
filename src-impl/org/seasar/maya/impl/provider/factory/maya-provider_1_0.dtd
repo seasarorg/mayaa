@@ -20,8 +20,11 @@
 <!ELEMENT errorHandler (description?, parameter*)>
 <!ATTLIST errorHandler class CDATA #REQUIRED>
 
-<!ELEMENT script (description?, parameter*)>
+<!ELEMENT script (description?, scope*, parameter*)>
 <!ATTLIST script class CDATA #REQUIRED>
+
+<!ELEMENT scope (description?, parameter*)>
+<!ATTLIST scope class CDATA #REQUIRED>
 
 <!ELEMENT specificationBuilder (description?, parameter*)>
 <!ATTLIST specificationBuilder class CDATA #REQUIRED>

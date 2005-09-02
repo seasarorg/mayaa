@@ -15,42 +15,42 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import javax.servlet.ServletContext;
-
-import org.seasar.maya.impl.provider.ServiceProviderImpl;
-import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceTagHandler extends TagHandler {
+public class ScopeTagHandler extends AbstractParameterizableTagHandler {
     
-    private ServletContext _context;
-    private ServiceProviderImpl _provider;
+    private ScriptTagHandler _parent;
+    private AttributeScope _scope;
     
-    public ServiceTagHandler(ServletContext context) {
-        super("service");
-        if(context == null) {
+    public ScopeTagHandler(ScriptTagHandler parent) {
+        super("scope");
+        if(parent == null) {
             throw new IllegalArgumentException();
         }
-        _context = context;
-        putHandler(new PageSourceTagHandler(this));
-        putHandler(new EngineTagHandler(this));
-        putHandler(new ScriptTagHandler(this));
-        putHandler(new SpecificationBuilderTagHandler(this));
-        putHandler(new TemplateBuilderTagHandler(this));
-    }
-
-    protected void start(Attributes attributes) {
-        _provider = new ServiceProviderImpl(_context);
+        _parent = parent;
     }
     
-    public ServiceProviderImpl getServiceProvider() {
-        if(_provider == null) {
+    public void start(Attributes attributes) {
+        _scope = (AttributeScope)XmlUtil.getObjectValue(
+                attributes, "class", null, AttributeScope.class);
+        _parent.getScriptEnvironment().addAttributeScope(_scope);
+    }
+    
+    public void end(String body) {
+        _scope = null;
+    }
+    
+    public Parameterizable getParameterizable() {
+        if(_scope == null) {
             throw new IllegalStateException();
         }
-        return _provider;
+        return _scope;
     }
     
 }

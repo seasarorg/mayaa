@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
@@ -206,20 +206,15 @@ public class TemplateImpl extends SpecificationImpl
 	            return contentType;
 	        }
 		}
-        Page page = getPage();
-        String extension = page.getPageName() + "." + page.getExtension();
-        String ret = null ;
-        if(StringUtil.hasValue(extension)) {
-            Application application = CycleUtil.getApplication();
-            ret = application.getMimeType(extension);
-        }
+        Request request = CycleUtil.getRequest();
+        String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";
         }
         return ret ;
     }
     
-    private void prepareEncoding() {
+    private void prepareCycle() {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	Response response = cycle.getResponse();
         String contentType = getContentType();
@@ -239,7 +234,7 @@ public class TemplateImpl extends SpecificationImpl
             processor = this;
         }
         if(getParentProcessor() == null) {
-            prepareEncoding();
+            prepareCycle();
         }
         Object model = SpecificationUtil.findSpecificationModel(this);
         ScriptUtil.startScope(model);

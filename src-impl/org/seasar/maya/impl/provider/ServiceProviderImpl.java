@@ -41,10 +41,10 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
+public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
     
     private Object _context;
-    private Application _application;
+    private ApplicationImpl _application;
     private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;
     private SpecificationBuilder _specificationBuilder;
@@ -53,25 +53,27 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
     private Map _pageParams;
 	private ThreadLocal _currentServiceCycle = new ThreadLocal();
 	
-    public WebServiceProvider(Object context) {
+    public ServiceProviderImpl(Object context) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
     }
     
-    public Application getApplication() {
+    protected ApplicationImpl getApplication0() {
         if(_application == null) {
             if(_context instanceof ServletContext == false) {
                 throw new IllegalStateException();
             }
             ServletContext servletContext = (ServletContext)_context;
-            ApplicationImpl application = new ApplicationImpl();
-            application.setServletContext(servletContext);
-            _application = application;
+            _application = new ApplicationImpl(servletContext);
         }
         return _application;
     }
+
+    public Application getApplication() {
+        return getApplication0();
+    }    
     
     public void setEngine(Engine engine) {
         if(engine == null) {
@@ -174,7 +176,7 @@ public class WebServiceProvider implements ServiceProvider, CONST_IMPL {
 		}
 		ServiceCycleImpl cycle = (ServiceCycleImpl)_currentServiceCycle.get();
     	if(cycle == null) {
-    		cycle = new ServiceCycleImpl(getApplication());
+    		cycle = new ServiceCycleImpl(getApplication0());
     		_currentServiceCycle.set(cycle);
     	}
         HttpServletRequest httpRequest = (HttpServletRequest)request;

@@ -21,7 +21,11 @@
 		<parameter name="welcomeFileName" value="index.html"/>
 	</engine>
 	
-	<script class="org.seasar.maya.impl.cycle.script.rhino.RhinoScriptCompiler"/>
+	<script class="org.seasar.maya.impl.cycle.script.rhino.ScriptCompilerImpl">
+		<scope class="org.seasar.maya.impl.cycle.scope.BindingScope"/>
+		<scope class="org.seasar.maya.impl.cycle.scope.ParamScope"/>
+		<scope class="org.seasar.maya.impl.cycle.scope.HeaderScope"/>
+	</script>
 	
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
 	

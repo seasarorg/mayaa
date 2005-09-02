@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -36,29 +37,27 @@ public class SessionImpl implements Session {
     private HttpServletRequest _httpServletRequest;
     private HttpSession _session;
     
-    private void check() {
-        if(_httpServletRequest == null) {
-            throw new IllegalStateException();
-        }
-        if(_session == null) {
-            _session = _httpServletRequest.getSession(true);
-        }
-    }
-
-    public Object getUnderlyingObject() {
-        check();
-        return _session;
-    }
-    
-    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
+    public SessionImpl(
+            HttpServletRequest httpServletRequest) {
         if(httpServletRequest == null) {
             throw new IllegalArgumentException();
         }
         _httpServletRequest = httpServletRequest;
     }
     
+    private void prepare() {
+        if(_session == null) {
+            _session = _httpServletRequest.getSession(true);
+        }
+    }
+
+    public Object getUnderlyingObject() {
+        prepare();
+        return _session;
+    }
+    
     public String getID() {
-        check();
+        prepare();
         return _session.getId();
     }
 
@@ -70,7 +69,7 @@ public class SessionImpl implements Session {
         return EnumerationIterator.getInstance(_session.getAttributeNames());
     }
     public boolean hasAttribute(String name) {
-        check();
+        prepare();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
@@ -84,7 +83,7 @@ public class SessionImpl implements Session {
 	}
 
     public Object getAttribute(String name) {
-        check();
+        prepare();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
@@ -96,7 +95,7 @@ public class SessionImpl implements Session {
 	}
 
     public void setAttribute(String name, Object attribute) {
-        check();
+        prepare();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -104,11 +103,15 @@ public class SessionImpl implements Session {
     }
     
     public void removeAttribute(String name) {
-        check();
+        prepare();
         if(StringUtil.isEmpty(name)) {
             return;
         }
         _session.removeAttribute(name);
+    }
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
     }
 
 }

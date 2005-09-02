@@ -22,6 +22,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 
@@ -107,5 +108,9 @@ public class BindingScope implements AttributeScope {
 		}
 		
 	}
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
+    }
 
 }

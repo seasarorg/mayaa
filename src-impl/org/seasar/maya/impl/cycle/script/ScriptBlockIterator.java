@@ -25,9 +25,6 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class ScriptBlockIterator implements Iterator {
 
-    public static final String BLOCK_SIGN_JSP = "$";
-    public static final String BLOCK_SIGN_JSF = "#";
-
 	private String _text;
 	private String _blockSign;
 	private int _offset;

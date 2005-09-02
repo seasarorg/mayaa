@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -38,18 +38,23 @@ public class RequestImpl implements Request, CONST_IMPL {
 
     private static final long serialVersionUID = 8377365781441987529L;
 
-    private SessionImpl _session;
+    private ApplicationImpl _application;
     private HttpServletRequest _httpServletRequest;
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;
+    private String _mimeType;
+    private Locale[] _locales;
     private ParamValuesScope _paramValues;
     private HeaderValuesScope _headerValues;
     
-    private void check() {
-        if(_httpServletRequest == null) {
-            throw new IllegalStateException();
+    public RequestImpl(ApplicationImpl application, 
+            HttpServletRequest httpServletRequest) {
+        if(application == null || httpServletRequest == null) {
+            throw new IllegalArgumentException();
         }
+        _application = application;
+        _httpServletRequest = httpServletRequest;
     }
 
     public String getRequestedPath() {
@@ -61,7 +66,7 @@ public class RequestImpl implements Request, CONST_IMPL {
         }
         return path;
     }
-    
+
     protected void parsePath(String path) {
         String suffixSeparator = SpecificationUtil.getEngineSetting(
                 SUFFIX_SEPARATOR, "$");
@@ -69,16 +74,10 @@ public class RequestImpl implements Request, CONST_IMPL {
         _pageName = parsed[0];
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
+        _mimeType = _application.getMimeType(path);
     }
     
-    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
-        if(httpServletRequest == null) {
-            throw new IllegalArgumentException();
-        }
-        _httpServletRequest = httpServletRequest;
-    }
-    
-    public void setForwardPath(String relativeUrlPath) {
+    protected void setForwardPath(String relativeUrlPath) {
         if(StringUtil.isEmpty(relativeUrlPath)) {
             throw new IllegalArgumentException();
         }
@@ -86,13 +85,11 @@ public class RequestImpl implements Request, CONST_IMPL {
     }
     
     public Object getUnderlyingObject() {
-        check();
         return _httpServletRequest;
     }
 
     public String getPageName() {
         if(_pageName == null) {
-            check();
             parsePath(getRequestedPath());
         }
         return _pageName;
@@ -100,7 +97,6 @@ public class RequestImpl implements Request, CONST_IMPL {
 
     public String getRequestedSuffix() {
         if(_requestedSuffix == null) {
-            check();
             parsePath(getRequestedPath());
         }
         return _requestedSuffix;
@@ -108,31 +104,32 @@ public class RequestImpl implements Request, CONST_IMPL {
 
     public String getExtension() {
         if(_extension == null) {
-            check();
             parsePath(getRequestedPath());
         }
         return _extension;
     }
+    
+    public String getMimeType() {
+        if(_mimeType == null) {
+            parsePath(getRequestedPath());
+        }
+        return _mimeType;
+    }
 
     public Locale[] getLocales() {
-        check();
-        Enumeration locales = _httpServletRequest.getLocales();
-        if(locales == null) {
-        	return null;
+        if(_locales == null) {
+            Enumeration locales = _httpServletRequest.getLocales();
+            if(locales == null) {
+                _locales = new Locale[0];
+            } else {
+                ArrayList list = new ArrayList(); 
+                while(locales.hasMoreElements()) {
+                	list.add(locales.nextElement());
+                }
+                _locales = (Locale[])list.toArray(new Locale[list.size()]);
+            }
         }
-        ArrayList list = new ArrayList(); 
-        while(locales.hasMoreElements()) {
-        	list.add(locales.nextElement());
-        }
-        return (Locale[])list.toArray(new Locale[list.size()]);
-    }
-    
-    public Session getSession() {
-        if(_session == null) {
-            _session = new SessionImpl();
-            _session.setHttpServletRequest(_httpServletRequest);
-        }
-        return _session;
+        return _locales;
     }
 
     public AttributeScope getParamValues() {
@@ -159,7 +156,6 @@ public class RequestImpl implements Request, CONST_IMPL {
     }
 
     public boolean hasAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
@@ -173,7 +169,6 @@ public class RequestImpl implements Request, CONST_IMPL {
 	}
 
 	public Object getAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
@@ -185,7 +180,6 @@ public class RequestImpl implements Request, CONST_IMPL {
 	}
 
     public void setAttribute(String name, Object attribute) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -193,11 +187,14 @@ public class RequestImpl implements Request, CONST_IMPL {
     }
     
     public void removeAttribute(String name) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletRequest.removeAttribute(name);
     }
     
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(name);
+    }
+
 }

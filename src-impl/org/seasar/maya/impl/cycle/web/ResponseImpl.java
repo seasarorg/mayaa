@@ -32,26 +32,18 @@ public class ResponseImpl extends AbstractResponse {
 
     private HttpServletResponse _httpServletResponse;
 
-    private void check() {
-        if(_httpServletResponse == null) {
-            throw new IllegalStateException();
-        }
-    }
-    
-    public Object getUnderlyingObject() {
-        check();
-        return _httpServletResponse;
-    }
-
-    public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+    public ResponseImpl(HttpServletResponse httpServletResponse) {
         if(httpServletResponse == null) {
             throw new IllegalArgumentException();
         }
         _httpServletResponse = httpServletResponse;
     }
+    
+    public Object getUnderlyingObject() {
+        return _httpServletResponse;
+    }
 
     public void addHeader(String name, String value) {
-        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -59,12 +51,10 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public void setStatus(int code) {
-        check();
         _httpServletResponse.setStatus(code);
     }
 
     protected void setContentTypeToUnderlyingObject(String contentType) {
-        check();
         if(StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
@@ -72,7 +62,6 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public OutputStream getUnderlyingOutputStream() {
-        check();
         try {
             return _httpServletResponse.getOutputStream();
         } catch (IOException e) {
@@ -81,14 +70,13 @@ public class ResponseImpl extends AbstractResponse {
     }
     
     public String encodeURL(String url) {
-        check();
         if(StringUtil.isEmpty(url)) {
             throw new IllegalArgumentException();
         }
         return _httpServletResponse.encodeURL(url);
     }
 
-    public void redirect(String url) {
+    protected void redirect(String url) {
     	try {
     		_httpServletResponse.sendRedirect(url);
     	} catch(IOException e) {

@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
- * 
+ *
  * Licensed under the Seasar Software License, v1.1 (aka "the License"); you may
  * not use this file except in compliance with the License which accompanies
  * this distribution, and is available at
- * 
+ *
  *     http://www.seasar.org/SEASAR-LICENSE.TXT
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -30,7 +30,7 @@ public class ObjectUtil {
 
     private ObjectUtil() {
     }
-    
+
     protected static String getClassSignature(String className) {
         if(StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
@@ -66,7 +66,7 @@ public class ObjectUtil {
         }
         return buffer.toString();
     }
-    
+
     protected static Class loadPrimitiveClass(String className) {
         if(StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
@@ -92,7 +92,7 @@ public class ObjectUtil {
         }
         return null;
     }
-    
+
     public static Class loadClass(String className) {
         if(StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
@@ -120,7 +120,7 @@ public class ObjectUtil {
         }
         throw new IllegalTypeException(expectedType, clazz);
     }
-    
+
     public static Object newInstance(Class clazz) {
         if(clazz == null) {
             throw new IllegalArgumentException();
@@ -133,7 +133,7 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Class getPropertyType(Class beanClass, String propertyName) {
         PropertyDescriptor[] descs = PropertyUtils.getPropertyDescriptors(beanClass);
         for(int i = 0; i < descs.length; i++) {
@@ -143,19 +143,19 @@ public class ObjectUtil {
         }
         return null;
     }
-    
+
     public static Class getPropertyType(Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getTargetException());
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Object convert(Class expectedType, Object value) {
         Converter converter = ConvertUtils.lookup(expectedType);
         if(converter != null) {
@@ -163,9 +163,9 @@ public class ObjectUtil {
         }
         return value;
     }
-    
+
     public static void setProperty(Object bean, String propertyName, Object value) {
-    	try {
+        try {
             Class propertyType = getPropertyType(bean, propertyName);
             if(propertyType == null) {
                 throw new NoSuchPropertyException(bean.getClass(), propertyName);
@@ -175,16 +175,16 @@ public class ObjectUtil {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getTargetException());
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static boolean booleanValue(Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);
         return ((Boolean)converter.convert(null, obj)).booleanValue();
     }
-    
+
 }

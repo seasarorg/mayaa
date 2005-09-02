@@ -94,7 +94,11 @@ public class CycleUtil {
     
     public static void removeAttribute(String name, String scopeName) {
 		AttributeScope scope = getAttributeScope(scopeName);
-        scope.removeAttribute(name);
+        if(scope.isAttributeWritable()) {
+            scope.removeAttribute(name);
+        } else {
+            throw new ScopeNotWritableException(scopeName);
+        }
     }
 
     public static void setAttribute(String name, Object value) {
@@ -103,7 +107,11 @@ public class CycleUtil {
     
     public static void setAttribute(String name, Object value, String scopeName) {
 		AttributeScope scope = getAttributeScope(scopeName);
-		scope.setAttribute(name, value);
+        if(scope.isAttributeWritable()) {
+            scope.setAttribute(name, value);
+        } else {
+            throw new ScopeNotWritableException(scopeName);
+        }
     }
     
     public static AttributeScope findAttributeScope(String name) {

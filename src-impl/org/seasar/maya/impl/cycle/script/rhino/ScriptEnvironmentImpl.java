@@ -57,6 +57,20 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return new CompiledScriptImpl(source, encoding);
     }
 
+    protected void setModelToPrototype(Object model, Scriptable scope) {
+        if(scope == null) {
+            throw new IllegalArgumentException();
+        }
+        if(model != null) {
+            Context cx = Context.enter();
+            cx.setWrapFactory(new WrapFactoryImpl());
+            Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
+                    cx, _standardObjects, model, model.getClass());
+            Context.exit();
+            scope.setPrototype(prototype);
+        }
+    }
+    
     public void initScope() {
         Scriptable parent = (Scriptable)_parent.get();
         if(parent == null) {
@@ -68,17 +82,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             parent = cx.getWrapFactory().wrapAsJavaObject(
                     cx, _standardObjects, cycle, ServiceCycle.class);
-            Engine engine = SpecificationUtil.getEngine();
-            Object model = SpecificationUtil.findSpecificationModel(engine);
-            if(model != null) {
-                parent = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, parent, model, model.getClass());
-            }
-            _parent.set(parent);
             Context.exit();
+            _parent.set(parent);
         }
         PageAttributeScope scope = new PageAttributeScope();
         scope.setParentScope(parent);
+        Engine engine = SpecificationUtil.getEngine();
+        Object model = SpecificationUtil.findSpecificationModel(engine);
+        setModelToPrototype(model, scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(scope);
     }
@@ -88,17 +99,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
-            PageAttributeScope newScope = new PageAttributeScope();
-            newScope.setParentScope(pageScope);
-            if(model != null) {
-                Context cx = Context.enter();
-                cx.setWrapFactory(new WrapFactoryImpl());
-                Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, _standardObjects, model, model.getClass());
-                newScope.setPrototype(prototype);
-                Context.exit();
-            }
-            cycle.setPageScope(newScope);
+            PageAttributeScope newPageScope = new PageAttributeScope();
+            newPageScope.setParentScope(pageScope);
+            setModelToPrototype(model, newPageScope);
+            cycle.setPageScope(newPageScope);
         } else {
             throw new IllegalStateException();
         }

@@ -201,6 +201,7 @@ public class EngineImpl extends SpecificationImpl
             ScriptUtil.execEvent(this, QM_AFTER_RENDER);
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
+            ScriptUtil.initScope();
             handleError(t);
         }
         cycle.getResponse().flush();

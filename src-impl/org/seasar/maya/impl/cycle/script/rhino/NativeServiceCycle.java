@@ -44,7 +44,8 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
     
     public boolean has(String name, Scriptable start) {
-        if(CycleUtil.hasAttributeScope(name)) {
+        if(CycleUtil.hasAttributeScope(name) || 
+                CycleUtil.findAttributeScope(name) != null) {
             return true;
         }
         return super.has(name, start);
@@ -53,6 +54,10 @@ public class NativeServiceCycle extends NativeJavaObject {
     public Object get(String name, Scriptable start) {
         if(CycleUtil.hasAttributeScope(name)) {
             return CycleUtil.getAttributeScope(name);
+        }
+        AttributeScope scope = CycleUtil.findAttributeScope(name);
+        if(scope != null) {
+            return scope.getAttribute(name);
         }
         return super.get(name, start);
     }

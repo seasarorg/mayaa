@@ -106,14 +106,14 @@ public class CycleUtil {
 		scope.setAttribute(name, value);
     }
     
-    public static Object findAttribute(String name) {
+    public static AttributeScope findAttributeScope(String name) {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
         for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
             if(scope.hasAttribute(name)) {
-                return scope.getAttribute(name);
+                return scope;
             }
         }
         return null;

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.jsp;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.VariableResolver;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -34,7 +35,10 @@ public class VariableResolverImpl implements VariableResolver {
 
     public Object resolveVariable(String pName) throws ELException {
         if(StringUtil.hasValue(pName)) {
-            return CycleUtil.findAttribute(pName);
+            AttributeScope scope = CycleUtil.findAttributeScope(pName);
+            if(scope != null) {
+                return scope.getAttribute(pName);
+            }
         }
         return null;
     }

@@ -27,6 +27,6 @@ public interface Session extends Serializable, AttributeScope, Underlyable {
      * セッションIDの取得。
      * @return セッションID。
      */
-    String getID();
+    String getSessionID();
     
 }

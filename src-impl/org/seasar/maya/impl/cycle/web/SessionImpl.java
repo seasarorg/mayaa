@@ -56,7 +56,7 @@ public class SessionImpl implements Session {
         return _session;
     }
     
-    public String getID() {
+    public String getSessionID() {
         prepare();
         return _session.getId();
     }

@@ -25,6 +25,7 @@
 		<scope class="org.seasar.maya.impl.cycle.scope.BindingScope"/>
 		<scope class="org.seasar.maya.impl.cycle.scope.ParamScope"/>
 		<scope class="org.seasar.maya.impl.cycle.scope.HeaderScope"/>
+		<parameter name="wrapFactory" value="org.seasar.maya.impl.cycle.script.rhino.WrapFactoryImpl"/>
 	</script>
 	
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>

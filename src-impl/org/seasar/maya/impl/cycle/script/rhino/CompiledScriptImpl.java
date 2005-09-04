@@ -25,6 +25,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.WrapFactory;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
@@ -41,6 +42,7 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
     private Script _script;
     private String _sourceName;
     int _lineno;
+    private WrapFactory _wrap;
     
     public CompiledScriptImpl(String text,
             String blockSign, String sourceName, int lineno) {
@@ -53,6 +55,13 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
         super(source, encoding);
         _sourceName = source.getSystemID();
         _lineno = 1;
+    }
+    
+    public void setWrapFactory(WrapFactory wrap) {
+        if(wrap == null) {
+            throw new IllegalArgumentException();
+        }
+        _wrap = wrap;
     }
     
     protected Scriptable getScope() {
@@ -90,7 +99,9 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
         Object ret = null;
         Class expectedType = getExpectedType();
         Context cx = Context.enter();
-        cx.setWrapFactory(new WrapFactoryImpl());
+        if(_wrap != null) {
+            cx.setWrapFactory(_wrap);
+        }
         try {
             if(_script == null) {
                 _script = compile(cx);

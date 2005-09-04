@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.script.rhino;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.WrapFactory;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -25,9 +26,12 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
+import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -38,6 +42,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static Scriptable _standardObjects;
     private static ThreadLocal _parent = new ThreadLocal();
 
+    private WrapFactory _wrap;
+    
     protected CompiledScript compile(
             ScriptBlock scriptBlock, String sourceName, int lineno) {
         if(scriptBlock == null) {
@@ -47,15 +53,24 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new CompiledScriptImpl(text,
-                scriptBlock.getBlockSign(), sourceName, lineno);
+        CompiledScriptImpl compiled = new CompiledScriptImpl(
+                text, scriptBlock.getBlockSign(), sourceName, lineno);
+        if(_wrap != null) {
+            compiled.setWrapFactory(_wrap);
+        }
+        return compiled;
     }
 
     public CompiledScript compile(SourceDescriptor source, String encoding) {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        return new CompiledScriptImpl(source, encoding);
+        CompiledScriptImpl compiled = new CompiledScriptImpl(
+                source, encoding);
+        if(_wrap != null) {
+            compiled.setWrapFactory(_wrap);
+        }
+        return compiled;
     }
     
     protected Scriptable getStandardObjects() {
@@ -73,7 +88,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         if(model != null) {
             Context cx = Context.enter();
-            cx.setWrapFactory(new WrapFactoryImpl());
+            if(_wrap != null) {
+                cx.setWrapFactory(_wrap);
+            }
             Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
                     cx, getStandardObjects(), model, model.getClass());
             Context.exit();
@@ -85,7 +102,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         Scriptable parent = (Scriptable)_parent.get();
         if(parent == null) {
             Context cx = Context.enter();
-            cx.setWrapFactory(new WrapFactoryImpl());
+            if(_wrap != null) {
+                cx.setWrapFactory(_wrap);
+            }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             parent = cx.getWrapFactory().wrapAsJavaObject(
                     cx, getStandardObjects(), cycle, ServiceCycle.class);
@@ -135,7 +154,15 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        if("wrapFactory".equals(name)) {
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(name);
+            }
+            Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
+            _wrap = (WrapFactory)ObjectUtil.newInstance(clazz);
+        } else {
+            throw new UnsupportedParameterException(name);
+        }
     }
     
 }

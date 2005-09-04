@@ -75,12 +75,6 @@ public class PageAttributeScope extends ScriptableObject
         return false;
     }
 
-    // TODO デバッグ
-    public Object get(String name, Scriptable start) {
-        Object ret = super.get(name, start);
-        return ret;
-    }
-    
 	public Object getAttribute(String name) {
         Scriptable scope = findScope(name);
         if(scope != null) {

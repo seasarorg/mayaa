@@ -49,7 +49,7 @@ public class ComponentPageInjectionResolver
 	            String name = qName.getLocalName();
 	            String path = StringUtil.preparePath(uri) + StringUtil.preparePath(name);
                 SpecificationNode node = SpecificationUtil.createInjectedNode(
-                        QM_COMPONENT_PAGE, uri, injected);
+                        QM_PAGE, uri, injected);
                 node.addAttribute(QM_PATH, path);
                 node.addAttribute(QM_NAMESPACE_URI, uri);
                 return node;

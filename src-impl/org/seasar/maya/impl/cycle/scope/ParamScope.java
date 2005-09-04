@@ -18,13 +18,13 @@ package org.seasar.maya.impl.cycle.scope;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class ParamScope implements AttributeScope {
+public class ParamScope extends AbstractReadOnlyAttributeScope {
 
 	public String getScopeName() {
 		return "param";
@@ -50,20 +50,6 @@ public class ParamScope implements AttributeScope {
             return params[0];
         }
         return null;
-    }
-
-    public boolean isAttributeWritable() {
-        return false;
-    }
-
-    public void setAttribute(String name, Object attribute) {
-    }
-
-    public void removeAttribute(String name) {
-    }
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
     }
 
 }

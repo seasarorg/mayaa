@@ -15,14 +15,40 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
  * 「doBody」プロセッサ。呼び出し元の自分の子を描画する。
+ * 他のテンプレートに埋め込まれている時には、所属テンプレートのルートとなる
+ * m:pageの子を描画。所属テンプレートがダイレクトに利用されている場合には、
+ * 自分の子を描画する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DoBodyProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = -5462533588574819934L;
 
+    /**
+     * 親をさかのぼって、p:componentPageを探す。
+     * @return 見つかったp:componentPageもしくはnull。
+     */
+    protected ComponentPageProcessor findComponentPage() {
+        for(TemplateProcessor current = this;
+                current != null; current = current.getParentProcessor()) {
+            if(current instanceof ComponentPageProcessor) {
+                return (ComponentPageProcessor)current;
+            }
+        }
+        return null;
+    }
+    
+    public ProcessStatus doStartProcess() {
+        ComponentPageProcessor componentPage = findComponentPage();
+        if(componentPage != null) {
+            return componentPage.doBody();
+        }
+        return EVAL_BODY_INCLUDE;
+    }
+    
 }

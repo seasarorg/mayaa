@@ -91,5 +91,10 @@ public class ScriptUtil implements CONST_IMPL {
 	        }
         }
     }
+    
+    public static Object convertFromScriptObject(Object scriptObject) {
+        ScriptEnvironment env = getScriptEnvironment();
+        return env.convertFromScriptObject(scriptObject);
+    }
 
 }

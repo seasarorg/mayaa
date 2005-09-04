@@ -27,6 +27,7 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -172,7 +173,8 @@ public class RequestImpl implements Request, CONST_IMPL {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        return _httpServletRequest.getAttribute(name);
+        return ScriptUtil.convertFromScriptObject(
+                _httpServletRequest.getAttribute(name));
     }
 
     public boolean isAttributeWritable() {

@@ -71,13 +71,13 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return page;
     }
     
-    protected StartComponentProcessor findStart(TemplateProcessor processor) {
+    protected DoRenderProcessor findDoRender(TemplateProcessor processor) {
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
             TemplateProcessor childProcessor = processor.getChildProcessor(i);
-            if(childProcessor instanceof StartComponentProcessor) {
-                return (StartComponentProcessor)childProcessor;
+            if(childProcessor instanceof DoRenderProcessor) {
+                return (DoRenderProcessor)childProcessor;
             }
-            StartComponentProcessor doContentsProcessor = findStart(childProcessor);
+            DoRenderProcessor doContentsProcessor = findDoRender(childProcessor);
             if(doContentsProcessor != null) {
                 return doContentsProcessor;
             }
@@ -85,7 +85,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return null;
     }
     
-    public ProcessStatus renderChildren() {
+    public ProcessStatus doBody() {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             TemplateProcessor processor = getChildProcessor(i);
@@ -110,12 +110,12 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
                     _page.getPageName(), requiredSuffix, _page.getExtension());
         }
         template.setParentProcessor(this, 0);
-        StartComponentProcessor start = findStart(template);
+        DoRenderProcessor start = findDoRender(template);
         if(start != null) {
             template.doTemplateRender(start);
             return SKIP_BODY;
         }
-        throw new StartComponentNotFoundException();
+        throw new DoRenderNotFoundException();
     }
     
 	protected void writeEndElement() {

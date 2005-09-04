@@ -77,4 +77,11 @@ public interface ScriptEnvironment extends Parameterizable {
      */
     void endScope();
     
+    /**
+     * スクリプト内部表現オブジェクトから、Javaのオブジェクトに変換する。
+     * @param scriptObject スクリプト内部表現オブジェクト。
+     * @return Javaのオブジェクト。
+     */
+    Object convertFromScriptObject(Object scriptObject);
+    
 }

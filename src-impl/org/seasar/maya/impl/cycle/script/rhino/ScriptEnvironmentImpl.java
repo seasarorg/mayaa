@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -56,6 +57,15 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         return new CompiledScriptImpl(source, encoding);
     }
+    
+    protected Scriptable getStandardObjects() {
+        if(_standardObjects == null) {
+            Context cx = Context.enter();
+            _standardObjects = cx.initStandardObjects(null, true);
+            Context.exit();
+        }
+        return _standardObjects;
+    }
 
     protected void setModelToPrototype(Object model, Scriptable scope) {
         if(scope == null) {
@@ -65,7 +75,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             Context cx = Context.enter();
             cx.setWrapFactory(new WrapFactoryImpl());
             Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
-                    cx, _standardObjects, model, model.getClass());
+                    cx, getStandardObjects(), model, model.getClass());
             Context.exit();
             scope.setPrototype(prototype);
         }
@@ -76,12 +86,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(parent == null) {
             Context cx = Context.enter();
             cx.setWrapFactory(new WrapFactoryImpl());
-            if(_standardObjects == null) {
-                _standardObjects = cx.initStandardObjects(null, true);
-            }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             parent = cx.getWrapFactory().wrapAsJavaObject(
-                    cx, _standardObjects, cycle, ServiceCycle.class);
+                    cx, getStandardObjects(), cycle, ServiceCycle.class);
             Context.exit();
             _parent.set(parent);
         }
@@ -123,6 +130,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         throw new IllegalStateException();
     }
     
+    public Object convertFromScriptObject(Object scriptObject) {
+        return JavaAdapter.convertResult(scriptObject, Object.class);
+    }
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(name);
     }

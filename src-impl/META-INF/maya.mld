@@ -6,16 +6,31 @@
 
 	<description>The Maya core processors</description>
 
-	<processor name="attribute" class="org.seasar.maya.impl.engine.processor.AttributeProcessor">
-		<description>m:attribute injection</description>
-		<property name="name" required="true"/>
-		<property name="value" required="true" expectedType="java.lang.String"/>
+	<processor name="processingInstruction" class="org.seasar.maya.impl.engine.processor.ProcessingInstructionProcessor">
+		<description>PI on the template</description>
+		<property name="target" required="true"/>
+		<property name="data"/>
 	</processor>
 
-	<processor name="element" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
-		<description>m:element injection</description>
+	<processor name="doctype" class="org.seasar.maya.impl.engine.processor.DOCTYPEProcessor">
+		<description>DOCTYPE on the template</description>
 		<property name="name" required="true"/>
-		<property name="childEvaluation" default="true"/>
+		<property name="publicID"/>
+		<property name="systemID"/>
+	</processor>
+	
+	<processor name="comment" class="org.seasar.maya.impl.engine.processor.CommentProcessor">
+		<description>comment on the template</description>
+		<property name="text" expectedType="java.lang.String"/>
+	</processor>
+
+	<processor name="characters" class="org.seasar.maya.impl.engine.processor.CharactersProcessor">
+		<description>text on the template</description>
+		<property name="text" expectedType="java.lang.String"/>
+	</processor>
+
+	<processor name="cdata" class="org.seasar.maya.impl.engine.processor.CDATAProcessor">
+		<description>an CDATA on the template</description>
 	</processor>
 	
 	<processor name="templateElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
@@ -29,49 +44,31 @@
 		<property name="duplicated" default="true"/>
 	</processor>
 
-	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
-		<description>m:doBody injection</description>
-	</processor>
-
-	<processor name="cdata" class="org.seasar.maya.impl.engine.processor.CDATAProcessor">
-		<description>an CDATA on the template</description>
-	</processor>
-
-	<processor name="characters" class="org.seasar.maya.impl.engine.processor.CharactersProcessor">
-		<description>text on the template</description>
-		<property name="text" expectedType="java.lang.String"/>
-	</processor>
-	
-	<processor name="comment" class="org.seasar.maya.impl.engine.processor.CommentProcessor">
-		<description>comment on the template</description>
-		<property name="text" expectedType="java.lang.String"/>
-	</processor>
-
-	<processor name="doctype" class="org.seasar.maya.impl.engine.processor.DOCTYPEProcessor">
-		<description>DOCTYPE on the template</description>
+	<processor name="element" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
+		<description>m:element injection</description>
 		<property name="name" required="true"/>
-		<property name="publicID"/>
-		<property name="systemID"/>
+		<property name="childEvaluation" default="true"/>
 	</processor>
 
-	<processor name="processingInstruction" class="org.seasar.maya.impl.engine.processor.ProcessingInstructionProcessor">
-		<description>PI on the template</description>
-		<property name="target" required="true"/>
-		<property name="data"/>
+	<processor name="attribute" class="org.seasar.maya.impl.engine.processor.AttributeProcessor">
+		<description>m:attribute injection</description>
+		<property name="name" required="true"/>
+		<property name="value" required="true" expectedType="java.lang.String"/>
 	</processor>
 
-	<processor name="componentPage"
+	<processor name="page"
 			class="org.seasar.maya.impl.engine.processor.ComponentPageProcessor">
+		<description>m:page injection</description>
 		<property name="path" required="true"/>
 		<property name="namespaceURI" required="true"/>
 	</processor>
 
-	<processor name="startComponent"
-			class="org.seasar.maya.impl.engine.processor.StartComponentProcessor">
+	<processor name="doRender" class="org.seasar.maya.impl.engine.processor.DoRenderProcessor">
+		<description>m:doRender injection</description>
 	</processor>
 
-	<processor name="endComponent"
-			class="org.seasar.maya.impl.engine.processor.EndComponentProcessor">
+	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
+		<description>m:doBody injection</description>
 	</processor>
 
 	<processor name="exec"

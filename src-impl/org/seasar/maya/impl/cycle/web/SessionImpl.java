@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -87,7 +88,8 @@ public class SessionImpl implements Session {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        return _session.getAttribute(name);
+        return ScriptUtil.convertFromScriptObject(
+                _session.getAttribute(name));
     }
 
     public boolean isAttributeWritable() {

@@ -13,16 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.maya.impl.cycle;
 
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
+import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.util.ScopeNotWritableException;
 
 /**
- * 「startComponent」プロセッサ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class StartComponentProcessor extends TemplateProcessorSupport {
+public abstract class AbstractReadOnlyAttributeScope 
+        implements AttributeScope {
 
-	private static final long serialVersionUID = 4309532215454978747L;
+    public boolean isAttributeWritable() {
+        return false;
+    }
 
+    public void removeAttribute(String name) {
+        throw new ScopeNotWritableException(getScopeName());
+    }
+
+    public void setAttribute(String name, Object attribute) {
+        throw new ScopeNotWritableException(getScopeName());
+    }
+
+    public void setParameter(String name, String value) {
+        throw new UnsupportedOperationException();
+    }
+    
 }

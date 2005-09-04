@@ -63,7 +63,6 @@ public interface CONST_IMPL {
     QName QM_RENDERED = new QName("rendered");
     QName QM_ELEMENT = new QName("element");
     QName QM_NAME = new QName("name");
-    QName QM_VALUE = new QName("value");
     QName QM_TEMPLATE_ELEMENT = new QName("templateElement");
     QName QM_DUPLECATED_ELEMENT = new QName("duplecatedElement");
     QName QM_ATTRIBUTE = new QName("attribute");
@@ -77,7 +76,6 @@ public interface CONST_IMPL {
     QName QM_DOCTYPE = new QName("doctype");
     QName QM_PUBLIC_ID = new QName("publicID");
     QName QM_SYSTEM_ID = new QName("systemID");
-    QName QM_CODELET = new QName("codelet");
     
     QName QM_IGNORE = new QName("ignore");
     
@@ -89,9 +87,6 @@ public interface CONST_IMPL {
 
     QName QM_TEMPLATE_SUFFIX = new QName("templateSuffix");
 
-    QName QM_DO_BODY = new QName("doBody");
-
-    QName QM_COMPONENT_PAGE = new QName("componentPage");
     QName QM_PATH = new QName("path");
     QName QM_NAMESPACE_URI = new QName("namespaceURI");
     

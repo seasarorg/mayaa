@@ -19,14 +19,13 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class ParamValuesScope implements AttributeScope {
+public class ParamValuesScope extends AbstractReadOnlyAttributeScope {
 
 	private HttpServletRequest _request;
 	
@@ -40,7 +39,6 @@ public class ParamValuesScope implements AttributeScope {
 	public String getScopeName() {
 		return "paramValues";
 	}
-
 
     public Iterator iterateAttributeNames() {
         return EnumerationIterator.getInstance(_request.getParameterNames());
@@ -61,20 +59,6 @@ public class ParamValuesScope implements AttributeScope {
             return _request.getParameterValues(name);
         }
         return null;
-    }
-
-	public boolean isAttributeWritable() {
-		return false;
-	}
-
-	public void setAttribute(String name, Object attribute) {
-	}
-
-	public void removeAttribute(String name) {
-	}
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
     }
 
 }

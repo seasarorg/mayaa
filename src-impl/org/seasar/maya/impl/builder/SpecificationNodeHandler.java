@@ -88,6 +88,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     private SpecificationNode addNode(QName qName) {
 		SpecificationNodeImpl child = new SpecificationNodeImpl(
 				qName, _locator.getSystemId(), _locator.getLineNumber());
+        // TODO –¼‘O‹óŠÔ‚Ì•Û•û–@‚Ì‰ü—ÇB
         for(Iterator it = _namespaces.iterateNamespace(); it.hasNext();) {
             NodeNamespace ns = (NodeNamespace)it.next();
             child.addNamespace(ns.getPrefix(), ns.getNamespaceURI());

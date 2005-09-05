@@ -63,7 +63,7 @@ public class MLDDefinitionBuilder
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXmlAliasSourceScanner.ASSIGNED), false);
             if(assigned) {
-                library.setAssignedURI(source.getAttribute(SourceAlias.ALIAS));
+                library.addNamespaceURI(source.getAttribute(SourceAlias.ALIAS));
             }            
             return library;
         }

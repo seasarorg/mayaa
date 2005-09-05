@@ -15,8 +15,10 @@
  */
 package org.seasar.maya.impl.builder.library;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
@@ -29,27 +31,20 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class LibraryDefinitionImpl implements LibraryDefinition {
 
-    private String _namespaceURI;
-    private String _assignedURI;
+    private List _namespaceURI = new ArrayList();
     private Map _processors;
     
-    public void setNamespaceURI(String namespaceURI) {
+    public void addNamespaceURI(String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-        _namespaceURI = namespaceURI;
+        if(_namespaceURI.contains(namespaceURI) == false) {
+            _namespaceURI.add(namespaceURI);
+        }
     }
     
-    public String getNamespaceURI() {
-        return _namespaceURI;
-    }
-    
-    public void setAssignedURI(String uri) {
-        _assignedURI = uri;
-    }
-    
-    public String getAssignedURI() {
-        return _assignedURI;
+    public Iterator iterateNamespaceURI() {
+        return _namespaceURI.iterator();
     }
 
     public void addProcessorDefinition(ProcessorDefinition processor) {

@@ -34,14 +34,31 @@ public class TaglibTagHandler extends TagHandler {
     public TaglibTagHandler() {
         super("taglib");
         putHandler(new TagTagHandler(this));
-        putHandler(new JspVersionSetter("jsp-version"));
-        putHandler(new TagHandler("uri") {
+        putHandler(new TagHandler("jsp-version") {
             protected void end(String body) {
-                _library.setNamespaceURI(body);
+                _library.setRequiredVersion(body);
             }
         });
-        // JSP1.1
-        putHandler(new JspVersionSetter("jspversion"));
+        putHandler(new TagHandler("jspversion") {
+            protected void end(String body) {
+                _library.setRequiredVersion(body);
+            }
+        });
+        putHandler(new TagHandler("uri") {
+            protected void end(String body) {
+                _library.addNamespaceURI(body);
+            }
+        });
+        putHandler(new TagHandler("short-name") {
+            protected void end(String body) {
+                _library.addNamespaceURI(body);
+            }
+        });
+        putHandler(new TagHandler("shortname") {
+            protected void end(String body) {
+                _library.addNamespaceURI(body);
+            }
+        });
     }
     
     protected void start(Attributes attributes) {
@@ -50,18 +67,6 @@ public class TaglibTagHandler extends TagHandler {
 
     public JspLibraryDefinition getLibraryDefinition() {
         return _library;
-    }
-
-    private class JspVersionSetter extends TagHandler {
-
-        private JspVersionSetter(String name) {
-            super(name);
-        }
-        
-        protected void end(String body) {
-            _library.setRequiredVersion(body);
-        }
-        
     }
     
 }

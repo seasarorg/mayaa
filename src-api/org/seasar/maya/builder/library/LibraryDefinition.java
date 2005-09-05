@@ -25,16 +25,10 @@ import java.util.Iterator;
 public interface LibraryDefinition {
     
     /**
-     * 当該ライブラリの名前空間URI。uri属性値で指定されたもの。
-     * @return 名前空間URI。
+     * 当該ライブラリの名前空間URIをイテレートする。
+     * @return 名前空間URIのイテレータ。
      */
-    String getNamespaceURI();
-    
-    /**
-     * アプリケーションでアサインされたURIを取得する。
-     * @return アサインされたURI。
-     */
-    String getAssignedURI();
+    Iterator iterateNamespaceURI();
     
     /**
      * 子のprocessorノードのイテレータ。

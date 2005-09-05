@@ -65,7 +65,7 @@ public class LibraryManagerImpl implements LibraryManager {
 			            _libraries.add(library);
                         if(LOG.isTraceEnabled()) {
                             LOG.trace("loaded library - " + source.getSystemID() + 
-                                    " - " + library.getNamespaceURI());
+                                    " - " + library.iterateNamespaceURI().next());
                         }
 			            break;
 			    	}
@@ -147,8 +147,12 @@ public class LibraryManagerImpl implements LibraryManager {
                 return false;
             }
             LibraryDefinition library = (LibraryDefinition)test;
-            return  _namespaceURI.equals(library.getNamespaceURI()) ||
-            	_namespaceURI.equals(library.getAssignedURI());
+            for(Iterator it = library.iterateNamespaceURI(); it.hasNext(); ) {
+                if(_namespaceURI.equals(it.next())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     

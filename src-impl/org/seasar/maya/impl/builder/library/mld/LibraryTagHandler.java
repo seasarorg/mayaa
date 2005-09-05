@@ -35,7 +35,7 @@ public class LibraryTagHandler extends TagHandler {
         _libraryDefinition = new LibraryDefinitionImpl();
 		String uri = attributes.getValue("uri");
 		_libraryDefinition = new LibraryDefinitionImpl();
-		_libraryDefinition.setNamespaceURI(uri);
+		_libraryDefinition.addNamespaceURI(uri);
     }
     
     public LibraryDefinitionImpl getLibraryDefinition() {

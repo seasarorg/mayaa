@@ -22,13 +22,13 @@ import java.util.Map;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.CopyToFilter;
+import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XPathUtil;
 
 /**
@@ -62,9 +62,6 @@ public class XPathMatchesInjectionResolver
             SpecificationNode injected = (SpecificationNode)it.next();
             String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, getNamespaceMap(injected))) {
-                if(QM_IGNORE.equals(injected)) {
-                    return chain.getNode(original);
-                }
                 return injected.copyTo(_xpathFilter);
             }
         }
@@ -78,10 +75,9 @@ public class XPathMatchesInjectionResolver
     private class CheckXPathCopyToFilter implements CopyToFilter {
         
         public boolean accept(NodeObject test) {
-            if(test instanceof SpecificationNode) {
-                SpecificationNode node = (SpecificationNode)test;
-                String xpath = SpecificationUtil.getAttributeValue(node, QM_XPATH);
-                return StringUtil.isEmpty(xpath);
+            if(test instanceof NodeAttribute) {
+                NodeAttribute attr = (NodeAttribute)test;
+                return attr.getQName().equals(QM_XPATH) == false;
             }
             return true;
         }

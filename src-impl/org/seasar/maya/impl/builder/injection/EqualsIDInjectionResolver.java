@@ -92,10 +92,9 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
     private class CheckIDCopyToFilter implements CopyToFilter {
    
         public boolean accept(NodeObject test) {
-            if(test instanceof SpecificationNode) {
-                SpecificationNode node = (SpecificationNode)test;
-                NodeAttribute attr = node.getAttribute(QM_ID);
-                return attr == null;
+            if(test instanceof NodeAttribute) {
+                NodeAttribute attr = (NodeAttribute)test;
+                return attr.getQName().equals(QM_ID) == false;
             }
             return true;
         }

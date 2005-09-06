@@ -43,7 +43,7 @@ public interface Namespaceable extends NodeObject {
     
     /**
      * このスコープにて、名前空間モデルを追加したかどうか。
-     * @return
+     * @return このスコープに追加モデルがあるとtrue。
      */
     boolean added();
     
@@ -53,7 +53,7 @@ public interface Namespaceable extends NodeObject {
      * @param all 親スコープも検索する。
      * @return 名前空間モデル。
      */
-    NodeNamespace getNamespace(String prefix, boolean searchAll);
+    NodeNamespace getNamespace(String prefix, boolean all);
     
     /**
      * 適用される名前空間のイテレート。

@@ -160,7 +160,10 @@ public class SpecificationUtil implements CONST_IMPL {
         } else {
             throw new IllegalNameException(qName);
         }
-        return new QNameableImpl(new QName(namespaceURI, localName));
+        QName retName = new QName(namespaceURI, localName);
+        QNameable ret = new QNameableImpl(retName);
+        ret.setParentScope(namespaces);
+        return ret;
     }
     
     public static SpecificationNode createInjectedNode(

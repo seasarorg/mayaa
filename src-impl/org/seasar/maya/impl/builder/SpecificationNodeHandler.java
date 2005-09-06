@@ -56,8 +56,6 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace;
     private int _inEntity;
-    private boolean _addingNS;
-    private boolean _removeNS;
     
     public SpecificationNodeHandler(Specification specification) {
         if(specification == null) {
@@ -70,44 +68,40 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         _locator = locator;
     }
 
-    public void startDocument() {
-        _charactersBuffer = new StringBuffer(128);
+    private void initNamespaceScope() {
         _namespaces = new NamespaceableImpl();
         _namespaces.addNamespace("", _specification.getDefaultNamespaceURI());
+    }
+
+    private void stackNamespaceScope() {
+        Namespaceable parentScope = _namespaces;
+        _namespaces = new NamespaceableImpl();
+        _namespaces.setParentScope(parentScope);
+    }
+    
+    private void popNamespaceScope() {
+        _namespaces = _namespaces.getParentScope();
+        if(_namespaces == null) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    public void startDocument() {
+        _charactersBuffer = new StringBuffer(128);
         _outputWhitespace = SpecificationUtil.getEngineSettingBoolean(
                 OUTPUT_WHITE_SPACE, true);
         _current = _specification;
+        initNamespaceScope();
+        stackNamespaceScope();
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        if(_removeNS) {
-            Namespaceable parent = _namespaces.getParentScope();
-            if(_namespaces.added() == false) {
-                parent = parent.getParentScope();
-            }
-            _addingNS = true;
-            _namespaces = new NamespaceableImpl();
-            if(parent != null) {
-                _namespaces.setParentScope(parent);
-            }
-        } else if(_addingNS == false && _namespaces.added()) {
-            _addingNS = true;
-            Namespaceable parent = _namespaces;
-            _namespaces = new NamespaceableImpl();
-            _namespaces.setParentScope(parent);
-        }
         _namespaces.addNamespace(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix) {
-        Namespaceable test = _namespaces;
-        if(test.added() == false) {
-            test = test.getParentScope();
-        }
         NodeNamespace ns = _namespaces.getNamespace(prefix, false);
-        if(ns != null) {
-            _removeNS = true;
-        } else {
+        if(ns == null) {
             throw new IllegalStateException();
         }
     }
@@ -136,12 +130,6 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     public void startElement(String namespaceUR, 
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
-        if(_addingNS == false && _namespaces.added() == false) {
-            Namespaceable parent = _namespaces;
-            _namespaces = new NamespaceableImpl();
-            _namespaces.setParentScope(parent);
-        }
-        _addingNS = false;
         QNameable parsedName = 
             SpecificationUtil.parseName(_namespaces, qName);
         QName nodeQName = parsedName.getQName();
@@ -159,10 +147,12 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         }
         _current = node;
         saveToCycle(_current);
+        stackNamespaceScope();
     }
 
     public void endElement(String namespaceURI, 
             String localName, String qName) {
+        popNamespaceScope();
         addCharactersNode();
         _current = _current.getParentNode();
         saveToCycle(_current);

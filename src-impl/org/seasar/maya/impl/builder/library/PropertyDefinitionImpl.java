@@ -113,43 +113,37 @@ public class PropertyDefinitionImpl
         return _defaultValue;
     }
     
+    protected String getMessage(int index) {
+        String[] params = new String[] {
+                getProcessorDefinition().getName(), getName() };
+        return StringUtil.getMessage(getClass(), index, params);
+    }
+    
     protected Class getPropertyType() {
         Class processorClass = getProcessorDefinition().getProcessorClass();
         Class ret = ObjectUtil.getPropertyType(processorClass, getName());
         if(ret == null) {
             if(LOG.isWarnEnabled()) {
-                LOG.warn(StringUtil.getMessage(
-                        PropertyDefinitionImpl.class, 0, 
-                        new String[] { getProcessorDefinition().getName(), getName() }));
+                LOG.warn(getMessage(0));
             }
         }
         return ret;
     }
 
-    protected QName getPropertyQName(SpecificationNode injected) {
+    protected QName getQName(SpecificationNode injected) {
         return new QName(injected.getQName().getNamespaceURI(), _name);
-    }
-    
-    protected String getProcessValue(SpecificationNode injected, QName qName) {
-        String value = _defaultValue;
-        NodeAttribute attribute = injected.getAttribute(qName);
-        if(attribute != null) {
-            value = attribute.getValue();
-        }
-        if(value == null && _required) {
-            String processorName = getProcessorDefinition().getName();
-            throw new NoRequiredPropertyException(
-                    qName.getNamespaceURI(), processorName, _name);
-        }
-        return value;
     }
     
     public Object createProcessorProperty(SpecificationNode injected) {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
-    	QName propertyQName = getPropertyQName(injected);
-        String value = getProcessValue(injected, propertyQName);
+    	QName qName = getQName(injected);
+        String value = _defaultValue;
+        NodeAttribute attribute = injected.getAttribute(qName);
+        if(attribute != null) {
+            value = attribute.getValue();
+        }
         if(value != null) {
 	        Class propertyType = getPropertyType();
             if(propertyType == null) {
@@ -157,12 +151,15 @@ public class PropertyDefinitionImpl
                 return null;
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
-                NodeAttribute attr = injected.getAttribute(propertyQName);
+                NodeAttribute attr = injected.getAttribute(qName);
 	            return new ProcessorPropertyImpl(attr, value, getExpectedType());
 	        } else if(propertyType.equals(QNameable.class)) {
-                return SpecificationUtil.parseName(injected, value); 
+                return SpecificationUtil.parseName(injected.getParentScope(), value); 
             }
 	        return value;
+        } else if(_required) {
+            String processorName = getProcessorDefinition().getName();
+            throw new NoRequiredPropertyException(processorName, qName);
         }
         return null;
     }

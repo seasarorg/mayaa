@@ -59,11 +59,10 @@ public class JspProcessorDefinition extends ProcessorDefinitionImpl {
             PropertyDefinition property = (PropertyDefinition)it.next();
             Object prop = property.createProcessorProperty(injected);
             if(prop != null) {
-    	        JspCustomTagProcessor jspProcessor = (JspCustomTagProcessor)processor;
-    	        jspProcessor.addProcessorProperty((ProcessorProperty)prop);
+    	        JspCustomTagProcessor jsp = (JspCustomTagProcessor)processor;
+    	        jsp.addProcessorProperty((ProcessorProperty)prop);
             }
         }
     }
-
     
 }

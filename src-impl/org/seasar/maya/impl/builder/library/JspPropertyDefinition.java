@@ -29,16 +29,19 @@ public class JspPropertyDefinition extends PropertyDefinitionImpl {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
-        QName propertyQName = getPropertyQName(injected);
-        NodeAttribute attr = injected.getAttribute(propertyQName);
-        String value = getProcessValue(injected, propertyQName);
-        if(value != null) {
+        QName qName = getQName(injected);
+        NodeAttribute attribute = injected.getAttribute(qName);
+        if(attribute != null) {
             Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the tag.
                 return null;
             }
-            return new ProcessorPropertyImpl(attr, value, propertyType);
+            String value = attribute.getValue();
+            return new ProcessorPropertyImpl(attribute, value, propertyType);
+        } else if(isRequired()) {
+            String processorName = getProcessorDefinition().getName();
+            throw new NoRequiredPropertyException(processorName, qName);
         }
         return null;
     }

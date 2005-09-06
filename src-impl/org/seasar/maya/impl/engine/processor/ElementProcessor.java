@@ -21,6 +21,8 @@ import java.util.List;
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -56,27 +58,31 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _name = name;
     }
     
-    private boolean isXHTML(QName qName) {
+    private boolean isHTML(QName qName) {
         String namespaceURI = qName.getNamespaceURI();
-        return URI_XHTML.equals(namespaceURI);
+        return URI_HTML.equals(namespaceURI);
     }
     
     private boolean needsCloseElement(QName qName) {
-        if(isXHTML(qName)) {
-            return getChildProcessorSize() > 0;
+        if(isHTML(qName)) {
+            String localName = qName.getLocalName();
+            HTMLElements.Element element = HTMLElements.getElement(localName);
+            return element.isEmpty() == false;
         }
-        String localName = qName.getLocalName();
-        HTMLElements.Element element = HTMLElements.getElement(localName);
-        return element.isEmpty() == false;
+        return getChildProcessorSize() > 0;
     }
     
     private void appendAttributeString(StringBuffer buffer, ProcessorProperty prop) {
+        QName qName = prop.getName().getQName();
+        if(URI_MAYA.equals(qName.getNamespaceURI())) {
+            return;
+        }
         buffer.append(" ");
         String attrPrefix = prop.getName().getPrefix();
         if(StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
-        buffer.append(prop.getName().getQName().getLocalName());
+        buffer.append(qName.getLocalName());
         buffer.append("=\"").append(prop.getValue().execute()).append("\"");
     }
     
@@ -96,11 +102,30 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         QName qName = _name.getQName();
         buffer.append(qName.getLocalName());
+        if(isHTML(qName) == false) {
+            Namespaceable space = _name.getParentScope();
+            if(space == null) {
+                throw new IllegalArgumentException();
+            }
+            for(Iterator it = space.iterateNamespace(false);
+                    it.hasNext(); ) {
+                NodeNamespace mapping = (NodeNamespace)it.next();
+                String pre = mapping.getPrefix();
+                String uri = mapping.getNamespaceURI();
+                if(StringUtil.hasValue(pre)) {
+                    buffer.append(" xmlns:").append(pre);
+                } else {
+                    buffer.append(" xmlns");
+                }
+                buffer.append("=\"").append(uri).append("\"");
+            }
+        }
         List additionalAttributes = getProcesstimeProperties();
         for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             QName propQName = prop.getName().getQName(); 
-            if(_duplicated && (QH_ID.equals(propQName) || QX_ID.equals(propQName))) {
+            if(_duplicated && (QH_ID.equals(propQName) ||
+                    QX_ID.equals(propQName))) {
                 continue;
             }
             appendAttributeString(buffer, prop);
@@ -111,10 +136,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 appendAttributeString(buffer, prop);
             }
         }
-        if(isXHTML(qName) && getChildProcessorSize() == 0) {
-            buffer.append("/>");
-        } else {
+        if(isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
+        } else {
+            buffer.append("/>");
         }
         write(buffer);
         return EVAL_BODY_INCLUDE;

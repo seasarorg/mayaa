@@ -17,7 +17,9 @@ package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
 
+import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -61,6 +63,32 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
         return getQName().toString() + "='" + _value + "'";
     }
 
+    public boolean added() {
+        return false;
+    }
+
+    public void addNamespace(String prefix, String namespaceURI) {
+        throw new UnsupportedOperationException();
+    }
+
+    public NodeNamespace getNamespace(String prefix, boolean all) {
+        if(_node != null) {
+            return _node.getNamespace(prefix, all);
+        }
+        return null;
+    }
+
+    public void setParentScope(Namespaceable parent) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Namespaceable getParentScope() {
+        if(_node != null) {
+            _node.getParentScope();
+        }
+        return null;
+    }
+    
     public Iterator iterateNamespace(boolean all) {
         if(_node != null) {
             _node.iterateNamespace(all);

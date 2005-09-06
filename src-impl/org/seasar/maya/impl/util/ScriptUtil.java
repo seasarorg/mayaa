@@ -23,6 +23,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.script.NullScript;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -55,17 +56,18 @@ public class ScriptUtil implements CONST_IMPL {
         if(expectedType == null) {
         	throw new IllegalArgumentException();
         }
+        CompiledScript compiled;
         if(StringUtil.hasValue(text)) {
 	        ScriptEnvironment environment = getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             SpecificationNode node = cycle.getInjectedNode();
-            CompiledScript compiled = environment.compile(
+            compiled = environment.compile(
                     text, node.getSystemID(), node.getLineNumber());
-            compiled.setExpectedType(expectedType);
-            return compiled;
+        } else {
+            compiled = new NullScript();
         }
-        // TODO Null Çï‘Ç≥Ç»Ç¢ÅB
-        return null;
+        compiled.setExpectedType(expectedType);
+        return compiled;
     }
     
     public static  void execEvent(Specification specification, QName eventName) {

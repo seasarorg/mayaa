@@ -66,7 +66,7 @@ public abstract class AbstractScriptEnvironment
     
     public CompiledScript compile(String script, String sourceName, int lineno) {
         if(StringUtil.isEmpty(script)) {
-            throw new IllegalArgumentException();
+            return new NullScript();
         }
         List list = new ArrayList();
         for(Iterator it = new ScriptBlockIterator(script, _blockSign);

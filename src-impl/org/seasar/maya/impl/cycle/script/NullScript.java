@@ -38,7 +38,7 @@ public class NullScript implements CompiledScript {
     }
 
     public Object execute() {
-        return null;
+        return "";
     }
 
     public boolean isLiteral() {

@@ -79,7 +79,16 @@ WEBコンテナの起動後、WEBブラウザより以下のURL（参考）にアクセスください。
 -m:startComponentプロセッサをm:doRenderに、m:endComponentプロセッサをm:doBody
   にそれぞれ統合しました。
 
--TLDのshort-nameエレメントによるURI登録機能が欠如していたのを、修正しました。
+-FolderSourceScannerのプロパティに再帰的に読むかどうかのフラグを追加しました。
+  nameはrecursive、valueはtrueまたはfalseを指定します。
+
+-FolderSourceScannerのプロパティに読むファイルを拡張子指定するものを追加しました。
+  nameはextension、valueはピリオド(.)ありの拡張子を指定します。
+  無指定の場合は対象となるファイルはありません。
+
+-TLDの探し方を修正し、WEB-INF以下のすべてのTLDを読み込むようにしました。
+
+-MLDの探し方をTLDに合わせて変更し、WEB-INF以下のすべてのMLDを読み込むようにしました。
 
 -ElementProcessorをXHTMLに利用した場合において、xmlnsのマッピング定義出力を
   適切に行うように修正しました。

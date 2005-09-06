@@ -42,13 +42,8 @@
 		<library class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
 			<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>
 			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
-				<parameter name="folder" value="/WEB-INF/mld"/>
-			</source>
-			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
-				<parameter name="folder" value="/WEB-INF/tld"/>
-			</source>
-			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
-				<parameter name="folder" value="/WEB-INF/classes"/>
+				<parameter name="folder" value="/WEB-INF"/>
+				<parameter name="recursive" value="true"/>
 			</source>
 			<source class="org.seasar.maya.impl.builder.library.scanner.JarsSourceScanner">
 				<parameter name="folder" value="/WEB-INF/lib"/>

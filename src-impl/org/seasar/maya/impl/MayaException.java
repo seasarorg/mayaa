@@ -72,6 +72,7 @@ public abstract class MayaException extends RuntimeException {
                 LOG.error(t.getMessage(), t);
             }
         }
+        // TODO ‡”Ô‚ğ‚©‚¦‚ÄAæ‚É’èŒ^‚ğ•À‚×‚éB
         int paramLength = params.length; 
         String[] newParams = new String[paramLength + 4];
         System.arraycopy(params, 0, newParams, 0, paramLength);

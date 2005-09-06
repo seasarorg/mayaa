@@ -16,10 +16,14 @@
 package org.seasar.maya.impl.builder.library.scanner;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
@@ -30,6 +34,7 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class FolderSourceScanner implements SourceScanner {
 
@@ -39,6 +44,8 @@ public class FolderSourceScanner implements SourceScanner {
 
     private boolean _recursive = false;
 
+    private Set _extensions = new HashSet();
+
     public void setParameter(String name, String value) {
         if ("folder".equals(name)) {
             if (StringUtil.isEmpty(value)) {
@@ -47,6 +54,15 @@ public class FolderSourceScanner implements SourceScanner {
             _folder = value;
         } else if ("recursive".equals(name)) {
             _recursive = Boolean.valueOf(value).booleanValue();
+        } else if ("extension".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(name);
+            }
+            if (value.charAt(0) != '.') {
+                _extensions.add('.' + value);
+            } else {
+                _extensions.add(value);
+            }
         } else {
             throw new UnsupportedParameterException(name);
         }
@@ -57,6 +73,14 @@ public class FolderSourceScanner implements SourceScanner {
             throw new IllegalStateException();
         }
         return _folder;
+    }
+
+    public boolean isRecursive() {
+        return _recursive;
+    }
+
+    public Set getExtensions() {
+        return Collections.unmodifiableSet(_extensions);
     }
 
     public Iterator scan() {
@@ -83,27 +107,54 @@ public class FolderSourceScanner implements SourceScanner {
         return NullIterator.getInstance();
     }
 
+    private FileFilter createExtensionFilter() {
+        return new FileFilter() {
+            String[] extensions =
+                (String[])_extensions.toArray(new String[_extensions.size()]);
+            public boolean accept(File pathName) {
+                if (pathName.isDirectory()) {
+                    return true;
+                }
+
+                for (int i = 0; i < extensions.length; i++) {
+                    if (pathName.getName().endsWith(extensions[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+    }
+
     private File[] listFiles(File dir) {
         List sources = new ArrayList();
+        FileFilter filter = createExtensionFilter();
+
         if (_recursive) {
-            listFilesRecursive(sources, dir);
+            listFilesRecursive(sources, dir, filter);
         } else {
-            File[] files = dir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()) {
-                    sources.add(files[i]);
-                }
-            }
+            listFilesNonRecursive(sources, dir, filter);
         }
         return (File[]) sources.toArray(new File[sources.size()]);
     }
 
-    private void listFilesRecursive(List list, File dir) {
+    private void listFilesNonRecursive(List list, File dir, FileFilter filter) {
         if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
+            File[] files = dir.listFiles(filter);
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()) {
+                    list.add(files[i]);
+                }
+            }
+        }
+    }
+
+    private void listFilesRecursive(List list, File dir, FileFilter filter) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles(filter);
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isDirectory()) {
-                    listFilesRecursive(list, files[i]);
+                    listFilesRecursive(list, files[i], filter);
                 } else {
                     list.add(files[i]);
                 }

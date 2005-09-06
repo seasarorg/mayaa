@@ -36,13 +36,14 @@ import org.seasar.maya.source.SourceDescriptor;
 public class JarsSourceScanner implements SourceScanner {
 
     private static Map _cache = new HashMap();
-    
+
     private FolderSourceScanner _folderScanner = new FolderSourceScanner();
+
     private Set _ignores = new HashSet();
-    
+
     public void setParameter(String name, String value) {
-        if("ignore".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+        if ("ignore".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(name);
             }
             _ignores.add(value);
@@ -50,61 +51,59 @@ public class JarsSourceScanner implements SourceScanner {
             _folderScanner.setParameter(name, value);
         }
     }
-    
+
     protected String getJarName(String systemID) {
-        if(StringUtil.hasValue(systemID) && 
-        		systemID.toLowerCase().endsWith(".jar")) {
+        if (StringUtil.hasValue(systemID)) {
             int pos = systemID.lastIndexOf("/");
-            if(pos != -1) {
+            if (pos != -1) {
                 return systemID.substring(pos + 1);
             }
             return systemID;
         }
         return null;
     }
-    
+
     protected boolean containIgnores(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        for (Iterator it = _ignores.iterator(); it.hasNext(); ) {
+        for (Iterator it = _ignores.iterator(); it.hasNext();) {
             if (name.startsWith(it.next().toString())) {
                 return true;
             }
         }
         return false;
     }
-    
+
     protected void scanSource(SourceDescriptor source, Set aliases) {
-        if(source == null && source.exists() == false) {
+        if (source == null && source.exists() == false) {
             throw new IllegalArgumentException();
         }
         String jarName = getJarName(source.getSystemID());
-        if(StringUtil.hasValue(jarName) && containIgnores(jarName) == false) {
+        if (StringUtil.hasValue(jarName) && containIgnores(jarName) == false) {
             try {
                 JarInputStream jar = new JarInputStream(source.getInputStream());
                 JarEntry entry;
-                while((entry = jar.getNextJarEntry())  != null) {
+                while ((entry = jar.getNextJarEntry()) != null) {
                     String entryName = entry.getName();
-                    if(entryName.startsWith("META-INF/") && 
-                            "META-INF/MANIFEST.MF".equals(entryName) == false) {
-                        aliases.add(new SourceAlias(
-                        		jarName, entryName, source.getTimestamp()));
+                    if (entryName.startsWith("META-INF/")
+                            && "META-INF/MANIFEST.MF".equals(entryName) == false) {
+                        aliases.add(new SourceAlias(jarName, entryName, source.getTimestamp()));
                     }
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
-    
+
     protected Set scanAll(SourceScanner scanner) {
-        if(scanner == null) {
+        if (scanner == null) {
             throw new IllegalArgumentException();
         }
         Set aliases = new HashSet();
-        for(Iterator it = scanner.scan(); it.hasNext(); ) {
-            SourceDescriptor source = (SourceDescriptor)it.next();
+        for (Iterator it = scanner.scan(); it.hasNext();) {
+            SourceDescriptor source = (SourceDescriptor) it.next();
             scanSource(source, aliases);
         }
         return aliases;
@@ -112,31 +111,31 @@ public class JarsSourceScanner implements SourceScanner {
 
     public Iterator scan() {
         String folder = _folderScanner.getFolder();
-        Set aliases = (Set)_cache.get(folder);
-        if(aliases == null) {
+        Set aliases = (Set) _cache.get(folder);
+        if (aliases == null) {
             aliases = scanAll(_folderScanner);
             _cache.put(folder, aliases);
         }
         return new MetaInfSourceIterator(aliases.iterator());
-	}
-    
+    }
+
     private class MetaInfSourceIterator implements Iterator {
 
         private Iterator _it;
-        
+
         private MetaInfSourceIterator(Iterator it) {
-            if(it == null) {
+            if (it == null) {
                 throw new IllegalArgumentException();
             }
             _it = it;
         }
-        
+
         public boolean hasNext() {
             return _it.hasNext();
         }
 
         public Object next() {
-            SourceAlias alias = (SourceAlias)_it.next();
+            SourceAlias alias = (SourceAlias) _it.next();
             ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
@@ -147,7 +146,7 @@ public class JarsSourceScanner implements SourceScanner {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
 }

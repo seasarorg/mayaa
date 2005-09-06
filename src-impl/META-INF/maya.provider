@@ -43,9 +43,12 @@
 			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
 				<parameter name="folder" value="/WEB-INF"/>
 				<parameter name="recursive" value="true"/>
+				<parameter name="extension" value=".tld"/>
+				<parameter name="extension" value=".mld"/>
 			</source>
 			<source class="org.seasar.maya.impl.builder.library.scanner.JarsSourceScanner">
 				<parameter name="folder" value="/WEB-INF/lib"/>
+				<parameter name="extension" value=".jar"/>
 				<parameter name="ignore" value="commons-beanutils-"/>
 				<parameter name="ignore" value="commons-logging-"/>
 				<parameter name="ignore" value="nekohtml-"/>

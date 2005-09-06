@@ -19,10 +19,13 @@ import java.util.Iterator;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
+import org.seasar.maya.builder.library.LibraryManager;
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
+import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
@@ -30,13 +33,18 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XPathUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL {
+public class EqualsIDInjectionResolver
+        implements InjectionResolver, CONST_IMPL {
+
+    private static LibraryManager _libraryManager;    
     
-    private final CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
+    private CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
 
     private String getID(SpecificationNode node) {
 	    if(node == null) {
@@ -56,7 +64,22 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 		}
 		return null;
     }
-	
+
+    protected static SpecificationNode checkNode(
+            SpecificationNode injected, CopyToFilter filter) {
+        if(_libraryManager == null) {
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            _libraryManager = provider.getTemplateBuilder().getLibraryManager();
+        }
+        QName name = injected.getQName();
+        ProcessorDefinition def = _libraryManager.getProcessorDefinition(name);
+        if(def != null) {
+            return injected.copyTo(filter);
+        }
+        InjectionChain chain = DefaultInjectionChain.getInstance(); 
+        return chain.getNode(injected); 
+    }
+    
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
         if(original == null || chain == null) {
@@ -74,7 +97,7 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
 	            if(QM_IGNORE.equals(injected.getQName())) {
 	                return chain.getNode(original);
 	            }
-	            return injected.copyTo(_idFilter);
+	            return checkNode(injected, _idFilter);
 	        }
             boolean report = SpecificationUtil.getEngineSettingBoolean(
                     REPORT_UNRESOLVED_ID, true);

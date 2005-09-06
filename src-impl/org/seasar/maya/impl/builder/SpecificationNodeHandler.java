@@ -70,7 +70,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
 
     private void initNamespaceScope() {
         _namespaces = new NamespaceableImpl();
-        _namespaces.addNamespace("", _specification.getDefaultNamespaceURI());
+        _namespaces.addNamespace("", URI_HTML);
     }
 
     private void stackNamespaceScope() {

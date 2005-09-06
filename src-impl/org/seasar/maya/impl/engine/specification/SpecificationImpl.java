@@ -93,10 +93,6 @@ public class SpecificationImpl extends SpecificationNodeImpl
         }
     }
     
-    public String getDefaultNamespaceURI() {
-        return URI_MAYA;
-    }
-    
     public void kill() {
         setTimestamp(null);
     }

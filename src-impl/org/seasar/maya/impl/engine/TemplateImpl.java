@@ -69,10 +69,6 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
     
-    public String getDefaultNamespaceURI() {
-        return URI_HTML;
-    }
-    
     public Page getPage() {
         return (Page)getParentSpecification();
     }

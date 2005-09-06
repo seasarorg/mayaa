@@ -27,12 +27,6 @@ import org.seasar.maya.source.SourceDescriptor;
 public interface Specification extends SpecificationNode {
 
     /**
-     * 子ノードにおいて名前空間プレフィックス省略時に適用する名前空間URI。
-     * @return デフォルト名前空間。
-     */
-    String getDefaultNamespaceURI();
-    
-    /**
      * 最終ビルド時を取得する。
      * @return ビルド時。未ビルドの場合nullを返す。
      */

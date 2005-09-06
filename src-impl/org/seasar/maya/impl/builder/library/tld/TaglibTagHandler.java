@@ -46,17 +46,7 @@ public class TaglibTagHandler extends TagHandler {
         });
         putHandler(new TagHandler("uri") {
             protected void end(String body) {
-                _library.addNamespaceURI(body);
-            }
-        });
-        putHandler(new TagHandler("short-name") {
-            protected void end(String body) {
-                _library.addNamespaceURI(body);
-            }
-        });
-        putHandler(new TagHandler("shortname") {
-            protected void end(String body) {
-                _library.addNamespaceURI(body);
+                _library.setNamespaceURI(body);
             }
         });
     }

@@ -31,20 +31,33 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class LibraryDefinitionImpl implements LibraryDefinition {
 
-    private List _namespaceURI = new ArrayList();
+    private String _namespaceURI;
+    private List _assignedURI = new ArrayList();
     private Map _processors;
     
-    public void addNamespaceURI(String namespaceURI) {
+    public void setNamespaceURI(String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-        if(_namespaceURI.contains(namespaceURI) == false) {
-            _namespaceURI.add(namespaceURI);
+        _namespaceURI = namespaceURI;
+    }
+    
+    public String getNamespaceURI() {
+        return _namespaceURI;
+    }
+    
+    public void addAssignedURI(String assignedURI) {
+        if(StringUtil.isEmpty(assignedURI)) {
+            throw new IllegalArgumentException();
+        }
+        if(assignedURI.equals(_namespaceURI) || 
+                _assignedURI.contains(assignedURI) == false) {
+            _assignedURI.add(assignedURI);
         }
     }
     
-    public Iterator iterateNamespaceURI() {
-        return _namespaceURI.iterator();
+    public Iterator iterateAssignedURI() {
+        return _assignedURI.iterator();
     }
 
     public void addProcessorDefinition(ProcessorDefinition processor) {

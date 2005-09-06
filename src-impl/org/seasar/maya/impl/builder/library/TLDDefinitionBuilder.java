@@ -60,7 +60,7 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXmlAliasSourceScanner.ASSIGNED), false);
             if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
-                library.addNamespaceURI(source.getAttribute(SourceAlias.ALIAS));
+                library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
             }
             return library;
         }

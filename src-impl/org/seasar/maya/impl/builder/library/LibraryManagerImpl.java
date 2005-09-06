@@ -65,7 +65,7 @@ public class LibraryManagerImpl implements LibraryManager {
 			            _libraries.add(library);
                         if(LOG.isTraceEnabled()) {
                             LOG.trace("loaded library - " + source.getSystemID() + 
-                                    " - " + library.iterateNamespaceURI().next());
+                                    " - " + library.getNamespaceURI());
                         }
 			            break;
 			    	}
@@ -111,7 +111,8 @@ public class LibraryManagerImpl implements LibraryManager {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-		return new LibraryDefinitionFilteredIterator(namespaceURI, iterateLibraryDefinition());
+		return new LibraryDefinitionFilteredIterator(
+                namespaceURI, iterateLibraryDefinition());
     }
     
     public ProcessorDefinition getProcessorDefinition(QName qName) {
@@ -147,7 +148,10 @@ public class LibraryManagerImpl implements LibraryManager {
                 return false;
             }
             LibraryDefinition library = (LibraryDefinition)test;
-            for(Iterator it = library.iterateNamespaceURI(); it.hasNext(); ) {
+            if(_namespaceURI.equals(library.getNamespaceURI())) {
+                return true;
+            }
+            for(Iterator it = library.iterateAssignedURI(); it.hasNext(); ) {
                 if(_namespaceURI.equals(it.next())) {
                     return true;
                 }

@@ -15,9 +15,7 @@
  */
 package org.seasar.maya.impl.util;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
@@ -31,6 +29,7 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;
@@ -92,10 +91,10 @@ public class SpecificationUtil implements CONST_IMPL {
     
 	public static SpecificationNode getMayaNode(SpecificationNode node) {
         Specification specification = findSpecification(node);
-	    Map namespaces = new HashMap();
-	    namespaces.put("m", URI_MAYA);
+        Namespaceable namespaceable = new NamespaceableImpl();
+        namespaceable.addNamespace("m", URI_MAYA);
 	    Iterator it = XPathUtil.selectChildNodes(
-                specification, "/m:maya", namespaces, false);
+                specification, "/m:maya", namespaceable, false);
 	    if(it.hasNext()) {
 	        return (SpecificationNode)it.next();
 	    }
@@ -137,7 +136,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 	
     public static QNameable parseName(
-            Namespaceable namespaces, String qName, String defaultURI) {
+            Namespaceable namespaces, String qName) {
         String[] parsed = qName.split(":");
         String prefix = null;
         String localName = null;
@@ -145,18 +144,18 @@ public class SpecificationUtil implements CONST_IMPL {
         if(parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            NodeNamespace namespace = namespaces.getNamespace(prefix);
+            NodeNamespace namespace = namespaces.getNamespace(prefix, true);
             if(namespace == null) {
                 throw new PrefixMappingNotFoundException(prefix);
             }
             namespaceURI = namespace.getNamespaceURI();
         } else if(parsed.length == 1) {
             localName = parsed[0];
-            NodeNamespace namespace = namespaces.getNamespace("");
+            NodeNamespace namespace = namespaces.getNamespace("", true);
             if(namespace != null) {
                 namespaceURI = namespace.getNamespaceURI();
             } else {
-                namespaceURI = defaultURI;
+                throw new PrefixMappingNotFoundException("");
             }
         } else {
             throw new IllegalNameException(qName);
@@ -174,6 +173,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 node.addAttribute(attr.getQName(), attr.getValue());
             }
         }
+        node.setParentScope(original.getParentScope());
         return node;
     }
 	

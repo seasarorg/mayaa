@@ -56,13 +56,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _name = name;
     }
     
-    public String getInformalAttrituteURI() {
-        if(_name == null) {
-            throw new IllegalStateException();
-        }
-        return _name.getQName().getNamespaceURI();
-    }
-    
     private boolean isXHTML(QName qName) {
         String namespaceURI = qName.getNamespaceURI();
         return URI_XHTML.equals(namespaceURI);
@@ -79,12 +72,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
     
     private void appendAttributeString(StringBuffer buffer, ProcessorProperty prop) {
         buffer.append(" ");
-        String attrPrefix = prop.getPrefix();
+        String attrPrefix = prop.getName().getPrefix();
         if(StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
-        buffer.append(prop.getQName().getLocalName());
-        buffer.append("=\"").append(prop.getValue()).append("\"");
+        buffer.append(prop.getName().getQName().getLocalName());
+        buffer.append("=\"").append(prop.getValue().execute()).append("\"");
     }
     
     private void write(StringBuffer buffer) {
@@ -106,7 +99,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         List additionalAttributes = getProcesstimeProperties();
         for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
-            QName propQName = prop.getQName(); 
+            QName propQName = prop.getName().getQName(); 
             if(_duplicated && (QH_ID.equals(propQName) || QX_ID.equals(propQName))) {
                 continue;
             }

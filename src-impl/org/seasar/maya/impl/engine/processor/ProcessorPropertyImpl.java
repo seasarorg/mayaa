@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
@@ -25,58 +25,24 @@ import org.seasar.maya.impl.util.ScriptUtil;
  */
 public class ProcessorPropertyImpl implements ProcessorProperty {
 
-    private QName _qName;
-    private String _prefix;
-    private Object _value;
+    private QNameable _name;
+    private CompiledScript _compiled;
     
-    public ProcessorPropertyImpl(QName qName, String prefix, Object value) {
-        if(qName == null || value == null) {
+    public ProcessorPropertyImpl(
+            QNameable name, String value, Class expectedType) {
+        if(name == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
-        _qName = qName;
-        _prefix = prefix;
-        _value = value;
+        _name = name;
+        _compiled = ScriptUtil.compile(value, expectedType);
     }
     
-    public QName getQName() {
-        return _qName;
+    public QNameable getName() {
+        return _name;
     }
     
-    public String getPrefix() {
-        return _prefix;
-    }
-    
-    public boolean isStatic() {
-        if(_value instanceof ProcessorProperty) {
-            ProcessorProperty property = (ProcessorProperty)_value;
-            return property.isStatic();
-        } else if(_value instanceof CompiledScript) {
-            return ((CompiledScript)_value).isLiteral();
-        }
-        return true;
-    }
-
-    public Object getValue() {
-        if(_value instanceof ProcessorProperty) {
-            ProcessorProperty property = (ProcessorProperty)_value;
-            return property.getValue();
-        } else if(_value instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript)_value;
-            return ScriptUtil.execute(script);
-        }
-        return _value;
-    }
-    
-    public boolean equals(Object test) {
-        if(test == null || (test instanceof ProcessorProperty) == false) {
-            return false;
-        }
-        ProcessorProperty prop = (ProcessorProperty)test;
-        return _qName.equals(prop.getQName());
-    }
-    
-    public int hashCode() {
-        return _qName.hashCode();
+    public CompiledScript getValue() {
+        return _compiled;
     }
     
 }

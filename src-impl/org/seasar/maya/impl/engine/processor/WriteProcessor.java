@@ -42,7 +42,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
     
     public ProcessStatus doStartProcess() {
         if(_value != null) {
-            String ret = (String)_value.getValue();
+            String ret = (String)_value.getValue().execute();
             if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
             	ret = _default;
             }

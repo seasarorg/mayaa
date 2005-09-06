@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessorSupport;
@@ -62,9 +63,34 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
-        parent.addProcesstimeProperty(new ProcessorPropertyImpl(
-                _name.getQName(), _name.getPrefix(), _value));
+        parent.addProcesstimeProperty(
+                new ProcessorPropertyWrapper(_name, _value));
         return SKIP_BODY;
+    }
+    
+    private class ProcessorPropertyWrapper 
+            implements ProcessorProperty {
+
+        private QNameable _attrName;
+        private ProcessorProperty _attrValue;
+        
+        private ProcessorPropertyWrapper(
+                QNameable name, ProcessorProperty property) {
+            if(name == null || property == null) {
+                throw new IllegalArgumentException();
+            }
+            _attrName = name;
+            _attrValue = property;
+        }
+        
+        public QNameable getName() {
+            return _attrName;
+        }
+
+        public CompiledScript getValue() {
+            return _attrValue.getValue();
+        }
+        
     }
     
 }

@@ -40,7 +40,7 @@ public class IfProcessor extends TemplateProcessorSupport {
         if(_test == null) {
         	throw new IllegalStateException();
         }
-        boolean test = ObjectUtil.booleanValue(_test.getValue(), false);
+        boolean test = ObjectUtil.booleanValue(_test.getValue().execute(), false);
         return test ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
     

@@ -41,7 +41,7 @@ public class QNameableImpl extends NamespaceableImpl implements QNameable {
     
     public String getPrefix() {
         String namespaceURI = _qName.getNamespaceURI();
-	    for(Iterator it = iterateNamespace(); it.hasNext(); ) {
+	    for(Iterator it = iterateNamespace(true); it.hasNext(); ) {
 	        NodeNamespace ns = (NodeNamespace)it.next();
 	        if(namespaceURI.equals(ns.getNamespaceURI())) {
 	            return ns.getPrefix();

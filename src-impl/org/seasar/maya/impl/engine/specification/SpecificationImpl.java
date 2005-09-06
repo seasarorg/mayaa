@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -39,9 +38,6 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class SpecificationImpl extends SpecificationNodeImpl
 		implements Specification, CONST_IMPL {
-    
-    private static final NodeNamespace NS_MAYA = 
-        new NodeNamespaceImpl(PREFIX_MAYA, URI_MAYA);
     
     private Date _buildTimestamp;
     private SourceDescriptor _source;
@@ -97,8 +93,8 @@ public class SpecificationImpl extends SpecificationNodeImpl
         }
     }
     
-    public NodeNamespace getDefaultNamespace() {
-        return NS_MAYA;
+    public String getDefaultNamespaceURI() {
+        return URI_MAYA;
     }
     
     public void kill() {

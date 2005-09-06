@@ -71,20 +71,20 @@ public class ForProcessor extends TemplateProcessorSupport
         }
         count++;
         _counter.set(new Integer(count));
-        return ObjectUtil.booleanValue(_test.getValue(), false);
+        return ObjectUtil.booleanValue(_test.getValue().execute(), false);
 	}
 	
     public ProcessStatus doStartProcess() {
     	_counter.set(new Integer(0));
         if(_init != null) {
-    		_init.getValue();
+    		_init.getValue().execute();
     	}
         return execTest() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
 
 	public ProcessStatus doAfterChildProcess() {
         if(_after != null) {
-        	_after.getValue();
+        	_after.getValue().execute();
         }
         return execTest() ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}

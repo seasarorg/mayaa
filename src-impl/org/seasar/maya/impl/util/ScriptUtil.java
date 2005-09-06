@@ -64,15 +64,8 @@ public class ScriptUtil implements CONST_IMPL {
             compiled.setExpectedType(expectedType);
             return compiled;
         }
+        // TODO Null Çï‘Ç≥Ç»Ç¢ÅB
         return null;
-    }
-    
-    public static Object execute(Object obj) {
-        if (obj instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript)obj;
-            return script.execute();
-        }
-        return obj;
     }
     
     public static  void execEvent(Specification specification, QName eventName) {
@@ -85,8 +78,8 @@ public class ScriptUtil implements CONST_IMPL {
 	        if(attr != null) {
 	        	String text = attr.getValue();
 	        	if(StringUtil.hasValue(text)) {
-		            Object obj = ScriptUtil.compile(text, Void.class);
-		            ScriptUtil.execute(obj);
+		            CompiledScript script = ScriptUtil.compile(text, Void.class);
+		            script.execute();
 	        	}
 	        }
         }

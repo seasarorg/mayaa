@@ -37,11 +37,11 @@ public class HtmlAttributesSetter implements InjectionResolver, CONST_IMPL {
 			throw new IllegalArgumentException();
 		}
 		QName originalName = original.getQName();
-		SpecificationNode maya = SpecificationUtil.getMayaNode(original);
-		if(maya == null) {
-		    throw new IllegalStateException();
-		}
 		if(QH_HTML.equals(originalName) || QX_HTML.equals(originalName)) {
+            SpecificationNode maya = SpecificationUtil.getMayaNode(original);
+            if(maya == null) {
+                throw new IllegalStateException();
+            }
    		    for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
    		        NodeAttribute attribute = (NodeAttribute)it.next();
        		    maya.addAttribute(attribute.getQName(), attribute.getValue());

@@ -15,17 +15,17 @@
  */
 package org.seasar.maya.impl.builder.injection;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.CopyToFilter;
+import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -64,11 +64,11 @@ public class EqualsIDInjectionResolver implements InjectionResolver, CONST_IMPL 
         }
         String id = getID(original);
         if(StringUtil.hasValue(id)) {
-            Map namespaces = new HashMap();
-            namespaces.put("m", URI_MAYA);
+            Namespaceable namespaceable = new NamespaceableImpl();
+            namespaceable.addNamespace("m", URI_MAYA);
             String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
             Iterator it = XPathUtil.selectChildNodes(
-                    original, xpathExpr, namespaces, true);
+                    original, xpathExpr, namespaceable, true);
 	        if(it.hasNext()) {
 	            SpecificationNode injected = (SpecificationNode)it.next();
 	            if(QM_IGNORE.equals(injected.getQName())) {

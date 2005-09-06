@@ -15,7 +15,8 @@
  */
 package org.seasar.maya.engine.processor;
 
-import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.specification.QNameable;
 
 /**
  * プロセッサに設定するプロパティのランタイムオブジェクト。
@@ -24,27 +25,15 @@ import org.seasar.maya.engine.specification.QName;
 public interface ProcessorProperty {
     
     /**
-     * プロセッサにセットすべきプロパティとテンプレートや設定XML上の属性とのバインディング名。
-     * @return バインディング名。
+     * プロセッサのプロパティ名。
+     * @return プロパティ名。
      */
-    QName getQName();
+    QNameable getName();
 
     /**
-     * 名前空間URIにマッピングされたプレフィックス文字列の取得。
-     * @return プレフィックス文字列。
-     */
-    String getPrefix();
-    
-    /**
-     * 静的値かどうかを返す。
-     * @return trueだと静的値。
-     */
-    boolean isStatic();
-    
-    /**
-     * プロセッサの実行時に、プロパティ値取得を行う。
+     * プロパティ値のコンパイル済みスクリプトオブジェクトを取得する。
      * @return プロパティ値。
      */
-    Object getValue();
+    CompiledScript getValue();
     
 }

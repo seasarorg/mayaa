@@ -94,7 +94,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             StringBuffer buffer = new StringBuffer();
             for (Iterator it = iterateProperties(); it.hasNext();) {
                 ProcessorProperty property = (ProcessorProperty) it.next();
-                buffer.append("%").append(property.getQName().getLocalName());
+                String localName = property.getName().getQName().getLocalName();
+                buffer.append("%").append(localName);
             }
             _attributesKey = buffer.toString();
         }
@@ -154,8 +155,8 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag();
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
-            String propertyName = property.getQName().getLocalName();
-            Object value = property.getValue();
+            String propertyName = property.getName().getQName().getLocalName();
+            Object value = property.getValue().execute();
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
         TemplateProcessor processor = this;

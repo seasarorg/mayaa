@@ -62,7 +62,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         if(processor != null) {
             for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
                 ProcessorProperty prop = (ProcessorProperty)it.next();
-                if(prop.getQName().getLocalName().equals(name)) {
+                if(prop.getName().getQName().getLocalName().equals(name)) {
                     return true;
                 }
             }
@@ -77,8 +77,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         if(processor != null) {
     		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
     			ProcessorProperty prop = (ProcessorProperty)it.next();
-    			if(prop.getQName().getLocalName().equals(name)) {
-    				return prop.getValue();
+    			if(prop.getName().getQName().getLocalName().equals(name)) {
+    				return prop.getValue().execute();
     			}
     		}
             return null;
@@ -104,7 +104,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
 		public Object next() {
 			ProcessorProperty prop = (ProcessorProperty)_it.next();
-			return prop.getQName().getLocalName();
+			return prop.getName().getQName().getLocalName();
 		}
 
 		public void remove() {

@@ -15,11 +15,10 @@
  */
 package org.seasar.maya.impl.builder;
 
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -53,10 +52,12 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     private Specification _specification;
     private SpecificationNode _current;
     private Locator _locator;
-    private NamespaceableImpl _namespaces;
+    private Namespaceable _namespaces;
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace;
     private int _inEntity;
+    private boolean _addingNS;
+    private boolean _removeNS;
     
     public SpecificationNodeHandler(Specification specification) {
         if(specification == null) {
@@ -72,27 +73,49 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     public void startDocument() {
         _charactersBuffer = new StringBuffer(128);
         _namespaces = new NamespaceableImpl();
+        _namespaces.addNamespace("", _specification.getDefaultNamespaceURI());
         _outputWhitespace = SpecificationUtil.getEngineSettingBoolean(
                 OUTPUT_WHITE_SPACE, true);
         _current = _specification;
     }
 
     public void startPrefixMapping(String prefix, String uri) {
+        if(_removeNS) {
+            Namespaceable parent = _namespaces.getParentScope();
+            if(_namespaces.added() == false) {
+                parent = parent.getParentScope();
+            }
+            _addingNS = true;
+            _namespaces = new NamespaceableImpl();
+            if(parent != null) {
+                _namespaces.setParentScope(parent);
+            }
+        } else if(_addingNS == false && _namespaces.added()) {
+            _addingNS = true;
+            Namespaceable parent = _namespaces;
+            _namespaces = new NamespaceableImpl();
+            _namespaces.setParentScope(parent);
+        }
         _namespaces.addNamespace(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix) {
-        _namespaces.removeNamespace(prefix);
+        Namespaceable test = _namespaces;
+        if(test.added() == false) {
+            test = test.getParentScope();
+        }
+        NodeNamespace ns = _namespaces.getNamespace(prefix, false);
+        if(ns != null) {
+            _removeNS = true;
+        } else {
+            throw new IllegalStateException();
+        }
     }
     
     private SpecificationNode addNode(QName qName) {
 		SpecificationNodeImpl child = new SpecificationNodeImpl(
 				qName, _locator.getSystemId(), _locator.getLineNumber());
-        // TODO ñºëOãÛä‘ÇÃï€éùï˚ñ@ÇÃâ¸ó«ÅB
-        for(Iterator it = _namespaces.iterateNamespace(); it.hasNext();) {
-            NodeNamespace ns = (NodeNamespace)it.next();
-            child.addNamespace(ns.getPrefix(), ns.getNamespaceURI());
-        }
+        child.setParentScope(_namespaces);
 	    _current.addChildNode(child);
 		return child;
     }
@@ -110,19 +133,27 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         cycle.setOriginalNode(originalNode);
     }
     
-    public void startElement(
-            String namespaceUR, String localNam, String qName, Attributes attributes) {
+    public void startElement(String namespaceUR, 
+            String localName, String qName, Attributes attributes) {
         addCharactersNode();
-        NodeNamespace ns = _specification.getDefaultNamespace();
-        QNameable parsedName = SpecificationUtil.parseName(
-                _namespaces, qName, ns.getNamespaceURI());
+        if(_addingNS == false && _namespaces.added() == false) {
+            Namespaceable parent = _namespaces;
+            _namespaces = new NamespaceableImpl();
+            _namespaces.setParentScope(parent);
+        }
+        _addingNS = false;
+        QNameable parsedName = 
+            SpecificationUtil.parseName(_namespaces, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
+        Namespaceable elementNS = new NamespaceableImpl();
+        elementNS.setParentScope(_namespaces);
+        elementNS.addNamespace("", nodeURI);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
-            QNameable parsedAttrName = SpecificationUtil.parseName(
-                    _namespaces, attrName, nodeURI);
+            QNameable parsedAttrName = 
+                SpecificationUtil.parseName(elementNS, attrName);
             QName attrQName = parsedAttrName.getQName();
             node.addAttribute(attrQName, attributes.getValue(i));
         }
@@ -130,7 +161,8 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         saveToCycle(_current);
     }
 
-    public void endElement(String namespaceURI, String localName, String qName) {
+    public void endElement(String namespaceURI, 
+            String localName, String qName) {
         addCharactersNode();
         _current = _current.getParentNode();
         saveToCycle(_current);

@@ -36,10 +36,11 @@ public class InjectAttributeInjectionResolver
         if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-    	String injectName = SpecificationUtil.getAttributeValue(original, QM_INJECT);
+    	String injectName = 
+            SpecificationUtil.getAttributeValue(original, QM_INJECT);
         if(StringUtil.hasValue(injectName)) {
-            QNameable qNameable = SpecificationUtil.parseName(
-                    original, injectName, URI_MAYA);
+            QNameable qNameable = 
+                SpecificationUtil.parseName(original, injectName);
             QName qName = qNameable.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();

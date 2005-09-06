@@ -42,11 +42,6 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
     	return false;
 	}
 	
-	private boolean isRendered(
-	        SpecificationNode original, SpecificationNode injected) {
-	    return isRendered(original) || isRendered(injected);
-	}
-	
 	public SpecificationNode getNode( 
 	        SpecificationNode original, InjectionChain chain) {
 		if(original == null || chain == null) {
@@ -56,11 +51,12 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
 	    if(injected == null) {
 	    	return null;
 	    }
-   		if(isRendered(original, injected)) {
+   		if(isRendered(original) || isRendered(injected)) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = SpecificationUtil.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original);
+            // TODO ÉVÉìÉvÉãâªÅB
             StringBuffer name = new StringBuffer();
    		    String prefix = original.getPrefix();
             if(StringUtil.hasValue(prefix)) {

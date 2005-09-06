@@ -28,7 +28,6 @@ public interface CONST_IMPL {
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
     
-    String PREFIX_MAYA = "m";
     String URI_MAYA = "http://maya.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";
     String URI_XHTML = "http://www.w3.org/1999/xhtml";
@@ -88,6 +87,5 @@ public interface CONST_IMPL {
     QName QM_TEMPLATE_SUFFIX = new QName("templateSuffix");
 
     QName QM_PATH = new QName("path");
-    QName QM_NAMESPACE_URI = new QName("namespaceURI");
     
 }

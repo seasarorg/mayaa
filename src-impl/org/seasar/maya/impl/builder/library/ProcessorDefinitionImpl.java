@@ -22,15 +22,12 @@ import java.util.List;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -124,19 +121,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             SpecificationNode injected, InformalPropertyAcceptable acceptable) {
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
-            QName qName = attr.getQName();
-            if(acceptable.getInformalAttrituteURI().equals(qName.getNamespaceURI())) {
-	            String prefix = injected.getPrefix();
-	            CompiledScript script = ScriptUtil.compile(attr.getValue(), Object.class);
-	            Object obj = script;
-	            if(script == null) {
-	            	obj = "";
-	            } else if(script.isLiteral()) {
-	                obj = script.execute();
-	            }
-	            acceptable.addInformalProperty(
-                        new ProcessorPropertyImpl(qName, prefix, obj));
-            }
+            acceptable.addInformalProperty(
+                    new ProcessorPropertyImpl(attr, attr.getValue(), Object.class));
         }
     }
     

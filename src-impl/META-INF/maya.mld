@@ -60,7 +60,6 @@
 			class="org.seasar.maya.impl.engine.processor.ComponentPageProcessor">
 		<description>m:page injection</description>
 		<property name="path" required="true"/>
-		<property name="namespaceURI" required="true"/>
 	</processor>
 
 	<processor name="doRender" class="org.seasar.maya.impl.engine.processor.DoRenderProcessor">

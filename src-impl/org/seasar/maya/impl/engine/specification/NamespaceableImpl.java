@@ -18,11 +18,11 @@ package org.seasar.maya.impl.engine.specification;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
@@ -30,16 +30,38 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class NamespaceableImpl implements Namespaceable {
 
+    private Namespaceable _parent;
     private Map _namespaces;
-
+    
 	protected void clear() {
 	    synchronized(this) {
 			if(_namespaces != null) {
 			    _namespaces.clear();
 			}
+            _parent = null;
 	    }
 	}
+
+    public boolean added() {
+        if(_namespaces == null) {
+            return false;
+        }
+        synchronized(_namespaces) {
+            return _namespaces.size() > 0;
+        }
+    }
     
+    public void setParentScope(Namespaceable parent) {
+        if(parent == null) {
+            throw new IllegalArgumentException();
+        }
+        _parent = parent;
+    }
+    
+    public Namespaceable getParentScope() {
+        return _parent;
+    }
+
     public void addNamespace(String prefix, String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
@@ -52,67 +74,79 @@ public class NamespaceableImpl implements Namespaceable {
 	            _namespaces = new HashMap();
 	        }
 	        if(_namespaces.containsKey(prefix) == false) {
-	        	NodeNamespaceImpl ns = new NodeNamespaceImpl(prefix, namespaceURI); 
+	        	NodeNamespaceImpl ns = 
+                    new NodeNamespaceImpl(prefix, namespaceURI); 
 	            _namespaces.put(prefix, ns);
 	            ns.setNamespaceable(this);
 	        }
 	    }
     }
     
-    public void removeNamespace(String prefix) {
-        if(prefix == null) {
-            throw new IllegalArgumentException();
-        }
-	    synchronized(this) {
-	        if(_namespaces == null) {
-	            return;
-	        }
-            _namespaces.remove(prefix);
-	    }
-    }
-    
-    public NodeNamespace getNamespace(String prefix) {
-        if(_namespaces == null) {
-            return null;
-        }
+    public NodeNamespace getNamespace(String prefix, boolean all) {
         if(prefix == null) {
             prefix = "";
         }
-        return (NodeNamespace)_namespaces.get(prefix);
+        NodeNamespace ret = null;
+        if(_namespaces != null) {
+            ret = (NodeNamespace)_namespaces.get(prefix);
+            if(ret != null) {
+                return ret;
+            }
+        }
+        if(all && _parent != null) {
+            return _parent.getNamespace(prefix, true);
+        }
+        return null;
     }
 
-    public Iterator iterateNamespace() {
-		if(_namespaces == null) {
-		    return NullIterator.getInstance();
-		}
-		return _namespaces.values().iterator();
-    }
-    
-    public Iterator iterateNamespace(String namespaceURI) {
-        if(StringUtil.isEmpty(namespaceURI)) {
-            throw new IllegalArgumentException();
+    public Iterator iterateNamespace(boolean all) {
+        if(all && _parent != null) {
+            return new AllNamespaceIterator(this);
         }
-		return new NodeNamespaceFilteredIterator(namespaceURI, iterateNamespace());
+        if(_namespaces != null) {
+            return _namespaces.values().iterator();
+        }
+        return NullIterator.getInstance();
     }
     
-    private class NodeNamespaceFilteredIterator extends AbstractScanningIterator {
+    private class AllNamespaceIterator implements Iterator {
         
-        private String _namespaceURI;
+        private Namespaceable _current;
+        private Iterator _it;
         
-        private NodeNamespaceFilteredIterator(String namespaceURI, Iterator iterator) {
-            super(iterator);
-            if(StringUtil.isEmpty(namespaceURI)) {
+        private AllNamespaceIterator(Namespaceable current) {
+            if(current == null) {
                 throw new IllegalArgumentException();
             }
-            _namespaceURI = namespaceURI;
+            _current = current;
+            _it = current.iterateNamespace(false);
         }
-        
-        protected boolean filter(Object test) {
-            if(test == null || (test instanceof NodeNamespace == false)) {
-                return false;
+
+        public boolean hasNext() {
+            while(_it != null) {
+                boolean ret = _it.hasNext();
+                if(ret) {
+                    return true;
+                }
+                _current = _current.getParentScope();
+                if(_current != null) {
+                    _it = _current.iterateNamespace(false);
+                } else {
+                    _it = null;
+                }
             }
-            NodeNamespace namespace = (NodeNamespace)test;
-            return _namespaceURI.equals(namespace.getNamespaceURI());
+            return false;
+        }
+
+        public Object next() {
+            if(hasNext()) {
+                return _it.next();
+            }
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
 
     }

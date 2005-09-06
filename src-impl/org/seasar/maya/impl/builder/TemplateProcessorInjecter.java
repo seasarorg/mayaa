@@ -23,8 +23,8 @@ import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -70,9 +70,10 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	    for(int i = 0; i < processor.getChildProcessorSize(); i++) {
 	        TemplateProcessor child = processor.getChildProcessor(i);
 		    if(child instanceof CharactersProcessor) {
-                ProcessorProperty prop = ((CharactersProcessor)child).getText(); 
-		        if(prop.isStatic()) {
-                    String value = (String)prop.getValue();
+                CharactersProcessor charsProc = (CharactersProcessor)child;
+                CompiledScript script = charsProc.getText().getValue(); 
+		        if(script.isLiteral()) {
+                    String value = (String)script.execute();
     		        if(StringUtil.hasValue(value.trim())) {
     			        // .maya上のノードボディが空白でないとき
     		            return null;
@@ -90,14 +91,15 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	    return processor;
 	}
     
-    private TemplateProcessor resolveInjectedNode(Template template, Stack stack,  
-            SpecificationNode original, SpecificationNode injected) {
+    private TemplateProcessor resolveInjectedNode(Template template, 
+            Stack stack, SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(original, injected);
         TemplateProcessor processor = null;
-        ProcessorDefinition def = _libraryManger.getProcessorDefinition(injected.getQName());
+        ProcessorDefinition def = 
+            _libraryManger.getProcessorDefinition(injected.getQName());
         if(def != null) {
             processor = def.createTemplateProcessor(injected);
             processor.setOriginalNode(original);

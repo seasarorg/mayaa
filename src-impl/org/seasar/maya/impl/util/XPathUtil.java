@@ -16,12 +16,12 @@
 package org.seasar.maya.impl.util;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jaxen.Context;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
+import org.jaxen.NamespaceContext;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.SimpleVariableContext;
 import org.jaxen.XPath;
@@ -29,8 +29,10 @@ import org.jaxen.XPathFunctionContext;
 import org.jaxen.pattern.Pattern;
 import org.jaxen.pattern.PatternParser;
 import org.jaxen.saxpath.SAXPathException;
+import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.util.xpath.NamespaceContextImpl;
 import org.seasar.maya.impl.util.xpath.SpecificationNavigator;
 import org.seasar.maya.impl.util.xpath.SpecificationXPath;
 
@@ -43,15 +45,15 @@ public class XPathUtil {
     }
 
     public static boolean matches(SpecificationNode test, 
-            String xpathExpr, Map namespaces) {
+            String xpathExpr, Namespaceable namespaceable) {
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }
-        SimpleNamespaceContext nsContext;
-        if(namespaces == null) {
+        NamespaceContext nsContext;
+        if(namespaceable == null) {
             nsContext = new SimpleNamespaceContext();
         } else {
-            nsContext = new SimpleNamespaceContext(namespaces);
+            nsContext = new NamespaceContextImpl(namespaceable);
         }
         ContextSupport support = new ContextSupport(
                 nsContext,
@@ -70,17 +72,17 @@ public class XPathUtil {
     }
     
     public static Iterator selectChildNodes(SpecificationNode node,
-            String xpathExpr, Map namespaces, boolean cascade) {
+            String xpathExpr, Namespaceable namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }
         if(cascade) {
             return new CascadeSelectNodesIterator(
-                    specification, xpathExpr, namespaces);
+                    specification, xpathExpr, namespaceable);
         }
         try {
-            XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaces);
+            XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaceable);
             return xpath.selectNodes(specification).iterator();
         } catch(JaxenException e) {
             throw new RuntimeException(e);
@@ -91,24 +93,24 @@ public class XPathUtil {
 
         private Specification _specification;
         private String _xpathExpr;
-        private Map _namespaces;
+        private Namespaceable _namespaceable;
         private Iterator _iterator;
         
         private CascadeSelectNodesIterator(Specification specification, 
-                String xpathExpr, Map namespaces) {
+                String xpathExpr, Namespaceable namespaceable) {
             if(specification == null || StringUtil.isEmpty(xpathExpr)) {
                 throw new IllegalArgumentException();
             }
             _specification = specification;
             _xpathExpr = xpathExpr;
-            _namespaces = namespaces;
+            _namespaceable = namespaceable;
         }
         
         public boolean hasNext() {
             while(true) {
                 if(_iterator == null) {
                     XPath xpath = SpecificationXPath.createXPath(
-                            _xpathExpr, _namespaces);
+                            _xpathExpr, _namespaceable);
                     try {
                         _iterator = xpath.selectNodes(_specification).iterator();
                     } catch (JaxenException e) {

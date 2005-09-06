@@ -51,7 +51,6 @@ public class ComponentPageInjectionResolver
                 SpecificationNode node = SpecificationUtil.createInjectedNode(
                         QM_PAGE, uri, injected);
                 node.addAttribute(QM_PATH, path);
-                node.addAttribute(QM_NAMESPACE_URI, uri);
                 return node;
 	        }
         }

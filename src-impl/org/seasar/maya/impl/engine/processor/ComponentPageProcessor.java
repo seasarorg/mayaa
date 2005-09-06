@@ -34,7 +34,6 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	private String _path;
-    private String _namespaceURI;
     private Page _page;
     
     // MLD property
@@ -43,21 +42,6 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         _path = path;
-    }
-    
-    // MLD property
-    public void setNamespaceURI(String namespaceURI) {
-        if(StringUtil.isEmpty(namespaceURI)) {
-            throw new IllegalArgumentException();
-        }
-        _namespaceURI = namespaceURI;
-    }
-    
-    public String getInformalAttrituteURI() {
-        if(StringUtil.isEmpty(_namespaceURI)) {
-            return URI_MAYA;
-        }
-        return _namespaceURI;
     }
     
     protected Page preparePage() {

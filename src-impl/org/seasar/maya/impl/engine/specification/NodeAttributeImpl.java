@@ -61,11 +61,11 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
         return getQName().toString() + "='" + _value + "'";
     }
 
-    public Iterator iterateNamespace() {
+    public Iterator iterateNamespace(boolean all) {
         if(_node != null) {
-            _node.iterateNamespace();
+            _node.iterateNamespace(all);
         }
-        return super.iterateNamespace();
+        return super.iterateNamespace(all);
     }
     
 }

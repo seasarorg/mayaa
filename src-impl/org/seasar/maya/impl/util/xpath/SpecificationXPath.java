@@ -15,12 +15,10 @@
  */
 package org.seasar.maya.impl.util.xpath;
 
-import java.util.Map;
-
 import org.jaxen.BaseXPath;
 import org.jaxen.JaxenException;
-import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.XPath;
+import org.seasar.maya.engine.specification.Namespaceable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,11 +27,13 @@ public class SpecificationXPath extends BaseXPath {
 
 	private static final long serialVersionUID = -4676164886549672326L;
 
-	public static XPath createXPath(String xpathExpr, Map namespaces) {
+	public static XPath createXPath(
+            String xpathExpr, Namespaceable namespaceable) {
         try {
             XPath xpath = new SpecificationXPath(xpathExpr);
-            if(namespaces != null) {
-                xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
+            if(namespaceable != null) {
+                xpath.setNamespaceContext(
+                        new NamespaceContextImpl(namespaceable));
             }
             return xpath;
         } catch(JaxenException e) {

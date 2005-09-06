@@ -56,10 +56,10 @@ public class SpecificationNavigator extends DefaultNavigator
 	    if(namespaceable == null) {
 	        throw new IllegalArgumentException();
 	    }
-	    if(StringUtil.isEmpty(prefix)) {
-	        return URI_HTML;
+	    if(prefix == null) {
+	        prefix = "";
 	    }
-	    for(Iterator it = namespaceable.iterateNamespace(); it.hasNext(); ) {
+	    for(Iterator it = namespaceable.iterateNamespace(true); it.hasNext(); ) {
 	        NodeNamespace ns = (NodeNamespace)it.next();
 	        if(prefix.equals(ns.getPrefix())) {
 	            return ns.getNamespaceURI();
@@ -86,7 +86,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public Iterator getNamespaceAxisIterator(Object obj) {
         if(obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode)obj;
-            return node.iterateNamespace();
+            return node.iterateNamespace(true);
         }
         return NullIterator.getInstance();
     }

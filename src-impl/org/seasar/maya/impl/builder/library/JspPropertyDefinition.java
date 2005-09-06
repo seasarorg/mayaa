@@ -15,11 +15,10 @@
  */
 package org.seasar.maya.impl.builder.library;
 
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
-import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -31,16 +30,15 @@ public class JspPropertyDefinition extends PropertyDefinitionImpl {
     		throw new IllegalArgumentException();
     	}
         QName propertyQName = getPropertyQName(injected);
-        String stringValue = getProcessValue(injected, propertyQName);
-        if(stringValue != null) {
+        NodeAttribute attr = injected.getAttribute(propertyQName);
+        String value = getProcessValue(injected, propertyQName);
+        if(value != null) {
             Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the tag.
                 return null;
             }
-            CompiledScript script = ScriptUtil.compile(stringValue, propertyType);
-            String prefix = getPrefix(injected, propertyQName);
-            return new ProcessorPropertyImpl(propertyQName, prefix, script);
+            return new ProcessorPropertyImpl(attr, value, propertyType);
         }
         return null;
     }

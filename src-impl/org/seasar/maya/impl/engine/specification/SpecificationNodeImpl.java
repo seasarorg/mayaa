@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
@@ -170,12 +169,7 @@ public class SpecificationNodeImpl extends QNameableImpl
                 copy.addChildNode(node.copyTo(filter));
             }
         }
-        for(Iterator it = iterateNamespace(); it.hasNext(); ) {
-            NodeNamespace ns = (NodeNamespace)it.next();
-            if(filter.accept(ns)) {
-                copy.addNamespace(ns.getPrefix(), ns.getNamespaceURI());
-            }
-        }
+        copy.setParentScope(getParentScope());
         return copy;
     }
     

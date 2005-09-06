@@ -23,12 +23,6 @@ package org.seasar.maya.engine.processor;
  */
 public interface InformalPropertyAcceptable extends TemplateProcessor {
 
-    /**
-     * セットされるべき名前空間URI。
-     * @return 名前空間URI。
-     */
-    String getInformalAttrituteURI(); 
-    
 	/**
 	 * 非MLDなインフォーマルプロパティの受け入れメソッド。
 	 * @param property インフォーマルプロパティ。

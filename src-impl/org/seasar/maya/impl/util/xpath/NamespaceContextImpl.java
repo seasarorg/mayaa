@@ -13,27 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.util.xpath;
 
-import javax.servlet.jsp.el.ELException;
-import javax.servlet.jsp.el.Expression;
-import javax.servlet.jsp.el.VariableResolver;
-
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.jaxen.NamespaceContext;
+import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.NodeNamespace;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionImpl extends Expression {
+public class NamespaceContextImpl implements NamespaceContext {
 
-    private CompiledScript _script;
+    private Namespaceable _namespaceable;
     
-    public ExpressionImpl(CompiledScript script) {
-        _script = script;
+    public NamespaceContextImpl(Namespaceable namespaceable) {
+        if(namespaceable == null) {
+            throw new IllegalArgumentException();
+        }
+        _namespaceable = namespaceable;
     }
     
-    public Object evaluate(VariableResolver vResolver) throws ELException {
-        return _script.execute();
+    public String translateNamespacePrefixToUri(String prefix) {
+        NodeNamespace ns = _namespaceable.getNamespace(prefix, true);
+        if(ns != null) {
+            return ns.getNamespaceURI();
+        }
+        return null;
     }
-
+    
 }

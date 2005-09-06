@@ -30,11 +30,9 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
-import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
-import org.seasar.maya.impl.engine.specification.NodeNamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
@@ -50,8 +48,6 @@ public class TemplateImpl extends SpecificationImpl
 		implements Template, CONST_IMPL {
 
 	private static final long serialVersionUID = -5368325487192629078L;
-	private static final NodeNamespace NS_HTML = 
-        new NodeNamespaceImpl("", URI_HTML);
     
     private String _suffix ;
     private TemplateProcessor _parentNode;
@@ -73,8 +69,8 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
     
-    public NodeNamespace getDefaultNamespace() {
-        return NS_HTML;
+    public String getDefaultNamespaceURI() {
+        return URI_HTML;
     }
     
     public Page getPage() {

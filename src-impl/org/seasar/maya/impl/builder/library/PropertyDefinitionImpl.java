@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -32,7 +31,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -51,12 +49,13 @@ public class PropertyDefinitionImpl
     private String _defaultValue;
     
     protected String getPrefix(Namespaceable namespaceable, QName qName) {
-        Iterator it = namespaceable.iterateNamespace(qName.getNamespaceURI());
-        String prefix = null;
-        if(it.hasNext()) {
-            prefix = ((NodeNamespace)it.next()).getPrefix();
+        for(Iterator it = namespaceable.iterateNamespace(true); it.hasNext(); ) {
+            NodeNamespace ns = (NodeNamespace)it.next();
+            if(ns.getNamespaceURI().equals(qName.getNamespaceURI())) {
+                return ns.getPrefix(); 
+            }
         }
-        return prefix;
+        return null;
     }
 
     public void setProcessorDefinition(ProcessorDefinition processor) {
@@ -150,22 +149,20 @@ public class PropertyDefinitionImpl
     		throw new IllegalArgumentException();
     	}
     	QName propertyQName = getPropertyQName(injected);
-        String stringValue = getProcessValue(injected, propertyQName);
-        if(stringValue != null) {
+        String value = getProcessValue(injected, propertyQName);
+        if(value != null) {
 	        Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the processor.
                 return null;
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
-	            CompiledScript script  = 
-                    ScriptUtil.compile(stringValue, getExpectedType());
-	            String prefix = getPrefix(injected, propertyQName);
-	            return new ProcessorPropertyImpl(propertyQName, prefix, script);
+                NodeAttribute attr = injected.getAttribute(propertyQName);
+	            return new ProcessorPropertyImpl(attr, value, getExpectedType());
 	        } else if(propertyType.equals(QNameable.class)) {
-                return SpecificationUtil.parseName(injected, stringValue, URI_HTML); 
+                return SpecificationUtil.parseName(injected, value); 
             }
-	        return stringValue;
+	        return value;
         }
         return null;
     }

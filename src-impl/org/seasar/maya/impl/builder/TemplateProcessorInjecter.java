@@ -26,6 +26,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -104,6 +105,16 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         }
         return null;
     }
+
+    private String getDefaultURI(SpecificationNode original) {
+        for(Iterator it = original.iterateNamespace(true); it.hasNext(); ) {
+            NodeNamespace ns = (NodeNamespace)it.next();
+            if("".equals(ns.getPrefix())) {
+                return ns.getNamespaceURI();
+            }
+        }
+        throw new IllegalStateException();
+    }
     
     private TemplateProcessor resolveInjectedNode(Template template, 
             Stack stack, SpecificationNode original, SpecificationNode injected) {
@@ -113,7 +124,15 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         saveToCycle(original, injected);
         TemplateProcessor processor = createProcessor(original, injected);
         if(processor == null) {
-            throw new ProcessorNotInjectedException(injected);
+            String defaultURI = getDefaultURI(original);
+            if(defaultURI.equals(injected.getQName().getNamespaceURI())) {
+                InjectionChain chain = DefaultInjectionChain.getInstance(); 
+                SpecificationNode retry = chain.getNode(injected);
+                processor = createProcessor(original, retry);
+            }
+            if(processor == null) {
+                throw new ProcessorNotInjectedException(injected);
+            }
         }
         TemplateProcessor parent = (TemplateProcessor)stack.peek();
         parent.addChildProcessor(processor);

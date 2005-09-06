@@ -97,7 +97,6 @@ public class FolderSourceScanner implements SourceScanner {
     }
 
     private void listFilesRecursive(List list, File dir) {
-        list.add(dir);
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             for (int i = 0; i < files.length; i++) {

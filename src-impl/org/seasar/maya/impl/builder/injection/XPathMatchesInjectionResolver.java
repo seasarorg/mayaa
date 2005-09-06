@@ -52,7 +52,7 @@ public class XPathMatchesInjectionResolver
             SpecificationNode injected = (SpecificationNode)it.next();
             String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, injected)) {
-                return EqualsIDInjectionResolver.checkNode(injected, _xpathFilter);
+                return injected.copyTo(_xpathFilter);
             }
         }
         return chain.getNode(original);

@@ -107,7 +107,10 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
                 _script = compile(cx);
             }
             Object value = _script.exec(cx, getScope());
-            if(expectedType != Void.class) {
+            if(expectedType.equals(Boolean.TYPE)) {
+                // workaround to ECMA1.3 
+                ret = JavaAdapter.convertResult(value, Object.class);
+            } else if(expectedType != Void.class) {
                 ret = JavaAdapter.convertResult(value, expectedType);
             }
         } finally {

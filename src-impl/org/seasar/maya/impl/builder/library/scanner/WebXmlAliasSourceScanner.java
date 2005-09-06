@@ -30,16 +30,16 @@ import org.seasar.maya.source.SourceDescriptor;
 public class WebXmlAliasSourceScanner implements SourceScanner {
 
     public static final String ASSIGNED = WebXmlAliasSourceScanner.class + ".ASSIGNED";
-    
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(name);
     }
 
     protected Iterator scanWebXml(SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
-        if(source.exists() == false) {
+        if (source.exists() == false) {
             throw new IllegalStateException();
         }
         InputStream stream = source.getInputStream();
@@ -47,39 +47,40 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
         XmlUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, true, true);
         return handler.iterateTaglibLocations();
     }
-    
+
     public Iterator scan() {
         ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
         source.setRoot(ApplicationSourceDescriptor.WEB_INF);
-        source.setSystemID("web.xml"); 
+        source.setSystemID("web.xml");
         return new TaglibLocationIterator(scanWebXml(source));
     }
 
     private class TaglibLocationIterator implements Iterator {
 
         private Iterator _it;
-        
+
         private TaglibLocationIterator(Iterator it) {
-            if(it == null) {
+            if (it == null) {
                 throw new IllegalArgumentException();
             }
             _it = it;
         }
-        
+
         public boolean hasNext() {
             return _it.hasNext();
         }
 
         public Object next() {
-            SourceAlias alias = (SourceAlias)_it.next();
+            SourceAlias alias = (SourceAlias) _it.next();
             String systemID = alias.getSystemID();
-            if(systemID.startsWith("/WEB-INF/")) {
-                systemID = systemID.substring(8);
+            if (systemID.startsWith("/WEB-INF/")) {
+                systemID = systemID.substring(9);
             }
-            String root = systemID.startsWith("/") && !systemID.endsWith(".tld") ? null : "/WEB-INF";
-            ApplicationSourceDescriptor source = 
-                new ApplicationSourceDescriptor();
-            source.setRoot(root);
+
+            ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
+            if (systemID.startsWith("/") == false) {
+                source.setRoot(ApplicationSourceDescriptor.WEB_INF);
+            }
             source.setSystemID(systemID);
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
             source.setAttribute(ASSIGNED, "true");
@@ -89,7 +90,7 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
 }

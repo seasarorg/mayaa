@@ -84,16 +84,18 @@ public class FolderSourceScanner implements SourceScanner {
     }
 
     private File[] listFiles(File dir) {
-        File[] files;
+        List sources = new ArrayList();
         if (_recursive) {
-            List list = new ArrayList();
-            listFilesRecursive(list, dir);
-
-            files = (File[]) list.toArray(new File[list.size()]);
+            listFilesRecursive(sources, dir);
         } else {
-            files = dir.listFiles();
+            File[] files = dir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()) {
+                    sources.add(files[i]);
+                }
+            }
         }
-        return files;
+        return (File[]) sources.toArray(new File[sources.size()]);
     }
 
     private void listFilesRecursive(List list, File dir) {

@@ -31,7 +31,7 @@ import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 public final class StringUtil {
 
     private static Map _propFiles = new HashMap();
-	
+
     private StringUtil() {
     }
 
@@ -42,17 +42,17 @@ public final class StringUtil {
     public static boolean hasValue(String test) {
         return !isEmpty(test);
     }
-    
+
     public static String preparePath(String path) {
-        if(path == null) {
+        if (isEmpty(path)) {
             return "";
         }
         path = path.trim();
         path = path.replace(File.separatorChar, '/');
-        if(path.endsWith("/")) {
+        if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
-        if(path.length() > 0 && !path.startsWith("/")) {
+        if (path.length() > 0 && !path.startsWith("/")) {
             path = "/" + path;
         }
         return path;
@@ -61,61 +61,61 @@ public final class StringUtil {
     public static String resolveEntity(String blockString) {
         StringBuffer buffer = new StringBuffer();
         int start = blockString.indexOf("&");
-        if(start == -1) {
+        if (start == -1) {
             return blockString;
         }
         buffer.append(blockString.substring(0, start));
         String entity;
-        while(true) {
+        while (true) {
             int end = blockString.indexOf(";", start);
-            if(end == -1) {
+            if (end == -1) {
                 buffer.append(blockString.substring(start));
                 break;
             }
             entity = blockString.substring(start + 1, end);
             int value = HTMLEntities.get(entity);
-            if(value != -1) {
-                buffer.append((char)value);
+            if (value != -1) {
+                buffer.append((char) value);
             } else {
                 buffer.append(blockString.substring(start, end + 1));
             }
             start = blockString.indexOf("&", end);
-            if(start == -1) {
+            if (start == -1) {
                 buffer.append(blockString.substring(end + 1));
                 break;
             }
-            if(start != end + 1) {
+            if (start != end + 1) {
                 buffer.append(blockString.substring(end + 1, start));
             }
-            if(start == blockString.length()) {
+            if (start == blockString.length()) {
                 break;
             }
         }
         return buffer.toString();
     }
-    
+
     public static String[] parsePath(String path, String suffixSeparator) {
         String[] ret = new String[3];
         int paramOffset = path.indexOf('?');
-        if(paramOffset >= 0) {
+        if (paramOffset >= 0) {
             path = path.substring(0, paramOffset);
         }
         int lastSlashOffset = path.lastIndexOf('/');
-        String folder =  "";
+        String folder = "";
         String file = path;
-        if(lastSlashOffset >= 0) {
+        if (lastSlashOffset >= 0) {
             folder = path.substring(0, lastSlashOffset + 1);
             file = path.substring(lastSlashOffset + 1);
         }
         int lastDotOffset = file.lastIndexOf('.');
-        if(lastDotOffset > 0) {
+        if (lastDotOffset > 0) {
             ret[2] = file.substring(lastDotOffset + 1);
             file = file.substring(0, lastDotOffset);
         } else {
             ret[2] = "";
         }
         int suffixSeparatorOffset = file.lastIndexOf(suffixSeparator);
-        if(suffixSeparatorOffset > 0) {
+        if (suffixSeparatorOffset > 0) {
             ret[0] = folder + file.substring(0, suffixSeparatorOffset);
             ret[1] = file.substring(suffixSeparatorOffset + suffixSeparator.length());
         } else {
@@ -124,41 +124,41 @@ public final class StringUtil {
         }
         return ret;
     }
-    
+
     public static String getMessage(Class clazz, int index, String[] params) {
         Package key = clazz.getPackage();
-        Properties properties =  (Properties)_propFiles.get(key);
-        if(properties == null) {
+        Properties properties = (Properties) _propFiles.get(key);
+        if (properties == null) {
             ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
             source.setSystemID("message.properties");
             source.setNeighborClass(clazz);
             properties = new Properties();
             _propFiles.put(key, properties);
-            if(source.exists()) {
-	            try {
-	                properties.load(source.getInputStream());
-	            } catch (IOException e) {
-	                throw new RuntimeException(e);
-	            }
+            if (source.exists()) {
+                try {
+                    properties.load(source.getInputStream());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         String className = clazz.getName();
         int pos = className.lastIndexOf('.');
-        if(pos != -1) {
+        if (pos != -1) {
             className = className.substring(pos + 1);
         }
         StringBuffer propertyName = new StringBuffer(className);
-        if(index > 0) {
-            propertyName.append(".").append(index); 
+        if (index > 0) {
+            propertyName.append(".").append(index);
         }
         String message = properties.getProperty(propertyName.toString());
-        if(isEmpty(message)) {
-        	message = "!" + clazz.getName() +  "!";
+        if (isEmpty(message)) {
+            message = "!" + clazz.getName() + "!";
         }
-        if(params == null) {
+        if (params == null) {
             params = new String[0];
         }
         return MessageFormat.format(message, params);
     }
-    
+
 }

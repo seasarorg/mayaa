@@ -32,6 +32,10 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
 
+    public void load(String systemID) {
+        
+    }
+
     public Iterator iterateAttributeScope() {
         Iterator it = ScriptUtil.getScriptEnvironment().iterateAttributeScope();
         return new ScopeIterator(it);

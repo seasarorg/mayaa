@@ -81,8 +81,12 @@ public class PageImpl extends SpecificationImpl
         return _extension;
     }
 
-    private boolean match(Template template, String suffix) {
-        
+    private boolean match(Template template,  String suffix) {
+        String templateSuffix = template.getSuffix();
+        if((StringUtil.isEmpty(templateSuffix) && StringUtil.isEmpty(suffix)) ||
+                templateSuffix.equals(suffix)) {
+            return true;
+        }
         return false;
     }
     

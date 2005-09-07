@@ -47,6 +47,24 @@ public interface ServiceCycle extends Serializable {
     String SCOPE_PAGE = "page";
     
     /**
+     * フォワードを行う。
+     * @param relativeUrlPath パス文字列。
+     */
+    void forward(String relativeUrlPath);
+    
+    /**
+     * リダイレクトを行う。
+     * @param url リダイレクトを行うURL文字列。
+     */
+    void redirect(String url);
+
+    /**
+     * カレントのページスコープにてスクリプトを読み込み、実行する。
+     * @param systemID スクリプトソースのSystemID。
+     */
+    void load(String systemID);
+    
+    /**
      * アプリケーションスコープオブジェクトの取得。
      * @return アプリケーション。 
      */
@@ -111,17 +129,5 @@ public interface ServiceCycle extends Serializable {
      * @return インジェクトされたノード。
      */    
     SpecificationNode getInjectedNode();
-    
-    /**
-     * フォワードを行う。
-     * @param relativeUrlPath パス文字列。
-     */
-    void forward(String relativeUrlPath);
-    
-    /**
-     * リダイレクトを行う。
-     * @param url リダイレクトを行うURL文字列。
-     */
-    void redirect(String url);
    
 }

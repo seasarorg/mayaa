@@ -15,12 +15,9 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.maya.impl.util.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,9 +26,8 @@ public class ExecProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = -1413583265341468324L;
 
-    private ProcessorProperty _exec;
+    private ProcessorProperty _script;
     private ProcessorProperty _src;
-    private CompiledScript _compiled;
     private ProcessorProperty _encoding;
     
     // MLD property, expectedType=java.lang.String
@@ -46,24 +42,18 @@ public class ExecProcessor extends TemplateProcessorSupport {
 
     // MLD property, expectedType=void
     public void setScript(ProcessorProperty script) {
-        _exec = script;
+        _script = script;
     }
     
     public ProcessStatus doStartProcess() {
         if(_src != null) {
-            if(_compiled == null) {
-                ServiceProvider provider = ProviderFactory.getServiceProvider();
-                String srcValue = (String)_src.getValue().execute();
-                SourceDescriptor source = provider.getPageSourceDescriptor(srcValue);
-                ScriptEnvironment environment = provider.getScriptEnvironment();
-                String encValue = (String)_encoding.getValue().execute();
-                _compiled = environment.compile(source, encValue);
-                _compiled.setExpectedType(Void.class);
-            }
-            _compiled.execute();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            String srcValue = (String)_src.getValue().execute();
+            String encValue = (String)_encoding.getValue().execute();
+            cycle.load(srcValue, encValue);
         }
-        if(_exec != null) {
-            _exec.getValue().execute();
+        if(_script != null) {
+            _script.getValue().execute();
         }
         return EVAL_BODY_INCLUDE;
     }

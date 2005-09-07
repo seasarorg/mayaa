@@ -26,13 +26,10 @@ import java.util.List;
 public abstract class AbstractSoftReferencePool implements Serializable {
 
     private List _pool = new ArrayList();
-    private int _numActive;
 
     protected abstract Object createObject();
     
-    protected boolean validateObject(Object obj) {
-        return true;
-    }
+    protected abstract boolean validateObject(Object obj);
     
     protected synchronized Object borrowObject() {
         Object obj = null;
@@ -44,14 +41,12 @@ public abstract class AbstractSoftReferencePool implements Serializable {
                 obj = ref.get();
             }
         }
-        _numActive++;
         return obj;
     }
     
     protected void returnObject(Object obj) {
         boolean success = validateObject(obj);
         synchronized(this) {
-            _numActive--;
             if(success) {
                 _pool.add(new SoftReference(obj));
             }

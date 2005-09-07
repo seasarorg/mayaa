@@ -15,13 +15,20 @@
  */
 package org.seasar.maya.impl.cycle;
 
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.ScriptUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -32,8 +39,32 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
 
-    public void load(String systemID) {
-        
+    public void load(String systemID, String encoding) {
+        String sid = systemID;
+        if (sid.startsWith("/WEB-INF/")) {
+            sid = sid.substring(9);
+        }
+        ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
+        if (sid.startsWith("/") == false) {
+            appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        }
+        appSource.setSystemID(sid);
+        SourceDescriptor source = null;
+        if(appSource.exists()) {
+            source = appSource;
+        } else if(systemID.equals(sid) == false) {
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            source = provider.getPageSourceDescriptor(sid);
+            if(source.exists() == false) {
+                source = null;
+            }
+        }
+        if(source == null) {
+            throw new RuntimeException(new FileNotFoundException(systemID));
+        }
+        ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
+        CompiledScript script = env.compile(source, encoding);
+        script.execute();
     }
 
     public Iterator iterateAttributeScope() {

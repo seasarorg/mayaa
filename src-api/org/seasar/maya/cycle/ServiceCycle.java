@@ -61,8 +61,9 @@ public interface ServiceCycle extends Serializable {
     /**
      * カレントのページスコープにてスクリプトを読み込み、実行する。
      * @param systemID スクリプトソースのSystemID。
+     * @param encoding ソースエンコーディング。
      */
-    void load(String systemID);
+    void load(String systemID, String encoding);
     
     /**
      * アプリケーションスコープオブジェクトの取得。

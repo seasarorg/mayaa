@@ -76,7 +76,6 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
             if (systemID.startsWith("/WEB-INF/")) {
                 systemID = systemID.substring(9);
             }
-
             ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
             if (systemID.startsWith("/") == false) {
                 source.setRoot(ApplicationSourceDescriptor.WEB_INF);

@@ -44,7 +44,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static ThreadLocal _parent = new ThreadLocal();
 
     private WrapFactory _wrap;
-    private String _mimeType = "text/javascript";
     
     protected CompiledScript compile(
             ScriptBlock scriptBlock, String sourceName, int lineno) {
@@ -71,21 +70,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         Application application = CycleUtil.getApplication();
         return application.getMimeType(systemID);
     }
-    
-    public boolean canCompile(SourceDescriptor source) {
-        if(source == null) {
-            throw new IllegalArgumentException();
-        }
-        String mimeType = getSourceMimeType(source);
-        return _mimeType.equals(mimeType);
-    }
 
     public CompiledScript compile(SourceDescriptor source, String encoding) {
         if(source == null) {
             throw new IllegalArgumentException();
-        }
-        if(canCompile(source) == false) {
-            throw new NotJavaScriptException(getSourceMimeType(source));
         }
         CompiledScriptImpl compiled = new CompiledScriptImpl(
                 source, encoding);
@@ -182,11 +170,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             }
             Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
             _wrap = (WrapFactory)ObjectUtil.newInstance(clazz);
-        } else if("mimeType".equals(name)) {
-            if(StringUtil.isEmpty(value) || value.startsWith("text/") == false) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _mimeType = value;
         } else {
             throw new UnsupportedParameterException(getClass(), name);
         }

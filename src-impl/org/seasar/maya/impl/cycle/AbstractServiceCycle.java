@@ -52,7 +52,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         SourceDescriptor source = null;
         if(appSource.exists()) {
             source = appSource;
-        } else if(systemID.equals(sid) == false) {
+        } else {
             ServiceProvider provider = ProviderFactory.getServiceProvider();
             source = provider.getPageSourceDescriptor(sid);
             if(source.exists() == false) {

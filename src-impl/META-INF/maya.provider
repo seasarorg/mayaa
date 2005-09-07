@@ -25,7 +25,6 @@
 		<scope class="org.seasar.maya.impl.cycle.scope.ParamScope"/>
 		<scope class="org.seasar.maya.impl.cycle.scope.HeaderScope"/>
 		<parameter name="wrapFactory" value="org.seasar.maya.impl.cycle.script.rhino.WrapFactoryImpl"/>
-		<parameter name="mimeType" value="text/javascript"/>
 	</script>
 	
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>

@@ -28,13 +28,11 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ExecProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = -1413583265341468324L;
-	private static final Object LOADED = new Object();
 
     private ProcessorProperty _exec;
     private ProcessorProperty _src;
     private CompiledScript _compiled;
     private ProcessorProperty _encoding;
-    private ThreadLocal _loaded = new ThreadLocal();
     
     // MLD property, expectedType=java.lang.String
     public void setSrc(ProcessorProperty src) {
@@ -62,10 +60,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
                 _compiled = environment.compile(source, encValue);
                 _compiled.setExpectedType(Void.class);
             }
-            if(_loaded.get() == null) {
-                _compiled.execute();
-                _loaded.set(LOADED);
-            }
+            _compiled.execute();
         }
         if(_exec != null) {
             _exec.getValue().execute();

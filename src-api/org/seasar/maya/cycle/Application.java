@@ -22,6 +22,13 @@ package org.seasar.maya.cycle;
 public interface Application extends AttributeScope, Underlyable {
 
     /**
+     * MIME型をSystemIDから類推して返す。
+     * @param systemID テストするSysteｍID。
+     * @return MIME型。
+     */
+    String getMimeType(String systemID);
+    
+    /**
      * リクエストURIのコンテキスト相対パスを、OS上のファイルパスに変換する。
      * @param contextRelatedPath コンテキスト相対パス。
      * @return OS上のファイルパス。

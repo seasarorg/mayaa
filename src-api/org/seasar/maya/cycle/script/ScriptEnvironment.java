@@ -49,6 +49,13 @@ public interface ScriptEnvironment extends Parameterizable {
     CompiledScript compile(String script, String sourceName, int lineno);
 
     /**
+     * ソースがコンパイル可能かどうかを返す。
+     * @param mimeType テストするMIME型。
+     * @return コンパイル可能であれば、true。
+     */
+    boolean canCompile(SourceDescriptor source);
+
+    /**
      * スクリプトソースファイルを読み込んでコンパイルする。
      * @param source スクリプトソースファイル。
      * @param encoding スクリプトソースファイルのエンコーディング。

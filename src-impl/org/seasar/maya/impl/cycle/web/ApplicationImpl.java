@@ -45,7 +45,7 @@ public class ApplicationImpl implements Application {
         return _servletContext;
     }
     
-    protected String getMimeType(String fileName) {
+    public String getMimeType(String fileName) {
         if(StringUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException();
         }

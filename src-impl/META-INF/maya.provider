@@ -16,7 +16,6 @@
 		</errorHandler>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="outputWhitespace" value="true"/>
-		<parameter name="reportUnresolvedID" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 	</engine>
@@ -37,7 +36,9 @@
 		<resolver class="org.seasar.maya.impl.builder.injection.ElementDuplicator"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.ComponentPageInjectionResolver"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.InjectAttributeInjectionResolver"/>
-		<resolver class="org.seasar.maya.impl.builder.injection.EqualsIDInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.EqualsIDInjectionResolver">
+			<parameter name="reportUnresolvedID" value="true"/>
+		</resolver>
 		<resolver class="org.seasar.maya.impl.builder.injection.XPathMatchesInjectionResolver"/>
 		<library class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
 			<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>

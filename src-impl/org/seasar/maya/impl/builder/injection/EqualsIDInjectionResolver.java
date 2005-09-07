@@ -17,6 +17,8 @@ package org.seasar.maya.impl.builder.injection;
 
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.CopyToFilter;
@@ -27,7 +29,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XPathUtil;
 
@@ -37,7 +39,11 @@ import org.seasar.maya.impl.util.XPathUtil;
 public class EqualsIDInjectionResolver
         implements InjectionResolver, CONST_IMPL {
     
+    private static final Log LOG = 
+        LogFactory.getLog(EqualsIDInjectionResolver.class);
+    
     private CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
+    private boolean _reportResolvedID = true;
 
     private String getID(SpecificationNode node) {
 	    if(node == null) {
@@ -77,17 +83,23 @@ public class EqualsIDInjectionResolver
 	            }
                 return injected.copyTo(_idFilter);
 	        }
-            boolean report = SpecificationUtil.getEngineSettingBoolean(
-                    REPORT_UNRESOLVED_ID, true);
-            if(report) { 
-		        throw new IDNotResolvedException(id);
+            if(_reportResolvedID) {
+                if(LOG.isWarnEnabled()) {
+                    String msg = StringUtil.getMessage(
+                            EqualsIDInjectionResolver.class, 0, new String[] { id });
+                    LOG.warn(msg);
+                }
             }
         }
         return chain.getNode(original);
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
+        if("reportUnresolvedID".equals(name)) {
+            _reportResolvedID = ObjectUtil.booleanValue(value, true);
+        } else {
+            throw new UnsupportedParameterException(getClass(), name);
+        }
     }
     
     private class CheckIDCopyToFilter implements CopyToFilter {

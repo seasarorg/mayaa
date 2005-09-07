@@ -58,7 +58,6 @@ public class EngineImpl extends SpecificationImpl
         _paramNames = new HashSet();
         _paramNames.add(CHECK_TIMESTAMP);
         _paramNames.add(OUTPUT_WHITE_SPACE);
-        _paramNames.add(REPORT_UNRESOLVED_ID);
         _paramNames.add(SUFFIX_SEPARATOR);
         _paramNames.add(WELCOME_FILE_NAME);
     }

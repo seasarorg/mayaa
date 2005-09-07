@@ -25,7 +25,6 @@ public interface CONST_IMPL {
 
     String CHECK_TIMESTAMP = "checkTimestamp";
     String OUTPUT_WHITE_SPACE = "outputWhitespace";
-    String REPORT_UNRESOLVED_ID = "reportUnresolvedID";
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
     

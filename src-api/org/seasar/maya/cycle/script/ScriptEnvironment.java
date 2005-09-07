@@ -50,7 +50,7 @@ public interface ScriptEnvironment extends Parameterizable {
 
     /**
      * ソースがコンパイル可能かどうかを返す。
-     * @param mimeType テストするMIME型。
+     * @param source テストするソース。
      * @return コンパイル可能であれば、true。
      */
     boolean canCompile(SourceDescriptor source);

@@ -82,7 +82,12 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Template getTemplate() {
         Specification spec = findSpecification();
         if(spec instanceof Page) {
-            spec = findSpecification(spec.getParentNode());
+            SpecificationNode parent = spec.getParentNode();
+            if(parent != null) {
+                spec = findSpecification();
+            } else {
+                return null;
+            }
         }
         if(spec instanceof Template) {
             return (Template)spec;

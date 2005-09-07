@@ -33,6 +33,9 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     private ComponentPageProcessor getComponentPageProcessor() {
 		Template template = SpecificationUtil.getTemplate();
+        if(template == null) {
+            return null;
+        }
 		TemplateProcessor parent = template.getParentProcessor();
 		if (parent == null) {
 			return null;

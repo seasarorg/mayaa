@@ -26,6 +26,7 @@ import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
+import org.mozilla.javascript.WrappedException;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
@@ -113,6 +114,12 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
             } else if(expectedType != Void.class) {
                 ret = JavaAdapter.convertResult(value, expectedType);
             }
+        } catch(WrappedException e) {
+            Throwable t = e.getWrappedException();
+            if(t instanceof RuntimeException) {
+                throw (RuntimeException)t;
+            }
+            throw new RuntimeException(t);
         } finally {
             Context.exit();
         }

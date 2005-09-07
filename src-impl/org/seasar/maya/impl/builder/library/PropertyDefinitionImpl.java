@@ -30,6 +30,7 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -131,7 +132,7 @@ public class PropertyDefinitionImpl
     }
 
     protected QName getQName(SpecificationNode injected) {
-        return new QName(injected.getQName().getNamespaceURI(), _name);
+        return new QNameImpl(injected.getQName().getNamespaceURI(), _name);
     }
     
     public Object createProcessorProperty(SpecificationNode injected) {

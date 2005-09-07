@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
  * 「doBody」プロセッサ。呼び出し元の自分の子を描画する。

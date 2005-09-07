@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.engine.error;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
@@ -31,6 +33,7 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class TemplateErrorHandler  implements ErrorHandler {
 
+    private static final Log LOG = LogFactory.getLog(TemplateErrorHandler.class);
     public static final String THROWABLE = "THROWABLE";
     
     private String _folder = "/"; 
@@ -43,14 +46,14 @@ public class TemplateErrorHandler  implements ErrorHandler {
     
     public void setParameter(String name, String value) {
         if(StringUtil.isEmpty(value)) {
-            throw new IllegalParameterValueException(name);
+            throw new IllegalParameterValueException(getClass(), name);
         }
         if("folder".equals(name)) {
             _folder = value;
         } else if("extension".equals(name)) {
             _extension = value;
         } else {
-            throw new UnsupportedParameterException(name);
+            throw new UnsupportedParameterException(getClass(), name);
         }
     }
     
@@ -64,12 +67,24 @@ public class TemplateErrorHandler  implements ErrorHandler {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
+                String pageName = getPageName(throwableClass);
                 try {
-                    String pageName = getPageName(throwableClass);
                 	Page page = engine.getPage(engine, pageName, _extension);
                     page.doPageRender();
+                    if(LOG.isErrorEnabled()) {
+                        String msg = StringUtil.getMessage(
+                                TemplateErrorHandler.class, 1, 
+                                new String[] { t.getMessage() });
+                        LOG.error(msg, t);
+                    }
     	            break;
                 } catch(PageNotFoundException ignore) {
+                    if(LOG.isInfoEnabled()) {
+                        String msg = StringUtil.getMessage(
+                                TemplateErrorHandler.class, 2, 
+                                new String[] { pageName });
+                        LOG.info(msg);
+                    }
                 }
             }
         } finally {

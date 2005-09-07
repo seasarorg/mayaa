@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.util.ObjectUtil;
 
 /**

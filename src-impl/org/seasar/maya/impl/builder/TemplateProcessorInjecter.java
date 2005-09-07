@@ -125,7 +125,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
                 processor = createProcessor(original, retry);
             }
             if(processor == null) {
-                throw new ProcessorNotInjectedException(injected);
+                throw new ProcessorNotInjectedException();
             }
         }
         TemplateProcessor parent = (TemplateProcessor)stack.peek();
@@ -173,7 +173,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
             InjectionChain chain = DefaultInjectionChain.getInstance(); 
 	        SpecificationNode injected = _injectionResolver.getNode(child, chain);
 	        if(injected == null) {
-	            throw new TemplateNodeNotResolvedException(child);
+	            throw new TemplateNodeNotResolvedException();
 	        }
             saveToCycle(child, injected);
 	        TemplateProcessor processor = resolveInjectedNode(

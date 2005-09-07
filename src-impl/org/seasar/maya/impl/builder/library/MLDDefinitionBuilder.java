@@ -39,7 +39,7 @@ public class MLDDefinitionBuilder
     private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
     
     public LibraryDefinition build(SourceDescriptor source) {

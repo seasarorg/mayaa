@@ -15,10 +15,12 @@
  */
 package org.seasar.maya.impl.cycle.script;
 
+import org.seasar.maya.impl.MayaException;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class UnbalancedBraceException extends ScriptException {
+public class UnbalancedBraceException extends MayaException {
 
 	private static final long serialVersionUID = 9098125536269480736L;
 

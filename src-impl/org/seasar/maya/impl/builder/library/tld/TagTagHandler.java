@@ -26,7 +26,6 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**
- * tldのtagタグ用ハンドラ.
  * @author suga
  */
 public class TagTagHandler extends TagHandler {
@@ -46,7 +45,6 @@ public class TagTagHandler extends TagHandler {
             }
         });
         putHandler(new TagClassSetter("tag-class", this));
-        // JSP1.1
         putHandler(new TagClassSetter("tagclass", this));
     }
 

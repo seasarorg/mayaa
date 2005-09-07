@@ -13,27 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.builder.library.scanner;
 
-import javax.servlet.jsp.el.ELException;
-import javax.servlet.jsp.el.Expression;
-import javax.servlet.jsp.el.VariableResolver;
-
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ExpressionImpl extends Expression {
+public class IllegalTaglibDefinitionException extends MayaException {
 
-    private CompiledScript _script;
+    private static final long serialVersionUID = 130912610617611657L;
+
+    private String _systemID;
+    private int _lineNumber;
     
-    public ExpressionImpl(CompiledScript script) {
-        _script = script;
+    public IllegalTaglibDefinitionException(String systemID, int lineNumber) {
+        _systemID = systemID;
+        _lineNumber = lineNumber;
     }
     
-    public Object evaluate(VariableResolver vResolver) throws ELException {
-        return _script.execute();
+    public String getSystemID() {
+        return _systemID;
     }
-
+    
+    public int getLineNumber() {
+        return _lineNumber;
+    }
+    
+    protected String[] getMessageParams() {
+        return new String[] { _systemID, Integer.toString(_lineNumber) };
+    }
+    
 }

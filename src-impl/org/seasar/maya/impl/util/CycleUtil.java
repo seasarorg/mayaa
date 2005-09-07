@@ -22,6 +22,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.Session;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -46,6 +47,11 @@ public class CycleUtil {
     public static Request getRequest() {
     	ServiceCycle cycle = getServiceCycle();
     	return cycle.getRequest();
+    }
+
+    public static Session getSession() {
+        ServiceCycle cycle = getServiceCycle();
+        return cycle.getSession();
     }
 
     public static Response getResponse() {
@@ -79,17 +85,9 @@ public class CycleUtil {
         return false;
     }
     
-    public static Object getAttribute(String name) {
-        return getAttribute(name, null);
-    }
-    
     public static Object getAttribute(String name, String scopeName) {
         AttributeScope scope = getAttributeScope(scopeName);
         return scope.getAttribute(name);
-    }
-
-    public static void removeAttribute(String name) {
-	    removeAttribute(name, null);
     }
     
     public static void removeAttribute(String name, String scopeName) {
@@ -99,10 +97,6 @@ public class CycleUtil {
         } else {
             throw new ScopeNotWritableException(scopeName);
         }
-    }
-
-    public static void setAttribute(String name, Object value) {
-	    setAttribute(name, value, null);
     }
     
     public static void setAttribute(String name, Object value, String scopeName) {

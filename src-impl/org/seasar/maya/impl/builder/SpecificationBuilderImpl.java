@@ -52,7 +52,7 @@ public class SpecificationBuilderImpl
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
 
     protected XMLReader createXMLReader() {

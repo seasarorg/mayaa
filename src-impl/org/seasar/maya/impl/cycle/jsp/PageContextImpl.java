@@ -39,7 +39,6 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
-import org.seasar.maya.impl.util.collection.NullEnumeration;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -126,9 +125,27 @@ public class PageContextImpl extends PageContext {
     }
 
     // Underlying object -----------------------------------------------
+    
+    public ServletContext getServletContext() {
+        Application application = CycleUtil.getApplication();
+        Object obj = application.getUnderlyingObject();
+        if(obj instanceof ServletContext) {
+            return (ServletContext)obj;
+        }
+        throw new IllegalStateException();
+    }
+    
+    public HttpSession getSession() {
+        Session session = CycleUtil.getSession();
+        Object obj = session.getUnderlyingObject();
+        if(obj instanceof HttpSession) {
+            return (HttpSession)obj;
+        }
+        throw new IllegalStateException();
+    }
+
     public ServletRequest getRequest() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	Request request = cycle.getRequest();
+    	Request request = CycleUtil.getRequest();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;
@@ -137,22 +154,11 @@ public class PageContextImpl extends PageContext {
     }
     
     public ServletResponse getResponse() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	Response response = cycle.getResponse();
+    	Response response = CycleUtil.getResponse();
     	Object obj = response.getUnderlyingObject();
     	if(obj instanceof ServletResponse) {
     		return (ServletResponse)obj;
     	}
-        throw new IllegalStateException();
-    }
-    
-    public HttpSession getSession() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Session session = cycle.getSession();
-        Object obj = session.getUnderlyingObject();
-        if(obj instanceof HttpSession) {
-            return (HttpSession)obj;
-        }
         throw new IllegalStateException();
     }
     
@@ -161,16 +167,6 @@ public class PageContextImpl extends PageContext {
             _config = new CycleServletConfig();
         }
         return _config;
-    }
-    
-    public ServletContext getServletContext() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Application application = cycle.getApplication();
-        Object obj = application.getUnderlyingObject();
-        if(obj instanceof ServletContext) {
-            return (ServletContext)obj;
-        }
-        throw new IllegalStateException();
     }
 
     public Object getPage() {
@@ -263,11 +259,11 @@ public class PageContextImpl extends PageContext {
     private class CycleServletConfig implements ServletConfig {
 
         public String getInitParameter(String name) {
-            return null;
+            return getServletContext().getInitParameter(name);
         }
         
         public Enumeration getInitParameterNames() {
-            return NullEnumeration.getInstance();
+            return getServletContext().getInitParameterNames();
         }
         
         public ServletContext getServletContext() {
@@ -275,7 +271,7 @@ public class PageContextImpl extends PageContext {
         }
         
         public String getServletName() {
-            return "Internal dummy servlet";
+            return "Maya Servlet";
         }
     
     }

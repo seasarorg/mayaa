@@ -51,7 +51,7 @@ public class HtmlAttributesSetter implements InjectionResolver, CONST_IMPL {
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
 	
 }

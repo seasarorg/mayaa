@@ -26,7 +26,8 @@ import org.seasar.maya.cycle.CycleWriter;
  */
 public class JspWriterImpl extends JspWriter {
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = 
+        System.getProperty("line.separator");
     
     private boolean _closed;
     private boolean _flushed;

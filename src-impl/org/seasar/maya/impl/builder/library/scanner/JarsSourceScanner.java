@@ -44,7 +44,7 @@ public class JarsSourceScanner implements SourceScanner {
     public void setParameter(String name, String value) {
         if ("ignore".equals(name)) {
             if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             _ignores.add(value);
         } else {

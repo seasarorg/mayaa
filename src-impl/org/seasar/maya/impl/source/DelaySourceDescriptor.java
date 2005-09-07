@@ -75,7 +75,7 @@ public class DelaySourceDescriptor implements SourceDescriptor {
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
     
 }

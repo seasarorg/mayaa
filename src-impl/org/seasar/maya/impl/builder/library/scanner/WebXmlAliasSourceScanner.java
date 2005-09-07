@@ -32,7 +32,7 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
     public static final String ASSIGNED = WebXmlAliasSourceScanner.class + ".ASSIGNED";
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
 
     protected Iterator scanWebXml(SourceDescriptor source) {

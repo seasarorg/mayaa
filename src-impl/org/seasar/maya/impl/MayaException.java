@@ -28,15 +28,16 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public abstract class MayaException extends RuntimeException {
 
-	private static final long serialVersionUID = -9103534239273385474L;
 	private static final Log LOG = LogFactory.getLog(MayaException.class);
     
     protected static final String[] ZERO_PARAM = new String[0];
     
     private String _originalSystemID;
     private int _originalLineNumber = -1;
+    private String _originalNodeName;
     private String _injectedSystemID;
     private int _injectedLineNumber = -1;
+    private String _injectedNodeName;
     
 	public MayaException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
@@ -45,13 +46,25 @@ public abstract class MayaException extends RuntimeException {
             if(original != null) {
                 _originalSystemID = original.getSystemID();
                 _originalLineNumber = original.getLineNumber();
+                _originalNodeName = getNodeName(original);
             }
             SpecificationNode injected = cycle.getInjectedNode();
             if(injected != null) {
                 _injectedSystemID = injected.getSystemID();
                 _injectedLineNumber = injected.getLineNumber();
+                _injectedNodeName = getNodeName(injected);
             }
         }
+    }
+    
+    private String getNodeName(SpecificationNode node) {
+        StringBuffer buffer = new StringBuffer();
+        String prefix = node.getPrefix();
+        if(StringUtil.hasValue(prefix)) {
+            buffer.append(prefix).append(":");
+        }
+        buffer.append(node.getQName().getLocalName());
+        return buffer.toString();
     }
     
     protected int getMessageID() {
@@ -72,14 +85,15 @@ public abstract class MayaException extends RuntimeException {
                 LOG.error(t.getMessage(), t);
             }
         }
-        // TODO èáî‘ÇÇ©Ç¶ÇƒÅAêÊÇ…íËå^Çï¿Ç◊ÇÈÅB
         int paramLength = params.length; 
-        String[] newParams = new String[paramLength + 4];
-        System.arraycopy(params, 0, newParams, 0, paramLength);
-        newParams[paramLength] = _originalSystemID;
-        newParams[paramLength + 1] = Integer.toString(_originalLineNumber);
-        newParams[paramLength + 2] = _injectedSystemID;
-        newParams[paramLength + 3] = Integer.toString(_injectedLineNumber);
+        String[] newParams = new String[paramLength + 6];
+        newParams[0] = _originalSystemID;
+        newParams[1] = Integer.toString(_originalLineNumber);
+        newParams[2] = _originalNodeName;
+        newParams[3] = _injectedSystemID;
+        newParams[4] = Integer.toString(_injectedLineNumber);
+        newParams[5] = _injectedNodeName;
+        System.arraycopy(params, 0, newParams, 6, paramLength);
         String message = StringUtil.getMessage(
                 getClass(), getMessageID(), newParams);
         if(StringUtil.isEmpty(message)) {
@@ -103,6 +117,10 @@ public abstract class MayaException extends RuntimeException {
         return _originalLineNumber;
     }
     
+    public String getOriginalNodeName() {
+        return _originalNodeName;
+    }
+    
     public String getInjectedSystemID() {
     	return _injectedSystemID;
     }
@@ -111,4 +129,8 @@ public abstract class MayaException extends RuntimeException {
         return _injectedLineNumber;
     }
     
+    public String getInjectedNodeName() {
+        return _injectedNodeName;
+    }
+
 }

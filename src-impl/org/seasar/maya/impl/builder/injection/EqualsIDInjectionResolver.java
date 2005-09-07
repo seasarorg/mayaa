@@ -87,7 +87,7 @@ public class EqualsIDInjectionResolver
     }
 
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
     
     private class CheckIDCopyToFilter implements CopyToFilter {

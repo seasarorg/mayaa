@@ -49,7 +49,7 @@ public class LibraryManagerImpl implements LibraryManager {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
 
     protected void buildAll() {

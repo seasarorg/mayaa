@@ -196,7 +196,7 @@ public class RequestImpl implements Request, CONST_IMPL {
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
 
 }

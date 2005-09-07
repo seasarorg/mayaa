@@ -156,12 +156,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     public void setParameter(String name, String value) {
         if("wrapFactory".equals(name)) {
             if(StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
             _wrap = (WrapFactory)ObjectUtil.newInstance(clazz);
         } else {
-            throw new UnsupportedParameterException(name);
+            throw new UnsupportedParameterException(getClass(), name);
         }
     }
     

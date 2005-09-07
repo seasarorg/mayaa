@@ -22,7 +22,6 @@ import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.cycle.ExpressionImpl;
 import org.seasar.maya.impl.util.ScriptUtil;
 
 /**

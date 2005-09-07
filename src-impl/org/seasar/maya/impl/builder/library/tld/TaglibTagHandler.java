@@ -20,17 +20,12 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**
- * tldのtaglibタグ用ハンドラ.
  * @author suga
  */
 public class TaglibTagHandler extends TagHandler {
 
     private JspLibraryDefinition _library;
 
-    /**
-     * クラスローダーを受け取るコンストラクタ。
-     * @param loader Tagクラスなどを取得するクラスローダー
-     */
     public TaglibTagHandler() {
         super("taglib");
         putHandler(new TagTagHandler(this));

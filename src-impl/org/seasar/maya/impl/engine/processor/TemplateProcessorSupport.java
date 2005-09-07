@@ -13,18 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
- * TemplateProcessorの基本実装。直接用いるのではなく、継承して
- * 具体的な機能が盛り込まれることが想定されている。継承クラスでは、
- * doStartProcess()およびdoEndProcess()を実装することになる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateProcessorSupport implements TemplateProcessor {
@@ -53,10 +51,6 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         child.setParentProcessor(this, _children.size() - 1);
     }
 
-    /**
-     * 所属テンプレートの取得を行う。
-     * @return 所属テンプレート。
-     */
     public Template getTemplate() {
         for(TemplateProcessor current = this;
                 current != null; current = current.getParentProcessor()) {

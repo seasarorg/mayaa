@@ -22,12 +22,19 @@ import org.seasar.maya.impl.MayaException;
  */
 public class IllegalParameterValueException extends MayaException {
 
-	private static final long serialVersionUID = -8882890207890109562L;
+    private static final long serialVersionUID = -943480597929966946L;
 
+    private Class _parameterized;
 	private String _parameterName;
     
-    public IllegalParameterValueException(String parameterName) {
+    public IllegalParameterValueException(
+            Class parameterized, String parameterName) {
+        _parameterized = parameterized;
         _parameterName = parameterName;
+    }
+    
+    public Class getParameterizedClass() {
+        return _parameterized;
     }
     
     public String getParameterName() {
@@ -35,7 +42,11 @@ public class IllegalParameterValueException extends MayaException {
     }
     
     protected String[] getMessageParams() {
-        return new String[] { _parameterName };
+        String className = "";
+        if(_parameterized != null) {
+            className = _parameterized.getName();
+        }
+        return new String[] { className, _parameterName };
     }
 
 }

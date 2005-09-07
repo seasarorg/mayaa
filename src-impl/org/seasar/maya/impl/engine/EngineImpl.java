@@ -75,11 +75,11 @@ public class EngineImpl extends SpecificationImpl
                 _parameters = new HashMap();
             }
             if(StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             _parameters.put(name, value);
         } else {
-            throw new UnsupportedParameterException(name);
+            throw new UnsupportedParameterException(getClass(), name);
         }
     }
 
@@ -90,7 +90,7 @@ public class EngineImpl extends SpecificationImpl
             }
             return (String)_parameters.get(name);
         }
-        throw new UnsupportedParameterException(name);
+        throw new UnsupportedParameterException(getClass(), name);
     }
     
     public void setErrorHandler(ErrorHandler errorHandler) {

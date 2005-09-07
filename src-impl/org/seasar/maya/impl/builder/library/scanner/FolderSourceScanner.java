@@ -49,14 +49,14 @@ public class FolderSourceScanner implements SourceScanner {
     public void setParameter(String name, String value) {
         if ("folder".equals(name)) {
             if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
         } else if ("recursive".equals(name)) {
             _recursive = Boolean.valueOf(value).booleanValue();
         } else if ("extension".equals(name)) {
             if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             if (value.charAt(0) != '.') {
                 _extensions.add('.' + value);
@@ -64,7 +64,7 @@ public class FolderSourceScanner implements SourceScanner {
                 _extensions.add(value);
             }
         } else {
-            throw new UnsupportedParameterException(name);
+            throw new UnsupportedParameterException(getClass(), name);
         }
     }
 

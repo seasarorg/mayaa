@@ -37,7 +37,7 @@ public class PropertyTagHandler extends TagHandler {
     protected void start(Attributes attributes) {
         String name = attributes.getValue("name");
         if(StringUtil.isEmpty(name)) {
-            // ログ出力
+            // TODO ログ出力
             _parent.invalidate();
         } else {
 	        boolean required = XmlUtil.getBooleanValue(

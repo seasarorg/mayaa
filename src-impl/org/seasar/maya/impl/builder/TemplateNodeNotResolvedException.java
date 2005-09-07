@@ -15,18 +15,17 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateNodeNotResolvedException
-        extends NodeNotResolvedException {
+public class TemplateNodeNotResolvedException extends MayaException {
 
 	private static final long serialVersionUID = 4560512867759109674L;
 
-    public TemplateNodeNotResolvedException(QNameable qNameable) {
-        super(qNameable);
+    protected String[] getMessageParams() {
+        return ZERO_PARAM;
     }
     
 }

@@ -30,11 +30,11 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
     public void setParameter(String name, String value) {
         if("folder".equals(name)) {
             if(value == null) {
-                throw new IllegalParameterValueException(name);
+                throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
         } else {
-            throw new UnsupportedParameterException(name);
+            throw new UnsupportedParameterException(getClass(), name);
         }
     }
     

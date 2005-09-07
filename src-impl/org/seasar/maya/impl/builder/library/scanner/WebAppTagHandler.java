@@ -65,7 +65,7 @@ public class WebAppTagHandler extends TagHandler {
                         systemID = _locator.getSystemId();
                         lineNumber = _locator.getLineNumber();
                     }
-                    throw new IllegalTaglibDefinition(systemID, lineNumber);
+                    throw new IllegalTaglibDefinitionException(systemID, lineNumber);
                 }
                 _locations.add(new SourceAlias(_taglibURI, _taglibLocation, null));
             }

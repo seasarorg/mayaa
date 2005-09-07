@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.engine.processor.TemplateProcessorSupport;
 
 /**
  * 「m:doRender」プロセッサ。

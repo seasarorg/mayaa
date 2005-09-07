@@ -30,6 +30,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;
@@ -160,7 +161,7 @@ public class SpecificationUtil implements CONST_IMPL {
         } else {
             throw new IllegalNameException(qName);
         }
-        QName retName = new QName(namespaceURI, localName);
+        QName retName = new QNameImpl(namespaceURI, localName);
         QNameable ret = new QNameableImpl(retName);
         ret.setParentScope(namespaces);
         return ret;

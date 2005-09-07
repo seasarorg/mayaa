@@ -24,7 +24,6 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**
- * tldのattributeタグ用ハンドラ.
  * @author suga
  */
 public class AttributeTagHandler extends TagHandler {

@@ -24,10 +24,17 @@ public class UnsupportedParameterException extends MayaException {
 
 	private static final long serialVersionUID = -8882890207890109562L;
 
-	private String _parameterName;
+    private Class _parameterized;
+    private String _parameterName;
     
-    public UnsupportedParameterException(String parameterName) {
+    public UnsupportedParameterException(
+            Class parameterized, String parameterName) {
+        _parameterized = parameterized;
         _parameterName = parameterName;
+    }
+    
+    public Class getParameterizedClass() {
+        return _parameterized;
     }
     
     public String getParameterName() {
@@ -35,7 +42,11 @@ public class UnsupportedParameterException extends MayaException {
     }
     
     protected String[] getMessageParams() {
-        return new String[] { _parameterName };
+        String className = "";
+        if(_parameterized != null) {
+            className = _parameterized.getName();
+        }
+        return new String[] { className, _parameterName };
     }
 
 }

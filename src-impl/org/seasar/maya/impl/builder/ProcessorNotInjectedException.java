@@ -15,17 +15,17 @@
  */
 package org.seasar.maya.impl.builder;
 
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProcessorNotInjectedException extends NodeNotResolvedException {
+public class ProcessorNotInjectedException extends MayaException {
 
     private static final long serialVersionUID = -6422698028264082995L;
 
-    public ProcessorNotInjectedException(QNameable qNameable) {
-        super(qNameable);
+    protected String[] getMessageParams() {
+        return ZERO_PARAM;
     }
-    
+
 }

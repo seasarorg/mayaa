@@ -30,7 +30,8 @@ import org.seasar.maya.cycle.CycleWriter;
  */
 public class BodyContentImpl extends BodyContent {
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = 
+        System.getProperty("line.separator");
 
     private CycleWriter _writer;
     

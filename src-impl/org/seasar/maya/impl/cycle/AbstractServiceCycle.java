@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -26,6 +25,7 @@ import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.ScriptUtil;
+import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
@@ -40,6 +40,9 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private SpecificationNode _injectedNode;
 
     public void load(String systemID, String encoding) {
+        if(StringUtil.isEmpty(systemID)) {
+            throw new ScriptFileNotFoundException("");
+        }
         String sid = systemID;
         if (sid.startsWith("/WEB-INF/")) {
             sid = sid.substring(9);
@@ -60,7 +63,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
             }
         }
         if(source == null) {
-            throw new RuntimeException(new FileNotFoundException(systemID));
+            throw new ScriptFileNotFoundException(systemID);
         }
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
         CompiledScript script = env.compile(source, encoding);

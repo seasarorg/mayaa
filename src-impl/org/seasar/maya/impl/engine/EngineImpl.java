@@ -31,6 +31,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
@@ -201,10 +202,18 @@ public class EngineImpl extends SpecificationImpl
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
                     Page page = getPage(this, pageName, extension);
-                    page.doPageRender();
+                    ProcessStatus ret = null;
+                    ret = page.doPageRender();
                     saveToCycle();
                     ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-                    cycle.getResponse().flush();
+                    Response response = CycleUtil.getResponse();
+                    if(ret == null) {
+                        if(response.isFlushed() == false) {
+                            throw new RenderNotCompletedException(
+                                    pageName, extension);
+                        }
+                    }
+                    response.flush();
                     service = false;
                 } catch(PageForwarded f) {
                 }

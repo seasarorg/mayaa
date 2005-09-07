@@ -96,6 +96,12 @@ public interface Response extends Serializable, Underlyable  {
     void flush();
 
     /**
+     * 描画され、UnderlyingObjectへ書き出されたかどうかを取得する。
+     * @return すでに書き出しが行われていたらtrue。
+     */
+    boolean isFlushed();
+    
+    /**
      * バッファされたライタを取得する。
      * @return バッファされたライタ。
      */
@@ -117,7 +123,7 @@ public interface Response extends Serializable, Underlyable  {
      * 実際の出力ストリームの取得。
      * @return 出力ストリーム。
      */
-    OutputStream getUnderlyingOutputStream();
+    OutputStream getOutputStream();
     
     /**
      * 渡されたURL文字列に、必要であればセッションIDを付加する。

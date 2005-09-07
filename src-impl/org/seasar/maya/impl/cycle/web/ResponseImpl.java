@@ -61,7 +61,7 @@ public class ResponseImpl extends AbstractResponse {
         _httpServletResponse.setContentType(contentType);
     }
 
-    public OutputStream getUnderlyingOutputStream() {
+    public OutputStream getOutputStream() {
         try {
             return _httpServletResponse.getOutputStream();
         } catch (IOException e) {

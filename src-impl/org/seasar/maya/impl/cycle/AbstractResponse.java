@@ -32,6 +32,7 @@ public abstract class AbstractResponse implements Response {
 
     private String _encoding = "UTF-8";
     private Stack _stack;
+    private boolean _flushed;
 
     public AbstractResponse() {
         _stack = new Stack();
@@ -134,14 +135,19 @@ public abstract class AbstractResponse implements Response {
         return _encoding;
     }
 
+    public boolean isFlushed() {
+        return _flushed;
+    }
+
     public void flush() {
         try {
             if(_stack.size() == 1) {
                 CycleWriter writer = (CycleWriter)_stack.peek();
                 Writer underlyingWriter = new OutputStreamWriter(
-                        getUnderlyingOutputStream(), _encoding);
+                        getOutputStream(), _encoding);
                 writer.writeOut(underlyingWriter);
                 underlyingWriter.flush();
+                _flushed = true;
             } else {
                 getWriter().flush();
             }

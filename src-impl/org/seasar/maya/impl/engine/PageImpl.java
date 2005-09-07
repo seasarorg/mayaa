@@ -18,6 +18,7 @@ package org.seasar.maya.impl.engine;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Engine;
@@ -162,16 +163,26 @@ public class PageImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
-    public ProcessStatus doPageRender() {
+    public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
         Object model = SpecificationUtil.findSpecificationModel(this);
         ScriptUtil.startScope(model);
         ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
-        Template template = getTemplate();
-        ProcessStatus ret = template.doTemplateRender(null);
-        saveToCycle();
+        ProcessStatus ret = null;
+        if("maya".equals(getExtension()) == false) {
+            Template template = getTemplate();
+            ret = template.doTemplateRender(null);
+            saveToCycle();
+        }
         ScriptUtil.execEvent(this, QM_AFTER_RENDER);
         ScriptUtil.endScope();
+        if(ret == null) {
+            Response response = CycleUtil.getResponse();
+            if(response.isFlushed() == false) {
+                throw new RenderNotCompletedException(
+                        getPageName(), getExtension());
+            }
+        }
         return ret;
     }
 

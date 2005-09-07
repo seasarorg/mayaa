@@ -140,7 +140,8 @@ public class EngineImpl extends SpecificationImpl
 	public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String mimeType = cycle.getRequest().getMimeType();
-        if(mimeType != null && mimeType.indexOf("html") != -1) {
+        if((mimeType != null && mimeType.indexOf("html") != -1) ||
+                "maya".equals(cycle.getRequest().getExtension())) {
             prepareResponse(cycle.getResponse());
             doPageService(cycle);
         } else {
@@ -163,6 +164,7 @@ public class EngineImpl extends SpecificationImpl
         t = removeWrapperRuntimeException(t);
         try {
             getErrorHandler().doErrorHandle(t);
+            CycleUtil.getResponse().flush();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -190,21 +192,28 @@ public class EngineImpl extends SpecificationImpl
     
     protected void doPageService(ServiceCycle cycle) {
         try {
-        	saveToCycle();
-            ScriptUtil.initScope();
-            ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
-            String pageName = cycle.getRequest().getPageName();
-            String extension = cycle.getRequest().getExtension();
-            Page page = getPage(this, pageName, extension);
-            page.doPageRender();
-            saveToCycle();
-            ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+            boolean service = true;
+        	while(service) {
+                try {
+                    saveToCycle();
+                    ScriptUtil.initScope();
+                    ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
+                    String pageName = cycle.getRequest().getPageName();
+                    String extension = cycle.getRequest().getExtension();
+                    Page page = getPage(this, pageName, extension);
+                    page.doPageRender();
+                    saveToCycle();
+                    ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+                    cycle.getResponse().flush();
+                    service = false;
+                } catch(PageForwarded f) {
+                }
+            }
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
             ScriptUtil.initScope();
             handleError(t);
         }
-        cycle.getResponse().flush();
     }
     
     protected void doResourceService(ServiceCycle cycle) {
@@ -216,7 +225,7 @@ public class EngineImpl extends SpecificationImpl
         source.setSystemID(path);
         InputStream stream = source.getInputStream();
         if(stream != null) {
-            OutputStream out = cycle.getResponse().getUnderlyingOutputStream();
+            OutputStream out = cycle.getResponse().getOutputStream();
             try {
                 for(int i = stream.read(); i != -1; i = stream.read()) {
                     out.write(i);

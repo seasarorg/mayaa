@@ -22,10 +22,8 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.engine.PageForwarded;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -93,10 +91,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     	check();
         _request.setForwardPath(relativeUrlPath);
         _response.clearBuffer();
-        Engine engine = SpecificationUtil.getEngine();
-        Page page = engine.getPage(
-                engine, _request.getPageName(), _request.getExtension());
-        page.doPageRender();
+        throw new PageForwarded();
     }
 
     public void redirect(String url) {

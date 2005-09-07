@@ -15,10 +15,12 @@
  */
 package org.seasar.maya.impl.engine.specification;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -109,7 +111,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
 	        if(_children == null) {
 	            _children = new ArrayList();
 	        }
-	        _children.add(child);
+	        _children.add(new SoftReference(child));
         }
     }
     
@@ -117,7 +119,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
         if(_children == null) {
             return NullIterator.getInstance();
         }
-        return _children.iterator();
+        return new ChildSpecificationsIterator(_children);
     }
 
     public void setParentNode(SpecificationNode parent) {
@@ -152,4 +154,53 @@ public class SpecificationImpl extends SpecificationNodeImpl
         throw new UnsupportedOperationException();
     }
 
+	protected class ChildSpecificationsIterator implements Iterator {
+
+		private int _index;
+		private Specification _next;
+		private List _list;
+		
+		protected ChildSpecificationsIterator(List list) {
+			if(list == null) {
+				throw new IllegalArgumentException();
+			}
+			_list = list;
+			_index = list.size();
+		}
+		
+		public boolean hasNext() {
+			if(_next != null) {
+				return true;
+			}
+			while(_next == null) {
+				_index--;
+				if(_index < 0) {
+					return false;
+				}
+				synchronized(_list) {
+					SoftReference ref = (SoftReference)_list.get(_index);
+					_next = (Specification)ref.get();
+					if(_next == null) {
+						_list.remove(_index);
+					}
+				}
+			}
+			return true;
+		}
+
+		public Object next() {
+			if(_next == null && hasNext() == false) {
+				throw new NoSuchElementException();
+			}
+			Specification ret = _next;
+			_next = null;
+			return ret;
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}		
+		
+	}
+	
 }

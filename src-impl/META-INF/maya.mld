@@ -70,6 +70,12 @@
 		<description>m:doBody injection</description>
 	</processor>
 
+	<processor name="with"
+			class="org.seasar.maya.impl.engine.processor.TemplateProcessorSupport">
+		<description>in order to grouping processor</description>
+	</processor>
+
+
 	<processor name="exec"
 			class="org.seasar.maya.impl.engine.processor.ExecProcessor">
 		<property name="script" expectedType="void"/>

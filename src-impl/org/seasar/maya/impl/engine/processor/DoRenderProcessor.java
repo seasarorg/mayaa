@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine.processor;
 
 
 /**
- * 「m:doRender」プロセッサ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DoRenderProcessor extends TemplateProcessorSupport {

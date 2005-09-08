@@ -20,7 +20,6 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.CycleUtil;
 
 /**
- * ボディテキストの出力を行うプロセッサ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CharactersProcessor extends TemplateProcessorSupport {

@@ -42,7 +42,6 @@ import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
- * カスタムタグ用プロセッサ.
  * @author suga
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

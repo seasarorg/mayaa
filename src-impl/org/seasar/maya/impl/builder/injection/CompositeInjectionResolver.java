@@ -30,10 +30,6 @@ public class CompositeInjectionResolver implements InjectionResolver {
     
 	private List _resolvers = new ArrayList();
 	
-    /**
-     * レゾルバを追加する。
-     * @param resolver 追加したいレゾルバ。
-     */
     public void add(InjectionResolver resolver) {
         if(resolver == null) {
             throw new IllegalArgumentException();

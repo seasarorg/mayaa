@@ -66,7 +66,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 	private TemplateProcessor getConnectPoint(TemplateProcessor processor) {
 	    if(processor instanceof ElementProcessor &&
 	            ((ElementProcessor)processor).isDuplicated()) {
-	        // m:rendered="true"のとき、duplicatedなelementを剥き取る。
+	        // "processor"'s m:rendered is true, ripping duplicated element.
 	        return getConnectPoint(processor.getChildProcessor(0));
 	    }
 	    for(int i = 0; i < processor.getChildProcessorSize(); i++) {
@@ -77,16 +77,16 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
 		        if(script.isLiteral()) {
                     String value = (String)script.execute();
     		        if(StringUtil.hasValue(value.trim())) {
-    			        // .maya上のノードボディが空白でないとき
+    			        // "processor" has child which is not empty.
     		            return null;
     		        }
                 } else {
-                    // .maya上のノードボディに、動的式が書かれているとき
+                    // "processor" has child which is scriptlet.
                     return null;
                 }
 	        } else if(child instanceof AttributeProcessor == false) {
-	            // .maya上のノードにm:charactersもしくは、
-	            // m:attribute以外のネストした子ノードがあるとき
+	            // "processor" has child which is implicit m:characters or
+	            // nested child node, but is NOT m:attribute
 	            return null;
 	        }
 		}
@@ -134,7 +134,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
         if(it.hasNext() == false) {
             return processor;
         }
-        // .mayaにネストしたノードが有る場合の処理開始。
+        // "injected" node has children, nested node definition on .maya
         stack.push(processor);
         TemplateProcessor connectionPoint = null;
         while(it.hasNext()) {

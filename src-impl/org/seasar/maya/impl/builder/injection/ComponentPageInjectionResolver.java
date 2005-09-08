@@ -28,7 +28,6 @@ import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
- * 解決した結果がコンポーネントページの場合に、インジェクションの修正を行うレゾルバ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ComponentPageInjectionResolver 

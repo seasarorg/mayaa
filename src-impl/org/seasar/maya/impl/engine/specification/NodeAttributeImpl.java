@@ -32,10 +32,6 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
     private SpecificationNode _node;
     private String _value;
 
-    /**
-     * @param qName 属性のQName。
-     * @param value 属性の値。空白文字列はよい。
-     */
 	public NodeAttributeImpl(QName qName, String value) {
 	    super(qName);
         if(value == null) {

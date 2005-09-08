@@ -47,11 +47,6 @@ public class PageImpl extends SpecificationImpl
     private String _pageName;
     private String _extension;
 
-    /**
-     * @param parent 呼び出し元Engineもしくは埋め込み先テンプレート。
-     * @param pageName ページ名。
-     * @param extension ページ拡張子。
-     */
     public PageImpl(Specification parent, String pageName, String extension) {
         super(QM_PAGE, parent);
         if(StringUtil.isEmpty(pageName)) {

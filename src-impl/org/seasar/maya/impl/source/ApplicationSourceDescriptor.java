@@ -31,7 +31,6 @@ import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * WEBコンテキスト相対パスで探す、ソースディスクリプタ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ApplicationSourceDescriptor implements SourceDescriptor {

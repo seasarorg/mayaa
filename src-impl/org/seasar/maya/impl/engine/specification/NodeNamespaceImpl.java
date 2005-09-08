@@ -28,10 +28,6 @@ public class NodeNamespaceImpl implements NodeNamespace {
     private String _prefix;
     private String _namespaceURI;
     
-    /**
-     * @param prefix 名前空間プレフィックス。
-     * @param namespaceURI 名前空間URI。非null、非ゼロ長。
-     */
     public NodeNamespaceImpl(String prefix, String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
@@ -43,10 +39,6 @@ public class NodeNamespaceImpl implements NodeNamespace {
         _namespaceURI = namespaceURI;
     }
 
-    /**
-     * 所属するノードを設定する。
-     * @param node 所属ノード。
-     */
     public void setNamespaceable(Namespaceable namespaceable) {
         if(namespaceable == null) {
             throw new IllegalArgumentException();

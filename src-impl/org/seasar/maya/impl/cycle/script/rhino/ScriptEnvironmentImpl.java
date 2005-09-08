@@ -24,15 +24,17 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -67,7 +69,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        Application application = CycleUtil.getApplication();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        Application application = provider.getApplication();
         return application.getMimeType(systemID);
     }
 
@@ -115,7 +118,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             if(_wrap != null) {
                 cx.setWrapFactory(_wrap);
             }
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
             parent = cx.getWrapFactory().wrapAsJavaObject(
                     cx, getStandardObjects(), cycle, ServiceCycle.class);
             Context.exit();
@@ -126,12 +129,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         Engine engine = SpecificationUtil.getEngine();
         Object model = SpecificationUtil.findSpecificationModel(engine);
         setModelToPrototype(model, scope);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setPageScope(scope);
     }
 
     public void startScope(Object model) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
@@ -145,7 +148,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public void endScope() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;

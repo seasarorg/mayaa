@@ -21,6 +21,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -40,7 +41,7 @@ public class InjectAttributeInjectionResolver
             SpecificationUtil.getAttributeValue(original, QM_INJECT);
         if(StringUtil.hasValue(injectName)) {
             QNameable qNameable = 
-                SpecificationUtil.parseName(original, injectName);
+                QNameableImpl.parseName(original, injectName);
             QName qName = qNameable.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();

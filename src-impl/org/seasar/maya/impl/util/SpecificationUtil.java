@@ -23,15 +23,12 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
-import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -74,7 +71,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
     
     public static Specification findSpecification() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         SpecificationNode current = cycle.getOriginalNode();
         return findSpecification(current);
     }
@@ -99,7 +96,8 @@ public class SpecificationUtil implements CONST_IMPL {
         Specification specification = findSpecification(node);
         Namespaceable namespaceable = new NamespaceableImpl();
         namespaceable.addNamespace("m", URI_MAYA);
-	    Iterator it = XPathUtil.selectChildNodes(
+	    // TODO XPathàÀë∂ÇÇ»Ç≠Ç∑ÅB
+        Iterator it = XPathUtil.selectChildNodes(
                 specification, "/m:maya", namespaceable, false);
 	    if(it.hasNext()) {
 	        return (SpecificationNode)it.next();
@@ -141,37 +139,6 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 	
-    public static QNameable parseName(
-            Namespaceable namespaces, String qName) {
-        String[] parsed = qName.split(":");
-        String prefix = null;
-        String localName = null;
-        String namespaceURI = null;
-        if(parsed.length == 2) {
-            prefix = parsed[0];
-            localName = parsed[1];
-            NodeNamespace namespace = namespaces.getNamespace(prefix, true);
-            if(namespace == null) {
-                throw new PrefixMappingNotFoundException(prefix);
-            }
-            namespaceURI = namespace.getNamespaceURI();
-        } else if(parsed.length == 1) {
-            localName = parsed[0];
-            NodeNamespace namespace = namespaces.getNamespace("", true);
-            if(namespace != null) {
-                namespaceURI = namespace.getNamespaceURI();
-            } else {
-                throw new PrefixMappingNotFoundException("");
-            }
-        } else {
-            throw new IllegalNameException(qName);
-        }
-        QName retName = new QNameImpl(namespaceURI, localName);
-        QNameable ret = new QNameableImpl(retName);
-        ret.setParentScope(namespaces);
-        return ret;
-    }
-    
     public static SpecificationNode createInjectedNode(
             QName qName, String uri, SpecificationNode original) {
         SpecificationNodeImpl node = new SpecificationNodeImpl(

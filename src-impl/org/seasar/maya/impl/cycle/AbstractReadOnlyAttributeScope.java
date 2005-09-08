@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.cycle;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.util.ScopeNotWritableException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

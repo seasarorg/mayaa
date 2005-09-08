@@ -23,6 +23,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.script.NullScript;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -59,7 +60,7 @@ public class ScriptUtil implements CONST_IMPL {
         CompiledScript compiled;
         if(StringUtil.hasValue(text)) {
 	        ScriptEnvironment environment = getScriptEnvironment();
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
             SpecificationNode node = cycle.getInjectedNode();
             compiled = environment.compile(
                     text, node.getSystemID(), node.getLineNumber());

@@ -13,29 +13,29 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util;
+package org.seasar.maya.impl.engine.specification;
 
 import org.seasar.maya.impl.MayaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalNameException extends MayaException {
+public class PrefixMappingNotFoundException extends MayaException {
 
-	private static final long serialVersionUID = 2431120366863355234L;
+	private static final long serialVersionUID = -9114023056056051237L;
 
-	private String _qName;
-	
-	public IllegalNameException(String qName) {
-		_qName = qName;
-    }
-	
-	public String getQName() {
-		return _qName;
-	}
-
-    protected String[] getMessageParams() {
-        return new String[] { _qName };
+	private String _prefix;
+    
+    public PrefixMappingNotFoundException(String prefix) {
+    	_prefix = prefix;
     }
     
+    public String getPrefix() {
+        return _prefix;
+    }
+
+    protected String[] getMessageParams() {
+        return new String[] { _prefix };
+    }
+
 }

@@ -34,11 +34,12 @@ import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractResponse;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -138,7 +139,7 @@ public class EngineImpl extends SpecificationImpl
     }
    
 	public void doService() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         String mimeType = cycle.getRequest().getMimeType();
         if((mimeType != null && mimeType.indexOf("html") != -1) ||
                 "maya".equals(cycle.getRequest().getExtension())) {
@@ -164,7 +165,7 @@ public class EngineImpl extends SpecificationImpl
         t = removeWrapperRuntimeException(t);
         try {
             getErrorHandler().doErrorHandle(t);
-            CycleUtil.getResponse().flush();
+            AbstractResponse.getResponse().flush();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -185,7 +186,7 @@ public class EngineImpl extends SpecificationImpl
     }
     
     private void saveToCycle() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);
     }
@@ -205,7 +206,7 @@ public class EngineImpl extends SpecificationImpl
                     ret = page.doPageRender();
                     saveToCycle();
                     ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-                    Response response = CycleUtil.getResponse();
+                    Response response = AbstractResponse.getResponse();
                     if(ret == null) {
                         if(response.isFlushed() == false) {
                             throw new RenderNotCompletedException(

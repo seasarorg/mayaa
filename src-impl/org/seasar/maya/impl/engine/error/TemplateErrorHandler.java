@@ -21,10 +21,10 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -61,7 +61,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
         if(t == null) {
             throw new IllegalArgumentException();
         }
-        CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
+        AbstractServiceCycle.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
         Engine engine = SpecificationUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 
@@ -88,7 +88,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 }
             }
         } finally {
-            CycleUtil.removeAttribute(THROWABLE, ServiceCycle.SCOPE_REQUEST);
+            AbstractServiceCycle.removeAttribute(THROWABLE, ServiceCycle.SCOPE_REQUEST);
         }
     }
     

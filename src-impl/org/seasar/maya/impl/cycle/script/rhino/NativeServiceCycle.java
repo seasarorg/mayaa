@@ -24,7 +24,7 @@ import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -44,18 +44,18 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
     
     public boolean has(String name, Scriptable start) {
-        if(CycleUtil.hasAttributeScope(name) || 
-                CycleUtil.findAttributeScope(name) != null) {
+        if(AbstractServiceCycle.hasAttributeScope(name) || 
+                AbstractServiceCycle.findAttributeScope(name) != null) {
             return true;
         }
         return super.has(name, start);
     }    
 
     public Object get(String name, Scriptable start) {
-        if(CycleUtil.hasAttributeScope(name)) {
-            return CycleUtil.getAttributeScope(name);
+        if(AbstractServiceCycle.hasAttributeScope(name)) {
+            return AbstractServiceCycle.getAttributeScope(name);
         }
-        AttributeScope scope = CycleUtil.findAttributeScope(name);
+        AttributeScope scope = AbstractServiceCycle.findAttributeScope(name);
         if(scope != null) {
             return scope.getAttribute(name);
         }

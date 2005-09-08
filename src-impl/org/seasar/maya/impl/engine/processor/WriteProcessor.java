@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -45,7 +45,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
             if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
             	ret = _default;
             }
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
             cycle.getResponse().write(ret);
         }
         return SKIP_BODY;

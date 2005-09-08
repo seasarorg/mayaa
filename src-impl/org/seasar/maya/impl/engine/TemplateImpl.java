@@ -32,9 +32,10 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractRequest;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -127,7 +128,7 @@ public class TemplateImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         saveToCycle(current);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
             ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
@@ -198,7 +199,7 @@ public class TemplateImpl extends SpecificationImpl
 	            return contentType;
 	        }
 		}
-        Request request = CycleUtil.getRequest();
+        Request request = AbstractRequest.getRequest();
         String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";
@@ -207,14 +208,14 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private void prepareCycle() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
+    	ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
     	Response response = cycle.getResponse();
         String contentType = getContentType();
         response.setContentType(contentType);
     }
 
     private void saveToCycle(TemplateProcessor processor) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setOriginalNode(processor.getOriginalNode());
         cycle.setInjectedNode(processor.getInjectedNode());
     }

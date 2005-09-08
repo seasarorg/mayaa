@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.cycle.AbstractRequest;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -31,18 +31,18 @@ public class ParamScope extends AbstractReadOnlyAttributeScope {
 	}
 
     public Iterator iterateAttributeNames() {
-        AttributeScope values = CycleUtil.getRequest().getParamValues();
+        AttributeScope values = AbstractRequest.getRequest().getParamValues();
         return values.iterateAttributeNames();
     }
 
     public boolean hasAttribute(String name) {
-        AttributeScope values = CycleUtil.getRequest().getParamValues();
+        AttributeScope values = AbstractRequest.getRequest().getParamValues();
         return values.hasAttribute(name);
     }
 
     public Object getAttribute(String name) {
         if(hasAttribute(name)) {
-            AttributeScope values = CycleUtil.getRequest().getParamValues();
+            AttributeScope values = AbstractRequest.getRequest().getParamValues();
             String[] params = (String[])values.getAttribute(name);
             if(params.length == 0) {
                 return "";

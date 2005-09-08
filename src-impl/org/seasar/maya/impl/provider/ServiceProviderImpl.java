@@ -30,9 +30,9 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.web.ApplicationImpl;
 import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -198,10 +198,10 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         }
         Class modelClass = (Class)modelKey;
         String modelName = modelClass.getName();
-        Object model = CycleUtil.getAttribute(modelName, modelScope); 
+        Object model = AbstractServiceCycle.getAttribute(modelName, modelScope); 
         if(model == null) {
             model = ObjectUtil.newInstance(modelClass);
-            CycleUtil.setAttribute(modelName, model, modelScope);
+            AbstractServiceCycle.setAttribute(modelName, model, modelScope);
         }
         return model;
 	}

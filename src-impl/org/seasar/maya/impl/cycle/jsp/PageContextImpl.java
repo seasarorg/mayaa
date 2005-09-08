@@ -37,8 +37,10 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
+import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -86,25 +88,25 @@ public class PageContextImpl extends PageContext {
     }
 
     public JspWriter getOut() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         Response response = cycle.getResponse();
         return new JspWriterImpl(response.getWriter());
     }
 
     public JspWriter popBody() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         Response response = cycle.getResponse();
     	return new JspWriterImpl(response.popWriter());
     }
 
     public BodyContent pushBody() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         Response response = cycle.getResponse();
         return new BodyContentImpl(response.pushWriter());
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
     	cycle.forward(relativeUrlPath);
     }
 
@@ -127,7 +129,8 @@ public class PageContextImpl extends PageContext {
     // Underlying object -----------------------------------------------
     
     public ServletContext getServletContext() {
-        Application application = CycleUtil.getApplication();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        Application application = provider.getApplication();
         Object obj = application.getUnderlyingObject();
         if(obj instanceof ServletContext) {
             return (ServletContext)obj;
@@ -136,7 +139,8 @@ public class PageContextImpl extends PageContext {
     }
     
     public HttpSession getSession() {
-        Session session = CycleUtil.getSession();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        Session session = cycle.getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;
@@ -145,7 +149,8 @@ public class PageContextImpl extends PageContext {
     }
 
     public ServletRequest getRequest() {
-    	Request request = CycleUtil.getRequest();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        Request request = cycle.getRequest();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;
@@ -154,7 +159,8 @@ public class PageContextImpl extends PageContext {
     }
     
     public ServletResponse getResponse() {
-    	Response response = CycleUtil.getResponse();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        Response response = cycle.getResponse();
     	Object obj = response.getUnderlyingObject();
     	if(obj instanceof ServletResponse) {
     		return (ServletResponse)obj;
@@ -190,7 +196,7 @@ public class PageContextImpl extends PageContext {
 	// Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
+            Object ret = AbstractServiceCycle.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return ret;
             }
@@ -203,7 +209,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        return CycleUtil.getAttribute(name, scopeName);
+        return AbstractServiceCycle.getAttribute(name, scopeName);
     }
 
     public Object getAttribute(String name) {
@@ -215,7 +221,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        CycleUtil.removeAttribute(name, scopeName);
+        AbstractServiceCycle.removeAttribute(name, scopeName);
     }
 
     public void removeAttribute(String name) {
@@ -223,7 +229,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            CycleUtil.removeAttribute(name, CYCLE_SCOPES[i]);
+            AbstractServiceCycle.removeAttribute(name, CYCLE_SCOPES[i]);
         }
     }
 
@@ -232,7 +238,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        CycleUtil.setAttribute(name, value, scopeName);
+        AbstractServiceCycle.setAttribute(name, value, scopeName);
     }
 
     public void setAttribute(String name, Object value) {
@@ -241,13 +247,13 @@ public class PageContextImpl extends PageContext {
 
     public Enumeration getAttributeNamesInScope(int scope) {
         String scopeName = getScopeFromInt(scope);
-        AttributeScope attrScope = CycleUtil.getAttributeScope(scopeName);
+        AttributeScope attrScope = AbstractServiceCycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
     }
 
     public int getAttributesScope(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
+            Object ret = AbstractServiceCycle.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return JSP_SCOPES[i];
             }

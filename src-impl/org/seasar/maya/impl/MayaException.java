@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.util.CycleUtil;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -40,7 +40,7 @@ public abstract class MayaException extends RuntimeException {
     private String _injectedNodeName;
     
 	public MayaException() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         if(cycle != null) {
             SpecificationNode original = cycle.getOriginalNode();
             if(original != null) {

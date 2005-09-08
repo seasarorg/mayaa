@@ -31,12 +31,12 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.injection.DefaultInjectionChain;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.processor.AttributeProcessor;
 import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -58,7 +58,7 @@ public class TemplateProcessorInjecter implements CONST_IMPL {
     
     private void saveToCycle(SpecificationNode originalNode,
     		SpecificationNode injectedNode) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setOriginalNode(originalNode);
         cycle.setInjectedNode(injectedNode);
     }

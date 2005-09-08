@@ -22,10 +22,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.Request;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
@@ -35,26 +34,21 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RequestImpl implements Request, CONST_IMPL {
+public class RequestImpl extends AbstractRequest {
 
     private static final long serialVersionUID = 8377365781441987529L;
 
-    private ApplicationImpl _application;
     private HttpServletRequest _httpServletRequest;
-    private String _pageName;
-    private String _requestedSuffix;
-    private String _extension;
-    private String _mimeType;
     private Locale[] _locales;
     private ParamValuesScope _paramValues;
     private HeaderValuesScope _headerValues;
     
-    public RequestImpl(ApplicationImpl application, 
+    public RequestImpl(Application application, 
             HttpServletRequest httpServletRequest) {
-        if(application == null || httpServletRequest == null) {
+        super(application);
+        if(httpServletRequest == null) {
             throw new IllegalArgumentException();
         }
-        _application = application;
         _httpServletRequest = httpServletRequest;
     }
 
@@ -67,54 +61,9 @@ public class RequestImpl implements Request, CONST_IMPL {
         }
         return path;
     }
-
-    protected void parsePath(String path) {
-        String suffixSeparator = SpecificationUtil.getEngineSetting(
-                SUFFIX_SEPARATOR, "$");
-        String[] parsed = StringUtil.parsePath(path, suffixSeparator);
-        _pageName = parsed[0];
-        _requestedSuffix = parsed[1];
-        _extension = parsed[2];
-        _mimeType = _application.getMimeType(path);
-    }
-    
-    protected void setForwardPath(String relativeUrlPath) {
-        if(StringUtil.isEmpty(relativeUrlPath)) {
-            throw new IllegalArgumentException();
-        }
-        parsePath(relativeUrlPath);
-    }
     
     public Object getUnderlyingObject() {
         return _httpServletRequest;
-    }
-
-    public String getPageName() {
-        if(_pageName == null) {
-            parsePath(getRequestedPath());
-        }
-        return _pageName;
-    }
-
-    public String getRequestedSuffix() {
-        if(_requestedSuffix == null) {
-            parsePath(getRequestedPath());
-        }
-        return _requestedSuffix;
-    }
-
-    public String getExtension() {
-        if(_extension == null) {
-            parsePath(getRequestedPath());
-        }
-        return _extension;
-    }
-    
-    public String getMimeType() {
-        if(_mimeType == null) {
-            parsePath(getRequestedPath());
-        }
-        return _mimeType;
     }
 
     public Locale[] getLocales() {
@@ -146,10 +95,6 @@ public class RequestImpl implements Request, CONST_IMPL {
         }
         return _headerValues;
     }
-
-    public String getScopeName() {
-        return ServiceCycle.SCOPE_REQUEST;
-    }
     
     public Iterator iterateAttributeNames() {
         return EnumerationIterator.getInstance(
@@ -176,10 +121,6 @@ public class RequestImpl implements Request, CONST_IMPL {
         return ScriptUtil.convertFromScriptObject(
                 _httpServletRequest.getAttribute(name));
     }
-
-    public boolean isAttributeWritable() {
-		return true;
-	}
 
     public void setAttribute(String name, Object attribute) {
         if(StringUtil.isEmpty(name)) {

@@ -74,6 +74,7 @@ public class EqualsIDInjectionResolver
             Namespaceable namespaceable = new NamespaceableImpl();
             namespaceable.addNamespace("m", URI_MAYA);
             String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
+            // TODO XPathàÀë∂ÇÇ»Ç≠Ç∑ÅB
             Iterator it = XPathUtil.selectChildNodes(
                     original, xpathExpr, namespaceable, true);
 	        if(it.hasNext()) {

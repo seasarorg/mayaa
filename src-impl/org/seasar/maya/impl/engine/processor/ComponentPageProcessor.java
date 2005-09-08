@@ -21,8 +21,8 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.PageNotFoundException;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -86,7 +86,7 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
                 _page = preparePage();
             }
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         String requiredSuffix = cycle.getRequest().getRequestedSuffix();
         Template template = _page.getTemplate(requiredSuffix);
         if(template == null) {

@@ -26,9 +26,10 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
+import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
-import org.seasar.maya.impl.util.CycleUtil;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -123,7 +124,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     }
     
     private void saveToCycle(SpecificationNode originalNode) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setOriginalNode(originalNode);
     }
     
@@ -131,7 +132,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
         QNameable parsedName = 
-            SpecificationUtil.parseName(_namespaces, qName);
+            QNameableImpl.parseName(_namespaces, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
@@ -141,7 +142,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             QNameable parsedAttrName = 
-                SpecificationUtil.parseName(elementNS, attrName);
+                QNameableImpl.parseName(elementNS, attrName);
             QName attrQName = parsedAttrName.getQName();
             node.addAttribute(attrQName, attributes.getValue(i));
         }

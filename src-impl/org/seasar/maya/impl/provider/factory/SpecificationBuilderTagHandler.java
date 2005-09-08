@@ -36,6 +36,7 @@ public class SpecificationBuilderTagHandler extends AbstractParameterizableTagHa
     }
     
     protected void start(Attributes attributes) {
+//    	 TODO class‘®«‚ğg‚¤B
         _specificationBuilder = new SpecificationBuilderImpl();
         _parent.getServiceProvider().setSpecificationBuilder(_specificationBuilder);
     }

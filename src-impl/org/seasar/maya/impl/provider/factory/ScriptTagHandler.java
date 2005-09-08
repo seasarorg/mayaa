@@ -38,6 +38,7 @@ public class ScriptTagHandler extends AbstractParameterizableTagHandler {
     }
     
     protected void start(Attributes attributes) {
+    	// TODO class属性を使う。まだ手を抜いて決め打ってるのでカスタマイズできないので。
         _scriptEnvironment = new ScriptEnvironmentImpl();
         _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
     }

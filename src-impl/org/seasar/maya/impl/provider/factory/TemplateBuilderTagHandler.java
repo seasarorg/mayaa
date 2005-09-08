@@ -39,6 +39,7 @@ public class TemplateBuilderTagHandler extends AbstractParameterizableTagHandler
     }
     
     protected void start(Attributes attributes) {
+//    	 TODO class‘®«‚ğg‚¤B
         _templateBuilder = new TemplateBuilderImpl();
         _parent.getServiceProvider().setTemplateBuilder(_templateBuilder);
     }

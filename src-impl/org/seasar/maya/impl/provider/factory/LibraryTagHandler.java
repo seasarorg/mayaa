@@ -38,7 +38,8 @@ public class LibraryTagHandler extends AbstractParameterizableTagHandler {
     }
     
     public void start(Attributes attributes) {
-        _libraryManager = new LibraryManagerImpl();
+//    	 TODO class‘®«‚ğg‚¤B
+    	_libraryManager = new LibraryManagerImpl();
         _parent.getTemplateBuilder().setLibraryManager(_libraryManager);
     }
     

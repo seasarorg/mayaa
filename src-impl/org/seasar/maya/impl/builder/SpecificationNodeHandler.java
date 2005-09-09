@@ -27,10 +27,10 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -89,7 +89,7 @@ public class SpecificationNodeHandler implements EntityResolver, DTDHandler,
     
     public void startDocument() {
         _charactersBuffer = new StringBuffer(128);
-        _outputWhitespace = SpecificationUtil.getEngineSettingBoolean(
+        _outputWhitespace = EngineImpl.getEngineSettingBoolean(
                 OUTPUT_WHITE_SPACE, true);
         _current = _specification;
         initNamespaceScope();

@@ -23,8 +23,8 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -38,7 +38,7 @@ public class HtmlAttributesSetter implements InjectionResolver, CONST_IMPL {
 		}
 		QName originalName = original.getQName();
 		if(QH_HTML.equals(originalName) || QX_HTML.equals(originalName)) {
-            SpecificationNode maya = SpecificationUtil.getMayaNode(original);
+            SpecificationNode maya = SpecificationImpl.getMayaNode(original);
             if(maya == null) {
                 throw new IllegalStateException();
             }

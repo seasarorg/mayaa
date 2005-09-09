@@ -24,10 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.AbstractRequest;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.ScriptUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -76,7 +77,7 @@ public class RequestImpl extends AbstractRequest {
         String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
         if(StringUtil.isEmpty(path) || "/".equals(path)) {
-            return SpecificationUtil.getEngineSetting(
+            return EngineImpl.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
         }
         return path;
@@ -140,8 +141,8 @@ public class RequestImpl extends AbstractRequest {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        return ScriptUtil.convertFromScriptObject(
-                _httpServletRequest.getAttribute(name));
+        ScriptEnvironment env = AbstractScriptEnvironment.getScriptEnvironment(); 
+        return env.convertFromScriptObject(_httpServletRequest.getAttribute(name));
     }
 
     public void setAttribute(String name, Object attribute) {

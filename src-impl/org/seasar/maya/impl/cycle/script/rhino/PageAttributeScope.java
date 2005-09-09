@@ -22,8 +22,9 @@ import java.util.List;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -78,7 +79,8 @@ public class PageAttributeScope extends ScriptableObject
 	public Object getAttribute(String name) {
         Scriptable scope = findScope(name);
         if(scope != null) {
-            return ScriptUtil.convertFromScriptObject(scope.get(name, this));
+            ScriptEnvironment env = AbstractScriptEnvironment.getScriptEnvironment(); 
+            return env.convertFromScriptObject(scope.get(name, this));
         }
         return null;
     }

@@ -23,21 +23,21 @@ import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.ScriptUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -131,8 +131,7 @@ public class TemplateImpl extends SpecificationImpl
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
-            ScriptEnvironment scriptEnvironment = ScriptUtil.getScriptEnvironment();
-            scriptEnvironment.startScope(null);
+            startScope(null);
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
@@ -173,7 +172,7 @@ public class TemplateImpl extends SpecificationImpl
             }
             saveToCycle(current);
             ret = current.doEndProcess();
-            scriptEnvironment.endScope();
+            endScope();
         } catch (RuntimeException e) {
             saveToCycle(current);
             if(isTryCatchFinally(current)) {
@@ -191,9 +190,9 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private String getContentType() {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
+        SpecificationNode maya = SpecificationImpl.getMayaNode(this);
 		if(maya != null) {
-	        String contentType = SpecificationUtil.getAttributeValue(
+	        String contentType = SpecificationNodeImpl.getAttributeValue(
                     maya, QM_CONTENT_TYPE);
 	        if(StringUtil.hasValue(contentType)) {
 	            return contentType;
@@ -229,13 +228,13 @@ public class TemplateImpl extends SpecificationImpl
         if(getParentProcessor() == null) {
             prepareCycle();
         }
-        Object model = SpecificationUtil.findSpecificationModel(this);
-        ScriptUtil.startScope(model);
-        ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
+        Object model = SpecificationImpl.getSpecificationModel(this);
+        startScope(model);
+        AbstractScriptEnvironment.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
         saveToCycle(this);
-        ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-        ScriptUtil.endScope();
+        AbstractScriptEnvironment.execEvent(this, QM_AFTER_RENDER);
+        endScope();
         return ret;
     }
 
@@ -314,6 +313,22 @@ public class TemplateImpl extends SpecificationImpl
 
     public SpecificationNode getInjectedNode() {
         return this;
+    }
+
+    public static Template getTemplate() {
+        Specification spec = SpecificationImpl.findSpecification();
+        if(spec instanceof Page) {
+            SpecificationNode parent = spec.getParentNode();
+            if(parent != null) {
+                spec = SpecificationImpl.findSpecification();
+            } else {
+                return null;
+            }
+        }
+        if(spec instanceof Template) {
+            return (Template)spec;
+        }
+        throw new IllegalStateException();
     }
     
 }

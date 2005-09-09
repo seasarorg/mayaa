@@ -32,6 +32,7 @@ import org.jaxen.saxpath.SAXPathException;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.util.xpath.NamespaceContextImpl;
 import org.seasar.maya.impl.util.xpath.SpecificationNavigator;
 import org.seasar.maya.impl.util.xpath.SpecificationXPath;
@@ -73,7 +74,7 @@ public class XPathUtil {
     
     public static Iterator selectChildNodes(SpecificationNode node,
             String xpathExpr, Namespaceable namespaceable, boolean cascade) {
-        Specification specification = SpecificationUtil.findSpecification(node);
+        Specification specification = SpecificationImpl.findSpecification(node);
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }

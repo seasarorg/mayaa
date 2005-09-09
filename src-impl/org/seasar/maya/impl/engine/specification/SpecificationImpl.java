@@ -23,13 +23,21 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.SpecificationBuilder;
+import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
-import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.XPathUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -71,7 +79,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     }
 	
     protected boolean isOldSpecification() {
-    	boolean check = SpecificationUtil.getEngineSettingBoolean(
+    	boolean check = EngineImpl.getEngineSettingBoolean(
                 CHECK_TIMESTAMP, true);
         if(check == false) {
             return false;
@@ -154,7 +162,82 @@ public class SpecificationImpl extends SpecificationNodeImpl
         throw new UnsupportedOperationException();
     }
 
-	protected class ChildSpecificationsIterator implements Iterator {
+	public static SpecificationNode getMayaNode(SpecificationNode node) {
+        Specification specification = findSpecification(node);
+        Namespaceable namespaceable = new NamespaceableImpl();
+        namespaceable.addNamespace("m", URI_MAYA);
+        // TODO XPathàÀë∂ÇÇ»Ç≠Ç∑ÅB
+        Iterator it = XPathUtil.selectChildNodes(
+                specification, "/m:maya", namespaceable, false);
+        if(it.hasNext()) {
+            return (SpecificationNode)it.next();
+        }
+        return null;
+    }
+
+    public static Specification findSpecification(SpecificationNode current) {
+        while(current instanceof Specification == false) {
+            current = current.getParentNode();
+            if(current == null) {
+                return null;
+            }
+        }
+        return (Specification)current;
+    }
+
+    public static Specification findSpecification() {
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        SpecificationNode current = cycle.getOriginalNode();
+        return findSpecification(current);
+    }
+
+    public static Object getSpecificationModel(Specification specification) {
+        SpecificationNode maya = SpecificationImpl.getMayaNode(specification);
+        if (maya != null) {
+            String className = SpecificationNodeImpl.getAttributeValue(maya, QM_CLASS);
+            if(StringUtil.hasValue(className)) {
+                ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+                AttributeScope scope = cycle.getAttributeScope(
+                        SpecificationNodeImpl.getAttributeValue(maya, QM_SCOPE));
+                Object model = scope.getAttribute(className); 
+                if(model == null) {
+                    Class modelClass = ObjectUtil.loadClass(className);
+                    model = ObjectUtil.newInstance(modelClass);
+                    scope.setAttribute(className, model);
+                }
+                return model;
+            }
+        }
+        return null;
+    }
+
+    public static SpecificationNode createInjectedNode(
+            QName qName, String uri, SpecificationNode original) {
+        SpecificationNodeImpl node = new SpecificationNodeImpl(
+        		qName, original.getSystemID(), original.getLineNumber());
+        for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
+            NodeAttribute attr = (NodeAttribute)it.next();
+            if(uri.equals(attr.getQName().getNamespaceURI())) {
+                node.addAttribute(attr.getQName(), attr.getValue());
+            }
+        }
+        node.setParentScope(original.getParentScope());
+        return node;
+    }
+
+    public static void initScope() {
+        AbstractScriptEnvironment.getScriptEnvironment().initScope();
+    }
+
+    public static void startScope(Object model) {
+        AbstractScriptEnvironment.getScriptEnvironment().startScope(model);
+    }
+
+    public static void endScope() {
+        AbstractScriptEnvironment.getScriptEnvironment().endScope();
+    }
+    
+    protected class ChildSpecificationsIterator implements Iterator {
 
 		private int _index;
 		private Specification _next;

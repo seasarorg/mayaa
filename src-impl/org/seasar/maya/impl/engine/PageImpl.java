@@ -24,12 +24,13 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.ScriptUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
+import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -106,7 +107,7 @@ public class PageImpl extends SpecificationImpl
         if(template == null) {
             StringBuffer name = new StringBuffer(_pageName);
             if(StringUtil.hasValue(suffix)) {
-                String separator = SpecificationUtil.getEngineSetting(
+                String separator = EngineImpl.getEngineSetting(
                         SUFFIX_SEPARATOR, "$");
                 name.append(separator).append(suffix);
             }
@@ -125,10 +126,21 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
+    private String findAttributeValue(Specification specification, QName qName) {
+        while(specification != null) {
+            String value = SpecificationNodeImpl.getAttributeValue(specification, qName);
+            if(value != null) {
+                return value;
+            }
+            specification = specification.getParentSpecification();
+        }
+        return null;
+    }
+
     protected String getTemplateSuffix() {
-        String text = SpecificationUtil.findAttributeValue(this, QM_TEMPLATE_SUFFIX);
+        String text = findAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(text)) {
-            CompiledScript action = ScriptUtil.compile(text, String.class);
+            CompiledScript action = AbstractScriptEnvironment.compile(text, String.class);
             return (String)action.execute();
         }
         return "";
@@ -163,17 +175,17 @@ public class PageImpl extends SpecificationImpl
 
     public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
-        Object model = SpecificationUtil.findSpecificationModel(this);
-        ScriptUtil.startScope(model);
-        ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
+        Object model = SpecificationImpl.getSpecificationModel(this);
+        startScope(model);
+        AbstractScriptEnvironment.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
             Template template = getTemplate();
             ret = template.doTemplateRender(null);
             saveToCycle();
         }
-        ScriptUtil.execEvent(this, QM_AFTER_RENDER);
-        ScriptUtil.endScope();
+        AbstractScriptEnvironment.execEvent(this, QM_AFTER_RENDER);
+        endScope();
         return ret;
     }
 

@@ -24,8 +24,8 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.engine.TemplateImpl;
 import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
-import org.seasar.maya.impl.util.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -33,7 +33,7 @@ import org.seasar.maya.impl.util.SpecificationUtil;
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     private ComponentPageProcessor getComponentPageProcessor() {
-		Template template = SpecificationUtil.getTemplate();
+		Template template = TemplateImpl.getTemplate();
         if(template == null) {
             return null;
         }

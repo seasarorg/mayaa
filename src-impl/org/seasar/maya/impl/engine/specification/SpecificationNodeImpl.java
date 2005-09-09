@@ -177,6 +177,14 @@ public class SpecificationNodeImpl extends QNameableImpl
         return copyTo(FILTER_ALL);
     }
 
+    public static String getAttributeValue(SpecificationNode node, QName qName) {
+        NodeAttribute nameAttr = node.getAttribute(qName);
+        if(nameAttr != null) {
+        	return nameAttr.getValue();
+        }
+        return null;
+    }
+
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
     
     private static class AllCopyToFilter implements CopyToFilter {

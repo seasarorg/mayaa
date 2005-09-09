@@ -21,9 +21,9 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -54,7 +54,7 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
    		if(isRendered(original) || isRendered(injected)) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
-   		    SpecificationNode element = SpecificationUtil.createInjectedNode(
+   		    SpecificationNode element = SpecificationImpl.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original);
             // TODO ÉVÉìÉvÉãâªÅB
             StringBuffer name = new StringBuffer();

@@ -28,10 +28,11 @@ import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
+import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -126,8 +127,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         PageAttributeScope scope = new PageAttributeScope();
         scope.setParentScope(parent);
-        Engine engine = SpecificationUtil.getEngine();
-        Object model = SpecificationUtil.findSpecificationModel(engine);
+        Engine engine = EngineImpl.getEngine();
+        Object model = SpecificationImpl.getSpecificationModel(engine);
         setModelToPrototype(model, scope);
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setPageScope(scope);

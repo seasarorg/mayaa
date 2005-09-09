@@ -36,12 +36,13 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractResponse;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.util.ScriptUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -202,15 +203,15 @@ public class EngineImpl extends SpecificationImpl
         	while(service) {
                 try {
                     saveToCycle();
-                    ScriptUtil.initScope();
-                    ScriptUtil.execEvent(this, QM_BEFORE_RENDER);
+                    initScope();
+                    AbstractScriptEnvironment.execEvent(this, QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
                     Page page = getPage(this, pageName, extension);
                     ProcessStatus ret = null;
                     ret = page.doPageRender();
                     saveToCycle();
-                    ScriptUtil.execEvent(this, QM_AFTER_RENDER);
+                    AbstractScriptEnvironment.execEvent(this, QM_AFTER_RENDER);
                     Response response = AbstractResponse.getResponse();
                     if(ret == null) {
                         if(response.isFlushed() == false) {
@@ -225,7 +226,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
-            ScriptUtil.initScope();
+            initScope();
             handleError(t);
         }
     }
@@ -251,6 +252,26 @@ public class EngineImpl extends SpecificationImpl
         } else {
             cycle.getResponse().setStatus(404);
         }
+    }
+
+    public static Engine getEngine() {
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        return provider.getEngine();
+    }
+
+    public static String getEngineSetting(String name, String defaultValue) {
+        Engine engine = getEngine();
+        String value = engine.getParameter(name);
+        if(value != null) {
+            return value;
+        }
+        return defaultValue;
+    }
+
+    public static boolean getEngineSettingBoolean(String name, boolean defaultValue) {
+        Engine engine = getEngine();
+        String value = engine.getParameter(name);
+        return ObjectUtil.booleanValue(value, defaultValue);
     }
     
 }

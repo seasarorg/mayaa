@@ -85,13 +85,5 @@ public interface ServiceProvider {
      * @return カレントスレッドでのサービスサイクル。
      */
     ServiceCycle getServiceCycle();
-
-    /**
-     * ユーザー定義のモデルオブジェクト取得メソッド。
-     * @param modelKey コンポーネントキー。
-     * @param modelScope スコープ。
-     * @return モデルオブジェクト。
-     */
-    Object getModel(Object modelKey, String modelScope);
     
 }

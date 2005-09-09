@@ -122,6 +122,20 @@ public class SpecificationUtil implements CONST_IMPL {
         return ServiceCycle.SCOPE_PAGE;
     }
 
+    public static Object getModel(Object modelKey, String modelScope) {
+        if(modelKey instanceof Class == false) {
+            throw new IllegalArgumentException();
+        }
+        Class modelClass = (Class)modelKey;
+        String modelName = modelClass.getName();
+        Object model = AbstractServiceCycle.getAttribute(modelName, modelScope); 
+        if(model == null) {
+            model = ObjectUtil.newInstance(modelClass);
+            AbstractServiceCycle.setAttribute(modelName, model, modelScope);
+        }
+        return model;
+    }
+    
     public static Object findSpecificationModel(Specification specification) {
         while (specification != null) {
             SpecificationNode maya = getMayaNode(specification);
@@ -129,9 +143,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 Class modelClass = getModelClass(maya);
                 if (modelClass != null) {
                     String scope = SpecificationUtil.getModelScope(maya);
-                    ServiceProvider provider = ProviderFactory
-                            .getServiceProvider();
-                    return provider.getModel(modelClass, scope);
+                    return getModel(modelClass, scope);
                 }
             }
             specification = specification.getParentSpecification();

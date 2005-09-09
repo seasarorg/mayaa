@@ -23,13 +23,10 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
-import org.seasar.maya.impl.engine.EngineImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -113,39 +110,35 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
     
     public void initScope() {
-        Scriptable parent = (Scriptable)_parent.get();
-        if(parent == null) {
-            Context cx = Context.enter();
-            if(_wrap != null) {
-                cx.setWrapFactory(_wrap);
-            }
-            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-            parent = cx.getWrapFactory().wrapAsJavaObject(
-                    cx, getStandardObjects(), cycle, ServiceCycle.class);
-            Context.exit();
-            _parent.set(parent);
-        }
-        PageAttributeScope scope = new PageAttributeScope();
-        scope.setParentScope(parent);
-        Engine engine = EngineImpl.getEngine();
-        Object model = SpecificationImpl.getSpecificationModel(engine);
-        setModelToPrototype(model, scope);
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-        cycle.setPageScope(scope);
+        cycle.setPageScope(null);
     }
 
     public void startScope(Object model) {
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
-        if(scope instanceof PageAttributeScope) {
-            PageAttributeScope pageScope = (PageAttributeScope)scope;
-            PageAttributeScope newPageScope = new PageAttributeScope();
-            newPageScope.setParentScope(pageScope);
-            setModelToPrototype(model, newPageScope);
-            cycle.setPageScope(newPageScope);
+        Scriptable parent;
+        if(scope == null) {
+            parent = (Scriptable)_parent.get();
+            if(parent == null) {
+                Context cx = Context.enter();
+                if(_wrap != null) {
+                    cx.setWrapFactory(_wrap);
+                }
+                parent = cx.getWrapFactory().wrapAsJavaObject(
+                        cx, getStandardObjects(), cycle, ServiceCycle.class);
+                Context.exit();
+                _parent.set(parent);
+            }
+        } else if(scope instanceof PageAttributeScope) {
+            parent = (PageAttributeScope)scope;
         } else {
             throw new IllegalStateException();
         }
+        PageAttributeScope pageScope = new PageAttributeScope();
+        pageScope.setParentScope(parent);
+        setModelToPrototype(model, pageScope);
+        cycle.setPageScope(pageScope);
     }
 
     public void endScope() {
@@ -153,10 +146,13 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
-            Scriptable parent = pageScope.getParentScope();
-            if(parent instanceof PageAttributeScope) {
-                PageAttributeScope parentScope = (PageAttributeScope)parent;
+            Scriptable current = pageScope.getParentScope();
+            if(current instanceof PageAttributeScope) {
+                PageAttributeScope parentScope = (PageAttributeScope)current;
                 cycle.setPageScope(parentScope);
+                return;
+            } else if(current != null) {
+                cycle.setPageScope(null);
                 return;
             }
         }

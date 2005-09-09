@@ -107,16 +107,10 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     }
 
     public void setPageScope(AttributeScope page) {
-        if(page == null) {
-            throw new IllegalArgumentException();
-        }
         _page = page;
     }
     
     public AttributeScope getPageScope() {
-        if(_page == null) {
-            throw new IllegalStateException();
-        }
         return _page;
     }
 

@@ -36,7 +36,6 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractResponse;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -204,14 +203,17 @@ public class EngineImpl extends SpecificationImpl
                 try {
                     saveToCycle();
                     initScope();
-                    AbstractScriptEnvironment.execEvent(this, QM_BEFORE_RENDER);
+                    Object model = getSpecificationModel();
+                    startScope(model);
+                    execEvent(QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
                     Page page = getPage(this, pageName, extension);
                     ProcessStatus ret = null;
                     ret = page.doPageRender();
                     saveToCycle();
-                    AbstractScriptEnvironment.execEvent(this, QM_AFTER_RENDER);
+                    execEvent(QM_AFTER_RENDER);
+                    endScope();
                     Response response = AbstractResponse.getResponse();
                     if(ret == null) {
                         if(response.isFlushed() == false) {

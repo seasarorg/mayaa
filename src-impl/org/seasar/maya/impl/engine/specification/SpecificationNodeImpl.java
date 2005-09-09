@@ -36,6 +36,8 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class SpecificationNodeImpl extends QNameableImpl
 		implements SpecificationNode, CONST_IMPL {
+
+    private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
     
     private Map _attributes;
     private SpecificationNode _parent;
@@ -177,15 +179,7 @@ public class SpecificationNodeImpl extends QNameableImpl
         return copyTo(FILTER_ALL);
     }
 
-    public static String getAttributeValue(SpecificationNode node, QName qName) {
-        NodeAttribute nameAttr = node.getAttribute(qName);
-        if(nameAttr != null) {
-        	return nameAttr.getValue();
-        }
-        return null;
-    }
-
-    private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
+    // support class --------------------------------------------------
     
     private static class AllCopyToFilter implements CopyToFilter {
         
@@ -193,6 +187,17 @@ public class SpecificationNodeImpl extends QNameableImpl
             return true;
         }
         
+    }
+    
+    // static util method ----------------------------------------------
+    
+    public static String getAttributeValue(
+            SpecificationNode node, QName qName) {
+        NodeAttribute nameAttr = node.getAttribute(qName);
+        if(nameAttr != null) {
+        	return nameAttr.getValue();
+        }
+        return null;
     }
 
 }

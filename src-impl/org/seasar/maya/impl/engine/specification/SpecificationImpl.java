@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
@@ -37,7 +37,6 @@ import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.XPathUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -162,17 +161,109 @@ public class SpecificationImpl extends SpecificationNodeImpl
         throw new UnsupportedOperationException();
     }
 
-	public static SpecificationNode getMayaNode(SpecificationNode node) {
-        Specification specification = findSpecification(node);
-        Namespaceable namespaceable = new NamespaceableImpl();
-        namespaceable.addNamespace("m", URI_MAYA);
-        // TODO XPathàÀë∂ÇÇ»Ç≠Ç∑ÅB
-        Iterator it = XPathUtil.selectChildNodes(
-                specification, "/m:maya", namespaceable, false);
-        if(it.hasNext()) {
-            return (SpecificationNode)it.next();
+    public Object getSpecificationModel() {
+        SpecificationNode maya = getMayaNode(this);
+        if (maya != null) {
+            String className = getAttributeValue(maya, QM_CLASS);
+            if(StringUtil.hasValue(className)) {
+                ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+                AttributeScope scope = cycle.getAttributeScope(
+                        getAttributeValue(maya, QM_SCOPE));
+                Object model = scope.getAttribute(className); 
+                if(model == null) {
+                    Class modelClass = ObjectUtil.loadClass(className);
+                    model = ObjectUtil.newInstance(modelClass);
+                    scope.setAttribute(className, model);
+                }
+                return model;
+            }
         }
         return null;
+    }
+    
+    public void execEvent(QName eventName) {
+        if(eventName == null) {
+            throw new IllegalArgumentException();
+        }
+        SpecificationNode maya = getMayaNode(this);
+        if(maya != null) {
+            NodeAttribute attr = maya.getAttribute(eventName);
+            if(attr != null) {
+                String text = attr.getValue();
+                if(StringUtil.hasValue(text)) {
+                    CompiledScript script = 
+                        AbstractScriptEnvironment.compile(text, Void.class);
+                    script.execute();
+                }
+            }
+        }
+    }
+    
+    // support class --------------------------------------------------
+
+    protected class ChildSpecificationsIterator implements Iterator {
+
+        private int _index;
+        private Specification _next;
+        private List _list;
+        
+        protected ChildSpecificationsIterator(List list) {
+            if(list == null) {
+                throw new IllegalArgumentException();
+            }
+            _list = list;
+            _index = list.size();
+        }
+        
+        public boolean hasNext() {
+            if(_next != null) {
+                return true;
+            }
+            while(_next == null) {
+                _index--;
+                if(_index < 0) {
+                    return false;
+                }
+                synchronized(_list) {
+                    SoftReference ref = (SoftReference)_list.get(_index);
+                    _next = (Specification)ref.get();
+                    if(_next == null) {
+                        _list.remove(_index);
+                    }
+                }
+            }
+            return true;
+        }
+
+        public Object next() {
+            if(_next == null && hasNext() == false) {
+                throw new NoSuchElementException();
+            }
+            Specification ret = _next;
+            _next = null;
+            return ret;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }       
+        
+    }
+
+    // static util methods ----------------------------------------------
+    
+    public static SpecificationNode createInjectedNode(
+            QName qName, String uri, SpecificationNode original) {
+        SpecificationNodeImpl node = new SpecificationNodeImpl(
+                qName, original.getSystemID(), original.getLineNumber());
+        for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
+            NodeAttribute attr = (NodeAttribute)it.next();
+            if(uri.equals(attr.getQName().getNamespaceURI())) {
+                node.addAttribute(attr.getQName(), attr.getValue());
+            }
+        }
+        node.setParentScope(original.getParentScope());
+        return node;
     }
 
     public static Specification findSpecification(SpecificationNode current) {
@@ -190,39 +281,16 @@ public class SpecificationImpl extends SpecificationNodeImpl
         SpecificationNode current = cycle.getOriginalNode();
         return findSpecification(current);
     }
-
-    public static Object getSpecificationModel(Specification specification) {
-        SpecificationNode maya = SpecificationImpl.getMayaNode(specification);
-        if (maya != null) {
-            String className = SpecificationNodeImpl.getAttributeValue(maya, QM_CLASS);
-            if(StringUtil.hasValue(className)) {
-                ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-                AttributeScope scope = cycle.getAttributeScope(
-                        SpecificationNodeImpl.getAttributeValue(maya, QM_SCOPE));
-                Object model = scope.getAttribute(className); 
-                if(model == null) {
-                    Class modelClass = ObjectUtil.loadClass(className);
-                    model = ObjectUtil.newInstance(modelClass);
-                    scope.setAttribute(className, model);
-                }
-                return model;
+    
+    public static SpecificationNode getMayaNode(SpecificationNode current) {
+        Specification specification = findSpecification(current);
+        for(Iterator it = specification.iterateChildNode(); it.hasNext(); ) {
+            SpecificationNode node = (SpecificationNode)it.next();
+            if(node.getQName().equals(QM_MAYA)) {
+                return node;
             }
         }
         return null;
-    }
-
-    public static SpecificationNode createInjectedNode(
-            QName qName, String uri, SpecificationNode original) {
-        SpecificationNodeImpl node = new SpecificationNodeImpl(
-        		qName, original.getSystemID(), original.getLineNumber());
-        for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
-            NodeAttribute attr = (NodeAttribute)it.next();
-            if(uri.equals(attr.getQName().getNamespaceURI())) {
-                node.addAttribute(attr.getQName(), attr.getValue());
-            }
-        }
-        node.setParentScope(original.getParentScope());
-        return node;
     }
 
     public static void initScope() {
@@ -236,54 +304,5 @@ public class SpecificationImpl extends SpecificationNodeImpl
     public static void endScope() {
         AbstractScriptEnvironment.getScriptEnvironment().endScope();
     }
-    
-    protected class ChildSpecificationsIterator implements Iterator {
-
-		private int _index;
-		private Specification _next;
-		private List _list;
-		
-		protected ChildSpecificationsIterator(List list) {
-			if(list == null) {
-				throw new IllegalArgumentException();
-			}
-			_list = list;
-			_index = list.size();
-		}
-		
-		public boolean hasNext() {
-			if(_next != null) {
-				return true;
-			}
-			while(_next == null) {
-				_index--;
-				if(_index < 0) {
-					return false;
-				}
-				synchronized(_list) {
-					SoftReference ref = (SoftReference)_list.get(_index);
-					_next = (Specification)ref.get();
-					if(_next == null) {
-						_list.remove(_index);
-					}
-				}
-			}
-			return true;
-		}
-
-		public Object next() {
-			if(_next == null && hasNext() == false) {
-				throw new NoSuchElementException();
-			}
-			Specification ret = _next;
-			_next = null;
-			return ret;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}		
-		
-	}
 	
 }

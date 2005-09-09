@@ -34,7 +34,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
@@ -228,12 +227,12 @@ public class TemplateImpl extends SpecificationImpl
         if(getParentProcessor() == null) {
             prepareCycle();
         }
-        Object model = SpecificationImpl.getSpecificationModel(this);
+        Object model = getSpecificationModel();
         startScope(model);
-        AbstractScriptEnvironment.execEvent(this, QM_BEFORE_RENDER);
+        execEvent(QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
         saveToCycle(this);
-        AbstractScriptEnvironment.execEvent(this, QM_AFTER_RENDER);
+        execEvent(QM_AFTER_RENDER);
         endScope();
         return ret;
     }

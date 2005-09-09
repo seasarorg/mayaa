@@ -158,6 +158,8 @@ public abstract class AbstractResponse implements Response {
             throw new RuntimeException(e);
         }
     }
+    
+    // static util method ----------------------------------------------
 
     public static Response getResponse() {
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();

@@ -15,17 +15,19 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.builder.SpecificationBuilderImpl;
+import org.seasar.maya.builder.SpecificationBuilder;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationBuilderTagHandler extends AbstractParameterizableTagHandler {
+public class SpecificationBuilderTagHandler
+        extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
-    private SpecificationBuilderImpl _specificationBuilder;
+    private SpecificationBuilder _specificationBuilder;
     
     public SpecificationBuilderTagHandler(ServiceTagHandler parent) {
         super("specificationBuilder");
@@ -36,8 +38,8 @@ public class SpecificationBuilderTagHandler extends AbstractParameterizableTagHa
     }
     
     protected void start(Attributes attributes) {
-//    	 TODO classëÆê´ÇégÇ§ÅB
-        _specificationBuilder = new SpecificationBuilderImpl();
+        _specificationBuilder = (SpecificationBuilder)XmlUtil.getObjectValue(
+                attributes, "class", null, SpecificationBuilder.class);
         _parent.getServiceProvider().setSpecificationBuilder(_specificationBuilder);
     }
     

@@ -15,18 +15,19 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.builder.TemplateBuilderImpl;
-import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateBuilderTagHandler extends AbstractParameterizableTagHandler {
+public class TemplateBuilderTagHandler 
+        extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
-    private TemplateBuilderImpl _templateBuilder;
+    private TemplateBuilder _templateBuilder;
     
     public TemplateBuilderTagHandler(ServiceTagHandler parent) {
         super("templateBuilder");
@@ -34,13 +35,12 @@ public class TemplateBuilderTagHandler extends AbstractParameterizableTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new InjectionResolverTagHandler(this));
-        putHandler(new LibraryTagHandler(this));
+        putHandler(new ResolverTagHandler(this));
     }
     
     protected void start(Attributes attributes) {
-//    	 TODO classëÆê´ÇégÇ§ÅB
-        _templateBuilder = new TemplateBuilderImpl();
+        _templateBuilder = (TemplateBuilder)XmlUtil.getObjectValue(
+                attributes, "class", null, TemplateBuilder.class);
         _parent.getServiceProvider().setTemplateBuilder(_templateBuilder);
     }
     
@@ -48,14 +48,10 @@ public class TemplateBuilderTagHandler extends AbstractParameterizableTagHandler
         if(_templateBuilder == null) {
             throw new IllegalStateException();
         }
-        if(_templateBuilder.hasLibraryManager() == false) {
-            TagHandler handler = startElement("library", NULL_ATTR);
-            handler.endElement();
-        }
         _templateBuilder = null;
     }
     
-    public TemplateBuilderImpl getTemplateBuilder() {
+    public TemplateBuilder getTemplateBuilder() {
         if(_templateBuilder == null) {
             throw new IllegalStateException();
         }

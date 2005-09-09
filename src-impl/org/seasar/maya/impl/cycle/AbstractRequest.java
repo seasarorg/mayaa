@@ -21,6 +21,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -28,18 +29,10 @@ import org.seasar.maya.impl.util.StringUtil;
 public abstract class AbstractRequest
         implements Request, CONST_IMPL {
 
-    private Application _application;
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;
     private String _mimeType;
-
-    public AbstractRequest(Application application) {
-        if(application == null) {
-            throw new IllegalArgumentException();
-        }
-        _application = application;
-    }
 
     public void parsePath(String path) {
         String suffixSeparator = SpecificationUtil.getEngineSetting(
@@ -48,7 +41,9 @@ public abstract class AbstractRequest
         _pageName = parsed[0];
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
-        _mimeType = _application.getMimeType(path);
+        Application application = 
+            ProviderFactory.getServiceProvider().getApplication();
+        _mimeType = application.getMimeType(path);
     }
     
     public void setForwardPath(String relativeUrlPath) {

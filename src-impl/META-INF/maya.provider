@@ -4,30 +4,56 @@
     "http://maya.seasar.org/dtd/maya-provider_1_0.dtd">
 <service>
 
-	<pageSource class="org.seasar.maya.impl.source.PageSourceDescriptor">
+	<serviceCycle class="org.seasar.maya.impl.cycle.web.ServiceCycleImpl"/>
+
+	<pageSourceDescriptor class="org.seasar.maya.impl.source.PageSourceDescriptor">
 		<parameter name="folder" value="/WEB-INF/page"/>
-	</pageSource>
+	</pageSourceDescriptor>
 
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
-		<specification path="/default.maya"/>
 		<errorHandler class="org.seasar.maya.impl.engine.error.TemplateErrorHandler">
 			<parameter name="folder" value="/"/>
 			<parameter name="extension" value="html"/>
 		</errorHandler>
+		<parameter name="defaultSpecification" value="/default.maya"/>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="outputWhitespace" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 	</engine>
 	
-	<script class="org.seasar.maya.impl.cycle.script.rhino.ScriptEnvironmentImpl">
+	<scriptEnvironment class="org.seasar.maya.impl.cycle.script.rhino.ScriptEnvironmentImpl">
 		<scope class="org.seasar.maya.impl.cycle.scope.BindingScope"/>
 		<scope class="org.seasar.maya.impl.cycle.scope.ParamScope"/>
 		<scope class="org.seasar.maya.impl.cycle.scope.HeaderScope"/>
 		<parameter name="wrapFactory" value="org.seasar.maya.impl.cycle.script.rhino.WrapFactoryImpl"/>
-	</script>
+	</scriptEnvironment>
 	
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
+
+	<libraryManager class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
+		<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>
+		<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
+			<parameter name="folder" value="/WEB-INF"/>
+			<parameter name="recursive" value="true"/>
+			<parameter name="extension" value=".tld"/>
+			<parameter name="extension" value=".mld"/>
+		</source>
+		<source class="org.seasar.maya.impl.builder.library.scanner.JarsSourceScanner">
+			<parameter name="folder" value="/WEB-INF/lib"/>
+			<parameter name="extension" value=".jar"/>
+			<parameter name="ignore" value="commons-beanutils-"/>
+			<parameter name="ignore" value="commons-logging-"/>
+			<parameter name="ignore" value="nekohtml-"/>
+			<parameter name="ignore" value="jaxen-"/>
+			<parameter name="ignore" value="xml-apis-"/>
+			<parameter name="ignore" value="xercesImpl-"/>
+			<parameter name="ignore" value="rhino-"/>
+		</source>
+		<source class="org.seasar.maya.impl.builder.library.scanner.WalkaroundSourceScanner"/>
+		<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
+		<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
+	</libraryManager>
 	
 	<templateBuilder class="org.seasar.maya.impl.builder.TemplateBuilderImpl">
 		<resolver class="org.seasar.maya.impl.builder.injection.ContentTypeSetter"/>
@@ -39,29 +65,6 @@
 			<parameter name="reportUnresolvedID" value="true"/>
 		</resolver>
 		<resolver class="org.seasar.maya.impl.builder.injection.XPathMatchesInjectionResolver"/>
-		<library class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
-			<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>
-			<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
-				<parameter name="folder" value="/WEB-INF"/>
-				<parameter name="recursive" value="true"/>
-				<parameter name="extension" value=".tld"/>
-				<parameter name="extension" value=".mld"/>
-			</source>
-			<source class="org.seasar.maya.impl.builder.library.scanner.JarsSourceScanner">
-				<parameter name="folder" value="/WEB-INF/lib"/>
-				<parameter name="extension" value=".jar"/>
-				<parameter name="ignore" value="commons-beanutils-"/>
-				<parameter name="ignore" value="commons-logging-"/>
-				<parameter name="ignore" value="nekohtml-"/>
-				<parameter name="ignore" value="jaxen-"/>
-				<parameter name="ignore" value="xml-apis-"/>
-				<parameter name="ignore" value="xercesImpl-"/>
-				<parameter name="ignore" value="rhino-"/>
-			</source>
-			<source class="org.seasar.maya.impl.builder.library.scanner.WalkaroundSourceScanner"/>
-			<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
-			<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
-		</library>
 	</templateBuilder>
 	
 </service>

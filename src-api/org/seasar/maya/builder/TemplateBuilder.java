@@ -16,7 +16,6 @@
 package org.seasar.maya.builder;
 
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.builder.library.LibraryManager;
 
 /**
  * HTMLテンプレートのビルダ
@@ -25,15 +24,9 @@ import org.seasar.maya.builder.library.LibraryManager;
 public interface TemplateBuilder extends SpecificationBuilder {
     
     /**
-     * インジェクションリゾルバのルートを取得する。
-     * @return インジェクションリゾルバ。
+     * インジェクションリゾルバの追加を行う。
+     * @param resolver インジェクションリゾルバ。
      */
-    InjectionResolver getInjectionResolver();
-    
-    /**
-     * ライブラリマネージャーを取得する。
-     * @return ライブラリマネージャー。
-     */
-    LibraryManager getLibraryManager();
+    void addInjectionResolver(InjectionResolver resolver);
     
 }

@@ -15,47 +15,42 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.builder.library.LibraryManagerImpl;
+import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryTagHandler extends AbstractParameterizableTagHandler {
+public class SourceTagHandler extends AbstractParameterizableTagHandler {
     
-    private TemplateBuilderTagHandler _parent;
-    private LibraryManagerImpl _libraryManager;
+    private LibraryManagerTagHandler _parent;
+    private SourceScanner _scanner;
     
-    public LibraryTagHandler(TemplateBuilderTagHandler parent) {
-        super("library");
+    public SourceTagHandler(LibraryManagerTagHandler parent) {
+        super("source");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new LibrarySourceTagHandler(this));
-        putHandler(new LibraryBuilderTagHandler(this));
     }
-    
+
     public void start(Attributes attributes) {
-//    	 TODO classëÆê´ÇégÇ§ÅB
-    	_libraryManager = new LibraryManagerImpl();
-        _parent.getTemplateBuilder().setLibraryManager(_libraryManager);
+        _scanner = (SourceScanner)XmlUtil.getObjectValue(
+                attributes, "class", null, SourceScanner.class);
+        _parent.getLibraryManager().addSourceScanner(_scanner);
     }
     
     public void end(String body) {
-        _libraryManager = null;
-    }
-    
-    public LibraryManagerImpl getLibraryManager() {
-        if(_libraryManager == null) {
-            throw new IllegalStateException();
-        }
-        return _libraryManager;
+        _scanner = null;
     }
     
     public Parameterizable getParameterizable() {
-        return getLibraryManager();
+        if(_scanner == null) {
+            throw new IllegalStateException();
+        }
+        return _scanner;
     }
 
 }

@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -23,34 +23,35 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibrarySourceTagHandler extends AbstractParameterizableTagHandler {
+public class ResolverTagHandler 
+        extends AbstractParameterizableTagHandler {
     
-    private LibraryTagHandler _parent;
-    private SourceScanner _scanner;
+    private TemplateBuilderTagHandler _parent;
+    private InjectionResolver _resolver;
     
-    public LibrarySourceTagHandler(LibraryTagHandler parent) {
-        super("source");
+    public ResolverTagHandler(TemplateBuilderTagHandler parent) {
+        super("resolver");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
-
+    
     public void start(Attributes attributes) {
-        _scanner = (SourceScanner)XmlUtil.getObjectValue(
-                attributes, "class", null, SourceScanner.class);
-        _parent.getLibraryManager().addSourceScanner(_scanner);
+        _resolver = (InjectionResolver)XmlUtil.getObjectValue(
+                attributes, "class", null, InjectionResolver.class);
+        _parent.getTemplateBuilder().addInjectionResolver(_resolver);
     }
     
     public void end(String body) {
-        _scanner = null;
+        _resolver = null;
     }
     
     public Parameterizable getParameterizable() {
-        if(_scanner == null) {
+        if(_resolver == null) {
             throw new IllegalStateException();
         }
-        return _scanner;
+        return _resolver;
     }
-
+    
 }

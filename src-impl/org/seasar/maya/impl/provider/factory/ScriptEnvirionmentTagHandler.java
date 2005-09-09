@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.builder.library.DefinitionBuilder;
+import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -23,34 +23,40 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryBuilderTagHandler extends AbstractParameterizableTagHandler {
+public class ScriptEnvirionmentTagHandler
+        extends AbstractParameterizableTagHandler {
     
-    private LibraryTagHandler _parent;
-    private DefinitionBuilder _builder;
+    private ServiceTagHandler _parent;
+    private ScriptEnvironment _scriptEnvironment;
     
-    public LibraryBuilderTagHandler(LibraryTagHandler parent) {
-        super("builder");
+    public ScriptEnvirionmentTagHandler(ServiceTagHandler parent) {
+        super("scriptEnvironment");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-    }
-
-    public void start(Attributes attributes) {
-        _builder = (DefinitionBuilder)XmlUtil.getObjectValue(
-                attributes, "class", null, DefinitionBuilder.class);
-        _parent.getLibraryManager().addDefinitionBuilder(_builder);
+        putHandler(new ScopeTagHandler(this));
     }
     
-    public void end(String body) {
-        _builder = null;
+    protected void start(Attributes attributes) {
+        _scriptEnvironment = (ScriptEnvironment)XmlUtil.getObjectValue(
+                attributes, "class", null, ScriptEnvironment.class);
+        _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
+    }
+    
+    protected void end(String body) {
+        _scriptEnvironment = null;
+    }
+    
+    public ScriptEnvironment getScriptEnvironment() {
+        if(_scriptEnvironment == null) {
+            throw new IllegalStateException();
+        }
+        return _scriptEnvironment;
     }
     
     public Parameterizable getParameterizable() {
-        if(_builder == null) {
-            throw new IllegalStateException();
-        }
-        return _builder;
+        return getScriptEnvironment();
     }
 
 }

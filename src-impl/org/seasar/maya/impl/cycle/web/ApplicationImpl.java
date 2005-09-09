@@ -33,19 +33,27 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 public class ApplicationImpl implements Application {
 
     private ServletContext _servletContext;
+
+    private void check() {
+        if(_servletContext == null) {
+            throw new IllegalStateException();
+        }
+    }
     
-    public ApplicationImpl(ServletContext servletContext) {
-        if(servletContext == null) {
+    public void setUnderlyingObject(Object context) {
+        if(context == null || context instanceof ServletContext == false) {
             throw new IllegalArgumentException();
         }
-        _servletContext = servletContext;
+        _servletContext = (ServletContext)context;
     }
-
+    
     public Object getUnderlyingObject() {
+        check();
         return _servletContext;
     }
     
     public String getMimeType(String fileName) {
+        check();
         if(StringUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException();
         }
@@ -53,6 +61,7 @@ public class ApplicationImpl implements Application {
     }
 
     public String getRealPath(String contextRelatedPath) {
+        check();
         if(StringUtil.isEmpty(contextRelatedPath)) {
             throw new IllegalArgumentException();
         }
@@ -64,10 +73,12 @@ public class ApplicationImpl implements Application {
     }
     
     public Iterator iterateAttributeNames() {
+        check();
         return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
@@ -81,6 +92,7 @@ public class ApplicationImpl implements Application {
 	}
 
 	public Object getAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
@@ -93,6 +105,7 @@ public class ApplicationImpl implements Application {
 	}
 
     public void setAttribute(String name, Object attribute) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -100,6 +113,7 @@ public class ApplicationImpl implements Application {
     }
     
     public void removeAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }

@@ -15,17 +15,20 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EngineTagHandler extends AbstractParameterizableTagHandler {
+public class EngineTagHandler 
+        extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
-    private EngineImpl _engine;
+    private Engine _engine;
     
     public EngineTagHandler(ServiceTagHandler parent) {
         super("engine");
@@ -33,13 +36,12 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new SpecificationTagHandler(this));
         putHandler(new ErrorHandlerTagHandler(this));
     }
     
     protected void start(Attributes attributes) {
-    	// TODO classëÆê´ílÇópÇ¢ÇÈÅB
-        _engine = new EngineImpl();
+        _engine = (EngineImpl)XmlUtil.getObjectValue(
+                attributes, "class", null, Engine.class);
         _parent.getServiceProvider().setEngine(_engine);
     }
     
@@ -47,7 +49,7 @@ public class EngineTagHandler extends AbstractParameterizableTagHandler {
         _engine = null;
     }
     
-    public EngineImpl getEngine() {
+    public Engine getEngine() {
         if(_engine == null) {
             throw new IllegalStateException();
         }

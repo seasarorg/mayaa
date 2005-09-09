@@ -15,47 +15,48 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
-import org.seasar.maya.impl.cycle.script.rhino.ScriptEnvironmentImpl;
+import org.seasar.maya.builder.library.LibraryManager;
+import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScriptTagHandler extends AbstractParameterizableTagHandler {
+public class LibraryManagerTagHandler extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
-    private AbstractScriptEnvironment _scriptEnvironment;
+    private LibraryManager _libraryManager;
     
-    public ScriptTagHandler(ServiceTagHandler parent) {
-        super("script");
+    public LibraryManagerTagHandler(ServiceTagHandler parent) {
+        super("libraryManager");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new ScopeTagHandler(this));
+        putHandler(new SourceTagHandler(this));
+        putHandler(new BuilderTagHandler(this));
     }
     
-    protected void start(Attributes attributes) {
-    	// TODO class属性を使う。まだ手を抜いて決め打ってるのでカスタマイズできないので。
-        _scriptEnvironment = new ScriptEnvironmentImpl();
-        _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
+    public void start(Attributes attributes) {
+    	_libraryManager = (LibraryManager)XmlUtil.getObjectValue(
+                attributes, "class", null, LibraryManager.class);
+        _parent.getServiceProvider().setLibraryManager(_libraryManager);
     }
     
-    protected void end(String body) {
-        _scriptEnvironment = null;
+    public void end(String body) {
+        _libraryManager = null;
     }
     
-    public AbstractScriptEnvironment getScriptEnvironment() {
-        if(_scriptEnvironment == null) {
+    public LibraryManager getLibraryManager() {
+        if(_libraryManager == null) {
             throw new IllegalStateException();
         }
-        return _scriptEnvironment;
+        return _libraryManager;
     }
     
     public Parameterizable getParameterizable() {
-        return getScriptEnvironment();
+        return getLibraryManager();
     }
 
 }

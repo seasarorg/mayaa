@@ -25,10 +25,10 @@ import org.xml.sax.Attributes;
  */
 public class ScopeTagHandler extends AbstractParameterizableTagHandler {
     
-    private ScriptTagHandler _parent;
+    private ScriptEnvirionmentTagHandler _parent;
     private AttributeScope _scope;
     
-    public ScopeTagHandler(ScriptTagHandler parent) {
+    public ScopeTagHandler(ScriptEnvirionmentTagHandler parent) {
         super("scope");
         if(parent == null) {
             throw new IllegalArgumentException();

@@ -17,6 +17,7 @@ package org.seasar.maya.provider;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
@@ -46,7 +47,13 @@ public interface ServiceProvider {
      * @return スクリプト実行環境。
      */
     ScriptEnvironment getScriptEnvironment();
-    
+
+    /**
+     * ライブラリマネージャーを取得する。
+     * @return ライブラリマネージャー。
+     */
+    LibraryManager getLibraryManager();
+
     /**
      * 設定XMLのビルダを取得する。
      * @return 設定XMLビルダ。
@@ -68,10 +75,10 @@ public interface ServiceProvider {
     
     /**
      * リクエストおよびレスポンスのコンテキストオブジェクト設定。
-     * @param request カレントのリクエストオブジェクト。
-     * @param response カレントのレスポンスオブジェクト。
+     * @param requestContext カレントのリクエストオブジェクト。
+     * @param responseContext カレントのレスポンスオブジェクト。
      */
-    void initialize(Object request, Object response);
+    void initialize(Object requestContext, Object responseContext);
     
     /**
      * サービスサイクルの取得

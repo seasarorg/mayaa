@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -39,6 +40,10 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
 
+    public Application getApplication() {
+        return ProviderFactory.getServiceProvider().getApplication();
+    }
+    
     public void load(String systemID, String encoding) {
         if(StringUtil.isEmpty(systemID)) {
             throw new ScriptFileNotFoundException("");

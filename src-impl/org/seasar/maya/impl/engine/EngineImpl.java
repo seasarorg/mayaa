@@ -39,6 +39,7 @@ import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.util.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -71,7 +72,11 @@ public class EngineImpl extends SpecificationImpl
     }
     
     public void setParameter(String name, String value) {
-        if(_paramNames.contains(name)) {
+        if("defaultSpecification".equals(name)) {
+            SourceDescriptor source = new DelaySourceDescriptor();
+            source.setSystemID(value);
+            setSource(source);
+        } else if(_paramNames.contains(name)) {
             if(_parameters == null) {
                 _parameters = new HashMap();
             }

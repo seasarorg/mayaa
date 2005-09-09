@@ -32,18 +32,28 @@ public class ResponseImpl extends AbstractResponse {
 
     private HttpServletResponse _httpServletResponse;
 
-    public ResponseImpl(HttpServletResponse httpServletResponse) {
-        if(httpServletResponse == null) {
+    private void check() {
+        if(_httpServletResponse == null) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    public void setUnderlyingObject(Object context) {
+        if(context == null || 
+                context instanceof HttpServletResponse == false) {
             throw new IllegalArgumentException();
         }
-        _httpServletResponse = httpServletResponse;
+        _httpServletResponse = (HttpServletResponse)context;
+        clearBuffer();
     }
     
     public Object getUnderlyingObject() {
+        check();
         return _httpServletResponse;
     }
 
     public void addHeader(String name, String value) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -51,10 +61,12 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public void setStatus(int code) {
+        check();
         _httpServletResponse.setStatus(code);
     }
 
     protected void setContentTypeToUnderlyingObject(String contentType) {
+        check();
         if(StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
@@ -62,6 +74,7 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public OutputStream getOutputStream() {
+        check();
         try {
             return _httpServletResponse.getOutputStream();
         } catch (IOException e) {
@@ -70,13 +83,15 @@ public class ResponseImpl extends AbstractResponse {
     }
     
     public String encodeURL(String url) {
+        check();
         if(StringUtil.isEmpty(url)) {
             throw new IllegalArgumentException();
         }
         return _httpServletResponse.encodeURL(url);
     }
 
-    protected void redirect(String url) {
+    public void redirect(String url) {
+        check();
     	try {
     		_httpServletResponse.sendRedirect(url);
     	} catch(IOException e) {

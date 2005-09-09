@@ -43,7 +43,7 @@ public class ComponentPageInjectionResolver
         String uri = qName.getNamespaceURI();
         if(uri.startsWith("/")) {
 	        ServiceProvider provider = ProviderFactory.getServiceProvider(); 
-	        LibraryManager libraryManager = provider.getTemplateBuilder().getLibraryManager();
+	        LibraryManager libraryManager = provider.getLibraryManager();
 	        if(libraryManager.getProcessorDefinition(qName) == null) {
 	            String name = qName.getLocalName();
 	            String path = StringUtil.preparePath(uri) + StringUtil.preparePath(name);

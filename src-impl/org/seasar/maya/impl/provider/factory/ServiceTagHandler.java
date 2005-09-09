@@ -35,10 +35,12 @@ public class ServiceTagHandler extends TagHandler {
             throw new IllegalArgumentException();
         }
         _context = context;
-        putHandler(new PageSourceTagHandler(this));
+        putHandler(new ServiceCycleTagHandler(this));
+        putHandler(new PageSourceDescriptorTagHandler(this));
         putHandler(new EngineTagHandler(this));
-        putHandler(new ScriptTagHandler(this));
+        putHandler(new ScriptEnvirionmentTagHandler(this));
         putHandler(new SpecificationBuilderTagHandler(this));
+        putHandler(new LibraryManagerTagHandler(this));
         putHandler(new TemplateBuilderTagHandler(this));
     }
 

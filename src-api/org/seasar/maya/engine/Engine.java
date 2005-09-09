@@ -36,6 +36,12 @@ public interface Engine extends Parameterizable, Specification, Serializable {
     String getParameter(String name);
     
     /**
+     * エラーハンドラの設定。
+     * @param errorHandler エラーハンドラ。
+     */
+    void setErrorHandler(ErrorHandler errorHandler);
+    
+    /**
      * エラーハンドラの取得。
      * @return エラーハンドラ。
      */

@@ -19,12 +19,13 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.provider.Parameterizable;
 
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceCycle extends Serializable {
+public interface ServiceCycle extends Parameterizable, Serializable {
     
     /**
      * アプリケーションレベルスコープ。

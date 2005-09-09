@@ -20,19 +20,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.cycle.Application;
+import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.cycle.web.ApplicationImpl;
-import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -44,13 +44,16 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
     
     private Object _context;
-    private ApplicationImpl _application;
+    private Application _application;
+    private Class _serviceCycleClass;
+    private Map _serviceCycleParams;
     private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;
+    private LibraryManager _libraryManager; 
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
     private Class _pageSourceClass;
-    private Map _pageParams;
+    private Map _pageSourceParams;
 	private ThreadLocal _currentServiceCycle = new ThreadLocal();
 	
     public ServiceProviderImpl(Object context) {
@@ -60,21 +63,35 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         _context = context;
     }
     
-    protected ApplicationImpl getApplication0() {
+    public Application getApplication() {
         if(_application == null) {
             if(_context instanceof ServletContext == false) {
                 throw new IllegalStateException();
             }
             ServletContext servletContext = (ServletContext)_context;
-            _application = new ApplicationImpl(servletContext);
+            _application = new ApplicationImpl();
+            _application.setUnderlyingObject(servletContext);
         }
         return _application;
     }
 
-    public Application getApplication() {
-        return getApplication0();
-    }    
-    
+    public void setServiceCycleClass(Class serviceCycleClass) {
+        if(serviceCycleClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _serviceCycleClass = serviceCycleClass;
+    }
+
+    public void setServiceCycleParameter(String name, String value) {
+        if(StringUtil.isEmpty(name) || value == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_serviceCycleParams == null) {
+            _serviceCycleParams = new HashMap();
+        }
+        _serviceCycleParams.put(name, value);
+    }
+
     public void setEngine(Engine engine) {
         if(engine == null) {
             throw new IllegalArgumentException();
@@ -101,6 +118,20 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
             throw new IllegalStateException();
         }
         return _scriptEnvironment;
+    }
+
+    public void setLibraryManager(LibraryManager libraryManager) {
+        if(libraryManager == null) {
+            throw new IllegalArgumentException();
+        }
+        _libraryManager = libraryManager;
+    }
+    
+    public LibraryManager getLibraryManager() {
+        if(_libraryManager == null) {
+            throw new IllegalStateException();
+        }
+        return _libraryManager;
     }
     
     public void setSpecificationBuilder(SpecificationBuilder specificationBuilder) {
@@ -142,10 +173,10 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         if(StringUtil.isEmpty(name) || value == null) {
             throw new IllegalArgumentException();
         }
-        if(_pageParams == null) {
-            _pageParams = new HashMap();
+        if(_pageSourceParams == null) {
+            _pageSourceParams = new HashMap();
         }
-        _pageParams.put(name, value);
+        _pageSourceParams.put(name, value);
     }
     
     public SourceDescriptor getPageSourceDescriptor(String systemID) {
@@ -158,30 +189,39 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         SourceDescriptor source = 
             (SourceDescriptor)ObjectUtil.newInstance(_pageSourceClass);
         source.setSystemID(systemID);
-        if(_pageParams != null) {
-            for(Iterator it = _pageParams.keySet().iterator(); it.hasNext(); ) {
+        if(_pageSourceParams != null) {
+            for(Iterator it = _pageSourceParams.keySet().iterator(); it.hasNext(); ) {
                 String key = (String)it.next();
-                String value = (String)_pageParams.get(key);
+                String value = (String)_pageSourceParams.get(key);
                 source.setParameter(key, value);
             }
         }
         return source;
     }
 
-	public void initialize(Object request, Object response) {
-		if(request == null || response == null ||
-                request instanceof HttpServletRequest == false ||
-                response instanceof HttpServletResponse == false) {
+	public void initialize(Object requestContext, Object responseContext) {
+		if(requestContext == null || responseContext == null) {
 			throw new IllegalArgumentException();
 		}
-		ServiceCycleImpl cycle = (ServiceCycleImpl)_currentServiceCycle.get();
+		ServiceCycle cycle = (ServiceCycle)_currentServiceCycle.get();
     	if(cycle == null) {
-    		cycle = new ServiceCycleImpl(getApplication0());
+            if(_serviceCycleClass == null) {
+                throw new IllegalStateException();
+            }
+    		cycle = (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
+            if(_serviceCycleParams != null) {
+                for(Iterator it = _serviceCycleParams.keySet().iterator(); it.hasNext(); ) {
+                    String key = (String)it.next();
+                    String value = (String)_serviceCycleParams.get(key);
+                    cycle.setParameter(key, value);
+                }
+            }
     		_currentServiceCycle.set(cycle);
     	}
-        HttpServletRequest httpRequest = (HttpServletRequest)request;
-        HttpServletResponse httpResponse = (HttpServletResponse)response;
-		cycle.inithialize(httpRequest, httpResponse);
+		Request request = cycle.getRequest();
+        request.setUnderlyingObject(requestContext);
+        Response response = cycle.getResponse();
+        response.setUnderlyingObject(responseContext);
 	}
 
 	public ServiceCycle getServiceCycle() {

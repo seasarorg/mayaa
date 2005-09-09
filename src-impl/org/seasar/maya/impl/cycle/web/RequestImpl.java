@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -43,16 +43,36 @@ public class RequestImpl extends AbstractRequest {
     private ParamValuesScope _paramValues;
     private HeaderValuesScope _headerValues;
     
-    public RequestImpl(Application application, 
-            HttpServletRequest httpServletRequest) {
-        super(application);
-        if(httpServletRequest == null) {
+    private void check() {
+        if(_httpServletRequest == null) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    public void setUnderlyingObject(Object context) {
+        if(context == null || 
+                context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
-        _httpServletRequest = httpServletRequest;
+        _httpServletRequest = (HttpServletRequest)context;
+        _locales = null;
+        _paramValues = null;
+        _headerValues = null;
+        parsePath(getRequestedPath());
+    }
+    
+    public Object getUnderlyingObject() {
+        check();
+        return _httpServletRequest;
     }
 
+    public HttpSession getHttpSession() {
+        check();
+        return _httpServletRequest.getSession(true);
+    }
+    
     public String getRequestedPath() {
+        check();
         String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
         if(StringUtil.isEmpty(path) || "/".equals(path)) {
@@ -61,12 +81,9 @@ public class RequestImpl extends AbstractRequest {
         }
         return path;
     }
-    
-    public Object getUnderlyingObject() {
-        return _httpServletRequest;
-    }
 
     public Locale[] getLocales() {
+        check();
         if(_locales == null) {
             Enumeration locales = _httpServletRequest.getLocales();
             if(locales == null) {
@@ -83,6 +100,7 @@ public class RequestImpl extends AbstractRequest {
     }
 
     public AttributeScope getParamValues() {
+        check();
         if(_paramValues == null) {
         	_paramValues = new ParamValuesScope(_httpServletRequest);
         }
@@ -90,6 +108,7 @@ public class RequestImpl extends AbstractRequest {
     }
 
     public AttributeScope getHeaderValues() {
+        check();
         if(_headerValues == null) {
         	_headerValues = new HeaderValuesScope(_httpServletRequest);
         }
@@ -97,11 +116,13 @@ public class RequestImpl extends AbstractRequest {
     }
     
     public Iterator iterateAttributeNames() {
+        check();
         return EnumerationIterator.getInstance(
         		_httpServletRequest.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
@@ -115,6 +136,7 @@ public class RequestImpl extends AbstractRequest {
 	}
 
 	public Object getAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
@@ -123,6 +145,7 @@ public class RequestImpl extends AbstractRequest {
     }
 
     public void setAttribute(String name, Object attribute) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
@@ -130,6 +153,7 @@ public class RequestImpl extends AbstractRequest {
     }
     
     public void removeAttribute(String name) {
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }

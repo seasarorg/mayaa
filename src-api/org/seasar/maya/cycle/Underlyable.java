@@ -22,6 +22,12 @@ package org.seasar.maya.cycle;
 public interface Underlyable {
     
     /**
+     * ホストする実サービスオブジェクトの設定メソッド。
+     * @param context 実サービスオブジェクト。
+     */
+    void setUnderlyingObject(Object context);
+    
+    /**
      * ホストする実サービスオブジェクトの取得メソッド。
      * @return 実サービスオブジェクト。
      */

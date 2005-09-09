@@ -18,7 +18,6 @@ package org.seasar.maya.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.ServiceCycle;
@@ -35,31 +34,29 @@ public class SessionImpl implements Session {
 
     private static final long serialVersionUID = -3211729351966533995L;
 
-    private HttpServletRequest _httpServletRequest;
-    private HttpSession _session;
+    private HttpSession _httpSession;
     
-    public SessionImpl(
-            HttpServletRequest httpServletRequest) {
-        if(httpServletRequest == null) {
-            throw new IllegalArgumentException();
+    private void check() {
+        if(_httpSession == null) {
+            throw new IllegalStateException();
         }
-        _httpServletRequest = httpServletRequest;
     }
     
-    private void prepare() {
-        if(_session == null) {
-            _session = _httpServletRequest.getSession(true);
+    public void setUnderlyingObject(Object context) {
+        if(context == null || context instanceof HttpSession == false) {
+            throw new IllegalArgumentException();
         }
+        _httpSession = (HttpSession)context;
     }
 
     public Object getUnderlyingObject() {
-        prepare();
-        return _session;
+        check();
+        return _httpSession;
     }
     
     public String getSessionID() {
-        prepare();
-        return _session.getId();
+        check();
+        return _httpSession.getId();
     }
 
     public String getScopeName() {
@@ -67,14 +64,16 @@ public class SessionImpl implements Session {
     }
     
     public Iterator iterateAttributeNames() {
-        return EnumerationIterator.getInstance(_session.getAttributeNames());
+        check();
+        return EnumerationIterator.getInstance(_httpSession.getAttributeNames());
     }
+
     public boolean hasAttribute(String name) {
-        prepare();
+        check();
         if(StringUtil.isEmpty(name)) {
             return false;
         }
-        for(Enumeration e = _session.getAttributeNames();
+        for(Enumeration e = _httpSession.getAttributeNames();
         		e.hasMoreElements(); ) {
 			if(e.nextElement().equals(name)) {
 				return true;
@@ -84,12 +83,12 @@ public class SessionImpl implements Session {
 	}
 
     public Object getAttribute(String name) {
-        prepare();
+        check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
         return ScriptUtil.convertFromScriptObject(
-                _session.getAttribute(name));
+                _httpSession.getAttribute(name));
     }
 
     public boolean isAttributeWritable() {
@@ -97,19 +96,19 @@ public class SessionImpl implements Session {
 	}
 
     public void setAttribute(String name, Object attribute) {
-        prepare();
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _session.setAttribute(name, attribute);
+        _httpSession.setAttribute(name, attribute);
     }
     
     public void removeAttribute(String name) {
-        prepare();
+        check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _session.removeAttribute(name);
+        _httpSession.removeAttribute(name);
     }
     
     public void setParameter(String name, String value) {

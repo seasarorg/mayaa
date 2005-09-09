@@ -66,6 +66,7 @@ public class ForProcessor extends TemplateProcessorSupport
         }
         int count = ((Integer)_counter.get()).intValue();
         if(count > _max) {
+            // TODO 無限（-1）設定の場合を用意する。
             throw new TooManyLoopException(_max);
         }
         count++;

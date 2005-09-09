@@ -247,7 +247,8 @@ public class PageContextImpl extends PageContext {
 
     public Enumeration getAttributeNamesInScope(int scope) {
         String scopeName = getScopeFromInt(scope);
-        AttributeScope attrScope = AbstractServiceCycle.getAttributeScope(scopeName);
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
     }
 

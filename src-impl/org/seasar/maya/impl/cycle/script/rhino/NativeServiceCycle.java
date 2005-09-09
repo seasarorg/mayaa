@@ -44,7 +44,8 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
     
     public boolean has(String name, Scriptable start) {
-        if(AbstractServiceCycle.hasAttributeScope(name) || 
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        if(cycle.hasAttributeScope(name) || 
                 AbstractServiceCycle.findAttributeScope(name) != null) {
             return true;
         }
@@ -52,8 +53,9 @@ public class NativeServiceCycle extends NativeJavaObject {
     }    
 
     public Object get(String name, Scriptable start) {
-        if(AbstractServiceCycle.hasAttributeScope(name)) {
-            return AbstractServiceCycle.getAttributeScope(name);
+        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        if(cycle.hasAttributeScope(name)) {
+            return cycle.getAttributeScope(name);
         }
         AttributeScope scope = AbstractServiceCycle.findAttributeScope(name);
         if(scope != null) {

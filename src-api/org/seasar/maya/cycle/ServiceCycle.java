@@ -97,6 +97,20 @@ public interface ServiceCycle extends Parameterizable, Serializable {
     Iterator iterateAttributeScope();
 
     /**
+     * 指定スコープを保持しているかをテストする。
+     * @param scopeName 指定スコープ名。
+     * @return テスト結果。指定スコープを保持しているときtrue。
+     */
+    boolean hasAttributeScope(String scopeName);
+    
+    /**
+     * 指定スコープを取得する。
+     * @param scopeName 指定スコープ名。
+     * @return 指定スコープ。スコープが無い場合、例外。
+     */
+    AttributeScope getAttributeScope(String scopeName);
+    
+    /**
      * 「page」スコープオブジェクトの設定。
      * @param page 「page」スコープ。 
      */

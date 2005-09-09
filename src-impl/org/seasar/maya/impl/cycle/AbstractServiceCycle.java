@@ -80,6 +80,32 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         return new ScopeIterator(it);
     }
 
+    public boolean hasAttributeScope(String scopeName) {
+        if(StringUtil.isEmpty(scopeName)) {
+            scopeName = ServiceCycle.SCOPE_PAGE;
+        }
+        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+            AttributeScope scope = (AttributeScope)it.next();
+            if(scope.getScopeName().equals(scopeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public AttributeScope getAttributeScope(String scopeName) {
+        if(StringUtil.isEmpty(scopeName)) {
+            scopeName = ServiceCycle.SCOPE_PAGE;
+        }
+        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+            AttributeScope scope = (AttributeScope)it.next();
+            if(scope.getScopeName().equals(scopeName)) {
+                return scope;
+            }
+        }
+        throw new ScopeNotFoundException(scopeName);
+    }
+
     public void setPageScope(AttributeScope page) {
         if(page == null) {
             throw new IllegalArgumentException();
@@ -169,30 +195,9 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     
     // static util methods ----------------------------------------------
 
-    public static boolean hasAttributeScope(String scopeName) {
-        if(StringUtil.isEmpty(scopeName)) {
-            scopeName = ServiceCycle.SCOPE_PAGE;
-        }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
-            if(scope.getScopeName().equals(scopeName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public static AttributeScope getAttributeScope(String scopeName) {
-        if(StringUtil.isEmpty(scopeName)) {
-            scopeName = ServiceCycle.SCOPE_PAGE;
-        }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
-            if(scope.getScopeName().equals(scopeName)) {
-                return scope;
-            }
-        }
-        throw new ScopeNotFoundException(scopeName);
+    public static ServiceCycle getServiceCycle() {
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        return provider.getServiceCycle();
     }
 
     public static AttributeScope findAttributeScope(String name) {
@@ -207,14 +212,16 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         }
         return null;
     }
-
+    
     public static Object getAttribute(String name, String scopeName) {
-        AttributeScope scope = getAttributeScope(scopeName);
+        ServiceCycle cycle = getServiceCycle();
+        AttributeScope scope = cycle.getAttributeScope(scopeName);
         return scope.getAttribute(name);
     }
 
     public static void setAttribute(String name, Object value, String scopeName) {
-        AttributeScope scope = getAttributeScope(scopeName);
+        ServiceCycle cycle = getServiceCycle();
+        AttributeScope scope = cycle.getAttributeScope(scopeName);
         if(scope.isAttributeWritable()) {
             scope.setAttribute(name, value);
         } else {
@@ -223,17 +230,13 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     }
 
     public static void removeAttribute(String name, String scopeName) {
-    	AttributeScope scope = getAttributeScope(scopeName);
+        ServiceCycle cycle = getServiceCycle();
+    	AttributeScope scope = cycle.getAttributeScope(scopeName);
         if(scope.isAttributeWritable()) {
             scope.removeAttribute(name);
         } else {
             throw new ScopeNotWritableException(scopeName);
         }
-    }
-
-    public static ServiceCycle getServiceCycle() {
-    	ServiceProvider provider = ProviderFactory.getServiceProvider();
-    	return provider.getServiceCycle();
     }
     
 }

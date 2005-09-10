@@ -100,7 +100,7 @@
 		<property name="init" expectedType="void"/>
 		<property name="test" required="true" expectedType="boolean"/>
 		<property name="after" expectedType="void"/>
-		<property name="max" default="1024"/>
+		<property name="max" default="256"/>
 	</processor>		
 
 	<processor name="if"

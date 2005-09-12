@@ -170,6 +170,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             }
             Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
             _wrap = (WrapFactory)ObjectUtil.newInstance(clazz);
+        } else if("blockSign".equals(name)) {
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            setBlockSign(value);
         } else {
             throw new UnsupportedParameterException(getClass(), name);
         }

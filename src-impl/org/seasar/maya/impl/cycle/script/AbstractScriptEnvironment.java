@@ -66,6 +66,10 @@ public abstract class AbstractScriptEnvironment
         _blockSign = blockSign;
     }
     
+    public String getBlockSign() {
+        return _blockSign;
+    }
+    
     protected abstract CompiledScript compile(
             ScriptBlock scriptBlock, String sourceName, int lineno);
     

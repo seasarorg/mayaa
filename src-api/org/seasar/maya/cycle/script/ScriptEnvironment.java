@@ -40,11 +40,10 @@ public interface ScriptEnvironment extends Parameterizable {
     Iterator iterateAttributeScope();
 
     /**
-     * スクリプト文字列ブロックの開きクオートに前置される識別文字列の設定。
-     * デフォルトでは、JSP仕様と同じく、「$」。
-     * @param blockSign 開きクオート前置文字列。
+     * スクリプト文字列ブロックの開きクオートに前置される識別文字列の取得。
+     * @return 開きクオート前置文字列。
      */
-    void setBlockSign(String blockSign);
+    String getBlockSign();
     
     /**
      * 式文字列をコンパイルする。

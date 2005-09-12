@@ -181,20 +181,34 @@ public class SpecificationImpl extends SpecificationNodeImpl
         return null;
     }
     
+    private void execEventScript(String text) {
+        if(StringUtil.hasValue(text)) {
+            CompiledScript script = 
+                AbstractScriptEnvironment.compile(text, Void.class);
+            script.execute();
+        }
+    }
+    
     public void execEvent(QName eventName) {
         if(eventName == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode maya = getMayaNode(this);
         if(maya != null) {
+            for(Iterator it = maya.iterateChildNode(); it.hasNext(); ) {
+                SpecificationNode child = (SpecificationNode)it.next();
+                if(eventName.equals(child.getQName())) {
+                    String bodyText = getNodeBodyText(child);
+                    String blockSign = AbstractScriptEnvironment.
+                        getScriptEnvironment().getBlockSign();
+                    bodyText = blockSign + "{" + bodyText + "}"; 
+                    execEventScript(bodyText);
+                }
+            }
             NodeAttribute attr = maya.getAttribute(eventName);
             if(attr != null) {
-                String text = attr.getValue();
-                if(StringUtil.hasValue(text)) {
-                    CompiledScript script = 
-                        AbstractScriptEnvironment.compile(text, Void.class);
-                    script.execute();
-                }
+                String attrText = attr.getValue();
+                execEventScript(attrText);
             }
         }
     }
@@ -298,6 +312,24 @@ public class SpecificationImpl extends SpecificationNodeImpl
         return null;
     }
 
+    public static String getNodeBodyText(SpecificationNode node) {
+        StringBuffer buffer = new StringBuffer();
+        for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
+            SpecificationNode child = (SpecificationNode)it.next();
+            QName qName = child.getQName();
+            if(QM_CDATA.equals(qName)) {
+                buffer.append(getNodeBodyText(child));
+            } else if(QM_CHARACTERS.equals(qName)) {
+                buffer.append(SpecificationNodeImpl.getAttributeValue(
+                        child, QM_TEXT));
+            } else {
+                String name = child.getPrefix() + ":" + qName.getLocalName();
+                throw new IllegalChildNodeException(name);
+            }
+        }
+        return buffer.toString();
+    }
+    
     public static void initScope() {
         AbstractScriptEnvironment.getScriptEnvironment().initScope();
     }

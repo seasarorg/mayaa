@@ -15,7 +15,9 @@
  */
 package org.seasar.maya.impl.builder;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 import org.seasar.maya.builder.TemplateBuilder;
@@ -32,7 +34,6 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.injection.CompositeInjectionResolver;
 import org.seasar.maya.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.builder.parser.TemplateParser;
@@ -59,14 +60,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
 	private static final long serialVersionUID = 4578697145887676787L;
 
-    private CompositeInjectionResolver _injectionResolver = 
-        new CompositeInjectionResolver();
+    private List _resolvers = new ArrayList();
     
     public void addInjectionResolver(InjectionResolver resolver) {
-    	if(resolver == null) {
-    		throw new IllegalArgumentException();
-    	}
-        _injectionResolver.add(resolver);
+        if(resolver == null) {
+            throw new IllegalArgumentException();
+        }
+        synchronized (_resolvers) {
+            _resolvers.add(resolver);
+        }
     }
     
     protected XMLReader createXMLReader() {
@@ -98,7 +100,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if(source.exists()) {
 	        super.build(specification);
 	        try {
-	            resolveTemplate((Template)specification);
+	            doInjection((Template)specification);
 	        } catch(Throwable t) {
 	            specification.kill();
 				if(t instanceof RuntimeException) {
@@ -109,18 +111,19 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
-    private void saveToCycle(SpecificationNode originalNode,
+    protected void saveToCycle(SpecificationNode originalNode,
             SpecificationNode injectedNode) {
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         cycle.setOriginalNode(originalNode);
         cycle.setInjectedNode(injectedNode);
     }
     
-    private TemplateProcessor getConnectPoint(TemplateProcessor processor) {
+    protected TemplateProcessor findConnectPoint(
+            TemplateProcessor processor) {
         if(processor instanceof ElementProcessor &&
                 ((ElementProcessor)processor).isDuplicated()) {
             // "processor"'s m:rendered is true, ripping duplicated element.
-            return getConnectPoint(processor.getChildProcessor(0));
+            return findConnectPoint(processor.getChildProcessor(0));
         }
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
             TemplateProcessor child = processor.getChildProcessor(i);
@@ -146,7 +149,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return processor;
     }
     
-    private TemplateProcessor createProcessor(
+    protected TemplateProcessor createProcessor(
             SpecificationNode original, SpecificationNode injected) {
         QName name = injected.getQName();
         ServiceProvider provider = ProviderFactory.getServiceProvider(); 
@@ -161,7 +164,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return null;
     }
     
-    private TemplateProcessor resolveInjectedNode(Template template, 
+    protected TemplateProcessor resolveInjectedNode(Template template, 
             Stack stack, SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
@@ -209,10 +212,22 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if(connectionPoint != null) {
             return connectionPoint;
         }
-        return getConnectPoint(processor);
+        return findConnectPoint(processor);
     }
     
-    private void resolveChildren(
+    protected SpecificationNode resolveOriginalNode(
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_resolvers.size() > 0) {
+            InjectionChainImpl first = new InjectionChainImpl(chain);
+            return first.getNode(original);
+        }
+        return chain.getNode(original);
+    }
+    
+    protected void walkParsedTree(
             Template template, Stack stack, SpecificationNode original) {
         if(original == null) {
             throw new IllegalArgumentException();
@@ -226,7 +241,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 continue;
             }
             InjectionChain chain = DefaultInjectionChain.getInstance(); 
-            SpecificationNode injected = _injectionResolver.getNode(child, chain);
+            SpecificationNode injected = resolveOriginalNode(child, chain);
             if(injected == null) {
                 throw new TemplateNodeNotResolvedException();
             }
@@ -235,13 +250,13 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                     template, stack, original, injected);
             if(processor != null) {
                 stack.push(processor);
-                resolveChildren(template, stack, child);
+                walkParsedTree(template, stack, child);
                 stack.pop();
             }
         }
     }
     
-    public void resolveTemplate(Template template) {
+    protected void doInjection(Template template) {
         if(template == null) {
             throw new IllegalArgumentException();
         }
@@ -251,11 +266,46 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         SpecificationNode maya = new SpecificationNodeImpl(
                 QM_MAYA, template.getSystemID(), 0);
         template.addChildNode(maya);
-        resolveChildren(template, stack, template);
+        walkParsedTree(template, stack, template);
         if(template.equals(stack.peek()) == false) {
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
     }
     
+    // support class --------------------------------------------------
+    
+    protected class InjectionChainImpl implements InjectionChain {
+        
+        private int _index;
+        private InjectionChain _external;
+        
+        public InjectionChainImpl(InjectionChain external) {
+            if (external == null) {
+                throw new IllegalArgumentException();
+            }
+            _external = external;
+        }
+        
+        public SpecificationNode getNode(SpecificationNode original) {
+            if(original == null) {
+                throw new IllegalArgumentException();
+            }
+            if(_index < _resolvers.size()) {
+                InjectionResolver resolver =
+                    (InjectionResolver)_resolvers.get(_index);
+                _index++;
+                InjectionChain chain;
+                if(_index == _resolvers.size()) {
+                    chain = _external;
+                } else {
+                    chain = this;
+                }
+                return resolver.getNode(original, chain);
+            }
+            throw new IndexOutOfBoundsException();
+        }
+
+    }
+
 }

@@ -38,54 +38,50 @@ public interface CONST_IMPL {
     String PUBLIC_MLD10 = "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
     String PUBLIC_PROVIDER10 = "-//The Seasar Foundation//DTD Maya Provider 1.0//EN";
     
-    QName QH_HTML = new QNameImpl(URI_HTML, "html");
-    QName QH_META = new QNameImpl(URI_HTML, "meta");
-    QName QH_ID = new QNameImpl(URI_HTML, ATTR_ID);
     QName QH_CONTENT = new QNameImpl(URI_HTML, "content");
+    QName QH_HTML = new QNameImpl(URI_HTML, "html");
     QName QH_HTTP_EQUIV = new QNameImpl(URI_HTML, "http-equiv");    
+    QName QH_ID = new QNameImpl(URI_HTML, ATTR_ID);
+    QName QH_META = new QNameImpl(URI_HTML, "meta");
     
-    QName QX_HTML = new QNameImpl(URI_XHTML, "html");
-    QName QX_META = new QNameImpl(URI_XHTML, "meta");
-    QName QX_ID = new QNameImpl(URI_XHTML, ATTR_ID);
     QName QX_CONTENT = new QNameImpl(URI_XHTML, "content");
+    QName QX_HTML = new QNameImpl(URI_XHTML, "html");
     QName QX_HTTP_EQUIV = new QNameImpl(URI_XHTML, "http-equiv");    
+    QName QX_ID = new QNameImpl(URI_XHTML, ATTR_ID);
+    QName QX_META = new QNameImpl(URI_XHTML, "meta");
 
-    QName QM_ENGINE = new QNameImpl("engine");
-	QName QM_PAGE = new QNameImpl("page");
-	QName QM_TEMPLATE = new QNameImpl("template");
-    
-	QName QM_MAYA = new QNameImpl("maya");
-	QName QM_CONTENT_TYPE = new QNameImpl("contentType");
-    QName QM_INJECT = new QNameImpl(ATTR_INJECT);
-    QName QM_ID = new QNameImpl("id");
-    QName QM_XPATH = new QNameImpl("xpath");
-    QName QM_RENDERED = new QNameImpl("rendered");
-    QName QM_ELEMENT = new QNameImpl("element");
-    QName QM_NAME = new QNameImpl("name");
-    QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
-    QName QM_DUPLECATED_ELEMENT = new QNameImpl("duplecatedElement");
     QName QM_ATTRIBUTE = new QNameImpl("attribute");
-    QName QM_CHARACTERS = new QNameImpl("characters");
-    QName QM_TEXT = new QNameImpl("text");    
-    QName QM_PROCESSING_INSTRUCTION = new QNameImpl("processingInstruction");
-    QName QM_TARGET = new QNameImpl("target");
-    QName QM_DATA = new QNameImpl("data");
-    QName QM_COMMENT = new QNameImpl("comment");
     QName QM_CDATA = new QNameImpl("cdata");
+    QName QM_CHARACTERS = new QNameImpl("characters");
+    QName QM_COMMENT = new QNameImpl("comment");
     QName QM_DOCTYPE = new QNameImpl("doctype");
-    QName QM_PUBLIC_ID = new QNameImpl("publicID");
-    QName QM_SYSTEM_ID = new QNameImpl("systemID");
-    
-    QName QM_IGNORE = new QNameImpl("ignore");
-    
+    QName QM_DUPLECATED_ELEMENT = new QNameImpl("duplecatedElement");
+    QName QM_ELEMENT = new QNameImpl("element");
+    QName QM_ENGINE = new QNameImpl("engine");
+    QName QM_MAYA = new QNameImpl("maya");
+    QName QM_NULL = new QNameImpl("null");
+    QName QM_PAGE = new QNameImpl("page");
+    QName QM_PROCESSING_INSTRUCTION = new QNameImpl("processingInstruction");
+    QName QM_TEMPLATE = new QNameImpl("template");
+    QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
+
+    QName QM_AFTER_RENDER = new QNameImpl("afterRender");
 	QName QM_BEFORE_RENDER = new QNameImpl("beforeRender");
-	QName QM_AFTER_RENDER = new QNameImpl("afterRender");
-
     QName QM_CLASS = new QNameImpl("class");
-    QName QM_SCOPE = new QNameImpl("scope");
-
-    QName QM_TEMPLATE_SUFFIX = new QNameImpl("templateSuffix");
-
+    QName QM_CONTENT_TYPE = new QNameImpl("contentType");
+    QName QM_DATA = new QNameImpl("data");
+    QName QM_ID = new QNameImpl("id");
+    QName QM_IGNORE = new QNameImpl("ignore");
+    QName QM_INJECT = new QNameImpl(ATTR_INJECT);
+    QName QM_NAME = new QNameImpl("name");
     QName QM_PATH = new QNameImpl("path");
+    QName QM_PUBLIC_ID = new QNameImpl("publicID");
+    QName QM_RENDERED = new QNameImpl("rendered");
+    QName QM_SCOPE = new QNameImpl("scope");
+    QName QM_SYSTEM_ID = new QNameImpl("systemID");
+    QName QM_TARGET = new QNameImpl("target");
+    QName QM_TEMPLATE_SUFFIX = new QNameImpl("templateSuffix");
+    QName QM_TEXT = new QNameImpl("text");    
+    QName QM_XPATH = new QNameImpl("xpath");
     
 }

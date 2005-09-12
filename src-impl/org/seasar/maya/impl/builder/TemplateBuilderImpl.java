@@ -281,9 +281,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         private InjectionChain _external;
         
         public InjectionChainImpl(InjectionChain external) {
-            if (external == null) {
-                throw new IllegalArgumentException();
-            }
             _external = external;
         }
         
@@ -307,5 +304,5 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
 
     }
-
+    
 }

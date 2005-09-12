@@ -56,10 +56,10 @@
 	</libraryManager>
 	
 	<templateBuilder class="org.seasar.maya.impl.builder.TemplateBuilderImpl">
-		<resolver class="org.seasar.maya.impl.builder.injection.ContentTypeSetter"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.HtmlAttributesSetter"/>
-		<resolver class="org.seasar.maya.impl.builder.injection.ElementDuplicator"/>
-		<resolver class="org.seasar.maya.impl.builder.injection.ComponentPageInjectionResolver"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.ContentTypeSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.RenderedSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.ComponentPageSetter"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.InjectAttributeInjectionResolver"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.EqualsIDInjectionResolver">
 			<parameter name="reportUnresolvedID" value="true"/>

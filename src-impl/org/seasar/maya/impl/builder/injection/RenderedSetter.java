@@ -29,7 +29,7 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
+public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	
 	private boolean isRendered(SpecificationNode node) {
 	    if(node == null) {
@@ -51,12 +51,16 @@ public class ElementDuplicator	implements InjectionResolver, CONST_IMPL {
 	    if(injected == null) {
 	    	return null;
 	    }
-   		if(isRendered(original) || isRendered(injected)) {
+        if(QM_TEMPLATE_ELEMENT.equals(injected.getQName())) {
+            if(isRendered(original) == false) {
+                return SpecificationImpl.createInjectedNode(
+                        QM_NULL, null, original);
+            }
+        } else if(isRendered(original) || isRendered(injected)) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = SpecificationImpl.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original);
-            // TODO ÉVÉìÉvÉãâªÅB
             StringBuffer name = new StringBuffer();
    		    String prefix = original.getPrefix();
             if(StringUtil.hasValue(prefix)) {

@@ -254,12 +254,17 @@ public class SpecificationImpl extends SpecificationNodeImpl
     
     public static SpecificationNode createInjectedNode(
             QName qName, String uri, SpecificationNode original) {
+        if(qName == null || original == null) {
+            throw new IllegalArgumentException();
+        }
         SpecificationNodeImpl node = new SpecificationNodeImpl(
                 qName, original.getSystemID(), original.getLineNumber());
-        for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
-            NodeAttribute attr = (NodeAttribute)it.next();
-            if(uri.equals(attr.getQName().getNamespaceURI())) {
-                node.addAttribute(attr.getQName(), attr.getValue());
+        if(StringUtil.hasValue(uri)) {
+            for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
+                NodeAttribute attr = (NodeAttribute)it.next();
+                if(uri.equals(attr.getQName().getNamespaceURI())) {
+                    node.addAttribute(attr.getQName(), attr.getValue());
+                }
             }
         }
         node.setParentScope(original.getParentScope());

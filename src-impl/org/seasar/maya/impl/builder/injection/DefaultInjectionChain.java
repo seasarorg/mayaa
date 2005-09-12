@@ -20,25 +20,26 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
     
-    private static final DefaultInjectionChain _instance = new DefaultInjectionChain();
-    private static final QName[] _specialNames = new QName[] {
-            QM_CDATA,
-            QM_CHARACTERS,
-            QM_COMMENT,
-            QM_DOCTYPE,
-            QM_PROCESSING_INSTRUCTION
-    };
+    private static final DefaultInjectionChain _instance = 
+        new DefaultInjectionChain();
     
     public static InjectionChain getInstance() {
         return _instance;
     }
+
+    private QName[] _specialNames = new QName[] {
+        QM_CDATA,
+        QM_CHARACTERS,
+        QM_COMMENT,
+        QM_DOCTYPE,
+        QM_PROCESSING_INSTRUCTION
+    };
     
     private DefaultInjectionChain() {
     }
@@ -63,13 +64,9 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         String uri = qName.getNamespaceURI();
         SpecificationNode element =  SpecificationImpl.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original);
-        StringBuffer name = new StringBuffer();
-            String prefix = original.getPrefix();
-        if(StringUtil.hasValue(prefix)) {
-            name.append(prefix).append(":");
-        }
-        name.append(qName.getLocalName());
-        element.addAttribute(QM_NAME, name.toString());
+        element.addAttribute(QM_NAMESPACE_URI, uri);
+        element.addAttribute(QM_LOCAL_NAME, qName.getLocalName());
+        element.addAttribute(QM_PREFIX, original.getPrefix());
         return element;
     }
 

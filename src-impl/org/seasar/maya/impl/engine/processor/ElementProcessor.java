@@ -27,6 +27,8 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
+import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -37,6 +39,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
 	private static final long serialVersionUID = 923306412062075314L;
 
+    private String _namespaceURI;
+    private String _localName;
+    private String _prefix;
 	private QNameable _name;
     private boolean _duplicated;
 
@@ -56,6 +61,30 @@ public class ElementProcessor extends AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         _name = name;
+    }
+    
+    // MLD property
+    public void setNamespaceURI(String namespaceURI) {
+        if(StringUtil.isEmpty(namespaceURI)) {
+            throw new IllegalArgumentException();
+        }
+        _namespaceURI = namespaceURI;
+    }
+    
+    // MLD property
+    public void setLocalName(String localName) {
+        if(StringUtil.isEmpty(localName)) {
+            throw new IllegalArgumentException();
+        }
+        _localName = localName;
+    }
+    
+    // MLD property
+    public void setPrefix(String prefix) {
+        if(prefix == null) {
+            throw new IllegalArgumentException();
+        }
+        _prefix = prefix;
     }
     
     private boolean isHTML(QName qName) {
@@ -91,10 +120,21 @@ public class ElementProcessor extends AbstractAttributableProcessor
         cycle.getResponse().write(buffer.toString());
     }
     
-    protected ProcessStatus writeStartElement() {
+    private void checkName() {
         if(_name == null) {
-            throw new IllegalStateException();
+            if(StringUtil.isEmpty(_namespaceURI) || 
+                    StringUtil.isEmpty(_localName) || _prefix == null) {
+                throw new IllegalStateException();
+            }
+            QName qName = new QNameImpl(_namespaceURI, _localName);
+            QNameableImpl name = new QNameableImpl(qName);
+            name.addNamespace(_prefix, _namespaceURI);
+            _name = name;
         }
+    }
+    
+    protected ProcessStatus writeStartElement() {
+        checkName();
         StringBuffer buffer = new StringBuffer("<");
         String prefix = _name.getPrefix();
         if(StringUtil.hasValue(prefix)) {

@@ -24,7 +24,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -61,14 +60,10 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = SpecificationImpl.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original);
-            StringBuffer name = new StringBuffer();
-   		    String prefix = original.getPrefix();
-            if(StringUtil.hasValue(prefix)) {
-                name.append(prefix).append(":");
-            }
-            name.append(qName.getLocalName());
-            element.addAttribute(QM_NAME, name.toString());
-   			element.addChildNode(injected);
+            element.addAttribute(QM_NAMESPACE_URI, uri);
+            element.addAttribute(QM_LOCAL_NAME, qName.getLocalName());
+            element.addAttribute(QM_PREFIX, original.getPrefix());
+            element.addChildNode(injected);
    			return element;
    		}
         return injected;

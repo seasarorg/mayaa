@@ -35,12 +35,16 @@
 	
 	<processor name="templateElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>element on the template</description>
-		<property name="name" required="true"/>
+		<property name="namespaceURI" required="true"/>
+		<property name="localName" required="true"/>
+		<property name="prefix" required="true"/>
 	</processor>
 	
 	<processor name="duplecatedElement" class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>duplecated element on the template by m:rendered="true"</description>
-		<property name="name" required="true"/>
+		<property name="namespaceURI" required="true"/>
+		<property name="localName" required="true"/>
+		<property name="prefix" required="true"/>
 		<property name="duplicated" default="true"/>
 	</processor>
 

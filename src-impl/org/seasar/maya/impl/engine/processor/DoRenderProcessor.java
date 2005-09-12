@@ -23,4 +23,15 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = 4309532215454978747L;
 
+    private boolean _rendered = false;
+    
+    // MLD property, default=false
+    public void setRendered(boolean rendered) {
+        _rendered = rendered;
+    }
+    
+    public boolean isRendered() {
+        return _rendered;
+    }
+    
 }

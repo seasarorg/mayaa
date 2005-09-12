@@ -29,8 +29,8 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentPageProcessor extends AbstractAttributableProcessor
-		implements CONST_IMPL {
+public class ComponentPageProcessor
+        extends AbstractAttributableProcessor	implements CONST_IMPL {
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	private String _path;
@@ -55,15 +55,16 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         return page;
     }
     
-    protected DoRenderProcessor findDoRender(TemplateProcessor processor) {
+    protected DoRenderProcessor findDoRender(
+            TemplateProcessor processor) {
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
             TemplateProcessor childProcessor = processor.getChildProcessor(i);
             if(childProcessor instanceof DoRenderProcessor) {
                 return (DoRenderProcessor)childProcessor;
             }
-            DoRenderProcessor doContentsProcessor = findDoRender(childProcessor);
-            if(doContentsProcessor != null) {
-                return doContentsProcessor;
+            DoRenderProcessor doRender = findDoRender(childProcessor);
+            if(doRender != null) {
+                return doRender;
             }
         }
         return null;
@@ -96,7 +97,12 @@ public class ComponentPageProcessor extends AbstractAttributableProcessor
         template.setParentProcessor(this, 0);
         DoRenderProcessor start = findDoRender(template);
         if(start != null) {
-            template.doTemplateRender(start);
+            if(start.isRendered()) {
+                TemplateProcessor duplecated = start.getParentProcessor();
+                template.doTemplateRender(duplecated);
+            } else {
+                template.doTemplateRender(start);
+            }
             return SKIP_BODY;
         }
         throw new DoRenderNotFoundException();

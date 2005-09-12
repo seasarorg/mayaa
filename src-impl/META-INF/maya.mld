@@ -64,6 +64,7 @@
 
 	<processor name="doRender" class="org.seasar.maya.impl.engine.processor.DoRenderProcessor">
 		<description>m:doRender injection</description>
+		<property name="rendered" default="false"/>
 	</processor>
 
 	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">

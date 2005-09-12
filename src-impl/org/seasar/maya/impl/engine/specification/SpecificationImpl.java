@@ -199,9 +199,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
                 SpecificationNode child = (SpecificationNode)it.next();
                 if(eventName.equals(child.getQName())) {
                     String bodyText = getNodeBodyText(child);
-                    String blockSign = AbstractScriptEnvironment.
-                        getScriptEnvironment().getBlockSign();
-                    bodyText = blockSign + "{" + bodyText + "}"; 
+                    bodyText = getBlockSignedText(bodyText);
                     execEventScript(bodyText);
                 }
             }
@@ -328,6 +326,15 @@ public class SpecificationImpl extends SpecificationNodeImpl
             }
         }
         return buffer.toString();
+    }
+    
+    public static String getBlockSignedText(String text) {
+        if(StringUtil.isEmpty(text)) {
+            return text;
+        }
+        String blockSign = 
+            AbstractScriptEnvironment.getScriptEnvironment().getBlockSign();
+        return text = blockSign + "{" + text.trim() + "}"; 
     }
     
     public static void initScope() {

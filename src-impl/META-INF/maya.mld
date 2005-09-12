@@ -74,13 +74,13 @@
 	<processor name="with"
 			class="org.seasar.maya.impl.engine.processor.TemplateProcessorSupport">
 		<description>in order to grouping processor</description>
-		<property name="path" default="true"/>
+		<property name="rendered" default="true"/>
 	</processor>
 
 	<processor name="null"
 			class="org.seasar.maya.impl.engine.processor.TemplateProcessorSupport">
 		<description>in order to grouping processor</description>
-		<property name="path" default="false"/>
+		<property name="rendered" default="false"/>
 	</processor>
 
 	<processor name="exec"

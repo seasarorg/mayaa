@@ -31,7 +31,7 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	
-	private boolean isRendered(SpecificationNode node) {
+	private boolean isRendered(SpecificationNode node, boolean def) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
 	    }
@@ -39,7 +39,7 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
     	if(attr != null) {
     		return ObjectUtil.booleanValue(attr.getValue(), false);
     	}
-    	return false;
+    	return def;
 	}
 	
 	public SpecificationNode getNode( 
@@ -52,11 +52,11 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	    	return null;
 	    }
         if(QM_TEMPLATE_ELEMENT.equals(injected.getQName())) {
-            if(isRendered(original) == false) {
+            if(isRendered(original, true) == false) {
                 return SpecificationImpl.createInjectedNode(
                         QM_NULL, null, original);
             }
-        } else if(isRendered(original) || isRendered(injected)) {
+        } else if(isRendered(original, false) || isRendered(injected, false)) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = SpecificationImpl.createInjectedNode(

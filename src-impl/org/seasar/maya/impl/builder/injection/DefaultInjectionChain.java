@@ -20,6 +20,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -64,9 +65,13 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         String uri = qName.getNamespaceURI();
         SpecificationNode element =  SpecificationImpl.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original);
-        element.addAttribute(QM_NAMESPACE_URI, uri);
-        element.addAttribute(QM_LOCAL_NAME, qName.getLocalName());
-        element.addAttribute(QM_PREFIX, original.getPrefix());
+        StringBuffer name = new StringBuffer();
+            String prefix = original.getPrefix();
+        if(StringUtil.hasValue(prefix)) {
+            name.append(prefix).append(":");
+        }
+        name.append(qName.getLocalName());
+        element.addAttribute(QM_NAME, name.toString());
         return element;
     }
 

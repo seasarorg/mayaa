@@ -22,16 +22,16 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.CopyToFilter;
-import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
+import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.XPathUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -64,6 +64,21 @@ public class EqualsIDInjectionResolver
 		return null;
     }
 
+    private SpecificationNode getEqualsIDNode(
+            SpecificationNode node, String id) {
+        for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
+            SpecificationNode child = (SpecificationNode)it.next();
+            if(id.equals(SpecificationNodeImpl.getAttributeValue(child, QM_ID))) {
+                return child;
+            }
+            SpecificationNode ret = getEqualsIDNode(child, id);
+            if(ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
+    
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
         if(original == null || chain == null) {
@@ -71,14 +86,17 @@ public class EqualsIDInjectionResolver
         }
         String id = getID(original);
         if(StringUtil.hasValue(id)) {
-            Namespaceable namespaceable = new NamespaceableImpl();
-            namespaceable.addNamespace("m", URI_MAYA);
-            String xpathExpr = "/m:maya//*[@m:id='" + id + "']"; 
-            // TODO XPathàÀë∂ÇÇ»Ç≠Ç∑ÅB
-            Iterator it = XPathUtil.selectChildNodes(
-                    original, xpathExpr, namespaceable, true);
-	        if(it.hasNext()) {
-	            SpecificationNode injected = (SpecificationNode)it.next();
+            Specification spec = SpecificationImpl.findSpecification(original);
+            SpecificationNode injected = null;
+            while(spec != null) {
+                SpecificationNode maya = SpecificationImpl.getMayaNode(spec);
+                injected = getEqualsIDNode(maya, id);
+                if(injected != null) {
+                    break;
+                }
+                spec = spec.getParentSpecification();
+            }
+	        if(injected != null) {
 	            if(QM_IGNORE.equals(injected.getQName())) {
 	                return chain.getNode(original);
 	            }

@@ -73,11 +73,8 @@ public interface CONST_IMPL {
     QName QM_ID = new QNameImpl("id");
     QName QM_IGNORE = new QNameImpl("ignore");
     QName QM_INJECT = new QNameImpl(ATTR_INJECT);
-    QName QM_LOCAL_NAME = new QNameImpl("localName");
     QName QM_NAME = new QNameImpl("name");
-    QName QM_NAMESPACE_URI = new QNameImpl("namespaceURI");
     QName QM_PATH = new QNameImpl("path");
-    QName QM_PREFIX = new QNameImpl("prefix");
     QName QM_PUBLIC_ID = new QNameImpl("publicID");
     QName QM_RENDERED = new QNameImpl("rendered");
     QName QM_SCOPE = new QNameImpl("scope");

@@ -45,10 +45,12 @@ import org.xml.sax.ext.LexicalHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationNodeHandler implements EntityResolver, DTDHandler, 
-        ContentHandler, ErrorHandler, LexicalHandler, AdditionalHandler, CONST_IMPL {
+public class SpecificationNodeHandler
+        implements EntityResolver, DTDHandler, ContentHandler, 
+        ErrorHandler, LexicalHandler, AdditionalHandler, CONST_IMPL {
     
-    private static final Log LOG = LogFactory.getLog(SpecificationNodeHandler.class);
+    private static final Log LOG = 
+        LogFactory.getLog(SpecificationNodeHandler.class);
 
     private Specification _specification;
     private SpecificationNode _current;

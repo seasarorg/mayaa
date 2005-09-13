@@ -22,7 +22,7 @@ import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -43,7 +43,7 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
 
     public Expression parseExpression(String expression, Class expectedType, 
             FunctionMapper fMapper) throws ELException {
-        CompiledScript script = AbstractScriptEnvironment.compile(expression, expectedType);
+        CompiledScript script = ScriptUtil.compile(expression, expectedType);
         return new ExpressionImpl(script);
     }
 

@@ -26,7 +26,7 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.XPathUtil;
 
@@ -50,7 +50,7 @@ public class XPathMatchesInjectionResolver
         for(Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespaceable, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
-            String mayaPath = SpecificationNodeImpl.getAttributeValue(injected, QM_XPATH);
+            String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, injected)) {
                 return injected.copyTo(_xpathFilter);
             }

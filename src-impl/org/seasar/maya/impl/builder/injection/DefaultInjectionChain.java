@@ -19,7 +19,7 @@ import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -63,7 +63,7 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         }
         QName qName = original.getQName(); 
         String uri = qName.getNamespaceURI();
-        SpecificationNode element =  SpecificationImpl.createInjectedNode(
+        SpecificationNode element =  BuilderUtil.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original, false);
         StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();

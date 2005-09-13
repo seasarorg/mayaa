@@ -24,7 +24,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -70,13 +70,13 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(source == null) {
             throw new ScriptFileNotFoundException(systemID);
         }
-        ScriptEnvironment env = AbstractScriptEnvironment.getScriptEnvironment();
+        ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
         CompiledScript script = env.compile(source, encoding);
         script.execute();
     }
 
     public Iterator iterateAttributeScope() {
-        Iterator it = AbstractScriptEnvironment.getScriptEnvironment().iterateAttributeScope();
+        Iterator it = ScriptUtil.getScriptEnvironment().iterateAttributeScope();
         return new ScopeIterator(it);
     }
 

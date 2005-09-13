@@ -28,9 +28,9 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -128,7 +128,7 @@ public class PageImpl extends SpecificationImpl
 
     private String findAttributeValue(Specification specification, QName qName) {
         while(specification != null) {
-            String value = SpecificationNodeImpl.getAttributeValue(specification, qName);
+            String value = SpecificationUtil.getAttributeValue(specification, qName);
             if(value != null) {
                 return value;
             }
@@ -140,7 +140,7 @@ public class PageImpl extends SpecificationImpl
     protected String getTemplateSuffix() {
         String text = findAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(text)) {
-            CompiledScript action = AbstractScriptEnvironment.compile(text, String.class);
+            CompiledScript action = ScriptUtil.compile(text, String.class);
             return (String)action.execute();
         }
         return "";
@@ -176,7 +176,7 @@ public class PageImpl extends SpecificationImpl
     public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
         Object model = getSpecificationModel();
-        startScope(model);
+        SpecificationUtil.startScope(model);
         execEvent(QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
@@ -185,7 +185,7 @@ public class PageImpl extends SpecificationImpl
             saveToCycle();
         }
         execEvent(QM_AFTER_RENDER);
-        endScope();
+        SpecificationUtil.endScope();
         return ret;
     }
 

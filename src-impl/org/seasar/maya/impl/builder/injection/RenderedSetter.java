@@ -21,7 +21,7 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -53,13 +53,13 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	    }
         if(QM_TEMPLATE_ELEMENT.equals(injected.getQName())) {
             if(isRendered(original, true) == false) {
-                return SpecificationImpl.createInjectedNode(
+                return BuilderUtil.createInjectedNode(
                         QM_NULL, null, original, false);
             }
         } else if(isRendered(original, false) || isRendered(injected, false)) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
-   		    SpecificationNode element = SpecificationImpl.createInjectedNode(
+   		    SpecificationNode element = BuilderUtil.createInjectedNode(
    		            QM_DUPLECATED_ELEMENT, uri, original, false);
             StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();

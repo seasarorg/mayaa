@@ -21,9 +21,8 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.QNameableImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.builder.BuilderUtil;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -39,14 +38,14 @@ public class InjectAttributeInjectionResolver
             throw new IllegalArgumentException();
         }
     	String injectName = 
-            SpecificationNodeImpl.getAttributeValue(original, QM_INJECT);
+            SpecificationUtil.getAttributeValue(original, QM_INJECT);
         if(StringUtil.hasValue(injectName)) {
             QNameable qNameable = 
-                QNameableImpl.parseName(original, injectName);
+                BuilderUtil.parseName(original, injectName);
             QName qName = qNameable.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();
-	            return SpecificationImpl.createInjectedNode(
+	            return BuilderUtil.createInjectedNode(
                         qName, uri, original, true); 
             }
         }

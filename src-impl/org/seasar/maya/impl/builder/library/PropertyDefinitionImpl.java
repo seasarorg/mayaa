@@ -29,9 +29,9 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.engine.specification.QNameImpl;
-import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -155,7 +155,7 @@ public class PropertyDefinitionImpl
                 NodeAttribute attr = injected.getAttribute(qName);
 	            return new ProcessorPropertyImpl(attr, value, getExpectedType());
 	        } else if(propertyType.equals(QNameable.class)) {
-                return QNameableImpl.parseName(injected.getParentScope(), value); 
+                return BuilderUtil.parseName(injected.getParentScope(), value); 
             }
 	        return value;
         } else if(_required) {

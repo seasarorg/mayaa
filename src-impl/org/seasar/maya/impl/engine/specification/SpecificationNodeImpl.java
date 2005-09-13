@@ -188,16 +188,5 @@ public class SpecificationNodeImpl extends QNameableImpl
         }
         
     }
-    
-    // static util method ----------------------------------------------
-    
-    public static String getAttributeValue(
-            SpecificationNode node, QName qName) {
-        NodeAttribute nameAttr = node.getAttribute(qName);
-        if(nameAttr != null) {
-        	return nameAttr.getValue();
-        }
-        return null;
-    }
 
 }

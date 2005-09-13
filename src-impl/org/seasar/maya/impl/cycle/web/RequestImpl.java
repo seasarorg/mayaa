@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.AbstractRequest;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -141,7 +141,7 @@ public class RequestImpl extends AbstractRequest {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        ScriptEnvironment env = AbstractScriptEnvironment.getScriptEnvironment(); 
+        ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
         return env.convertFromScriptObject(_httpServletRequest.getAttribute(name));
     }
 

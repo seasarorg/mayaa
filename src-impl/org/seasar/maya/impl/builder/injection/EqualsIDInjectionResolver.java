@@ -27,8 +27,7 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -68,7 +67,7 @@ public class EqualsIDInjectionResolver
             SpecificationNode node, String id) {
         for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
             SpecificationNode child = (SpecificationNode)it.next();
-            if(id.equals(SpecificationNodeImpl.getAttributeValue(child, QM_ID))) {
+            if(id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
                 return child;
             }
             SpecificationNode ret = getEqualsIDNode(child, id);
@@ -86,10 +85,10 @@ public class EqualsIDInjectionResolver
         }
         String id = getID(original);
         if(StringUtil.hasValue(id)) {
-            Specification spec = SpecificationImpl.findSpecification(original);
+            Specification spec = SpecificationUtil.findSpecification(original);
             SpecificationNode injected = null;
             while(spec != null) {
-                SpecificationNode maya = SpecificationImpl.getMayaNode(spec);
+                SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
                 injected = getEqualsIDNode(maya, id);
                 if(injected != null) {
                     break;

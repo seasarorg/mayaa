@@ -13,7 +13,7 @@
  * express or implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.maya.impl.builder;
 
 import org.seasar.maya.impl.MayaException;
 

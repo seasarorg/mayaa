@@ -32,7 +32,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -162,13 +162,13 @@ public class SpecificationImpl extends SpecificationNodeImpl
     }
 
     public Object getSpecificationModel() {
-        SpecificationNode maya = getMayaNode(this);
+        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
         if (maya != null) {
-            String className = getAttributeValue(maya, QM_CLASS);
+            String className = SpecificationUtil.getAttributeValue(maya, QM_CLASS);
             if(StringUtil.hasValue(className)) {
                 ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
                 AttributeScope scope = cycle.getAttributeScope(
-                        getAttributeValue(maya, QM_SCOPE));
+                        SpecificationUtil.getAttributeValue(maya, QM_SCOPE));
                 Object model = scope.getAttribute(className); 
                 if(model == null) {
                     Class modelClass = ObjectUtil.loadClass(className);
@@ -184,7 +184,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     private void execEventScript(String text) {
         if(StringUtil.hasValue(text)) {
             CompiledScript script = 
-                AbstractScriptEnvironment.compile(text, Void.class);
+                ScriptUtil.compile(text, Void.class);
             script.execute();
         }
     }
@@ -193,13 +193,13 @@ public class SpecificationImpl extends SpecificationNodeImpl
         if(eventName == null) {
             throw new IllegalArgumentException();
         }
-        SpecificationNode maya = getMayaNode(this);
+        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
         if(maya != null) {
             for(Iterator it = maya.iterateChildNode(); it.hasNext(); ) {
                 SpecificationNode child = (SpecificationNode)it.next();
                 if(eventName.equals(child.getQName())) {
-                    String bodyText = getNodeBodyText(child);
-                    bodyText = getBlockSignedText(bodyText);
+                    String bodyText = SpecificationUtil.getNodeBodyText(child);
+                    bodyText = SpecificationUtil.getBlockSignedText(bodyText);
                     execEventScript(bodyText);
                 }
             }
@@ -260,94 +260,6 @@ public class SpecificationImpl extends SpecificationNodeImpl
             throw new UnsupportedOperationException();
         }       
         
-    }
-
-    // static util methods ----------------------------------------------
-    
-    public static SpecificationNode createInjectedNode(
-            QName qName, String uri, SpecificationNode original, boolean maya) {
-        if(qName == null || original == null) {
-            throw new IllegalArgumentException();
-        }
-        SpecificationNodeImpl node = new SpecificationNodeImpl(
-                qName, original.getSystemID(), original.getLineNumber());
-        if(StringUtil.hasValue(uri)) {
-            for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
-                NodeAttribute attr = (NodeAttribute)it.next();
-                String attrURI = attr.getQName().getNamespaceURI();
-                if(uri.equals(attrURI) || (maya && URI_MAYA.equals(attrURI))) {
-                    node.addAttribute(attr.getQName(), attr.getValue());
-                }
-            }
-        }
-        node.setParentScope(original.getParentScope());
-        return node;
-    }
-
-    public static Specification findSpecification(SpecificationNode current) {
-        while(current instanceof Specification == false) {
-            current = current.getParentNode();
-            if(current == null) {
-                return null;
-            }
-        }
-        return (Specification)current;
-    }
-
-    public static Specification findSpecification() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-        SpecificationNode current = cycle.getOriginalNode();
-        return findSpecification(current);
-    }
-    
-    public static SpecificationNode getMayaNode(SpecificationNode current) {
-        Specification specification = findSpecification(current);
-        for(Iterator it = specification.iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode node = (SpecificationNode)it.next();
-            if(node.getQName().equals(QM_MAYA)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    public static String getNodeBodyText(SpecificationNode node) {
-        StringBuffer buffer = new StringBuffer();
-        for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode child = (SpecificationNode)it.next();
-            QName qName = child.getQName();
-            if(QM_CDATA.equals(qName)) {
-                buffer.append(getNodeBodyText(child));
-            } else if(QM_CHARACTERS.equals(qName)) {
-                buffer.append(SpecificationNodeImpl.getAttributeValue(
-                        child, QM_TEXT));
-            } else {
-                String name = child.getPrefix() + ":" + qName.getLocalName();
-                throw new IllegalChildNodeException(name);
-            }
-        }
-        return buffer.toString();
-    }
-    
-    public static String getBlockSignedText(String text) {
-        if(StringUtil.isEmpty(text)) {
-            return text;
-        }
-        String blockSign = 
-            AbstractScriptEnvironment.getScriptEnvironment().getBlockSign();
-        return text = blockSign + "{" + text.trim() + "}"; 
-    }
-    
-    public static void initScope() {
-        AbstractScriptEnvironment.getScriptEnvironment().initScope();
-    }
-
-    public static void startScope(Object model) {
-        AbstractScriptEnvironment.getScriptEnvironment().startScope(model);
-    }
-
-    public static void endScope() {
-        AbstractScriptEnvironment.getScriptEnvironment().endScope();
     }
 	
 }

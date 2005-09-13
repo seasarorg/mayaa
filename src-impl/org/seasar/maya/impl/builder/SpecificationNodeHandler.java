@@ -29,7 +29,6 @@ import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
-import org.seasar.maya.impl.engine.specification.QNameableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -134,7 +133,7 @@ public class SpecificationNodeHandler
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
         QNameable parsedName = 
-            QNameableImpl.parseName(_namespaces, qName);
+            BuilderUtil.parseName(_namespaces, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
@@ -144,7 +143,7 @@ public class SpecificationNodeHandler
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             QNameable parsedAttrName = 
-                QNameableImpl.parseName(elementNS, attrName);
+                BuilderUtil.parseName(elementNS, attrName);
             QName attrQName = parsedAttrName.getQName();
             node.addAttribute(attrQName, attributes.getValue(i));
         }

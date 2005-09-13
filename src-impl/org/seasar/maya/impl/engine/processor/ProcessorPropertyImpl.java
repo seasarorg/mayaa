@@ -18,7 +18,7 @@ package org.seasar.maya.impl.engine.processor;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.QNameable;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.maya.impl.cycle.script.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -34,7 +34,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
             throw new IllegalArgumentException();
         }
         _name = name;
-        _compiled = AbstractScriptEnvironment.compile(value, expectedType);
+        _compiled = ScriptUtil.compile(value, expectedType);
     }
     
     public QNameable getName() {

@@ -32,7 +32,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.QNameImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -178,7 +178,7 @@ public class SpecificationNavigator extends DefaultNavigator
 	public String getCommentStringValue(Object obj) {
 	    if(isComment(obj)) {
 	        SpecificationNode node = (SpecificationNode)obj;
-	        String text = SpecificationNodeImpl.getAttributeValue(node, QM_TEXT);
+	        String text = SpecificationUtil.getAttributeValue(node, QM_TEXT);
 	        if(text != null) {
 	            return text;
 	        }
@@ -233,7 +233,7 @@ public class SpecificationNavigator extends DefaultNavigator
 	public String getTextStringValue(Object obj) {
 	    if(isText(obj)) {
 	        SpecificationNode node = (SpecificationNode)obj;
-	        String text = SpecificationNodeImpl.getAttributeValue(node, QM_TEXT);
+	        String text = SpecificationUtil.getAttributeValue(node, QM_TEXT);
 	        if(text != null) {
 	            return text;
 	        }

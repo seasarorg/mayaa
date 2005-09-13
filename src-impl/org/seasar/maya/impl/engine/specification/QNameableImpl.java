@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
 
-import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -51,38 +50,5 @@ public class QNameableImpl extends NamespaceableImpl
 	    }
 	    return "";
 	}
-
-    // static util  method ---------------------------------------------
-    
-    public static QNameable parseName(
-            Namespaceable namespaces, String qName) {
-        String[] parsed = qName.split(":");
-        String prefix = null;
-        String localName = null;
-        String namespaceURI = null;
-        if(parsed.length == 2) {
-            prefix = parsed[0];
-            localName = parsed[1];
-            NodeNamespace namespace = namespaces.getNamespace(prefix, true);
-            if(namespace == null) {
-                throw new PrefixMappingNotFoundException(prefix);
-            }
-            namespaceURI = namespace.getNamespaceURI();
-        } else if(parsed.length == 1) {
-            localName = parsed[0];
-            NodeNamespace namespace = namespaces.getNamespace("", true);
-            if(namespace != null) {
-                namespaceURI = namespace.getNamespaceURI();
-            } else {
-                throw new PrefixMappingNotFoundException("");
-            }
-        } else {
-            throw new IllegalNameException(qName);
-        }
-        QName retName = new QNameImpl(namespaceURI, localName);
-        QNameable ret = new QNameableImpl(retName);
-        ret.setParentScope(namespaces);
-        return ret;
-    }
 
 }

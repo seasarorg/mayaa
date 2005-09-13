@@ -21,15 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -89,31 +84,6 @@ public abstract class AbstractScriptEnvironment
 	    CompiledScript[] compiled = 
             (CompiledScript[])list.toArray(new CompiledScript[list.size()]);
         return new ComplexScript(compiled);
-    }
-
-    // static util methods ---------------------------------------------
-    
-    public static ScriptEnvironment getScriptEnvironment() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getScriptEnvironment();
-    }
-    
-    public static CompiledScript compile(String text, Class expectedType) {
-        if(expectedType == null) {
-        	throw new IllegalArgumentException();
-        }
-        CompiledScript compiled;
-        if(StringUtil.hasValue(text)) {
-            ScriptEnvironment environment = getScriptEnvironment();
-            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-            SpecificationNode node = cycle.getInjectedNode();
-            compiled = environment.compile(
-                    text, node.getSystemID(), node.getLineNumber());
-        } else {
-            compiled = new NullScript();
-        }
-        compiled.setExpectedType(expectedType);
-        return compiled;
     }
 
 }

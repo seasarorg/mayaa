@@ -36,7 +36,7 @@ import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -130,7 +130,7 @@ public class TemplateImpl extends SpecificationImpl
         ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
-            startScope(null);
+            SpecificationUtil.startScope(null);
         	ProcessStatus startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
@@ -171,7 +171,7 @@ public class TemplateImpl extends SpecificationImpl
             }
             saveToCycle(current);
             ret = current.doEndProcess();
-            endScope();
+            SpecificationUtil.endScope();
         } catch (RuntimeException e) {
             saveToCycle(current);
             if(isTryCatchFinally(current)) {
@@ -189,9 +189,9 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private String getContentType() {
-        SpecificationNode maya = SpecificationImpl.getMayaNode(this);
+        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
 		if(maya != null) {
-	        String contentType = SpecificationNodeImpl.getAttributeValue(
+	        String contentType = SpecificationUtil.getAttributeValue(
                     maya, QM_CONTENT_TYPE);
 	        if(StringUtil.hasValue(contentType)) {
 	            return contentType;
@@ -228,12 +228,12 @@ public class TemplateImpl extends SpecificationImpl
             prepareCycle();
         }
         Object model = getSpecificationModel();
-        startScope(model);
+        SpecificationUtil.startScope(model);
         execEvent(QM_BEFORE_RENDER);
         ProcessStatus ret = render(processor);
         saveToCycle(this);
         execEvent(QM_AFTER_RENDER);
-        endScope();
+        SpecificationUtil.endScope();
         return ret;
     }
 
@@ -315,11 +315,11 @@ public class TemplateImpl extends SpecificationImpl
     }
 
     public static Template getTemplate() {
-        Specification spec = SpecificationImpl.findSpecification();
+        Specification spec = SpecificationUtil.findSpecification();
         if(spec instanceof Page) {
             SpecificationNode parent = spec.getParentNode();
             if(parent != null) {
-                spec = SpecificationImpl.findSpecification();
+                spec = SpecificationUtil.findSpecification();
             } else {
                 return null;
             }

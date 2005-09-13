@@ -37,6 +37,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.AbstractResponse;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
@@ -202,9 +203,9 @@ public class EngineImpl extends SpecificationImpl
         	while(service) {
                 try {
                     saveToCycle();
-                    initScope();
+                    SpecificationUtil.initScope();
                     Object model = getSpecificationModel();
-                    startScope(model);
+                    SpecificationUtil.startScope(model);
                     execEvent(QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
@@ -213,7 +214,7 @@ public class EngineImpl extends SpecificationImpl
                     ret = page.doPageRender();
                     saveToCycle();
                     execEvent(QM_AFTER_RENDER);
-                    endScope();
+                    SpecificationUtil.endScope();
                     Response response = AbstractResponse.getResponse();
                     if(ret == null) {
                         if(response.isFlushed() == false) {
@@ -228,7 +229,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
-            initScope();
+            SpecificationUtil.initScope();
             handleError(t);
         }
     }

@@ -56,6 +56,10 @@
 		<property name="value" required="true" expectedType="java.lang.String"/>
 	</processor>
 
+	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
+		<description>m:doBody injection</description>
+	</processor>
+
 	<processor name="page"
 			class="org.seasar.maya.impl.engine.processor.PageProcessor">
 		<description>m:page injection</description>
@@ -69,8 +73,8 @@
 		<property name="name" default=""/>
 	</processor>
 
-	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">
-		<description>m:doBody injection</description>
+	<processor name="doBase" class="org.seasar.maya.impl.engine.processor.DoBaseProcessor">
+		<description>m:doBase injection</description>
 	</processor>
 
 	<processor name="with"

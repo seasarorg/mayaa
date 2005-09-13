@@ -58,9 +58,9 @@ public interface CONST_IMPL {
     QName QM_DUPLECATED_ELEMENT = new QNameImpl("duplecatedElement");
     QName QM_ELEMENT = new QNameImpl("element");
     QName QM_ENGINE = new QNameImpl("engine");
+    QName QM_INSERT = new QNameImpl("insert");
     QName QM_MAYA = new QNameImpl("maya");
     QName QM_NULL = new QNameImpl("null");
-    QName QM_PAGE = new QNameImpl("page");
     QName QM_PROCESSING_INSTRUCTION = new QNameImpl("processingInstruction");
     QName QM_TEMPLATE = new QNameImpl("template");
     QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");

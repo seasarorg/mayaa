@@ -15,31 +15,11 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DoBodyProcessor extends TemplateProcessorSupport {
 
-	private static final long serialVersionUID = -5462533588574819934L;
+    private static final long serialVersionUID = -5462533588574819934L;
 
-    protected PageProcessor findPageProcessor() {
-        for(TemplateProcessor current = this;
-                current != null; current = current.getParentProcessor()) {
-            if(current instanceof PageProcessor) {
-                return (PageProcessor)current;
-            }
-        }
-        return null;
-    }
-    
-    public ProcessStatus doStartProcess() {
-        PageProcessor pageProcessor = findPageProcessor();
-        if(pageProcessor != null) {
-            return pageProcessor.doBody();
-        }
-        return EVAL_BODY_INCLUDE;
-    }
-    
 }

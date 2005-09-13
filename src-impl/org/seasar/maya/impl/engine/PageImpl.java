@@ -49,7 +49,7 @@ public class PageImpl extends SpecificationImpl
     private String _extension;
 
     public PageImpl(Specification parent, String pageName, String extension) {
-        super(QM_PAGE, parent);
+        super(QM_INSERT, parent);
         if(StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }

@@ -25,14 +25,14 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.TemplateImpl;
-import org.seasar.maya.impl.engine.processor.PageProcessor;
+import org.seasar.maya.impl.engine.processor.InsertProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
-    private PageProcessor getComponentPageProcessor() {
+    private InsertProcessor getInsertProcessor() {
 		Template template = TemplateImpl.getTemplate();
         if(template == null) {
             return null;
@@ -40,8 +40,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 		TemplateProcessor parent = template.getParentProcessor();
 		if (parent == null) {
 			return null;
-		} else if (parent instanceof PageProcessor) {
-			return (PageProcessor)parent;
+		} else if (parent instanceof InsertProcessor) {
+			return (InsertProcessor)parent;
 		} else {
 			throw new IllegalStateException();
 		}
@@ -52,7 +52,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 	}
 
 	public Iterator iterateAttributeNames() {
-		PageProcessor processor = getComponentPageProcessor(); 
+		InsertProcessor processor = getInsertProcessor(); 
 		if(processor != null) {
 			return new ComponentBindingIterator(
 					processor.getInformalProperties().iterator());
@@ -63,7 +63,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 	}
 
     public boolean hasAttribute(String name) {
-        PageProcessor processor = getComponentPageProcessor();
+        InsertProcessor processor = getInsertProcessor();
         if(processor != null) {
             for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
                 ProcessorProperty prop = (ProcessorProperty)it.next();
@@ -79,7 +79,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
     }
 
 	public Object getAttribute(String name) {
-		PageProcessor processor = getComponentPageProcessor();
+		InsertProcessor processor = getInsertProcessor();
         if(processor != null) {
     		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
     			ProcessorProperty prop = (ProcessorProperty)it.next();

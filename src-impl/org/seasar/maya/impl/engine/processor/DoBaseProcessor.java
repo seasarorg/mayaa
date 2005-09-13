@@ -24,20 +24,20 @@ public class DoBaseProcessor extends DoBodyProcessor {
 
     private static final long serialVersionUID = 6825307534213593235L;
 
-    protected PageProcessor findPageProcessor() {
+    protected InsertProcessor findInsertProcessor() {
         for(TemplateProcessor current = this;
                 current != null; current = current.getParentProcessor()) {
-            if(current instanceof PageProcessor) {
-                return (PageProcessor)current;
+            if(current instanceof InsertProcessor) {
+                return (InsertProcessor)current;
             }
         }
         return null;
     }
     
     public ProcessStatus doStartProcess() {
-        PageProcessor pageProcessor = findPageProcessor();
-        if(pageProcessor != null) {
-            return pageProcessor.doBody();
+        InsertProcessor insert = findInsertProcessor();
+        if(insert != null) {
+            return insert.doBody();
         }
         return EVAL_BODY_INCLUDE;
     }

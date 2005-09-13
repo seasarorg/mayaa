@@ -29,7 +29,7 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageProcessor
+public class InsertProcessor
         extends AbstractAttributableProcessor	implements CONST_IMPL {
 
 	private static final long serialVersionUID = -1240398725406503403L;

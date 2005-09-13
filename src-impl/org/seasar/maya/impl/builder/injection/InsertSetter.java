@@ -31,7 +31,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSetter implements InjectionResolver, CONST_IMPL {
+public class InsertSetter implements InjectionResolver, CONST_IMPL {
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
@@ -48,7 +48,7 @@ public class PageSetter implements InjectionResolver, CONST_IMPL {
 	            String name = qName.getLocalName();
 	            String path = StringUtil.preparePath(uri) + StringUtil.preparePath(name);
                 SpecificationNode node = BuilderUtil.createInjectedNode(
-                        QM_PAGE, uri, injected, false);
+                        QM_INSERT, uri, injected, false);
                 node.addAttribute(QM_PATH, path);
                 String compName = SpecificationUtil.getAttributeValue(
                         injected, QM_NAME);

@@ -25,14 +25,14 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.TemplateImpl;
-import org.seasar.maya.impl.engine.processor.ComponentPageProcessor;
+import org.seasar.maya.impl.engine.processor.PageProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
-    private ComponentPageProcessor getComponentPageProcessor() {
+    private PageProcessor getComponentPageProcessor() {
 		Template template = TemplateImpl.getTemplate();
         if(template == null) {
             return null;
@@ -40,8 +40,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 		TemplateProcessor parent = template.getParentProcessor();
 		if (parent == null) {
 			return null;
-		} else if (parent instanceof ComponentPageProcessor) {
-			return (ComponentPageProcessor)parent;
+		} else if (parent instanceof PageProcessor) {
+			return (PageProcessor)parent;
 		} else {
 			throw new IllegalStateException();
 		}
@@ -52,7 +52,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 	}
 
 	public Iterator iterateAttributeNames() {
-		ComponentPageProcessor processor = getComponentPageProcessor(); 
+		PageProcessor processor = getComponentPageProcessor(); 
 		if(processor != null) {
 			return new ComponentBindingIterator(
 					processor.getInformalProperties().iterator());
@@ -63,7 +63,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 	}
 
     public boolean hasAttribute(String name) {
-        ComponentPageProcessor processor = getComponentPageProcessor();
+        PageProcessor processor = getComponentPageProcessor();
         if(processor != null) {
             for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
                 ProcessorProperty prop = (ProcessorProperty)it.next();
@@ -79,7 +79,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
     }
 
 	public Object getAttribute(String name) {
-		ComponentPageProcessor processor = getComponentPageProcessor();
+		PageProcessor processor = getComponentPageProcessor();
         if(processor != null) {
     		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
     			ProcessorProperty prop = (ProcessorProperty)it.next();

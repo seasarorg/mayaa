@@ -57,14 +57,16 @@
 	</processor>
 
 	<processor name="page"
-			class="org.seasar.maya.impl.engine.processor.ComponentPageProcessor">
+			class="org.seasar.maya.impl.engine.processor.PageProcessor">
 		<description>m:page injection</description>
 		<property name="path" required="true"/>
+		<property name="name"/>
 	</processor>
 
 	<processor name="doRender" class="org.seasar.maya.impl.engine.processor.DoRenderProcessor">
 		<description>m:doRender injection</description>
 		<property name="rendered" default="false"/>
+		<property name="name" default=""/>
 	</processor>
 
 	<processor name="doBody" class="org.seasar.maya.impl.engine.processor.DoBodyProcessor">

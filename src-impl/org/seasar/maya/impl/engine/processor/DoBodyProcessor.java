@@ -24,20 +24,20 @@ public class DoBodyProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = -5462533588574819934L;
 
-    protected ComponentPageProcessor findComponentPage() {
+    protected PageProcessor findPageProcessor() {
         for(TemplateProcessor current = this;
                 current != null; current = current.getParentProcessor()) {
-            if(current instanceof ComponentPageProcessor) {
-                return (ComponentPageProcessor)current;
+            if(current instanceof PageProcessor) {
+                return (PageProcessor)current;
             }
         }
         return null;
     }
     
     public ProcessStatus doStartProcess() {
-        ComponentPageProcessor componentPage = findComponentPage();
-        if(componentPage != null) {
-            return componentPage.doBody();
+        PageProcessor pageProcessor = findPageProcessor();
+        if(pageProcessor != null) {
+            return pageProcessor.doBody();
         }
         return EVAL_BODY_INCLUDE;
     }

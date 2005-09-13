@@ -29,19 +29,28 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentPageProcessor
+public class PageProcessor
         extends AbstractAttributableProcessor	implements CONST_IMPL {
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	private String _path;
+    private String _name = "";
     private Page _page;
     
-    // MLD property
+    // MLD property, required
     public void setPath(String path) {
         if(StringUtil.isEmpty(path)) {
             throw new IllegalArgumentException();
         }
         _path = path;
+    }
+    
+    // MLD property
+    public void setName(String name) {
+        if(name == null) {
+            name = "";
+        }
+        _name = name;
     }
     
     protected Page preparePage() {
@@ -58,11 +67,14 @@ public class ComponentPageProcessor
     protected DoRenderProcessor findDoRender(
             TemplateProcessor processor) {
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
-            TemplateProcessor childProcessor = processor.getChildProcessor(i);
-            if(childProcessor instanceof DoRenderProcessor) {
-                return (DoRenderProcessor)childProcessor;
+            TemplateProcessor child = processor.getChildProcessor(i);
+            if(child instanceof DoRenderProcessor) {
+                DoRenderProcessor doRender =  (DoRenderProcessor)child;
+                if(_name.equals(doRender.getName())) {
+                    return doRender;
+                }
             }
-            DoRenderProcessor doRender = findDoRender(childProcessor);
+            DoRenderProcessor doRender = findDoRender(child);
             if(doRender != null) {
                 return doRender;
             }

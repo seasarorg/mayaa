@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -24,6 +23,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 	private static final long serialVersionUID = 4309532215454978747L;
 
     private boolean _rendered = false;
+    private String _name = "";
     
     // MLD property, default=false
     public void setRendered(boolean rendered) {
@@ -34,4 +34,16 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return _rendered;
     }
     
+    // MLD property, default=""
+    public void setName(String name) {
+        if(name == null) {
+            _name = name;
+        }
+        _name = name;
+    }
+    
+    public String getName() {
+        return _name;
+    }
+
 }

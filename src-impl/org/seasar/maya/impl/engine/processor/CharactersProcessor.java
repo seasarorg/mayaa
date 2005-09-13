@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -39,7 +39,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess() {
         Object value = getText().getValue().execute();
         if(value != null) {
-            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());
         }
         return SKIP_BODY;

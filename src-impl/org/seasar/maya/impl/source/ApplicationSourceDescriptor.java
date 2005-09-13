@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -55,7 +55,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     
     public Application getApplication() {
         if(_application == null) {
-            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             _application = cycle.getApplication();
         }
         return _application;

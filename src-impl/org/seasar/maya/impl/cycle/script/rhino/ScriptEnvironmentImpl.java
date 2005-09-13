@@ -23,7 +23,7 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
@@ -110,12 +110,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
     
     public void initScope() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(null);
     }
 
     public void startScope(Object model) {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
         if(scope == null) {
@@ -142,7 +142,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public void endScope() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;

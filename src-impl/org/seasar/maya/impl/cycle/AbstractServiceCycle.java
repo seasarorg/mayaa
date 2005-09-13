@@ -84,7 +84,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
             if(scope.getScopeName().equals(scopeName)) {
                 return true;
@@ -97,7 +97,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
             if(scope.getScopeName().equals(scopeName)) {
                 return scope;
@@ -185,52 +185,6 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
             throw new UnsupportedOperationException();
         }
         
-    }
-    
-    // static util methods ----------------------------------------------
-
-    public static ServiceCycle getServiceCycle() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getServiceCycle();
-    }
-
-    public static AttributeScope findAttributeScope(String name) {
-        if(StringUtil.isEmpty(name)) {
-            return null;
-        }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
-            if(scope.hasAttribute(name)) {
-                return scope;
-            }
-        }
-        return null;
-    }
-    
-    public static Object getAttribute(String name, String scopeName) {
-        ServiceCycle cycle = getServiceCycle();
-        AttributeScope scope = cycle.getAttributeScope(scopeName);
-        return scope.getAttribute(name);
-    }
-
-    public static void setAttribute(String name, Object value, String scopeName) {
-        ServiceCycle cycle = getServiceCycle();
-        AttributeScope scope = cycle.getAttributeScope(scopeName);
-        if(scope.isAttributeWritable()) {
-            scope.setAttribute(name, value);
-        } else {
-            throw new ScopeNotWritableException(scopeName);
-        }
-    }
-
-    public static void removeAttribute(String name, String scopeName) {
-        ServiceCycle cycle = getServiceCycle();
-    	AttributeScope scope = cycle.getAttributeScope(scopeName);
-        if(scope.isAttributeWritable()) {
-            scope.removeAttribute(name);
-        } else {
-            throw new ScopeNotWritableException(scopeName);
-        }
     }
     
 }

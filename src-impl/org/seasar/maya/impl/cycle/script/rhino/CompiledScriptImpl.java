@@ -29,7 +29,7 @@ import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -66,7 +66,7 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
     }
     
     protected Scriptable getScope() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrs = cycle.getPageScope();
         if(attrs instanceof Scriptable) {
             return (Scriptable)attrs;

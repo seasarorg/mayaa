@@ -27,7 +27,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -148,7 +148,7 @@ public class PageImpl extends SpecificationImpl
 
     protected Template getTemplate() {
         String suffix;
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
             suffix = requestedSuffix;
@@ -168,7 +168,7 @@ public class PageImpl extends SpecificationImpl
     }
     
     private void saveToCycle() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);
     }

@@ -26,7 +26,7 @@ import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -87,7 +87,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     private void write(StringBuffer buffer) {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(buffer.toString());
     }
     

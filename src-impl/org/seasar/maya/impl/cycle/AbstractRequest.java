@@ -88,12 +88,5 @@ public abstract class AbstractRequest
         }
         return _mimeType;
     }
-
-    // static util method -----------------------------------------------
-    
-    public static Request getRequest() {
-    	ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-    	return cycle.getRequest();
-    }
     
 }

@@ -26,7 +26,7 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
@@ -125,7 +125,7 @@ public class SpecificationNodeHandler
     }
     
     private void saveToCycle(SpecificationNode originalNode) {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
     }
     

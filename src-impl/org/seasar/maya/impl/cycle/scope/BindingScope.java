@@ -23,7 +23,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.TemplateImpl;
 import org.seasar.maya.impl.engine.processor.PageProcessor;
 
@@ -57,7 +57,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 			return new ComponentBindingIterator(
 					processor.getInformalProperties().iterator());
 		}
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope param = cycle.getAttributeScope("param");
 		return param.iterateAttributeNames();
 	}
@@ -73,7 +73,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
             }
             return false;
         }
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope param = cycle.getAttributeScope("param");
         return param.hasAttribute(name);
     }
@@ -89,7 +89,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
     		}
             return null;
         }
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope param = cycle.getAttributeScope("param");
 		return param.getAttribute(name);
 	}

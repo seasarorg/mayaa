@@ -37,7 +37,7 @@ import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -88,25 +88,25 @@ public class PageContextImpl extends PageContext {
     }
 
     public JspWriter getOut() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         return new JspWriterImpl(response.getWriter());
     }
 
     public JspWriter popBody() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
     	return new JspWriterImpl(response.popWriter());
     }
 
     public BodyContent pushBody() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         return new BodyContentImpl(response.pushWriter());
     }
 
     public void forward(String relativeUrlPath) throws ServletException, IOException {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
     	cycle.forward(relativeUrlPath);
     }
 
@@ -139,7 +139,7 @@ public class PageContextImpl extends PageContext {
     }
     
     public HttpSession getSession() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Session session = cycle.getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
@@ -149,7 +149,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public ServletRequest getRequest() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Request request = cycle.getRequest();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
@@ -159,7 +159,7 @@ public class PageContextImpl extends PageContext {
     }
     
     public ServletResponse getResponse() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
     	Object obj = response.getUnderlyingObject();
     	if(obj instanceof ServletResponse) {
@@ -196,7 +196,7 @@ public class PageContextImpl extends PageContext {
 	// Attributes ------------------------------------------------------------
     public Object findAttribute(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = AbstractServiceCycle.getAttribute(name, CYCLE_SCOPES[i]);
+            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return ret;
             }
@@ -209,7 +209,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        return AbstractServiceCycle.getAttribute(name, scopeName);
+        return CycleUtil.getAttribute(name, scopeName);
     }
 
     public Object getAttribute(String name) {
@@ -221,7 +221,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        AbstractServiceCycle.removeAttribute(name, scopeName);
+        CycleUtil.removeAttribute(name, scopeName);
     }
 
     public void removeAttribute(String name) {
@@ -229,7 +229,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            AbstractServiceCycle.removeAttribute(name, CYCLE_SCOPES[i]);
+            CycleUtil.removeAttribute(name, CYCLE_SCOPES[i]);
         }
     }
 
@@ -238,7 +238,7 @@ public class PageContextImpl extends PageContext {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
-        AbstractServiceCycle.setAttribute(name, value, scopeName);
+        CycleUtil.setAttribute(name, value, scopeName);
     }
 
     public void setAttribute(String name, Object value) {
@@ -247,14 +247,14 @@ public class PageContextImpl extends PageContext {
 
     public Enumeration getAttributeNamesInScope(int scope) {
         String scopeName = getScopeFromInt(scope);
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
     }
 
     public int getAttributesScope(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = AbstractServiceCycle.getAttribute(name, CYCLE_SCOPES[i]);
+            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
             if(ret != null) {
                 return JSP_SCOPES[i];
             }

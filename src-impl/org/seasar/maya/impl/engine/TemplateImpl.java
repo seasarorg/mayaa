@@ -32,8 +32,7 @@ import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractRequest;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -127,7 +126,7 @@ public class TemplateImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         saveToCycle(current);
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
             SpecificationUtil.startScope(null);
@@ -197,7 +196,7 @@ public class TemplateImpl extends SpecificationImpl
 	            return contentType;
 	        }
 		}
-        Request request = AbstractRequest.getRequest();
+        Request request = CycleUtil.getRequest();
         String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";
@@ -206,14 +205,14 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private void prepareCycle() {
-    	ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+    	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	Response response = cycle.getResponse();
         String contentType = getContentType();
         response.setContentType(contentType);
     }
 
     private void saveToCycle(TemplateProcessor processor) {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(processor.getOriginalNode());
         cycle.setInjectedNode(processor.getInjectedNode());
     }

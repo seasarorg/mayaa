@@ -34,8 +34,7 @@ import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractResponse;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
@@ -145,7 +144,7 @@ public class EngineImpl extends SpecificationImpl
     }
    
 	public void doService() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         String mimeType = cycle.getRequest().getMimeType();
         if((mimeType != null && mimeType.indexOf("html") != -1) ||
                 "maya".equals(cycle.getRequest().getExtension())) {
@@ -171,7 +170,7 @@ public class EngineImpl extends SpecificationImpl
         t = removeWrapperRuntimeException(t);
         try {
             getErrorHandler().doErrorHandle(t);
-            AbstractResponse.getResponse().flush();
+            CycleUtil.getResponse().flush();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -192,7 +191,7 @@ public class EngineImpl extends SpecificationImpl
     }
     
     private void saveToCycle() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);
     }
@@ -215,7 +214,7 @@ public class EngineImpl extends SpecificationImpl
                     saveToCycle();
                     execEvent(QM_AFTER_RENDER);
                     SpecificationUtil.endScope();
-                    Response response = AbstractResponse.getResponse();
+                    Response response = CycleUtil.getResponse();
                     if(ret == null) {
                         if(response.isFlushed() == false) {
                             throw new RenderNotCompletedException(

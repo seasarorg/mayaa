@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -47,7 +47,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
     
     public ProcessStatus doStartProcess() {
         if(_src != null) {
-            ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             String srcValue = (String)_src.getValue().execute();
             String encValue = (String)_encoding.getValue().execute();
             cycle.load(srcValue, encValue);

@@ -38,7 +38,7 @@ import org.seasar.maya.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.builder.parser.TemplateParser;
 import org.seasar.maya.impl.builder.parser.TemplateScanner;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.processor.AttributeProcessor;
 import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
@@ -113,7 +113,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected void saveToCycle(SpecificationNode originalNode,
             SpecificationNode injectedNode) {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
         cycle.setInjectedNode(injectedNode);
     }

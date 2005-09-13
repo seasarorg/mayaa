@@ -23,7 +23,6 @@ import java.util.Stack;
 
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -157,13 +156,6 @@ public abstract class AbstractResponse implements Response {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-    
-    // static util method ----------------------------------------------
-
-    public static Response getResponse() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
-        return cycle.getResponse();
     }
 
 }

@@ -31,7 +31,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
@@ -166,7 +166,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
         if (maya != null) {
             String className = SpecificationUtil.getAttributeValue(maya, QM_CLASS);
             if(StringUtil.hasValue(className)) {
-                ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
                 AttributeScope scope = cycle.getAttributeScope(
                         SpecificationUtil.getAttributeValue(maya, QM_SCOPE));
                 Object model = scope.getAttribute(className); 

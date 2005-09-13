@@ -23,7 +23,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -55,7 +55,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static Specification findSpecification() {
-        ServiceCycle cycle = AbstractServiceCycle.getServiceCycle();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         SpecificationNode current = cycle.getOriginalNode();
         return findSpecification(current);
     }

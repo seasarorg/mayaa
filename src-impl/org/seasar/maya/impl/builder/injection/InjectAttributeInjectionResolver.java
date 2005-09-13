@@ -46,7 +46,8 @@ public class InjectAttributeInjectionResolver
             QName qName = qNameable.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();
-	            return SpecificationImpl.createInjectedNode(qName, uri, original); 
+	            return SpecificationImpl.createInjectedNode(
+                        qName, uri, original, true); 
             }
         }
         return chain.getNode(original);

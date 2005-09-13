@@ -265,7 +265,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     // static util methods ----------------------------------------------
     
     public static SpecificationNode createInjectedNode(
-            QName qName, String uri, SpecificationNode original) {
+            QName qName, String uri, SpecificationNode original, boolean maya) {
         if(qName == null || original == null) {
             throw new IllegalArgumentException();
         }
@@ -274,7 +274,8 @@ public class SpecificationImpl extends SpecificationNodeImpl
         if(StringUtil.hasValue(uri)) {
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
                 NodeAttribute attr = (NodeAttribute)it.next();
-                if(uri.equals(attr.getQName().getNamespaceURI())) {
+                String attrURI = attr.getQName().getNamespaceURI();
+                if(uri.equals(attrURI) || (maya && URI_MAYA.equals(attrURI))) {
                     node.addAttribute(attr.getQName(), attr.getValue());
                 }
             }

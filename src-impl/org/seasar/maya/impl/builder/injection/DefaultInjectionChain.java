@@ -64,7 +64,7 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         QName qName = original.getQName(); 
         String uri = qName.getNamespaceURI();
         SpecificationNode element =  SpecificationImpl.createInjectedNode(
-                QM_TEMPLATE_ELEMENT, uri, original);
+                QM_TEMPLATE_ELEMENT, uri, original, false);
         StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();
         if(StringUtil.hasValue(prefix)) {

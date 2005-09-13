@@ -22,6 +22,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -47,8 +48,13 @@ public class PageSetter implements InjectionResolver, CONST_IMPL {
 	            String name = qName.getLocalName();
 	            String path = StringUtil.preparePath(uri) + StringUtil.preparePath(name);
                 SpecificationNode node = SpecificationImpl.createInjectedNode(
-                        QM_PAGE, uri, injected);
+                        QM_PAGE, uri, injected, false);
                 node.addAttribute(QM_PATH, path);
+                String compName = SpecificationNodeImpl.getAttributeValue(
+                        injected, QM_NAME);
+                if(StringUtil.hasValue(compName)) {
+                    node.addAttribute(QM_NAME, compName);
+                }
                 return node;
 	        }
         }

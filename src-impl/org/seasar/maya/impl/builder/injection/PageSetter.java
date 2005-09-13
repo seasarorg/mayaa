@@ -30,8 +30,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentPageSetter 
-		implements InjectionResolver, CONST_IMPL {
+public class PageSetter implements InjectionResolver, CONST_IMPL {
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {

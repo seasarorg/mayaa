@@ -21,7 +21,7 @@ import java.util.Iterator;
  * 	設定XMLの構成物。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SpecificationNode extends NodeWalkable, QNameable {
+public interface SpecificationNode extends NodeTreeWalker, QNameable {
     
 	/**
 	 * ノード属性の追加。

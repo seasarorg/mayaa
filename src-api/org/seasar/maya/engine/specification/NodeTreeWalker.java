@@ -20,29 +20,29 @@ import java.util.Iterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeWalkable {
+public interface NodeTreeWalker {
     
     /**
      * 親ノードの設定をセットする。
      * @param parentNode 親ノード。
      */
-    void setParentNode(SpecificationNode parentNode);
+    void setParentNode(NodeTreeWalker parentNode);
 
     /**
      * 親ノードを取得する。
      * @return 親ノード。
      */
-    SpecificationNode getParentNode();
+    NodeTreeWalker getParentNode();
     
     /**
      * 子ノードの設定をセットする。
      * @param childNode 子ノード。
      */
-    void addChildNode(SpecificationNode childNode);
+    void addChildNode(NodeTreeWalker childNode);
 
     /**
      * 子ノードのイテレータを取得する。
-     * @return 子ノード（<code>SpecificationNode</code>）を保持したイテレータ。
+     * @return 子ノード（<code>NodeTreeWalker</code>）を保持したイテレータ。
      */
     Iterator iterateChildNode();
     

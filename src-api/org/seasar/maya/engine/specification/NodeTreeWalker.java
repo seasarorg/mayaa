@@ -46,4 +46,16 @@ public interface NodeTreeWalker {
      */
     Iterator iterateChildNode();
     
+    /**
+     * ソース上の行位置を取得。
+     * @return 位置情報
+     */
+    int getLineNumber();
+    
+    /**
+     * ソースのSystemIDを取得。
+     * @return ソースSystemID。
+     */
+    String getSystemID();
+
 }

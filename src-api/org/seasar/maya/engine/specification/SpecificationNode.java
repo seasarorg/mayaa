@@ -44,18 +44,6 @@ public interface SpecificationNode extends NodeTreeWalker, QNameable {
     Iterator iterateAttribute();
     
     /**
-     * ソース上の行位置を取得。
-     * @return 位置情報
-     */
-    int getLineNumber();
-    
-    /**
-     * ソースのSystemIDを取得。
-     * @return ソースSystemID。
-     */
-    String getSystemID();
-    
-    /**
      * 自分のコピーを生成して返す。ただし、親ノードは設定されていない。
      * @return 自分のコピー。
      */

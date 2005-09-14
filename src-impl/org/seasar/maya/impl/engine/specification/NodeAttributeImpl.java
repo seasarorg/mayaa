@@ -74,13 +74,13 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
         return null;
     }
 
-    public void setParentScope(Namespaceable parent) {
+    public void setParentSpace(Namespaceable parent) {
         throw new UnsupportedOperationException();
     }
 
-    public Namespaceable getParentScope() {
+    public Namespaceable getParentSpace() {
         if(_node != null) {
-            _node.getParentScope();
+            _node.getParentSpace();
         }
         return null;
     }

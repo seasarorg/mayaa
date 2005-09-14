@@ -26,13 +26,13 @@ public interface Namespaceable extends NodeObject {
      * 親名前空間スコープの設定。 
      * @param parent 親の名前空間スコープ。
      */
-    void setParentScope(Namespaceable parent);
+    void setParentSpace(Namespaceable parent);
 
     /**
      * 親名前空間スコープの取得。
      * @return 親の名前空間スコープ。
      */
-    Namespaceable getParentScope();
+    Namespaceable getParentSpace();
     
     /**
      * 名前空間モデルの追加。

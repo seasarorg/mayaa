@@ -53,7 +53,7 @@ public class BuilderUtil implements CONST_IMPL {
                 }
             }
         }
-        node.setParentScope(original.getParentScope());
+        node.setParentSpace(original.getParentSpace());
         return node;
     }
 
@@ -84,7 +84,7 @@ public class BuilderUtil implements CONST_IMPL {
         }
         QName retName = new QNameImpl(namespaceURI, localName);
         QNameable ret = new QNameableImpl(retName);
-        ret.setParentScope(namespaces);
+        ret.setParentSpace(namespaces);
         return ret;
     }
 

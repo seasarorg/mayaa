@@ -51,14 +51,14 @@ public class NamespaceableImpl implements Namespaceable {
         }
     }
     
-    public void setParentScope(Namespaceable parent) {
+    public void setParentSpace(Namespaceable parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
     
-    public Namespaceable getParentScope() {
+    public Namespaceable getParentSpace() {
         return _parent;
     }
 
@@ -128,7 +128,7 @@ public class NamespaceableImpl implements Namespaceable {
                 if(ret) {
                     return true;
                 }
-                _current = _current.getParentScope();
+                _current = _current.getParentSpace();
                 if(_current != null) {
                     _it = _current.iterateNamespace(false);
                 } else {

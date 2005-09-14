@@ -103,7 +103,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         QName qName = _name.getQName();
         buffer.append(qName.getLocalName());
         if(isHTML(qName) == false) {
-            Namespaceable space = _name.getParentScope();
+            Namespaceable space = _name.getParentSpace();
             if(space == null) {
                 throw new IllegalArgumentException();
             }

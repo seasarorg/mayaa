@@ -172,7 +172,7 @@ public class PropertyDefinitionImpl
                 NodeAttribute attr = injected.getAttribute(qName);
 	            return new ProcessorPropertyImpl(attr, value, getExpectedType());
 	        } else if(propertyType.equals(QNameable.class)) {
-                return BuilderUtil.parseName(injected.getParentScope(), value); 
+                return BuilderUtil.parseName(injected.getParentSpace(), value); 
             }
 	        return value;
         } else if(_required) {

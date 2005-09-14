@@ -55,7 +55,7 @@ public class SpecificationNodeHandler
     private Specification _specification;
     private NodeTreeWalker _current;
     private Locator _locator;
-    private Namespaceable _namespaces;
+    private Namespaceable _namespace;
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace;
     private int _inEntity;
@@ -71,20 +71,20 @@ public class SpecificationNodeHandler
         _locator = locator;
     }
 
-    private void initNamespaceScope() {
-        _namespaces = new NamespaceableImpl();
-        _namespaces.addNamespace("", URI_HTML);
+    private void initNamespace() {
+        _namespace = new NamespaceableImpl();
+        _namespace.addNamespace("", URI_HTML);
     }
 
-    private void stackNamespaceScope() {
-        Namespaceable parentScope = _namespaces;
-        _namespaces = new NamespaceableImpl();
-        _namespaces.setParentScope(parentScope);
+    private void stackNamespace() {
+        Namespaceable parentSpace = _namespace;
+        _namespace = new NamespaceableImpl();
+        _namespace.setParentSpace(parentSpace);
     }
     
-    private void popNamespaceScope() {
-        _namespaces = _namespaces.getParentScope();
-        if(_namespaces == null) {
+    private void popNamespace() {
+        _namespace = _namespace.getParentSpace();
+        if(_namespace == null) {
             throw new IllegalStateException();
         }
     }
@@ -94,16 +94,16 @@ public class SpecificationNodeHandler
         _outputWhitespace = EngineUtil.getEngineSettingBoolean(
                 OUTPUT_WHITE_SPACE, true);
         _current = _specification;
-        initNamespaceScope();
-        stackNamespaceScope();
+        initNamespace();
+        stackNamespace();
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        _namespaces.addNamespace(prefix, uri);
+        _namespace.addNamespace(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix) {
-        NodeNamespace ns = _namespaces.getNamespace(prefix, false);
+        NodeNamespace ns = _namespace.getNamespace(prefix, false);
         if(ns == null) {
             throw new IllegalStateException();
         }
@@ -112,7 +112,7 @@ public class SpecificationNodeHandler
     private SpecificationNode addNode(QName qName) {
 		SpecificationNodeImpl child = new SpecificationNodeImpl(
 				qName, _locator.getSystemId(), _locator.getLineNumber());
-        child.setParentScope(_namespaces);
+        child.setParentSpace(_namespace);
 	    _current.addChildNode(child);
 		return child;
     }
@@ -138,12 +138,12 @@ public class SpecificationNodeHandler
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
         QNameable parsedName = 
-            BuilderUtil.parseName(_namespaces, qName);
+            BuilderUtil.parseName(_namespace, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
         Namespaceable elementNS = new NamespaceableImpl();
-        elementNS.setParentScope(_namespaces);
+        elementNS.setParentSpace(_namespace);
         elementNS.addNamespace("", nodeURI);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
@@ -154,12 +154,12 @@ public class SpecificationNodeHandler
         }
         _current = node;
         saveToCycle(_current);
-        stackNamespaceScope();
+        stackNamespace();
     }
 
     public void endElement(String namespaceURI, 
             String localName, String qName) {
-        popNamespaceScope();
+        popNamespace();
         addCharactersNode();
         _current = _current.getParentNode();
         saveToCycle(_current);

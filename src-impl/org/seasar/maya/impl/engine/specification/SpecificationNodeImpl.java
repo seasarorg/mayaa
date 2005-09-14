@@ -172,7 +172,7 @@ public class SpecificationNodeImpl extends QNameableImpl
                 copy.addChildNode(node.copyTo(filter));
             }
         }
-        copy.setParentScope(getParentScope());
+        copy.setParentSpace(getParentSpace());
         return copy;
     }
     

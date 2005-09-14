@@ -23,6 +23,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * スペック情報にアクセスするためのインターフェイス
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * TODO NodeTreeWalker を直接継承し、SpecificationNodeでなくす。
  */
 public interface Specification extends SpecificationNode {
 

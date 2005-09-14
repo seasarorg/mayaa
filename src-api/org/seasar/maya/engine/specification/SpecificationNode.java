@@ -21,7 +21,7 @@ import java.util.Iterator;
  * 	設定XMLの構成物。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SpecificationNode extends QNameable {
+public interface SpecificationNode extends NodeWalkable, QNameable {
     
 	/**
 	 * ノード属性の追加。
@@ -42,30 +42,6 @@ public interface SpecificationNode extends QNameable {
      * @return 属性（<code>NodeAttribute</code>）のイテレータ。
      */
     Iterator iterateAttribute();
-    
-    /**
-     * 親ノードの設定をセットする。
-     * @param parent 親ノード。
-     */
-    void setParentNode(SpecificationNode parent);
-
-    /**
-     * 親ノードを取得する。
-     * @return 親ノード。
-     */
-    SpecificationNode getParentNode();
-    
-    /**
-     * 子ノードの設定をセットする。
-     * @param child 子ノード。
-     */
-    void addChildNode(SpecificationNode child);
-
-    /**
-     * 子ノードのイテレータを取得する。
-     * @return 子ノード（<code>SpecificationNode</code>）を保持したイテレータ。
-     */
-    Iterator iterateChildNode();
     
     /**
      * ソース上の行位置を取得。

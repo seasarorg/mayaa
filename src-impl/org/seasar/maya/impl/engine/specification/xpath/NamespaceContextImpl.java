@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.util.xpath;
+package org.seasar.maya.impl.engine.specification.xpath;
 
 import org.jaxen.NamespaceContext;
 import org.seasar.maya.engine.specification.Namespaceable;

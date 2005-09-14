@@ -27,8 +27,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.engine.specification.XPathUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.XPathUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

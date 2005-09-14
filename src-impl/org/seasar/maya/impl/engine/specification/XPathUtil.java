@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.util;
+package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -32,10 +32,10 @@ import org.jaxen.saxpath.SAXPathException;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.xpath.NamespaceContextImpl;
-import org.seasar.maya.impl.util.xpath.SpecificationNavigator;
-import org.seasar.maya.impl.util.xpath.SpecificationXPath;
+import org.seasar.maya.impl.engine.specification.xpath.NamespaceContextImpl;
+import org.seasar.maya.impl.engine.specification.xpath.SpecificationNavigator;
+import org.seasar.maya.impl.engine.specification.xpath.SpecificationXPath;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

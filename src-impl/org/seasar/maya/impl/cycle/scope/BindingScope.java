@@ -24,7 +24,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.TemplateImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.processor.InsertProcessor;
 
 /**
@@ -33,7 +33,7 @@ import org.seasar.maya.impl.engine.processor.InsertProcessor;
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     private InsertProcessor getInsertProcessor() {
-		Template template = TemplateImpl.getTemplate();
+		Template template = EngineUtil.getTemplate();
         if(template == null) {
             return null;
         }

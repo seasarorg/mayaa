@@ -16,6 +16,11 @@
 package org.seasar.maya.impl.engine;
 
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.Specification;
+import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -46,6 +51,22 @@ public class EngineUtil {
         Engine engine = getEngine();
         String value = engine.getParameter(name);
         return ObjectUtil.booleanValue(value, defaultValue);
+    }
+
+    public static Template getTemplate() {
+        Specification spec = SpecificationUtil.findSpecification();
+        if(spec instanceof Page) {
+            SpecificationNode parent = spec.getParentNode();
+            if(parent != null) {
+                spec = SpecificationUtil.findSpecification();
+            } else {
+                return null;
+            }
+        }
+        if(spec instanceof Template) {
+            return (Template)spec;
+        }
+        throw new IllegalStateException();
     }
 
     

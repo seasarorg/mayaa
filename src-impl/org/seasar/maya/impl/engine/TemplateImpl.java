@@ -29,7 +29,6 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
-import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
@@ -311,22 +310,6 @@ public class TemplateImpl extends SpecificationImpl
 
     public SpecificationNode getInjectedNode() {
         return this;
-    }
-
-    public static Template getTemplate() {
-        Specification spec = SpecificationUtil.findSpecification();
-        if(spec instanceof Page) {
-            SpecificationNode parent = spec.getParentNode();
-            if(parent != null) {
-                spec = SpecificationUtil.findSpecification();
-            } else {
-                return null;
-            }
-        }
-        if(spec instanceof Template) {
-            return (Template)spec;
-        }
-        throw new IllegalStateException();
     }
     
 }

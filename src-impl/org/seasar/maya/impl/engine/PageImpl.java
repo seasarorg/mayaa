@@ -72,24 +72,21 @@ public class PageImpl extends SpecificationImpl
         return false;
     }
     
-    protected Template findTemplate(String suffix) {
-        for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
-            Object obj = it.next();
-            if(obj instanceof Template) {
-	            Template template = (Template)obj;
-	            if(match(template, suffix)) {
-	                return template;
-	            }
-            }
-        }
-        return null;
-    }
-    
     public synchronized Template getTemplate(String suffix) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
-        Template template = findTemplate(suffix);
+        Template template = null;
+        for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
+            Object obj = it.next();
+            if(obj instanceof Template) {
+                Template test = (Template)obj;
+                if(match(test, suffix)) {
+                    template = test;
+                    break;
+                }
+            }
+        }
         if(template == null) {
             StringBuffer name = new StringBuffer(_pageName);
             if(StringUtil.hasValue(suffix)) {
@@ -102,7 +99,8 @@ public class PageImpl extends SpecificationImpl
                 name.append(".").append(extension);
             }
             ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SourceDescriptor source = provider.getPageSourceDescriptor(name.toString());
+            SourceDescriptor source = 
+                provider.getPageSourceDescriptor(name.toString());
             if(source.exists()) {
                 template = new TemplateImpl(this, suffix);
                 template.setSource(source);

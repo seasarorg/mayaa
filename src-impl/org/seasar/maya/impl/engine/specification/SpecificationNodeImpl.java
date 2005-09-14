@@ -24,6 +24,7 @@ import java.util.Map;
 import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -40,7 +41,7 @@ public class SpecificationNodeImpl extends QNameableImpl
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
     
     private Map _attributes;
-    private SpecificationNode _parent;
+    private NodeTreeWalker _parent;
     private List _childNodes;
     private String _systemID;
     private int _lineNumber;
@@ -89,18 +90,18 @@ public class SpecificationNodeImpl extends QNameableImpl
         return _attributes.values().iterator();
     }
     
-    public void setParentNode(SpecificationNode parent) {
+    public void setParentNode(NodeTreeWalker parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
     
-    public SpecificationNode getParentNode() {
+    public NodeTreeWalker getParentNode() {
         return _parent;
     }
 
-    public void addChildNode(SpecificationNode child) {
+    public void addChildNode(NodeTreeWalker child) {
         if(child == null) {
             throw new IllegalArgumentException();
         }

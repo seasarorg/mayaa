@@ -27,6 +27,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -48,7 +49,7 @@ public class TemplateImpl extends SpecificationImpl
 	private static final long serialVersionUID = -5368325487192629078L;
     
     private String _suffix ;
-    private TemplateProcessor _parentNode;
+    private ProcessorTreeWalker _parentNode;
     private int _index;
     private List _childProcessors = new ArrayList();
 
@@ -145,22 +146,33 @@ public class TemplateImpl extends SpecificationImpl
             	ProcessStatus afterRet;
                 do {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
-                        final ProcessStatus child = render(current.getChildProcessor(i));
-                        if(child == SKIP_PAGE) {
-                            return SKIP_PAGE;
+                        ProcessorTreeWalker child = current.getChildProcessor(i);
+                        if(child instanceof TemplateProcessor) {
+                            TemplateProcessor proc = (TemplateProcessor)child;
+                            final ProcessStatus childRet = render(proc);
+                            if(childRet == SKIP_PAGE) {
+                                return SKIP_PAGE;
+                            }
+                        } else {
+                            throw new IllegalStateException();
                         }
                     }
                     afterRet = SKIP_BODY;
                     saveToCycle(current);
                     if(isIteration(current)) {
                         afterRet = getIteration(current).doAfterChildProcess();
-                    	TemplateProcessor parent = current.getParentProcessor();
-                    	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN &&
-                                isDuplicated(parent)) {
-                            saveToCycle(parent);
-                            parent.doEndProcess();
-                            parent.doStartProcess();
-                    	}
+                        ProcessorTreeWalker parent = current.getParentProcessor();
+                        if(parent instanceof TemplateProcessor) {
+                            TemplateProcessor proc = (TemplateProcessor)parent;
+                        	if(afterRet == IterationProcessor.EVAL_BODY_AGAIN &&
+                                    isDuplicated(proc)) {
+                                saveToCycle(proc);
+                                proc.doEndProcess();
+                                proc.doStartProcess();
+                        	}
+                        } else {
+                            throw new IllegalStateException();
+                        }
                     }
                 } while(afterRet == IterationProcessor.EVAL_BODY_AGAIN);
             }
@@ -252,7 +264,7 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
 
-	public void addChildProcessor(TemplateProcessor child) {
+	public void addChildProcessor(ProcessorTreeWalker child) {
         if(child == null) {
             throw new IllegalArgumentException();
         }
@@ -262,9 +274,9 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
 
-    public TemplateProcessor getChildProcessor(int index) {
+    public ProcessorTreeWalker getChildProcessor(int index) {
         checkTemplate();
-        return (TemplateProcessor)_childProcessors.get(index);
+        return (ProcessorTreeWalker)_childProcessors.get(index);
     }
 
     public int getChildProcessorSize() {
@@ -276,7 +288,7 @@ public class TemplateImpl extends SpecificationImpl
         return _index;
     }
 
-    public void setParentProcessor(TemplateProcessor parent, int index) {
+    public void setParentProcessor(ProcessorTreeWalker parent, int index) {
         if(parent == null || index < 0) {
             throw new IllegalArgumentException();
         }
@@ -284,7 +296,7 @@ public class TemplateImpl extends SpecificationImpl
         _index = index;
     }
 
-    public TemplateProcessor getParentProcessor() {
+    public ProcessorTreeWalker getParentProcessor() {
         return _parentNode;
     }
     

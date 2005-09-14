@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -25,7 +25,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
     private static final long serialVersionUID = 6825307534213593235L;
 
     protected InsertProcessor findInsertProcessor() {
-        for(TemplateProcessor current = this;
+        for(ProcessorTreeWalker current = this;
                 current != null; current = current.getParentProcessor()) {
             if(current instanceof InsertProcessor) {
                 return (InsertProcessor)current;

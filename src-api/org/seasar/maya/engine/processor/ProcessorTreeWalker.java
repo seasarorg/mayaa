@@ -15,11 +15,13 @@
  */
 package org.seasar.maya.engine.processor;
 
+import java.io.Serializable;
+
 /**
  * プロセッサツリーを操作する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorTreeWalker {
+public interface ProcessorTreeWalker extends Serializable {
 
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -29,7 +30,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
 	private static final long serialVersionUID = -3521980479718620027L;
 
-	private TemplateProcessor _parent;
+	private ProcessorTreeWalker _parent;
     private int _index;
     private List _children = new ArrayList();
     private SpecificationNode _originalNode;
@@ -41,7 +42,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         _evalBodyInclude = evalBodyInclude;
     }
     
-    public void setParentProcessor(TemplateProcessor parent, int index) {
+    public void setParentProcessor(ProcessorTreeWalker parent, int index) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
@@ -49,7 +50,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         _index = index;
     }
 
-    public void addChildProcessor(TemplateProcessor child) {
+    public void addChildProcessor(ProcessorTreeWalker child) {
         if(child == null) {
             throw new IllegalArgumentException();
         }
@@ -58,7 +59,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public Template getTemplate() {
-        for(TemplateProcessor current = this;
+        for(ProcessorTreeWalker current = this;
                 current != null; current = current.getParentProcessor()) {
             if(current instanceof Template &&
                     current.getParentProcessor() == null) {
@@ -68,7 +69,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         throw new IllegalStateException();
     }
 
-    public TemplateProcessor getParentProcessor() {
+    public ProcessorTreeWalker getParentProcessor() {
         return _parent;
     }
 
@@ -93,8 +94,8 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         }
     }
 
-    public TemplateProcessor getChildProcessor(int index) {
-        return (TemplateProcessor)_children.get(index);
+    public ProcessorTreeWalker getChildProcessor(int index) {
+        return (ProcessorTreeWalker)_children.get(index);
     }
 
     public void setOriginalNode(SpecificationNode node) {

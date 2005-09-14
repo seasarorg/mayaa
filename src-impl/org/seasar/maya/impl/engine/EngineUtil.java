@@ -18,8 +18,8 @@ package org.seasar.maya.impl.engine;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -56,7 +56,7 @@ public class EngineUtil {
     public static Template getTemplate() {
         Specification spec = SpecificationUtil.findSpecification();
         if(spec instanceof Page) {
-            SpecificationNode parent = spec.getParentNode();
+            NodeTreeWalker parent = spec.getParentNode();
             if(parent != null) {
                 spec = SpecificationUtil.findSpecification();
             } else {

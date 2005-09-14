@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
@@ -52,7 +53,7 @@ public class SpecificationNodeHandler
         LogFactory.getLog(SpecificationNodeHandler.class);
 
     private Specification _specification;
-    private SpecificationNode _current;
+    private NodeTreeWalker _current;
     private Locator _locator;
     private Namespaceable _namespaces;
     private StringBuffer _charactersBuffer;
@@ -124,9 +125,13 @@ public class SpecificationNodeHandler
     	}
     }
     
-    private void saveToCycle(SpecificationNode originalNode) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setOriginalNode(originalNode);
+    private void saveToCycle(NodeTreeWalker originalNode) {
+        if(originalNode instanceof SpecificationNode) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            cycle.setOriginalNode((SpecificationNode)originalNode);
+        } else {
+            throw new IllegalStateException();
+        }
     }
     
     public void startElement(String namespaceUR, 

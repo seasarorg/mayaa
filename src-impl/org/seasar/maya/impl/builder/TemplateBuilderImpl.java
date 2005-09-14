@@ -28,6 +28,7 @@ import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.NodeNamespace;
 import org.seasar.maya.engine.specification.QName;
@@ -118,15 +119,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         cycle.setInjectedNode(injectedNode);
     }
     
-    protected TemplateProcessor findConnectPoint(
-            TemplateProcessor processor) {
+    protected ProcessorTreeWalker findConnectPoint(
+            ProcessorTreeWalker processor) {
         if(processor instanceof ElementProcessor &&
                 ((ElementProcessor)processor).isDuplicated()) {
             // "processor"'s m:rendered is true, ripping duplicated element.
             return findConnectPoint(processor.getChildProcessor(0));
         }
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
-            TemplateProcessor child = processor.getChildProcessor(i);
+            ProcessorTreeWalker child = processor.getChildProcessor(i);
             if(child instanceof CharactersProcessor) {
                 CharactersProcessor charsProc = (CharactersProcessor)child;
                 CompiledScript script = charsProc.getText().getValue(); 
@@ -164,7 +165,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return null;
     }
     
-    protected TemplateProcessor resolveInjectedNode(Template template, 
+    protected ProcessorTreeWalker resolveInjectedNode(Template template, 
             Stack stack, SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
@@ -194,11 +195,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         // "injected" node has children, nested node definition on .maya
         stack.push(processor);
-        TemplateProcessor connectionPoint = null;
+        ProcessorTreeWalker connectionPoint = null;
         while(it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode)it.next();
             saveToCycle(original, childNode);
-            TemplateProcessor childProcessor = resolveInjectedNode(
+            ProcessorTreeWalker childProcessor = resolveInjectedNode(
                     template, stack, original, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {
@@ -246,7 +247,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 throw new TemplateNodeNotResolvedException();
             }
             saveToCycle(child, injected);
-            TemplateProcessor processor = resolveInjectedNode(
+            ProcessorTreeWalker processor = resolveInjectedNode(
                     template, stack, original, injected);
             if(processor != null) {
                 stack.push(processor);

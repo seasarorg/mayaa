@@ -19,6 +19,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
@@ -65,9 +66,9 @@ public class InsertProcessor
     }
     
     protected DoRenderProcessor findDoRender(
-            TemplateProcessor processor) {
+            ProcessorTreeWalker processor) {
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
-            TemplateProcessor child = processor.getChildProcessor(i);
+            ProcessorTreeWalker child = processor.getChildProcessor(i);
             if(child instanceof DoRenderProcessor) {
                 DoRenderProcessor doRender =  (DoRenderProcessor)child;
                 if(_name.equals(doRender.getName())) {
@@ -85,9 +86,14 @@ public class InsertProcessor
     public ProcessStatus doBody() {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
-            TemplateProcessor processor = getChildProcessor(i);
-            if(template.doTemplateRender(processor) == SKIP_PAGE) {
-                return SKIP_PAGE;
+            ProcessorTreeWalker child = getChildProcessor(i);
+            if(child instanceof TemplateProcessor) {
+                TemplateProcessor proc = (TemplateProcessor)child;
+                if(template.doTemplateRender(proc) == SKIP_PAGE) {
+                    return SKIP_PAGE;
+                }
+            } else {
+                throw new IllegalStateException();
             }
         }
         return EVAL_PAGE;
@@ -110,8 +116,11 @@ public class InsertProcessor
         DoRenderProcessor start = findDoRender(template);
         if(start != null) {
             if(start.isRendered()) {
-                TemplateProcessor duplecated = start.getParentProcessor();
-                template.doTemplateRender(duplecated);
+                ProcessorTreeWalker duplecated = start.getParentProcessor();
+                if(duplecated instanceof TemplateProcessor) {
+                    TemplateProcessor proc = (TemplateProcessor)duplecated;
+                    template.doTemplateRender(proc);
+                }
             } else {
                 template.doTemplateRender(start);
             }

@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -44,7 +45,7 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
-    public static Specification findSpecification(SpecificationNode current) {
+    public static Specification findSpecification(NodeTreeWalker current) {
         while(current instanceof Specification == false) {
             current = current.getParentNode();
             if(current == null) {

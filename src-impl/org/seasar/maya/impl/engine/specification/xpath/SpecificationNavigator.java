@@ -26,6 +26,7 @@ import org.jaxen.util.SingleObjectIterator;
 import org.seasar.maya.engine.specification.Namespaceable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
@@ -123,7 +124,7 @@ public class SpecificationNavigator extends DefaultNavigator
     }
     
     public Object getDocumentNode(Object obj) {
-        for(SpecificationNode current = (SpecificationNode)obj;
+        for(NodeTreeWalker current = (NodeTreeWalker)obj;
         		current != null; current = current.getParentNode()) {
 		    if(current instanceof Specification) {
 		        return current;

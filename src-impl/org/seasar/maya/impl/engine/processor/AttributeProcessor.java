@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.QNameable;
 
 /**
@@ -31,7 +31,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 	private ProcessorProperty _value;
     
     private AbstractAttributableProcessor findParentAttributable() {
-        for(TemplateProcessor parent = getParentProcessor();
+        for(ProcessorTreeWalker parent = getParentProcessor();
         		parent != null;
         		parent = parent.getParentProcessor()) {
 	        if(parent instanceof AbstractAttributableProcessor) {

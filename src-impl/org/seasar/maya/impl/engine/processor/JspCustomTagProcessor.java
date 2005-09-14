@@ -32,6 +32,7 @@ import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -157,7 +158,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
             Object value = property.getValue().execute();
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
-        TemplateProcessor processor = this;
+        ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspCustomTagProcessor) {
             	JspCustomTagProcessor jspProcessor = 

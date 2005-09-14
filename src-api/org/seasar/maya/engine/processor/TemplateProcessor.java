@@ -24,7 +24,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface TemplateProcessor extends Serializable {
+public interface TemplateProcessor extends ProcessorTreeWalker {
 
     /**
      * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
@@ -47,44 +47,6 @@ public interface TemplateProcessor extends Serializable {
      */
     ProcessStatus EVAL_PAGE = new ProcessStatus();
     
-    /**
-     * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
-     * @param parent 親TemplateProcessor
-     * @param index 親TemplateNode内での子としてのインデックス値。
-     */
-    void setParentProcessor(TemplateProcessor parent, int index);
-
-    /**
-     * 子TemplateProcessorを追加する。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
-     * @param child 子TemplateProcessor
-     */
-    void addChildProcessor(TemplateProcessor child);
-
-    /**
-     * 親TemplateProcessor内での子としてのインデックス値
-     * @return インデックス値
-     */
-    int getIndex();
-
-    /**
-     * 親TemplateProcessorを取得する。
-     * @return 親TemplateProcessor
-     */
-    TemplateProcessor getParentProcessor();
-
-    /**
-     * 子TemplateNodeの数を取得する。
-     * @return 子TemplateNodeの数
-     */
-    int getChildProcessorSize();
-
-    /**
-     * 指定インデックスの子TemplateNodeを取得する。
-     * @param index 指定index。
-     * @return 指定indexの子TemplateProcessor。
-     */
-    TemplateProcessor getChildProcessor(int index);
-
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
      * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、

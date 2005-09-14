@@ -19,7 +19,7 @@ import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -35,7 +35,7 @@ public abstract class AbstractRequest
     private String _mimeType;
 
     public void parsePath(String path) {
-        String suffixSeparator = EngineImpl.getEngineSetting(
+        String suffixSeparator = EngineUtil.getEngineSetting(
                 SUFFIX_SEPARATOR, "$");
         String[] parsed = StringUtil.parsePath(path, suffixSeparator);
         _pageName = parsed[0];

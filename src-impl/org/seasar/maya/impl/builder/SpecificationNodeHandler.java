@@ -27,7 +27,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
@@ -90,7 +90,7 @@ public class SpecificationNodeHandler
     
     public void startDocument() {
         _charactersBuffer = new StringBuffer(128);
-        _outputWhitespace = EngineImpl.getEngineSettingBoolean(
+        _outputWhitespace = EngineUtil.getEngineSettingBoolean(
                 OUTPUT_WHITE_SPACE, true);
         _current = _specification;
         initNamespaceScope();

@@ -22,7 +22,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -62,7 +62,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
             throw new IllegalArgumentException();
         }
         CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
-        Engine engine = EngineImpl.getEngine();
+        Engine engine = EngineUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 

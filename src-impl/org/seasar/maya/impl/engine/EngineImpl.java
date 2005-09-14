@@ -41,7 +41,6 @@ import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -254,26 +253,6 @@ public class EngineImpl extends SpecificationImpl
         } else {
             cycle.getResponse().setStatus(404);
         }
-    }
-
-    public static Engine getEngine() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getEngine();
-    }
-
-    public static String getEngineSetting(String name, String defaultValue) {
-        Engine engine = getEngine();
-        String value = engine.getParameter(name);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
-
-    public static boolean getEngineSettingBoolean(String name, boolean defaultValue) {
-        Engine engine = getEngine();
-        String value = engine.getParameter(name);
-        return ObjectUtil.booleanValue(value, defaultValue);
     }
     
 }

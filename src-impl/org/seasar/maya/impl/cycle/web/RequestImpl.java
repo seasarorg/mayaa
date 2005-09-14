@@ -27,7 +27,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.AbstractRequest;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -77,7 +77,7 @@ public class RequestImpl extends AbstractRequest {
         String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
         if(StringUtil.isEmpty(path) || "/".equals(path)) {
-            return EngineImpl.getEngineSetting(
+            return EngineUtil.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
         }
         return path;

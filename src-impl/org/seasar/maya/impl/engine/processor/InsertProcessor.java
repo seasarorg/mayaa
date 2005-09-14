@@ -22,7 +22,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -57,7 +57,7 @@ public class InsertProcessor
         if(StringUtil.isEmpty(_path)) {
             throw new IllegalStateException();
         }
-        Engine engine = EngineImpl.getEngine();
+        Engine engine = EngineUtil.getEngine();
         String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
         String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
         Page page = engine.getPage(getTemplate(), pagePath[0], pagePath[2]);  

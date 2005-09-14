@@ -33,7 +33,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.engine.EngineImpl;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -78,7 +78,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     }
 	
     protected boolean isOldSpecification() {
-    	boolean check = EngineImpl.getEngineSettingBoolean(
+    	boolean check = EngineUtil.getEngineSettingBoolean(
                 CHECK_TIMESTAMP, true);
         if(check == false) {
             return false;

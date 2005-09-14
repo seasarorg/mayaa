@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.XmlUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -36,24 +35,21 @@ public class PropertyTagHandler extends TagHandler {
 
     protected void start(Attributes attributes) {
         String name = attributes.getValue("name");
-        if(StringUtil.isEmpty(name)) {
-            // TODO ÉçÉOèoóÕ
-            _parent.invalidate();
-        } else {
-	        boolean required = XmlUtil.getBooleanValue(
-                    attributes, "required", false);
-	        Class expectedType = XmlUtil.getClassValue(
-                    attributes, "expectedType", Object.class);
-	        String defaultValue = attributes.getValue("default");
-	        PropertyDefinitionImpl property = new PropertyDefinitionImpl();
-	        property.setName(name);
-	        property.setRequired(required);
-	        property.setExpectedType(expectedType);
-	        property.setDefaultValue(defaultValue);
-            ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
-	        processor.addPropertyDefinitiion(property);
-            property.setProcessorDefinition(processor);
-        }
+        boolean required = XmlUtil.getBooleanValue(
+                attributes, "required", false);
+        Class expectedType = XmlUtil.getClassValue(
+                attributes, "expectedType", Object.class);
+        String finalValue = attributes.getValue("final");
+        String defaultValue = attributes.getValue("default");
+        PropertyDefinitionImpl property = new PropertyDefinitionImpl();
+        property.setName(name);
+        property.setRequired(required);
+        property.setExpectedType(expectedType);
+        property.setFinalValue(finalValue);
+        property.setDefaultValue(defaultValue);
+        ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
+        processor.addPropertyDefinitiion(property);
+        property.setProcessorDefinition(processor);
     }
     
 }

@@ -34,11 +34,11 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private List _children = new ArrayList();
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
-    private boolean _rendered = true;
+    private boolean _evalBodyInclude = true;
     
-    // MLD property, defaultValue=true 
-    public void setRendered(boolean rendered) {
-        _rendered = rendered;
+    // MLD property
+    public void setEvalBodyInclude(boolean evalBodyInclude) {
+        _evalBodyInclude = evalBodyInclude;
     }
     
     public void setParentProcessor(TemplateProcessor parent, int index) {
@@ -81,7 +81,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public ProcessStatus doStartProcess() {
-        if(_rendered) {
+        if(_evalBodyInclude) {
             return EVAL_BODY_INCLUDE;
         }
         return SKIP_BODY;

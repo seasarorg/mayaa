@@ -48,6 +48,7 @@ public class PropertyDefinitionImpl
     private boolean _required;
     private Class _expectedType;
     private String _defaultValue;
+    private String _finalValue;
     
     protected String getPrefix(Namespaceable namespaceable, QName qName) {
         for(Iterator it = namespaceable.iterateNamespace(true); it.hasNext(); ) {
@@ -114,6 +115,14 @@ public class PropertyDefinitionImpl
         return _defaultValue;
     }
     
+    public void setFinalValue(String finalValue) {
+        _finalValue = finalValue;
+    }
+    
+    public String getFinalValue() {
+        return _finalValue;
+    }
+    
     protected String getMessage(int index) {
         String[] params = new String[] {
                 getProcessorDefinition().getName(), getName() };
@@ -140,10 +149,18 @@ public class PropertyDefinitionImpl
     		throw new IllegalArgumentException();
     	}
     	QName qName = getQName(injected);
-        String value = _defaultValue;
+        String value = getFinalValue();
         NodeAttribute attribute = injected.getAttribute(qName);
-        if(attribute != null) {
-            value = attribute.getValue();
+        if(value == null) {
+            value = getDefaultValue();
+            attribute = injected.getAttribute(qName);
+            if(attribute != null) {
+                value = attribute.getValue();
+            }
+        } else if(attribute != null) {
+            String processorName = getProcessorDefinition().getName();
+            throw new FinalProcessorPropertyException(
+                    processorName, qName);
         }
         if(value != null) {
 	        Class propertyType = getPropertyType();

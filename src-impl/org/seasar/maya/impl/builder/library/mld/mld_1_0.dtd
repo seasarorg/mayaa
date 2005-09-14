@@ -16,4 +16,5 @@
 <!ATTLIST property name CDATA #REQUIRED>
 <!ATTLIST property expectedType CDATA #IMPLIED>
 <!ATTLIST property required (true | false) "false">
+<!ATTLIST property final CDATA  #IMPLIED>
 <!ATTLIST property default CDATA  #IMPLIED>

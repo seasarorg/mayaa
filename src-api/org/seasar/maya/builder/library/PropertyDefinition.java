@@ -30,13 +30,13 @@ public interface PropertyDefinition {
     ProcessorDefinition getProcessorDefinition();
     
     /**
-     * MLDのname属性、であるプロパティ名。
+     * MLDのname属性であるプロパティ名。
      * テンプレートや設定XML上の属性と、テンプレートプロセッサのプロパティを
      * バインディングする名前となる。
      * @return バインディング名。 
      */
     String getName();
-
+    
     /**
      * MLDにrequired属性で記述された必須フラグ。デフォルトはfalse。
      * @return 必須フラグ。
@@ -50,11 +50,17 @@ public interface PropertyDefinition {
     Class getExpectedType();
     
     /**
-     * MLDのdefaultValue属性値。カスタマイズで渡すプロパティのデフォルト値。
+     * MLDのdefault属性値。カスタマイズで渡すプロパティのデフォルト値。
      * @return カスタマイズデフォルト値。
      */
     String getDefaultValue();
 
+    /**
+     * MLDのfinal属性値。MLDに定義した値はユーザーアプリで上書きされない。
+     * @return ファイナル値。
+     */
+    String getFinalValue();
+    
     /**
      * プロパティオブジェクトを生成する。
      * @param injected インジェクションするノード。

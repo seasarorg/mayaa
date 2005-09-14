@@ -50,14 +50,14 @@
 			duplecated element on the template by m:rendered="true"
 		</description>
 		<property name="name" required="true"/>
-		<property name="duplicated" default="true"/>
+		<property name="duplicated" final="true"/>
 	</processor>
 
 	<processor name="element"
 			class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>m:element injection</description>
 		<property name="name" required="true"/>
-		<property name="childEvaluation" default="true"/>
+		<property name="childEvaluation" final="true"/>
 	</processor>
 
 	<processor name="attribute"
@@ -94,13 +94,13 @@
 	<processor name="with"
 			class="org.seasar.maya.impl.engine.processor.TemplateProcessorSupport">
 		<description>in order to grouping processor</description>
-		<property name="rendered" default="true"/>
+		<property name="evalBodyInclude" final="true"/>
 	</processor>
 
 	<processor name="null"
 			class="org.seasar.maya.impl.engine.processor.TemplateProcessorSupport">
 		<description>in order to grouping processor</description>
-		<property name="rendered" default="false"/>
+		<property name="evalBodyInclude" final="false"/>
 	</processor>
 
 	<processor name="exec"

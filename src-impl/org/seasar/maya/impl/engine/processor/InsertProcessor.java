@@ -35,7 +35,7 @@ public class InsertProcessor
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	private String _path;
-    private String _name = "";
+    private String _name;
     private Page _page;
     
     // MLD property, required
@@ -48,9 +48,6 @@ public class InsertProcessor
     
     // MLD property
     public void setName(String name) {
-        if(name == null) {
-            name = "";
-        }
         _name = name;
     }
     
@@ -65,38 +62,39 @@ public class InsertProcessor
         return page;
     }
     
-    protected DoRenderProcessor findDoRender(
-            ProcessorTreeWalker processor) {
-        for(int i = 0; i < processor.getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = processor.getChildProcessor(i);
+    protected DoRenderProcessor findDoRender(ProcessorTreeWalker proc) {
+        DoRenderProcessor doRender = null;
+        for(int i = 0; i < proc.getChildProcessorSize(); i++) {
+            ProcessorTreeWalker child = proc.getChildProcessor(i);
             if(child instanceof DoRenderProcessor) {
-                DoRenderProcessor doRender =  (DoRenderProcessor)child;
-                if(_name.equals(doRender.getName())) {
-                    return doRender;
-                }
+           		doRender =  (DoRenderProcessor)child;
+               	if(StringUtil.isEmpty(_name) || 
+               			_name.equals(doRender.getName())) {
+           			break;
+            	}
             }
-            DoRenderProcessor doRender = findDoRender(child);
+            doRender = findDoRender(child);
             if(doRender != null) {
-                return doRender;
+                break;
             }
         }
-        return null;
+        return doRender;
     }
     
-    public ProcessStatus doBody() {
+    public ProcessStatus doBase() {
         Template template = getTemplate();
         for(int i = 0; i < getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor proc = (TemplateProcessor)child;
-                if(template.doTemplateRender(proc) == TemplateProcessor.SKIP_PAGE) {
-                    return TemplateProcessor.SKIP_PAGE;
+                if(template.doTemplateRender(proc) == SKIP_PAGE) {
+                    return SKIP_PAGE;
                 }
             } else {
                 throw new IllegalStateException();
             }
         }
-        return TemplateProcessor.EVAL_PAGE;
+        return EVAL_PAGE;
     }
     
 	protected ProcessStatus writeStartElement() {
@@ -112,20 +110,23 @@ public class InsertProcessor
             throw new PageNotFoundException(
                     _page.getPageName(), requiredSuffix, _page.getExtension());
         }
-        // TODO setParentProcessor‚µ‚È‚¢‚Å‚àAOK‚È‚æ‚¤‚É‚·‚éB
         template.setParentProcessor(this, 0);
         DoRenderProcessor start = findDoRender(template);
         if(start != null) {
+        	ProcessStatus startRet = SKIP_BODY; 
             if(start.isRendered()) {
                 ProcessorTreeWalker duplecated = start.getParentProcessor();
                 if(duplecated instanceof TemplateProcessor) {
                     TemplateProcessor proc = (TemplateProcessor)duplecated;
-                    template.doTemplateRender(proc);
+                    startRet = template.doTemplateRender(proc);
                 }
             } else {
-                template.doTemplateRender(start);
+            	startRet = template.doTemplateRender(start);
             }
-            return TemplateProcessor.SKIP_BODY;
+            if(startRet == EVAL_PAGE) {
+            	startRet = SKIP_BODY;
+            }
+            return startRet;
         }
         throw new DoRenderNotFoundException();
     }

@@ -17,7 +17,6 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.util.ObjectUtil;
 
 /**
@@ -79,14 +78,14 @@ public class ForProcessor extends TemplateProcessorSupport
         if(_init != null) {
     		_init.getValue().execute();
     	}
-        return execTest() ? TemplateProcessor.EVAL_BODY_INCLUDE : TemplateProcessor.SKIP_BODY;
+        return execTest() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
 
 	public ProcessStatus doAfterChildProcess() {
         if(_after != null) {
         	_after.getValue().execute();
         }
-        return execTest() ? EVAL_BODY_AGAIN : TemplateProcessor.SKIP_BODY;
+        return execTest() ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
     
 }

@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
@@ -34,7 +33,7 @@ public class CommentProcessor extends CharactersProcessor {
             cycle.getResponse().write(value.toString());
         }
         cycle.getResponse().write("-->");
-        return TemplateProcessor.SKIP_BODY;
+        return SKIP_BODY;
     }
 
 }

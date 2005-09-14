@@ -33,7 +33,6 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
@@ -132,13 +131,13 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
     
     protected ProcessStatus getProcessStatus(int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
-            return TemplateProcessor.EVAL_BODY_INCLUDE;
+            return EVAL_BODY_INCLUDE;
         } else if(status == Tag.SKIP_BODY) {
-            return TemplateProcessor.SKIP_BODY;
+            return SKIP_BODY;
         } else if(status == Tag.EVAL_PAGE) {
-            return TemplateProcessor.EVAL_PAGE;
+            return EVAL_PAGE;
         } else if(status == Tag.SKIP_PAGE) {
-            return TemplateProcessor.SKIP_PAGE;
+            return SKIP_PAGE;
         } else if(!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
             return IterationProcessor.EVAL_BODY_AGAIN;
         } else if(doStart && status == BodyTag.EVAL_BODY_BUFFERED) {

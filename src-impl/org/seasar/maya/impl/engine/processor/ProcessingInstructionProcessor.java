@@ -16,14 +16,14 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
+public class ProcessingInstructionProcessor 
+		extends TemplateProcessorSupport {
     
 	private static final long serialVersionUID = 6717263251948534639L;
 
@@ -58,7 +58,7 @@ public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
         processingInstruction.append("?>\r\n");
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(processingInstruction.toString());
-        return TemplateProcessor.SKIP_BODY;
+        return SKIP_BODY;
     }
 
 }

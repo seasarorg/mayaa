@@ -22,9 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -50,11 +50,11 @@ public class PropertyDefinitionImpl
     private String _defaultValue;
     private String _finalValue;
     
-    protected String getPrefix(Namespaceable namespaceable, QName qName) {
-        for(Iterator it = namespaceable.iterateNamespace(true); it.hasNext(); ) {
-            NodeNamespace ns = (NodeNamespace)it.next();
-            if(ns.getNamespaceURI().equals(qName.getNamespaceURI())) {
-                return ns.getPrefix(); 
+    protected String getPrefix(Namespace namespace, QName qName) {
+        for(Iterator it = namespace.iteratePrefixMapping(true); it.hasNext(); ) {
+            PrefixMapping mapping = (PrefixMapping)it.next();
+            if(mapping.getNamespaceURI().equals(qName.getNamespaceURI())) {
+                return mapping.getPrefix(); 
             }
         }
         return null;

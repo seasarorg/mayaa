@@ -18,13 +18,13 @@ package org.seasar.maya.engine.specification;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeNamespace extends NodeObject {
+public interface PrefixMapping extends NodeObject {
 
     /**
      * 宣言されているノードの取得。
      * @return 宣言ノード。
      */
-    Namespaceable getNamespaceable();
+    Namespace getNamespace();
 
     /**
      * プレフィックス文字列の取得。

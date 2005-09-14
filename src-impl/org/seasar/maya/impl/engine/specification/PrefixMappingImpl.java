@@ -15,20 +15,20 @@
  */
 package org.seasar.maya.impl.engine.specification;
 
-import org.seasar.maya.engine.specification.Namespaceable;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.Namespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NodeNamespaceImpl implements NodeNamespace {
+public class PrefixMappingImpl implements PrefixMapping {
 
-    private Namespaceable _namespaceable;
+    private Namespace _namespace;
     private String _prefix;
     private String _namespaceURI;
     
-    public NodeNamespaceImpl(String prefix, String namespaceURI) {
+    public PrefixMappingImpl(String prefix, String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
@@ -39,18 +39,18 @@ public class NodeNamespaceImpl implements NodeNamespace {
         _namespaceURI = namespaceURI;
     }
 
-    public void setNamespaceable(Namespaceable namespaceable) {
-        if(namespaceable == null) {
+    public void setNamespace(Namespace namespace) {
+        if(namespace == null) {
             throw new IllegalArgumentException();
         }
-        _namespaceable = namespaceable;
+        _namespace = namespace;
     }
 
-    public Namespaceable getNamespaceable() {
-        if(_namespaceable == null) {
+    public Namespace getNamespace() {
+        if(_namespace == null) {
             throw new IllegalStateException();
         }
-        return _namespaceable;
+        return _namespace;
     }
 
     public String getPrefix() {
@@ -72,11 +72,12 @@ public class NodeNamespaceImpl implements NodeNamespace {
     }
     
     public boolean equals(Object test) {
-        if(test == null || (test instanceof NodeNamespaceImpl) == false) {
+        if(test == null || (test instanceof PrefixMappingImpl) == false) {
             return false;
         }
-        NodeNamespaceImpl ns = (NodeNamespaceImpl)test;
-        return _prefix.equals(ns.getPrefix()) && _namespaceURI.equals(ns.getNamespaceURI());
+        PrefixMappingImpl ns = (PrefixMappingImpl)test;
+        return _prefix.equals(ns.getPrefix()) && 
+        		_namespaceURI.equals(ns.getNamespaceURI());
     }
     
     public int hashCode() {

@@ -16,27 +16,27 @@
 package org.seasar.maya.impl.engine.specification.xpath;
 
 import org.jaxen.NamespaceContext;
-import org.seasar.maya.engine.specification.Namespaceable;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.Namespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class NamespaceContextImpl implements NamespaceContext {
 
-    private Namespaceable _namespaceable;
+    private Namespace _namespace;
     
-    public NamespaceContextImpl(Namespaceable namespaceable) {
+    public NamespaceContextImpl(Namespace namespaceable) {
         if(namespaceable == null) {
             throw new IllegalArgumentException();
         }
-        _namespaceable = namespaceable;
+        _namespace = namespaceable;
     }
     
     public String translateNamespacePrefixToUri(String prefix) {
-        NodeNamespace ns = _namespaceable.getNamespace(prefix, true);
-        if(ns != null) {
-            return ns.getNamespaceURI();
+        PrefixMapping mapping = _namespace.getPrefixMapping(prefix, true);
+        if(mapping != null) {
+            return mapping.getNamespaceURI();
         }
         return null;
     }

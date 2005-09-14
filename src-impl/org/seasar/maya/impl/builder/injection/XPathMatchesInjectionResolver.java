@@ -20,12 +20,12 @@ import java.util.Iterator;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.CopyToFilter;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
+import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.engine.specification.XPathUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -44,13 +44,14 @@ public class XPathMatchesInjectionResolver
         if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-        Namespaceable namespaceable = new NamespaceableImpl();
-        namespaceable.addNamespace("m", URI_MAYA);
+        Namespace namespace = new NamespaceImpl();
+        namespace.addPrefixMapping("m", URI_MAYA);
         String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
         for(Iterator it = XPathUtil.selectChildNodes(
-                original, xpathExpr, namespaceable, true); it.hasNext(); ) {
+                original, xpathExpr, namespace, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
-            String mayaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
+            String mayaPath = SpecificationUtil.getAttributeValue(
+            		injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, injected)) {
                 return injected.copyTo(_xpathFilter);
             }

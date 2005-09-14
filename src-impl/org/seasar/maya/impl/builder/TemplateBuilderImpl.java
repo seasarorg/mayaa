@@ -30,7 +30,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -173,11 +173,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         saveToCycle(original, injected);
         TemplateProcessor processor = createProcessor(original, injected);
         if(processor == null) {
-            NodeNamespace ns = original.getNamespace("", true);
-            if(ns == null) {
+            PrefixMapping mapping = original.getPrefixMapping("", true);
+            if(mapping == null) {
                 throw new IllegalStateException();
             }
-            String defaultURI = ns.getNamespaceURI();
+            String defaultURI = mapping.getNamespaceURI();
             if(defaultURI.equals(injected.getQName().getNamespaceURI())) {
                 InjectionChain chain = DefaultInjectionChain.getInstance(); 
                 SpecificationNode retry = chain.getNode(injected);

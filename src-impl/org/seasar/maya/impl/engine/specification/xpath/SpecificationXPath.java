@@ -18,7 +18,7 @@ package org.seasar.maya.impl.engine.specification.xpath;
 import org.jaxen.BaseXPath;
 import org.jaxen.JaxenException;
 import org.jaxen.XPath;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -28,12 +28,12 @@ public class SpecificationXPath extends BaseXPath {
 	private static final long serialVersionUID = -4676164886549672326L;
 
 	public static XPath createXPath(
-            String xpathExpr, Namespaceable namespaceable) {
+            String xpathExpr, Namespace namespace) {
         try {
             XPath xpath = new SpecificationXPath(xpathExpr);
-            if(namespaceable != null) {
+            if(namespace != null) {
                 xpath.setNamespaceContext(
-                        new NamespaceContextImpl(namespaceable));
+                        new NamespaceContextImpl(namespace));
             }
             return xpath;
         } catch(JaxenException e) {

@@ -17,14 +17,14 @@ package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
 
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class QNameableImpl extends NamespaceableImpl
+public class QNameableImpl extends NamespaceImpl
         implements QNameable {
 
     private QName _qName;
@@ -42,10 +42,10 @@ public class QNameableImpl extends NamespaceableImpl
     
     public String getPrefix() {
         String namespaceURI = _qName.getNamespaceURI();
-	    for(Iterator it = iterateNamespace(true); it.hasNext(); ) {
-	        NodeNamespace ns = (NodeNamespace)it.next();
-	        if(namespaceURI.equals(ns.getNamespaceURI())) {
-	            return ns.getPrefix();
+	    for(Iterator it = iteratePrefixMapping(true); it.hasNext(); ) {
+	        PrefixMapping mapping = (PrefixMapping)it.next();
+	        if(namespaceURI.equals(mapping.getNamespaceURI())) {
+	            return mapping.getPrefix();
 	        }
 	    }
 	    return "";

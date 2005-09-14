@@ -19,7 +19,7 @@ package org.seasar.maya.engine.specification;
  * QNameを取得できるオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface QNameable extends Namespaceable {
+public interface QNameable extends Namespace {
 
     /**
      * 名前空間URIおよびローカル名の組み合わせの取得。

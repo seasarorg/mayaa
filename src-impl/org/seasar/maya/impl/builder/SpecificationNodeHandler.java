@@ -18,8 +18,8 @@ package org.seasar.maya.impl.builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.specification.Namespaceable;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.Namespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -29,7 +29,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
-import org.seasar.maya.impl.engine.specification.NamespaceableImpl;
+import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -55,7 +55,7 @@ public class SpecificationNodeHandler
     private Specification _specification;
     private NodeTreeWalker _current;
     private Locator _locator;
-    private Namespaceable _namespace;
+    private Namespace _namespace;
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace;
     private int _inEntity;
@@ -72,13 +72,13 @@ public class SpecificationNodeHandler
     }
 
     private void initNamespace() {
-        _namespace = new NamespaceableImpl();
-        _namespace.addNamespace("", URI_HTML);
+        _namespace = new NamespaceImpl();
+        _namespace.addPrefixMapping("", URI_HTML);
     }
 
     private void stackNamespace() {
-        Namespaceable parentSpace = _namespace;
-        _namespace = new NamespaceableImpl();
+        Namespace parentSpace = _namespace;
+        _namespace = new NamespaceImpl();
         _namespace.setParentSpace(parentSpace);
     }
     
@@ -99,12 +99,12 @@ public class SpecificationNodeHandler
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        _namespace.addNamespace(prefix, uri);
+        _namespace.addPrefixMapping(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix) {
-        NodeNamespace ns = _namespace.getNamespace(prefix, false);
-        if(ns == null) {
+        PrefixMapping mapping = _namespace.getPrefixMapping(prefix, false);
+        if(mapping == null) {
             throw new IllegalStateException();
         }
     }
@@ -142,9 +142,9 @@ public class SpecificationNodeHandler
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
-        Namespaceable elementNS = new NamespaceableImpl();
+        Namespace elementNS = new NamespaceImpl();
         elementNS.setParentSpace(_namespace);
-        elementNS.addNamespace("", nodeURI);
+        elementNS.addPrefixMapping("", nodeURI);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             QNameable parsedAttrName = 

@@ -20,49 +20,49 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.seasar.maya.engine.specification.Namespaceable;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.Namespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NamespaceableImpl implements Namespaceable {
+public class NamespaceImpl implements Namespace {
 
-    private Namespaceable _parent;
-    private Map _namespaces;
+    private Namespace _parent;
+    private Map _mappings;
     
 	protected void clear() {
 	    synchronized(this) {
-			if(_namespaces != null) {
-			    _namespaces.clear();
+			if(_mappings != null) {
+			    _mappings.clear();
 			}
             _parent = null;
 	    }
 	}
 
     public boolean added() {
-        if(_namespaces == null) {
+        if(_mappings == null) {
             return false;
         }
-        synchronized(_namespaces) {
-            return _namespaces.size() > 0;
+        synchronized(_mappings) {
+            return _mappings.size() > 0;
         }
     }
     
-    public void setParentSpace(Namespaceable parent) {
+    public void setParentSpace(Namespace parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
     
-    public Namespaceable getParentSpace() {
+    public Namespace getParentSpace() {
         return _parent;
     }
 
-    public void addNamespace(String prefix, String namespaceURI) {
+    public void addPrefixMapping(String prefix, String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
@@ -70,56 +70,56 @@ public class NamespaceableImpl implements Namespaceable {
             prefix = "";
         }
 	    synchronized(this) {
-	        if(_namespaces == null) {
-	            _namespaces = new HashMap();
+	        if(_mappings == null) {
+	            _mappings = new HashMap();
 	        }
-	        if(_namespaces.containsKey(prefix) == false) {
-	        	NodeNamespaceImpl ns = 
-                    new NodeNamespaceImpl(prefix, namespaceURI); 
-	            _namespaces.put(prefix, ns);
-	            ns.setNamespaceable(this);
+	        if(_mappings.containsKey(prefix) == false) {
+	        	PrefixMappingImpl ns = 
+                    new PrefixMappingImpl(prefix, namespaceURI); 
+	            _mappings.put(prefix, ns);
+	            ns.setNamespace(this);
 	        }
 	    }
     }
     
-    public NodeNamespace getNamespace(String prefix, boolean all) {
+    public PrefixMapping getPrefixMapping(String prefix, boolean all) {
         if(prefix == null) {
             prefix = "";
         }
-        NodeNamespace ret = null;
-        if(_namespaces != null) {
-            ret = (NodeNamespace)_namespaces.get(prefix);
+        PrefixMapping ret = null;
+        if(_mappings != null) {
+            ret = (PrefixMapping)_mappings.get(prefix);
             if(ret != null) {
                 return ret;
             }
         }
         if(all && _parent != null) {
-            return _parent.getNamespace(prefix, true);
+            return _parent.getPrefixMapping(prefix, true);
         }
         return null;
     }
 
-    public Iterator iterateNamespace(boolean all) {
+    public Iterator iteratePrefixMapping(boolean all) {
         if(all && _parent != null) {
             return new AllNamespaceIterator(this);
         }
-        if(_namespaces != null) {
-            return _namespaces.values().iterator();
+        if(_mappings != null) {
+            return _mappings.values().iterator();
         }
         return NullIterator.getInstance();
     }
     
     private class AllNamespaceIterator implements Iterator {
         
-        private Namespaceable _current;
+        private Namespace _current;
         private Iterator _it;
         
-        private AllNamespaceIterator(Namespaceable current) {
+        private AllNamespaceIterator(Namespace current) {
             if(current == null) {
                 throw new IllegalArgumentException();
             }
             _current = current;
-            _it = current.iterateNamespace(false);
+            _it = current.iteratePrefixMapping(false);
         }
 
         public boolean hasNext() {
@@ -130,7 +130,7 @@ public class NamespaceableImpl implements Namespaceable {
                 }
                 _current = _current.getParentSpace();
                 if(_current != null) {
-                    _it = _current.iterateNamespace(false);
+                    _it = _current.iteratePrefixMapping(false);
                 } else {
                     _it = null;
                 }

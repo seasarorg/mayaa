@@ -23,9 +23,9 @@ import org.jaxen.Navigator;
 import org.jaxen.XPath;
 import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
@@ -54,17 +54,17 @@ public class SpecificationNavigator extends DefaultNavigator
     private SpecificationNavigator() {
     }
 
-	private String getNamespaceURI(Namespaceable namespaceable, String prefix) {
-	    if(namespaceable == null) {
+	private String getNamespaceURI(Namespace namespace, String prefix) {
+	    if(namespace == null) {
 	        throw new IllegalArgumentException();
 	    }
 	    if(prefix == null) {
 	        prefix = "";
 	    }
-	    for(Iterator it = namespaceable.iterateNamespace(true); it.hasNext(); ) {
-	        NodeNamespace ns = (NodeNamespace)it.next();
-	        if(prefix.equals(ns.getPrefix())) {
-	            return ns.getNamespaceURI();
+	    for(Iterator it = namespace.iteratePrefixMapping(true); it.hasNext(); ) {
+	        PrefixMapping mapping = (PrefixMapping)it.next();
+	        if(prefix.equals(mapping.getPrefix())) {
+	            return mapping.getNamespaceURI();
 	        }
 	    }
 	    return null;
@@ -72,8 +72,8 @@ public class SpecificationNavigator extends DefaultNavigator
     
     public Iterator getParentAxisIterator(Object obj) {
         Object parent = null;
-        if(obj instanceof NodeNamespace) {
-            parent =((NodeNamespace)obj).getNamespaceable();
+        if(obj instanceof PrefixMapping) {
+            parent =((PrefixMapping)obj).getNamespace();
         } else if(obj instanceof NodeAttribute) {
             parent = ((NodeAttribute)obj).getNode();
         } else if(obj instanceof SpecificationNode) {
@@ -88,7 +88,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public Iterator getNamespaceAxisIterator(Object obj) {
         if(obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode)obj;
-            return node.iterateNamespace(true);
+            return node.iteratePrefixMapping(true);
         }
         return NullIterator.getInstance();
     }
@@ -134,16 +134,16 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public String translateNamespacePrefixToUri(String prefix, Object obj) {
-    	Namespaceable namaspaceable = null;
-        if(obj instanceof NodeNamespace) {
-            namaspaceable = ((NodeNamespace)obj).getNamespaceable();
+    	Namespace namaspace = null;
+        if(obj instanceof PrefixMapping) {
+            namaspace = ((PrefixMapping)obj).getNamespace();
         } else if(obj instanceof NodeAttribute) {
-            namaspaceable = ((NodeAttribute)obj).getNode();
+            namaspace = ((NodeAttribute)obj).getNode();
         } else if(obj instanceof SpecificationNode) {
-            namaspaceable = (SpecificationNode)obj;
+            namaspace = (SpecificationNode)obj;
         }
-        if(namaspaceable != null) {
-            return getNamespaceURI(namaspaceable, prefix);
+        if(namaspace != null) {
+            return getNamespaceURI(namaspace, prefix);
         }
         return "";
     }
@@ -222,12 +222,12 @@ public class SpecificationNavigator extends DefaultNavigator
 	}
 	
 	public String getNamespacePrefix(Object obj) {
-	    NodeNamespace ns = (NodeNamespace)obj;
+	    PrefixMapping ns = (PrefixMapping)obj;
 		return ns.getPrefix();
 	}
 	
 	public String getNamespaceStringValue(Object obj) {
-	    NodeNamespace ns = (NodeNamespace)obj;
+	    PrefixMapping ns = (PrefixMapping)obj;
 		return ns.getNamespaceURI();
 	}
 	
@@ -267,7 +267,7 @@ public class SpecificationNavigator extends DefaultNavigator
 	}
 	
 	public boolean isNamespace(Object obj) {
-		return obj instanceof NodeNamespace;
+		return obj instanceof PrefixMapping;
 	}
 	
 	public boolean isProcessingInstruction(Object obj) {

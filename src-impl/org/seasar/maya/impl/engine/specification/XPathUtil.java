@@ -29,7 +29,7 @@ import org.jaxen.XPathFunctionContext;
 import org.jaxen.pattern.Pattern;
 import org.jaxen.pattern.PatternParser;
 import org.jaxen.saxpath.SAXPathException;
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.specification.xpath.NamespaceContextImpl;
@@ -46,15 +46,15 @@ public class XPathUtil {
     }
 
     public static boolean matches(SpecificationNode test, 
-            String xpathExpr, Namespaceable namespaceable) {
+            String xpathExpr, Namespace namespace) {
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }
         NamespaceContext nsContext;
-        if(namespaceable == null) {
+        if(namespace == null) {
             nsContext = new SimpleNamespaceContext();
         } else {
-            nsContext = new NamespaceContextImpl(namespaceable);
+            nsContext = new NamespaceContextImpl(namespace);
         }
         ContextSupport support = new ContextSupport(
                 nsContext,
@@ -73,7 +73,7 @@ public class XPathUtil {
     }
     
     public static Iterator selectChildNodes(SpecificationNode node,
-            String xpathExpr, Namespaceable namespaceable, boolean cascade) {
+            String xpathExpr, Namespace namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
@@ -94,11 +94,11 @@ public class XPathUtil {
 
         private Specification _specification;
         private String _xpathExpr;
-        private Namespaceable _namespaceable;
+        private Namespace _namespaceable;
         private Iterator _iterator;
         
         private CascadeSelectNodesIterator(Specification specification, 
-                String xpathExpr, Namespaceable namespaceable) {
+                String xpathExpr, Namespace namespaceable) {
             if(specification == null || StringUtil.isEmpty(xpathExpr)) {
                 throw new IllegalArgumentException();
             }

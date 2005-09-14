@@ -17,9 +17,9 @@ package org.seasar.maya.impl.builder;
 
 import java.util.Iterator;
 
-import org.seasar.maya.engine.specification.Namespaceable;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -58,7 +58,7 @@ public class BuilderUtil implements CONST_IMPL {
     }
 
     public static QNameable parseName(
-            Namespaceable namespaces, String qName) {
+            Namespace namespace, String qName) {
         String[] parsed = qName.split(":");
         String prefix = null;
         String localName = null;
@@ -66,16 +66,16 @@ public class BuilderUtil implements CONST_IMPL {
         if(parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            NodeNamespace namespace = namespaces.getNamespace(prefix, true);
-            if(namespace == null) {
+            PrefixMapping mapping = namespace.getPrefixMapping(prefix, true);
+            if(mapping == null) {
                 throw new PrefixMappingNotFoundException(prefix);
             }
-            namespaceURI = namespace.getNamespaceURI();
+            namespaceURI = mapping.getNamespaceURI();
         } else if(parsed.length == 1) {
             localName = parsed[0];
-            NodeNamespace namespace = namespaces.getNamespace("", true);
-            if(namespace != null) {
-                namespaceURI = namespace.getNamespaceURI();
+            PrefixMapping mapping = namespace.getPrefixMapping("", true);
+            if(mapping != null) {
+                namespaceURI = mapping.getNamespaceURI();
             } else {
                 throw new PrefixMappingNotFoundException("");
             }
@@ -84,7 +84,7 @@ public class BuilderUtil implements CONST_IMPL {
         }
         QName retName = new QNameImpl(namespaceURI, localName);
         QNameable ret = new QNameableImpl(retName);
-        ret.setParentSpace(namespaces);
+        ret.setParentSpace(namespace);
         return ret;
     }
 

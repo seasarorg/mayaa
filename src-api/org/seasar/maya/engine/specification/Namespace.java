@@ -20,26 +20,26 @@ import java.util.Iterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Namespaceable extends NodeObject {
+public interface Namespace extends NodeObject {
 
     /**
      * 親名前空間スコープの設定。 
      * @param parent 親の名前空間スコープ。
      */
-    void setParentSpace(Namespaceable parent);
+    void setParentSpace(Namespace parent);
 
     /**
      * 親名前空間スコープの取得。
      * @return 親の名前空間スコープ。
      */
-    Namespaceable getParentSpace();
+    Namespace getParentSpace();
     
     /**
      * 名前空間モデルの追加。
      * @param prefix 名前空間プレフィックス。
      * @param namespaceURI 名前空間URI。
      */
-    void addNamespace(String prefix, String namespaceURI);
+    void addPrefixMapping(String prefix, String namespaceURI);
     
     /**
      * このスコープにて、名前空間モデルを追加したかどうか。
@@ -53,13 +53,13 @@ public interface Namespaceable extends NodeObject {
      * @param all 親スコープも検索する。
      * @return 名前空間モデル。
      */
-    NodeNamespace getNamespace(String prefix, boolean all);
+    PrefixMapping getPrefixMapping(String prefix, boolean all);
     
     /**
      * 適用される名前空間のイテレート。
      * @param all 親スコープも検索する。 
-     * @return 名前空間（<code>NodeNamespace</code>）のイテレータ。
+     * @return プレフィックスマッピング（<code>PrefixMapping</code>）のイテレータ。
      */
-    Iterator iterateNamespace(boolean all);
+    Iterator iteratePrefixMapping(boolean all);
 
 }

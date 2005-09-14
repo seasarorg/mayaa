@@ -21,8 +21,8 @@ import java.util.List;
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.Namespaceable;
-import org.seasar.maya.engine.specification.NodeNamespace;
+import org.seasar.maya.engine.specification.Namespace;
+import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -103,13 +103,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
         QName qName = _name.getQName();
         buffer.append(qName.getLocalName());
         if(isHTML(qName) == false) {
-            Namespaceable space = _name.getParentSpace();
-            if(space == null) {
+            Namespace namespace = _name.getParentSpace();
+            if(namespace == null) {
                 throw new IllegalArgumentException();
             }
-            for(Iterator it = space.iterateNamespace(false);
+            for(Iterator it = namespace.iteratePrefixMapping(false);
                     it.hasNext(); ) {
-                NodeNamespace mapping = (NodeNamespace)it.next();
+                PrefixMapping mapping = (PrefixMapping)it.next();
                 String pre = mapping.getPrefix();
                 String uri = mapping.getNamespaceURI();
                 if(StringUtil.hasValue(pre)) {

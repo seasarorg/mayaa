@@ -240,7 +240,7 @@ public class TemplateImpl extends SpecificationImpl
         if(templateTime != null) {
             Page page = getPage();
             Date pageTime = page.getTimestamp();
-            Date engineTime = page.getEngine().getTimestamp();
+            Date engineTime = EngineUtil.getEngine().getTimestamp();
             if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
                 setTimestamp(null);
             }

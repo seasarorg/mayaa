@@ -27,12 +27,6 @@ import org.seasar.maya.engine.specification.Specification;
  */
 public interface Page extends Specification, Serializable {
 
-	/**
-	 * エンジンへの参照を取得。
-	 * @return エンジン。
-	 */
-	Engine getEngine();
-	
     /**
      * ページの名前を取得する。/context/hello.htmlであれば、「/context/hello」を返す。
      * @return ページ名。

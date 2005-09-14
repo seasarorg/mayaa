@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
@@ -44,7 +43,6 @@ public class PageImpl extends SpecificationImpl
 
 	private static final long serialVersionUID = -8688634709901129128L;
 
-	private Engine _engine;
     private String _pageName;
     private String _extension;
 
@@ -53,20 +51,8 @@ public class PageImpl extends SpecificationImpl
         if(StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
-        if(parent instanceof Engine) {
-            _engine = (Engine)parent;
-        } else if(parent instanceof Template) {
-            Template template = (Template)parent;
-            _engine = template.getPage().getEngine();
-        } else {
-            throw new IllegalArgumentException();
-        }
         _pageName = pageName;
         _extension = extension;
-    }
-    
-    public Engine getEngine() {
-        return _engine;
     }
 
     public String getPageName() {

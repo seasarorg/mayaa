@@ -17,15 +17,18 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
+import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
- * テンプレートオブジェクト。HTMLをパースした結果の、TemplateProcessorのツリー構造を内包。
- * 自身もTemplateProcessorである。リクエストに対して、ステートレスである。 シリアライズ可能。
+ * テンプレートオブジェクト。HTMLをパースした結果の、
+ * TemplateProcessorのツリー構造を内包。
+ * リクエストに対して、ステートレスである。 シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Template extends Specification, TemplateProcessor, Serializable {
+public interface Template 
+        extends Specification, ProcessorTreeWalker, Serializable {
 
 	/**
 	 * ページへの参照を取得する。
@@ -44,6 +47,6 @@ public interface Template extends Specification, TemplateProcessor, Serializable
      * @param renderRoot 描画のルートとなるプロセッサ。nullの場合は自身をルートとして描画する。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
-    ProcessStatus doTemplateRender(TemplateProcessor renderRoot);
+    ProcessStatus doTemplateRender(ProcessorTreeWalker renderRoot);
     
 }

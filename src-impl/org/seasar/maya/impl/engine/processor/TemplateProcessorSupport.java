@@ -78,14 +78,14 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public ProcessStatus doEndProcess() {
-        return EVAL_PAGE;
+        return TemplateProcessor.EVAL_PAGE;
     }
 
     public ProcessStatus doStartProcess() {
         if(_evalBodyInclude) {
-            return EVAL_BODY_INCLUDE;
+            return TemplateProcessor.EVAL_BODY_INCLUDE;
         }
-        return SKIP_BODY;
+        return TemplateProcessor.SKIP_BODY;
     }
 
     public int getChildProcessorSize() {

@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
@@ -28,13 +29,13 @@ public class CDATAProcessor extends TemplateProcessorSupport {
 	public ProcessStatus doStartProcess() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("<![CDATA[");
-        return EVAL_BODY_INCLUDE;
+        return TemplateProcessor.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doEndProcess() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("]]>");
-        return EVAL_PAGE;
+        return TemplateProcessor.EVAL_PAGE;
     }
     
 }

@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -39,7 +40,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
         if(insert != null) {
             return insert.doBody();
         }
-        return EVAL_BODY_INCLUDE;
+        return TemplateProcessor.EVAL_BODY_INCLUDE;
     }
     
 }

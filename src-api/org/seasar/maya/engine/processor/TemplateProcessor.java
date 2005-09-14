@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.engine.processor;
 
+
 import java.io.Serializable;
 
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -26,27 +27,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public interface TemplateProcessor extends ProcessorTreeWalker {
 
-    /**
-     * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
-     */
-    ProcessStatus SKIP_BODY = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doStartProcess()がこの値を返すと、
-     * プロセッサボディをバッファリング無しで出力する。
-     */
-    ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、以降の出力をただちに中止する。
-     */
-    ProcessStatus SKIP_PAGE = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、以降のプロセッサ出力を続ける。
-     */
-    ProcessStatus EVAL_PAGE = new ProcessStatus();
-    
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
      * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
@@ -90,11 +70,32 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      */
     public class ProcessStatus implements Serializable {
 
-		private static final long serialVersionUID = 473586899180314059L;
+        private static final long serialVersionUID = 473586899180314059L;
 
-		protected ProcessStatus() {
-    	}
-    	
+        protected ProcessStatus() {
+        }
+        
     }
+
+    /**
+     * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
+     */
+    public static final ProcessStatus SKIP_BODY = new ProcessStatus();
     
+    /**
+     * リターンフラグ。doStartProcess()がこの値を返すと、
+     * プロセッサボディをバッファリング無しで出力する。
+     */
+    public static final ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
+    
+    /**
+     * リターンフラグ。doEndProcess()がこの値を返すと、以降の出力をただちに中止する。
+     */
+    public static final ProcessStatus SKIP_PAGE = new ProcessStatus();
+    
+    /**
+     * リターンフラグ。doEndProcess()がこの値を返すと、以降のプロセッサ出力を続ける。
+     */
+    public static final ProcessStatus EVAL_PAGE = new ProcessStatus();
+
 }

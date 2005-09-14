@@ -187,7 +187,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 throw new ProcessorNotInjectedException();
             }
         }
-        TemplateProcessor parent = (TemplateProcessor)stack.peek();
+        ProcessorTreeWalker parent = (ProcessorTreeWalker)stack.peek();
         parent.addChildProcessor(processor);
         Iterator it = injected.iterateChildNode();
         if(it.hasNext() == false) {

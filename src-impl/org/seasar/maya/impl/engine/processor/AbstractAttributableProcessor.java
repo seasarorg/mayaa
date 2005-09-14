@@ -23,6 +23,7 @@ import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -97,7 +98,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
             }
         }
         writeEndElement();
-        return EVAL_PAGE;
+        return TemplateProcessor.EVAL_PAGE;
     }
     
     public boolean isIteration() {
@@ -120,7 +121,7 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     }
     
     public ProcessStatus doAfterChildProcess() {
-        return SKIP_BODY;
+        return TemplateProcessor.SKIP_BODY;
     }
 
     //helper class, methods ----------------------------------------

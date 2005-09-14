@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -57,7 +58,7 @@ public class ProcessingInstructionProcessor extends TemplateProcessorSupport {
         processingInstruction.append("?>\r\n");
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(processingInstruction.toString());
-        return SKIP_BODY;
+        return TemplateProcessor.SKIP_BODY;
     }
 
 }

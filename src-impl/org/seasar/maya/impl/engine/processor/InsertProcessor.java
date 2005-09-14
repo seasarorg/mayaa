@@ -89,14 +89,14 @@ public class InsertProcessor
             ProcessorTreeWalker child = getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor proc = (TemplateProcessor)child;
-                if(template.doTemplateRender(proc) == SKIP_PAGE) {
-                    return SKIP_PAGE;
+                if(template.doTemplateRender(proc) == TemplateProcessor.SKIP_PAGE) {
+                    return TemplateProcessor.SKIP_PAGE;
                 }
             } else {
                 throw new IllegalStateException();
             }
         }
-        return EVAL_PAGE;
+        return TemplateProcessor.EVAL_PAGE;
     }
     
 	protected ProcessStatus writeStartElement() {
@@ -112,6 +112,7 @@ public class InsertProcessor
             throw new PageNotFoundException(
                     _page.getPageName(), requiredSuffix, _page.getExtension());
         }
+        // TODO setParentProcessorÇµÇ»Ç¢Ç≈Ç‡ÅAOKÇ»ÇÊÇ§Ç…Ç∑ÇÈÅB
         template.setParentProcessor(this, 0);
         DoRenderProcessor start = findDoRender(template);
         if(start != null) {
@@ -124,7 +125,7 @@ public class InsertProcessor
             } else {
                 template.doTemplateRender(start);
             }
-            return SKIP_BODY;
+            return TemplateProcessor.SKIP_BODY;
         }
         throw new DoRenderNotFoundException();
     }

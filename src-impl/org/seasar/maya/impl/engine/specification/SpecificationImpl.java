@@ -70,6 +70,11 @@ public class SpecificationImpl extends SpecificationNodeImpl
     }
     
     public Date getTimestamp() {
+        synchronized(this) {
+            if(isOldSpecification()) {
+                parseSpecification();
+            }
+        }
         return _buildTimestamp;
     }
     
@@ -83,13 +88,12 @@ public class SpecificationImpl extends SpecificationNodeImpl
         if(check == false) {
             return false;
         }
-        Date buildTimestamp = getTimestamp();
-        if(buildTimestamp == null) {
+        if(_buildTimestamp == null) {
             return true;
         }
         Date source = getSource().getTimestamp();
         Date now = new Date();
-        return source.after(buildTimestamp) && now.after(source);
+        return source.after(_buildTimestamp) && now.after(source);
     }
 
     protected void parseSpecification() {

@@ -37,14 +37,16 @@ public interface Template
 	Page getPage();
 	
     /**
-     * テンプレートの接尾子を返す。hello_ja.htmlであれば、「ja」を返す。hello.htmlでは空白文字列。
+     * テンプレートの接尾子を返す。hello_ja.htmlであれば、「ja」を返す。
+     * hello.htmlでは空白文字列。
      * @return テンプレートの接尾子。
      */
     String getSuffix();
 
     /**
      * テンプレートをレンダリングする。
-     * @param renderRoot 描画のルートとなるプロセッサ。nullの場合は自身をルートとして描画する。
+     * @param renderRoot 描画のルートとなるプロセッサ。
+     * nullの場合は自身をルートとして描画する。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
     ProcessStatus doTemplateRender(ProcessorTreeWalker renderRoot);

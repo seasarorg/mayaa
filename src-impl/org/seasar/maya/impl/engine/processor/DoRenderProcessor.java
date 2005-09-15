@@ -24,6 +24,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     private boolean _rendered = false;
     private String _name = "";
+    private ThreadLocal _insertProcs = new ThreadLocal();
     
     // MLD property, default=false
     public void setRendered(boolean rendered) {
@@ -46,4 +47,16 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return _name;
     }
 
+    public void setInsertProcessor(InsertProcessor proc) {
+        _insertProcs.set(proc);
+    }
+    
+    public InsertProcessor getInsertProcessor() {
+        InsertProcessor proc = (InsertProcessor)_insertProcs.get();
+        if(proc == null) {
+            throw new IllegalStateException();
+        }
+        return proc;
+    }
+    
 }

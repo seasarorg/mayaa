@@ -62,25 +62,6 @@ public class InsertProcessor
         return page;
     }
     
-    protected DoRenderProcessor findDoRender(ProcessorTreeWalker proc) {
-        DoRenderProcessor doRender = null;
-        for(int i = 0; i < proc.getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = proc.getChildProcessor(i);
-            if(child instanceof DoRenderProcessor) {
-           		doRender =  (DoRenderProcessor)child;
-               	if(StringUtil.isEmpty(_name) || 
-               			_name.equals(doRender.getName())) {
-           			break;
-            	}
-            }
-            doRender = findDoRender(child);
-            if(doRender != null) {
-                break;
-            }
-        }
-        return doRender;
-    }
-    
     public ProcessStatus doBase() {
         Template template = EngineUtil.getTemplate(this);
         return template.doTemplateRender(this);
@@ -91,12 +72,29 @@ public class InsertProcessor
         cycle.setOriginalNode(_page);
         cycle.setInjectedNode(_page);
     }
-    
-    protected ProcessorTreeWalker getRenderRoot(Template template) {
-        DoRenderProcessor doRender = findDoRender(template);
-        if(doRender == null) {
-            throw new DoRenderNotFoundException();
+
+    protected DoRenderProcessor findDoRender(
+            ProcessorTreeWalker proc, String name) {
+        DoRenderProcessor doRender = null;
+        for(int i = 0; i < proc.getChildProcessorSize(); i++) {
+            ProcessorTreeWalker child = proc.getChildProcessor(i);
+            if(child instanceof DoRenderProcessor) {
+                doRender =  (DoRenderProcessor)child;
+                if(StringUtil.isEmpty(name) || 
+                        name.equals(doRender.getName())) {
+                    break;
+                }
+            }
+            doRender = findDoRender(child, name);
+            if(doRender != null) {
+                break;
+            }
         }
+        return doRender;
+    }
+    
+    protected ProcessorTreeWalker getRenderRoot(
+            DoRenderProcessor doRender) {
         if(doRender.isRendered()) {
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
             if(duplecated == null) {
@@ -119,9 +117,14 @@ public class InsertProcessor
             throw new PageNotFoundException(
                     _page.getPageName(), requiredSuffix, _page.getExtension());
         }
-        template.setParentProcessor(this, 0);
-        ProcessorTreeWalker root = getRenderRoot(template);
+        DoRenderProcessor doRender = findDoRender(template, _name);
+        if(doRender == null) {
+            throw new DoRenderNotFoundException();
+        }
+        ProcessorTreeWalker root = getRenderRoot(doRender);
+        doRender.setInsertProcessor(this);
         ProcessStatus ret = template.doTemplateRender(root);
+        doRender.setInsertProcessor(null);
         if(ret == EVAL_PAGE) {
             ret = SKIP_BODY;
         }
@@ -150,5 +153,5 @@ public class InsertProcessor
     
 	protected void writeEndElement() {
 	}
-
+    
 }

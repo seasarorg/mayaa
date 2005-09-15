@@ -45,9 +45,9 @@ public interface Template
 
     /**
      * テンプレートをレンダリングする。
-     * @param renderRoot 描画のルートとなるプロセッサ。ルート自体は描画しない。
+     * @param root 描画のルートとなるプロセッサ。ルート自体は描画しない。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
-    ProcessStatus doTemplateRender(ProcessorTreeWalker renderRoot);
+    ProcessStatus doTemplateRender(ProcessorTreeWalker root);
     
 }

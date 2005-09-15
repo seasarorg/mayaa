@@ -6,7 +6,14 @@
 	<body m:inject="m:exec" 
 			m:script="${ var msg = THROWABLE.message; if(msg == null) { msg = THROWABLE.getClass().getName(); } }">
 		<h1>${ msg }</h1>
-		<h3>stackTrace:</h3>
+		<h2>processed node</h2>
+		<p>
+			original = ${ ORIGINAL_NODE.getSystemID(); }:
+						${ ORIGINAL_NODE.getLineNumber(); }<br>
+			injected = ${ INJECTED_NODE.getSystemID(); }:
+						${ INJECTED_NODE.getLineNumber(); }<br>
+		</p>
+		<h2>stackTrace:</h2>
 		<p>			
 			<span m:inject="m:for"
 					m:init="${ var trace = THROWABLE.stackTrace; var i = 0 }"

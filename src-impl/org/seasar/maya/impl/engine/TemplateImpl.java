@@ -204,6 +204,7 @@ public class TemplateImpl extends SpecificationImpl
             saveToCycle(current);
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);
+                SpecificationUtil.endScope();
             } else {
                 throw e;
             }

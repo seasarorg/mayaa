@@ -98,6 +98,8 @@ public class TemplateErrorHandler  implements ErrorHandler {
             }
         } finally {
             CycleUtil.removeAttribute(THROWABLE, ServiceCycle.SCOPE_REQUEST);
+            CycleUtil.removeAttribute(ORIGINAL_NODE, ServiceCycle.SCOPE_REQUEST);
+            CycleUtil.removeAttribute(INJECTED_NODE, ServiceCycle.SCOPE_REQUEST);
         }
     }
     

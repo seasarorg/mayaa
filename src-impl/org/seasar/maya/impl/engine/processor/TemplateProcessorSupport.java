@@ -18,7 +18,6 @@ package org.seasar.maya.impl.engine.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
@@ -56,17 +55,6 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         }
         _children.add(child);
         child.setParentProcessor(this, _children.size() - 1);
-    }
-
-    public Template getTemplate() {
-        for(ProcessorTreeWalker current = this;
-                current != null; current = current.getParentProcessor()) {
-            if(current instanceof Template &&
-                    current.getParentProcessor() == null) {
-                return (Template)current;
-            }
-        }
-        throw new IllegalStateException();
     }
 
     public ProcessorTreeWalker getParentProcessor() {

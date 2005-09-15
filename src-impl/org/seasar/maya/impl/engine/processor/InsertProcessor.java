@@ -50,7 +50,7 @@ public class InsertProcessor
     public void setName(String name) {
         _name = name;
     }
-    
+
     protected Page preparePage() {
         if(StringUtil.isEmpty(_path)) {
             throw new IllegalStateException();
@@ -58,7 +58,7 @@ public class InsertProcessor
         Engine engine = EngineUtil.getEngine();
         String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
         String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-        Page page = engine.getPage(getTemplate(), pagePath[0], pagePath[2]);  
+        Page page = engine.getPage(pagePath[0], pagePath[2]);  
         return page;
     }
     
@@ -82,7 +82,7 @@ public class InsertProcessor
     }
     
     public ProcessStatus doBase() {
-        Template template = getTemplate();
+        Template template = EngineUtil.getTemplate(this);
         return template.doTemplateRender(this);
     }
 

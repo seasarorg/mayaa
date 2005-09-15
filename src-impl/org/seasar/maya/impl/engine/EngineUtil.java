@@ -18,6 +18,7 @@ package org.seasar.maya.impl.engine;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -38,7 +39,8 @@ public class EngineUtil {
         return provider.getEngine();
     }
 
-    public static String getEngineSetting(String name, String defaultValue) {
+    public static String getEngineSetting(
+            String name, String defaultValue) {
         Engine engine = getEngine();
         String value = engine.getParameter(name);
         if(value != null) {
@@ -47,7 +49,8 @@ public class EngineUtil {
         return defaultValue;
     }
 
-    public static boolean getEngineSettingBoolean(String name, boolean defaultValue) {
+    public static boolean getEngineSettingBoolean(
+            String name, boolean defaultValue) {
         Engine engine = getEngine();
         String value = engine.getParameter(name);
         return ObjectUtil.booleanValue(value, defaultValue);
@@ -69,6 +72,23 @@ public class EngineUtil {
         throw new IllegalStateException();
     }
 
-    
+    public static Template getTemplate(ProcessorTreeWalker proc) {
+        for(ProcessorTreeWalker current = proc;
+                current != null; current = current.getParentProcessor()) {
+            if(current instanceof Template) {
+                return (Template)current;
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    public static Specification getParentSpecification(Specification spec) {
+        if(spec instanceof Page) {
+            return EngineUtil.getEngine();
+        } else if(spec instanceof Template) {
+            return ((Template)spec).getPage();
+        }
+        return null;
+    }
     
 }

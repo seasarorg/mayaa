@@ -16,14 +16,16 @@
 package org.seasar.maya.impl.engine;
 
 import java.io.Serializable;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
-import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -46,9 +48,9 @@ public class PageImpl extends SpecificationImpl
 
     private String _pageName;
     private String _extension;
+    private List _templates;
 
-    public PageImpl(Specification parent, String pageName, String extension) {
-        super(parent);
+    public PageImpl(String pageName, String extension) {
         if(StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
@@ -78,13 +80,16 @@ public class PageImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         Template template = null;
-        for(Iterator it = iterateChildSpecification(); it.hasNext(); ) {
-            Object obj = it.next();
-            if(obj instanceof Template) {
-                Template test = (Template)obj;
-                if(match(test, suffix)) {
-                    template = test;
-                    break;
+        if(_templates != null) {
+            for(Iterator it = new ChildSpecificationsIterator(_templates); 
+                    it.hasNext(); ) {
+                Object obj = it.next();
+                if(obj instanceof Template) {
+                    Template test = (Template)obj;
+                    if(match(test, suffix)) {
+                        template = test;
+                        break;
+                    }
                 }
             }
         }
@@ -105,30 +110,34 @@ public class PageImpl extends SpecificationImpl
             if(source.exists()) {
                 template = new TemplateImpl(this, suffix);
                 template.setSource(source);
-                addChildSpecification(template);
+                synchronized (this) {
+                    if (_templates == null) {
+                        _templates = new ArrayList();
+                    }
+                    _templates.add(new SoftReference(template));
+                }
             }
         }
         return template;
     }
 
-    private String findMayaAttributeValue(
-            Specification specification, QName qName) {
-        while(specification != null) {
-            SpecificationNode maya = 
-                SpecificationUtil.getMayaNode(specification);
-            if(maya != null) {
-                String value = SpecificationUtil.getAttributeValue(maya, qName);
-                if(value != null) {
-                    return value;
-                }
+    private String getTemplateSuffix(Specification specification) {
+        SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
+        if(maya != null) {
+            String value = SpecificationUtil.getAttributeValue(
+                    maya, QM_TEMPLATE_SUFFIX);
+            if(value != null) {
+                return value;
             }
-            specification = specification.getParentSpecification();
         }
         return null;
     }
 
     protected String getTemplateSuffix() {
-        String text = findMayaAttributeValue(this, QM_TEMPLATE_SUFFIX);
+        String text = getTemplateSuffix(this);
+        if(text == null) {
+            text = getTemplateSuffix(EngineUtil.getEngine());
+        }
         if(StringUtil.hasValue(text)) {
             CompiledScript action = ScriptUtil.compile(text, String.class);
             return (String)action.execute();

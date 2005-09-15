@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
@@ -43,13 +41,7 @@ public class SpecificationImpl
     
     private Date _buildTimestamp;
     private SourceDescriptor _source;
-    private Specification _parentSpec;
-    private List _childSpecs;
     private List _childNodes;
-    
-    public SpecificationImpl(Specification parentSpec) {
-        _parentSpec = parentSpec;
-    }
 
     public void setParentNode(NodeTreeWalker parentNode) {
         throw new IllegalStateException();
@@ -152,52 +144,13 @@ public class SpecificationImpl
         setTimestamp(null);
     }
     
-    public Specification getParentSpecification() {
-        return _parentSpec;
-    }
-
-    public void addChildSpecification(Specification child) {
-        if(child == null) {
-            throw new IllegalArgumentException();
-        }
-        synchronized(this) {
-	        if(_childSpecs == null) {
-	            _childSpecs = new ArrayList();
-	        }
-	        _childSpecs.add(new SoftReference(child));
-        }
-    }
-    
-    public Iterator iterateChildSpecification() {
-        if(_childSpecs == null) {
-            return NullIterator.getInstance();
-        }
-        return new ChildSpecificationsIterator(_childSpecs);
-    }
-
-    public void setParentNode(SpecificationNode parent) {
-       	throw new UnsupportedOperationException();
-    }
-
-    public void addAttribute(NodeAttribute nodeAttribute) {
-        throw new IllegalStateException();
-    }
-
-    public Iterator iterateAttribute() {
-        return NullIterator.getInstance();
-    }
-    
-	public SpecificationNode copyTo() {
-        throw new UnsupportedOperationException();
-    }
-
     protected class ChildSpecificationsIterator implements Iterator {
 
         private int _index;
         private Specification _next;
         private List _list;
         
-        protected ChildSpecificationsIterator(List list) {
+        public ChildSpecificationsIterator(List list) {
             if(list == null) {
                 throw new IllegalArgumentException();
             }

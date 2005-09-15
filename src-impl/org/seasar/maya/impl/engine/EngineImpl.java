@@ -18,9 +18,12 @@ package org.seasar.maya.impl.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +35,6 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
-import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
@@ -65,10 +67,7 @@ public class EngineImpl extends SpecificationImpl
 
     private Map _parameters;
     private ErrorHandler _errorHandler;
-    
-    public EngineImpl() {
-        super(null);
-    }
+    private List _pages;
     
     public void setParameter(String name, String value) {
         if("defaultSpecification".equals(name)) {
@@ -121,24 +120,31 @@ public class EngineImpl extends SpecificationImpl
         return false;
     }
     
-    public synchronized Page getPage(Specification parent,
-            String pageName, String extension) {
+    public synchronized Page getPage(String pageName, String extension) {
         Page page;
-        for(Iterator it = parent.iterateChildSpecification(); it.hasNext(); ) {
-            Object child = it.next();
-            if(child instanceof Page) {
-                page = (Page)child;
-                if(match(page, pageName, extension)) {
-                    return page;
+        if(_pages != null) {
+            for(Iterator it = new ChildSpecificationsIterator(_pages);
+                    it.hasNext(); ) {
+                Object child = it.next();
+                if(child instanceof Page) {
+                    page = (Page)child;
+                    if(match(page, pageName, extension)) {
+                        return page;
+                    }
                 }
             }
         }
         String path = pageName + ".maya";
-        page = new PageImpl(parent, pageName, extension);
+        page = new PageImpl(pageName, extension);
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         SourceDescriptor source = provider.getPageSourceDescriptor(path);
         page.setSource(source);
-        parent.addChildSpecification(page);
+        synchronized (this) {
+            if(_pages == null) {
+                _pages = new ArrayList();
+            }
+            _pages.add(new SoftReference(page));
+        }
         return page;
     }
    
@@ -207,7 +213,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
-                    Page page = getPage(this, pageName, extension);
+                    Page page = getPage(pageName, extension);
                     ProcessStatus ret = null;
                     ret = page.doPageRender();
                     saveToCycle();

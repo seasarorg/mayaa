@@ -32,6 +32,7 @@ import org.jaxen.saxpath.SAXPathException;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.specification.xpath.NamespaceContextImpl;
 import org.seasar.maya.impl.engine.specification.xpath.SpecificationNavigator;
 import org.seasar.maya.impl.engine.specification.xpath.SpecificationXPath;
@@ -121,7 +122,8 @@ public class XPathUtil {
                 if(_iterator.hasNext()) {
                     return true;
                 }
-                Specification parent = _specification.getParentSpecification();
+                Specification parent = 
+                    EngineUtil.getParentSpecification(_specification);
                 if(parent == null) {
                     return false;
                 }

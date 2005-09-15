@@ -27,6 +27,7 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -93,7 +94,7 @@ public class EqualsIDInjectionResolver
                 if(injected != null) {
                     break;
                 }
-                spec = spec.getParentSpecification();
+                spec = EngineUtil.getParentSpecification(spec);
             }
 	        if(injected != null) {
 	            if(QM_IGNORE.equals(injected.getQName())) {

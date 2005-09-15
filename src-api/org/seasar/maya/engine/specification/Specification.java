@@ -16,7 +16,6 @@
 package org.seasar.maya.engine.specification;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -49,22 +48,4 @@ public interface Specification extends NodeTreeWalker {
 	 */
 	void kill();
 
-	/**
-	 * 親スペックの取得。
-	 * @return 親スペックもしくはnull。
-	 */
-    Specification getParentSpecification();
-
-    /**
-     * 子スペックのイテレート。
-     * @return 子スペック(Specification)のイテレータ。
-     */
-    Iterator iterateChildSpecification();
-
-    /**
-     * 子スペックの追加。
-     * @param child 子スペック。
-     */
-    void addChildSpecification(Specification child);
-    
 }

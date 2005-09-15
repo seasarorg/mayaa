@@ -49,15 +49,15 @@ public class TemplateImpl extends SpecificationImpl
 
 	private static final long serialVersionUID = -5368325487192629078L;
     
+    private Page _page;
     private String _suffix ;
-    private int _index;
     private List _childProcessors = new ArrayList();
 
     public TemplateImpl(Page page, String suffix) {
-        super(page);
-        if(suffix == null) {
+        if(page == null || suffix == null) {
             throw new IllegalArgumentException();
         }
+        _page = page;
         _suffix = suffix;
     }
     
@@ -69,7 +69,7 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     public Page getPage() {
-        return (Page)getParentSpecification();
+        return _page;
     }
 
     protected void parseSpecification() {
@@ -309,23 +309,15 @@ public class TemplateImpl extends SpecificationImpl
     }
 
     public int getIndex() {
-        return _index;
+        return 0;
     }
 
-    // TODO コンポーネントをキャッシュできなくなるので親を保持するべきでない?
-    
-    private ProcessorTreeWalker _parentProcessor;
-    
     public void setParentProcessor(ProcessorTreeWalker parent, int index) {
-        if(parent == null || index < 0) {
-            throw new IllegalArgumentException();
-        }
-        _parentProcessor = parent;
-        _index = index;
+        throw new IllegalStateException();
     }
 
     public ProcessorTreeWalker getParentProcessor() {
-        return _parentProcessor;
+        return null;
     }
     
 }

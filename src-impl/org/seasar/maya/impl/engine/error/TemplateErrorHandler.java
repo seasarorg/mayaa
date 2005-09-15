@@ -64,21 +64,19 @@ public class TemplateErrorHandler  implements ErrorHandler {
             throw new IllegalArgumentException();
         }
         CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
-
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         CycleUtil.setAttribute(ORIGINAL_NODE,
                 cycle.getOriginalNode(), ServiceCycle.SCOPE_REQUEST);
         CycleUtil.setAttribute(INJECTED_NODE,
                 cycle.getInjectedNode(), ServiceCycle.SCOPE_REQUEST);
-
-        Engine engine = EngineUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
             		throwableClass = throwableClass.getSuperclass()) {
                 String pageName = getPageName(throwableClass);
                 try {
-                	Page page = engine.getPage(engine, pageName, _extension);
+                    Engine engine = EngineUtil.getEngine();
+                	Page page = engine.getPage(pageName, _extension);
                     page.doPageRender();
                     if(LOG.isErrorEnabled()) {
                         String msg = StringUtil.getMessage(

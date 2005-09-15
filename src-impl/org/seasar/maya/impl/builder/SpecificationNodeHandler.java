@@ -130,7 +130,7 @@ public class SpecificationNodeHandler
         cycle.setOriginalNode(originalNode);
     }
     
-    public void startElement(String namespaceUR, 
+    public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
         QNameable parsedName = 

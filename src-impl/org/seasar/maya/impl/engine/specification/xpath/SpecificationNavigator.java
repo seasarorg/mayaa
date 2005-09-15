@@ -122,10 +122,15 @@ public class SpecificationNavigator extends DefaultNavigator
     
     public Iterator getChildAxisIterator(Object obj, 
             String localName, String namespacePrefix, String namespaceURI) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if(obj instanceof NodeTreeWalker) {
+            NodeTreeWalker node = (NodeTreeWalker)obj;
             if(StringUtil.isEmpty(namespaceURI)) {
-                namespaceURI = getNamespaceURI(node, namespacePrefix);
+                if(node instanceof Namespace) {
+                    namespaceURI = getNamespaceURI(
+                            (Namespace)node, namespacePrefix);
+                } else {
+                    namespaceURI = URI_MAYA;
+                }
             }
             QName qName = new QNameImpl(namespaceURI, localName);
             return new QNameFilteredIterator(qName, node.iterateChildNode());
@@ -249,8 +254,11 @@ public class SpecificationNavigator extends DefaultNavigator
 	}
 	
 	public String getNamespacePrefix(Object obj) {
-	    PrefixMapping mapping = (PrefixMapping)obj;
-		return mapping.getPrefix();
+        if(obj instanceof PrefixMapping) {
+    	    PrefixMapping mapping = (PrefixMapping)obj;
+    		return mapping.getPrefix();
+        }
+        return null;
 	}
 	
 	public String getNamespaceStringValue(Object obj) {
@@ -262,7 +270,9 @@ public class SpecificationNavigator extends DefaultNavigator
 	}
 	
 	public String getTextStringValue(Object obj) {
-	    if(isText(obj)) {
+        if(obj instanceof String) {
+            return (String)obj;
+        } else if(isText(obj)) {
 	        SpecificationNode node = (SpecificationNode)obj;
 	        String text = SpecificationUtil.getAttributeValue(node, QM_TEXT);
 	        if(text != null) {
@@ -308,7 +318,9 @@ public class SpecificationNavigator extends DefaultNavigator
 	}
 	
 	public boolean isText(Object obj) {
-		if(obj instanceof SpecificationNode) {
+        if(obj instanceof String) {
+            return true;
+        } else if(obj instanceof SpecificationNode) {
 		    SpecificationNode node = (SpecificationNode)obj;
 		    return QM_CHARACTERS.equals(node.getQName()) ||
 		    	QM_CDATA.equals(node.getQName());

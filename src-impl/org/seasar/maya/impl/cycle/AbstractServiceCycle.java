@@ -23,6 +23,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
@@ -39,7 +40,8 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
-
+    private ProcessorTreeWalker _processor;
+    
     public Application getApplication() {
         return ProviderFactory.getServiceProvider().getApplication();
     }
@@ -133,6 +135,14 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 		return _injectedNode;
 	}
 
+    public ProcessorTreeWalker getProcessor() {
+        return _processor;
+    }
+
+    public void setProcessor(ProcessorTreeWalker processor) {
+        _processor = processor;
+    }
+    
     // support class ---------------------------------------------------
     
     private class ScopeIterator implements Iterator {

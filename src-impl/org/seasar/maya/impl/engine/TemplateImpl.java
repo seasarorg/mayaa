@@ -241,6 +241,7 @@ public class TemplateImpl extends SpecificationImpl
 
     private void saveToCycle(ProcessorTreeWalker current) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setProcessor(current);
         if(current instanceof TemplateProcessor) {
             TemplateProcessor proc = (TemplateProcessor)current;
             cycle.setOriginalNode(proc.getOriginalNode());

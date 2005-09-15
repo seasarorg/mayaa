@@ -18,6 +18,7 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.provider.Parameterizable;
 
@@ -145,5 +146,17 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * @return インジェクトされたノード。
      */    
     NodeTreeWalker getInjectedNode();
-   
+
+    /**
+     * 現在処理中のプロセッサの設定。
+     * @param processor 処理中のプロセッサ。
+     */
+    void setProcessor(ProcessorTreeWalker processor);    
+    
+    /**
+     * 現在処理中のプロセッサの取得。
+     * @return 処理中のプロセッサ。もしくはnull。
+     */
+    ProcessorTreeWalker getProcessor();
+    
 }

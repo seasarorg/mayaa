@@ -35,7 +35,9 @@ public class TemplateErrorHandler  implements ErrorHandler {
 
     private static final Log LOG = LogFactory.getLog(TemplateErrorHandler.class);
     public static final String THROWABLE = "THROWABLE";
-    
+    public static final String ORIGINAL_NODE = "ORIGINAL_NODE";
+    public static final String INJECTED_NODE = "INJECTED_NODE";
+
     private String _folder = "/"; 
     private String _extension = "html";
     
@@ -62,6 +64,13 @@ public class TemplateErrorHandler  implements ErrorHandler {
             throw new IllegalArgumentException();
         }
         CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
+
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        CycleUtil.setAttribute(ORIGINAL_NODE,
+                cycle.getOriginalNode(), ServiceCycle.SCOPE_REQUEST);
+        CycleUtil.setAttribute(INJECTED_NODE,
+                cycle.getInjectedNode(), ServiceCycle.SCOPE_REQUEST);
+
         Engine engine = EngineUtil.getEngine();
         try {
             for(Class throwableClass = t.getClass(); 

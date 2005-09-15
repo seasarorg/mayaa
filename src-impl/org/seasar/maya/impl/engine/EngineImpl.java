@@ -67,7 +67,7 @@ public class EngineImpl extends SpecificationImpl
     private ErrorHandler _errorHandler;
     
     public EngineImpl() {
-        super(QM_ENGINE, null);
+        super(null);
     }
     
     public void setParameter(String name, String value) {

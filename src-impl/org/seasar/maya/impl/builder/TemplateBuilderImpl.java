@@ -30,6 +30,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
@@ -152,7 +153,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
     
     protected TemplateProcessor createProcessor(
-            SpecificationNode original, SpecificationNode injected) {
+            NodeTreeWalker original, SpecificationNode injected) {
         QName name = injected.getQName();
         ServiceProvider provider = ProviderFactory.getServiceProvider(); 
         LibraryManager libraryManager = provider.getLibraryManager();
@@ -167,14 +168,18 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
     
     protected ProcessorTreeWalker resolveInjectedNode(Template template, 
-            Stack stack, SpecificationNode original, SpecificationNode injected) {
+            Stack stack, NodeTreeWalker original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(original, injected);
         TemplateProcessor processor = createProcessor(original, injected);
         if(processor == null) {
-            PrefixMapping mapping = original.getPrefixMapping("", true);
+            if(original instanceof Namespace == false) {
+                throw new IllegalStateException();
+            }
+            Namespace namespace = (Namespace)original;
+            PrefixMapping mapping = namespace.getPrefixMapping("", true);
             if(mapping == null) {
                 throw new IllegalStateException();
             }
@@ -230,7 +235,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
     
     protected void walkParsedTree(
-            Template template, Stack stack, SpecificationNode original) {
+            Template template, Stack stack, NodeTreeWalker original) {
         if(original == null) {
             throw new IllegalArgumentException();
         }

@@ -27,6 +27,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -45,17 +46,63 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationImpl extends SpecificationNodeImpl
+public class SpecificationImpl
 		implements Specification, CONST_IMPL {
     
     private Date _buildTimestamp;
     private SourceDescriptor _source;
-    private Specification _parent;
-    private List _children;
+    private Specification _parentSpec;
+    private List _childSpecs;
+    private List _childNodes;
     
-    public SpecificationImpl(QName qName, Specification parent) {
-        super(qName, "", 0);
-        _parent = parent;
+    public SpecificationImpl(Specification parentSpec) {
+        _parentSpec = parentSpec;
+    }
+
+    public void setParentNode(NodeTreeWalker parentNode) {
+        throw new UnsupportedOperationException();
+    }
+
+    public NodeTreeWalker getParentNode() {
+        return null;
+    }
+
+    public void addChildNode(NodeTreeWalker childNode) {
+        if(childNode == null) {
+            throw new IllegalArgumentException();
+        }
+        synchronized(this) {
+            if(_childNodes == null) {
+                _childNodes = new ArrayList();
+            }
+        }
+        synchronized(_childNodes) {
+            _childNodes.add(childNode);
+            childNode.setParentNode(this);
+        }
+    }
+
+    public Iterator iterateChildNode() {
+        synchronized(this) {
+            if(isOldSpecification()) {
+                parseSpecification();
+            }
+        }
+        if(_childNodes == null) {
+            return NullIterator.getInstance();
+        }        
+        return _childNodes.iterator();
+    }
+    
+    public String getSystemID() {
+        if(_source == null) {
+            return null;
+        }
+        return _source.getSystemID();
+    }
+
+    public int getLineNumber() {
+        return 0;
     }
 
     public void setSource(SourceDescriptor source) {
@@ -96,6 +143,14 @@ public class SpecificationImpl extends SpecificationNodeImpl
         return source.after(_buildTimestamp) && now.after(source);
     }
 
+    protected void clear() {
+        synchronized(this) {
+            if(_childNodes != null) {
+                _childNodes.clear();
+            }
+        }
+    }
+
     protected void parseSpecification() {
 		setTimestamp(new Date());
         if(getSource().exists()) {
@@ -111,7 +166,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     }
     
     public Specification getParentSpecification() {
-        return _parent;
+        return _parentSpec;
     }
 
     public void addChildSpecification(Specification child) {
@@ -119,18 +174,18 @@ public class SpecificationImpl extends SpecificationNodeImpl
             throw new IllegalArgumentException();
         }
         synchronized(this) {
-	        if(_children == null) {
-	            _children = new ArrayList();
+	        if(_childSpecs == null) {
+	            _childSpecs = new ArrayList();
 	        }
-	        _children.add(new SoftReference(child));
+	        _childSpecs.add(new SoftReference(child));
         }
     }
     
     public Iterator iterateChildSpecification() {
-        if(_children == null) {
+        if(_childSpecs == null) {
             return NullIterator.getInstance();
         }
-        return new ChildSpecificationsIterator(_children);
+        return new ChildSpecificationsIterator(_childSpecs);
     }
 
     public void setParentNode(SpecificationNode parent) {
@@ -144,23 +199,7 @@ public class SpecificationImpl extends SpecificationNodeImpl
     public Iterator iterateAttribute() {
         return NullIterator.getInstance();
     }
-
-    public Iterator iterateChildNode() {
-        synchronized(this) {
-	        if(isOldSpecification()) {
-	            parseSpecification();
-	        }
-        }
-        return super.iterateChildNode();
-    }
     
-    public String getSystemID() {
-    	if(_source != null) {
-    		return _source.getSystemID();
-    	}
-		return null;
-	}
-
 	public SpecificationNode copyTo() {
         throw new UnsupportedOperationException();
     }

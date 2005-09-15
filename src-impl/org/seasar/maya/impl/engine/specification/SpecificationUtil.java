@@ -61,7 +61,7 @@ public class SpecificationUtil implements CONST_IMPL {
         return findSpecification(current);
     }
 
-    public static SpecificationNode getMayaNode(SpecificationNode current) {
+    public static SpecificationNode getMayaNode(NodeTreeWalker current) {
         Specification specification = findSpecification(current);
         for(Iterator it = specification.iterateChildNode(); it.hasNext(); ) {
             SpecificationNode node = (SpecificationNode)it.next();

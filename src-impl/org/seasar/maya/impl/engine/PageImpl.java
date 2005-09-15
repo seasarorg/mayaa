@@ -25,6 +25,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
+import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
@@ -47,7 +48,7 @@ public class PageImpl extends SpecificationImpl
     private String _extension;
 
     public PageImpl(Specification parent, String pageName, String extension) {
-        super(QM_INSERT, parent);
+        super(parent);
         if(StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
@@ -110,11 +111,16 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    private String findAttributeValue(Specification specification, QName qName) {
+    private String findMayaAttributeValue(
+            Specification specification, QName qName) {
         while(specification != null) {
-            String value = SpecificationUtil.getAttributeValue(specification, qName);
-            if(value != null) {
-                return value;
+            SpecificationNode maya = 
+                SpecificationUtil.getMayaNode(specification);
+            if(maya != null) {
+                String value = SpecificationUtil.getAttributeValue(maya, qName);
+                if(value != null) {
+                    return value;
+                }
             }
             specification = specification.getParentSpecification();
         }
@@ -122,7 +128,7 @@ public class PageImpl extends SpecificationImpl
     }
 
     protected String getTemplateSuffix() {
-        String text = findAttributeValue(this, QM_TEMPLATE_SUFFIX);
+        String text = findMayaAttributeValue(this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.hasValue(text)) {
             CompiledScript action = ScriptUtil.compile(text, String.class);
             return (String)action.execute();

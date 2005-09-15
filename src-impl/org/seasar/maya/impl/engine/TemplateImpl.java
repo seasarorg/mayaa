@@ -54,7 +54,7 @@ public class TemplateImpl extends SpecificationImpl
     private List _childProcessors = new ArrayList();
 
     public TemplateImpl(Page page, String suffix) {
-        super(QM_TEMPLATE, page);
+        super(page);
         if(suffix == null) {
             throw new IllegalArgumentException();
         }

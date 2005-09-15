@@ -20,11 +20,11 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -83,18 +83,13 @@ public class InsertProcessor
     
     public ProcessStatus doBase() {
         Template template = getTemplate();
-        for(int i = 0; i < getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = getChildProcessor(i);
-            if(child instanceof TemplateProcessor) {
-                TemplateProcessor proc = (TemplateProcessor)child;
-                if(template.doTemplateRender(proc) == SKIP_PAGE) {
-                    return SKIP_PAGE;
-                }
-            } else {
-                throw new IllegalStateException();
-            }
-        }
-        return EVAL_PAGE;
+        return template.doTemplateRender(this);
+    }
+
+    private void saveToCycle() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(_page);
+        cycle.setInjectedNode(_page);
     }
     
 	protected ProcessStatus writeStartElement() {
@@ -103,32 +98,45 @@ public class InsertProcessor
                 _page = preparePage();
             }
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String requiredSuffix = cycle.getRequest().getRequestedSuffix();
-        Template template = _page.getTemplate(requiredSuffix);
-        if(template == null) {
-            throw new PageNotFoundException(
-                    _page.getPageName(), requiredSuffix, _page.getExtension());
-        }
-        template.setParentProcessor(this, 0);
-        DoRenderProcessor start = findDoRender(template);
-        if(start != null) {
-        	ProcessStatus startRet = SKIP_BODY; 
-            if(start.isRendered()) {
-                ProcessorTreeWalker duplecated = start.getParentProcessor();
-                if(duplecated instanceof TemplateProcessor) {
-                    TemplateProcessor proc = (TemplateProcessor)duplecated;
-                    startRet = template.doTemplateRender(proc);
+        saveToCycle();
+        Object model = SpecificationUtil.getSpecificationModel(_page);
+        SpecificationUtil.startScope(model);
+        SpecificationUtil.execEvent(_page, QM_BEFORE_RENDER);
+        ProcessStatus startRet = SKIP_BODY; 
+        if("maya".equals(_page.getExtension()) == false) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            String requiredSuffix = cycle.getRequest().getRequestedSuffix();
+            Template template = _page.getTemplate(requiredSuffix);
+            if(template == null) {
+                throw new PageNotFoundException(
+                        _page.getPageName(), requiredSuffix, _page.getExtension());
+            }
+            template.setParentProcessor(this, 0);
+            DoRenderProcessor doRender = findDoRender(template);
+            if(doRender == null) {
+                throw new DoRenderNotFoundException();
+            }
+            if(doRender.isRendered()) {
+                ProcessorTreeWalker duplecated = doRender.getParentProcessor();
+                if(duplecated == null) {
+                    throw new IllegalStateException();
                 }
+                ProcessorTreeWalker root = duplecated.getParentProcessor();
+                if(root == null) {
+                    throw new IllegalStateException();
+                }
+                startRet = template.doTemplateRender(root);
             } else {
-            	startRet = template.doTemplateRender(start);
+            	startRet = template.doTemplateRender(doRender);
             }
             if(startRet == EVAL_PAGE) {
             	startRet = SKIP_BODY;
             }
-            return startRet;
         }
-        throw new DoRenderNotFoundException();
+        saveToCycle();
+        SpecificationUtil.execEvent(_page, QM_AFTER_RENDER);
+        SpecificationUtil.endScope();
+        return startRet;
     }
     
 	protected void writeEndElement() {

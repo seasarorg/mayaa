@@ -39,6 +39,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
         if(insert != null) {
             return insert.doBase();
         }
+        // direct access to component page.
         return EVAL_BODY_INCLUDE;
     }
     

@@ -165,16 +165,16 @@ public class PageImpl extends SpecificationImpl
 
     public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
-        Object model = getSpecificationModel();
+        Object model = SpecificationUtil.getSpecificationModel(this);
         SpecificationUtil.startScope(model);
-        execEvent(QM_BEFORE_RENDER);
+        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
             Template template = getTemplate();
-            ret = template.doTemplateRender(null);
+            ret = template.doTemplateRender(template);
             saveToCycle();
         }
-        execEvent(QM_AFTER_RENDER);
+        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.endScope();
         return ret;
     }

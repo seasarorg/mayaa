@@ -17,7 +17,9 @@ package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
@@ -26,6 +28,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -99,6 +102,26 @@ public class SpecificationUtil implements CONST_IMPL {
         return text = blockSign + "{" + text.trim() + "}"; 
     }
 
+    public static Object getSpecificationModel(Specification spec) {
+        SpecificationNode maya = getMayaNode(spec);
+        if (maya != null) {
+            String className = getAttributeValue(maya, QM_CLASS);
+            if(StringUtil.hasValue(className)) {
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
+                AttributeScope scope = cycle.getAttributeScope(
+                        getAttributeValue(maya, QM_SCOPE));
+                Object model = scope.getAttribute(className); 
+                if(model == null) {
+                    Class modelClass = ObjectUtil.loadClass(className);
+                    model = ObjectUtil.newInstance(modelClass);
+                    scope.setAttribute(className, model);
+                }
+                return model;
+            }
+        }
+        return null;
+    }
+
     public static void initScope() {
         ScriptUtil.getScriptEnvironment().initScope();
     }
@@ -109,6 +132,36 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static void endScope() {
         ScriptUtil.getScriptEnvironment().endScope();
+    }
+
+    private static void execEventScript(String text) {
+        if(StringUtil.hasValue(text)) {
+            CompiledScript script = 
+                ScriptUtil.compile(text, Void.class);
+            script.execute();
+        }
+    }
+
+    public static void execEvent(Specification spec, QName eventName) {
+        if(eventName == null) {
+            throw new IllegalArgumentException();
+        }
+        SpecificationNode maya = getMayaNode(spec);
+        if(maya != null) {
+            for(Iterator it = maya.iterateChildNode(); it.hasNext(); ) {
+                SpecificationNode child = (SpecificationNode)it.next();
+                if(eventName.equals(child.getQName())) {
+                    String bodyText = getNodeBodyText(child);
+                    bodyText = getBlockSignedText(bodyText);
+                    execEventScript(bodyText);
+                }
+            }
+            NodeAttribute attr = maya.getAttribute(eventName);
+            if(attr != null) {
+                String attrText = attr.getValue();
+                execEventScript(attrText);
+            }
+        }
     }
     
 }

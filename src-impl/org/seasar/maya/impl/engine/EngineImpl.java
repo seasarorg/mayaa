@@ -202,16 +202,16 @@ public class EngineImpl extends SpecificationImpl
                 try {
                     saveToCycle();
                     SpecificationUtil.initScope();
-                    Object model = getSpecificationModel();
+                    Object model = SpecificationUtil.getSpecificationModel(this);
                     SpecificationUtil.startScope(model);
-                    execEvent(QM_BEFORE_RENDER);
+                    SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();
                     Page page = getPage(this, pageName, extension);
                     ProcessStatus ret = null;
                     ret = page.doPageRender();
                     saveToCycle();
-                    execEvent(QM_AFTER_RENDER);
+                    SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();
                     Response response = CycleUtil.getResponse();
                     if(ret == null) {

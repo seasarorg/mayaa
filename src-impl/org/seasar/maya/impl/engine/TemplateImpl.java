@@ -122,9 +122,9 @@ public class TemplateImpl extends SpecificationImpl
         return (TryCatchFinallyProcessor)current;
     }
     
-    private ProcessStatus render() {
-        for(int i = 0; i < getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = getChildProcessor(i);
+    private ProcessStatus renderRoot(ProcessorTreeWalker root) {
+        for(int i = 0; i < root.getChildProcessorSize(); i++) {
+            ProcessorTreeWalker child = root.getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor childProc = (TemplateProcessor)child;
                 final ProcessStatus childRet = render(childProc);
@@ -254,23 +254,21 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
     
-    public ProcessStatus doTemplateRender(ProcessorTreeWalker renderRoot) {
+    public ProcessStatus doTemplateRender(ProcessorTreeWalker root) {
+        if(root == null) {
+            throw new IllegalArgumentException();
+        }
         saveToCycle(this);
-        if(getParentProcessor() == null) {
+        if(root.getParentProcessor() == null) {
             prepareCycle();
         }
-        Object model = getSpecificationModel();
+        Object model = SpecificationUtil.getSpecificationModel(this);
         SpecificationUtil.startScope(model);
-        execEvent(QM_BEFORE_RENDER);
+        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret;
-        if(renderRoot instanceof TemplateProcessor) {
-            TemplateProcessor rootProc = (TemplateProcessor)renderRoot;
-            ret = render(rootProc);
-        } else {
-            ret = render();
-        }
+        ret = renderRoot(root);
         saveToCycle(this);
-        execEvent(QM_AFTER_RENDER);
+        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.endScope();
         return ret;
     }

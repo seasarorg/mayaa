@@ -23,21 +23,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -117,11 +109,6 @@ public class SpecificationImpl
     }
     
     public Date getTimestamp() {
-        synchronized(this) {
-            if(isOldSpecification()) {
-                parseSpecification();
-            }
-        }
         return _buildTimestamp;
     }
     
@@ -203,58 +190,6 @@ public class SpecificationImpl
 	public SpecificationNode copyTo() {
         throw new UnsupportedOperationException();
     }
-
-    public Object getSpecificationModel() {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
-        if (maya != null) {
-            String className = SpecificationUtil.getAttributeValue(maya, QM_CLASS);
-            if(StringUtil.hasValue(className)) {
-                ServiceCycle cycle = CycleUtil.getServiceCycle();
-                AttributeScope scope = cycle.getAttributeScope(
-                        SpecificationUtil.getAttributeValue(maya, QM_SCOPE));
-                Object model = scope.getAttribute(className); 
-                if(model == null) {
-                    Class modelClass = ObjectUtil.loadClass(className);
-                    model = ObjectUtil.newInstance(modelClass);
-                    scope.setAttribute(className, model);
-                }
-                return model;
-            }
-        }
-        return null;
-    }
-    
-    private void execEventScript(String text) {
-        if(StringUtil.hasValue(text)) {
-            CompiledScript script = 
-                ScriptUtil.compile(text, Void.class);
-            script.execute();
-        }
-    }
-    
-    public void execEvent(QName eventName) {
-        if(eventName == null) {
-            throw new IllegalArgumentException();
-        }
-        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
-        if(maya != null) {
-            for(Iterator it = maya.iterateChildNode(); it.hasNext(); ) {
-                SpecificationNode child = (SpecificationNode)it.next();
-                if(eventName.equals(child.getQName())) {
-                    String bodyText = SpecificationUtil.getNodeBodyText(child);
-                    bodyText = SpecificationUtil.getBlockSignedText(bodyText);
-                    execEventScript(bodyText);
-                }
-            }
-            NodeAttribute attr = maya.getAttribute(eventName);
-            if(attr != null) {
-                String attrText = attr.getValue();
-                execEventScript(attrText);
-            }
-        }
-    }
-    
-    // support class --------------------------------------------------
 
     protected class ChildSpecificationsIterator implements Iterator {
 

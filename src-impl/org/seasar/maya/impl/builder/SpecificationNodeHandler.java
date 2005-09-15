@@ -126,12 +126,8 @@ public class SpecificationNodeHandler
     }
     
     private void saveToCycle(NodeTreeWalker originalNode) {
-        if(originalNode instanceof SpecificationNode) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.setOriginalNode((SpecificationNode)originalNode);
-        } else {
-            throw new IllegalStateException();
-        }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(originalNode);
     }
     
     public void startElement(String namespaceUR, 

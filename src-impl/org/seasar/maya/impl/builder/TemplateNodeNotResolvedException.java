@@ -24,8 +24,18 @@ public class TemplateNodeNotResolvedException extends MayaException {
 
 	private static final long serialVersionUID = 4560512867759109674L;
 
+    private String _originalName;
+    
+    public TemplateNodeNotResolvedException(String originalName) {
+        _originalName = originalName;
+    }
+    
+    public String getOriginalName() {
+        return _originalName;
+    }
+    
     protected String[] getMessageParams() {
-        return ZERO_PARAM;
+        return new String[] { _originalName };
     }
     
 }

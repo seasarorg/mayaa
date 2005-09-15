@@ -241,12 +241,15 @@ public class TemplateImpl extends SpecificationImpl
     }
 
     private void saveToCycle(ProcessorTreeWalker current) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(current instanceof TemplateProcessor) {
-            // TODO Templateのときの保存
             TemplateProcessor proc = (TemplateProcessor)current;
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.setOriginalNode(proc.getOriginalNode());
             cycle.setInjectedNode(proc.getInjectedNode());
+        } else if(current instanceof Template) {
+            Template temp = (Template)current;
+            cycle.setOriginalNode(temp);
+            cycle.setInjectedNode(temp);
         }
     }
     
@@ -312,7 +315,7 @@ public class TemplateImpl extends SpecificationImpl
         return _index;
     }
 
-    // TODO コンポーネントをキャッシュできなくなるので親を保持するべきでない。
+    // TODO コンポーネントをキャッシュできなくなるので親を保持するべきでない?
     
     private ProcessorTreeWalker _parentProcessor;
     

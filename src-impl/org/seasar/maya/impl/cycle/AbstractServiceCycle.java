@@ -23,7 +23,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
@@ -37,8 +37,8 @@ import org.seasar.maya.source.SourceDescriptor;
 public abstract class AbstractServiceCycle implements ServiceCycle {
 
     private AttributeScope _page;
-    private SpecificationNode _originalNode;
-    private SpecificationNode _injectedNode;
+    private NodeTreeWalker _originalNode;
+    private NodeTreeWalker _injectedNode;
 
     public Application getApplication() {
         return ProviderFactory.getServiceProvider().getApplication();
@@ -114,22 +114,22 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         return _page;
     }
 
-    public void setOriginalNode(SpecificationNode originalNode) {
+    public void setOriginalNode(NodeTreeWalker originalNode) {
         if(originalNode == null) {
             throw new IllegalArgumentException();
         }
         _originalNode = originalNode;
     }    
 
-    public SpecificationNode getOriginalNode() {
+    public NodeTreeWalker getOriginalNode() {
         return _originalNode;
     }
     
-	public void setInjectedNode(SpecificationNode injectedNode) {
+	public void setInjectedNode(NodeTreeWalker injectedNode) {
 		_injectedNode = injectedNode;
 	}
     
-    public SpecificationNode getInjectedNode() {
+    public NodeTreeWalker getInjectedNode() {
 		return _injectedNode;
 	}
 

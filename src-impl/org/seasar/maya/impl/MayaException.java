@@ -18,7 +18,7 @@ package org.seasar.maya.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -34,37 +34,23 @@ public abstract class MayaException extends RuntimeException {
     
     private String _originalSystemID;
     private int _originalLineNumber = -1;
-    private String _originalNodeName;
     private String _injectedSystemID;
     private int _injectedLineNumber = -1;
-    private String _injectedNodeName;
     
 	public MayaException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle != null) {
-            SpecificationNode original = cycle.getOriginalNode();
+            NodeTreeWalker original = cycle.getOriginalNode();
             if(original != null) {
                 _originalSystemID = original.getSystemID();
                 _originalLineNumber = original.getLineNumber();
-                _originalNodeName = getNodeName(original);
             }
-            SpecificationNode injected = cycle.getInjectedNode();
+            NodeTreeWalker injected = cycle.getInjectedNode();
             if(injected != null) {
                 _injectedSystemID = injected.getSystemID();
                 _injectedLineNumber = injected.getLineNumber();
-                _injectedNodeName = getNodeName(injected);
             }
         }
-    }
-    
-    private String getNodeName(SpecificationNode node) {
-        StringBuffer buffer = new StringBuffer();
-        String prefix = node.getPrefix();
-        if(StringUtil.hasValue(prefix)) {
-            buffer.append(prefix).append(":");
-        }
-        buffer.append(node.getQName().getLocalName());
-        return buffer.toString();
     }
     
     protected int getMessageID() {
@@ -86,13 +72,11 @@ public abstract class MayaException extends RuntimeException {
             }
         }
         int paramLength = params.length; 
-        String[] newParams = new String[paramLength + 6];
+        String[] newParams = new String[paramLength + 4];
         newParams[0] = _originalSystemID;
         newParams[1] = Integer.toString(_originalLineNumber);
-        newParams[2] = _originalNodeName;
-        newParams[3] = _injectedSystemID;
-        newParams[4] = Integer.toString(_injectedLineNumber);
-        newParams[5] = _injectedNodeName;
+        newParams[2] = _injectedSystemID;
+        newParams[3] = Integer.toString(_injectedLineNumber);
         System.arraycopy(params, 0, newParams, 6, paramLength);
         String message = StringUtil.getMessage(
                 getClass(), getMessageID(), newParams);
@@ -117,20 +101,12 @@ public abstract class MayaException extends RuntimeException {
         return _originalLineNumber;
     }
     
-    public String getOriginalNodeName() {
-        return _originalNodeName;
-    }
-    
     public String getInjectedSystemID() {
     	return _injectedSystemID;
     }
     
     public int getInjectedLineNumber() {
         return _injectedLineNumber;
-    }
-    
-    public String getInjectedNodeName() {
-        return _injectedNodeName;
     }
 
 }

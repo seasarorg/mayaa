@@ -18,7 +18,7 @@ package org.seasar.maya.impl.cycle.script;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -45,7 +45,7 @@ public class ScriptUtil {
         if(StringUtil.hasValue(text)) {
             ScriptEnvironment environment = getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            SpecificationNode node = cycle.getInjectedNode();
+            NodeTreeWalker node = cycle.getInjectedNode();
             compiled = environment.compile(
                     text, node.getSystemID(), node.getLineNumber());
         } else {

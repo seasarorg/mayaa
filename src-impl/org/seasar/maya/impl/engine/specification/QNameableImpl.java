@@ -20,6 +20,7 @@ import java.util.Iterator;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -51,4 +52,14 @@ public class QNameableImpl extends NamespaceImpl
 	    return "";
 	}
 
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        String prefix = getPrefix();
+        if(StringUtil.hasValue(prefix)) {
+            buffer.append(prefix).append(":");
+        }
+        buffer.append(getQName().getLocalName());
+        return buffer.toString();
+    }
+    
 }

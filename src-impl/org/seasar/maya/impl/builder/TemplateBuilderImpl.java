@@ -30,6 +30,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
@@ -112,8 +113,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
-    protected void saveToCycle(SpecificationNode originalNode,
-            SpecificationNode injectedNode) {
+    protected void saveToCycle(NodeTreeWalker originalNode,
+            NodeTreeWalker injectedNode) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
         cycle.setInjectedNode(injectedNode);
@@ -184,7 +185,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 processor = createProcessor(original, retry);
             }
             if(processor == null) {
-                throw new ProcessorNotInjectedException();
+                throw new ProcessorNotInjectedException(injected.toString());
             }
         }
         ProcessorTreeWalker parent = (ProcessorTreeWalker)stack.peek();
@@ -244,7 +245,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             InjectionChain chain = DefaultInjectionChain.getInstance(); 
             SpecificationNode injected = resolveOriginalNode(child, chain);
             if(injected == null) {
-                throw new TemplateNodeNotResolvedException();
+                throw new TemplateNodeNotResolvedException(
+                        original.toString());
             }
             saveToCycle(child, injected);
             ProcessorTreeWalker processor = resolveInjectedNode(

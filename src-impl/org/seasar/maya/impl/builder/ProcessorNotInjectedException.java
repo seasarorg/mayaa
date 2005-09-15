@@ -24,8 +24,18 @@ public class ProcessorNotInjectedException extends MayaException {
 
     private static final long serialVersionUID = -6422698028264082995L;
 
+    private String _injectedName;
+    
+    public ProcessorNotInjectedException(String injectedName) {
+        _injectedName = injectedName;
+    }
+    
+    public String getInjectedName() {
+        return _injectedName;
+    }
+    
     protected String[] getMessageParams() {
-        return ZERO_PARAM;
+        return new String[] { _injectedName };
     }
 
 }

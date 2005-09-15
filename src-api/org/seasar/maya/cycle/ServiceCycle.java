@@ -18,7 +18,7 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
@@ -126,24 +126,24 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * 現在処理中のテンプレート上ノード情報を設定する。
      * @param node テンプレートノード。
      */
-    void setOriginalNode(SpecificationNode node);
+    void setOriginalNode(NodeTreeWalker node);
     
     /**
      * 現在処理中のテンプレート上ノード情報の取得。
      * @return テンプレートノード。
      */
-    SpecificationNode getOriginalNode();
+    NodeTreeWalker getOriginalNode();
     
     /**
      * 現在処理中のインジェクションされたノード情報の設定。
      * @param node インジェクトされたノード。
      */
-    void setInjectedNode(SpecificationNode node);
+    void setInjectedNode(NodeTreeWalker node);
     
     /**
      * 現在処理中のインジェクションされたノード情報の取得。
      * @return インジェクトされたノード。
      */    
-    SpecificationNode getInjectedNode();
+    NodeTreeWalker getInjectedNode();
    
 }

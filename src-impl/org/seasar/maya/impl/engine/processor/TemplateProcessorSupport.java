@@ -21,7 +21,7 @@ import java.util.List;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.engine.specification.NodeTreeWalker;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,8 +33,8 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 	private ProcessorTreeWalker _parent;
     private int _index;
     private List _children = new ArrayList();
-    private SpecificationNode _originalNode;
-    private SpecificationNode _injectedNode;
+    private NodeTreeWalker _originalNode;
+    private NodeTreeWalker _injectedNode;
     private boolean _evalBodyInclude = true;
     
     // MLD property
@@ -98,25 +98,25 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return (ProcessorTreeWalker)_children.get(index);
     }
 
-    public void setOriginalNode(SpecificationNode node) {
+    public void setOriginalNode(NodeTreeWalker node) {
         if(node == null) {
             throw new IllegalArgumentException();
         }
         _originalNode = node;
     }
 
-    public SpecificationNode getOriginalNode() {
+    public NodeTreeWalker getOriginalNode() {
         return _originalNode;
     }
 
-    public void setInjectedNode(SpecificationNode node) {
+    public void setInjectedNode(NodeTreeWalker node) {
         if(node == null) {
             throw new IllegalArgumentException();
         }
         _injectedNode = node;
     }
 
-    public SpecificationNode getInjectedNode() {
+    public NodeTreeWalker getInjectedNode() {
         return _injectedNode;
     }
 

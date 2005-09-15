@@ -60,7 +60,7 @@ public class SpecificationImpl
     }
 
     public void setParentNode(NodeTreeWalker parentNode) {
-        throw new UnsupportedOperationException();
+        throw new IllegalStateException();
     }
 
     public NodeTreeWalker getParentNode() {

@@ -201,7 +201,6 @@ public class TemplateImpl extends SpecificationImpl
             ret = current.doEndProcess();
             SpecificationUtil.endScope();
         } catch (RuntimeException e) {
-            saveToCycle(current);
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);
                 SpecificationUtil.endScope();
@@ -209,7 +208,6 @@ public class TemplateImpl extends SpecificationImpl
                 throw e;
             }
         } finally {
-            saveToCycle(current);
             if(isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }

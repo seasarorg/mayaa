@@ -86,10 +86,46 @@ public class InsertProcessor
         return template.doTemplateRender(this);
     }
 
-    private void saveToCycle() {
+    protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(_page);
         cycle.setInjectedNode(_page);
+    }
+    
+    protected ProcessorTreeWalker getRenderRoot(Template template) {
+        DoRenderProcessor doRender = findDoRender(template);
+        if(doRender == null) {
+            throw new DoRenderNotFoundException();
+        }
+        if(doRender.isRendered()) {
+            ProcessorTreeWalker duplecated = doRender.getParentProcessor();
+            if(duplecated == null) {
+                throw new IllegalStateException();
+            }
+            ProcessorTreeWalker root = duplecated.getParentProcessor();
+            if(root == null) {
+                throw new IllegalStateException();
+            }
+            return root;
+        }
+        return doRender;
+    }
+    
+    protected ProcessStatus renderTemplate() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        String requiredSuffix = cycle.getRequest().getRequestedSuffix();
+        Template template = _page.getTemplate(requiredSuffix);
+        if(template == null) {
+            throw new PageNotFoundException(
+                    _page.getPageName(), requiredSuffix, _page.getExtension());
+        }
+        template.setParentProcessor(this, 0);
+        ProcessorTreeWalker root = getRenderRoot(template);
+        ProcessStatus ret = template.doTemplateRender(root);
+        if(ret == EVAL_PAGE) {
+            ret = SKIP_BODY;
+        }
+        return ret;
     }
     
 	protected ProcessStatus writeStartElement() {
@@ -104,34 +140,7 @@ public class InsertProcessor
         SpecificationUtil.execEvent(_page, QM_BEFORE_RENDER);
         ProcessStatus startRet = SKIP_BODY; 
         if("maya".equals(_page.getExtension()) == false) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            String requiredSuffix = cycle.getRequest().getRequestedSuffix();
-            Template template = _page.getTemplate(requiredSuffix);
-            if(template == null) {
-                throw new PageNotFoundException(
-                        _page.getPageName(), requiredSuffix, _page.getExtension());
-            }
-            template.setParentProcessor(this, 0);
-            DoRenderProcessor doRender = findDoRender(template);
-            if(doRender == null) {
-                throw new DoRenderNotFoundException();
-            }
-            if(doRender.isRendered()) {
-                ProcessorTreeWalker duplecated = doRender.getParentProcessor();
-                if(duplecated == null) {
-                    throw new IllegalStateException();
-                }
-                ProcessorTreeWalker root = duplecated.getParentProcessor();
-                if(root == null) {
-                    throw new IllegalStateException();
-                }
-                startRet = template.doTemplateRender(root);
-            } else {
-            	startRet = template.doTemplateRender(doRender);
-            }
-            if(startRet == EVAL_PAGE) {
-            	startRet = SKIP_BODY;
-            }
+            startRet = renderTemplate();
         }
         saveToCycle();
         SpecificationUtil.execEvent(_page, QM_AFTER_RENDER);

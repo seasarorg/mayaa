@@ -77,7 +77,7 @@ public abstract class MayaException extends RuntimeException {
         newParams[1] = Integer.toString(_originalLineNumber);
         newParams[2] = _injectedSystemID;
         newParams[3] = Integer.toString(_injectedLineNumber);
-        System.arraycopy(params, 0, newParams, 6, paramLength);
+        System.arraycopy(params, 0, newParams, 4, paramLength);
         String message = StringUtil.getMessage(
                 getClass(), getMessageID(), newParams);
         if(StringUtil.isEmpty(message)) {

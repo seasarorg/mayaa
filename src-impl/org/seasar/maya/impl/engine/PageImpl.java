@@ -175,7 +175,7 @@ public class PageImpl extends SpecificationImpl
     public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
         Object model = SpecificationUtil.getSpecificationModel(this);
-        SpecificationUtil.startScope(model);
+        SpecificationUtil.startScope(model, null);
         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {

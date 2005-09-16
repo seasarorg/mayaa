@@ -139,7 +139,7 @@ public class InsertProcessor
         }
         saveToCycle();
         Object model = SpecificationUtil.getSpecificationModel(_page);
-        SpecificationUtil.startScope(model);
+        SpecificationUtil.startScope(model, getVariables());
         SpecificationUtil.execEvent(_page, QM_BEFORE_RENDER);
         ProcessStatus startRet = SKIP_BODY; 
         if("maya".equals(_page.getExtension()) == false) {

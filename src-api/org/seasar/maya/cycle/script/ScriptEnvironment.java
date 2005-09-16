@@ -16,6 +16,7 @@
 package org.seasar.maya.cycle.script;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.provider.Parameterizable;
@@ -73,8 +74,9 @@ public interface ScriptEnvironment extends Parameterizable {
      * カレントServiceCycleのページスコープに、スクリプトのスコープオブジェクトを
      * プッシュする。
      * @param model モデルオブジェクト、もしくはnull。
+     * @param variables カスタムスコープ変数。
      */
-    void startScope(Object model);
+    void startScope(Object model, Map variables);
     
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。

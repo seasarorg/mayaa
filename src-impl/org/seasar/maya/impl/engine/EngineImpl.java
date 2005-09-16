@@ -209,7 +209,7 @@ public class EngineImpl extends SpecificationImpl
                     saveToCycle();
                     SpecificationUtil.initScope();
                     Object model = SpecificationUtil.getSpecificationModel(this);
-                    SpecificationUtil.startScope(model);
+                    SpecificationUtil.startScope(model, null);
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                     String pageName = cycle.getRequest().getPageName();
                     String extension = cycle.getRequest().getExtension();

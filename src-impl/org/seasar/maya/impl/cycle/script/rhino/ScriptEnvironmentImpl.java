@@ -15,9 +15,13 @@
  */
 package org.seasar.maya.impl.cycle.script.rhino;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.AttributeScope;
@@ -114,7 +118,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         cycle.setPageScope(null);
     }
 
-    public void startScope(Object model) {
+    public void startScope(Object model, Map variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
@@ -138,6 +142,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
         setModelToPrototype(model, pageScope);
+        if(variables != null) {
+            for(Iterator it = variables.keySet().iterator(); it.hasNext(); ) {
+                String name = it.next().toString(); 
+                Object value = variables.get(name);
+                Object variable = Context.javaToJS(value, pageScope);
+                ScriptableObject.putProperty(pageScope, name, variable);
+            }
+        }
         cycle.setPageScope(pageScope);
     }
 

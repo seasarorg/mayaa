@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +78,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     // ProcessorTreeWalker implements --------------------------------
 
     public Map getVariables() {
-        return Collections.EMPTY_MAP;
+        return null;
     }
     
     public void setParentProcessor(ProcessorTreeWalker parent, int index) {

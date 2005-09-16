@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.specification;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -126,8 +127,8 @@ public class SpecificationUtil implements CONST_IMPL {
         ScriptUtil.getScriptEnvironment().initScope();
     }
 
-    public static void startScope(Object model) {
-        ScriptUtil.getScriptEnvironment().startScope(model);
+    public static void startScope(Object model, Map variables) {
+        ScriptUtil.getScriptEnvironment().startScope(model, variables);
     }
 
     public static void endScope() {

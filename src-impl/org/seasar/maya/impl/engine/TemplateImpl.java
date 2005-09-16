@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -161,7 +160,7 @@ public class TemplateImpl extends SpecificationImpl
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
-            SpecificationUtil.startScope(null);
+            SpecificationUtil.startScope(null, current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
         	startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {
@@ -275,7 +274,7 @@ public class TemplateImpl extends SpecificationImpl
             prepareCycle();
         }
         Object model = SpecificationUtil.getSpecificationModel(this);
-        SpecificationUtil.startScope(model);
+        SpecificationUtil.startScope(model, getVariables());
         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret;
         ret = renderRoot(root);
@@ -305,7 +304,7 @@ public class TemplateImpl extends SpecificationImpl
     // ProcessorTreeWalker implements --------------------------------
     
     public Map getVariables() {
-        return Collections.EMPTY_MAP;
+        return null;
     }
 
     public void setParentProcessor(ProcessorTreeWalker parent, int index) {

@@ -29,7 +29,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     private QNameable _name;
 	private ProcessorProperty _value;
-    
+
     private AbstractAttributableProcessor findParentAttributable() {
         for(ProcessorTreeWalker parent = getParentProcessor();
         		parent != null;
@@ -40,7 +40,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
         throw new IllegalStateException();
     }
-    
+
     // MLD property
     public void setName(QNameable name) {
         if(name == null) {
@@ -48,7 +48,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
         _name = name;
     }
-    
+
     // MLD property
     public void setValue(ProcessorProperty value) {
         if(value == null) {
@@ -56,7 +56,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
         _value = value;
     }
-    
+
     public ProcessStatus doStartProcess() {
         if(_value == null) {
             throw new IllegalStateException();
@@ -66,13 +66,13 @@ public class AttributeProcessor extends TemplateProcessorSupport {
                 new ProcessorPropertyWrapper(_name, _value));
         return SKIP_BODY;
     }
-    
+
     private class ProcessorPropertyWrapper 
             implements ProcessorProperty {
 
         private QNameable _attrName;
         private ProcessorProperty _attrValue;
-        
+
         private ProcessorPropertyWrapper(
                 QNameable name, ProcessorProperty property) {
             if(name == null || property == null) {
@@ -81,7 +81,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             _attrName = name;
             _attrValue = property;
         }
-        
+
         public QNameable getName() {
             return _attrName;
         }
@@ -89,7 +89,21 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         public CompiledScript getValue() {
             return _attrValue.getValue();
         }
-        
+
+        public boolean equals(Object obj) {
+            if (obj instanceof ProcessorProperty) {
+                QNameable otherName = ((ProcessorProperty) obj).getName();
+                return _name.getQName().equals(otherName.getQName());
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return toString().hashCode();
+        }
+
+        public String toString() {
+            return _name.toString() + "=\"" + _attrValue.getValue() + "\"";
+        }
     }
-    
 }

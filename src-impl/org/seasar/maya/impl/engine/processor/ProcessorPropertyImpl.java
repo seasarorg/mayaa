@@ -27,7 +27,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
 
     private QNameable _name;
     private CompiledScript _compiled;
-    
+
     public ProcessorPropertyImpl(
             QNameable name, String value, Class expectedType) {
         if(name == null || expectedType == null) {
@@ -36,13 +36,28 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         _name = name;
         _compiled = ScriptUtil.compile(value, expectedType);
     }
-    
+
     public QNameable getName() {
         return _name;
     }
-    
+
     public CompiledScript getValue() {
         return _compiled;
     }
-    
+
+    public boolean equals(Object obj) {
+        if (obj instanceof ProcessorProperty) {
+            QNameable otherName = ((ProcessorProperty) obj).getName();
+            return _name.getQName().equals(otherName.getQName());
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public String toString() {
+        return _name.toString() + "=\"" + _compiled.getScript() + "\"";
+    }
 }

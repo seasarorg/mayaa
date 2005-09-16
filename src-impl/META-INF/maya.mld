@@ -75,7 +75,7 @@
 	<processor name="insert"
 			class="org.seasar.maya.impl.engine.processor.InsertProcessor">
 		<description>m:insert injection</description>
-		<property name="path" required="true"/>
+		<property name="path"/>
 		<property name="name"/>
 	</processor>
 

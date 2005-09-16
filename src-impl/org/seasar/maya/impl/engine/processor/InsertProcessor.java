@@ -108,19 +108,24 @@ public class InsertProcessor
     protected ProcessStatus renderTemplate() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requiredSuffix = cycle.getRequest().getRequestedSuffix();
-        Template template = _page.getTemplate(requiredSuffix);
-        if(template == null) {
+        Template insertTemplate = _page.getTemplate(requiredSuffix);
+        if(insertTemplate == null) {
             throw new PageNotFoundException(
                     _page.getPageName(), requiredSuffix, _page.getExtension());
         }
-        DoRenderProcessor doRender = findDoRender(template, _name);
+        Object model = SpecificationUtil.getSpecificationModel(insertTemplate);
+        SpecificationUtil.startScope(model, getVariables());
+        SpecificationUtil.execEvent(insertTemplate, QM_BEFORE_RENDER);
+        DoRenderProcessor doRender = findDoRender(insertTemplate, _name);
         if(doRender == null) {
             throw new DoRenderNotFoundException();
         }
-        ProcessorTreeWalker root = getRenderRoot(doRender);
+        ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
         doRender.setInsertProcessor(this);
-        ProcessStatus ret = RenderUtil.render(root);
+        ProcessStatus ret = RenderUtil.render(insertRoot);
         doRender.setInsertProcessor(null);
+        SpecificationUtil.execEvent(insertTemplate, QM_AFTER_RENDER);
+        SpecificationUtil.endScope();
         if(ret == EVAL_PAGE) {
             ret = SKIP_BODY;
         }

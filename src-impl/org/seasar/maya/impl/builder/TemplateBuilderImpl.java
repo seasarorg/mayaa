@@ -255,7 +255,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
             saveToCycle(child, injected);
             ProcessorTreeWalker processor = resolveInjectedNode(
-                    template, stack, original, injected);
+                    template, stack, child, injected);
             if(processor != null) {
                 stack.push(processor);
                 walkParsedTree(template, stack, child);

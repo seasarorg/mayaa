@@ -43,6 +43,63 @@ public class SpecificationImpl
     private SourceDescriptor _source;
     private List _childNodes;
 
+    protected void clear() {
+        synchronized(this) {
+            if(_childNodes != null) {
+                _childNodes.clear();
+            }
+        }
+    }
+    
+    protected boolean isOldSpecification() {
+        boolean check = EngineUtil.getEngineSettingBoolean(
+                CHECK_TIMESTAMP, true);
+        if(check == false) {
+            return false;
+        }
+        if(_buildTimestamp == null) {
+            return true;
+        }
+        Date source = getSource().getTimestamp();
+        Date now = new Date();
+        return source.after(_buildTimestamp) && now.after(source);
+    }
+
+    protected void parseSpecification() {
+        setTimestamp(new Date());
+        if(getSource().exists()) {
+            clear();
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            SpecificationBuilder builder = provider.getSpecificationBuilder();
+            builder.build(this);
+        }
+    }
+    
+    protected void setTimestamp(Date buildTimestamp) {
+        _buildTimestamp = buildTimestamp;
+    }
+    
+    public Date getTimestamp() {
+        return _buildTimestamp;
+    }
+
+    public void setSource(SourceDescriptor source) {
+        _source = source;
+    }
+    
+    public SourceDescriptor getSource() {
+		if(_source == null) {
+		    _source = new NullSourceDescriptor();
+		}
+		return _source;
+    }
+    
+    public void kill() {
+        setTimestamp(null);
+    }
+    
+    // NodeTreeWalker implements ------------------------------------
+    
     public void setParentNode(NodeTreeWalker parentNode) {
         throw new IllegalStateException();
     }
@@ -89,60 +146,7 @@ public class SpecificationImpl
         return 0;
     }
 
-    public void setSource(SourceDescriptor source) {
-        _source = source;
-    }
-    
-    public SourceDescriptor getSource() {
-		if(_source == null) {
-		    _source = new NullSourceDescriptor();
-		}
-		return _source;
-    }
-    
-    public Date getTimestamp() {
-        return _buildTimestamp;
-    }
-    
-    protected void setTimestamp(Date buildTimestamp) {
-    	_buildTimestamp = buildTimestamp;
-    }
-	
-    protected boolean isOldSpecification() {
-    	boolean check = EngineUtil.getEngineSettingBoolean(
-                CHECK_TIMESTAMP, true);
-        if(check == false) {
-            return false;
-        }
-        if(_buildTimestamp == null) {
-            return true;
-        }
-        Date source = getSource().getTimestamp();
-        Date now = new Date();
-        return source.after(_buildTimestamp) && now.after(source);
-    }
-
-    protected void clear() {
-        synchronized(this) {
-            if(_childNodes != null) {
-                _childNodes.clear();
-            }
-        }
-    }
-
-    protected void parseSpecification() {
-		setTimestamp(new Date());
-        if(getSource().exists()) {
-	    	clear();
-	        ServiceProvider provider = ProviderFactory.getServiceProvider();
-	        SpecificationBuilder builder = provider.getSpecificationBuilder();
-	        builder.build(this);
-        }
-    }
-    
-    public void kill() {
-        setTimestamp(null);
-    }
+    // support class -------------------------------------------------
     
     protected class ChildSpecificationsIterator implements Iterator {
 

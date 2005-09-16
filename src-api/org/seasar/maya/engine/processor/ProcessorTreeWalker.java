@@ -16,13 +16,20 @@
 package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * プロセッサツリーを操作する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorTreeWalker extends Serializable {
-
+    
+    /**
+     * プロセッサ実行スコープに、登録スクリプト変数を提供する。
+     * @return 登録変数のマップ。キーが変数名となる。
+     */
+    Map getVariables();
+    
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
      * @param parent 親ProcessorTreeWalker

@@ -30,6 +30,7 @@ import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.specification.NamespaceImpl;
+import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -73,7 +74,7 @@ public class SpecificationNodeHandler
 
     private void initNamespace() {
         _namespace = new NamespaceImpl();
-        _namespace.addPrefixMapping("", URI_HTML);
+        _namespace.addPrefixMapping(new PrefixMappingImpl("", URI_HTML));
     }
 
     private void stackNamespace() {
@@ -99,11 +100,12 @@ public class SpecificationNodeHandler
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        _namespace.addPrefixMapping(prefix, uri);
+        PrefixMapping mapping = new PrefixMappingImpl(prefix, uri);
+        _namespace.addPrefixMapping(mapping);
     }
     
     public void endPrefixMapping(String prefix) {
-        PrefixMapping mapping = _namespace.getPrefixMapping(prefix, false);
+        PrefixMapping mapping = _namespace.getMappingFromPrefix(prefix, false);
         if(mapping == null) {
             throw new IllegalStateException();
         }
@@ -140,7 +142,8 @@ public class SpecificationNodeHandler
         SpecificationNode node = addNode(nodeQName);
         Namespace elementNS = new NamespaceImpl();
         elementNS.setParentSpace(_namespace);
-        elementNS.addPrefixMapping("", nodeURI);
+        PrefixMapping mapping = new PrefixMappingImpl("", nodeURI);
+        elementNS.addPrefixMapping(mapping);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             QNameable parsedAttrName = 

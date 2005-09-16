@@ -30,19 +30,86 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class NamespaceImpl implements Namespace {
 
-    private Namespace _parent;
+    private Namespace _parentSpace;
     private Map _mappings;
     
-	protected void clear() {
-	    synchronized(this) {
-			if(_mappings != null) {
-			    _mappings.clear();
-			}
-            _parent = null;
-	    }
-	}
+    public void setParentSpace(Namespace parent) {
+        if(parent == null) {
+            throw new IllegalArgumentException();
+        }
+        _parentSpace = parent;
+    }
+    
+    public Namespace getParentSpace() {
+        return _parentSpace;
+    }
 
-    public boolean added() {
+    public void addPrefixMapping(PrefixMapping mapping) {
+        if(mapping == null) {
+            throw new IllegalArgumentException();
+        }
+	    synchronized(this) {
+	        if(_mappings == null) {
+	            _mappings = new HashMap();
+	        }
+            String prefix = mapping.getPrefix();
+	        if(_mappings.containsKey(prefix) == false) {
+	            _mappings.put(prefix, mapping);
+	            mapping.setNamespace(this);
+	        } else {
+	            // TODO LOG
+            }
+	    }
+    }
+    
+    private PrefixMapping getMapping(
+            boolean fromPrefix, String test, boolean all) {
+        if(test == null) {
+            throw new IllegalArgumentException();
+        }
+        PrefixMapping ret = null;
+        if(_mappings != null) {
+            ret = (PrefixMapping)_mappings.get(test);
+            if(ret != null) {
+                return ret;
+            }
+        }
+        if(all && _parentSpace != null) {
+            if(fromPrefix) {
+                ret = _parentSpace.getMappingFromPrefix(test, true);
+            } else {
+                ret = _parentSpace.getMappingFromURI(test, true);
+            }
+        }
+        return ret;
+    }
+    
+    public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
+        if(prefix == null) {
+            prefix = "";
+        }
+        return getMapping(true, prefix, all);
+    }
+
+    public PrefixMapping getMappingFromURI(
+            String namespaceURI, boolean all) {
+        if(StringUtil.isEmpty(namespaceURI)) {
+            throw new IllegalArgumentException();
+        }
+        return getMapping(false, namespaceURI, all);
+    }
+
+    public Iterator iteratePrefixMapping(boolean all) {
+        if(all && _parentSpace != null) {
+            return new AllNamespaceIterator(this);
+        }
+        if(_mappings != null) {
+            return _mappings.values().iterator();
+        }
+        return NullIterator.getInstance();
+    }
+
+    public boolean addedMapping() {
         if(_mappings == null) {
             return false;
         }
@@ -51,63 +118,7 @@ public class NamespaceImpl implements Namespace {
         }
     }
     
-    public void setParentSpace(Namespace parent) {
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
-        _parent = parent;
-    }
-    
-    public Namespace getParentSpace() {
-        return _parent;
-    }
-
-    public void addPrefixMapping(String prefix, String namespaceURI) {
-        if(StringUtil.isEmpty(namespaceURI)) {
-            throw new IllegalArgumentException();
-        }
-        if(prefix == null) {
-            prefix = "";
-        }
-	    synchronized(this) {
-	        if(_mappings == null) {
-	            _mappings = new HashMap();
-	        }
-	        if(_mappings.containsKey(prefix) == false) {
-	        	PrefixMappingImpl ns = 
-                    new PrefixMappingImpl(prefix, namespaceURI); 
-	            _mappings.put(prefix, ns);
-	            ns.setNamespace(this);
-	        }
-	    }
-    }
-    
-    public PrefixMapping getPrefixMapping(String prefix, boolean all) {
-        if(prefix == null) {
-            prefix = "";
-        }
-        PrefixMapping ret = null;
-        if(_mappings != null) {
-            ret = (PrefixMapping)_mappings.get(prefix);
-            if(ret != null) {
-                return ret;
-            }
-        }
-        if(all && _parent != null) {
-            return _parent.getPrefixMapping(prefix, true);
-        }
-        return null;
-    }
-
-    public Iterator iteratePrefixMapping(boolean all) {
-        if(all && _parent != null) {
-            return new AllNamespaceIterator(this);
-        }
-        if(_mappings != null) {
-            return _mappings.values().iterator();
-        }
-        return NullIterator.getInstance();
-    }
+    // support class -------------------------------------------------
     
     private class AllNamespaceIterator implements Iterator {
         

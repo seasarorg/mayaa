@@ -27,7 +27,8 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractAttributableProcessor extends TemplateProcessorSupport
+public abstract class AbstractAttributableProcessor
+        extends TemplateProcessorSupport
 		implements ChildEvaluationProcessor, InformalPropertyAcceptable {
 
     private boolean _childEvaluation;
@@ -84,26 +85,6 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
         return writeStartElement();
     }
     
-    public ProcessStatus doEndProcess() {
-        ProcesstimeInfo info = getProcesstimeInfo();
-        if(_childEvaluation) {
-            writeStartElement();
-            if(info._body != null) {
-            	try {
-                    info._body.flush();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        writeEndElement();
-        return EVAL_PAGE;
-    }
-    
-    public boolean isIteration() {
-        return false;
-    }
-    
     public boolean isChildEvaluation() {
         return _childEvaluation;
     }
@@ -119,8 +100,28 @@ public abstract class AbstractAttributableProcessor extends TemplateProcessorSup
     public void doInitChildProcess() {
     }
     
+    public boolean isIteration() {
+        return false;
+    }
+    
     public ProcessStatus doAfterChildProcess() {
         return SKIP_BODY;
+    }
+    
+    public ProcessStatus doEndProcess() {
+        ProcesstimeInfo info = getProcesstimeInfo();
+        if(_childEvaluation) {
+            writeStartElement();
+            if(info._body != null) {
+            	try {
+                    info._body.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        writeEndElement();
+        return EVAL_PAGE;
     }
 
     //helper class, methods ----------------------------------------

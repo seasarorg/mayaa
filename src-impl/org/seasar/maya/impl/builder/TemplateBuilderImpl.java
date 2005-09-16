@@ -179,7 +179,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 throw new IllegalStateException();
             }
             Namespace namespace = (Namespace)original;
-            PrefixMapping mapping = namespace.getPrefixMapping("", true);
+            PrefixMapping mapping = namespace.getMappingFromPrefix("", true);
             if(mapping == null) {
                 throw new IllegalStateException();
             }

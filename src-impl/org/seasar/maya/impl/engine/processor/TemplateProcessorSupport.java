@@ -16,7 +16,9 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -40,34 +42,6 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     public void setEvalBodyInclude(boolean evalBodyInclude) {
         _evalBodyInclude = evalBodyInclude;
     }
-    
-    public void setParentProcessor(ProcessorTreeWalker parent, int index) {
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
-        _parent = parent;
-        _index = index;
-    }
-
-    public void addChildProcessor(ProcessorTreeWalker child) {
-        if(child == null) {
-            throw new IllegalArgumentException();
-        }
-        _children.add(child);
-        child.setParentProcessor(this, _children.size() - 1);
-    }
-
-    public ProcessorTreeWalker getParentProcessor() {
-        return _parent;
-    }
-
-    public int getIndex() {
-        return _index;
-    }
-
-    public ProcessStatus doEndProcess() {
-        return EVAL_PAGE;
-    }
 
     public ProcessStatus doStartProcess() {
         if(_evalBodyInclude) {
@@ -76,14 +50,8 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         return SKIP_BODY;
     }
 
-    public int getChildProcessorSize() {
-        synchronized(_children) {
-            return _children.size();
-        }
-    }
-
-    public ProcessorTreeWalker getChildProcessor(int index) {
-        return (ProcessorTreeWalker)_children.get(index);
+    public ProcessStatus doEndProcess() {
+        return EVAL_PAGE;
     }
 
     public void setOriginalNode(NodeTreeWalker node) {
@@ -106,6 +74,46 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public NodeTreeWalker getInjectedNode() {
         return _injectedNode;
+    }
+    
+    // ProcessorTreeWalker implements --------------------------------
+
+    public Map getVariables() {
+        return Collections.EMPTY_MAP;
+    }
+    
+    public void setParentProcessor(ProcessorTreeWalker parent, int index) {
+        if(parent == null) {
+            throw new IllegalArgumentException();
+        }
+        _parent = parent;
+        _index = index;
+    }
+
+    public ProcessorTreeWalker getParentProcessor() {
+        return _parent;
+    }
+
+    public int getIndex() {
+        return _index;
+    }
+
+    public void addChildProcessor(ProcessorTreeWalker child) {
+        if(child == null) {
+            throw new IllegalArgumentException();
+        }
+        _children.add(child);
+        child.setParentProcessor(this, _children.size() - 1);
+    }
+
+    public int getChildProcessorSize() {
+        synchronized(_children) {
+            return _children.size();
+        }
+    }
+
+    public ProcessorTreeWalker getChildProcessor(int index) {
+        return (ProcessorTreeWalker)_children.get(index);
     }
 
 }

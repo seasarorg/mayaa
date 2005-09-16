@@ -36,16 +36,15 @@ public interface Namespace extends NodeObject {
     
     /**
      * 名前空間モデルの追加。
-     * @param prefix 名前空間プレフィックス。
-     * @param namespaceURI 名前空間URI。
+     * @param mapping 名前空間モデル。
      */
-    void addPrefixMapping(String prefix, String namespaceURI);
+    void addPrefixMapping(PrefixMapping mapping);
     
     /**
      * このスコープにて、名前空間モデルを追加したかどうか。
      * @return このスコープに追加モデルがあるとtrue。
      */
-    boolean added();
+    boolean addedMapping();
     
     /**
      * 名前空間モデルの取得。
@@ -53,7 +52,15 @@ public interface Namespace extends NodeObject {
      * @param all 親スコープも検索する。
      * @return 名前空間モデル。
      */
-    PrefixMapping getPrefixMapping(String prefix, boolean all);
+    PrefixMapping getMappingFromPrefix(String prefix, boolean all);
+
+    /**
+     * 名前空間モデルの取得。
+     * @param namespaceURI 取得したい名前空間のURI。
+     * @param all 親スコープも検索する。
+     * @return 名前空間モデル。
+     */
+    PrefixMapping getMappingFromURI(String namespaceURI, boolean all);
     
     /**
      * 適用される名前空間のイテレート。

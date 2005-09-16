@@ -21,14 +21,15 @@ import java.io.Serializable;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 
 /**
- * テンプレート中のHTMLタグを処理する委譲クラス。このTemplateProcessorのツリーすなわち
- * Templateとなる。このTemplateProcessorもリクエストに対してステートレスでなければならない。
+ * テンプレート中のHTMLタグを処理するクラス。
+ * リクエストに対してステートレスなように実装しなければならない。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateProcessor extends ProcessorTreeWalker {
-
+    
     /**
-     * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、このメソッドで出力する。
+     * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、
+     * このメソッドで出力する。
      * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
      * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
      */
@@ -68,7 +69,7 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
     /**
      * プロセッサ動作にて状態遷移を示すステータス。
      */
-    public class ProcessStatus implements Serializable {
+    class ProcessStatus implements Serializable {
 
         private static final long serialVersionUID = 473586899180314059L;
 
@@ -78,24 +79,27 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
     }
 
     /**
-     * リターンフラグ。doStartProcess()がこの値を返すと、プロセッサボディを出力しない。
+     * リターンフラグ。doStartProcess()がこの値を返すと、
+     * プロセッサボディを出力しない。
      */
-    public static final ProcessStatus SKIP_BODY = new ProcessStatus();
+    ProcessStatus SKIP_BODY = new ProcessStatus();
     
     /**
      * リターンフラグ。doStartProcess()がこの値を返すと、
      * プロセッサボディをバッファリング無しで出力する。
      */
-    public static final ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
+    ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
     
     /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、以降の出力をただちに中止する。
+     * リターンフラグ。doEndProcess()がこの値を返すと、
+     * 以降の出力をただちに中止する。
      */
-    public static final ProcessStatus SKIP_PAGE = new ProcessStatus();
+    ProcessStatus SKIP_PAGE = new ProcessStatus();
     
     /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、以降のプロセッサ出力を続ける。
+     * リターンフラグ。doEndProcess()がこの値を返すと、
+     * 以降のプロセッサ出力を続ける。
      */
-    public static final ProcessStatus EVAL_PAGE = new ProcessStatus();
+    ProcessStatus EVAL_PAGE = new ProcessStatus();
 
 }

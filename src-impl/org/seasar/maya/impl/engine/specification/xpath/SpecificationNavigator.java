@@ -61,7 +61,7 @@ public class SpecificationNavigator extends DefaultNavigator
 	    if(prefix == null) {
 	        prefix = "";
 	    }
-        PrefixMapping mapping = namespace.getPrefixMapping(prefix, true);
+        PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
         if(mapping != null) {
             return mapping.getNamespaceURI();
         }

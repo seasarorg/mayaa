@@ -66,14 +66,14 @@ public class BuilderUtil implements CONST_IMPL {
         if(parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            PrefixMapping mapping = namespace.getPrefixMapping(prefix, true);
+            PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
             if(mapping == null) {
                 throw new PrefixMappingNotFoundException(prefix);
             }
             namespaceURI = mapping.getNamespaceURI();
         } else if(parsed.length == 1) {
             localName = parsed[0];
-            PrefixMapping mapping = namespace.getPrefixMapping("", true);
+            PrefixMapping mapping = namespace.getMappingFromPrefix("", true);
             if(mapping != null) {
                 namespaceURI = mapping.getNamespaceURI();
             } else {

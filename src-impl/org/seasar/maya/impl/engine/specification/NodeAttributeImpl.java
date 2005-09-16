@@ -22,19 +22,20 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * NodeAttributeÇÃé¿ëïÉNÉâÉXÅB
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
+public class NodeAttributeImpl implements NodeAttribute {
     
     private SpecificationNode _node;
+    private QName _qName;
     private String _value;
 
 	public NodeAttributeImpl(QName qName, String value) {
-	    super(qName);
-        if(value == null) {
+        if(qName == null || value == null) {
             throw new IllegalArgumentException();
         }
         _value = value;
@@ -56,24 +57,26 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
     }
 
     public String toString() {
-        return getQName().toString() + "='" + _value + "'";
+        return getQName().toString();
     }
 
-    public boolean added() {
-        return false;
+    // QNameable implements ----------------------------------------
+    
+    public QName getQName() {
+        return _qName;
     }
-
-    public void addPrefixMapping(String prefix, String namespaceURI) {
-        throw new UnsupportedOperationException();
-    }
-
-    public PrefixMapping getPrefixMapping(String prefix, boolean all) {
-        if(_node != null) {
-            return _node.getPrefixMapping(prefix, all);
+    
+    public String getPrefix() {
+        String namespaceURI = _qName.getNamespaceURI();
+        PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
+        if(mapping != null) {
+            return mapping.getPrefix();
         }
-        return null;
+        return "";
     }
-
+    
+    // Namespace implemetns ----------------------------------------
+    
     public void setParentSpace(Namespace parent) {
         throw new UnsupportedOperationException();
     }
@@ -84,12 +87,35 @@ public class NodeAttributeImpl extends QNameableImpl implements NodeAttribute {
         }
         return null;
     }
+
+    public void addPrefixMapping(PrefixMapping mapping) {
+        throw new UnsupportedOperationException();
+    }
+
+    public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
+        if(_node != null) {
+            return _node.getMappingFromPrefix(prefix, all);
+        }
+        return null;
+    }
     
+    public PrefixMapping getMappingFromURI(
+            String namespaceURI, boolean all) {
+        if(_node != null) {
+            return _node.getMappingFromURI(namespaceURI, all);
+        }
+        return null;
+    }
+
     public Iterator iteratePrefixMapping(boolean all) {
         if(_node != null) {
             _node.iteratePrefixMapping(all);
         }
-        return super.iteratePrefixMapping(all);
+        return NullIterator.getInstance();
+    }
+
+    public boolean addedMapping() {
+        return false;
     }
     
 }

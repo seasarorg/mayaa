@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -52,17 +51,6 @@ public class InsertProcessor
         _name = name;
     }
 
-    protected Page preparePage() {
-        if(StringUtil.isEmpty(_path)) {
-            throw new IllegalStateException();
-        }
-        Engine engine = EngineUtil.getEngine();
-        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-        String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-        Page page = engine.getPage(pagePath[0], pagePath[2]);  
-        return page;
-    }
-    
     protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(_page);
@@ -133,7 +121,7 @@ public class InsertProcessor
 	protected ProcessStatus writeStartElement() {
         synchronized(this) {
             if(_page == null) {
-                _page = preparePage();
+                _page = EngineUtil.getPage(_path);
             }
         }
         saveToCycle();

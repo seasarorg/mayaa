@@ -70,6 +70,7 @@ public interface CONST_IMPL {
     QName QM_CLASS = new QNameImpl("class");
     QName QM_CONTENT_TYPE = new QNameImpl("contentType");
     QName QM_DATA = new QNameImpl("data");
+    QName QM_EXTENDS = new QNameImpl("extends");
     QName QM_ID = new QNameImpl("id");
     QName QM_IGNORE = new QNameImpl("ignore");
     QName QM_INJECT = new QNameImpl(ATTR_INJECT);

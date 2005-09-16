@@ -26,8 +26,6 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
@@ -46,6 +44,7 @@ public class PageImpl extends SpecificationImpl
 
 	private static final long serialVersionUID = -8688634709901129128L;
 
+    private Page _super;
     private String _pageName;
     private String _extension;
     private List _templates;
@@ -57,10 +56,25 @@ public class PageImpl extends SpecificationImpl
         _pageName = pageName;
         _extension = extension;
     }
-
+    
+    protected void clear() {
+        synchronized(this) {
+            _super = null;
+            super.clear();
+        }
+    }
+    
     public Page getSuper() {
-        // TODO impl
-        return null;
+        synchronized(this) {
+            if(_super == null) {
+                String extendsPath = SpecificationUtil.getMayaAttributeValue(
+                        this, QM_EXTENDS);
+                if(StringUtil.hasValue(extendsPath)) {
+                    _super = EngineUtil.getPage(extendsPath);
+                }
+            }
+        }
+        return _super;
     }
 
     public String getPageName() {
@@ -126,27 +140,17 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    protected String getSuffixScript(Specification specification) {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
-        if(maya != null) {
-            String value = SpecificationUtil.getAttributeValue(
-                    maya, QM_TEMPLATE_SUFFIX);
-            if(value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
-
     protected String getTemplateSuffix() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
             return requestedSuffix;
         }
-        String text = getSuffixScript(this);
+        String text = SpecificationUtil.getMayaAttributeValue(
+                this, QM_TEMPLATE_SUFFIX);
         if(text == null) {
-            text = getSuffixScript(EngineUtil.getEngine());
+            text = SpecificationUtil.getMayaAttributeValue(
+                    EngineUtil.getEngine(), QM_TEMPLATE_SUFFIX);
         }
         if(StringUtil.hasValue(text)) {
             CompiledScript action = ScriptUtil.compile(text, String.class);

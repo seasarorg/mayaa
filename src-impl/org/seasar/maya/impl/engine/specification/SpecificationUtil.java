@@ -76,6 +76,19 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    public static String getMayaAttributeValue(
+            NodeTreeWalker current, QName qName) {
+        SpecificationNode maya = getMayaNode(current);
+        if(maya != null) {
+            String value = getAttributeValue(
+                    maya, qName);
+            if(value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static String getNodeBodyText(SpecificationNode node) {
         StringBuffer buffer = new StringBuffer();
         for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {

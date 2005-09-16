@@ -35,8 +35,6 @@ public class TemplateErrorHandler  implements ErrorHandler {
 
     private static final Log LOG = LogFactory.getLog(TemplateErrorHandler.class);
     public static final String THROWABLE = "THROWABLE";
-    public static final String ORIGINAL_NODE = "ORIGINAL_NODE";
-    public static final String INJECTED_NODE = "INJECTED_NODE";
 
     private String _folder = "/"; 
     private String _extension = "html";
@@ -65,10 +63,6 @@ public class TemplateErrorHandler  implements ErrorHandler {
         }
         CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        CycleUtil.setAttribute(ORIGINAL_NODE,
-                cycle.getOriginalNode(), ServiceCycle.SCOPE_REQUEST);
-        CycleUtil.setAttribute(INJECTED_NODE,
-                cycle.getInjectedNode(), ServiceCycle.SCOPE_REQUEST);
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
@@ -98,8 +92,6 @@ public class TemplateErrorHandler  implements ErrorHandler {
             }
         } finally {
             CycleUtil.removeAttribute(THROWABLE, ServiceCycle.SCOPE_REQUEST);
-            CycleUtil.removeAttribute(ORIGINAL_NODE, ServiceCycle.SCOPE_REQUEST);
-            CycleUtil.removeAttribute(INJECTED_NODE, ServiceCycle.SCOPE_REQUEST);
         }
     }
     

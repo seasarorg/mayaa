@@ -177,18 +177,27 @@ public class PageImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
+    protected Page findBase() {
+        Page page = this;
+        while(page.getSuper() != null) {
+            page = page.getSuper();
+        }
+        return page;
+    }
+    
     public ProcessStatus doPageRender() throws PageForwarded {
         saveToCycle();
-        Object model = SpecificationUtil.getSpecificationModel(this);
+        Page base = findBase();
+        Object model = SpecificationUtil.getSpecificationModel(base);
         SpecificationUtil.startScope(model, null);
-        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
+        SpecificationUtil.execEvent(base, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
-        if("maya".equals(getExtension()) == false) {
-            Template template = getTemplate();
+        if("maya".equals(base.getExtension()) == false) {
+            Template template = base.getTemplate();
             ret = template.doTemplateRender();
             saveToCycle();
         }
-        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
+        SpecificationUtil.execEvent(base, QM_AFTER_RENDER);
         SpecificationUtil.endScope();
         return ret;
     }

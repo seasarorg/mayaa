@@ -24,6 +24,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
+import org.seasar.maya.impl.engine.RenderUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -62,11 +63,6 @@ public class InsertProcessor
         return page;
     }
     
-    public ProcessStatus doBase() {
-        Template template = EngineUtil.getTemplate(this);
-        return template.doTemplateRender(this);
-    }
-
     protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(_page);
@@ -123,7 +119,7 @@ public class InsertProcessor
         }
         ProcessorTreeWalker root = getRenderRoot(doRender);
         doRender.setInsertProcessor(this);
-        ProcessStatus ret = template.doTemplateRender(root);
+        ProcessStatus ret = RenderUtil.render(root);
         doRender.setInsertProcessor(null);
         if(ret == EVAL_PAGE) {
             ret = SKIP_BODY;

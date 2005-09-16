@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
+import org.seasar.maya.impl.engine.RenderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -38,7 +39,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
     public ProcessStatus doStartProcess() {
         InsertProcessor insert = getInsertProcessor();
         if(insert != null) {
-            return insert.doBase();
+            return RenderUtil.render(insert);
         }
         // direct access to component page.
         return EVAL_BODY_INCLUDE;

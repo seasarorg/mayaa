@@ -180,7 +180,7 @@ public class PageImpl extends SpecificationImpl
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
             Template template = getTemplate();
-            ret = template.doTemplateRender(template);
+            ret = template.doTemplateRender();
             saveToCycle();
         }
         SpecificationUtil.execEvent(this, QM_AFTER_RENDER);

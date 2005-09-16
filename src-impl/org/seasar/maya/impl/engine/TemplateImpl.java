@@ -26,16 +26,11 @@ import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
-import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -49,19 +44,7 @@ public class TemplateImpl extends SpecificationImpl
 		implements Template, CONST_IMPL {
 
 	private static final long serialVersionUID = -5368325487192629078L;
-    private static final ProcessStatus SKIP_BODY = 
-        TemplateProcessor.SKIP_BODY;
-    private static final ProcessStatus EVAL_BODY_INCLUDE = 
-        TemplateProcessor.EVAL_BODY_INCLUDE;
-    private static final ProcessStatus SKIP_PAGE = 
-        TemplateProcessor.SKIP_PAGE;
-    private static final ProcessStatus EVAL_PAGE = 
-        TemplateProcessor.EVAL_PAGE;
-    private static final ProcessStatus EVAL_BODY_AGAIN =
-        IterationProcessor.EVAL_BODY_AGAIN;
-    private static final ProcessStatus EVAL_BODY_BUFFERED =
-        ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
-    
+
     private Page _page;
     private String _suffix ;
     private List _childProcessors = new ArrayList();
@@ -80,10 +63,6 @@ public class TemplateImpl extends SpecificationImpl
             super.clear();
         }
     }
-    
-    public Page getPage() {
-        return _page;
-    }
 
     protected void parseSpecification() {
         setTimestamp(new Date());
@@ -92,150 +71,24 @@ public class TemplateImpl extends SpecificationImpl
         TemplateBuilder builder = provider.getTemplateBuilder();
         builder.build(this);
     }
+    
+    public Page getPage() {
+        return _page;
+    }
 
     public String getSuffix() {
         return _suffix;
     }
     
-    private boolean isEvaluation(TemplateProcessor current) {
-        return current instanceof ChildEvaluationProcessor && 
-        		((ChildEvaluationProcessor)current).isChildEvaluation();
-    }
-
-    private ChildEvaluationProcessor getEvaluation(
-            TemplateProcessor current) {
-        return (ChildEvaluationProcessor)current;
-    }
-    
-    private boolean isIteration(TemplateProcessor current) {
-        return current instanceof IterationProcessor &&
-        		((IterationProcessor)current).isIteration();
-    }
-    
-    private IterationProcessor getIteration(TemplateProcessor current) {
-        return (IterationProcessor)current;
-    }
-    
-    private boolean isDuplicated(TemplateProcessor current) {
-        return current instanceof ElementProcessor &&
-        		((ElementProcessor)current).isDuplicated(); 
-    }
-    
-    private boolean isTryCatchFinally(TemplateProcessor current) {
-        if( current instanceof TryCatchFinallyProcessor ){
-            TryCatchFinallyProcessor tryCatchFinallyProcessor 
-                                        = (TryCatchFinallyProcessor)current;
-            return tryCatchFinallyProcessor.canCatch();
-        }
-        return false ;
-    }
-    
-    private TryCatchFinallyProcessor getTryCatchFinally(
-            TemplateProcessor current) {
-        return (TryCatchFinallyProcessor)current;
-    }
-    
-    private ProcessStatus renderRoot(ProcessorTreeWalker root) {
-        for(int i = 0; i < root.getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = root.getChildProcessor(i);
-            if(child instanceof TemplateProcessor) {
-                TemplateProcessor childProc = (TemplateProcessor)child;
-                final ProcessStatus childRet = render(childProc);
-                if(childRet == SKIP_PAGE) {
-                    return SKIP_PAGE;
-                }
-            } else {
-                throw new IllegalStateException();
-            }
-        }
-        return EVAL_PAGE;
-    }
-    
-    // main rendering method
-    private ProcessStatus render(TemplateProcessor current) {
-        if(current == null) {
-            throw new IllegalArgumentException();
-        }
-        saveToCycle(current);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ProcessStatus ret = EVAL_PAGE;
-        try { 
-            SpecificationUtil.startScope(null, current.getVariables());
-            ProcessStatus startRet = EVAL_BODY_INCLUDE;
-        	startRet = current.doStartProcess();
-            if(startRet == SKIP_PAGE) {
-                return SKIP_PAGE;
-            }
-            boolean buffered = false;
-            if(startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
-                buffered = true;
-                getEvaluation(current).setBodyContent(
-                        cycle.getResponse().pushWriter());
-                getEvaluation(current).doInitChildProcess();
-            }
-            if(startRet == EVAL_BODY_INCLUDE || 
-                    startRet == EVAL_BODY_BUFFERED) {
-            	ProcessStatus afterRet;
-                do {
-                    for(int i = 0; i < current.getChildProcessorSize(); i++) {
-                        ProcessorTreeWalker child = current.getChildProcessor(i);
-                        if(child instanceof TemplateProcessor) {
-                            TemplateProcessor childProc = (TemplateProcessor)child;
-                            final ProcessStatus childRet = render(childProc);
-                            if(childRet == SKIP_PAGE) {
-                                return SKIP_PAGE;
-                            }
-                        } else {
-                            throw new IllegalStateException();
-                        }
-                    }
-                    afterRet = SKIP_BODY;
-                    saveToCycle(current);
-                    if(isIteration(current)) {
-                        afterRet = getIteration(current).doAfterChildProcess();
-                        ProcessorTreeWalker parent = current.getParentProcessor();
-                        if(parent instanceof TemplateProcessor) {
-                            TemplateProcessor parentProc = (TemplateProcessor)parent;
-                        	if(afterRet == EVAL_BODY_AGAIN &&
-                                    isDuplicated(parentProc)) {
-                                saveToCycle(parentProc);
-                                parentProc.doEndProcess();
-                                parentProc.doStartProcess();
-                        	}
-                        }
-                    }
-                } while(afterRet == EVAL_BODY_AGAIN);
-            }
-            if(buffered) {
-                cycle.getResponse().popWriter();
-            }
-            saveToCycle(current);
-            ret = current.doEndProcess();
-            SpecificationUtil.endScope();
-        } catch (RuntimeException e) {
-            if(isTryCatchFinally(current)) {
-                getTryCatchFinally(current).doCatchProcess(e);
-                SpecificationUtil.endScope();
-            } else {
-                throw e;
-            }
-        } finally {
-            if(isTryCatchFinally(current)) {
-                getTryCatchFinally(current).doFinallyProcess();
-            }
-        }
-        return ret;
-    }
-    
     private String getContentType() {
         SpecificationNode maya = SpecificationUtil.getMayaNode(this);
-		if(maya != null) {
-	        String contentType = SpecificationUtil.getAttributeValue(
+        if(maya != null) {
+            String contentType = SpecificationUtil.getAttributeValue(
                     maya, QM_CONTENT_TYPE);
-	        if(StringUtil.hasValue(contentType)) {
-	            return contentType;
-	        }
-		}
+            if(StringUtil.hasValue(contentType)) {
+                return contentType;
+            }
+        }
         Request request = CycleUtil.getRequest();
         String ret = request.getMimeType();
         if(ret == null) {
@@ -245,60 +98,23 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     private void prepareCycle() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	Response response = cycle.getResponse();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Response response = cycle.getResponse();
         String contentType = getContentType();
         response.setContentType(contentType);
     }
-
-    private void saveToCycle(ProcessorTreeWalker current) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setProcessor(current);
-        if(current instanceof TemplateProcessor) {
-            TemplateProcessor proc = (TemplateProcessor)current;
-            cycle.setOriginalNode(proc.getOriginalNode());
-            cycle.setInjectedNode(proc.getInjectedNode());
-        } else if(current instanceof Template) {
-            Template temp = (Template)current;
-            cycle.setOriginalNode(temp);
-            cycle.setInjectedNode(temp);
-        }
-    }
     
-    public ProcessStatus doTemplateRender(ProcessorTreeWalker root) {
-        if(root == null) {
-            throw new IllegalArgumentException();
-        }
-        saveToCycle(this);
-        if(root.getParentProcessor() == null) {
-            prepareCycle();
-        }
+    public ProcessStatus doTemplateRender() {
+        RenderUtil.saveToCycle(this);
+        prepareCycle();
         Object model = SpecificationUtil.getSpecificationModel(this);
         SpecificationUtil.startScope(model, getVariables());
         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-        ProcessStatus ret;
-        ret = renderRoot(root);
-        saveToCycle(this);
+        ProcessStatus ret = RenderUtil.render(this);
+        RenderUtil.saveToCycle(this);
         SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
         SpecificationUtil.endScope();
         return ret;
-    }
-
-    private void checkTemplate() {
-        Date templateTime = getTimestamp();
-        if(templateTime != null) {
-            Page page = getPage();
-            Date pageTime = page.getTimestamp();
-            Date engineTime = EngineUtil.getEngine().getTimestamp();
-            if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
-                setTimestamp(null);
-            }
-        }
-        synchronized(this) {
-            if(isOldSpecification()) {
-                parseSpecification();
-            }
-        }
     }
 
     // ProcessorTreeWalker implements --------------------------------
@@ -329,13 +145,30 @@ public class TemplateImpl extends SpecificationImpl
         }
     }
 
+    private void checkTimestamps() {
+        Date templateTime = getTimestamp();
+        if(templateTime != null) {
+            Page page = getPage();
+            Date pageTime = page.getTimestamp();
+            Date engineTime = EngineUtil.getEngine().getTimestamp();
+            if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
+                setTimestamp(null);
+            }
+        }
+        synchronized(this) {
+            if(isOldSpecification()) {
+                parseSpecification();
+            }
+        }
+    }
+
     public int getChildProcessorSize() {
-        checkTemplate();
+        checkTimestamps();
         return _childProcessors.size();
     }
 
     public ProcessorTreeWalker getChildProcessor(int index) {
-        checkTemplate();
+        checkTimestamps();
         return (ProcessorTreeWalker)_childProcessors.get(index);
     }
     

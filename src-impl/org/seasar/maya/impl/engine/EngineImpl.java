@@ -135,9 +135,9 @@ public class EngineImpl extends SpecificationImpl
                     }
                 }
             }
-            String path = pageName + ".maya";
             page = new PageImpl(pageName, extension);
             ServiceProvider provider = ProviderFactory.getServiceProvider();
+            String path = pageName + ".maya";
             SourceDescriptor source = provider.getPageSourceDescriptor(path);
             page.setSource(source);
             if(_pages == null) {

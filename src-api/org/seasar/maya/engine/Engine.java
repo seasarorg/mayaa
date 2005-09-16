@@ -48,6 +48,7 @@ public interface Engine extends Parameterizable, Specification, Serializable {
     ErrorHandler getErrorHandler();
     
 	/**
+     * TODO ページ名だけで取得できるようにして、拡張子はPageと関連をなくす。
 	 * Pageオブジェクトのインスタンスを返す。
      * @param pageName ページ名。
      * @param extension ページ拡張子。

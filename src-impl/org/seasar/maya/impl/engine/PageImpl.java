@@ -85,16 +85,30 @@ public class PageImpl extends SpecificationImpl
         return _extension;
     }
 
-    private boolean match(Template template,  String suffix) {
+    public CompiledScript getSuffixScript() {
+        String value = SpecificationUtil.getMayaAttributeValue(
+                this, QM_TEMPLATE_SUFFIX);
+        if(StringUtil.isEmpty(value)) {
+            value = SpecificationUtil.getMayaAttributeValue(
+                    EngineUtil.getEngine(), QM_TEMPLATE_SUFFIX);
+        }
+        if(StringUtil.isEmpty(value)) {
+            value = "";
+        }        
+        return ScriptUtil.compile(value, String.class);
+    }
+
+
+    private boolean match(Template template,  String suffix, String extension) {
         String templateSuffix = template.getSuffix();
-        if((StringUtil.isEmpty(templateSuffix) && StringUtil.isEmpty(suffix)) ||
-                templateSuffix.equals(suffix)) {
+        String templateExt = template.getExtension();
+        if(templateSuffix.equals(suffix) && templateExt.equals(extension)) {
             return true;
         }
         return false;
     }
     
-    protected Template getTemplateFromSuffix(String suffix) {
+    public Template getTemplate(String suffix, String extension) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
@@ -106,7 +120,7 @@ public class PageImpl extends SpecificationImpl
                     Object obj = it.next();
                     if(obj instanceof Template) {
                         Template test = (Template)obj;
-                        if(match(test, suffix)) {
+                        if(match(test, suffix, extension)) {
                             template = test;
                             break;
                         }
@@ -120,7 +134,6 @@ public class PageImpl extends SpecificationImpl
                             SUFFIX_SEPARATOR, "$");
                     name.append(separator).append(suffix);
                 }
-                String extension = getExtension();
                 if(StringUtil.hasValue(extension)) {
                     name.append(".").append(extension);
                 }
@@ -128,7 +141,7 @@ public class PageImpl extends SpecificationImpl
                 SourceDescriptor source = 
                     provider.getPageSourceDescriptor(name.toString());
                 if(source.exists()) {
-                    template = new TemplateImpl(this, suffix);
+                    template = new TemplateImpl(this, suffix, extension);
                     template.setSource(source);
                     if (_templates == null) {
                         _templates = new ArrayList();
@@ -139,31 +152,21 @@ public class PageImpl extends SpecificationImpl
         }
         return template;
     }
-
-    protected String getTemplateSuffix() {
+    
+    public Template getTemplate() {
+        String suffix = "";
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
-            return requestedSuffix;
+            suffix = requestedSuffix;
+        } else {
+            CompiledScript script = getSuffixScript();
+            suffix = (String)script.execute();
         }
-        String text = SpecificationUtil.getMayaAttributeValue(
-                this, QM_TEMPLATE_SUFFIX);
-        if(text == null) {
-            text = SpecificationUtil.getMayaAttributeValue(
-                    EngineUtil.getEngine(), QM_TEMPLATE_SUFFIX);
-        }
-        if(StringUtil.hasValue(text)) {
-            CompiledScript action = ScriptUtil.compile(text, String.class);
-            return (String)action.execute();
-        }
-        return "";
-    }
-
-    public Template getTemplate() {
-        String suffix = getTemplateSuffix();
-        Template template = getTemplateFromSuffix(suffix);
+        String extension = getExtension();
+        Template template = getTemplate(suffix, extension);
         if(template == null && StringUtil.hasValue(suffix)) {
-            template = getTemplateFromSuffix("");
+            template = getTemplate("", extension);
         }
         if(template == null) {
             throw new PageNotFoundException(_pageName, _extension);

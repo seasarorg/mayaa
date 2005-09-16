@@ -44,6 +44,12 @@ public interface Template
     String getSuffix();
 
     /**
+     * ページの拡張子を返す。/context/hello.htmlだと、「html」。ドットを含まない。
+     * @return ページの拡張子。
+     */
+    String getExtension();
+    
+    /**
      * テンプレートをレンダリングする。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */

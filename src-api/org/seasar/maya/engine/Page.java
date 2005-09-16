@@ -17,6 +17,7 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 
@@ -41,12 +42,20 @@ public interface Page extends Specification, Serializable {
     String getPageName();
 
     /**
+     * TODO Templateに移動
      * ページの拡張子を返す。/context/hello.htmlだと、「html」。ドットを含まない。
      * @return ページの拡張子。
      */
     String getExtension();
 
     /**
+     * テンプレート接尾辞を決定するコンパイル済みスクリプト。
+     * @return コンパイル済みスクリプト。
+     */
+    CompiledScript getSuffixScript();
+    
+    /**
+     * TODO 接尾辞と拡張子を指定する。
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
      * @return レンダリングするテンプレート。
      */

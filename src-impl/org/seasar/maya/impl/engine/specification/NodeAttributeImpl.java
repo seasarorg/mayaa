@@ -38,6 +38,7 @@ public class NodeAttributeImpl implements NodeAttribute {
         if(qName == null || value == null) {
             throw new IllegalArgumentException();
         }
+        _qName = qName;
         _value = value;
     }
 	

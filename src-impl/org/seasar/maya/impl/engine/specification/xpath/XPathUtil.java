@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.maya.impl.engine.specification.xpath;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -33,9 +33,7 @@ import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.EngineUtil;
-import org.seasar.maya.impl.engine.specification.xpath.NamespaceContextImpl;
-import org.seasar.maya.impl.engine.specification.xpath.SpecificationNavigator;
-import org.seasar.maya.impl.engine.specification.xpath.SpecificationXPath;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**

@@ -28,7 +28,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.engine.specification.XPathUtil;
+import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**

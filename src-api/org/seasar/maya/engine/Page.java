@@ -21,14 +21,15 @@ import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 
 /**
- * テンプレートのレンダリングエントリーポイント。アプリケーションを構成する各ページのモデル
- * であり、リクエストに対してはステートレスなオブジェクトである。シリアライズ可能。
+ * テンプレートのレンダリングエントリーポイント。アプリケーションを構成する
+ * 各ページのモデルであり、リクエストに対してはステートレスなオブジェクトである。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Page extends Specification, Serializable {
 
     /**
-     * ページの名前を取得する。/context/hello.htmlであれば、「/context/hello」を返す。
+     * ページの名前を取得する。/context/hello.htmlであれば、
+     * 「/context/hello」を返す。
      * @return ページ名。
      */
     String getPageName();
@@ -40,12 +41,18 @@ public interface Page extends Specification, Serializable {
     String getExtension();
 
     /**
+     * リクエストより、適切なテンプレート接尾辞を返す。
+     * @return テンプレート接尾辞。
+     */
+    String getTemplateSuffix();
+
+    /**
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
-     * @param suffix ページ接尾辞。nullでもよい。
+     * @param suffix テンプレート接尾辞。もしくはnull。
      * @return レンダリングするテンプレート。
      */
     Template getTemplate(String suffix);
-	
+    
     /**
      * テンプレートレンダリングを行う。
      * @return プロセッサ処理ステータス。

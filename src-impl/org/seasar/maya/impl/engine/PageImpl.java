@@ -121,7 +121,7 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    private String getTemplateSuffix(Specification specification) {
+    private String getSuffixScript(Specification specification) {
         SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
         if(maya != null) {
             String value = SpecificationUtil.getAttributeValue(
@@ -133,10 +133,15 @@ public class PageImpl extends SpecificationImpl
         return null;
     }
 
-    protected String getTemplateSuffix() {
-        String text = getTemplateSuffix(this);
+    public String getTemplateSuffix() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        String requestedSuffix = cycle.getRequest().getRequestedSuffix();
+        if(StringUtil.hasValue(requestedSuffix)) {
+            return requestedSuffix;
+        }
+        String text = getSuffixScript(this);
         if(text == null) {
-            text = getTemplateSuffix(EngineUtil.getEngine());
+            text = getSuffixScript(EngineUtil.getEngine());
         }
         if(StringUtil.hasValue(text)) {
             CompiledScript action = ScriptUtil.compile(text, String.class);
@@ -145,25 +150,16 @@ public class PageImpl extends SpecificationImpl
         return "";
     }
 
-    protected Template getTemplate() {
-        String suffix;
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String requestedSuffix = cycle.getRequest().getRequestedSuffix();
-        if(StringUtil.hasValue(requestedSuffix)) {
-            suffix = requestedSuffix;
-        } else {
-            suffix = getTemplateSuffix();
-        }
+    protected ProcessStatus renderTemplate() {
+        String suffix = getTemplateSuffix();
         Template template = getTemplate(suffix);
-        if(template == null && StringUtil.hasValue(suffix) &&
-                StringUtil.isEmpty(requestedSuffix)) {
+        if(template == null && StringUtil.hasValue(suffix)) {
             template = getTemplate("");
         }
         if(template == null) {
-            throw new PageNotFoundException(
-                    _pageName, requestedSuffix, _extension);
+            throw new PageNotFoundException(_pageName, suffix, _extension);
         }
-        return template;
+        return template.doTemplateRender();
     }
     
     private void saveToCycle() {
@@ -179,8 +175,7 @@ public class PageImpl extends SpecificationImpl
         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
-            Template template = getTemplate();
-            ret = template.doTemplateRender();
+            ret = renderTemplate();
             saveToCycle();
         }
         SpecificationUtil.execEvent(this, QM_AFTER_RENDER);

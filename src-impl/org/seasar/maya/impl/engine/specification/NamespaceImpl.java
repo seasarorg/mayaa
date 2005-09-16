@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.impl.util.StringUtil;
@@ -30,6 +32,8 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  */
 public class NamespaceImpl implements Namespace {
 
+    private static Log LOG = LogFactory.getLog(NamespaceImpl.class);
+    
     private Namespace _parentSpace;
     private Map _mappings;
     
@@ -57,7 +61,10 @@ public class NamespaceImpl implements Namespace {
 	            _mappings.put(prefix, mapping);
 	            mapping.setNamespace(this);
 	        } else {
-	            // TODO LOG
+                if(LOG.isWarnEnabled()) {
+                    LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0, 
+                            new String[] { mapping.toString() }));
+                }
             }
 	    }
     }

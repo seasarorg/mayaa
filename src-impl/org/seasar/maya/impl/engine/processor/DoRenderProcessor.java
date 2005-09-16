@@ -51,6 +51,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         _insertProcs.set(proc);
     }
     
+    // TODO 一個でよいはずがないと思える。スタック化もしくはマップ化が必要なはず。
     public InsertProcessor getInsertProcessor() {
         InsertProcessor proc = (InsertProcessor)_insertProcs.get();
         if(proc == null) {

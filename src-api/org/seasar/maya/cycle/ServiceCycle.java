@@ -18,6 +18,7 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.provider.Parameterizable;
@@ -158,5 +159,17 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * @return 処理中のプロセッサ。もしくはnull。
      */
     ProcessorTreeWalker getProcessor();
+    
+    /**
+     * 現在処理中の最上位ページの設定。
+     * @param page 処理中のページ。
+     */
+    void setPage(Page page);
+    
+    /**
+     * 現在処理中の最上位ページの取得。
+     * @return 処理中のページ。もしくはnull。
+     */
+    Page getPage();
     
 }

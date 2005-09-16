@@ -23,6 +23,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
@@ -37,10 +38,11 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public abstract class AbstractServiceCycle implements ServiceCycle {
 
-    private AttributeScope _page;
+    private AttributeScope _pageScope;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
+    private Page _page;
     
     public Application getApplication() {
         return ProviderFactory.getServiceProvider().getApplication();
@@ -109,17 +111,14 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     }
 
     public void setPageScope(AttributeScope page) {
-        _page = page;
+        _pageScope = page;
     }
     
     public AttributeScope getPageScope() {
-        return _page;
+        return _pageScope;
     }
 
     public void setOriginalNode(NodeTreeWalker originalNode) {
-        if(originalNode == null) {
-            throw new IllegalArgumentException();
-        }
         _originalNode = originalNode;
     }    
 
@@ -135,12 +134,20 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 		return _injectedNode;
 	}
 
+    public void setProcessor(ProcessorTreeWalker processor) {
+        _processor = processor;
+    }
+
     public ProcessorTreeWalker getProcessor() {
         return _processor;
     }
+    
+    public void setPage(Page page) {
+        _page = page;
+    }
 
-    public void setProcessor(ProcessorTreeWalker processor) {
-        _processor = processor;
+    public Page getPage() {
+        return _page;
     }
     
     // support class ---------------------------------------------------
@@ -164,8 +171,8 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         public Object next() {
             AttributeScope scope = null;
             if(_current == null) {
-                if(_page != null) {
-                    scope = _page;
+                if(_pageScope != null) {
+                    scope = _pageScope;
                     _current = SCOPE_PAGE;
                 } else if(_it.hasNext()) {
                     scope = (AttributeScope)_it.next();

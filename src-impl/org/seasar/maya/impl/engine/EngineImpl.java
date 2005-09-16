@@ -215,7 +215,9 @@ public class EngineImpl extends SpecificationImpl
                     String extension = cycle.getRequest().getExtension();
                     Page page = getPage(pageName, extension);
                     ProcessStatus ret = null;
+                    cycle.setPage(page);
                     ret = page.doPageRender();
+                    cycle.setPage(null);
                     saveToCycle();
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();

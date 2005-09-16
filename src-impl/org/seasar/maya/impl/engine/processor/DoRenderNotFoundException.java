@@ -24,8 +24,14 @@ public class DoRenderNotFoundException extends MayaException {
 
 	private static final long serialVersionUID = -8123490579795977124L;
     
+    private String _name;
+    
+    public DoRenderNotFoundException(String name) {
+        _name = name;
+    }
+    
     protected String[] getMessageParams() {
-        return ZERO_PARAM;
+        return new String[] { _name };
     }
     
 }

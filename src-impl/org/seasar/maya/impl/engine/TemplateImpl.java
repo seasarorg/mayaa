@@ -45,7 +45,6 @@ public class TemplateImpl extends SpecificationImpl
 
 	private static final long serialVersionUID = -5368325487192629078L;
 
-    private Page _superPage;
     private Page _page;
     private String _suffix ;
     private List _childProcessors = new ArrayList();
@@ -58,19 +57,6 @@ public class TemplateImpl extends SpecificationImpl
         _suffix = suffix;
     }
     
-    public Page getSuperPage() {
-        synchronized(this) {
-            if(_superPage == null) {
-                String extendsPath = SpecificationUtil.getMayaAttributeValue(
-                        this, QM_EXTENDS);
-                if(StringUtil.hasValue(extendsPath)) {
-                    _superPage = EngineUtil.getPage(extendsPath);
-                }
-            }
-        }
-        return _superPage;
-    }
-
     public Page getPage() {
         return _page;
     }
@@ -106,19 +92,12 @@ public class TemplateImpl extends SpecificationImpl
     public ProcessStatus doTemplateRender() {
         RenderUtil.saveToCycle(this);
         prepareCycle();
-        Object model = SpecificationUtil.getSpecificationModel(this);
-        SpecificationUtil.startScope(model, getVariables());
-        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = RenderUtil.render(this);
-        RenderUtil.saveToCycle(this);
-        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
-        SpecificationUtil.endScope();
         return ret;
     }
     
     public void clear() {
         synchronized(this) {
-            _superPage = null;
             _childProcessors.clear();
             super.clear();
         }

@@ -40,9 +40,6 @@ public class InsertProcessor
     
     // MLD property, required
     public void setPath(String path) {
-        if(StringUtil.isEmpty(path)) {
-            throw new IllegalArgumentException();
-        }
         _path = path;
     }
     
@@ -51,10 +48,10 @@ public class InsertProcessor
         _name = name;
     }
 
-    protected void saveToCycle() {
+    protected void saveToCycle(Page page) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setOriginalNode(_page);
-        cycle.setInjectedNode(_page);
+        cycle.setOriginalNode(page);
+        cycle.setInjectedNode(page);
     }
 
     protected DoRenderProcessor findDoRender(
@@ -93,49 +90,63 @@ public class InsertProcessor
         return doRender;
     }
     
-    protected ProcessStatus renderTemplate() {
-        Template insertTemplate = _page.getTemplate();
-        if(insertTemplate == null) {
-            throw new PageNotFoundException(
-                    _page.getPageName(), _page.getExtension());
+    protected ProcessStatus insert(Page page) {
+        if(page == null) {
+            throw new IllegalStateException();
         }
-        Object model = SpecificationUtil.getSpecificationModel(insertTemplate);
-        SpecificationUtil.startScope(model, getVariables());
-        SpecificationUtil.execEvent(insertTemplate, QM_BEFORE_RENDER);
-        DoRenderProcessor doRender = findDoRender(insertTemplate, _name);
-        if(doRender == null) {
-            throw new DoRenderNotFoundException();
+        while(page != null) {
+            boolean maya = "maya".equals(page.getExtension());
+            DoRenderProcessor doRender = null;
+            if(maya == false) {
+                Template template = page.getTemplate();
+                if(template == null) {
+                    throw new PageNotFoundException(
+                            page.getPageName(), page.getExtension());
+                }
+                doRender = findDoRender(template, _name);
+            }
+            if(maya || doRender != null) {
+                ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
+                doRender.setInsertProcessor(this);
+                saveToCycle(page);
+                Object model = SpecificationUtil.getSpecificationModel(page);
+                SpecificationUtil.startScope(model, getVariables());
+                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
+                ProcessStatus ret = SKIP_BODY; 
+                if(maya == false) {
+                    ret = RenderUtil.render(insertRoot);
+                }
+                saveToCycle(page);
+                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+                SpecificationUtil.endScope();
+                doRender.setInsertProcessor(null);
+                return ret;
+            }
+            page = page.getSuper();
         }
-        ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
-        doRender.setInsertProcessor(this);
-        ProcessStatus ret = RenderUtil.render(insertRoot);
-        doRender.setInsertProcessor(null);
-        SpecificationUtil.execEvent(insertTemplate, QM_AFTER_RENDER);
-        SpecificationUtil.endScope();
-        if(ret == EVAL_PAGE) {
-            ret = SKIP_BODY;
-        }
-        return ret;
+        throw new DoRenderNotFoundException(_name);
     }
     
 	protected ProcessStatus writeStartElement() {
         synchronized(this) {
             if(_page == null) {
-                _page = EngineUtil.getPage(_path);
+                if(StringUtil.hasValue(_path)) {
+                    _page = EngineUtil.getPage(_path);
+                }
             }
         }
-        saveToCycle();
-        Object model = SpecificationUtil.getSpecificationModel(_page);
-        SpecificationUtil.startScope(model, getVariables());
-        SpecificationUtil.execEvent(_page, QM_BEFORE_RENDER);
-        ProcessStatus startRet = SKIP_BODY; 
-        if("maya".equals(_page.getExtension()) == false) {
-            startRet = renderTemplate();
+        Page page = _page;
+        if(page == null) {
+            page = CycleUtil.getServiceCycle().getPage();
         }
-        saveToCycle();
-        SpecificationUtil.execEvent(_page, QM_AFTER_RENDER);
-        SpecificationUtil.endScope();
-        return startRet;
+        if(page == null) {
+            throw new IllegalStateException();
+        }
+        ProcessStatus ret = insert(page);
+        if(ret == EVAL_PAGE) {
+            ret = SKIP_BODY;
+        }
+        return ret;
     }
     
 	protected void writeEndElement() {

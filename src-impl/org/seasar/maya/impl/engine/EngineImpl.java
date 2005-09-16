@@ -120,26 +120,26 @@ public class EngineImpl extends SpecificationImpl
         return false;
     }
     
-    public synchronized Page getPage(String pageName, String extension) {
+    public Page getPage(String pageName, String extension) {
         Page page;
-        if(_pages != null) {
-            for(Iterator it = new ChildSpecificationsIterator(_pages);
-                    it.hasNext(); ) {
-                Object child = it.next();
-                if(child instanceof Page) {
-                    page = (Page)child;
-                    if(match(page, pageName, extension)) {
-                        return page;
+        synchronized(this) {
+            if(_pages != null) {
+                for(Iterator it = new ChildSpecificationsIterator(_pages);
+                        it.hasNext(); ) {
+                    Object child = it.next();
+                    if(child instanceof Page) {
+                        page = (Page)child;
+                        if(match(page, pageName, extension)) {
+                            return page;
+                        }
                     }
                 }
             }
-        }
-        String path = pageName + ".maya";
-        page = new PageImpl(pageName, extension);
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        SourceDescriptor source = provider.getPageSourceDescriptor(path);
-        page.setSource(source);
-        synchronized (this) {
+            String path = pageName + ".maya";
+            page = new PageImpl(pageName, extension);
+            ServiceProvider provider = ProviderFactory.getServiceProvider();
+            SourceDescriptor source = provider.getPageSourceDescriptor(path);
+            page.setSource(source);
             if(_pages == null) {
                 _pages = new ArrayList();
             }

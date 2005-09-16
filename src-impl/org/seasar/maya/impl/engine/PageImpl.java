@@ -58,6 +58,11 @@ public class PageImpl extends SpecificationImpl
         _extension = extension;
     }
 
+    public Page getSuper() {
+        // TODO impl
+        return null;
+    }
+
     public String getPageName() {
         return _pageName;
     }
@@ -75,42 +80,42 @@ public class PageImpl extends SpecificationImpl
         return false;
     }
     
-    public synchronized Template getTemplate(String suffix) {
+    protected Template getTemplateFromSuffix(String suffix) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
         Template template = null;
-        if(_templates != null) {
-            for(Iterator it = new ChildSpecificationsIterator(_templates); 
-                    it.hasNext(); ) {
-                Object obj = it.next();
-                if(obj instanceof Template) {
-                    Template test = (Template)obj;
-                    if(match(test, suffix)) {
-                        template = test;
-                        break;
+        synchronized(this) {
+            if(_templates != null) {
+                for(Iterator it = new ChildSpecificationsIterator(_templates); 
+                        it.hasNext(); ) {
+                    Object obj = it.next();
+                    if(obj instanceof Template) {
+                        Template test = (Template)obj;
+                        if(match(test, suffix)) {
+                            template = test;
+                            break;
+                        }
                     }
                 }
             }
-        }
-        if(template == null) {
-            StringBuffer name = new StringBuffer(_pageName);
-            if(StringUtil.hasValue(suffix)) {
-                String separator = EngineUtil.getEngineSetting(
-                        SUFFIX_SEPARATOR, "$");
-                name.append(separator).append(suffix);
-            }
-            String extension = getExtension();
-            if(StringUtil.hasValue(extension)) {
-                name.append(".").append(extension);
-            }
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SourceDescriptor source = 
-                provider.getPageSourceDescriptor(name.toString());
-            if(source.exists()) {
-                template = new TemplateImpl(this, suffix);
-                template.setSource(source);
-                synchronized (this) {
+            if(template == null) {
+                StringBuffer name = new StringBuffer(_pageName);
+                if(StringUtil.hasValue(suffix)) {
+                    String separator = EngineUtil.getEngineSetting(
+                            SUFFIX_SEPARATOR, "$");
+                    name.append(separator).append(suffix);
+                }
+                String extension = getExtension();
+                if(StringUtil.hasValue(extension)) {
+                    name.append(".").append(extension);
+                }
+                ServiceProvider provider = ProviderFactory.getServiceProvider();
+                SourceDescriptor source = 
+                    provider.getPageSourceDescriptor(name.toString());
+                if(source.exists()) {
+                    template = new TemplateImpl(this, suffix);
+                    template.setSource(source);
                     if (_templates == null) {
                         _templates = new ArrayList();
                     }
@@ -121,7 +126,7 @@ public class PageImpl extends SpecificationImpl
         return template;
     }
 
-    private String getSuffixScript(Specification specification) {
+    protected String getSuffixScript(Specification specification) {
         SpecificationNode maya = SpecificationUtil.getMayaNode(specification);
         if(maya != null) {
             String value = SpecificationUtil.getAttributeValue(
@@ -133,7 +138,7 @@ public class PageImpl extends SpecificationImpl
         return null;
     }
 
-    public String getTemplateSuffix() {
+    protected String getTemplateSuffix() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String requestedSuffix = cycle.getRequest().getRequestedSuffix();
         if(StringUtil.hasValue(requestedSuffix)) {
@@ -150,19 +155,19 @@ public class PageImpl extends SpecificationImpl
         return "";
     }
 
-    protected ProcessStatus renderTemplate() {
+    public Template getTemplate() {
         String suffix = getTemplateSuffix();
-        Template template = getTemplate(suffix);
+        Template template = getTemplateFromSuffix(suffix);
         if(template == null && StringUtil.hasValue(suffix)) {
-            template = getTemplate("");
+            template = getTemplateFromSuffix("");
         }
         if(template == null) {
-            throw new PageNotFoundException(_pageName, suffix, _extension);
+            throw new PageNotFoundException(_pageName, _extension);
         }
-        return template.doTemplateRender();
+        return template;
     }
     
-    private void saveToCycle() {
+    protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);
@@ -175,7 +180,8 @@ public class PageImpl extends SpecificationImpl
         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if("maya".equals(getExtension()) == false) {
-            ret = renderTemplate();
+            Template template = getTemplate();
+            ret = template.doTemplateRender();
             saveToCycle();
         }
         SpecificationUtil.execEvent(this, QM_AFTER_RENDER);

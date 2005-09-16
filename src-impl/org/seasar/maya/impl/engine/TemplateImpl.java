@@ -57,21 +57,11 @@ public class TemplateImpl extends SpecificationImpl
         _suffix = suffix;
     }
     
-    public void clear() {
-        synchronized(this) {
-            _childProcessors.clear();
-            super.clear();
-        }
+    public Page getSuperPage() {
+        // TODO impl
+        return null;
     }
 
-    protected void parseSpecification() {
-        setTimestamp(new Date());
-        clear();
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        TemplateBuilder builder = provider.getTemplateBuilder();
-        builder.build(this);
-    }
-    
     public Page getPage() {
         return _page;
     }
@@ -116,6 +106,38 @@ public class TemplateImpl extends SpecificationImpl
         SpecificationUtil.endScope();
         return ret;
     }
+    
+    public void clear() {
+        synchronized(this) {
+            _childProcessors.clear();
+            super.clear();
+        }
+    }
+
+    protected void parseSpecification() {
+        setTimestamp(new Date());
+        clear();
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        TemplateBuilder builder = provider.getTemplateBuilder();
+        builder.build(this);
+    }
+
+    private void checkTimestamps() {
+        Date templateTime = getTimestamp();
+        if(templateTime != null) {
+            Page page = getPage();
+            Date pageTime = page.getTimestamp();
+            Date engineTime = EngineUtil.getEngine().getTimestamp();
+            if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
+                setTimestamp(null);
+            }
+        }
+        synchronized(this) {
+            if(isOldSpecification()) {
+                parseSpecification();
+            }
+        }
+    }
 
     // ProcessorTreeWalker implements --------------------------------
     
@@ -142,23 +164,6 @@ public class TemplateImpl extends SpecificationImpl
         synchronized(_childProcessors) {
             _childProcessors.add(child);
             child.setParentProcessor(this, _childProcessors.size() - 1);
-        }
-    }
-
-    private void checkTimestamps() {
-        Date templateTime = getTimestamp();
-        if(templateTime != null) {
-            Page page = getPage();
-            Date pageTime = page.getTimestamp();
-            Date engineTime = EngineUtil.getEngine().getTimestamp();
-            if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
-                setTimestamp(null);
-            }
-        }
-        synchronized(this) {
-            if(isOldSpecification()) {
-                parseSpecification();
-            }
         }
     }
 

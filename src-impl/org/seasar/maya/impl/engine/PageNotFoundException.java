@@ -25,30 +25,23 @@ public class PageNotFoundException extends MayaException {
 	private static final long serialVersionUID = 3750171533372115950L;
 
 	private String _pageName;
-    private String _requiredSuffix;
     private String _extension;
     
-	public PageNotFoundException(String pageName, 
-            String requeiredSuffix, String extension) {
+	public PageNotFoundException(String pageName, String extension) {
 	    _pageName = pageName;
-        _requiredSuffix = requeiredSuffix;
         _extension = extension;
     }
 
 	public String getPageName() {
 		return _pageName;
 	}
-
-    public String getRequiredSuffix() {
-        return _requiredSuffix;
-    }
     
     public String getExtension() {
         return _extension;
     }
     
     protected String[] getMessageParams() {
-        return new String[] { _pageName, _requiredSuffix, _extension };
+        return new String[] { _pageName, _extension };
     }
     
 }

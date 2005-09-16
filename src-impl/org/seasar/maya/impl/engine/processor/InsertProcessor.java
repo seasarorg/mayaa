@@ -106,12 +106,10 @@ public class InsertProcessor
     }
     
     protected ProcessStatus renderTemplate() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String requiredSuffix = cycle.getRequest().getRequestedSuffix();
-        Template insertTemplate = _page.getTemplate(requiredSuffix);
+        Template insertTemplate = _page.getTemplate();
         if(insertTemplate == null) {
             throw new PageNotFoundException(
-                    _page.getPageName(), requiredSuffix, _page.getExtension());
+                    _page.getPageName(), _page.getExtension());
         }
         Object model = SpecificationUtil.getSpecificationModel(insertTemplate);
         SpecificationUtil.startScope(model, getVariables());

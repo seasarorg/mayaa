@@ -28,6 +28,12 @@ import org.seasar.maya.engine.specification.Specification;
 public interface Page extends Specification, Serializable {
 
     /**
+     * 継承元ページの取得。
+     * @return 継承元ページもしくはnull。
+     */
+    Page getSuper();
+
+    /**
      * ページの名前を取得する。/context/hello.htmlであれば、
      * 「/context/hello」を返す。
      * @return ページ名。
@@ -41,22 +47,15 @@ public interface Page extends Specification, Serializable {
     String getExtension();
 
     /**
-     * リクエストより、適切なテンプレート接尾辞を返す。
-     * @return テンプレート接尾辞。
-     */
-    String getTemplateSuffix();
-
-    /**
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
-     * @param suffix テンプレート接尾辞。もしくはnull。
      * @return レンダリングするテンプレート。
      */
-    Template getTemplate(String suffix);
+    Template getTemplate();
     
     /**
      * テンプレートレンダリングを行う。
      * @return プロセッサ処理ステータス。
      */
     ProcessStatus doPageRender();
-
+    
 }

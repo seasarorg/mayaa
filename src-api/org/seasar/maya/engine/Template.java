@@ -29,6 +29,12 @@ import org.seasar.maya.engine.specification.Specification;
  */
 public interface Template 
         extends Specification, ProcessorTreeWalker, Serializable {
+    
+    /**
+     * 継承元ページもしくはnull。
+     * @return
+     */
+    Page getSuperPage();
 
 	/**
 	 * ページへの参照を取得する。

@@ -74,13 +74,17 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
+    protected boolean isHTML(String mimeType) {
+        return mimeType != null && (mimeType.indexOf("html") != -1);
+    }
+
     protected XMLReader createXMLReader() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         String mimeType = cycle.getRequest().getMimeType();
-        if(mimeType != null && mimeType.equals("text/xml")) {
-            return super.createXMLReader();
+        if(isHTML(mimeType)) {
+            return new TemplateParser(new TemplateScanner());
         }
-        return new TemplateParser(new TemplateScanner());
+        return super.createXMLReader();
     }
 
     protected String getPublicID() {
@@ -93,7 +97,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if(handler instanceof AdditionalHandler) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             String mimeType = cycle.getRequest().getMimeType();
-            if(mimeType != null && (mimeType.indexOf("html") != -1)) {
+            if(isHTML(mimeType)) {
                 try {
                     xmlReader.setProperty(
                             AdditionalHandler.ADDITIONAL_HANDLER, handler);

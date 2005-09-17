@@ -167,7 +167,8 @@ public class EngineImpl extends SpecificationImpl
 
         String mimeType = request.getMimeType();
         return mimeType != null
-                && (mimeType.indexOf("html") != -1 || mimeType.equals("text/xml"));
+                && (mimeType.indexOf("html") != -1
+                        || mimeType.indexOf("xml") != -1);
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {

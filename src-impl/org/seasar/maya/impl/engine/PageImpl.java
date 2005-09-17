@@ -199,9 +199,9 @@ public class PageImpl extends SpecificationImpl
         Page page = this;
         String suffix = null;
         while(page.getSuperPage() != null) {
-            page = page.getSuperPage();
             suffix = page.getSuperSuffix();
             extension = page.getSuperExtension();
+            page = page.getSuperPage();
         }
         Object model = SpecificationUtil.getSpecificationModel(page);
         SpecificationUtil.startScope(model, null);

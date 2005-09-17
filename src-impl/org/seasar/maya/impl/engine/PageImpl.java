@@ -194,7 +194,7 @@ public class PageImpl extends SpecificationImpl
     }
 
     public ProcessStatus doPageRender(
-    		String requestedSuffix, String extension) throws PageForwarded {
+    		String requestedSuffix, String extension) {
         saveToCycle();
         Page page = this;
         String suffix = null;

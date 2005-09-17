@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
@@ -150,15 +151,24 @@ public class EngineImpl extends SpecificationImpl
    
 	public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String mimeType = cycle.getRequest().getMimeType();
-        if((mimeType != null && mimeType.indexOf("html") != -1) ||
-                "maya".equals(cycle.getRequest().getExtension())) {
+        if(isPageRequested()) {
             prepareResponse(cycle.getResponse());
             doPageService(cycle);
         } else {
             doResourceService(cycle);
         }
 	}
+
+    protected boolean isPageRequested() {
+        Request request = CycleUtil.getServiceCycle().getRequest();
+        if ("maya".equals(request.getExtension())) {
+            return true;
+        }
+
+        String mimeType = request.getMimeType();
+        return mimeType != null
+                && (mimeType.indexOf("html") != -1 || mimeType.equals("text/xml"));
+    }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
         Throwable throwable = t ;

@@ -64,7 +64,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 	private static final long serialVersionUID = 4578697145887676787L;
 
     private List _resolvers = new ArrayList();
-    
+
     public void addInjectionResolver(InjectionResolver resolver) {
         if(resolver == null) {
             throw new IllegalArgumentException();
@@ -73,24 +73,33 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             _resolvers.add(resolver);
         }
     }
-    
+
     protected XMLReader createXMLReader() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        String mimeType = cycle.getRequest().getMimeType();
+        if(mimeType != null && mimeType.equals("text/xml")) {
+            return super.createXMLReader();
+        }
         return new TemplateParser(new TemplateScanner());
     }
 
     protected String getPublicID() {
         return URI_MAYA + "/template";
     }
-    
+
     protected void setContentHander(
             XMLReader xmlReader, ContentHandler handler) {
         super.setContentHander(xmlReader, handler);
         if(handler instanceof AdditionalHandler) {
-            try {
-                xmlReader.setProperty(
-                        AdditionalHandler.ADDITIONAL_HANDLER, handler);
-            } catch(SAXException e) {
-                throw new RuntimeException(e);
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            String mimeType = cycle.getRequest().getMimeType();
+            if(mimeType != null && (mimeType.indexOf("html") != -1)) {
+                try {
+                    xmlReader.setProperty(
+                            AdditionalHandler.ADDITIONAL_HANDLER, handler);
+                } catch(SAXException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -120,7 +129,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         cycle.setOriginalNode(originalNode);
         cycle.setInjectedNode(injectedNode);
     }
-    
+
     protected ProcessorTreeWalker findConnectPoint(
             ProcessorTreeWalker processor) {
         if(processor instanceof ElementProcessor &&
@@ -151,7 +160,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         return processor;
     }
-    
+
     protected TemplateProcessor createProcessor(
             NodeTreeWalker original, SpecificationNode injected) {
         QName name = injected.getQName();
@@ -166,7 +175,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         return null;
     }
-    
+
     protected ProcessorTreeWalker resolveInjectedNode(Template template, 
             Stack stack, NodeTreeWalker original, SpecificationNode injected) {
         if(injected == null) {
@@ -221,7 +230,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         return findConnectPoint(processor);
     }
-    
+
     protected SpecificationNode resolveOriginalNode(
             SpecificationNode original, InjectionChain chain) {
         if(original == null || chain == null) {
@@ -233,7 +242,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         return chain.getNode(original);
     }
-    
+
     protected void walkParsedTree(
             Template template, Stack stack, NodeTreeWalker original) {
         if(original == null) {
@@ -263,7 +272,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
         }
     }
-    
+
     protected void doInjection(Template template) {
         if(template == null) {
             throw new IllegalArgumentException();
@@ -280,18 +289,18 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         saveToCycle(template, template);
     }
-    
+
     // support class --------------------------------------------------
-    
+
     protected class InjectionChainImpl implements InjectionChain {
-        
+
         private int _index;
         private InjectionChain _external;
-        
+
         public InjectionChainImpl(InjectionChain external) {
             _external = external;
         }
-        
+
         public SpecificationNode getNode(SpecificationNode original) {
             if(original == null) {
                 throw new IllegalArgumentException();

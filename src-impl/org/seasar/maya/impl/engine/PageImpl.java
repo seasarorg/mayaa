@@ -123,7 +123,7 @@ public class PageImpl extends SpecificationImpl
     }
 
 
-    private boolean match(Template template,  String suffix) {
+    protected boolean match(Template template,  String suffix) {
         String templateSuffix = template.getSuffix();
         if(templateSuffix.equals(suffix)) {
             return true;
@@ -131,7 +131,8 @@ public class PageImpl extends SpecificationImpl
         return false;
     }
     
-    protected Template getTemplateImpl(String suffix, String extension) {
+    protected Template getTemplateFromFixedSuffix(
+    		String suffix, String extension) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
@@ -177,9 +178,9 @@ public class PageImpl extends SpecificationImpl
     }
     
     public Template getTemplate(String suffix, String extension) {
-        Template template = getTemplateImpl(suffix, extension);
+        Template template = getTemplateFromFixedSuffix(suffix, extension);
         if(template == null && StringUtil.hasValue(suffix)) {
-            template = getTemplateImpl("", extension);
+            template = getTemplateFromFixedSuffix("", extension);
         }
         if(template == null) {
             throw new PageNotFoundException(_pageName, extension);

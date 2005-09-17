@@ -109,7 +109,7 @@ public class EngineImpl extends SpecificationImpl
         return _errorHandler;
     }
     
-    private boolean match(Page page, String name) {
+    protected boolean match(Page page, String name) {
         String pageName = page.getPageName();
         if(pageName.equals(name)) {
             return true;
@@ -202,7 +202,7 @@ public class EngineImpl extends SpecificationImpl
         response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
     }
     
-    private void saveToCycle() {
+    protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);

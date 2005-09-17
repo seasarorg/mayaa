@@ -71,7 +71,7 @@ public class TemplateImpl extends SpecificationImpl
     	return _extension;
     }
     
-    private String getContentType() {
+    protected String getContentType() {
         SpecificationNode maya = SpecificationUtil.getMayaNode(this);
         if(maya != null) {
             String contentType = SpecificationUtil.getAttributeValue(
@@ -88,7 +88,7 @@ public class TemplateImpl extends SpecificationImpl
         return ret ;
     }
     
-    private void prepareCycle() {
+    protected void prepareCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         String contentType = getContentType();
@@ -117,7 +117,7 @@ public class TemplateImpl extends SpecificationImpl
         builder.build(this);
     }
 
-    private void checkTimestamps() {
+    protected void checkTimestamps() {
         Date templateTime = getTimestamp();
         if(templateTime != null) {
             Page page = getPage();

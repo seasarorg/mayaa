@@ -42,7 +42,6 @@ public interface Page extends Specification, Serializable {
     String getPageName();
 
     /**
-     * TODO Templateに移動
      * ページの拡張子を返す。/context/hello.htmlだと、「html」。ドットを含まない。
      * @return ページの拡張子。
      */
@@ -55,7 +54,6 @@ public interface Page extends Specification, Serializable {
     CompiledScript getSuffixScript();
     
     /**
-     * TODO 接尾辞と拡張子を指定する。
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
      * @return レンダリングするテンプレート。
      */

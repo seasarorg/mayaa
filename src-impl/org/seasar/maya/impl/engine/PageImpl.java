@@ -99,16 +99,15 @@ public class PageImpl extends SpecificationImpl
     }
 
 
-    private boolean match(Template template,  String suffix, String extension) {
+    private boolean match(Template template,  String suffix) {
         String templateSuffix = template.getSuffix();
-        String templateExt = template.getExtension();
-        if(templateSuffix.equals(suffix) && templateExt.equals(extension)) {
+        if(templateSuffix.equals(suffix)) {
             return true;
         }
         return false;
     }
     
-    public Template getTemplate(String suffix, String extension) {
+    public Template getTemplate(String suffix) {
         if(suffix == null) {
             throw new IllegalArgumentException();
         }
@@ -120,7 +119,7 @@ public class PageImpl extends SpecificationImpl
                     Object obj = it.next();
                     if(obj instanceof Template) {
                         Template test = (Template)obj;
-                        if(match(test, suffix, extension)) {
+                        if(match(test, suffix)) {
                             template = test;
                             break;
                         }
@@ -134,14 +133,14 @@ public class PageImpl extends SpecificationImpl
                             SUFFIX_SEPARATOR, "$");
                     name.append(separator).append(suffix);
                 }
-                if(StringUtil.hasValue(extension)) {
-                    name.append(".").append(extension);
+                if(StringUtil.hasValue(_extension)) {
+                    name.append(".").append(_extension);
                 }
                 ServiceProvider provider = ProviderFactory.getServiceProvider();
                 SourceDescriptor source = 
                     provider.getPageSourceDescriptor(name.toString());
                 if(source.exists()) {
-                    template = new TemplateImpl(this, suffix, extension);
+                    template = new TemplateImpl(this, suffix);
                     template.setSource(source);
                     if (_templates == null) {
                         _templates = new ArrayList();
@@ -163,10 +162,9 @@ public class PageImpl extends SpecificationImpl
             CompiledScript script = getSuffixScript();
             suffix = (String)script.execute();
         }
-        String extension = getExtension();
-        Template template = getTemplate(suffix, extension);
+        Template template = getTemplate(suffix);
         if(template == null && StringUtil.hasValue(suffix)) {
-            template = getTemplate("", extension);
+            template = getTemplate("");
         }
         if(template == null) {
             throw new PageNotFoundException(_pageName, _extension);

@@ -47,16 +47,14 @@ public class TemplateImpl extends SpecificationImpl
 
     private Page _page;
     private String _suffix ;
-    private String _extension;
     private List _childProcessors = new ArrayList();
 
-    public TemplateImpl(Page page, String suffix, String extension) {
-        if(page == null || suffix == null || extension == null) {
+    public TemplateImpl(Page page, String suffix) {
+        if(page == null || suffix == null) {
             throw new IllegalArgumentException();
         }
         _page = page;
         _suffix = suffix;
-        _extension = extension;
     }
     
     public Page getPage() {
@@ -65,10 +63,6 @@ public class TemplateImpl extends SpecificationImpl
 
     public String getSuffix() {
         return _suffix;
-    }
-
-    public String getExtension() {
-        return _extension;
     }
     
     private String getContentType() {

@@ -32,20 +32,26 @@ public interface Page extends Specification, Serializable {
      * 継承元ページの取得。
      * @return 継承元ページもしくはnull。
      */
-    Page getSuper();
+    Page getSuperPage();
 
+    /**
+     * 継承元テンプレート接尾辞の取得。
+     * @return テンプレート接尾辞。
+     */
+    String getSuperSuffix();
+    
+    /**
+     * 継承元テンプレート拡張子の取得。
+     * @return テンプレート拡張子。
+     */
+    String getSuperExtension();
+    
     /**
      * ページの名前を取得する。/context/hello.htmlであれば、
      * 「/context/hello」を返す。
      * @return ページ名。
      */
     String getPageName();
-
-    /**
-     * ページの拡張子を返す。/context/hello.htmlだと、「html」。ドットを含まない。
-     * @return ページの拡張子。
-     */
-    String getExtension();
 
     /**
      * テンプレート接尾辞を決定するコンパイル済みスクリプト。
@@ -57,12 +63,14 @@ public interface Page extends Specification, Serializable {
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
      * @return レンダリングするテンプレート。
      */
-    Template getTemplate();
+    Template getTemplate(String suffix, String extension);
     
     /**
      * テンプレートレンダリングを行う。
+     * @param requestedSuffix リクエストされたテンプレート接尾辞。
+     * @param extension テンプレート拡張子。
      * @return プロセッサ処理ステータス。
      */
-    ProcessStatus doPageRender();
+    ProcessStatus doPageRender(String requestedSuffix, String extension);
     
 }

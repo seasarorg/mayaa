@@ -24,7 +24,6 @@ import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -56,17 +55,6 @@ public class EngineUtil implements CONST_IMPL {
         Engine engine = getEngine();
         String value = engine.getParameter(name);
         return ObjectUtil.booleanValue(value, defaultValue);
-    }
-
-    public static Page getPage(String path) {
-        if(StringUtil.isEmpty(path)) {
-            throw new IllegalStateException();
-        }
-        Engine engine = getEngine();
-        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-        String[] pagePath = StringUtil.parsePath(path, suffixSeparator);
-        Page page = engine.getPage(pagePath[0], pagePath[2]);  
-        return page;
     }
 
     public static Template getTemplate() {

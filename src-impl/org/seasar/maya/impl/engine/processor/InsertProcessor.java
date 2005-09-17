@@ -15,7 +15,9 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -37,6 +39,8 @@ public class InsertProcessor
 	private String _path;
     private String _name;
     private Page _page;
+    private String _suffix;
+    private String _extension;
     
     // MLD property, required
     public void setPath(String path) {
@@ -90,18 +94,18 @@ public class InsertProcessor
         return doRender;
     }
     
-    protected ProcessStatus insert(Page page) {
+    protected ProcessStatus insert(Page page, String suffix, String extension) {
         if(page == null) {
             throw new IllegalStateException();
         }
         while(page != null) {
-            boolean maya = "maya".equals(page.getExtension());
+            boolean maya = "maya".equals(extension);
             DoRenderProcessor doRender = null;
             if(maya == false) {
-                Template template = page.getTemplate();
+                Template template = page.getTemplate(suffix, extension);
                 if(template == null) {
                     throw new PageNotFoundException(
-                            page.getPageName(), page.getExtension());
+                            page.getPageName(), extension);
                 }
                 doRender = findDoRender(template, _name);
             }
@@ -122,7 +126,7 @@ public class InsertProcessor
                 doRender.popInsertProcessor();
                 return ret;
             }
-            page = page.getSuper();
+            page = page.getSuperPage();
         }
         throw new DoRenderNotFoundException(_name);
     }
@@ -131,18 +135,29 @@ public class InsertProcessor
         synchronized(this) {
             if(_page == null) {
                 if(StringUtil.hasValue(_path)) {
-                    _page = EngineUtil.getPage(_path);
+                    Engine engine = EngineUtil.getEngine();
+                    String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+                    String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+                    _page = engine.getPage(pagePath[0]);  
+                    _suffix = pagePath[1];
+                    _extension = pagePath[2];
                 }
             }
         }
         Page page = _page;
+        String suffix = _suffix;
+        String extension = _extension;
         if(page == null) {
-            page = CycleUtil.getServiceCycle().getPage();
+        	ServiceCycle cycle = CycleUtil.getServiceCycle();
+            page = cycle.getPage();
+            Request request = cycle.getRequest();
+            suffix = request.getRequestedSuffix();
+            extension = request.getExtension();
         }
         if(page == null) {
             throw new IllegalStateException();
         }
-        ProcessStatus ret = insert(page);
+        ProcessStatus ret = insert(page, suffix, extension);
         if(ret == EVAL_PAGE) {
             ret = SKIP_BODY;
         }

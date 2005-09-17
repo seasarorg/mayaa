@@ -70,9 +70,9 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 String pageName = getPageName(throwableClass);
                 try {
                     Engine engine = EngineUtil.getEngine();
-                	Page page = engine.getPage(pageName, _extension);
+                	Page page = engine.getPage(pageName);
                     cycle.setPage(page);
-                    page.doPageRender();
+                    page.doPageRender("", _extension);
                     cycle.setPage(null);
                     if(LOG.isErrorEnabled()) {
                         String msg = StringUtil.getMessage(

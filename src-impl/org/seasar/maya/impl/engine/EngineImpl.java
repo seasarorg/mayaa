@@ -109,19 +109,15 @@ public class EngineImpl extends SpecificationImpl
         return _errorHandler;
     }
     
-    private boolean match(Page page, String name, String extension) {
+    private boolean match(Page page, String name) {
         String pageName = page.getPageName();
-        String pageExt = page.getExtension();
         if(pageName.equals(name)) {
-            if((StringUtil.isEmpty(pageExt) && StringUtil.isEmpty(extension)) ||
-                    pageExt.equals(extension)) {
-                return true;
-            }
+            return true;
         }
         return false;
     }
     
-    public Page getPage(String pageName, String extension) {
+    public Page getPage(String pageName) {
         Page page;
         synchronized(this) {
             if(_pages != null) {
@@ -130,13 +126,13 @@ public class EngineImpl extends SpecificationImpl
                     Object child = it.next();
                     if(child instanceof Page) {
                         page = (Page)child;
-                        if(match(page, pageName, extension)) {
+                        if(match(page, pageName)) {
                             return page;
                         }
                     }
                 }
             }
-            page = new PageImpl(pageName, extension);
+            page = new PageImpl(pageName);
             ServiceProvider provider = ProviderFactory.getServiceProvider();
             String path = pageName + ".maya";
             SourceDescriptor source = provider.getPageSourceDescriptor(path);
@@ -222,12 +218,14 @@ public class EngineImpl extends SpecificationImpl
                     Object model = SpecificationUtil.getSpecificationModel(this);
                     SpecificationUtil.startScope(model, null);
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-                    String pageName = cycle.getRequest().getPageName();
-                    String extension = cycle.getRequest().getExtension();
-                    Page page = getPage(pageName, extension);
-                    ProcessStatus ret = null;
+                    Request request = cycle.getRequest();
+                    String pageName = request.getPageName();
+                    String requestedSuffix = request.getRequestedSuffix();
+                    String extension = request.getExtension();
+                    Page page = getPage(pageName);
                     cycle.setPage(page);
-                    ret = page.doPageRender();
+                    ProcessStatus ret = page.doPageRender(
+                    		requestedSuffix, extension);
                     cycle.setPage(null);
                     saveToCycle();
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);

@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import java.util.Stack;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -47,17 +49,29 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return _name;
     }
 
-    public void setInsertProcessor(InsertProcessor proc) {
-        _insertProcs.set(proc);
+    private Stack getStack() {
+    	Stack stack = (Stack)_insertProcs.get();
+    	if(stack == null) {
+    		stack = new Stack();
+    		_insertProcs.set(stack);
+    	}
+    	return stack;
     }
     
-    // TODO 一個でよいはずがないと思える。スタック化もしくはマップ化が必要なはず。
-    public InsertProcessor getInsertProcessor() {
-        InsertProcessor proc = (InsertProcessor)_insertProcs.get();
-        if(proc == null) {
-            throw new IllegalStateException();
-        }
+    public void pushInsertProcessor(InsertProcessor proc) {
+    	Stack stack = getStack();
+        stack.push(proc);
+    }
+    
+    public InsertProcessor peekInsertProcessor() {
+       	Stack stack = getStack();
+       	InsertProcessor proc = (InsertProcessor)stack.peek();
         return proc;
+    }
+    
+    public void popInsertProcessor() {
+    	Stack stack = getStack();
+    	stack.pop();
     }
     
 }

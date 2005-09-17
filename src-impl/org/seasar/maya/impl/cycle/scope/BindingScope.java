@@ -37,7 +37,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
                 current != null; current = current.getParentProcessor()) {
             if (current instanceof DoRenderProcessor) {
                 DoRenderProcessor doRender = (DoRenderProcessor)current;
-                return doRender.getInsertProcessor();
+                return doRender.peekInsertProcessor();
             }
         }
         return null;

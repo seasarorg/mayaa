@@ -107,7 +107,7 @@ public class InsertProcessor
             }
             if(maya || doRender != null) {
                 ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
-                doRender.setInsertProcessor(this);
+                doRender.pushInsertProcessor(this);
                 saveToCycle(page);
                 Object model = SpecificationUtil.getSpecificationModel(page);
                 SpecificationUtil.startScope(model, getVariables());
@@ -119,7 +119,7 @@ public class InsertProcessor
                 saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
                 SpecificationUtil.endScope();
-                doRender.setInsertProcessor(null);
+                doRender.popInsertProcessor();
                 return ret;
             }
             page = page.getSuper();

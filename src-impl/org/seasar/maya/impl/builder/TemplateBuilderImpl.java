@@ -25,6 +25,7 @@ import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
+import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
@@ -48,9 +49,9 @@ import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.xml.XmlReaderPool;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -64,6 +65,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 	private static final long serialVersionUID = 4578697145887676787L;
 
     private List _resolvers = new ArrayList();
+    private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
 
     public void addInjectionResolver(InjectionResolver resolver) {
         if(resolver == null) {
@@ -78,53 +80,24 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return mimeType != null && (mimeType.indexOf("html") != -1);
     }
 
-    protected XMLReader createXMLReader() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String mimeType = cycle.getRequest().getMimeType();
-        if(isHTML(mimeType)) {
-            return new TemplateParser(new TemplateScanner());
-        }
-        return super.createXMLReader();
+    protected XmlReaderPool getXmlReaderPool(String systemID) {
+    	Application application = CycleUtil.getServiceCycle().getApplication();
+    	String mimeType = application.getMimeType(systemID);
+    	if(isHTML(mimeType)) {
+    		return _htmlReaderPool;
+    	}
+        return super.getXmlReaderPool(systemID);
     }
 
     protected String getPublicID() {
-        return URI_MAYA + "/template";
+        return "/template";
     }
 
-    protected void setContentHander(
-            XMLReader xmlReader, ContentHandler handler) {
-        super.setContentHander(xmlReader, handler);
-        if(handler instanceof AdditionalHandler) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            String mimeType = cycle.getRequest().getMimeType();
-            if(isHTML(mimeType)) {
-                try {
-                    xmlReader.setProperty(
-                            AdditionalHandler.ADDITIONAL_HANDLER, handler);
-                } catch(SAXException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    public void build(Specification specification) {
+    protected void afterBuild(Specification specification) {
         if((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
-        SourceDescriptor source = specification.getSource();
-        if(source.exists()) {
-	        super.build(specification);
-	        try {
-	            doInjection((Template)specification);
-	        } catch(Throwable t) {
-	            specification.kill();
-				if(t instanceof RuntimeException) {
-				    throw (RuntimeException)t;
-				}
-				throw new RuntimeException(t);
-	        }
-        }
+        doInjection((Template)specification);
     }
 
     protected void saveToCycle(NodeTreeWalker originalNode,
@@ -296,6 +269,38 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
+    protected class HtmlReaderPool extends XmlReaderPool {
+
+		private static final long serialVersionUID = -5203349759797583368L;
+
+		protected HtmlReaderPool() {
+		}
+
+		protected Object createObject() {
+			return new TemplateParser(new TemplateScanner());
+		}
+
+		protected boolean validateObject(Object object) {
+	        return object instanceof TemplateParser;
+		}
+
+		public XMLReader borrowXMLReader(ContentHandler handler, 
+				boolean namespaces, boolean validation, boolean xmlSchema) {
+			XMLReader htmlReader = super.borrowXMLReader(
+					handler, namespaces, validation, xmlSchema);
+			if(handler instanceof AdditionalHandler) {
+				try {
+					htmlReader.setProperty(
+							AdditionalHandler.ADDITIONAL_HANDLER, handler);
+				} catch (SAXException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			return htmlReader;
+		}
+		
+    }
+    
     protected class InjectionChainImpl implements InjectionChain {
 
         private int _index;

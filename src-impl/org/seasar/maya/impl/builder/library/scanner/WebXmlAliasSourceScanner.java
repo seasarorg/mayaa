@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -44,7 +44,7 @@ public class WebXmlAliasSourceScanner implements SourceScanner {
         }
         InputStream stream = source.getInputStream();
         WebXMLHandler handler = new WebXMLHandler();
-        XmlUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, true, true);
+        XUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, true, true);
         return handler.iterateTaglibLocations();
     }
 

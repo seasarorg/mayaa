@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -38,7 +38,7 @@ public class ResolverTagHandler
     }
     
     public void start(Attributes attributes) {
-        _resolver = (InjectionResolver)XmlUtil.getObjectValue(
+        _resolver = (InjectionResolver)XUtil.getObjectValue(
                 attributes, "class", null, InjectionResolver.class);
         _parent.getTemplateBuilder().addInjectionResolver(_resolver);
     }

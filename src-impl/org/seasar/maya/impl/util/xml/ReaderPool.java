@@ -29,20 +29,20 @@ import org.xml.sax.ext.LexicalHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XmlReaderPool extends AbstractSoftReferencePool {
+public class ReaderPool extends AbstractSoftReferencePool {
 
 	private static final long serialVersionUID = 1736077679163143852L;
 
-	private static XmlReaderPool _xmlReaderPool;
+	private static ReaderPool _xmlReaderPool;
     
-    public static XmlReaderPool getPool() {
+    public static ReaderPool getPool() {
         if(_xmlReaderPool == null) {
-            _xmlReaderPool = new XmlReaderPool();
+            _xmlReaderPool = new ReaderPool();
         }
         return _xmlReaderPool;
     }
     
-    protected XmlReaderPool() {
+    protected ReaderPool() {
     }
     
     protected Object createObject() {

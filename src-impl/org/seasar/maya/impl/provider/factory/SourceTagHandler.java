@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -37,7 +37,7 @@ public class SourceTagHandler extends AbstractParameterizableTagHandler {
     }
 
     public void start(Attributes attributes) {
-        _scanner = (SourceScanner)XmlUtil.getObjectValue(
+        _scanner = (SourceScanner)XUtil.getObjectValue(
                 attributes, "class", null, SourceScanner.class);
         _parent.getLibraryManager().addSourceScanner(_scanner);
     }

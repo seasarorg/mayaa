@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -37,7 +37,7 @@ public class ErrorHandlerTagHandler extends AbstractParameterizableTagHandler {
     }
     
     protected void start(Attributes attributes) {
-        _handler = (ErrorHandler)XmlUtil.getObjectValue(
+        _handler = (ErrorHandler)XUtil.getObjectValue(
                 attributes, "class", null, ErrorHandler.class);
         _parent.getEngine().setErrorHandler(_handler);
     }

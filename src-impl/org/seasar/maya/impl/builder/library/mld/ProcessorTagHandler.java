@@ -18,7 +18,7 @@ package org.seasar.maya.impl.builder.library.mld;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -39,7 +39,7 @@ public class ProcessorTagHandler extends TagHandler {
     
     protected void start(Attributes attributes) {
         String name = attributes.getValue("name");
-        Class processorClass = XmlUtil.getClassValue(attributes, "class", null);
+        Class processorClass = XUtil.getClassValue(attributes, "class", null);
         if(StringUtil.isEmpty(name) || processorClass == null) {
             invalidate();
         } else {

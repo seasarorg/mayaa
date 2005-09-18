@@ -22,7 +22,7 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
@@ -43,7 +43,7 @@ public class ProviderFactoryImpl extends ProviderFactory
     	if(source.exists()) {
 	    	ProviderHandler handler = new ProviderHandler(servletContext);
             InputStream stream = source.getInputStream();
-	        XmlUtil.parse(handler, stream, PUBLIC_PROVIDER10, 
+	        XUtil.parse(handler, stream, PUBLIC_PROVIDER10, 
                     source.getSystemID(), true, true, false);
             return handler.getResult();
     	}

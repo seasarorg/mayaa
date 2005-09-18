@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -38,7 +38,7 @@ public class SpecificationBuilderTagHandler
     }
     
     protected void start(Attributes attributes) {
-        _specificationBuilder = (SpecificationBuilder)XmlUtil.getObjectValue(
+        _specificationBuilder = (SpecificationBuilder)XUtil.getObjectValue(
                 attributes, "class", null, SpecificationBuilder.class);
         _parent.getServiceProvider().setSpecificationBuilder(_specificationBuilder);
     }

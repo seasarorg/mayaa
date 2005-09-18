@@ -17,7 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.engine.EngineImpl;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -40,7 +40,7 @@ public class EngineTagHandler
     }
     
     protected void start(Attributes attributes) {
-        _engine = (EngineImpl)XmlUtil.getObjectValue(
+        _engine = (EngineImpl)XUtil.getObjectValue(
                 attributes, "class", null, Engine.class);
         _parent.getServiceProvider().setEngine(_engine);
     }

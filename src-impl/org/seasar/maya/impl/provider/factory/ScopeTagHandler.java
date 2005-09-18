@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -37,7 +37,7 @@ public class ScopeTagHandler extends AbstractParameterizableTagHandler {
     }
     
     public void start(Attributes attributes) {
-        _scope = (AttributeScope)XmlUtil.getObjectValue(
+        _scope = (AttributeScope)XUtil.getObjectValue(
                 attributes, "class", null, AttributeScope.class);
         _parent.getScriptEnvironment().addAttributeScope(_scope);
     }

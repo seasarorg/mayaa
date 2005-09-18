@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.util.XmlUtil;
+import org.seasar.maya.impl.util.XUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -35,8 +35,8 @@ public class ParameterTagHandler extends TagHandler {
     }
     
     protected void start(Attributes attributes) {
-        String name = XmlUtil.getStringValue(attributes, "name", null);
-        String value = XmlUtil.getStringValue(attributes, "value", null);
+        String name = XUtil.getStringValue(attributes, "name", null);
+        String value = XUtil.getStringValue(attributes, "value", null);
         _parent.getParameterizable().setParameter(name, value);
     }
     

@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -39,7 +39,7 @@ public class LibraryManagerTagHandler extends AbstractParameterizableTagHandler 
     }
     
     public void start(Attributes attributes) {
-    	_libraryManager = (LibraryManager)XUtil.getObjectValue(
+    	_libraryManager = (LibraryManager)XMLUtil.getObjectValue(
                 attributes, "class", null, LibraryManager.class);
         _parent.getServiceProvider().setLibraryManager(_libraryManager);
     }

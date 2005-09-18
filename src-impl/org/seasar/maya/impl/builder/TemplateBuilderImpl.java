@@ -49,7 +49,7 @@ import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.xml.ReaderPool;
+import org.seasar.maya.impl.util.xml.XMLReaderPool;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.xml.sax.ContentHandler;
@@ -80,13 +80,13 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return mimeType != null && (mimeType.indexOf("html") != -1);
     }
 
-    protected ReaderPool getXmlReaderPool(String systemID) {
+    protected XMLReaderPool getXMLReaderPool(String systemID) {
     	Application application = CycleUtil.getServiceCycle().getApplication();
     	String mimeType = application.getMimeType(systemID);
     	if(isHTML(mimeType)) {
     		return _htmlReaderPool;
     	}
-        return super.getXmlReaderPool(systemID);
+        return super.getXMLReaderPool(systemID);
     }
 
     protected String getPublicID() {
@@ -269,7 +269,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
-    protected class HtmlReaderPool extends ReaderPool {
+    protected class HtmlReaderPool extends XMLReaderPool {
 
 		private static final long serialVersionUID = -5203349759797583368L;
 

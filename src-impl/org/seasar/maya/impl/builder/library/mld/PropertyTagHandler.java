@@ -17,7 +17,7 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -35,9 +35,9 @@ public class PropertyTagHandler extends TagHandler {
 
     protected void start(Attributes attributes) {
         String name = attributes.getValue("name");
-        boolean required = XUtil.getBooleanValue(
+        boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
-        Class expectedType = XUtil.getClassValue(
+        Class expectedType = XMLUtil.getClassValue(
                 attributes, "expectedType", Object.class);
         String finalValue = attributes.getValue("final");
         String defaultValue = attributes.getValue("default");

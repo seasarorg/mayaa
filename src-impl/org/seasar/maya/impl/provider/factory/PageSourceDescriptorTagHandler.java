@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -36,7 +36,7 @@ public class PageSourceDescriptorTagHandler
     }
 
     protected void start(Attributes attributes) {
-        Class pageSourceClass = XUtil.getClassValue(
+        Class pageSourceClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _parent.getServiceProvider().setPageSourceClass(pageSourceClass);
     }

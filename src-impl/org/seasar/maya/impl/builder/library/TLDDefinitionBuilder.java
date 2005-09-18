@@ -26,7 +26,7 @@ import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
 import org.seasar.maya.impl.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -49,7 +49,7 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
             InputStream stream = source.getInputStream();
             TLDHandler handler = new TLDHandler();
             try {
-                XUtil.parse(handler, stream, "tld", systemID, true, true, true);
+                XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
             } catch(Throwable t) {
                 if(LOG.isErrorEnabled()) {
                     LOG.error("TLD parse error on " + systemID, t);

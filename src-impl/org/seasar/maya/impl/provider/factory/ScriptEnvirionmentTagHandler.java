@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -39,7 +39,7 @@ public class ScriptEnvirionmentTagHandler
     }
     
     protected void start(Attributes attributes) {
-        _scriptEnvironment = (ScriptEnvironment)XUtil.getObjectValue(
+        _scriptEnvironment = (ScriptEnvironment)XMLUtil.getObjectValue(
                 attributes, "class", null, ScriptEnvironment.class);
         _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
     }

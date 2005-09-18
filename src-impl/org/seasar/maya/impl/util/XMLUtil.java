@@ -17,7 +17,7 @@ package org.seasar.maya.impl.util;
 
 import java.io.InputStream;
 
-import org.seasar.maya.impl.util.xml.ReaderPool;
+import org.seasar.maya.impl.util.xml.XMLReaderPool;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -26,9 +26,9 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public final class XUtil {
+public final class XMLUtil {
     
-    private XUtil() {
+    private XMLUtil() {
     }
 
     public static void parse(DefaultHandler handler, 
@@ -37,7 +37,7 @@ public final class XUtil {
         if(stream == null) {
             throw new IllegalArgumentException();
         }
-        ReaderPool pool = ReaderPool.getPool();
+        XMLReaderPool pool = XMLReaderPool.getPool();
         XMLReader xmlReader = 
             pool.borrowXMLReader(handler, namespace, validation, xmlSchema);
         InputSource input = new InputSource(stream);

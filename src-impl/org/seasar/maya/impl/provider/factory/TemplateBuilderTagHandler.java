@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -39,7 +39,7 @@ public class TemplateBuilderTagHandler
     }
     
     protected void start(Attributes attributes) {
-        _templateBuilder = (TemplateBuilder)XUtil.getObjectValue(
+        _templateBuilder = (TemplateBuilder)XMLUtil.getObjectValue(
                 attributes, "class", null, TemplateBuilder.class);
         _parent.getServiceProvider().setTemplateBuilder(_templateBuilder);
     }

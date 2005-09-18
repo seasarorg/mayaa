@@ -19,7 +19,7 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
-import org.seasar.maya.impl.util.xml.ReaderPool;
+import org.seasar.maya.impl.util.xml.XMLReaderPool;
 import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -33,8 +33,8 @@ public class SpecificationBuilderImpl
 
 	private static final long serialVersionUID = 7852577574830768959L;
 
-    protected ReaderPool getXmlReaderPool(	String systemID) {
-        return ReaderPool.getPool();
+    protected XMLReaderPool getXMLReaderPool(	String systemID) {
+        return XMLReaderPool.getPool();
     }
 
     protected ContentHandler createContentHandler(
@@ -56,7 +56,7 @@ public class SpecificationBuilderImpl
         SourceDescriptor source = specification.getSource();
         if(source.exists()) {
             ContentHandler handler = createContentHandler(specification);
-            ReaderPool pool = getXmlReaderPool(source.getSystemID());
+            XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
             XMLReader xmlReader = 
             	pool.borrowXMLReader(handler, true, false, false);
             InputSource input = new InputSource(source.getInputStream());

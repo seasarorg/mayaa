@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.impl.util.XUtil;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -37,7 +37,7 @@ public class BuilderTagHandler extends AbstractParameterizableTagHandler {
     }
 
     public void start(Attributes attributes) {
-        _builder = (DefinitionBuilder)XUtil.getObjectValue(
+        _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
                 attributes, "class", null, DefinitionBuilder.class);
         _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }

@@ -90,7 +90,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected String getPublicID() {
-        return "/template";
+        return URI_MAYA + "/template";
     }
 
     protected void afterBuild(Specification specification) {

@@ -17,6 +17,7 @@ package org.seasar.maya.impl.builder;
 
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
+import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.xml.XmlReaderPool;
 import org.seasar.maya.source.SourceDescriptor;
@@ -28,7 +29,7 @@ import org.xml.sax.XMLReader;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationBuilderImpl 
-		implements SpecificationBuilder {
+		implements SpecificationBuilder, CONST_IMPL {
 
 	private static final long serialVersionUID = 7852577574830768959L;
 
@@ -42,7 +43,7 @@ public class SpecificationBuilderImpl
     }
 
     protected String getPublicID() {
-        return "/specification";
+        return URI_MAYA + "/specification";
     }
 
     protected void afterBuild(Specification specification) {

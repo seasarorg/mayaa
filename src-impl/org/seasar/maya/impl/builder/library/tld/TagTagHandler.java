@@ -19,8 +19,8 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.builder.library.JspProcessorDefinition;
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.maya.impl.builder.library.TLDProcessorDefinition;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -33,7 +33,7 @@ public class TagTagHandler extends TagHandler {
     private static final Log LOG = LogFactory.getLog(TagTagHandler.class);
     
     private TaglibTagHandler _parent;
-    private JspProcessorDefinition _processor;
+    private TLDProcessorDefinition _processor;
     
     public TagTagHandler(TaglibTagHandler parent) {
         super("tag");
@@ -49,17 +49,17 @@ public class TagTagHandler extends TagHandler {
     }
 
     protected void start(Attributes attributes) {
-        _processor = new JspProcessorDefinition();
+        _processor = new TLDProcessorDefinition();
     }
 
     protected void end(String body) {
-        JspLibraryDefinition library = _parent.getLibraryDefinition();
+        TLDLibraryDefinition library = _parent.getLibraryDefinition();
         library.addProcessorDefinition(_processor);
         _processor.setLibraryDefinition(library);
         _processor = null;
     }
     
-    public JspProcessorDefinition getProcessorDefinition() {
+    public TLDProcessorDefinition getProcessorDefinition() {
         if(_processor == null) {
             throw new IllegalStateException();
         }

@@ -23,7 +23,7 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspLibraryDefinition extends LibraryDefinitionImpl {
+public class TLDLibraryDefinition extends LibraryDefinitionImpl {
 
     private static String VERSION_JSP ;
     static {

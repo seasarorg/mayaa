@@ -23,7 +23,7 @@ import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspPropertyDefinition extends PropertyDefinitionImpl {
+public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     
     public Object createProcessorProperty(SpecificationNode injected) {
     	if(injected == null) {

@@ -27,9 +27,9 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WebXmlAliasSourceScanner implements SourceScanner {
+public class WebXMLTaglibSourceScanner implements SourceScanner {
 
-    public static final String ASSIGNED = WebXmlAliasSourceScanner.class + ".ASSIGNED";
+    public static final String ASSIGNED = WebXMLTaglibSourceScanner.class + ".ASSIGNED";
 
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);

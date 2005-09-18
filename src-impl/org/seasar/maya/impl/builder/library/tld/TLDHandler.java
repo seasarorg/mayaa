@@ -17,8 +17,8 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
-import org.seasar.maya.impl.builder.library.entity.J2eeEntityResolver;
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.maya.impl.builder.library.entity.J2EEEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -40,12 +40,12 @@ public class TLDHandler extends DefaultHandler {
         _stack = new TagHandlerStack(_handler);
     }
     
-    public JspLibraryDefinition getLibraryDefinition() {
+    public TLDLibraryDefinition getLibraryDefinition() {
         return _handler.getLibraryDefinition();
     }
 
     public InputSource resolveEntity(String publicId, String systemId) {
-        return J2eeEntityResolver.resolveEntity(publicId, systemId);
+        return J2EEEntityResolver.resolveEntity(publicId, systemId);
     }
 
 	public void startElement(

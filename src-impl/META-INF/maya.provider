@@ -32,14 +32,14 @@
 	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
 
 	<libraryManager class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
-		<source class="org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner"/>
+		<source class="org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
 		<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
 			<parameter name="folder" value="/WEB-INF"/>
 			<parameter name="recursive" value="true"/>
 			<parameter name="extension" value=".tld"/>
 			<parameter name="extension" value=".mld"/>
 		</source>
-		<source class="org.seasar.maya.impl.builder.library.scanner.JarsSourceScanner">
+		<source class="org.seasar.maya.impl.builder.library.scanner.MetaInfSourceScanner">
 			<parameter name="folder" value="/WEB-INF/lib"/>
 			<parameter name="extension" value=".jar"/>
 			<parameter name="ignore" value="commons-beanutils-"/>

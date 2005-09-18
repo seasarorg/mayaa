@@ -33,7 +33,7 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class JarsSourceScanner implements SourceScanner {
+public class MetaInfSourceScanner implements SourceScanner {
 
     private static Map _cache = new HashMap();
 

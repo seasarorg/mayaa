@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.builder.library.tld;
 
-import org.seasar.maya.impl.builder.library.JspLibraryDefinition;
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  */
 public class TaglibTagHandler extends TagHandler {
 
-    private JspLibraryDefinition _library;
+    private TLDLibraryDefinition _library;
 
     public TaglibTagHandler() {
         super("taglib");
@@ -47,10 +47,10 @@ public class TaglibTagHandler extends TagHandler {
     }
     
     protected void start(Attributes attributes) {
-        _library = new JspLibraryDefinition();
+        _library = new TLDLibraryDefinition();
     }
 
-    public JspLibraryDefinition getLibraryDefinition() {
+    public TLDLibraryDefinition getLibraryDefinition() {
         return _library;
     }
     

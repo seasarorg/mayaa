@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
-import org.seasar.maya.impl.builder.library.scanner.WebXmlAliasSourceScanner;
+import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.maya.impl.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -56,9 +56,9 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
                 }
                 return null;
             }
-            JspLibraryDefinition library = handler.getLibraryDefinition();
+            TLDLibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
-                    WebXmlAliasSourceScanner.ASSIGNED), false);
+                    WebXMLTaglibSourceScanner.ASSIGNED), false);
             if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
                 library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
             }

@@ -28,7 +28,7 @@ import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspProcessorDefinition extends ProcessorDefinitionImpl {
+public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
     private Class _tagClass;
 

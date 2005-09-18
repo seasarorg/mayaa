@@ -17,8 +17,8 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.builder.library.JspProcessorDefinition;
-import org.seasar.maya.impl.builder.library.JspPropertyDefinition;
+import org.seasar.maya.impl.builder.library.TLDProcessorDefinition;
+import org.seasar.maya.impl.builder.library.TLDPropertyDefinition;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -30,7 +30,7 @@ public class AttributeTagHandler extends TagHandler {
 
     private static final Log LOG = LogFactory.getLog(AttributeTagHandler.class);
             
-    JspPropertyDefinition _property;
+    TLDPropertyDefinition _property;
     private TagTagHandler _parent;
 
     public AttributeTagHandler(TagTagHandler parent) {
@@ -69,11 +69,11 @@ public class AttributeTagHandler extends TagHandler {
     }
 
     protected void start(Attributes attributes) {
-        _property = new JspPropertyDefinition();
+        _property = new TLDPropertyDefinition();
     }
 
     protected void end(String body) {
-        JspProcessorDefinition processor = _parent.getProcessorDefinition();
+        TLDProcessorDefinition processor = _parent.getProcessorDefinition();
         _property.setProcessorDefinition(_parent.getProcessorDefinition());
         processor.addPropertyDefinitiion(_property);
     }

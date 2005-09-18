@@ -54,37 +54,46 @@ public class XmlReaderPool extends AbstractSoftReferencePool {
         return object instanceof XMLReader;
     }
 
+    protected void setFeature(
+    		XMLReader xmlReader, String name, boolean value) {
+        try {
+            xmlReader.setFeature(name, value);
+        } catch (SAXNotRecognizedException e) {
+        } catch (SAXNotSupportedException e) {
+        }
+    }
+    
+    protected void setProperty(
+    		XMLReader xmlReader, String name, Object value) {
+        try {
+            xmlReader.setProperty(name, value);
+        } catch (SAXNotRecognizedException e) {
+        } catch (SAXNotSupportedException e) {
+        }
+    }
+    
 	public XMLReader borrowXMLReader(ContentHandler handler, 
 	        boolean namespaces, boolean validation, boolean xmlSchema) {
 	    XMLReader xmlReader = (XMLReader)borrowObject();
-        try {
-            xmlReader.setFeature(
-            		"http://xml.org/sax/features/namespaces",
-            		namespaces);
-            xmlReader.setFeature(
-            		"http://xml.org/sax/features/validation",
-            		validation);
-            xmlReader.setFeature(
-            		"http://apache.org/xml/features/validation/schema",
-            		xmlSchema);
-            xmlReader.setContentHandler(handler);
-            if(handler instanceof EntityResolver) {
-                xmlReader.setEntityResolver((EntityResolver)handler);
-            }
-            if(handler instanceof ErrorHandler) {
-                xmlReader.setErrorHandler((ErrorHandler)handler);
-            }
-            if(handler instanceof DTDHandler) {
-                xmlReader.setDTDHandler((DTDHandler)handler);
-            }
-            if(handler instanceof LexicalHandler) {
-                xmlReader.setProperty(
-                		"http://xml.org/sax/properties/lexical-handler", handler);
-            }
-        } catch (SAXNotRecognizedException e) {
-            throw new RuntimeException(e);
-        } catch (SAXNotSupportedException e) {
-            throw new RuntimeException(e);
+        setFeature(xmlReader,
+        	"http://xml.org/sax/features/namespaces", namespaces);
+        setFeature(xmlReader,
+           	"http://xml.org/sax/features/validation", validation);
+        setFeature(xmlReader,
+            "http://apache.org/xml/features/validation/schema", xmlSchema);
+        xmlReader.setContentHandler(handler);
+        if(handler instanceof EntityResolver) {
+            xmlReader.setEntityResolver((EntityResolver)handler);
+        }
+        if(handler instanceof ErrorHandler) {
+            xmlReader.setErrorHandler((ErrorHandler)handler);
+        }
+        if(handler instanceof DTDHandler) {
+            xmlReader.setDTDHandler((DTDHandler)handler);
+        }
+        if(handler instanceof LexicalHandler) {
+			setProperty(xmlReader,
+				"http://xml.org/sax/properties/lexical-handler", handler);
         }
 	    return xmlReader;
 	}

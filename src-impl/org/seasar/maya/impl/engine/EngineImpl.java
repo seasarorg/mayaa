@@ -109,40 +109,44 @@ public class EngineImpl extends SpecificationImpl
         return _errorHandler;
     }
     
-    protected boolean match(Page page, String name) {
-        String pageName = page.getPageName();
-        if(pageName.equals(name)) {
-            return true;
-        }
-        return false;
-    }
-    
-    public Page getPage(String pageName) {
-        Page page;
-        synchronized(this) {
-            if(_pages != null) {
-                for(Iterator it = new ChildSpecificationsIterator(_pages);
-                        it.hasNext(); ) {
-                    Object child = it.next();
-                    if(child instanceof Page) {
-                        page = (Page)child;
-                        if(match(page, pageName)) {
-                            return page;
-                        }
+    protected Page findPageFromCache(String pageName) {
+        if(_pages != null) {
+            for(Iterator it = new ChildSpecificationsIterator(_pages);
+                    it.hasNext(); ) {
+                Object child = it.next();
+                if(child instanceof Page) {
+                    Page page = (Page)child;
+                    String name = page.getPageName();
+                    if(pageName.equals(name)) {
+                        return page;
                     }
                 }
             }
-            page = new PageImpl(pageName);
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            String path = pageName + ".maya";
-            SourceDescriptor source = provider.getPageSourceDescriptor(path);
-            page.setSource(source);
-            if(_pages == null) {
-                _pages = new ArrayList();
-            }
-            _pages.add(new SoftReference(page));
         }
+        return null;
+    }
+    
+    protected Page createNewPage(String pageName) {
+    	Page page = new PageImpl(pageName);
+        ServiceProvider provider = ProviderFactory.getServiceProvider();
+        String path = pageName + ".maya";
+        SourceDescriptor source = provider.getPageSourceDescriptor(path);
+        page.setSource(source);
         return page;
+    }
+    
+    public Page getPage(String pageName) {
+        synchronized(this) {
+        	Page page = findPageFromCache(pageName);
+        	if(page == null) {
+	        	page = createNewPage(pageName);
+	            if(_pages == null) {
+	                _pages = new ArrayList();
+	            }
+	            _pages.add(new SoftReference(page));
+        	}
+            return page;
+        }
     }
    
 	public void doService() {

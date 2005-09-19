@@ -63,11 +63,11 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
    		            QM_DUPLECATED_ELEMENT, uri, original, false);
             StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();
-        if(StringUtil.hasValue(prefix)) {
-            name.append(prefix).append(":");
-        }
-        name.append(qName.getLocalName());
-        element.addAttribute(QM_NAME, name.toString());
+	        if(StringUtil.hasValue(prefix)) {
+	            name.append(prefix).append(":");
+	        }
+	        name.append(qName.getLocalName());
+	        element.addAttribute(QM_NAME, name.toString());
             element.addChildNode(injected);
    			return element;
    		}

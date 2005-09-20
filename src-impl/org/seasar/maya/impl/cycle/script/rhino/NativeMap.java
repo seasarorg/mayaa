@@ -63,9 +63,8 @@ public class NativeMap extends NativeJavaObject {
         for(int i = 0; i < ids.length; i++) {
             Object name = ids[i];
             if(set.contains(name) == false) {
-                continue;
+                set.add(name);
             }
-            set.add(name);
         }
         return set.toArray(new Object[set.size()]);
     }

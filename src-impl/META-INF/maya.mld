@@ -129,4 +129,10 @@
 		<property name="test" required="true" expectedType="boolean"/>
 	</processor>		
 
+	<processor name="echo"
+			class="org.seasar.maya.impl.engine.processor.EchoProcessor">
+		<description>m:echo injection</description>
+		<property name="childEvaluation" final="true"/>
+	</processor>
+
 </library>

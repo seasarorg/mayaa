@@ -67,7 +67,6 @@ public interface CONST_IMPL {
 
     QName QM_AFTER_RENDER = new QNameImpl("afterRender");
 	QName QM_BEFORE_RENDER = new QNameImpl("beforeRender");
-    QName QM_CLASS = new QNameImpl("class");
     QName QM_CONTENT_TYPE = new QNameImpl("contentType");
     QName QM_DATA = new QNameImpl("data");
     QName QM_EXTENDS = new QNameImpl("extends");
@@ -78,7 +77,6 @@ public interface CONST_IMPL {
     QName QM_PATH = new QNameImpl("path");
     QName QM_PUBLIC_ID = new QNameImpl("publicID");
     QName QM_RENDERED = new QNameImpl("rendered");
-    QName QM_SCOPE = new QNameImpl("scope");
     QName QM_SYSTEM_ID = new QNameImpl("systemID");
     QName QM_TARGET = new QNameImpl("target");
     QName QM_TEMPLATE_SUFFIX = new QNameImpl("templateSuffix");

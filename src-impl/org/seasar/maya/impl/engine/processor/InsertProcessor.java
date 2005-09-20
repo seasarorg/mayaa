@@ -28,6 +28,7 @@ import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.engine.RenderUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -101,11 +102,16 @@ public class InsertProcessor
         while(page != null) {
             boolean maya = "maya".equals(extension);
             DoRenderProcessor doRender = null;
-            if(maya == false) {
+            String pageName = page.getPageName();
+            if(maya) {
+                SourceDescriptor source = page.getSource();
+                if(source.exists() == false) {
+                    throw new PageNotFoundException(pageName, extension);
+                }
+            } else {
                 Template template = page.getTemplate(suffix, extension);
                 if(template == null) {
-                    throw new PageNotFoundException(
-                            page.getPageName(), extension);
+                    throw new PageNotFoundException(pageName, extension);
                 }
                 doRender = findDoRender(template, _name);
             }

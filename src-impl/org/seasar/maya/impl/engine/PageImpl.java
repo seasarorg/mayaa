@@ -213,11 +213,18 @@ public class PageImpl extends SpecificationImpl
             extension = page.getSuperExtension();
             page = page.getSuperPage();
         }
+        boolean maya = "maya".equals(extension);
+        if(maya) {
+            SourceDescriptor source = getSource();
+            if(source.exists() == false) {
+                throw new PageNotFoundException(_pageName, extension);
+            }
+        }
         Object model = SpecificationUtil.getSpecificationModel(page);
         SpecificationUtil.startScope(model, null);
         SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
-        if("maya".equals(extension) == false) {
+        if(maya == false) {
             if(StringUtil.isEmpty(suffix)) {
             	if(StringUtil.isEmpty(requestedSuffix)) {
 	                CompiledScript script = getSuffixScript();

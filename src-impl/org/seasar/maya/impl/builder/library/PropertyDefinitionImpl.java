@@ -153,7 +153,6 @@ public class PropertyDefinitionImpl
         NodeAttribute attribute = injected.getAttribute(qName);
         if(value == null) {
             value = getDefaultValue();
-            attribute = injected.getAttribute(qName);
             if(attribute != null) {
                 value = attribute.getValue();
             }

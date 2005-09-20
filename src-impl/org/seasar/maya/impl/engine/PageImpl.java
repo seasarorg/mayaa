@@ -127,7 +127,9 @@ public class PageImpl extends SpecificationImpl
                 }
                 Template template = (Template)obj;
                 String templateSuffix = template.getSuffix();
-                if(templateSuffix.equals(suffix)) {
+                String templateExtension = template.getExtension();
+                if(templateSuffix.equals(suffix) && 
+                        templateExtension.equals(extension)) {
                     return template;
                 }
             }

@@ -72,18 +72,18 @@ public class SpecificationNodeHandler
         _locator = locator;
     }
 
-    private void initNamespace() {
+    protected void initNamespace() {
         _namespace = new NamespaceImpl();
         _namespace.addPrefixMapping(new PrefixMappingImpl("", URI_HTML));
     }
 
-    private void stackNamespace() {
+    protected void stackNamespace() {
         Namespace parentSpace = _namespace;
         _namespace = new NamespaceImpl();
         _namespace.setParentSpace(parentSpace);
     }
     
-    private void popNamespace() {
+    protected void popNamespace() {
         _namespace = _namespace.getParentSpace();
         if(_namespace == null) {
             throw new IllegalStateException();
@@ -111,7 +111,7 @@ public class SpecificationNodeHandler
         }
     }
     
-    private SpecificationNode addNode(QName qName) {
+    protected SpecificationNode addNode(QName qName) {
 		SpecificationNodeImpl child = new SpecificationNodeImpl(
 				qName, _locator.getSystemId(), _locator.getLineNumber());
         child.setParentSpace(_namespace);
@@ -119,7 +119,7 @@ public class SpecificationNodeHandler
 		return child;
     }
     
-    private void addCharactersNode() {
+    protected void addCharactersNode() {
     	if(_charactersBuffer.length() > 0) {
     		SpecificationNode node = addNode(QM_CHARACTERS);
     		node.addAttribute(QM_TEXT, _charactersBuffer.toString());
@@ -127,7 +127,7 @@ public class SpecificationNodeHandler
     	}
     }
     
-    private void saveToCycle(NodeTreeWalker originalNode) {
+    protected void saveToCycle(NodeTreeWalker originalNode) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
     }

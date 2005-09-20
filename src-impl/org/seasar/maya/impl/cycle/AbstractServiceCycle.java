@@ -42,7 +42,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
-    private Page _page;
+    private Page _renderingPage;
     
     public Application getApplication() {
         return ProviderFactory.getServiceProvider().getApplication();
@@ -142,12 +142,12 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         return _processor;
     }
     
-    public void setRenderingPage(Page page) {
-        _page = page;
+    public void setRenderingPage(Page renderingPage) {
+        _renderingPage = renderingPage;
     }
 
     public Page getRenderingPage() {
-        return _page;
+        return _renderingPage;
     }
     
     // support class ---------------------------------------------------

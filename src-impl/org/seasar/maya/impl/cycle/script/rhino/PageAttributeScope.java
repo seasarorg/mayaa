@@ -38,7 +38,7 @@ public class PageAttributeScope extends ScriptableObject
     public String getClassName() {
         return "PageScope";
     }
-
+    
     public String getScopeName() {
         return "page";
     }

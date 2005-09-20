@@ -162,9 +162,9 @@ public interface ServiceCycle extends Parameterizable, Serializable {
     
     /**
      * 現在処理中の最上位ページの設定。
-     * @param page 処理中のページ。
+     * @param renderingPage 処理中のページ。
      */
-    void setRenderingPage(Page page);
+    void setRenderingPage(Page renderingPage);
     
     /**
      * 現在処理中の最上位ページの取得。

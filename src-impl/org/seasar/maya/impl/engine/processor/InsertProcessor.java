@@ -131,18 +131,20 @@ public class InsertProcessor
         throw new DoRenderNotFoundException(_name);
     }
     
+    protected void preparePage() {
+        if(_page == null && StringUtil.hasValue(_path)) {
+            Engine engine = EngineUtil.getEngine();
+            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+            _page = engine.getPage(pagePath[0]);  
+            _suffix = pagePath[1];
+            _extension = pagePath[2];
+        }
+    }
+    
 	protected ProcessStatus writeStartElement() {
         synchronized(this) {
-            if(_page == null) {
-                if(StringUtil.hasValue(_path)) {
-                    Engine engine = EngineUtil.getEngine();
-                    String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-                    String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-                    _page = engine.getPage(pagePath[0]);  
-                    _suffix = pagePath[1];
-                    _extension = pagePath[2];
-                }
-            }
+            preparePage();
         }
         Page page = _page;
         String suffix = _suffix;

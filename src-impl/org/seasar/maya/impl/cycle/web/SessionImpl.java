@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.Session;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.impl.cycle.AbstractWritableAttributeScope;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -31,7 +32,8 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SessionImpl implements Session {
+public class SessionImpl extends AbstractWritableAttributeScope
+        implements Session {
 
     private static final long serialVersionUID = -3211729351966533995L;
 
@@ -91,10 +93,6 @@ public class SessionImpl implements Session {
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
         return env.convertFromScriptObject(_httpSession.getAttribute(name));
     }
-
-    public boolean isAttributeWritable() {
-		return true;
-	}
 
     public void setAttribute(String name, Object attribute) {
         check();

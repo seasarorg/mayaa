@@ -142,11 +142,11 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         return _processor;
     }
     
-    public void setPage(Page page) {
+    public void setRenderingPage(Page page) {
         _page = page;
     }
 
-    public Page getPage() {
+    public Page getRenderingPage() {
         return _page;
     }
     

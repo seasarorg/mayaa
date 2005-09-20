@@ -72,4 +72,14 @@ public interface AttributeScope extends Parameterizable {
      */
     void removeAttribute(String name);
     
+    /**
+     * このスコープ中に、指定クラス型のオブジェクトを生成する。
+     * すでに同じ名前で違うクラス型のオブジェクトが存在する場合の処理や、
+     * 名前やクラス型の引数チェックの仕様は定めない。実装毎の仕様となる。
+     * @param name 指定名。
+     * @param attributeType 指定クラス型。
+     * @return 指定オブジェクト。
+     */
+    Object newAttribute(String name, Class attributeType);
+    
 }

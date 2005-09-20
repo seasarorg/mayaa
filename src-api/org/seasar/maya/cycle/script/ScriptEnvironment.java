@@ -71,12 +71,10 @@ public interface ScriptEnvironment extends Parameterizable {
     
     /**
      * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
-     * カレントServiceCycleのページスコープに、スクリプトのスコープオブジェクトを
-     * プッシュする。
-     * @param model モデルオブジェクト、もしくはnull。
+     * カレントServiceCycleのページスコープに、スクリプト変数をプッシュする。
      * @param variables カスタムスコープ変数。
      */
-    void startScope(Object model, Map variables);
+    void startScope(Map variables);
     
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。

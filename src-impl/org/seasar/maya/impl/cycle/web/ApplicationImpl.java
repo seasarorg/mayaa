@@ -23,6 +23,7 @@ import javax.servlet.ServletContext;
 import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.impl.cycle.AbstractWritableAttributeScope;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -31,7 +32,8 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ApplicationImpl implements Application {
+public class ApplicationImpl extends AbstractWritableAttributeScope 
+        implements Application {
 
     private ServletContext _servletContext;
 
@@ -100,10 +102,6 @@ public class ApplicationImpl implements Application {
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
         return env.convertFromScriptObject(_servletContext.getAttribute(name));
     }
-
-    public boolean isAttributeWritable() {
-		return true;
-	}
 
     public void setAttribute(String name, Object attribute) {
         check();

@@ -95,7 +95,7 @@ public class RenderUtil {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         try { 
-            SpecificationUtil.startScope(null, current.getVariables());
+            SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
         	startRet = current.doStartProcess();
             if(startRet == SKIP_PAGE) {

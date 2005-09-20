@@ -97,28 +97,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return _standardObjects;
     }
 
-    protected void setModelToPrototype(Object model, Scriptable scope) {
-        if(scope == null) {
-            throw new IllegalArgumentException();
-        }
-        if(model != null) {
-            Context cx = Context.enter();
-            if(_wrap != null) {
-                cx.setWrapFactory(_wrap);
-            }
-            Scriptable prototype = cx.getWrapFactory().wrapAsJavaObject(
-                    cx, getStandardObjects(), model, model.getClass());
-            Context.exit();
-            scope.setPrototype(prototype);
-        }
-    }
-    
     public void initScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(null);
     }
 
-    public void startScope(Object model, Map variables) {
+    public void startScope(Map variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
@@ -141,7 +125,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
-        setModelToPrototype(model, pageScope);
         if(variables != null) {
             for(Iterator it = variables.keySet().iterator(); it.hasNext(); ) {
                 String name = it.next().toString(); 

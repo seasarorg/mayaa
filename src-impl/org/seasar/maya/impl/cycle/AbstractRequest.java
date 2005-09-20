@@ -27,6 +27,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractRequest
+        extends AbstractWritableAttributeScope
         implements Request, CONST_IMPL {
 
     private String _pageName;
@@ -62,10 +63,6 @@ public abstract class AbstractRequest
             parsePath(getRequestedPath());
         }
         return _pageName;
-    }
-
-    public boolean isAttributeWritable() {
-        return true;
     }
 
     public String getRequestedSuffix() {

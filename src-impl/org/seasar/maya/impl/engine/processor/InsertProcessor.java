@@ -119,8 +119,7 @@ public class InsertProcessor
                 ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
                 doRender.pushInsertProcessor(this);
                 saveToCycle(page);
-                Object model = SpecificationUtil.getSpecificationModel(page);
-                SpecificationUtil.startScope(model, getVariables());
+                SpecificationUtil.startScope(getVariables());
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
                 ProcessStatus ret = SKIP_BODY; 
                 if(maya == false) {
@@ -157,7 +156,7 @@ public class InsertProcessor
         String extension = _extension;
         if(page == null) {
         	ServiceCycle cycle = CycleUtil.getServiceCycle();
-            page = cycle.getPage();
+            page = cycle.getRenderingPage();
             Request request = cycle.getRequest();
             suffix = request.getRequestedSuffix();
             extension = request.getExtension();

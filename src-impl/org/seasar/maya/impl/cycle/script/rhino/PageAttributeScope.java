@@ -25,6 +25,7 @@ import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.ObjectUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -100,7 +101,16 @@ public class PageAttributeScope extends ScriptableObject
             scope.delete(name);
         }
     }
-    
+
+    public Object newAttribute(String name, Class attributeType) {
+        if(hasAttribute(name)) {
+            return getAttribute(name); 
+        }
+        Object model = ObjectUtil.newInstance(attributeType);
+        setAttribute(name, model);
+        return model;
+    }
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

@@ -71,9 +71,9 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 try {
                     Engine engine = EngineUtil.getEngine();
                 	Page page = engine.getPage(pageName);
-                    cycle.setPage(page);
+                    cycle.setRenderingPage(page);
                     page.doPageRender("", _extension);
-                    cycle.setPage(null);
+                    cycle.setRenderingPage(null);
                     if(LOG.isErrorEnabled()) {
                         String msg = StringUtil.getMessage(
                                 TemplateErrorHandler.class, 1, 

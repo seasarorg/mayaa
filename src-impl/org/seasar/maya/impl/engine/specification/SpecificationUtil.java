@@ -18,7 +18,6 @@ package org.seasar.maya.impl.engine.specification;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -29,7 +28,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -116,32 +114,12 @@ public class SpecificationUtil implements CONST_IMPL {
         return text = blockSign + "{" + text.trim() + "}"; 
     }
 
-    public static Object getSpecificationModel(Specification spec) {
-        SpecificationNode maya = getMayaNode(spec);
-        if (maya != null) {
-            String className = getAttributeValue(maya, QM_CLASS);
-            if(StringUtil.hasValue(className)) {
-                ServiceCycle cycle = CycleUtil.getServiceCycle();
-                AttributeScope scope = cycle.getAttributeScope(
-                        getAttributeValue(maya, QM_SCOPE));
-                Object model = scope.getAttribute(className); 
-                if(model == null) {
-                    Class modelClass = ObjectUtil.loadClass(className);
-                    model = ObjectUtil.newInstance(modelClass);
-                    scope.setAttribute(className, model);
-                }
-                return model;
-            }
-        }
-        return null;
-    }
-
     public static void initScope() {
         ScriptUtil.getScriptEnvironment().initScope();
     }
 
-    public static void startScope(Object model, Map variables) {
-        ScriptUtil.getScriptEnvironment().startScope(model, variables);
+    public static void startScope(Map variables) {
+        ScriptUtil.getScriptEnvironment().startScope(variables);
     }
 
     public static void endScope() {

@@ -16,31 +16,32 @@
 package org.seasar.maya.impl.cycle;
 
 import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractReadOnlyAttributeScope 
+public abstract class AbstractWritableAttributeScope
         implements AttributeScope {
 
     public boolean isAttributeWritable() {
-        return false;
-    }
-
-    public void removeAttribute(String name) {
-        throw new ScopeNotWritableException(getScopeName());
-    }
-
-    public void setAttribute(String name, Object attribute) {
-        throw new ScopeNotWritableException(getScopeName());
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     public Object newAttribute(String name, Class attributeType) {
-        throw new UnsupportedOperationException();
+        if(attributeType == null) {
+            throw new IllegalArgumentException();
+        }
+        if(StringUtil.isEmpty(name)) {
+            name = attributeType.getName();
+        }
+        if(hasAttribute(name)) {
+            return getAttribute(name); 
+        }
+        Object model = ObjectUtil.newInstance(attributeType);
+        setAttribute(name, model);
+        return model;
     }
-    
+
 }

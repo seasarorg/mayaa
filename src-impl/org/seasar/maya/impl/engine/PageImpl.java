@@ -220,8 +220,7 @@ public class PageImpl extends SpecificationImpl
                 throw new PageNotFoundException(_pageName, extension);
             }
         }
-        Object model = SpecificationUtil.getSpecificationModel(page);
-        SpecificationUtil.startScope(model, null);
+        SpecificationUtil.startScope(null);
         SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if(maya == false) {

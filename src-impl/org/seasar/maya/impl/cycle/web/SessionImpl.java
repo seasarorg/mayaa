@@ -52,6 +52,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
     
     public void setUnderlyingObject(Object context) {
+        // underlying object is HttpServletRequest.
         if(context == null || 
                 context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
@@ -60,6 +61,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
 
     public Object getUnderlyingObject() {
+        // underlying object is HttpServletRequest.
         check();
         return _httpRequest;
     }

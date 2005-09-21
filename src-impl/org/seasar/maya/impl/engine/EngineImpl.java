@@ -61,7 +61,6 @@ public class EngineImpl extends SpecificationImpl
     static {
         _paramNames = new HashSet();
         _paramNames.add(CHECK_TIMESTAMP);
-        _paramNames.add(OUTPUT_WHITE_SPACE);
         _paramNames.add(SUFFIX_SEPARATOR);
         _paramNames.add(WELCOME_FILE_NAME);
     }

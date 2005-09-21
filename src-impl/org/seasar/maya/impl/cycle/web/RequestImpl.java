@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
@@ -65,11 +64,6 @@ public class RequestImpl extends AbstractRequest {
     public Object getUnderlyingObject() {
         check();
         return _httpServletRequest;
-    }
-
-    public HttpSession getHttpSession() {
-        check();
-        return _httpServletRequest.getSession(true);
     }
     
     public String getRequestedPath() {

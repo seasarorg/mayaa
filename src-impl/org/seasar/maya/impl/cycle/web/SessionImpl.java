@@ -18,6 +18,7 @@ package org.seasar.maya.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.seasar.maya.cycle.ServiceCycle;
@@ -28,6 +29,7 @@ import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,28 +39,36 @@ public class SessionImpl extends AbstractWritableAttributeScope
 
     private static final long serialVersionUID = -3211729351966533995L;
 
+    private HttpServletRequest _httpRequest;
     private HttpSession _httpSession;
     
     private void check() {
-        if(_httpSession == null) {
+        if(_httpRequest == null) {
             throw new IllegalStateException();
+        }
+        if(_httpSession == null) {
+            _httpSession = _httpRequest.getSession(false);
         }
     }
     
     public void setUnderlyingObject(Object context) {
-        if(context == null || context instanceof HttpSession == false) {
+        if(context == null || 
+                context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
-        _httpSession = (HttpSession)context;
+        _httpRequest = (HttpServletRequest)context;
     }
 
     public Object getUnderlyingObject() {
         check();
-        return _httpSession;
+        return _httpRequest;
     }
     
     public String getSessionID() {
         check();
+        if(_httpSession == null) {
+            return null;
+        }
         return _httpSession.getId();
     }
 
@@ -68,12 +78,16 @@ public class SessionImpl extends AbstractWritableAttributeScope
     
     public Iterator iterateAttributeNames() {
         check();
-        return EnumerationIterator.getInstance(_httpSession.getAttributeNames());
+        if(_httpSession == null) {
+            return NullIterator.getInstance();
+        }
+        return EnumerationIterator.getInstance(
+                _httpSession.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return false;
         }
         for(Enumeration e = _httpSession.getAttributeNames();
@@ -87,7 +101,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
 
     public Object getAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return null;
         }
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
@@ -99,12 +113,15 @@ public class SessionImpl extends AbstractWritableAttributeScope
         if(StringUtil.isEmpty(name)) {
             return;
         }
+        if(_httpSession == null) {
+            _httpSession = _httpRequest.getSession(true);
+        }
         _httpSession.setAttribute(name, attribute);
     }
     
     public void removeAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return;
         }
         _httpSession.removeAttribute(name);

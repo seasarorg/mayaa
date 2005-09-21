@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.Session;
@@ -40,7 +42,11 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     public Session getSession() {
         if(_session == null) {
             _session = new SessionImpl();
-            _session.setUnderlyingObject(_request.getHttpSession());
+            Object underlying = _request.getUnderlyingObject();
+            if(underlying instanceof HttpServletRequest == false) {
+                throw new IllegalStateException();
+            }
+            _session.setUnderlyingObject(underlying);
         }
         return _session;
 	}

@@ -31,7 +31,6 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
@@ -107,12 +106,13 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         cycle.setInjectedNode(injectedNode);
     }
 
-    protected ProcessorTreeWalker findConnectPoint(
-            ProcessorTreeWalker processor) {
+    protected TemplateProcessor findConnectPoint(
+            TemplateProcessor processor) {
         if(processor instanceof ElementProcessor &&
                 ((ElementProcessor)processor).isDuplicated()) {
             // "processor"'s m:rendered is true, ripping duplicated element.
-            return findConnectPoint(processor.getChildProcessor(0));
+            return findConnectPoint(
+                    (TemplateProcessor)processor.getChildProcessor(0));
         }
         for(int i = 0; i < processor.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = processor.getChildProcessor(i);
@@ -139,7 +139,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected TemplateProcessor createProcessor(
-            NodeTreeWalker original, SpecificationNode injected) {
+            SpecificationNode original, SpecificationNode injected) {
         QName name = injected.getQName();
         ServiceProvider provider = ProviderFactory.getServiceProvider(); 
         LibraryManager libraryManager = provider.getLibraryManager();
@@ -153,19 +153,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return null;
     }
 
-    protected ProcessorTreeWalker resolveInjectedNode(Template template, 
-            Stack stack, NodeTreeWalker original, SpecificationNode injected) {
+    protected TemplateProcessor resolveInjectedNode(Template template, 
+            Stack stack, SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(original, injected);
         TemplateProcessor processor = createProcessor(original, injected);
         if(processor == null) {
-            if(original instanceof Namespace == false) {
-                throw new IllegalStateException();
-            }
-            Namespace namespace = (Namespace)original;
-            PrefixMapping mapping = namespace.getMappingFromPrefix("", true);
+            PrefixMapping mapping = original.getMappingFromPrefix("", true);
             if(mapping == null) {
                 throw new IllegalStateException();
             }
@@ -187,11 +183,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         // "injected" node has children, nested node definition on .maya
         stack.push(processor);
-        ProcessorTreeWalker connectionPoint = null;
+        TemplateProcessor connectionPoint = null;
         while(it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode)it.next();
             saveToCycle(original, childNode);
-            ProcessorTreeWalker childProcessor = resolveInjectedNode(
+            TemplateProcessor childProcessor = resolveInjectedNode(
                     template, stack, original, childNode);
             if(childProcessor instanceof DoBodyProcessor) {
                 if(connectionPoint != null) {

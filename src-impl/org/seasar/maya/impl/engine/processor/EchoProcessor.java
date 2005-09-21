@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -33,15 +32,13 @@ public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
 
     private static final long serialVersionUID = 3924111635172574833L;
 
-    public void setOriginalNode(NodeTreeWalker node) {
+    public void setOriginalNode(SpecificationNode node) {
         super.setOriginalNode(node);
-
-        setupElement((SpecificationNode) node);
+        setupElement(node);
     }
 
     private void setupElement(SpecificationNode node) {
         super.setName(node);
-
         for (Iterator it = node.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
             ProcessorPropertyImpl property =

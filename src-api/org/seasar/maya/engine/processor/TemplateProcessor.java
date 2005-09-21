@@ -18,7 +18,7 @@ package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
 
-import org.seasar.maya.engine.specification.NodeTreeWalker;
+import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
  * テンプレート中のHTMLタグを処理するクラス。
@@ -46,25 +46,25 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      * テンプレート上の該当するノード情報を設定する。
      * @param node テンプレートノード。
      */
-    void setOriginalNode(NodeTreeWalker node);
+    void setOriginalNode(SpecificationNode node);
     
     /**
      * テンプレート上の該当するノード情報の取得。
      * @return テンプレートノード。
      */
-    NodeTreeWalker getOriginalNode();
+    SpecificationNode getOriginalNode();
     
     /**
      * インジェクションされたノード情報の設定。
      * @param node インジェクトされたノード。
      */
-    void setInjectedNode(NodeTreeWalker node);
+    void setInjectedNode(SpecificationNode node);
     
     /**
      * インジェクションされたノード情報の取得。
      * @return インジェクトされたノード。
      */    
-    NodeTreeWalker getInjectedNode();
+    SpecificationNode getInjectedNode();
     
     /**
      * プロセッサ動作にて状態遷移を示すステータス。

@@ -28,7 +28,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
@@ -58,7 +57,7 @@ public class SpecificationNodeHandler
     private Locator _locator;
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
-    private boolean _outputWhitespace;
+    private boolean _outputWhitespace = true;
     private int _inEntity;
     
     public SpecificationNodeHandler(Specification specification) {
@@ -68,6 +67,10 @@ public class SpecificationNodeHandler
         _specification = specification;
     }
 
+    public void setOutputWhitespace(boolean outputWhitespace) {
+        _outputWhitespace = outputWhitespace;
+    }
+    
     public void setDocumentLocator(Locator locator) {
         _locator = locator;
     }
@@ -92,8 +95,6 @@ public class SpecificationNodeHandler
     
     public void startDocument() {
         _charactersBuffer = new StringBuffer(128);
-        _outputWhitespace = EngineUtil.getEngineSettingBoolean(
-                OUTPUT_WHITE_SPACE, true);
         _current = _specification;
         initNamespace();
         stackNamespace();

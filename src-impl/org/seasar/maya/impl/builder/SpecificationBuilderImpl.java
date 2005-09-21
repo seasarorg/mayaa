@@ -19,6 +19,7 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.XMLReaderPool;
 import org.seasar.maya.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
@@ -33,13 +34,18 @@ public class SpecificationBuilderImpl
 
 	private static final long serialVersionUID = 7852577574830768959L;
 
+    private boolean _outputWhitespace = true;
+    
     protected XMLReaderPool getXMLReaderPool(	String systemID) {
         return XMLReaderPool.getPool();
     }
 
     protected ContentHandler createContentHandler(
     		Specification specification) {
-        return new SpecificationNodeHandler(specification);
+        SpecificationNodeHandler handler =
+            new SpecificationNodeHandler(specification);
+        handler.setOutputWhitespace(_outputWhitespace);
+        return handler;
     }
 
     protected String getPublicID() {
@@ -78,7 +84,11 @@ public class SpecificationBuilderImpl
     }
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
+        if("outputWhitespace".equals(name)) {
+            _outputWhitespace = ObjectUtil.booleanValue(value, true);
+        } else {
+            throw new UnsupportedParameterException(getClass(), name);
+        }
     }
 
 }

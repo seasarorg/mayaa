@@ -78,7 +78,7 @@ public class InsertProcessor
         }
         return doRender;
     }
-    
+/*    
     protected ProcessorTreeWalker getRenderRoot(
             DoRenderProcessor doRender) {
         if(doRender.isRendered()) {
@@ -94,7 +94,7 @@ public class InsertProcessor
         }
         return doRender;
     }
-    
+*/    
     protected ProcessStatus insert(Page page, String suffix, String extension) {
         if(page == null) {
             throw new IllegalStateException();
@@ -116,14 +116,15 @@ public class InsertProcessor
                 doRender = findDoRender(template, _name);
             }
             if(maya || doRender != null) {
-                ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
+//                ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
                 doRender.pushInsertProcessor(this);
                 saveToCycle(page);
                 SpecificationUtil.startScope(getVariables());
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
                 ProcessStatus ret = SKIP_BODY; 
                 if(maya == false) {
-                    ret = RenderUtil.render(insertRoot);
+//                    ret = RenderUtil.render(insertRoot);
+                    ret = RenderUtil.render(doRender); 
                 }
                 saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);

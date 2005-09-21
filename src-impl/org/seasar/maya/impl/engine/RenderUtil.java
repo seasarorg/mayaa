@@ -87,7 +87,7 @@ public class RenderUtil {
     }
 
     // main rendering method
-    private static ProcessStatus renderImpl(TemplateProcessor current) {
+    public static ProcessStatus render(TemplateProcessor current) {
         if(current == null) {
             throw new IllegalArgumentException();
         }
@@ -116,7 +116,7 @@ public class RenderUtil {
                         ProcessorTreeWalker child = current.getChildProcessor(i);
                         if(child instanceof TemplateProcessor) {
                             TemplateProcessor childProc = (TemplateProcessor)child;
-                            final ProcessStatus childRet = renderImpl(childProc);
+                            final ProcessStatus childRet = render(childProc);
                             if(childRet == SKIP_PAGE) {
                                 return SKIP_PAGE;
                             }
@@ -163,12 +163,12 @@ public class RenderUtil {
     }
 
     // Rendering entry point
-    public static ProcessStatus render(ProcessorTreeWalker root) {
+    public static ProcessStatus renderChildren(ProcessorTreeWalker root) {
         for(int i = 0; i < root.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = root.getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor childProc = (TemplateProcessor)child;
-                final ProcessStatus childRet = renderImpl(childProc);
+                final ProcessStatus childRet = render(childProc);
                 if(childRet == SKIP_PAGE) {
                     return SKIP_PAGE;
                 }

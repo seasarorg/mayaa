@@ -98,7 +98,7 @@ public class TemplateImpl extends SpecificationImpl
     public ProcessStatus doTemplateRender() {
         RenderUtil.saveToCycle(this);
         prepareCycle();
-        ProcessStatus ret = RenderUtil.render(this);
+        ProcessStatus ret = RenderUtil.renderChildren(this);
         return ret;
     }
     

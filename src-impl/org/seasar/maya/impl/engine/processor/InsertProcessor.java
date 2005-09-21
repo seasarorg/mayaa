@@ -21,6 +21,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
+import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
@@ -78,24 +79,22 @@ public class InsertProcessor
         }
         return doRender;
     }
-/*    
-    protected ProcessorTreeWalker getRenderRoot(
+    
+    protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
         if(doRender.isRendered()) {
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
-            if(duplecated == null) {
+            if(duplecated == null ||
+                    duplecated instanceof TemplateProcessor == false) {
                 throw new IllegalStateException();
             }
-            ProcessorTreeWalker root = duplecated.getParentProcessor();
-            if(root == null) {
-                throw new IllegalStateException();
-            }
-            return root;
+            return (TemplateProcessor)duplecated;
         }
         return doRender;
     }
-*/    
-    protected ProcessStatus insert(Page page, String suffix, String extension) {
+    
+    protected ProcessStatus insert(
+            Page page, String suffix, String extension) {
         if(page == null) {
             throw new IllegalStateException();
         }
@@ -116,15 +115,14 @@ public class InsertProcessor
                 doRender = findDoRender(template, _name);
             }
             if(maya || doRender != null) {
-//                ProcessorTreeWalker insertRoot = getRenderRoot(doRender);
+                TemplateProcessor insertRoot = getRenderRoot(doRender);
                 doRender.pushInsertProcessor(this);
                 saveToCycle(page);
                 SpecificationUtil.startScope(getVariables());
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
                 ProcessStatus ret = SKIP_BODY; 
                 if(maya == false) {
-//                    ret = RenderUtil.render(insertRoot);
-                    ret = RenderUtil.render(doRender); 
+                    ret = RenderUtil.render(insertRoot); 
                 }
                 saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);

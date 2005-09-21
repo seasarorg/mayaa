@@ -60,9 +60,10 @@ public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
 
     // ProcessorTreeWalker implements --------------------------------
     public Map getVariables() {
-        if (getInformalProperties() != null) {
+    	Iterator it = iterateInformalProperties();
+        if(it.hasNext()) {
             Map attributeMap = new HashMap();
-            for (Iterator it = getInformalProperties().iterator(); it.hasNext();) {
+            while(it.hasNext()) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(
                         prop.getName().getQName().getLocalName(),
@@ -72,4 +73,5 @@ public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
         }
         return null;
     }
+
 }

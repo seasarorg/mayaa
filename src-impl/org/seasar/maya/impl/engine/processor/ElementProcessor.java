@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.engine.processor;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
@@ -94,12 +93,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
     
     protected void resolvePrefixAll() {
         resolvePrefix(_name);
-        List additionalAttributes = getProcesstimeProperties();
-        for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
+        for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             resolvePrefix(prop.getName());
         }
-        for(Iterator it = getInformalProperties().iterator(); it.hasNext(); ) {
+        for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             resolvePrefix(prop.getName());
         }
@@ -189,19 +187,19 @@ public class ElementProcessor extends AbstractAttributableProcessor
             appendPrefixMappingString(buffer, getCurrentNS());
             appendPrefixMappingString(buffer, _name.getParentSpace());
         }
-        List additionalAttributes = getProcesstimeProperties();
-        for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
+        for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
-            QName propQName = prop.getName().getQName(); 
-            if(_duplicated && (QH_ID.equals(propQName) ||
-                    QX_ID.equals(propQName))) {
-                continue;
+            if(_duplicated) {
+            	QName propQName = prop.getName().getQName(); 
+            	if(QH_ID.equals(propQName) || QX_ID.equals(propQName)) {
+            		continue;
+            	}
             }
             appendAttributeString(buffer, prop);
         }
-        for(Iterator it = getInformalProperties().iterator(); it.hasNext(); ) {
+        for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
-            if(additionalAttributes.contains(prop) == false) {
+            if(hasProcesstimeProperty(prop) == false) {
                 appendAttributeString(buffer, prop);
             }
         }

@@ -17,12 +17,14 @@ package org.seasar.maya.impl.engine.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -48,11 +50,11 @@ public abstract class AbstractAttributableProcessor
         _attributes.add(attr);
     }
     
-    public List getInformalProperties() {
+    public Iterator iterateInformalProperties() {
         if(_attributes == null) {
-            _attributes = new ArrayList();
+            return NullIterator.getInstance();
         }
-        return _attributes;
+        return _attributes.iterator();
     }
     
     // processtime method
@@ -60,18 +62,32 @@ public abstract class AbstractAttributableProcessor
         if(prop == null) {
             throw new IllegalArgumentException();
         }
-        List list = getProcesstimeProperties();
-        if(list.contains(prop) == false) {
-            list.add(prop);
+        ProcesstimeInfo info = getProcesstimeInfo();
+        if(info._processtimeProperties == null) {
+        	info._processtimeProperties = new ArrayList();
+        }
+        if(info._processtimeProperties.contains(prop) == false) {
+        	info._processtimeProperties.add(prop);
         }
     }
     
-    public List getProcesstimeProperties() {
+    public boolean hasProcesstimeProperty(ProcessorProperty prop) {
+        if(prop == null) {
+            throw new IllegalArgumentException();
+        }
         ProcesstimeInfo info = getProcesstimeInfo();
         if(info._processtimeProperties == null) {
-            info._processtimeProperties = new ArrayList();
+        	return false;
         }
-        return info._processtimeProperties;
+        return info._processtimeProperties.contains(prop);
+    }
+    
+    public Iterator iterateProcesstimeProperties() {
+        ProcesstimeInfo info = getProcesstimeInfo();
+        if(info._processtimeProperties == null) {
+            return NullIterator.getInstance();
+        }
+        return info._processtimeProperties.iterator();
     }
     
     protected abstract ProcessStatus writeStartElement();

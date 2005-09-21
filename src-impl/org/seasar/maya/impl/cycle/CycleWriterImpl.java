@@ -28,6 +28,7 @@ public class CycleWriterImpl extends CycleWriter {
 
     private CycleWriter _enclosingWriter;
     private CharArrayWriter _buffer;
+    private boolean _flushed;
 
     public CycleWriterImpl(CycleWriter enclosingWriter) {
         _enclosingWriter = enclosingWriter;
@@ -47,7 +48,7 @@ public class CycleWriterImpl extends CycleWriter {
     }
 
     public boolean isDirty() {
-        return _buffer.size() > 0;
+        return _flushed || _buffer.size() > 0;
     }
 
     public void writeOut(Writer writer) throws IOException {
@@ -56,6 +57,8 @@ public class CycleWriterImpl extends CycleWriter {
         }
         // don't flush.
         writer.write(_buffer.toCharArray());
+        _buffer.reset();
+        _flushed = true;
     }
 
     // Writer implemtents --------------------------------------------

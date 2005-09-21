@@ -37,40 +37,41 @@ public class CycleWriterImpl extends CycleWriter {
     public CycleWriter getEnclosingWriter() {
         return _enclosingWriter;
     }
-	
-	public void close() {
-	}
     
     public void clearBuffer() {
         _buffer.reset();
     }
 
+    public String getString() {
+        return _buffer.toString();
+    }
+
+    public boolean isDirty() {
+        return _buffer.size() > 0;
+    }
+
+    public void writeOut(Writer writer) throws IOException {
+        if(writer == null) {
+            throw new IllegalArgumentException();
+        }
+        // don't flush.
+        writer.write(_buffer.toCharArray());
+    }
+
+    // Writer implemtents --------------------------------------------
+    
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len == 0) {
             return;
         }
         _buffer.write(cbuf, off, len);
     }
-
-    public String getString() {
-        return _buffer.toString();
+    
+    public void flush() throws IOException {
+        writeOut(_enclosingWriter);
     }
     
-	public void flush() throws IOException {
-        if(_enclosingWriter == null) {
-            throw new IllegalStateException();
-        }
-        _enclosingWriter.write(_buffer.toCharArray());
-        // don't flush.
-        _buffer.reset();
-	}
-
-    public void writeOut(Writer writer) throws IOException {
-        if(writer == null) {
-            throw new IllegalArgumentException();
-        }
-        writer.write(_buffer.toCharArray());
-        // don't flush.
+    public void close() {
     }
     
 }

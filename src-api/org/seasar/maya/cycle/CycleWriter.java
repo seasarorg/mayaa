@@ -40,7 +40,13 @@ public abstract class CycleWriter extends Writer {
      * @return バッファ内容。
 	 */
     public abstract String getString();
-	
+
+    /**
+     * バッファに書き込みがされたかどうかを返す。
+     * @return バッファに書き込みがされていればtrueを返す。
+     */
+    public abstract boolean isDirty();
+    
     /**
      * 指定Writerにバッファ内容を書き出す。
      * @param writer 書き出し先のWriter。

@@ -235,7 +235,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.endScope();
                     Response response = CycleUtil.getResponse();
                     if(ret == null) {
-                        if(response.isFlushed() == false) {
+                        if(response.getWriter().isDirty() == false) {
                             throw new RenderNotCompletedException(
                                     pageName, extension);
                         }

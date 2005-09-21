@@ -49,12 +49,6 @@ public interface Response extends Serializable, Underlyable  {
     void clearBuffer();
     
     /**
-     * 書き出しバッファの内容を取得する。
-     * @return バッファ内容。
-     */
-    String getString();
-    
-    /**
      * バッファへの書き出し。
      * @param b 書き出し値。
      */
@@ -95,12 +89,6 @@ public interface Response extends Serializable, Underlyable  {
      */
     void flush();
 
-    /**
-     * 描画され、UnderlyingObjectへ書き出されたかどうかを取得する。
-     * @return すでに書き出しが行われていたらtrue。
-     */
-    boolean isFlushed();
-    
     /**
      * バッファされたライタを取得する。
      * @return バッファされたライタ。

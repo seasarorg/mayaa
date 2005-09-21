@@ -1,19 +1,19 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2005 the Seasar Foundation and the Others.
  *
- * Licensed under the Seasar Software License, v1.1 (aka "the License");
- * you may not use this file except in compliance with the License which
- * accompanies this distribution, and is available at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     http://www.seasar.org/SEASAR-LICENSE.TXT
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.maya.impl.builder.library.tld;
 
 import java.io.InputStream;
 
@@ -21,8 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.mld.MLDHandler;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -33,10 +31,9 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDDefinitionBuilder
-        implements DefinitionBuilder, CONST_IMPL {
+public class TLDDefinitionBuilder implements DefinitionBuilder {
 
-    private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
+    private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
@@ -47,24 +44,23 @@ public class MLDDefinitionBuilder
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        if(source.exists() && systemID.toLowerCase().endsWith(".mld")) {
-            MLDHandler handler = new MLDHandler();
+        if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
+            TLDHandler handler = new TLDHandler();
             try {
-                XMLUtil.parse(handler, stream, PUBLIC_MLD10, 
-                        systemID, true, true, false);
+                XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
             } catch(Throwable t) {
                 if(LOG.isErrorEnabled()) {
-                    LOG.error("MLD parse error on " + systemID, t);
+                    LOG.error("TLD parse error on " + systemID, t);
                 }
                 return null;
             }
-            LibraryDefinitionImpl library = handler.getLibraryDefinition();
+            TLDLibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if(assigned) {
+            if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
                 library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
-            }            
+            }
             return library;
         }
         return null;

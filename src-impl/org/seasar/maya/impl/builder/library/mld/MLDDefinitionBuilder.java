@@ -1,19 +1,19 @@
 /*
- * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2005 the Seasar Foundation and the Others.
  *
- * Licensed under the Seasar Software License, v1.1 (aka "the License");
- * you may not use this file except in compliance with the License which
- * accompanies this distribution, and is available at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     http://www.seasar.org/SEASAR-LICENSE.TXT
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.maya.impl.builder.library.mld;
 
 import java.io.InputStream;
 
@@ -21,9 +21,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
+import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
-import org.seasar.maya.impl.builder.library.tld.TLDHandler;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
@@ -32,9 +33,10 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TLDDefinitionBuilder implements DefinitionBuilder {
+public class MLDDefinitionBuilder
+        implements DefinitionBuilder, CONST_IMPL {
 
-    private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
+    private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
@@ -45,23 +47,24 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
+        if(source.exists() && systemID.toLowerCase().endsWith(".mld")) {
+            MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
-            TLDHandler handler = new TLDHandler();
             try {
-                XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
+                XMLUtil.parse(handler, stream, PUBLIC_MLD10, 
+                        systemID, true, true, false);
             } catch(Throwable t) {
                 if(LOG.isErrorEnabled()) {
-                    LOG.error("TLD parse error on " + systemID, t);
+                    LOG.error("MLD parse error on " + systemID, t);
                 }
                 return null;
             }
-            TLDLibraryDefinition library = handler.getLibraryDefinition();
+            LibraryDefinitionImpl library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
+            if(assigned) {
                 library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
-            }
+            }            
             return library;
         }
         return null;

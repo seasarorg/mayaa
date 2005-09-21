@@ -55,10 +55,12 @@ public class JspWriterImpl extends JspWriter {
         if(_closed || _flushed) {
             throw new IOException();
         }
+        // lazy implementation
         _writer.clearBuffer();
     }
 
     public void clearBuffer() throws IOException {
+        // lazy implementation
         _writer.clearBuffer();
     }
 
@@ -70,6 +72,7 @@ public class JspWriterImpl extends JspWriter {
         if(_closed) {
             throw new IOException();
         }
+        // lazy implementation
         _writer.flush();
         _flushed = true;
     }

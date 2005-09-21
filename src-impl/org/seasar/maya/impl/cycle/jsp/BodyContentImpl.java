@@ -44,6 +44,7 @@ public class BodyContentImpl extends BodyContent {
     }
 
     public void clearBody() {
+        // lazy implementation
         _writer.clearBuffer();
     }
 
@@ -64,10 +65,12 @@ public class BodyContentImpl extends BodyContent {
     }
 
     public void clear() throws IOException {
+        // lazy implementation
         _writer.clearBuffer();
     }
     
     public void clearBuffer() throws IOException {
+        // lazy implementation
         _writer.clearBuffer();
     }
     

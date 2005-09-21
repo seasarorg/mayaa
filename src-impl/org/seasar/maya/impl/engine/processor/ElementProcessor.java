@@ -27,6 +27,8 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.maya.impl.engine.specification.NamespaceImpl;
+import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -39,6 +41,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
 	private QNameable _name;
     private boolean _duplicated;
+    private ThreadLocal _currentNS = new ThreadLocal();
 
     // exported property
     public boolean isDuplicated() {
@@ -58,27 +61,91 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _name = name;
     }
     
-    private boolean isHTML(QName qName) {
-        String namespaceURI = qName.getNamespaceURI();
-        return URI_HTML.equals(namespaceURI);
-    }
-    
-    private boolean needsCloseElement(QName qName) {
-        if(isHTML(qName)) {
-            String localName = qName.getLocalName();
-            HTMLElements.Element element = HTMLElements.getElement(localName);
-            return element.isEmpty() == false;
+    protected Namespace getCurrentNS() {
+        Namespace currentNS = (Namespace)_currentNS.get();
+        if(currentNS == null) {
+            currentNS = new NamespaceImpl();
+            currentNS.setParentSpace(getOriginalNode().getParentSpace());
+            _currentNS.set(currentNS);
         }
-        return getChildProcessorSize() > 0;
+        return currentNS;
     }
     
-    private void appendAttributeString(StringBuffer buffer, ProcessorProperty prop) {
+    protected void resolvePrefix(QNameable name) {
+        if(name == null) {
+            throw new IllegalArgumentException();
+        }
+        Namespace currentNS = getCurrentNS();
+        String namespaceURI = name.getQName().getNamespaceURI();
+        PrefixMapping mapping = 
+            currentNS.getMappingFromURI(namespaceURI, true);
+        if(mapping != null) {
+            return;
+        }
+        Namespace namespace = getInjectedNode().getParentSpace();
+        mapping = namespace.getMappingFromURI(namespaceURI, true);
+        if(mapping != null) {
+            currentNS.addPrefixMapping(mapping);
+            return;
+        }
+        currentNS.addPrefixMapping(
+                new PrefixMappingImpl(name.getPrefix(), namespaceURI));
+    }
+    
+    protected void resolvePrefixAll() {
+        resolvePrefix(_name);
+        List additionalAttributes = getProcesstimeProperties();
+        for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
+            ProcessorProperty prop = (ProcessorProperty)it.next();
+            resolvePrefix(prop.getName());
+        }
+        for(Iterator it = getInformalProperties().iterator(); it.hasNext(); ) {
+            ProcessorProperty prop = (ProcessorProperty)it.next();
+            resolvePrefix(prop.getName());
+        }
+    }
+
+    protected String getResolvedPrefix(QNameable name) {
+        if(name == null) {
+            throw new IllegalArgumentException();
+        }
+        Namespace currentNS = getCurrentNS();
+        String namespaceURI = name.getQName().getNamespaceURI();
+        PrefixMapping mapping = 
+            currentNS.getMappingFromURI(namespaceURI, true);
+        if(mapping != null) {
+            return mapping.getPrefix();
+        }
+        throw new IllegalStateException();
+    }
+    
+    protected void appendPrefixMappingString(
+            StringBuffer buffer, Namespace namespace) {
+        if(namespace == null) {
+            throw new IllegalArgumentException();
+        }
+        for(Iterator it = namespace.iteratePrefixMapping(false);
+                it.hasNext(); ) {
+            PrefixMapping mapping = (PrefixMapping)it.next();
+            String pre = mapping.getPrefix();
+            String uri = mapping.getNamespaceURI();
+            if(StringUtil.hasValue(pre)) {
+                buffer.append(" xmlns:").append(pre);
+            } else {
+                buffer.append(" xmlns");
+            }
+            buffer.append("=\"").append(uri).append("\"");
+        }
+    }
+    
+    protected void appendAttributeString(
+            StringBuffer buffer, ProcessorProperty prop) {
         QName qName = prop.getName().getQName();
         if(URI_MAYA.equals(qName.getNamespaceURI())) {
             return;
         }
         buffer.append(" ");
-        String attrPrefix = prop.getName().getPrefix();
+        String attrPrefix = getResolvedPrefix(prop.getName());
         if(StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
@@ -86,7 +153,22 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append("=\"").append(prop.getValue().execute()).append("\"");
     }
     
-    private void write(StringBuffer buffer) {
+    protected boolean isHTML(QName qName) {
+        String namespaceURI = qName.getNamespaceURI();
+        return URI_HTML.equals(namespaceURI);
+    }
+    
+    protected boolean needsCloseElement(QName qName) {
+        if(isHTML(qName)) {
+            String localName = qName.getLocalName();
+            HTMLElements.Element element = 
+                HTMLElements.getElement(localName);
+            return element.isEmpty() == false;
+        }
+        return getChildProcessorSize() > 0;
+    }
+    
+    protected void write(StringBuffer buffer) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(buffer.toString());
     }
@@ -95,30 +177,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if(_name == null) {
             throw new IllegalStateException();
         }
+        resolvePrefixAll();
         StringBuffer buffer = new StringBuffer("<");
-        String prefix = _name.getPrefix();
+        String prefix = getResolvedPrefix(_name);
         if(StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
         QName qName = _name.getQName();
         buffer.append(qName.getLocalName());
         if(isHTML(qName) == false) {
-            Namespace namespace = _name.getParentSpace();
-            if(namespace == null) {
-                throw new IllegalArgumentException();
-            }
-            for(Iterator it = namespace.iteratePrefixMapping(false);
-                    it.hasNext(); ) {
-                PrefixMapping mapping = (PrefixMapping)it.next();
-                String pre = mapping.getPrefix();
-                String uri = mapping.getNamespaceURI();
-                if(StringUtil.hasValue(pre)) {
-                    buffer.append(" xmlns:").append(pre);
-                } else {
-                    buffer.append(" xmlns");
-                }
-                buffer.append("=\"").append(uri).append("\"");
-            }
+            appendPrefixMappingString(buffer, getCurrentNS());
+            appendPrefixMappingString(buffer, _name.getParentSpace());
         }
         List additionalAttributes = getProcesstimeProperties();
         for(Iterator it = additionalAttributes.iterator(); it.hasNext(); ) {
@@ -152,7 +221,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         QName qName = _name.getQName();
         if(needsCloseElement(qName)) {
             StringBuffer buffer = new StringBuffer("</");
-            String prefix = _name.getPrefix();
+            String prefix = getResolvedPrefix(_name);
             if(StringUtil.hasValue(prefix)) {
                 buffer.append(prefix).append(":");
             }

@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.engine.specification;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +35,7 @@ public class NamespaceImpl implements Namespace {
     private static Log LOG = LogFactory.getLog(NamespaceImpl.class);
     
     private Namespace _parentSpace;
-    private Map _mappings;
+    private List _mappings;
     
     public void setParentSpace(Namespace parent) {
         if(parent == null) {
@@ -54,11 +54,10 @@ public class NamespaceImpl implements Namespace {
         }
 	    synchronized(this) {
 	        if(_mappings == null) {
-	            _mappings = new HashMap();
+	            _mappings = new ArrayList();
 	        }
-            String prefix = mapping.getPrefix();
-	        if(_mappings.containsKey(prefix) == false) {
-	            _mappings.put(prefix, mapping);
+	        if(_mappings.contains(mapping) == false) {
+	            _mappings.add(mapping);
 	            mapping.setNamespace(this);
 	        } else {
                 if(LOG.isWarnEnabled()) {
@@ -74,21 +73,15 @@ public class NamespaceImpl implements Namespace {
         if(test == null) {
             throw new IllegalArgumentException();
         }
-        PrefixMapping ret = null;
-        if(_mappings != null) {
-            ret = (PrefixMapping)_mappings.get(test);
-            if(ret != null) {
-                return ret;
+        for(Iterator it = iteratePrefixMapping(all); it.hasNext(); ) {
+            PrefixMapping mapping = (PrefixMapping)it.next();
+            String value = fromPrefix ? 
+                    mapping.getPrefix() : mapping.getNamespaceURI();
+            if(test.equals(value)) {
+                return mapping;
             }
         }
-        if(all && _parentSpace != null) {
-            if(fromPrefix) {
-                ret = _parentSpace.getMappingFromPrefix(test, true);
-            } else {
-                ret = _parentSpace.getMappingFromURI(test, true);
-            }
-        }
-        return ret;
+        return null;
     }
     
     public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
@@ -111,7 +104,7 @@ public class NamespaceImpl implements Namespace {
             return new AllNamespaceIterator(this);
         }
         if(_mappings != null) {
-            return _mappings.values().iterator();
+            return _mappings.iterator();
         }
         return NullIterator.getInstance();
     }

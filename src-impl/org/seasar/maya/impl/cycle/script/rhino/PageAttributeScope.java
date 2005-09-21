@@ -150,7 +150,7 @@ public class PageAttributeScope extends ScriptableObject
     }
     
     public String getClassName() {
-        return "PageScope";
+        return "pageScope";
     }
     
     public boolean has(String name, Scriptable start) {

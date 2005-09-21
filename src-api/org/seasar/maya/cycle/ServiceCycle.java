@@ -116,13 +116,13 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * 「page」スコープオブジェクトの設定。
      * @param page 「page」スコープ。 
      */
-    void setPageScope(AttributeScope page);
+    void setPage(AttributeScope page);
     
     /**
      * 「page」スコープオブジェクトの取得。
      * @return 「page」スコープ。 
      */
-    AttributeScope getPageScope();
+    AttributeScope getPage();
 
     /**
      * 現在処理中のテンプレート上ノード情報を設定する。

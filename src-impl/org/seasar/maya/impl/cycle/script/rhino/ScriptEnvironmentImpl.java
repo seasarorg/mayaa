@@ -99,12 +99,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public void initScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setPageScope(null);
+        cycle.setPage(null);
     }
 
     public void startScope(Map variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getPageScope();
+        AttributeScope scope = cycle.getPage();
         Scriptable parent;
         if(scope == null) {
             parent = (Scriptable)_parent.get();
@@ -134,21 +134,21 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 ScriptableObject.putProperty(pageScope, name, variable);
             }
         }
-        cycle.setPageScope(pageScope);
+        cycle.setPage(pageScope);
     }
 
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getPageScope();
+        AttributeScope scope = cycle.getPage();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
             Scriptable current = pageScope.getParentScope();
             if(current instanceof PageAttributeScope) {
                 PageAttributeScope parentScope = (PageAttributeScope)current;
-                cycle.setPageScope(parentScope);
+                cycle.setPage(parentScope);
                 return;
             } else if(current != null) {
-                cycle.setPageScope(null);
+                cycle.setPage(null);
                 return;
             }
         }

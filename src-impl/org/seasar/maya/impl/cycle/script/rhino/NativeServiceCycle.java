@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2004-2005 the Seasar Foundation and the Others.
  * 
@@ -68,7 +69,16 @@ public class NativeServiceCycle extends NativeJavaObject {
         Set set = new HashSet();
         for(Iterator it = _cycle.iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope attrs = (AttributeScope)it.next();
-        	set.add(attrs.getScopeName());
+            String scopeName = attrs.getScopeName();
+            if(set.contains(scopeName) == false) {
+                set.add(scopeName);
+            }
+            for(Iterator kt = attrs.iterateAttributeNames(); kt.hasNext(); ) {
+                Object attrName = kt.next();
+                if(set.contains(attrName) == false) {
+                    set.add(attrName);
+                }
+            }
         }
         Object[] ids = super.getIds();
         for(int i = 0; i < ids.length; i++) {
@@ -81,7 +91,7 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
     
     public String getClassName() {
-        return "ServiceCycle";
+        return "serviceCycle";
     }
 
 }

@@ -38,7 +38,7 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public abstract class AbstractServiceCycle implements ServiceCycle {
 
-    private AttributeScope _pageScope;
+    private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
@@ -110,12 +110,12 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         throw new ScopeNotFoundException(scopeName);
     }
 
-    public void setPageScope(AttributeScope page) {
-        _pageScope = page;
+    public void setPage(AttributeScope page) {
+        _page = page;
     }
     
-    public AttributeScope getPageScope() {
-        return _pageScope;
+    public AttributeScope getPage() {
+        return _page;
     }
 
     public void setOriginalNode(NodeTreeWalker originalNode) {
@@ -171,8 +171,8 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         public Object next() {
             AttributeScope scope = null;
             if(_current == null) {
-                if(_pageScope != null) {
-                    scope = _pageScope;
+                if(_page != null) {
+                    scope = _page;
                     _current = SCOPE_PAGE;
                 } else if(_it.hasNext()) {
                     scope = (AttributeScope)_it.next();

@@ -24,7 +24,6 @@ import org.seasar.maya.impl.engine.specification.QNameImpl;
 public interface CONST_IMPL {
 
     String CHECK_TIMESTAMP = "checkTimestamp";
-    String OUTPUT_WHITE_SPACE = "outputWhitespace";
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
     

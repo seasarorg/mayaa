@@ -15,11 +15,16 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
+import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -34,15 +39,17 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InsertProcessor
-        extends AbstractAttributableProcessor	implements CONST_IMPL {
+public class InsertProcessor extends TemplateProcessorSupport
+        implements InformalPropertyAcceptable, CONST_IMPL {
 
 	private static final long serialVersionUID = -1240398725406503403L;
-	private String _path;
+	
+    private String _path;
     private String _name;
     private Page _page;
     private String _suffix;
     private String _extension;
+    private List _attributes;
     
     // MLD property, required
     public void setPath(String path) {
@@ -52,6 +59,21 @@ public class InsertProcessor
     // MLD property
     public void setName(String name) {
         _name = name;
+    }
+    
+    // MLD method
+    public void addInformalProperty(ProcessorProperty attr) {
+        if(_attributes == null) {
+            _attributes = new ArrayList();
+        }
+        _attributes.add(attr);
+    }
+    
+    public List getInformalProperties() {
+        if(_attributes == null) {
+            _attributes = new ArrayList();
+        }
+        return _attributes;
     }
 
     protected void saveToCycle(Page page) {
@@ -146,7 +168,7 @@ public class InsertProcessor
         }
     }
     
-	protected ProcessStatus writeStartElement() {
+    public ProcessStatus doStartProcess() {
         synchronized(this) {
             preparePage();
         }
@@ -169,8 +191,5 @@ public class InsertProcessor
         }
         return ret;
     }
-    
-	protected void writeEndElement() {
-	}
     
 }

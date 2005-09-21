@@ -17,7 +17,6 @@
 		</errorHandler>
 		<parameter name="defaultSpecification" value="/default.maya"/>
 		<parameter name="checkTimestamp" value="true"/>
-		<parameter name="outputWhitespace" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 	</engine>
@@ -29,7 +28,9 @@
 		<parameter name="wrapFactory" value="org.seasar.maya.impl.cycle.script.rhino.WrapFactoryImpl"/>
 	</scriptEnvironment>
 	
-	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl"/>
+	<specificationBuilder class="org.seasar.maya.impl.builder.SpecificationBuilderImpl">
+		<parameter name="outputWhitespace" value="true"/>
+	</specificationBuilder>
 
 	<libraryManager class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
 		<source class="org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
@@ -64,6 +65,7 @@
 			<parameter name="reportUnresolvedID" value="true"/>
 		</resolver>
 		<resolver class="org.seasar.maya.impl.builder.injection.XPathMatchesInjectionResolver"/>
+		<parameter name="outputWhitespace" value="true"/>
 	</templateBuilder>
 	
 </service>

@@ -115,9 +115,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 }
                 Scriptable standard = getStandardObjects();
                 parent = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, getStandardObjects(), cycle, ServiceCycle.class);
-                Scriptable packs = (Scriptable)standard.get("Packages", standard);
-                parent.setPrototype(packs);
+                        cx, standard, cycle, ServiceCycle.class);
                 Context.exit();
                 _parent.set(parent);
             }

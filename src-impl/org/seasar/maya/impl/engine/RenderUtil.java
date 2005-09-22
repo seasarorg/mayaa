@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
@@ -87,7 +88,8 @@ public class RenderUtil {
     }
 
     // main rendering method
-    public static ProcessStatus render(TemplateProcessor current) {
+    public static ProcessStatus render(
+            Page topLevelPage, TemplateProcessor current) {
         if(current == null) {
             throw new IllegalArgumentException();
         }
@@ -97,7 +99,7 @@ public class RenderUtil {
         try { 
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
-        	startRet = current.doStartProcess();
+        	startRet = current.doStartProcess(topLevelPage);
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
@@ -116,7 +118,8 @@ public class RenderUtil {
                         ProcessorTreeWalker child = current.getChildProcessor(i);
                         if(child instanceof TemplateProcessor) {
                             TemplateProcessor childProc = (TemplateProcessor)child;
-                            final ProcessStatus childRet = render(childProc);
+                            final ProcessStatus childRet = 
+                                render(topLevelPage, childProc);
                             if(childRet == SKIP_PAGE) {
                                 return SKIP_PAGE;
                             }
@@ -135,7 +138,7 @@ public class RenderUtil {
                                     isDuplicated(parentProc)) {
                                 saveToCycle(parentProc);
                                 parentProc.doEndProcess();
-                                parentProc.doStartProcess();
+                                parentProc.doStartProcess(null);
                         	}
                         }
                     }
@@ -163,12 +166,13 @@ public class RenderUtil {
     }
 
     // Rendering entry point
-    public static ProcessStatus renderChildren(ProcessorTreeWalker root) {
+    public static ProcessStatus renderChildren(
+            Page topLevelPage, ProcessorTreeWalker root) {
         for(int i = 0; i < root.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = root.getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor childProc = (TemplateProcessor)child;
-                final ProcessStatus childRet = render(childProc);
+                final ProcessStatus childRet = render(topLevelPage, childProc);
                 if(childRet == SKIP_PAGE) {
                     return SKIP_PAGE;
                 }

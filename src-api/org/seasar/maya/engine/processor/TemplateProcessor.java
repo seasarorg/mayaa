@@ -18,6 +18,7 @@ package org.seasar.maya.engine.processor;
 
 import java.io.Serializable;
 
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
@@ -30,10 +31,11 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、
      * このメソッドで出力する。
+     * @param topLevelPage 描画トップレベルのページ。
      * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
      * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
      */
-    ProcessStatus doStartProcess();
+    ProcessStatus doStartProcess(Page topLevelPage);
 
     /**
      * 閉じタグの出力。

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -73,7 +74,7 @@ public class ForProcessor extends TemplateProcessorSupport
         return ObjectUtil.booleanValue(_test.getValue().execute(), false);
 	}
 	
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
     	_counter.set(new Integer(0));
         if(_init != null) {
     		_init.getValue().execute();

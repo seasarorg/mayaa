@@ -62,7 +62,6 @@ public class TemplateErrorHandler  implements ErrorHandler {
             throw new IllegalArgumentException();
         }
         CycleUtil.setAttribute(THROWABLE, t, ServiceCycle.SCOPE_REQUEST);
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
         try {
             for(Class throwableClass = t.getClass(); 
             		throwableClass != null; 
@@ -71,9 +70,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
                 try {
                     Engine engine = EngineUtil.getEngine();
                 	Page page = engine.getPage(pageName);
-                    cycle.setRenderingPage(page);
                     page.doPageRender("", _extension);
-                    cycle.setRenderingPage(null);
                     if(LOG.isErrorEnabled()) {
                         String msg = StringUtil.getMessage(
                                 TemplateErrorHandler.class, 1, 

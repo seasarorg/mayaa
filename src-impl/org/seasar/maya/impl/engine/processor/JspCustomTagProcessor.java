@@ -29,6 +29,7 @@ import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -146,7 +147,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         throw new IllegalArgumentException();
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_tagClass == null) {
             throw new IllegalStateException();
         }

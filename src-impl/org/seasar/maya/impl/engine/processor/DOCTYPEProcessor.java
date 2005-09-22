@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -57,7 +58,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
     	return _systemID;
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         StringBuffer docTypeDecl = new StringBuffer(128);
         docTypeDecl.append("<!DOCTYPE ").append(_name);
         if(StringUtil.hasValue(_publicID)) {

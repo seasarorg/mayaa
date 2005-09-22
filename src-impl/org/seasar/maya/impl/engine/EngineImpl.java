@@ -225,10 +225,8 @@ public class EngineImpl extends SpecificationImpl
                     String requestedSuffix = request.getRequestedSuffix();
                     String extension = request.getExtension();
                     Page page = getPage(pageName);
-                    cycle.setRenderingPage(page);
                     ProcessStatus ret = page.doPageRender(
                     		requestedSuffix, extension);
-                    cycle.setRenderingPage(null);
                     saveToCycle();
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();

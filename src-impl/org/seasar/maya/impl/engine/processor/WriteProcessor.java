@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -39,7 +40,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
     	_default = defaultValue;
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value != null) {
             String ret = (String)_value.getValue().execute();
             if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -42,7 +43,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         _evalBodyInclude = evalBodyInclude;
     }
 
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_evalBodyInclude) {
             return EVAL_BODY_INCLUDE;
         }

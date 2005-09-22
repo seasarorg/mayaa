@@ -51,8 +51,9 @@ public interface Template
 
     /**
      * テンプレートをレンダリングする。
+     * @param topLevelPage  描画トップレベルのページ。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
-    ProcessStatus doTemplateRender();
+    ProcessStatus doTemplateRender(Page topLevelPage);
     
 }

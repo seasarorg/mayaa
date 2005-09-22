@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
 
@@ -35,7 +36,7 @@ public class IfProcessor extends TemplateProcessorSupport {
     	_test = test;
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_test == null) {
         	throw new IllegalStateException();
         }

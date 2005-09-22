@@ -95,10 +95,10 @@ public class TemplateImpl extends SpecificationImpl
         response.setContentType(contentType);
     }
     
-    public ProcessStatus doTemplateRender() {
+    public ProcessStatus doTemplateRender(Page topLevelPage) {
         RenderUtil.saveToCycle(this);
         prepareCycle();
-        ProcessStatus ret = RenderUtil.renderChildren(this);
+        ProcessStatus ret = RenderUtil.renderChildren(topLevelPage, this);
         return ret;
     }
     

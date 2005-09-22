@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.QNameable;
@@ -57,7 +58,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         _value = value;
     }
 
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value == null) {
             throw new IllegalStateException();
         }

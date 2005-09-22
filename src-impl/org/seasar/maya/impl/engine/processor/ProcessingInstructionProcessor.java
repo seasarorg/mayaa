@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -49,7 +50,7 @@ public class ProcessingInstructionProcessor
         return _data;
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         StringBuffer processingInstruction = new StringBuffer(128);
         processingInstruction.append("<?").append(_target);
         if(StringUtil.hasValue(_data)) {

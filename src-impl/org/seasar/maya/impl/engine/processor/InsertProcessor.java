@@ -115,10 +115,18 @@ public class InsertProcessor extends TemplateProcessorSupport
         return doRender;
     }
     
-    protected ProcessStatus insert(
+    protected ProcessStatus insert(boolean findSuper,
             Page page, String suffix, String extension) {
         if(page == null) {
             throw new IllegalStateException();
+        }
+        Page topLevelPage = page;
+        if(findSuper) {
+            while(page.getSuperPage() != null) {
+                suffix = page.getSuperSuffix();
+                extension = page.getSuperExtension();
+                page = page.getSuperPage();
+            }
         }
         while(page != null) {
             boolean maya = "maya".equals(extension);
@@ -144,7 +152,7 @@ public class InsertProcessor extends TemplateProcessorSupport
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
                 ProcessStatus ret = SKIP_BODY; 
                 if(maya == false) {
-                    ret = RenderUtil.render(insertRoot); 
+                    ret = RenderUtil.render(topLevelPage, insertRoot); 
                 }
                 saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
@@ -168,24 +176,26 @@ public class InsertProcessor extends TemplateProcessorSupport
         }
     }
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         synchronized(this) {
             preparePage();
         }
         Page page = _page;
         String suffix = _suffix;
         String extension = _extension;
+        boolean findSuper = true;
         if(page == null) {
         	ServiceCycle cycle = CycleUtil.getServiceCycle();
-            page = cycle.getRenderingPage();
+            page = topLevelPage;
             Request request = cycle.getRequest();
             suffix = request.getRequestedSuffix();
             extension = request.getExtension();
+            findSuper = false;
         }
         if(page == null) {
             throw new IllegalStateException();
         }
-        ProcessStatus ret = insert(page, suffix, extension);
+        ProcessStatus ret = insert(findSuper, page, suffix, extension);
         if(ret == EVAL_PAGE) {
             ret = SKIP_BODY;
         }

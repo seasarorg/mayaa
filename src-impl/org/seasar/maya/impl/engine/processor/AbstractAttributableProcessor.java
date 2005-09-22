@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -94,7 +95,7 @@ public abstract class AbstractAttributableProcessor
     
     protected abstract void writeEndElement();
     
-    public ProcessStatus doStartProcess() {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_childEvaluation) {
             return EVAL_BODY_BUFFERED;
         }

@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
@@ -25,7 +26,7 @@ public class CDATAProcessor extends TemplateProcessorSupport {
     
 	private static final long serialVersionUID = -4267623139201513906L;
 
-	public ProcessStatus doStartProcess() {
+	public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("<![CDATA[");
         return EVAL_BODY_INCLUDE;

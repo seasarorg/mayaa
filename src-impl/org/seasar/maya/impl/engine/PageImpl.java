@@ -233,7 +233,7 @@ public class PageImpl extends SpecificationImpl
             	}
             }
             Template template = page.getTemplate(suffix, extension);
-            ret = template.doTemplateRender();
+            ret = template.doTemplateRender(this);
             saveToCycle();
         }
         SpecificationUtil.execEvent(page, QM_AFTER_RENDER);

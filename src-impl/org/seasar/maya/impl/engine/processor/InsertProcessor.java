@@ -162,8 +162,7 @@ public class InsertProcessor extends TemplateProcessorSupport
             Page topLevelPage, Template template) {
         DoRenderProcessor doRender = findDoRender(template, _name);
         if(doRender == null) {
-            String systemID = template.getSource().getSystemID();
-            throw new DoRenderNotFoundException(systemID, _name);
+            throw new DoRenderNotFoundException(_name);
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);

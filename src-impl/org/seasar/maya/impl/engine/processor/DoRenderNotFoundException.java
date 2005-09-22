@@ -24,16 +24,10 @@ public class DoRenderNotFoundException extends MayaException {
 
 	private static final long serialVersionUID = -8123490579795977124L;
     
-    private String _templateSystemID;
     private String _name;
     
-    public DoRenderNotFoundException(String templateSystemID, String name) {
-        _templateSystemID = templateSystemID;
+    public DoRenderNotFoundException(String name) {
         _name = name;
-    }
-    
-    public String getTemplateSystemID() {
-        return _templateSystemID;
     }
     
     public String getName() {
@@ -41,7 +35,7 @@ public class DoRenderNotFoundException extends MayaException {
     }
     
     protected String[] getMessageParams() {
-        return new String[] { _templateSystemID, _name };
+        return new String[] { _name };
     }
     
 }

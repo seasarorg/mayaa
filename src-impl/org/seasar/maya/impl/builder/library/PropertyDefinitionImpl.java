@@ -123,18 +123,14 @@ public class PropertyDefinitionImpl
         return _finalValue;
     }
     
-    protected String getMessage(int index) {
-        String[] params = new String[] {
-                getProcessorDefinition().getName(), getName() };
-        return StringUtil.getMessage(getClass(), index, params);
-    }
-    
     protected Class getPropertyType() {
         Class processorClass = getProcessorDefinition().getProcessorClass();
         Class ret = ObjectUtil.getPropertyType(processorClass, getName());
         if(ret == null) {
             if(LOG.isWarnEnabled()) {
-                LOG.warn(getMessage(0));
+                String[] params = new String[] {
+                        getProcessorDefinition().getName(), getName() };
+                LOG.warn(StringUtil.getMessage(getClass(), 0, params));
             }
         }
         return ret;

@@ -109,8 +109,11 @@ public class EqualsIDInjectionResolver
 	        }
             if(_reportResolvedID) {
                 if(LOG.isWarnEnabled()) {
+                    String systemID = original.getSystemID();
+                    String lineNumber = Integer.toString(original.getLineNumber());
                     String msg = StringUtil.getMessage(
-                            EqualsIDInjectionResolver.class, 0, new String[] { id });
+                            EqualsIDInjectionResolver.class, 0, 
+                            new String[] { id, systemID, lineNumber });
                     LOG.warn(msg);
                 }
             }

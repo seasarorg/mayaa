@@ -21,14 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -196,49 +194,21 @@ public class PageImpl extends SpecificationImpl
         }
         return template;
     }
-    
-    protected void saveToCycle() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setOriginalNode(this);
-        cycle.setInjectedNode(this);
-    }
 
     public ProcessStatus doPageRender(
     		String requestedSuffix, String extension) {
-        saveToCycle();
-        Page page = this;
-        String suffix = null;
-        while(page.getSuperPage() != null) {
-            suffix = page.getSuperSuffix();
-            extension = page.getSuperExtension();
-            page = page.getSuperPage();
-        }
-        boolean maya = "maya".equals(extension);
-        if(maya) {
-            SourceDescriptor source = getSource();
-            if(source.exists() == false) {
-                throw new PageNotFoundException(_pageName, extension);
-            }
-        }
-        SpecificationUtil.startScope(null);
-        SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-        ProcessStatus ret = null;
-        if(maya == false) {
-            if(StringUtil.isEmpty(suffix)) {
-            	if(StringUtil.isEmpty(requestedSuffix)) {
-	                CompiledScript script = getSuffixScript();
-	                suffix = (String)script.execute();
-            	} else {
-            		suffix = requestedSuffix;
-            	}
-            }
-            Template template = page.getTemplate(suffix, extension);
-            ret = template.doTemplateRender(this);
-            saveToCycle();
-        }
-        SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-        SpecificationUtil.endScope();
-        return ret;
+        return RenderUtil.renderPage(true, this, null, 
+                this, requestedSuffix, extension);
     }
 
+    // TemplateRenderer implements ----------------------------------
+
+    public ProcessStatus renderTemplate(
+            Page topLevelPage, Template template) {
+        if(topLevelPage == null || template == null) {
+            throw new IllegalArgumentException();
+        }
+        return template.doTemplateRender(topLevelPage);
+    }
+    
 }

@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.seasar.maya.cycle.Request;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.TemplateRenderer;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -30,17 +32,16 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
-import org.seasar.maya.impl.engine.PageNotFoundException;
+import org.seasar.maya.impl.engine.RenderNotCompletedException;
 import org.seasar.maya.impl.engine.RenderUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class InsertProcessor extends TemplateProcessorSupport
-        implements InformalPropertyAcceptable, CONST_IMPL {
+        implements InformalPropertyAcceptable, 
+            TemplateRenderer, CONST_IMPL {
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	
@@ -75,12 +76,54 @@ public class InsertProcessor extends TemplateProcessorSupport
         }
         return _attributes;
     }
-
-    protected void saveToCycle(Page page) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setOriginalNode(page);
-        cycle.setInjectedNode(page);
+    
+    protected void preparePage() {
+        if(_page == null && StringUtil.hasValue(_path)) {
+            Engine engine = EngineUtil.getEngine();
+            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+            _page = engine.getPage(pagePath[0]);  
+            _suffix = pagePath[1];
+            _extension = pagePath[2];
+        }
     }
+    
+    public ProcessStatus doStartProcess(Page topLevelPage) {
+        synchronized(this) {
+            preparePage();
+        }
+        Page renderPage = _page;
+        String requestedSuffix = _suffix;
+        String extension = _extension;
+        boolean findSuper = true;
+        if(renderPage == null) {
+        	ServiceCycle cycle = CycleUtil.getServiceCycle();
+            renderPage = topLevelPage;
+            Request request = cycle.getRequest();
+            requestedSuffix = request.getRequestedSuffix();
+            extension = request.getExtension();
+            findSuper = false;
+        }
+        if(renderPage == null) {
+            throw new IllegalStateException();
+        }
+        ProcessStatus ret = RenderUtil.renderPage(
+                findSuper, this, getVariables(),
+                renderPage, requestedSuffix, extension);
+        if(ret == null) {
+            Response response = CycleUtil.getResponse();
+            if(response.getWriter().isDirty() == false) {
+                throw new RenderNotCompletedException(
+                        renderPage.getPageName(), extension);
+            }
+        }
+        if(ret == EVAL_PAGE) {
+            ret = SKIP_BODY;
+        }
+        return ret;
+    }
+    
+    // TemplateRenderer implements ----------------------------------
 
     protected DoRenderProcessor findDoRender(
             ProcessorTreeWalker proc, String name) {
@@ -115,91 +158,18 @@ public class InsertProcessor extends TemplateProcessorSupport
         return doRender;
     }
     
-    protected ProcessStatus insert(boolean findSuper,
-            Page page, String suffix, String extension) {
-        if(page == null) {
-            throw new IllegalStateException();
+    public ProcessStatus renderTemplate(
+            Page topLevelPage, Template template) {
+        DoRenderProcessor doRender = findDoRender(template, _name);
+        if(doRender == null) {
+            throw new DoRenderNotFoundException(_name);
         }
-        Page topLevelPage = page;
-        if(findSuper) {
-            while(page.getSuperPage() != null) {
-                suffix = page.getSuperSuffix();
-                extension = page.getSuperExtension();
-                page = page.getSuperPage();
-            }
-        }
-        while(page != null) {
-            boolean maya = "maya".equals(extension);
-            DoRenderProcessor doRender = null;
-            String pageName = page.getPageName();
-            if(maya) {
-                SourceDescriptor source = page.getSource();
-                if(source.exists() == false) {
-                    throw new PageNotFoundException(pageName, extension);
-                }
-            } else {
-                Template template = page.getTemplate(suffix, extension);
-                if(template == null) {
-                    throw new PageNotFoundException(pageName, extension);
-                }
-                doRender = findDoRender(template, _name);
-            }
-            if(maya || doRender != null) {
-                TemplateProcessor insertRoot = getRenderRoot(doRender);
-                doRender.pushInsertProcessor(this);
-                saveToCycle(page);
-                SpecificationUtil.startScope(getVariables());
-                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-                ProcessStatus ret = SKIP_BODY; 
-                if(maya == false) {
-                    ret = RenderUtil.render(topLevelPage, insertRoot); 
-                }
-                saveToCycle(page);
-                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-                SpecificationUtil.endScope();
-                doRender.popInsertProcessor();
-                return ret;
-            }
-            page = page.getSuperPage();
-        }
-        throw new DoRenderNotFoundException(_name);
-    }
-    
-    protected void preparePage() {
-        if(_page == null && StringUtil.hasValue(_path)) {
-            Engine engine = EngineUtil.getEngine();
-            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-            _page = engine.getPage(pagePath[0]);  
-            _suffix = pagePath[1];
-            _extension = pagePath[2];
-        }
-    }
-    
-    public ProcessStatus doStartProcess(Page topLevelPage) {
-        synchronized(this) {
-            preparePage();
-        }
-        Page page = _page;
-        String suffix = _suffix;
-        String extension = _extension;
-        boolean findSuper = true;
-        if(page == null) {
-        	ServiceCycle cycle = CycleUtil.getServiceCycle();
-            page = topLevelPage;
-            Request request = cycle.getRequest();
-            suffix = request.getRequestedSuffix();
-            extension = request.getExtension();
-            findSuper = false;
-        }
-        if(page == null) {
-            throw new IllegalStateException();
-        }
-        ProcessStatus ret = insert(findSuper, page, suffix, extension);
-        if(ret == EVAL_PAGE) {
-            ret = SKIP_BODY;
-        }
+        TemplateProcessor insertRoot = getRenderRoot(doRender);
+        doRender.pushInsertProcessor(this);
+        ProcessStatus ret = 
+            RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot); 
+        doRender.popInsertProcessor();
         return ret;
-    }
-    
+    }    
+
 }

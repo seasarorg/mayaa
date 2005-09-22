@@ -26,7 +26,8 @@ import org.seasar.maya.engine.specification.Specification;
  * 各ページのモデルであり、リクエストに対してはステートレスなオブジェクトである。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Page extends Specification, Serializable {
+public interface Page 
+        extends Serializable, Specification, TemplateRenderer {
 
     /**
      * 継承元ページの取得。

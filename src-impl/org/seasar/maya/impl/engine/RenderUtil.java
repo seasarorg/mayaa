@@ -15,23 +15,30 @@
  */
 package org.seasar.maya.impl.engine;
 
+import java.util.Map;
+
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
+import org.seasar.maya.engine.TemplateRenderer;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RenderUtil {
+public class RenderUtil implements CONST_IMPL {
 
     private static final ProcessStatus SKIP_BODY = 
             TemplateProcessor.SKIP_BODY;
@@ -64,7 +71,8 @@ public class RenderUtil {
         		((IterationProcessor)current).isIteration();
     }
 
-    private static IterationProcessor getIteration(TemplateProcessor current) {
+    private static IterationProcessor getIteration(
+            TemplateProcessor current) {
         return (IterationProcessor)current;
     }
 
@@ -88,7 +96,7 @@ public class RenderUtil {
     }
 
     // main rendering method
-    public static ProcessStatus render(
+    public static ProcessStatus renderTemplateProcessor(
             Page topLevelPage, TemplateProcessor current) {
         if(current == null) {
             throw new IllegalArgumentException();
@@ -117,9 +125,10 @@ public class RenderUtil {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
                         ProcessorTreeWalker child = current.getChildProcessor(i);
                         if(child instanceof TemplateProcessor) {
-                            TemplateProcessor childProc = (TemplateProcessor)child;
+                            TemplateProcessor childProc =
+                                (TemplateProcessor)child;
                             final ProcessStatus childRet = 
-                                render(topLevelPage, childProc);
+                                renderTemplateProcessor(topLevelPage, childProc);
                             if(childRet == SKIP_PAGE) {
                                 return SKIP_PAGE;
                             }
@@ -133,7 +142,8 @@ public class RenderUtil {
                         afterRet = getIteration(current).doAfterChildProcess();
                         ProcessorTreeWalker parent = current.getParentProcessor();
                         if(parent instanceof TemplateProcessor) {
-                            TemplateProcessor parentProc = (TemplateProcessor)parent;
+                            TemplateProcessor parentProc =
+                                (TemplateProcessor)parent;
                         	if(afterRet == EVAL_BODY_AGAIN &&
                                     isDuplicated(parentProc)) {
                                 saveToCycle(parentProc);
@@ -166,13 +176,14 @@ public class RenderUtil {
     }
 
     // Rendering entry point
-    public static ProcessStatus renderChildren(
+    public static ProcessStatus renderProcessorTree(
             Page topLevelPage, ProcessorTreeWalker root) {
         for(int i = 0; i < root.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = root.getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor childProc = (TemplateProcessor)child;
-                final ProcessStatus childRet = render(topLevelPage, childProc);
+                final ProcessStatus childRet = 
+                    renderTemplateProcessor(topLevelPage, childProc);
                 if(childRet == SKIP_PAGE) {
                     return SKIP_PAGE;
                 }
@@ -195,6 +206,55 @@ public class RenderUtil {
             cycle.setOriginalNode(temp);
             cycle.setInjectedNode(temp);
         }
+    }
+    
+    private static void saveToCycle(Page page) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setOriginalNode(page);
+        cycle.setInjectedNode(page);
+    }
+
+    public static ProcessStatus renderPage(
+            boolean findSuper, TemplateRenderer renderer, Map variables,
+            Page topLevelPage, String requestedSuffix, String extension) {
+        Page page = topLevelPage;
+        String suffix = null;
+        saveToCycle(topLevelPage);
+        if(findSuper) {
+            while(page.getSuperPage() != null) {
+                suffix = page.getSuperSuffix();
+                extension = page.getSuperExtension();
+                page = page.getSuperPage();
+            }
+        }
+        boolean maya = "maya".equals(extension);
+        if(maya) {
+            SourceDescriptor source = page.getSource();
+            if(source.exists() == false) {
+                String pageName = page.getPageName();
+                throw new PageNotFoundException(pageName, extension);
+            }
+        }
+        saveToCycle(page);
+        SpecificationUtil.startScope(variables);
+        SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
+        ProcessStatus ret = null;
+        if(maya == false) {
+            if(StringUtil.isEmpty(suffix)) {
+                if(StringUtil.isEmpty(requestedSuffix)) {
+                    CompiledScript script = page.getSuffixScript();
+                    suffix = (String)script.execute();
+                } else {
+                    suffix = requestedSuffix;
+                }
+            }
+            Template template = page.getTemplate(suffix, extension);
+            ret = renderer.renderTemplate(topLevelPage, template);
+            saveToCycle(page);
+        }
+        SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+        SpecificationUtil.endScope();
+        return ret;
     }
     
 }

@@ -98,7 +98,8 @@ public class TemplateImpl extends SpecificationImpl
     public ProcessStatus doTemplateRender(Page topLevelPage) {
         RenderUtil.saveToCycle(this);
         prepareCycle();
-        ProcessStatus ret = RenderUtil.renderChildren(topLevelPage, this);
+        ProcessStatus ret = 
+            RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
     }
     

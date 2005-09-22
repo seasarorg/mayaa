@@ -40,7 +40,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
     public ProcessStatus doStartProcess(Page topLevelPage) {
         InsertProcessor insert = getInsertProcessor();
         if(insert != null) {
-            return RenderUtil.renderChildren(topLevelPage, insert);
+            return RenderUtil.renderProcessorTree(topLevelPage, insert);
         }
         // direct access to component page.
         return EVAL_BODY_INCLUDE;

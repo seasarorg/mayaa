@@ -200,9 +200,9 @@ public class EngineImpl extends SpecificationImpl
     }
     
     protected void prepareResponse(Response response) {
-        response.addHeader("Pragma", "no-cache");
-        response.addHeader("Cache-Control", "no-cache");
-        response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+//        response.addHeader("Pragma", "no-cache");
+//        response.addHeader("Cache-Control", "no-cache");
+//        response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
     }
     
     protected void saveToCycle() {

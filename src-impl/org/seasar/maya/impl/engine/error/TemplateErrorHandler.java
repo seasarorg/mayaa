@@ -39,7 +39,10 @@ public class TemplateErrorHandler  implements ErrorHandler {
     private String _folder = "/"; 
     private String _extension = "html";
     
-    private String getPageName(Class throwableClass) {
+    protected String getPageName(Class throwableClass) {
+        if(throwableClass == null) {
+            throw new IllegalArgumentException();
+        }
         String name = throwableClass.getName();
     	return StringUtil.preparePath(_folder) + StringUtil.preparePath(name);
     }

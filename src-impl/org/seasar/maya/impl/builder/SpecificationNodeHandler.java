@@ -80,7 +80,7 @@ public class SpecificationNodeHandler
         _namespace.addPrefixMapping(new PrefixMappingImpl("", URI_HTML));
     }
 
-    protected void stackNamespace() {
+    protected void pushNamespace() {
         Namespace parentSpace = _namespace;
         _namespace = new NamespaceImpl();
         _namespace.setParentSpace(parentSpace);
@@ -97,7 +97,7 @@ public class SpecificationNodeHandler
         _charactersBuffer = new StringBuffer(128);
         _current = _specification;
         initNamespace();
-        stackNamespace();
+        pushNamespace();
     }
 
     public void startPrefixMapping(String prefix, String uri) {
@@ -133,6 +133,29 @@ public class SpecificationNodeHandler
         cycle.setOriginalNode(originalNode);
     }
     
+    protected boolean checkAttribute(String qName, String value) {
+    	// workaround for XML parser(NekoHTML?)'s bug.
+    	if(StringUtil.isEmpty(qName)) {
+    		throw new IllegalArgumentException();
+    	}
+    	String prefix;
+    	if("xmlns".equals(qName)) {
+            prefix = "";
+    	} else if(qName.startsWith("xmlns:")) {
+    		prefix = qName.substring(6);
+    	} else {
+    		return true;
+    	}
+    	if(_namespace.getMappingFromPrefix(prefix, false) == null) {
+    		startPrefixMapping(prefix, value);
+    	}
+        if(LOG.isWarnEnabled()) {
+        	LOG.warn(StringUtil.getMessage(SpecificationNodeHandler.class, 
+        			0, new String[] { prefix, value }));
+        }
+        return false;
+    }
+    
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
@@ -147,14 +170,17 @@ public class SpecificationNodeHandler
         elementNS.addPrefixMapping(mapping);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
-            QNameable parsedAttrName = 
-                BuilderUtil.parseName(elementNS, attrName);
-            QName attrQName = parsedAttrName.getQName();
-            node.addAttribute(attrQName, attributes.getValue(i));
+            String attrValue = attributes.getValue(i);
+            if(checkAttribute(attrName, attrValue)) {
+	            QNameable parsedAttrName = 
+	                BuilderUtil.parseName(elementNS, attrName);
+	            QName attrQName = parsedAttrName.getQName();
+	            node.addAttribute(attrQName, attrValue);
+            }
         }
         _current = node;
         saveToCycle(_current);
-        stackNamespace();
+        pushNamespace();
     }
 
     public void endElement(String namespaceURI, 

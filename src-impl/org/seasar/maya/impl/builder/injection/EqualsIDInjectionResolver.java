@@ -64,8 +64,11 @@ public class EqualsIDInjectionResolver
 		return null;
     }
 
-    private SpecificationNode getEqualsIDNode(
+    protected SpecificationNode getEqualsIDNode(
             SpecificationNode node, String id) {
+        if(node == null || StringUtil.isEmpty(id)) {
+            throw new IllegalArgumentException();
+        }
         for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
             SpecificationNode child = (SpecificationNode)it.next();
             if(id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
@@ -90,9 +93,11 @@ public class EqualsIDInjectionResolver
             SpecificationNode injected = null;
             while(spec != null) {
                 SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
-                injected = getEqualsIDNode(maya, id);
-                if(injected != null) {
-                    break;
+                if(maya != null) {
+                    injected = getEqualsIDNode(maya, id);
+                    if(injected != null) {
+                        break;
+                    }
                 }
                 spec = EngineUtil.getParentSpecification(spec);
             }

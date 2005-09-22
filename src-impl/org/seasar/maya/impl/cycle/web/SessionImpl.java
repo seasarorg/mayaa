@@ -42,17 +42,17 @@ public class SessionImpl extends AbstractWritableAttributeScope
     private HttpServletRequest _httpRequest;
     private HttpSession _httpSession;
     
-    private void check() {
+    private void check(boolean force) {
         if(_httpRequest == null) {
             throw new IllegalStateException();
         }
         if(_httpSession == null) {
-            _httpSession = _httpRequest.getSession(false);
+            _httpSession = _httpRequest.getSession(force);
         }
     }
     
     public void setUnderlyingObject(Object context) {
-        // underlying object is HttpServletRequest.
+        // When setting, UnderlyingObject is "HttpServletRequest"
         if(context == null || 
                 context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
@@ -61,13 +61,13 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
 
     public Object getUnderlyingObject() {
-        // underlying object is HttpServletRequest.
-        check();
-        return _httpRequest;
+        // When getting, UnderlyingObject is "HttpSession"
+        check(true);
+        return _httpSession;
     }
     
     public String getSessionID() {
-        check();
+        check(false);
         if(_httpSession == null) {
             return null;
         }
@@ -79,7 +79,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
     
     public Iterator iterateAttributeNames() {
-        check();
+        check(false);
         if(_httpSession == null) {
             return NullIterator.getInstance();
         }
@@ -88,7 +88,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
 
     public boolean hasAttribute(String name) {
-        check();
+        check(false);
         if(StringUtil.isEmpty(name) || _httpSession == null) {
             return false;
         }
@@ -102,7 +102,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
 	}
 
     public Object getAttribute(String name) {
-        check();
+        check(false);
         if(StringUtil.isEmpty(name) || _httpSession == null) {
             return null;
         }
@@ -111,18 +111,15 @@ public class SessionImpl extends AbstractWritableAttributeScope
     }
 
     public void setAttribute(String name, Object attribute) {
-        check();
+        check(true);
         if(StringUtil.isEmpty(name)) {
             return;
-        }
-        if(_httpSession == null) {
-            _httpSession = _httpRequest.getSession(true);
         }
         _httpSession.setAttribute(name, attribute);
     }
     
     public void removeAttribute(String name) {
-        check();
+        check(false);
         if(StringUtil.isEmpty(name) || _httpSession == null) {
             return;
         }

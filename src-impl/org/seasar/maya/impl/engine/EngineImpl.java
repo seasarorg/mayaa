@@ -185,7 +185,7 @@ public class EngineImpl extends SpecificationImpl
         t = removeWrapperRuntimeException(t);
         try {
             getErrorHandler().doErrorHandle(t);
-            CycleUtil.getResponse().flush();
+            CycleUtil.getResponse().flushAll();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -237,7 +237,7 @@ public class EngineImpl extends SpecificationImpl
                                     pageName, extension);
                         }
                     }
-                    response.flush();
+                    response.flushAll();
                     service = false;
                 } catch(PageForwarded f) {
                 }

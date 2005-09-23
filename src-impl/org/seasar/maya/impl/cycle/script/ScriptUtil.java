@@ -55,6 +55,12 @@ public class ScriptUtil {
         return compiled;
     }
 
-    
+    public static String getBlockSignedText(String text) {
+        if(StringUtil.isEmpty(text)) {
+            return text;
+        }
+        String blockSign = getScriptEnvironment().getBlockSign();
+        return text = blockSign + "{" + text.trim() + "}"; 
+    }
     
 }

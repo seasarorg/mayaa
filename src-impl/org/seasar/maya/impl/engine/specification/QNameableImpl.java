@@ -42,7 +42,7 @@ public class QNameableImpl extends NamespaceImpl
     }
     
     public String getPrefix() {
-        String namespaceURI = _qName.getNamespaceURI();
+        String namespaceURI = getQName().getNamespaceURI();
 	    for(Iterator it = iteratePrefixMapping(true); it.hasNext(); ) {
 	        PrefixMapping mapping = (PrefixMapping)it.next();
 	        if(namespaceURI.equals(mapping.getNamespaceURI())) {

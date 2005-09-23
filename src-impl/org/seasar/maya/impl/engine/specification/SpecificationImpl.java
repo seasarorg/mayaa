@@ -57,12 +57,12 @@ public class SpecificationImpl
         if(check == false) {
             return false;
         }
-        if(_buildTimestamp == null) {
+        if(getTimestamp() == null) {
             return true;
         }
         Date source = getSource().getTimestamp();
         Date now = new Date();
-        return source.after(_buildTimestamp) && now.after(source);
+        return source.after(getTimestamp()) && now.after(source);
     }
 
     protected void parseSpecification() {
@@ -136,10 +136,10 @@ public class SpecificationImpl
     }
     
     public String getSystemID() {
-        if(_source == null) {
+        if(getSource() == null) {
             return null;
         }
-        return _source.getSystemID();
+        return getSource().getSystemID();
     }
 
     public int getLineNumber() {

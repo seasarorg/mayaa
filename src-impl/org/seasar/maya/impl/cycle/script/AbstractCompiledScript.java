@@ -84,8 +84,7 @@ public abstract class AbstractCompiledScript
         if(usingSource()) {
             return _source.getSystemID();
         }
-        String blockSign = ScriptUtil.getScriptEnvironment().getBlockSign();
-        return blockSign + "{" + _text + "}";
+        return ScriptUtil.getBlockSignedText(_text);
     }
     
     

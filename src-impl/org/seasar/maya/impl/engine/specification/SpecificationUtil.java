@@ -40,28 +40,6 @@ public class SpecificationUtil implements CONST_IMPL {
     private SpecificationUtil() {
     }
 
-    public static Namespace createNamespace() {
-        return new NamespaceImpl();
-    }
-
-    public static QName createQName(String localName) {
-        return createQName(URI_MAYA, localName);
-    }
-
-    public static QName createQName(
-            String namespaceURI, String localName) {
-        return new QNameImpl(namespaceURI, localName);
-    }
-    
-    public static QNameable createQNameable(QName qName) {
-        return new QNameableImpl(qName);
-    }
-    
-    public static SpecificationNode createSpecificationNode(
-            QName qName, String systemID, int lineNumber) {
-        return new SpecificationNodeImpl(qName, systemID, lineNumber);
-    }
-    
     public static String getAttributeValue(
             SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);
@@ -129,15 +107,6 @@ public class SpecificationUtil implements CONST_IMPL {
         return buffer.toString();
     }
 
-    public static String getBlockSignedText(String text) {
-        if(StringUtil.isEmpty(text)) {
-            return text;
-        }
-        String blockSign = 
-            ScriptUtil.getScriptEnvironment().getBlockSign();
-        return text = blockSign + "{" + text.trim() + "}"; 
-    }
-
     public static void initScope() {
         ScriptUtil.getScriptEnvironment().initScope();
     }
@@ -168,7 +137,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 SpecificationNode child = (SpecificationNode)it.next();
                 if(eventName.equals(child.getQName())) {
                     String bodyText = getNodeBodyText(child);
-                    bodyText = getBlockSignedText(bodyText);
+                    bodyText = ScriptUtil.getBlockSignedText(bodyText);
                     execEventScript(bodyText);
                 }
             }
@@ -178,6 +147,30 @@ public class SpecificationUtil implements CONST_IMPL {
                 execEventScript(attrText);
             }
         }
+    }
+
+    // factory methods ----------------------------------------------
+    
+    public static Namespace createNamespace() {
+        return new NamespaceImpl();
+    }
+
+    public static QName createQName(String localName) {
+        return createQName(URI_MAYA, localName);
+    }
+
+    public static QName createQName(
+            String namespaceURI, String localName) {
+        return new QNameImpl(namespaceURI, localName);
+    }
+    
+    public static QNameable createQNameable(QName qName) {
+        return new QNameableImpl(qName);
+    }
+    
+    public static SpecificationNode createSpecificationNode(
+            QName qName, String systemID, int lineNumber) {
+        return new SpecificationNodeImpl(qName, systemID, lineNumber);
     }
     
 }

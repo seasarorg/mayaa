@@ -64,10 +64,10 @@ public class PrefixMappingImpl implements PrefixMapping {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("xmlns");
-        if(StringUtil.hasValue(_prefix)) {
-            buffer.append(":").append(_prefix);
+        if(StringUtil.hasValue(getPrefix())) {
+            buffer.append(":").append(getPrefix());
         }
-        buffer.append("=").append(_namespaceURI);
+        buffer.append("=").append(getNamespaceURI());
         return buffer.toString();
     }
     

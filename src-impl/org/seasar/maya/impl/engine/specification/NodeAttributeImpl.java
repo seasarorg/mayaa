@@ -25,7 +25,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
- * NodeAttributeÇÃé¿ëïÉNÉâÉXÅB
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class NodeAttributeImpl implements NodeAttribute {
@@ -68,7 +67,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
     
     public String getPrefix() {
-        String namespaceURI = _qName.getNamespaceURI();
+        String namespaceURI = getQName().getNamespaceURI();
         PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
         if(mapping != null) {
             return mapping.getPrefix();
@@ -83,8 +82,8 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public Namespace getParentSpace() {
-        if(_node != null) {
-            _node.getParentSpace();
+        if(getNode() != null) {
+            getNode().getParentSpace();
         }
         return null;
     }
@@ -94,23 +93,23 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
-        if(_node != null) {
-            return _node.getMappingFromPrefix(prefix, all);
+        if(getNode() != null) {
+            return getNode().getMappingFromPrefix(prefix, all);
         }
         return null;
     }
     
     public PrefixMapping getMappingFromURI(
             String namespaceURI, boolean all) {
-        if(_node != null) {
-            return _node.getMappingFromURI(namespaceURI, all);
+        if(getNode() != null) {
+            return getNode().getMappingFromURI(namespaceURI, all);
         }
         return null;
     }
 
     public Iterator iteratePrefixMapping(boolean all) {
-        if(_node != null) {
-            _node.iteratePrefixMapping(all);
+        if(getNode() != null) {
+            getNode().iteratePrefixMapping(all);
         }
         return NullIterator.getInstance();
     }

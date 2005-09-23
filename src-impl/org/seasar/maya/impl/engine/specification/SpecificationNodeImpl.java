@@ -92,7 +92,7 @@ public class SpecificationNodeImpl extends QNameableImpl
 
     public SpecificationNode copyTo(CopyToFilter filter) {
         SpecificationNodeImpl copy = new SpecificationNodeImpl(
-                getQName(), _systemID, _lineNumber);
+                getQName(), getSystemID(), getLineNumber());
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(filter.accept(attr)) {
@@ -115,8 +115,9 @@ public class SpecificationNodeImpl extends QNameableImpl
 
     public String toString() {
 	    StringBuffer path = new StringBuffer();
-	    if(_parent != null && _parent instanceof Specification == false) {
-	        path.append(_parent);
+	    if(getParentNode() != null && 
+                getParentNode() instanceof Specification == false) {
+	        path.append(getParentNode());
 	    }
 	    path.append("/");
 	    path.append(super.toString());

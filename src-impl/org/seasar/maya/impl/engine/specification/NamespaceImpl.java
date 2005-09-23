@@ -75,7 +75,7 @@ public class NamespaceImpl implements Namespace {
 	    }
     }
     
-    private PrefixMapping getMapping(
+    protected PrefixMapping getMapping(
             boolean fromPrefix, String test, boolean all) {
         if(test == null) {
             throw new IllegalArgumentException();
@@ -107,7 +107,7 @@ public class NamespaceImpl implements Namespace {
     }
 
     public Iterator iteratePrefixMapping(boolean all) {
-        if(all && _parentSpace != null) {
+        if(all && getParentSpace() != null) {
             return new AllNamespaceIterator(this);
         }
         if(_mappings != null) {

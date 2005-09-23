@@ -51,7 +51,8 @@ public class TemplateImpl extends SpecificationImpl
     private String _suffix ;
     private String _extension;
     private List _childProcessors = new ArrayList();
-
+    private Object _underlying;
+    
     public TemplateImpl(Page page, String suffix, String extension) {
         if(page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
@@ -195,5 +196,18 @@ public class TemplateImpl extends SpecificationImpl
         checkTimestamps();
         return (ProcessorTreeWalker)_childProcessors.get(index);
     }
+    
+    // Underlyable implements ----------------------------------------
+
+	public void setUnderlyingObject(Object context) {
+		if(context == null) {
+			throw new IllegalArgumentException();
+		}
+		_underlying = context;
+	}
+
+	public Object getUnderlyingObject() {
+		return _underlying;
+	}
     
 }

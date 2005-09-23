@@ -45,9 +45,8 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
     int _lineno;
     private WrapFactory _wrap;
     
-    public CompiledScriptImpl(String text,
-            String blockSign, String sourceName, int lineno) {
-        super(text, blockSign);
+    public CompiledScriptImpl(String text, String sourceName, int lineno) {
+        super(text);
         _sourceName = sourceName;
         _lineno = lineno;
     }

@@ -25,14 +25,13 @@ import org.seasar.maya.source.SourceDescriptor;
 public abstract class AbstractCompiledScript 
         implements CompiledScript {
 
-    private String _blockSign;
     private String _text;
     private SourceDescriptor _source;
     private String _encoding;
     private Class _expectedType = Object.class;
     
-    public AbstractCompiledScript(String text, String blockSign) {
-        if(text == null || StringUtil.isEmpty(blockSign)) {
+    public AbstractCompiledScript(String text) {
+        if(text == null) {
             throw new IllegalArgumentException();
         }
         _text = text;
@@ -84,7 +83,8 @@ public abstract class AbstractCompiledScript
         if(usingSource()) {
             return _source.getSystemID();
         }
-        return _blockSign + "{" + _text + "}";
+        String blockSign = ScriptUtil.getScriptEnvironment().getBlockSign();
+        return blockSign + "{" + _text + "}";
     }
     
     

@@ -58,8 +58,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        CompiledScriptImpl compiled = new CompiledScriptImpl(
-                text, scriptBlock.getBlockSign(), sourceName, lineno);
+        CompiledScriptImpl compiled = 
+            new CompiledScriptImpl(text, sourceName, lineno);
         if(_wrap != null) {
             compiled.setWrapFactory(_wrap);
         }

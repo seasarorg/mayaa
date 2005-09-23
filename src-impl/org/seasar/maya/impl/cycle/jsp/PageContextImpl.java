@@ -113,20 +113,27 @@ public class PageContextImpl extends PageContext {
 
     public void include(String relativeUrlPath)
             throws ServletException, IOException {
+        include(relativeUrlPath, false);
+    }
+    
+    public void include(String relativeUrlPath, boolean flush) {
+        // TODO impl for JSP API
         throw new UnsupportedOperationException();
     }
 
     public void handlePageException(Exception e)
             throws ServletException, IOException {
-    	throw new UnsupportedOperationException();
+        handlePageException((Throwable)e);
     }
     
     public void handlePageException(Throwable t)
             throws ServletException, IOException {
+        // TODO impl for JSP API
     	throw new UnsupportedOperationException();
     }
 
     public Exception getException() {
+        // TODO impl for JSP API
         throw new UnsupportedOperationException();
     }
 
@@ -184,10 +191,6 @@ public class PageContextImpl extends PageContext {
     }
 
     // since 2.0 -------------------------------------------------    
-    
-	public void include(String relativeUrlPath, boolean flush) {
-        throw new UnsupportedOperationException();
-	}
 
 	public ExpressionEvaluator getExpressionEvaluator() {
         return ExpressionEvaluatorImpl.getInstance();

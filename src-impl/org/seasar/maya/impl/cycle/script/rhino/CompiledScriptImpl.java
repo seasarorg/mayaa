@@ -66,7 +66,7 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
     
     protected Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope attrs = cycle.getPage();
+        AttributeScope attrs = cycle.getPageScope();
         if(attrs instanceof Scriptable) {
             return (Scriptable)attrs;
         }

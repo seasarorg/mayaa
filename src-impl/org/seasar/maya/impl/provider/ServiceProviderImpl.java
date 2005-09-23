@@ -210,7 +210,7 @@ public class ServiceProviderImpl
                 throw new IllegalStateException();
             }
     		cycle = (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
-            cycle.setApplication(getApplication());
+            cycle.setApplicationScope(getApplication());
     		if(_serviceCycleParams != null) {
                 for(Iterator it = _serviceCycleParams.keySet().iterator();
                 		it.hasNext(); ) {
@@ -221,7 +221,7 @@ public class ServiceProviderImpl
             }
     		_currentServiceCycle.set(cycle);
     	}
-		RequestScope request = cycle.getRequest();
+		RequestScope request = cycle.getRequestScope();
         request.setUnderlyingObject(requestContext);
         Response response = cycle.getResponse();
         response.setUnderlyingObject(responseContext);

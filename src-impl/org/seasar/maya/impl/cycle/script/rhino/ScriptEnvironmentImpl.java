@@ -72,7 +72,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         String systemID = source.getSystemID();
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ApplicationScope application = cycle.getApplication();
+        ApplicationScope application = cycle.getApplicationScope();
         return application.getMimeType(systemID);
     }
 
@@ -100,12 +100,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public void initScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setPage(null);
+        cycle.setPageScope(null);
     }
 
     public void startScope(Map variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getPage();
+        AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
         if(scope == null) {
             parent = (Scriptable)_parent.get();
@@ -135,21 +135,21 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 ScriptableObject.putProperty(pageScope, name, variable);
             }
         }
-        cycle.setPage(pageScope);
+        cycle.setPageScope(pageScope);
     }
 
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope scope = cycle.getPage();
+        AttributeScope scope = cycle.getPageScope();
         if(scope instanceof PageAttributeScope) {
             PageAttributeScope pageScope = (PageAttributeScope)scope;
             Scriptable current = pageScope.getParentScope();
             if(current instanceof PageAttributeScope) {
                 PageAttributeScope parentScope = (PageAttributeScope)current;
-                cycle.setPage(parentScope);
+                cycle.setPageScope(parentScope);
                 return;
             } else if(current != null) {
-                cycle.setPage(null);
+                cycle.setPageScope(null);
                 return;
             }
         }

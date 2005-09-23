@@ -159,7 +159,7 @@ public class EngineImpl extends SpecificationImpl
 	}
 
     protected boolean isPageRequested() {
-        RequestScope request = CycleUtil.getServiceCycle().getRequest();
+        RequestScope request = CycleUtil.getServiceCycle().getRequestScope();
         if ("maya".equals(request.getExtension())) {
             return true;
         }
@@ -217,7 +217,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(null);
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-                    RequestScope request = cycle.getRequest();
+                    RequestScope request = cycle.getRequestScope();
                     String pageName = request.getPageName();
                     String requestedSuffix = request.getRequestedSuffix();
                     String extension = request.getExtension();
@@ -250,7 +250,7 @@ public class EngineImpl extends SpecificationImpl
         if(cycle == null) {
             throw new IllegalArgumentException();
         }
-        String path = cycle.getRequest().getRequestedPath();
+        String path = cycle.getRequestScope().getRequestedPath();
         PageSourceDescriptor source = new PageSourceDescriptor();
         source.setSystemID(path);
         InputStream stream = source.getInputStream();

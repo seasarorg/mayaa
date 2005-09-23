@@ -76,25 +76,25 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * アプリケーションスコープオブジェクトの設定。
      * @param application アプリケーション。
      */
-    void setApplication(ApplicationScope application);
+    void setApplicationScope(ApplicationScope application);
     
     /**
      * アプリケーションスコープオブジェクトの取得。
      * @return アプリケーション。 
      */
-    ApplicationScope getApplication();
+    ApplicationScope getApplicationScope();
     
     /**
      * リクエストオブジェクトの取得。
      * @return リクエスト。
      */
-    RequestScope getRequest();
+    RequestScope getRequestScope();
     
     /**
      * セッションの取得。
      * @return セッションオブジェクト。
      */
-    SessionScope getSession();
+    SessionScope getSessionScope();
     
     /**
      * レスポンスオブジェクトの取得。
@@ -106,13 +106,13 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * 「page」スコープオブジェクトの設定。
      * @param page 「page」スコープ。 
      */
-    void setPage(AttributeScope page);
+    void setPageScope(AttributeScope page);
     
     /**
      * 「page」スコープオブジェクトの取得。
      * @return 「page」スコープ。 
      */
-    AttributeScope getPage();
+    AttributeScope getPageScope();
 
     /**
      * 指定スコープを保持しているかをテストする。

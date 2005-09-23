@@ -37,25 +37,25 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     // ServiceCycle implements --------------------------------------
 
-    public void setApplication(ApplicationScope application) {
+    public void setApplicationScope(ApplicationScope application) {
     	if(application == null) {
     		throw new IllegalArgumentException();
     	}
     	_application = application;
     }
     
-    public ApplicationScope getApplication() {
+    public ApplicationScope getApplicationScope() {
     	if(_application == null) {
     		throw new IllegalStateException();
     	}
         return _application;
     }
     
-    public RequestScope getRequest() {
+    public RequestScope getRequestScope() {
     	return _request;
     }
 
-    public SessionScope getSession() {
+    public SessionScope getSessionScope() {
         if(_session == null) {
             _session = new SessionScopeImpl();
             Object underlying = _request.getUnderlyingObject();

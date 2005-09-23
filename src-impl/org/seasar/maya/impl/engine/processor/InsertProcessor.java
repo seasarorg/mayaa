@@ -99,7 +99,7 @@ public class InsertProcessor extends TemplateProcessorSupport
         if(renderPage == null) {
         	ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
-            RequestScope request = cycle.getRequest();
+            RequestScope request = cycle.getRequestScope();
             requestedSuffix = request.getRequestedSuffix();
             extension = request.getExtension();
             findSuper = false;

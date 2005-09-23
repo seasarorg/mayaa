@@ -139,7 +139,7 @@ public class PageContextImpl extends PageContext {
     
     public ServletContext getServletContext() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ApplicationScope application = cycle.getApplication();
+        ApplicationScope application = cycle.getApplicationScope();
         Object obj = application.getUnderlyingObject();
         if(obj instanceof ServletContext) {
             return (ServletContext)obj;
@@ -149,7 +149,7 @@ public class PageContextImpl extends PageContext {
     
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        SessionScope session = cycle.getSession();
+        SessionScope session = cycle.getSessionScope();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;
@@ -159,7 +159,7 @@ public class PageContextImpl extends PageContext {
 
     public ServletRequest getRequest() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        RequestScope request = cycle.getRequest();
+        RequestScope request = cycle.getRequestScope();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;

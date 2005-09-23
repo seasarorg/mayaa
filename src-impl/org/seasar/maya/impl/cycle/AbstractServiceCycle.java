@@ -104,11 +104,11 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         throw new ScopeNotFoundException(scopeName);
     }
 
-    public void setPage(AttributeScope page) {
+    public void setPageScope(AttributeScope page) {
         _page = page;
     }
     
-    public AttributeScope getPage() {
+    public AttributeScope getPageScope() {
         return _page;
     }
 
@@ -165,10 +165,10 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
                     _current = scope.getScopeName();
                 }
             } else if(SCOPE_REQUEST.equals(_current)) {
-                scope = getSession();
+                scope = getSessionScope();
                 _current = SCOPE_SESSION;
             } else if(SCOPE_SESSION.equals(_current)) {
-                scope = getApplication();
+                scope = getApplicationScope();
                 _current = SCOPE_APPLICATION;
             } else if(SCOPE_APPLICATION.equals(_current)) {
                 throw new NoSuchElementException();
@@ -177,7 +177,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
                     scope = (AttributeScope)_it.next();
                     _current = scope.getScopeName();
                 } else {
-                    scope = getRequest();
+                    scope = getRequestScope();
                     _current = SCOPE_REQUEST;
                 }
             }

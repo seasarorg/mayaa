@@ -81,7 +81,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected XMLReaderPool getXMLReaderPool(String systemID) {
-    	ApplicationScope application = CycleUtil.getServiceCycle().getApplication();
+    	ApplicationScope application = CycleUtil.getServiceCycle().getApplicationScope();
     	String mimeType = application.getMimeType(systemID);
     	if(isHTML(mimeType)) {
     		return _htmlReaderPool;

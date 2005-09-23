@@ -56,7 +56,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     public ApplicationScope getApplication() {
         if(_application == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            _application = cycle.getApplication();
+            _application = cycle.getApplicationScope();
         }
         return _application;
     }

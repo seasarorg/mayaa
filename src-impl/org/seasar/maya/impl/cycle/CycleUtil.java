@@ -36,7 +36,7 @@ public class CycleUtil {
 
     public static RequestScope getRequest() {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	return cycle.getRequest();
+    	return cycle.getRequestScope();
     }
 
     public static Response getResponse() {

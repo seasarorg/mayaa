@@ -43,7 +43,7 @@ public abstract class AbstractRequestScope
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ApplicationScope application = cycle.getApplication();
+        ApplicationScope application = cycle.getApplicationScope();
         _mimeType = application.getMimeType(path);
     }
     

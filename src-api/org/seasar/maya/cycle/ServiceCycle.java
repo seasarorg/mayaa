@@ -18,12 +18,17 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
+import org.seasar.maya.cycle.scope.RequestScope;
+import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.provider.Parameterizable;
 
 /**
- * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、サービスのコンテキストとなる。
+ * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、
+ * サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle extends Parameterizable, Serializable {
@@ -71,19 +76,19 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * アプリケーションスコープオブジェクトの取得。
      * @return アプリケーション。 
      */
-    Application getApplication();
+    ApplicationScope getApplication();
     
     /**
      * リクエストオブジェクトの取得。
      * @return リクエスト。
      */
-    Request getRequest();
+    RequestScope getRequest();
     
     /**
      * セッションの取得。
      * @return セッションオブジェクト。
      */
-    Session getSession();
+    SessionScope getSession();
     
     /**
      * レスポンスオブジェクトの取得。
@@ -92,10 +97,16 @@ public interface ServiceCycle extends Parameterizable, Serializable {
     Response getResponse();
     
     /**
-     * スコープをイテレートする。
-     * @return スコープ（AttributeScope）のイテレータ。
+     * 「page」スコープオブジェクトの設定。
+     * @param page 「page」スコープ。 
      */
-    Iterator iterateAttributeScope();
+    void setPage(AttributeScope page);
+    
+    /**
+     * 「page」スコープオブジェクトの取得。
+     * @return 「page」スコープ。 
+     */
+    AttributeScope getPage();
 
     /**
      * 指定スコープを保持しているかをテストする。
@@ -112,16 +123,10 @@ public interface ServiceCycle extends Parameterizable, Serializable {
     AttributeScope getAttributeScope(String scopeName);
     
     /**
-     * 「page」スコープオブジェクトの設定。
-     * @param page 「page」スコープ。 
+     * スコープをイテレートする。
+     * @return スコープ（AttributeScope）のイテレータ。
      */
-    void setPage(AttributeScope page);
-    
-    /**
-     * 「page」スコープオブジェクトの取得。
-     * @return 「page」スコープ。 
-     */
-    AttributeScope getPage();
+    Iterator iterateAttributeScope();
 
     /**
      * 現在処理中のテンプレート上ノード情報を設定する。

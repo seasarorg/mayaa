@@ -24,14 +24,14 @@ import javax.servlet.ServletContext;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.web.ApplicationImpl;
+import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -43,7 +43,7 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
     
     private Object _context;
-    private Application _application;
+    private ApplicationScope _application;
     private Class _serviceCycleClass;
     private Map _serviceCycleParams;
     private Engine _engine;
@@ -62,13 +62,13 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         _context = context;
     }
     
-    public Application getApplication() {
+    public ApplicationScope getApplication() {
         if(_application == null) {
             if(_context instanceof ServletContext == false) {
                 throw new IllegalStateException();
             }
             ServletContext servletContext = (ServletContext)_context;
-            _application = new ApplicationImpl();
+            _application = new ApplicationScopeImpl();
             _application.setUnderlyingObject(servletContext);
         }
         return _application;
@@ -217,7 +217,7 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
             }
     		_currentServiceCycle.set(cycle);
     	}
-		Request request = cycle.getRequest();
+		RequestScope request = cycle.getRequest();
         request.setUnderlyingObject(requestContext);
         Response response = cycle.getResponse();
         response.setUnderlyingObject(responseContext);

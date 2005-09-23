@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -42,18 +42,18 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private String _root = "";
     private String _systemID = "";
     private File _file;
-    private Application _application;
+    private ApplicationScope _application;
     private Map _attributes;
     
     // use while building ServiceProvider.
-    public void setApplication(Application application) {
+    public void setApplication(ApplicationScope application) {
         if(application == null) {
             throw new IllegalArgumentException();
         }
         _application = application;
     }
     
-    public Application getApplication() {
+    public ApplicationScope getApplication() {
         if(_application == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             _application = cycle.getApplication();

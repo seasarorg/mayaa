@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.impl.cycle.scope;
 
-import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -26,9 +26,9 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractRequest
+public abstract class AbstractRequestScope
         extends AbstractWritableAttributeScope
-        implements Request, CONST_IMPL {
+        implements RequestScope, CONST_IMPL {
 
     private String _pageName;
     private String _requestedSuffix;
@@ -42,7 +42,7 @@ public abstract class AbstractRequest
         _pageName = parsed[0];
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
-        Application application = 
+        ApplicationScope application = 
             ProviderFactory.getServiceProvider().getApplication();
         _mimeType = application.getMimeType(path);
     }

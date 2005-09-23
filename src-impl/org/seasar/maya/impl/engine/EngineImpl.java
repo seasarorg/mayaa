@@ -29,9 +29,9 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
@@ -159,7 +159,7 @@ public class EngineImpl extends SpecificationImpl
 	}
 
     protected boolean isPageRequested() {
-        Request request = CycleUtil.getServiceCycle().getRequest();
+        RequestScope request = CycleUtil.getServiceCycle().getRequest();
         if ("maya".equals(request.getExtension())) {
             return true;
         }
@@ -184,7 +184,7 @@ public class EngineImpl extends SpecificationImpl
     protected void handleError(Throwable t) {
         t = removeWrapperRuntimeException(t);
         try {
-            Request request = CycleUtil.getRequest();
+            RequestScope request = CycleUtil.getRequest();
             request.setAttribute(THROWABLE, t);
             getErrorHandler().doErrorHandle(t);
             request.removeAttribute(THROWABLE);
@@ -217,7 +217,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(null);
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-                    Request request = cycle.getRequest();
+                    RequestScope request = cycle.getRequest();
                     String pageName = request.getPageName();
                     String requestedSuffix = request.getRequestedSuffix();
                     String extension = request.getExtension();

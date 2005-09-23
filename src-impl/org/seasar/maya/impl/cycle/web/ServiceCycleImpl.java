@@ -17,9 +17,9 @@ package org.seasar.maya.impl.cycle.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.Session;
+import org.seasar.maya.cycle.scope.RequestScope;
+import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.PageForwarded;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -31,19 +31,19 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     private static final long serialVersionUID = 5971443264903384152L;
 
-    private RequestImpl _request = new RequestImpl();
+    private RequestScopeImpl _request = new RequestScopeImpl();
     private ResponseImpl _response = new ResponseImpl();
-    private SessionImpl _session;
+    private SessionScopeImpl _session;
 
     // ServiceCycle implements --------------------------------------
     
-    public Request getRequest() {
+    public RequestScope getRequest() {
     	return _request;
     }
 
-    public Session getSession() {
+    public SessionScope getSession() {
         if(_session == null) {
-            _session = new SessionImpl();
+            _session = new SessionScopeImpl();
             Object underlying = _request.getUnderlyingObject();
             if(underlying instanceof HttpServletRequest == false) {
                 throw new IllegalStateException();

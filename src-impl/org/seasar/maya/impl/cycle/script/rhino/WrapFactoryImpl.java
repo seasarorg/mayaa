@@ -21,8 +21,8 @@ import java.util.Map;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.AttributeScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

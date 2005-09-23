@@ -28,7 +28,7 @@ import org.mozilla.javascript.NativeJavaMethod;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;

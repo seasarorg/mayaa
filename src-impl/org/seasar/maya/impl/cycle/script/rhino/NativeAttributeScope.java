@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

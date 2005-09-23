@@ -13,16 +13,19 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.cycle.scope;
 
 import java.io.Serializable;
 import java.util.Locale;
+
+import org.seasar.maya.cycle.Underlyable;
 
 /**
  * リクエストレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Request extends Serializable, AttributeScope, Underlyable {
+public interface RequestScope 
+		extends Serializable, AttributeScope, Underlyable {
 
 	/**
 	 * リクエストされたパス文字列を取得する。

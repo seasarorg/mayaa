@@ -18,9 +18,9 @@ package org.seasar.maya.impl.engine.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
@@ -99,7 +99,7 @@ public class InsertProcessor extends TemplateProcessorSupport
         if(renderPage == null) {
         	ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
-            Request request = cycle.getRequest();
+            RequestScope request = cycle.getRequest();
             requestedSuffix = request.getRequestedSuffix();
             extension = request.getExtension();
             findSuper = false;

@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
+import org.seasar.maya.impl.cycle.scope.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
 /**

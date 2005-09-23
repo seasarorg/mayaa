@@ -18,7 +18,7 @@ package org.seasar.maya.impl.cycle.jsp;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 

@@ -13,29 +13,28 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.maya.cycle.scope;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.maya.cycle.Underlyable;
 
 /**
+ * WEBアプリケーション全体で共有されるスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScopeNotFoundException extends MayaException {
+public interface ApplicationScope extends AttributeScope, Underlyable {
 
-    private static final long serialVersionUID = -5868339344208637137L;
-
-    private String _scope;
+    /**
+     * MIME型をSystemIDから類推して返す。
+     * @param systemID テストするSysteｍID。
+     * @return MIME型。
+     */
+    String getMimeType(String systemID);
     
-    public ScopeNotFoundException(String scope) {
-        _scope = scope;
-    }
-    
-    public String getScope() {
-        return _scope;
-    }
-    
-    public String[] getMessageParams() {
-        return new String[] { _scope };
-    }
+    /**
+     * リクエストURIのコンテキスト相対パスを、OS上のファイルパスに変換する。
+     * @param contextRelatedPath コンテキスト相対パス。
+     * @return OS上のファイルパス。
+     */
+    String getRealPath(String contextRelatedPath);
     
 }

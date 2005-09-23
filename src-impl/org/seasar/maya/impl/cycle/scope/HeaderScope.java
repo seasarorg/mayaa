@@ -17,8 +17,7 @@ package org.seasar.maya.impl.cycle.scope;
 
 import java.util.Iterator;
 
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**

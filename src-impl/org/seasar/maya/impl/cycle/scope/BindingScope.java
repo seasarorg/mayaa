@@ -17,11 +17,10 @@ package org.seasar.maya.impl.cycle.scope;
 
 import java.util.Iterator;
 
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.impl.cycle.AbstractReadOnlyAttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.processor.DoRenderProcessor;
 import org.seasar.maya.impl.engine.processor.InsertProcessor;

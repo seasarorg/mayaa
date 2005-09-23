@@ -22,9 +22,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.impl.cycle.AbstractRequest;
+import org.seasar.maya.impl.cycle.scope.AbstractRequestScope;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -34,7 +34,7 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RequestImpl extends AbstractRequest {
+public class RequestScopeImpl extends AbstractRequestScope {
 
     private static final long serialVersionUID = 8377365781441987529L;
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.StringUtil;

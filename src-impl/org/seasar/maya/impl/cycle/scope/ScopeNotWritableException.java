@@ -13,20 +13,25 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.maya.impl.cycle.scope;
 
-import java.io.Serializable;
+import org.seasar.maya.impl.MayaException;
 
 /**
- * セッションレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Session extends Serializable, AttributeScope, Underlyable {
+public class ScopeNotWritableException extends MayaException {
 
-    /**
-     * セッションIDの取得。
-     * @return セッションID。
-     */
-    String getSessionID();
+    private static final long serialVersionUID = -1404330731952054283L;
+
+    private String _scopeName;
+    
+    public ScopeNotWritableException(String scopeName) {
+        _scopeName = scopeName;
+    }
+    
+    protected String[] getMessageParams() {
+        return new String[] { _scopeName };
+    }
     
 }

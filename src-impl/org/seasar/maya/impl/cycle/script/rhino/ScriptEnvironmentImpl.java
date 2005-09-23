@@ -23,9 +23,9 @@ import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
-import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
@@ -74,7 +74,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         String systemID = source.getSystemID();
         ServiceProvider provider = ProviderFactory.getServiceProvider();
-        Application application = provider.getApplication();
+        ApplicationScope application = provider.getApplication();
         return application.getMimeType(systemID);
     }
 

@@ -18,113 +18,118 @@ package org.seasar.maya.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.impl.cycle.AbstractWritableAttributeScope;
+import org.seasar.maya.impl.cycle.scope.AbstractWritableAttributeScope;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ApplicationImpl extends AbstractWritableAttributeScope 
-        implements Application {
+public class SessionScopeImpl extends AbstractWritableAttributeScope
+        implements SessionScope {
 
-    private ServletContext _servletContext;
+    private static final long serialVersionUID = -3211729351966533995L;
 
-    protected void check() {
-        if(_servletContext == null) {
+    private HttpServletRequest _httpRequest;
+    private HttpSession _httpSession;
+    
+    protected void check(boolean force) {
+        if(_httpRequest == null) {
             throw new IllegalStateException();
         }
+        if(_httpSession == null) {
+            _httpSession = _httpRequest.getSession(force);
+        }
     }
     
-    // Application implements ----------------------------------------
+    // Session implements -------------------------------------------
     
-    public String getMimeType(String fileName) {
-        check();
-        if(StringUtil.isEmpty(fileName)) {
-            throw new IllegalArgumentException();
+    public String getSessionID() {
+        check(false);
+        if(_httpSession == null) {
+            return null;
         }
-        return _servletContext.getMimeType(fileName);
+        return _httpSession.getId();
     }
 
-    public String getRealPath(String contextRelatedPath) {
-        check();
-        if(StringUtil.isEmpty(contextRelatedPath)) {
-            throw new IllegalArgumentException();
-        }
-        return _servletContext.getRealPath(contextRelatedPath);
-    }
-    
     // AttributeScope implements -------------------------------------
-
+    
     public String getScopeName() {
-        return ServiceCycle.SCOPE_APPLICATION;
+        return ServiceCycle.SCOPE_SESSION;
     }
     
     public Iterator iterateAttributeNames() {
-        check();
+        check(false);
+        if(_httpSession == null) {
+            return NullIterator.getInstance();
+        }
         return EnumerationIterator.getInstance(
-                _servletContext.getAttributeNames());
+                _httpSession.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
-        check();
-        if(StringUtil.isEmpty(name)) {
+        check(false);
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return false;
         }
-        for(Enumeration e = _servletContext.getAttributeNames();
+        for(Enumeration e = _httpSession.getAttributeNames();
         		e.hasMoreElements(); ) {
-        	if(e.nextElement().equals(name)) {
-        		return true;
-        	}
-        }
-        return false;
+			if(e.nextElement().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public Object getAttribute(String name) {
-        check();
-        if(StringUtil.isEmpty(name)) {
+    public Object getAttribute(String name) {
+        check(false);
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return null;
         }
-        ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
-        return env.convertFromScriptObject(
-                _servletContext.getAttribute(name));
+        ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
+        return env.convertFromScriptObject(_httpSession.getAttribute(name));
     }
 
     public void setAttribute(String name, Object attribute) {
-        check();
+        check(true);
         if(StringUtil.isEmpty(name)) {
             return;
         }
-        _servletContext.setAttribute(name, attribute);
+        _httpSession.setAttribute(name, attribute);
     }
     
     public void removeAttribute(String name) {
-        check();
-        if(StringUtil.isEmpty(name)) {
+        check(false);
+        if(StringUtil.isEmpty(name) || _httpSession == null) {
             return;
         }
-        _servletContext.removeAttribute(name);
+        _httpSession.removeAttribute(name);
     }
 
     // Underlyable implemetns ----------------------------------------
     
     public void setUnderlyingObject(Object context) {
-        if(context == null || context instanceof ServletContext == false) {
+        // When setting, UnderlyingObject is "HttpServletRequest"
+        if(context == null || 
+                context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
-        _servletContext = (ServletContext)context;
+        _httpRequest = (HttpServletRequest)context;
     }
-    
+
     public Object getUnderlyingObject() {
-        check();
-        return _servletContext;
+        // When getting, UnderlyingObject is "HttpSession"
+        check(true);
+        return _httpSession;
     }
     
     // Parameterizable implements ------------------------------------
@@ -132,5 +137,5 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }
-        
+
 }

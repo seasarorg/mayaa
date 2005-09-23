@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -82,7 +82,7 @@ public class TemplateImpl extends SpecificationImpl
                 return contentType;
             }
         }
-        Request request = CycleUtil.getRequest();
+        RequestScope request = CycleUtil.getRequest();
         String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";

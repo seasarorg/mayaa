@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
-import org.seasar.maya.cycle.AttributeScope;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**

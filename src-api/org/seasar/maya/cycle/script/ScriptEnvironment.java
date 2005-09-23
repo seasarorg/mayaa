@@ -18,7 +18,7 @@ package org.seasar.maya.cycle.script;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.AttributeScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 

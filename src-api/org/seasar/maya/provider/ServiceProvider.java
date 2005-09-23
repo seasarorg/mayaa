@@ -18,8 +18,8 @@ package org.seasar.maya.provider;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.SourceDescriptor;
@@ -34,7 +34,7 @@ public interface ServiceProvider {
      * アプリケーションコンテキストの取得。
      * @return アプリケーションコンテキスト。
      */
-    Application getApplication();
+    ApplicationScope getApplication();
     
     /**
      * エンジンの生成を行う。

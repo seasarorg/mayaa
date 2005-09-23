@@ -25,8 +25,8 @@ import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.cycle.Application;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -81,7 +81,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected XMLReaderPool getXMLReaderPool(String systemID) {
-    	Application application = CycleUtil.getServiceCycle().getApplication();
+    	ApplicationScope application = CycleUtil.getServiceCycle().getApplication();
     	String mimeType = application.getMimeType(systemID);
     	if(isHTML(mimeType)) {
     		return _htmlReaderPool;

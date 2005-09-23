@@ -31,12 +31,12 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.seasar.maya.cycle.Application;
-import org.seasar.maya.cycle.AttributeScope;
-import org.seasar.maya.cycle.Request;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.Session;
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.cycle.scope.AttributeScope;
+import org.seasar.maya.cycle.scope.RequestScope;
+import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 import org.seasar.maya.provider.ServiceProvider;
@@ -141,7 +141,7 @@ public class PageContextImpl extends PageContext {
     
     public ServletContext getServletContext() {
         ServiceProvider provider = ProviderFactory.getServiceProvider();
-        Application application = provider.getApplication();
+        ApplicationScope application = provider.getApplication();
         Object obj = application.getUnderlyingObject();
         if(obj instanceof ServletContext) {
             return (ServletContext)obj;
@@ -151,7 +151,7 @@ public class PageContextImpl extends PageContext {
     
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Session session = cycle.getSession();
+        SessionScope session = cycle.getSession();
         Object obj = session.getUnderlyingObject();
         if(obj instanceof HttpSession) {
             return (HttpSession)obj;
@@ -161,7 +161,7 @@ public class PageContextImpl extends PageContext {
 
     public ServletRequest getRequest() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        Request request = cycle.getRequest();
+        RequestScope request = cycle.getRequest();
     	Object obj = request.getUnderlyingObject();
     	if(obj instanceof ServletRequest) {
     		return (ServletRequest)obj;

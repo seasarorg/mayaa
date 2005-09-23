@@ -24,9 +24,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
-import org.seasar.maya.impl.engine.specification.QNameableImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -37,12 +35,12 @@ public class BuilderUtil implements CONST_IMPL {
     private BuilderUtil() {
     }
 
-    public static SpecificationNode createInjectedNode(
-            QName qName, String uri, SpecificationNode original, boolean maya) {
+    public static SpecificationNode createInjectedNode(QName qName, 
+            String uri, SpecificationNode original, boolean maya) {
         if(qName == null || original == null) {
             throw new IllegalArgumentException();
         }
-        SpecificationNodeImpl node = new SpecificationNodeImpl(
+        SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, original.getSystemID(), original.getLineNumber());
         if(StringUtil.hasValue(uri)) {
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
@@ -82,8 +80,8 @@ public class BuilderUtil implements CONST_IMPL {
         } else {
             throw new IllegalNameException(qName);
         }
-        QName retName = new QNameImpl(namespaceURI, localName);
-        QNameable ret = new QNameableImpl(retName);
+        QNameable ret = SpecificationUtil.createQNameable(
+                SpecificationUtil.createQName(namespaceURI, localName));
         ret.setParentSpace(namespace);
         return ret;
     }

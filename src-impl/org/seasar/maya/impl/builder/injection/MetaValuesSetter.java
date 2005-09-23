@@ -21,7 +21,6 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -33,17 +32,17 @@ public class MetaValuesSetter
         implements InjectionResolver, CONST_IMPL {
 
     protected static final QName QH_CONTENT = 
-        new QNameImpl(URI_HTML, "content");
+        SpecificationUtil.createQName(URI_HTML, "content");
     protected static final QName QH_HTTP_EQUIV = 
-        new QNameImpl(URI_HTML, "http-equiv");    
+        SpecificationUtil.createQName(URI_HTML, "http-equiv");    
     protected static final QName QH_META = 
-        new QNameImpl(URI_HTML, "meta");
+        SpecificationUtil.createQName(URI_HTML, "meta");
     protected static final QName QX_CONTENT = 
-        new QNameImpl(URI_XHTML, "content");
+        SpecificationUtil.createQName(URI_XHTML, "content");
     protected static final QName QX_HTTP_EQUIV = 
-        new QNameImpl(URI_XHTML, "http-equiv");    
+        SpecificationUtil.createQName(URI_XHTML, "http-equiv");    
     protected static final QName QX_META = 
-        new QNameImpl(URI_XHTML, "meta");
+        SpecificationUtil.createQName(URI_XHTML, "meta");
     
     protected void addMayaAttribute(
             SpecificationNode original, QName qName, String value) {

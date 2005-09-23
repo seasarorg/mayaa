@@ -29,7 +29,6 @@ import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -46,7 +45,7 @@ public class PageImpl extends SpecificationImpl
 	private static final long serialVersionUID = -8688634709901129128L;
 
     protected static final QName QM_EXTENDS = 
-        new QNameImpl("extends");
+        SpecificationUtil.createQName("extends");
 
     private Page _superPage;
     private String _superSuffix;

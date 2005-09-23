@@ -46,7 +46,7 @@ import org.seasar.maya.impl.engine.processor.AttributeProcessor;
 import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.XMLReaderPool;
 import org.seasar.maya.provider.ServiceProvider;
@@ -258,7 +258,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         saveToCycle(template, template);
         Stack stack = new Stack();
         stack.push(template);
-        SpecificationNode maya = new SpecificationNodeImpl(
+        SpecificationNode maya = SpecificationUtil.createSpecificationNode(
                 QM_MAYA, template.getSystemID(), 0);
         template.addChildNode(maya);
         walkParsedTree(template, stack, template);

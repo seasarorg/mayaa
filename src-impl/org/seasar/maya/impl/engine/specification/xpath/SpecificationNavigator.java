@@ -32,7 +32,6 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
@@ -106,7 +105,8 @@ public class SpecificationNavigator extends DefaultNavigator
             if(StringUtil.isEmpty(namespaceURI)) {
                 namespaceURI = getNamespaceURI(node, namespacePrefix);
             }
-            QName qName = new QNameImpl(namespaceURI, localName);
+            QName qName = 
+                SpecificationUtil.createQName(namespaceURI, localName);
             return new QNameFilteredIterator(qName, node.iterateAttribute());
         }
         return NullIterator.getInstance();
@@ -132,7 +132,8 @@ public class SpecificationNavigator extends DefaultNavigator
                     namespaceURI = URI_MAYA;
                 }
             }
-            QName qName = new QNameImpl(namespaceURI, localName);
+            QName qName = 
+                SpecificationUtil.createQName(namespaceURI, localName);
             return new QNameFilteredIterator(qName, node.iterateChildNode());
         }
         return NullIterator.getInstance();

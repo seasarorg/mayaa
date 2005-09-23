@@ -24,6 +24,7 @@ import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -41,6 +42,24 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static Namespace createNamespace() {
         return new NamespaceImpl();
+    }
+
+    public static QName createQName(String localName) {
+        return createQName(URI_MAYA, localName);
+    }
+
+    public static QName createQName(
+            String namespaceURI, String localName) {
+        return new QNameImpl(namespaceURI, localName);
+    }
+    
+    public static QNameable createQNameable(QName qName) {
+        return new QNameableImpl(qName);
+    }
+    
+    public static SpecificationNode createSpecificationNode(
+            QName qName, String systemID, int lineNumber) {
+        return new SpecificationNodeImpl(qName, systemID, lineNumber);
     }
     
     public static String getAttributeValue(

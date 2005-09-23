@@ -22,7 +22,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -33,9 +33,9 @@ import org.seasar.maya.impl.util.StringUtil;
 public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	
     protected static final QName QM_NULL = 
-        new QNameImpl("null");
+        SpecificationUtil.createQName("null");
     protected static final QName QM_RENDERED = 
-        new QNameImpl("rendered");
+        SpecificationUtil.createQName("rendered");
 
 	protected boolean isRendered(SpecificationNode node, boolean def) {
 	    if(node == null) {

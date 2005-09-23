@@ -22,7 +22,6 @@ import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -34,7 +33,7 @@ public class InjectAttributeInjectionResolver
         implements InjectionResolver, CONST_IMPL {
 
     protected static final QName QM_INJECT =
-        new QNameImpl("inject");
+        SpecificationUtil.createQName("inject");
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {

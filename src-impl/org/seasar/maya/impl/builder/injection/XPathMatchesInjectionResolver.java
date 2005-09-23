@@ -26,7 +26,6 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -37,7 +36,8 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
 public class XPathMatchesInjectionResolver 
         implements InjectionResolver, CONST_IMPL {
 
-    protected static final QName QM_XPATH = new QNameImpl("xpath");
+    protected static final QName QM_XPATH = 
+        SpecificationUtil.createQName("xpath");
     
     private CopyToFilter _xpathFilter = new CheckXPathCopyToFilter(); 
 

@@ -28,8 +28,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -53,13 +51,13 @@ public class SpecificationNodeHandler
         LogFactory.getLog(SpecificationNodeHandler.class);
 
     protected static final QName QM_DATA = 
-        new QNameImpl("data");
+        SpecificationUtil.createQName("data");
     protected static final QName QM_PUBLIC_ID = 
-        new QNameImpl("publicID");
+        SpecificationUtil.createQName("publicID");
     protected static final QName QM_SYSTEM_ID = 
-        new QNameImpl("systemID");
+        SpecificationUtil.createQName("systemID");
     protected static final QName QM_TARGET = 
-        new QNameImpl("target");
+        SpecificationUtil.createQName("target");
 
     private Specification _specification;
     private NodeTreeWalker _current;
@@ -121,7 +119,7 @@ public class SpecificationNodeHandler
     }
     
     protected SpecificationNode addNode(QName qName) {
-		SpecificationNodeImpl child = new SpecificationNodeImpl(
+		SpecificationNode child = SpecificationUtil.createSpecificationNode(
 				qName, _locator.getSystemId(), _locator.getLineNumber());
         child.setParentSpace(_namespace);
 	    _current.addChildNode(child);

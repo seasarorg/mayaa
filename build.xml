@@ -49,7 +49,7 @@
 				<attribute name="Title" value="${jar.title}"/>
 				<attribute name="Version" value="${project.ver}"/>
 			</manifest>
-			<metainf dir="${folder.context}" includes="${resource}"/>
+			<metainf dir="${folder.context}" includes="${resource}/*"/>
 		</jar>
 	</target>
 

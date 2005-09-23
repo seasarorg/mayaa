@@ -41,85 +41,6 @@ public class PageAttributeScope extends ScriptableObject
         implements AttributeScope, Wrapper {
 
     private static final long serialVersionUID = 7746385735022710670L;
-    
-    public String getScopeName() {
-        return "page";
-    }
-
-    public Iterator iterateAttributeNames() {
-        List list = new ArrayList();
-        for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
-                scope = scope.getParentScope()) {
-            Object[] ids = scope.getIds();
-            for(int i = 0; i < ids.length; i++) {
-                if(ids[i] instanceof String && list.contains(ids[i]) == false) {
-                    list.add(ids[i]);
-                }
-            }
-        }
-        return list.iterator();
-    }
-
-    protected Scriptable findScope(String name) {
-        for(Scriptable scope = this;
-		        scope instanceof PageAttributeScope; 
-		        scope = scope.getParentScope()) {
-        	if(scope.has(name, this)) {
-        		return scope;
-        	}
-        }
-		return null;
-	}
-
-    public boolean hasAttribute(String name) {
-        Scriptable scope = findScope(name);
-        if(scope != null) {
-            return true;
-        }
-        return false;
-    }
-
-	public Object getAttribute(String name) {
-        Scriptable scope = findScope(name);
-        if(scope != null) {
-            ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
-            return env.convertFromScriptObject(scope.get(name, this));
-        }
-        return null;
-    }
-
-    public boolean isAttributeWritable() {
-		return true;
-	}
-
-	public void setAttribute(String name, Object attribute) {
-        put(name, this, attribute);
-    }
-
-    public void removeAttribute(String name) {
-        for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
-                scope = scope.getParentScope()) {
-            scope.delete(name);
-        }
-    }
-
-    public Object newAttribute(String name, Class attributeType) {
-        if(hasAttribute(name)) {
-            return getAttribute(name); 
-        }
-        Object model = ObjectUtil.newInstance(attributeType);
-        setAttribute(name, model);
-        return model;
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
-    }
-
-    // ScriptableObject implements ------------------------------------
-    
     private static Map _methodMap;
     
     private static void setMethod(String name, Class[] args) {
@@ -183,6 +104,86 @@ public class PageAttributeScope extends ScriptableObject
 
     public Object unwrap() {
         return this;
+    }
+
+    // AttributeScope implements -------------------------------------
+    
+    public String getScopeName() {
+        return "page";
+    }
+
+    public Iterator iterateAttributeNames() {
+        List list = new ArrayList();
+        for(Scriptable scope = this;
+                scope instanceof PageAttributeScope; 
+                scope = scope.getParentScope()) {
+            Object[] ids = scope.getIds();
+            for(int i = 0; i < ids.length; i++) {
+                if(ids[i] instanceof String && list.contains(ids[i]) == false) {
+                    list.add(ids[i]);
+                }
+            }
+        }
+        return list.iterator();
+    }
+
+    protected Scriptable findScope(String name) {
+        for(Scriptable scope = this;
+                scope instanceof PageAttributeScope; 
+                scope = scope.getParentScope()) {
+            if(scope.has(name, this)) {
+                return scope;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasAttribute(String name) {
+        Scriptable scope = findScope(name);
+        if(scope != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public Object getAttribute(String name) {
+        Scriptable scope = findScope(name);
+        if(scope != null) {
+            ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
+            return env.convertFromScriptObject(scope.get(name, this));
+        }
+        return null;
+    }
+
+    public boolean isAttributeWritable() {
+        return true;
+    }
+
+    public void setAttribute(String name, Object attribute) {
+        put(name, this, attribute);
+    }
+
+    public void removeAttribute(String name) {
+        for(Scriptable scope = this;
+                scope instanceof PageAttributeScope; 
+                scope = scope.getParentScope()) {
+            scope.delete(name);
+        }
+    }
+
+    public Object newAttribute(String name, Class attributeType) {
+        if(hasAttribute(name)) {
+            return getAttribute(name); 
+        }
+        Object model = ObjectUtil.newInstance(attributeType);
+        setAttribute(name, model);
+        return model;
+    }
+
+    // Parameterizable implements ------------------------------------
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(getClass(), name);
     }
     
 }

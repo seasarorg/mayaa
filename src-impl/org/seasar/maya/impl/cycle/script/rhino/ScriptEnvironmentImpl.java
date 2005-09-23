@@ -66,6 +66,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return compiled;
     }
 
+    // ScriptEnvironment implements ----------------------------------
+    
     protected String getSourceMimeType(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
@@ -76,7 +78,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return application.getMimeType(systemID);
     }
 
-    public CompiledScript compile(SourceDescriptor source, String encoding) {
+    public CompiledScript compile(
+            SourceDescriptor source, String encoding) {
         if(source == null) {
             throw new IllegalArgumentException();
         }
@@ -159,6 +162,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return JavaAdapter.convertResult(scriptObject, Object.class);
     }
 
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         if("wrapFactory".equals(name)) {
             if(StringUtil.isEmpty(value)) {

@@ -79,7 +79,8 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
             if(source.exists()) {
                 InputStream stream = source.getInputStream();
                 try {
-                    Reader reader = new InputStreamReader(stream, getEncoding());
+                    Reader reader = 
+                        new InputStreamReader(stream, getEncoding());
                     return cx.compileReader(reader, _sourceName, _lineno, null);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -94,6 +95,8 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
     protected Object convertToPrimitive(Object obj) {
     	return obj;
     }
+    
+    // CompiledScript implements -------------------------------------
     
     public Object execute() {
         Object ret = null;

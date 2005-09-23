@@ -67,7 +67,8 @@ public abstract class AbstractScriptEnvironment
     protected abstract CompiledScript compile(
             ScriptBlock scriptBlock, String sourceName, int lineno);
     
-    public CompiledScript compile(String script, String sourceName, int lineno) {
+    public CompiledScript compile(
+            String script, String sourceName, int lineno) {
         if(StringUtil.isEmpty(script)) {
             return new NullScript();
         }

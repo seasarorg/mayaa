@@ -37,7 +37,8 @@ public abstract class AbstractCompiledScript
         _text = text;
     }
 
-    public AbstractCompiledScript(SourceDescriptor source, String encoding) {
+    public AbstractCompiledScript(
+            SourceDescriptor source, String encoding) {
         if(source == null) {
             throw new IllegalArgumentException();
         }

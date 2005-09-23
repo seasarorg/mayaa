@@ -17,10 +17,10 @@
 	<property name="javadoc.access" value="protected"/>
 	<property name="javadoc.title" value="${project.title} ${project.ver} API"/>
 
+	<property name="folder.src" value="src"/>
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
-	<property name="folder.libsrc" value="libsrc"/>
 	
 	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
@@ -89,14 +89,14 @@
 
 	<target name="cleansrc">
 		<delete verbose="${project.verbose}">
-			<fileset dir="${folder.libsrc}">
+			<fileset dir="${folder.src}">
 				<include name="${project.name}-src-*.zip"/>
 			</fileset>
 		</delete>
 	</target>
 
 	<target name="makesrc" depends="cleansrc">
-		<zip destfile="${folder.libsrc}/${src.name}">
+		<zip destfile="${folder.src}/${src.name}">
 			<fileset dir="${folder.src.api}">
 				<exclude name="/**/.svn"/>
 				<exclude name="/**/.svn/**/*"/>
@@ -117,7 +117,7 @@
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}/**/*"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
-				<exclude name="${project.folder}/${folder.libsrc}/${src.name}"/>
+				<exclude name="${project.folder}/${folder.src}/${src.name}"/>
 				<exclude name="${project.folder}/**/.svn"/>
 				<exclude name="${project.folder}/**/.svn/**/*"/>
 			</fileset>
@@ -139,7 +139,7 @@
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
 			<fileset dir=".">
-				<include name="${folder.libsrc}/${src.name}"/>
+				<include name="${folder.src}/${src.name}"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="${war.title}"/>

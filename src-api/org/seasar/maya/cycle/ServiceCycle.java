@@ -73,6 +73,12 @@ public interface ServiceCycle extends Parameterizable, Serializable {
     void load(String systemID, String encoding);
     
     /**
+     * アプリケーションスコープオブジェクトの設定。
+     * @param application アプリケーション。
+     */
+    void setApplication(ApplicationScope application);
+    
+    /**
      * アプリケーションスコープオブジェクトの取得。
      * @return アプリケーション。 
      */

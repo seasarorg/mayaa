@@ -39,8 +39,6 @@ import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -140,8 +138,8 @@ public class PageContextImpl extends PageContext {
     // getting underlying object ---------------------------------------
     
     public ServletContext getServletContext() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        ApplicationScope application = provider.getApplication();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ApplicationScope application = cycle.getApplication();
         Object obj = application.getUnderlyingObject();
         if(obj instanceof ServletContext) {
             return (ServletContext)obj;

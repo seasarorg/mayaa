@@ -19,7 +19,6 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.source.SourceDescriptor;
@@ -29,12 +28,6 @@ import org.seasar.maya.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceProvider {
-
-    /**
-     * アプリケーションコンテキストの取得。
-     * @return アプリケーションコンテキスト。
-     */
-    ApplicationScope getApplication();
     
     /**
      * エンジンの生成を行う。

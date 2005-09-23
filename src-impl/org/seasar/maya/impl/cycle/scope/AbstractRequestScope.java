@@ -19,9 +19,9 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -42,8 +42,8 @@ public abstract class AbstractRequestScope
         _pageName = parsed[0];
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
-        ApplicationScope application = 
-            ProviderFactory.getServiceProvider().getApplication();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ApplicationScope application = cycle.getApplication();
         _mimeType = application.getMimeType(path);
     }
     

@@ -40,7 +40,8 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
+public class ServiceProviderImpl 
+		implements ServiceProvider, CONST_IMPL {
     
     private Object _context;
     private ApplicationScope _application;
@@ -60,18 +61,6 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
             throw new IllegalArgumentException();
         }
         _context = context;
-    }
-    
-    public ApplicationScope getApplication() {
-        if(_application == null) {
-            if(_context instanceof ServletContext == false) {
-                throw new IllegalStateException();
-            }
-            ServletContext servletContext = (ServletContext)_context;
-            _application = new ApplicationScopeImpl();
-            _application.setUnderlyingObject(servletContext);
-        }
-        return _application;
     }
 
     public void setServiceCycleClass(Class serviceCycleClass) {
@@ -133,7 +122,8 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         return _libraryManager;
     }
     
-    public void setSpecificationBuilder(SpecificationBuilder specificationBuilder) {
+    public void setSpecificationBuilder(
+    		SpecificationBuilder specificationBuilder) {
         if(specificationBuilder == null) {
             throw new IllegalArgumentException();
         }
@@ -197,6 +187,18 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
         }
         return source;
     }
+    
+    protected ApplicationScope getApplication() {
+        if(_application == null) {
+            if(_context instanceof ServletContext == false) {
+                throw new IllegalStateException();
+            }
+            ServletContext servletContext = (ServletContext)_context;
+            _application = new ApplicationScopeImpl();
+            _application.setUnderlyingObject(servletContext);
+        }
+        return _application;
+    }
 
 	public void initialize(Object requestContext, Object responseContext) {
 		if(requestContext == null || responseContext == null) {
@@ -208,8 +210,10 @@ public class ServiceProviderImpl implements ServiceProvider, CONST_IMPL {
                 throw new IllegalStateException();
             }
     		cycle = (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
-            if(_serviceCycleParams != null) {
-                for(Iterator it = _serviceCycleParams.keySet().iterator(); it.hasNext(); ) {
+            cycle.setApplication(getApplication());
+    		if(_serviceCycleParams != null) {
+                for(Iterator it = _serviceCycleParams.keySet().iterator();
+                		it.hasNext(); ) {
                     String key = (String)it.next();
                     String value = (String)_serviceCycleParams.get(key);
                     cycle.setParameter(key, value);

@@ -35,8 +35,6 @@ import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -73,8 +71,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        ApplicationScope application = provider.getApplication();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ApplicationScope application = cycle.getApplication();
         return application.getMimeType(systemID);
     }
 

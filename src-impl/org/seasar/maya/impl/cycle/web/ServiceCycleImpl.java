@@ -15,9 +15,8 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.seasar.maya.cycle.Response;
+import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
@@ -31,11 +30,26 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     private static final long serialVersionUID = 5971443264903384152L;
 
+	private ApplicationScope _application;
     private RequestScopeImpl _request = new RequestScopeImpl();
     private ResponseImpl _response = new ResponseImpl();
     private SessionScopeImpl _session;
 
     // ServiceCycle implements --------------------------------------
+
+    public void setApplication(ApplicationScope application) {
+    	if(application == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	_application = application;
+    }
+    
+    public ApplicationScope getApplication() {
+    	if(_application == null) {
+    		throw new IllegalStateException();
+    	}
+        return _application;
+    }
     
     public RequestScope getRequest() {
     	return _request;
@@ -45,9 +59,6 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         if(_session == null) {
             _session = new SessionScopeImpl();
             Object underlying = _request.getUnderlyingObject();
-            if(underlying instanceof HttpServletRequest == false) {
-                throw new IllegalStateException();
-            }
             _session.setUnderlyingObject(underlying);
         }
         return _session;

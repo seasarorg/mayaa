@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
@@ -42,10 +41,6 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
-    
-    public ApplicationScope getApplication() {
-        return ProviderFactory.getServiceProvider().getApplication();
-    }
     
     public void load(String systemID, String encoding) {
         if(StringUtil.isEmpty(systemID)) {

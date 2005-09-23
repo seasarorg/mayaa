@@ -28,6 +28,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
@@ -90,11 +91,17 @@ public class TemplateImpl extends SpecificationImpl
     }
     
     protected boolean isNoCache() {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
-        if(maya != null) {
-            String noCache = SpecificationUtil.getAttributeValue(
-                    maya, QM_NO_CACHE);
-            return ObjectUtil.booleanValue(noCache, false);
+        Specification spec = this;
+        while(spec != null) {
+            SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
+            if(maya != null) {
+                String noCache = SpecificationUtil.getAttributeValue(
+                        maya, QM_NO_CACHE);
+                if(noCache != null) {
+                    return ObjectUtil.booleanValue(noCache, false);
+                }
+            }
+            spec = EngineUtil.getParentSpecification(spec);
         }
         return false;
     }

@@ -45,7 +45,7 @@ public class EqualsIDInjectionResolver
     private CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
     private boolean _reportResolvedID = true;
 
-    private String getID(SpecificationNode node) {
+    protected String getID(SpecificationNode node) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
 	    }
@@ -107,7 +107,7 @@ public class EqualsIDInjectionResolver
 	            }
                 return injected.copyTo(_idFilter);
 	        }
-            if(_reportResolvedID) {
+            if(isReportResolvedID()) {
                 if(LOG.isWarnEnabled()) {
                     String systemID = original.getSystemID();
                     String lineNumber = Integer.toString(original.getLineNumber());
@@ -121,6 +121,12 @@ public class EqualsIDInjectionResolver
         return chain.getNode(original);
     }
 
+    // Parameterizable implements ------------------------------------
+    
+    protected boolean isReportResolvedID() {
+        return _reportResolvedID;
+    }
+    
     public void setParameter(String name, String value) {
         if("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
@@ -128,6 +134,8 @@ public class EqualsIDInjectionResolver
             throw new UnsupportedParameterException(getClass(), name);
         }
     }
+    
+    // support class ------------------------------------------------
     
     private class CheckIDCopyToFilter implements CopyToFilter {
    

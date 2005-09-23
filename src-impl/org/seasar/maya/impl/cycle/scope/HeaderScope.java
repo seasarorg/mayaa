@@ -25,6 +25,8 @@ import org.seasar.maya.impl.cycle.CycleUtil;
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class HeaderScope extends AbstractReadOnlyAttributeScope {
+    
+    // AttributeScope implements -------------------------------------
 	
 	public String getScopeName() {
 		return "header";

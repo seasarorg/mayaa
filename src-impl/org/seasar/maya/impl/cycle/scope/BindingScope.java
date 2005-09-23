@@ -31,7 +31,7 @@ import org.seasar.maya.impl.engine.processor.InsertProcessor;
  */
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
-    private InsertProcessor getInsertProcessor() {
+    protected InsertProcessor getInsertProcessor() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         for(ProcessorTreeWalker current = cycle.getProcessor();
                 current != null; current = current.getParentProcessor()) {
@@ -43,6 +43,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         return null;
 	}
 	
+    // AttributeScope implements -------------------------------------
+    
 	public String getScopeName() {
 		return "binding";
 	}
@@ -61,7 +63,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
     public boolean hasAttribute(String name) {
         InsertProcessor processor = getInsertProcessor();
         if(processor != null) {
-            for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
+            for(Iterator it = processor.getInformalProperties().iterator();
+                    it.hasNext(); ) {
                 ProcessorProperty prop = (ProcessorProperty)it.next();
                 if(prop.getName().getQName().getLocalName().equals(name)) {
                     return true;
@@ -77,7 +80,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 	public Object getAttribute(String name) {
 		InsertProcessor processor = getInsertProcessor();
         if(processor != null) {
-    		for(Iterator it = processor.getInformalProperties().iterator(); it.hasNext(); ) {
+    		for(Iterator it = processor.getInformalProperties().iterator();
+                    it.hasNext(); ) {
     			ProcessorProperty prop = (ProcessorProperty)it.next();
     			if(prop.getName().getQName().getLocalName().equals(name)) {
     				return prop.getValue().execute();
@@ -90,6 +94,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 		return param.getAttribute(name);
 	}
 
+    // support class ------------------------------------------------
+    
 	private class BindingIterator implements Iterator {
 		
 		private Iterator _it;

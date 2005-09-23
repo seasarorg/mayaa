@@ -47,10 +47,6 @@ public class LibraryManagerImpl implements LibraryManager {
     	_scanners = new ArrayList();
     	_builders = new ArrayList();
     }
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
-    }
 
     protected void buildAll() {
         _libraries = new ArrayList();
@@ -79,8 +75,8 @@ public class LibraryManagerImpl implements LibraryManager {
 			throw new IllegalArgumentException();
 		}
 		synchronized (_scanners) {
-            if(LOG.isTraceEnabled()) {
-                LOG.trace("adding SourceScanner[" + _scanners.size() + "] - " +
+            if(LOG.isInfoEnabled()) {
+                LOG.info("adding SourceScanner[" + _scanners.size() + "] - " +
                         scanner.getClass());
             }
 			_scanners.add(scanner);
@@ -92,8 +88,8 @@ public class LibraryManagerImpl implements LibraryManager {
     		throw new IllegalArgumentException();
     	}
     	synchronized(_builders) {
-            if(LOG.isTraceEnabled()) {
-                LOG.trace("adding DefinitionBuilder[" + _builders.size() + "] - " +
+            if(LOG.isInfoEnabled()) {
+                LOG.info("adding DefinitionBuilder[" + _builders.size() + "] - " +
                         builder.getClass());
             }
     		_builders.add(builder);
@@ -123,7 +119,8 @@ public class LibraryManagerImpl implements LibraryManager {
         String localName = qName.getLocalName();
         for(Iterator it = iterateLibraryDefinition(namespaceURI); it.hasNext(); ) {
             LibraryDefinition library = (LibraryDefinition)it.next();
-            ProcessorDefinition processor = library.getProcessorDefinition(localName);
+            ProcessorDefinition processor = 
+                library.getProcessorDefinition(localName);
             if(processor != null) {
                 return processor;
             }
@@ -131,11 +128,21 @@ public class LibraryManagerImpl implements LibraryManager {
         return null;
     }
     
-    private class LibraryDefinitionFilteredIterator extends AbstractScanningIterator {
+    // Parameterizable implements ------------------------------------
+    
+    public void setParameter(String name, String value) {
+        throw new UnsupportedParameterException(getClass(), name);
+    }
+
+    // support class ------------------------------------------------
+    
+    private class LibraryDefinitionFilteredIterator
+            extends AbstractScanningIterator {
         
         private String _namespaceURI;
         
-        private LibraryDefinitionFilteredIterator(String namespaceURI, Iterator iterator) {
+        public LibraryDefinitionFilteredIterator(
+                String namespaceURI, Iterator iterator) {
             super(iterator);
             if(StringUtil.isEmpty(namespaceURI)) {
                 throw new IllegalArgumentException();

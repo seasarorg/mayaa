@@ -49,11 +49,13 @@ public class J2EEEntityResolver implements CONST_J2EE {
         _entities.put(SYSTEM_XML_SCHEMA, FILE_XML_SCHEMA);
         _entities.put(LOCATION_XML, FILE_XML);
         _entities.put(LOCATION_WEB_SERVICE, FILE_WEB_SERVICE);
-        _entities.put(LOCATION_WEB_SERVICE_CLIENT, FILE_WEB_SERVICE_CLIENT);
+        _entities.put(LOCATION_WEB_SERVICE_CLIENT, 
+                FILE_WEB_SERVICE_CLIENT);
         _entities.put(LOCATION_J2EE_14, FILE_J2EE_14);
     }
     
-    public static InputSource resolveEntity(String publicId, String systemId) {
+    public static InputSource resolveEntity(
+            String publicId, String systemId) {
         String path = systemId;
         if(_entities.containsKey(publicId)) {
             path = (String)_entities.get(publicId);
@@ -65,7 +67,8 @@ public class J2EEEntityResolver implements CONST_J2EE {
                 path = systemId.substring(pos);
             }
         }
-        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+        ClassLoaderSourceDescriptor source = 
+            new ClassLoaderSourceDescriptor();
         source.setSystemID(path);
         source.setNeighborClass(J2EEEntityResolver.class);
         if(source.exists()) {

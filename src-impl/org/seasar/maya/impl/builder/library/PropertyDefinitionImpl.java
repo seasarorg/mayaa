@@ -41,7 +41,8 @@ import org.seasar.maya.impl.util.StringUtil;
 public class PropertyDefinitionImpl 
         implements PropertyDefinition, CONST_IMPL {
 
-    private static final Log LOG =LogFactory.getLog(PropertyDefinitionImpl.class);
+    private static final Log LOG =
+        LogFactory.getLog(PropertyDefinitionImpl.class);
     
     private ProcessorDefinition _processor;
     private String _name;
@@ -166,7 +167,8 @@ public class PropertyDefinitionImpl
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {
                 NodeAttribute attr = injected.getAttribute(qName);
-	            return new ProcessorPropertyImpl(attr, value, getExpectedType());
+	            return new ProcessorPropertyImpl(
+                        attr, value, getExpectedType());
 	        } else if(propertyType.equals(QNameable.class)) {
                 return BuilderUtil.parseName(injected.getParentSpace(), value); 
             }

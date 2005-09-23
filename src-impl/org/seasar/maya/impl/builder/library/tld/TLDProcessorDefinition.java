@@ -60,7 +60,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
             PropertyDefinition property = (PropertyDefinition)it.next();
             Object prop = property.createProcessorProperty(injected);
             if(prop != null) {
-    	        JspCustomTagProcessor jsp = (JspCustomTagProcessor)processor;
+    	        JspCustomTagProcessor jsp =
+                    (JspCustomTagProcessor)processor;
     	        jsp.addProcessorProperty((ProcessorProperty)prop);
             }
         }

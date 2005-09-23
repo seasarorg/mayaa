@@ -71,7 +71,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     
     public void setProcessorClass(Class processorClass) {
         if(processorClass == null || 
-                TemplateProcessor.class.isAssignableFrom(processorClass) == false) {
+                TemplateProcessor.class.isAssignableFrom(
+                        processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _processorClass = processorClass;
@@ -117,23 +118,26 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         }
     }
     
-    protected void settingInformalProperties(
-            SpecificationNode injected, InformalPropertyAcceptable acceptable) {
+    protected void settingInformalProperties(SpecificationNode injected, 
+            InformalPropertyAcceptable acceptable) {
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             acceptable.addInformalProperty(
-                    new ProcessorPropertyImpl(attr, attr.getValue(), Object.class));
+                    new ProcessorPropertyImpl(
+                            attr, attr.getValue(), Object.class));
         }
     }
     
-    public TemplateProcessor createTemplateProcessor(SpecificationNode injected) {
+    public TemplateProcessor createTemplateProcessor(
+            SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
         TemplateProcessor processor = newInstance(injected);
         settingProperties(injected, processor);
         if(processor instanceof InformalPropertyAcceptable) {
-            settingInformalProperties(injected, (InformalPropertyAcceptable)processor);
+            settingInformalProperties(
+                    injected, (InformalPropertyAcceptable)processor);
         }
         return processor;
     }

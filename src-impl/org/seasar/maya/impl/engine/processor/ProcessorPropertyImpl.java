@@ -58,6 +58,6 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     }
 
     public String toString() {
-        return _name.toString() + "=\"" + _compiled.getScript() + "\"";
+        return _name.toString() + "=\"" + _compiled.toString() + "\"";
     }
 }

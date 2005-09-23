@@ -58,7 +58,7 @@ public class LiteralScript  implements CompiledScript {
         return true;
     }
     
-    public String getScript() {
+    public String toString() {
         return _text;
     }
     

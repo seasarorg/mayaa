@@ -67,7 +67,7 @@ public class ComplexScript implements CompiledScript {
     public String getScript() {
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].getScript());
+            buffer.append(_compiled[i].toString());
         }
         return buffer.toString();
     }

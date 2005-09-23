@@ -79,7 +79,7 @@ public abstract class AbstractCompiledScript
         return _encoding;
     }
 
-    public String getScript() {
+    public String toString() {
         if(usingSource()) {
             return _source.getSystemID();
         }

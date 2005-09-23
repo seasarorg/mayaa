@@ -3,12 +3,14 @@
 
 	<property file="project.properties"/>
 
-	<property name="zip.name" value="${project.name}-src-${project.ver}.zip"/>
+	<property name="zip.name" value="${project.name}-project-${project.ver}.zip"/>
 	<property name="war.name" value="${project.name}-${project.ver}.war"/>
 	<property name="war.title" value="${project.title} Blank Application"/>
 	<property name="jar.name" value="${project.name}-${project.ver}.jar"/>
 	<property name="jar.title" value="${project.title} API &amp; Impl"/>
-
+	<property name="src.name" value="${project.name}-src-${project.ver}.zip"/>
+	
+	
 	<property name="javadoc.charset" value="Shift_JIS"/>
 	<property name="javadoc.packages" value="*"/>
 	<property name="javadoc.source" value="1.4"/>
@@ -18,7 +20,8 @@
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
-
+	<property name="folder.libsrc" value="libsrc"/>
+	
 	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
 	<property name="webinf" value="WEB-INF"/>
@@ -84,7 +87,28 @@
        	</javadoc>
     </target>
 
-	<target name="make" depends="makejar, javadoc"/>
+	<target name="cleansrc">
+		<delete verbose="${project.verbose}">
+			<fileset dir="${folder.libsrc}">
+				<include name="${project.name}-src-*.zip"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="makesrc" depends="cleansrc">
+		<zip destfile="${folder.libsrc}/${src.name}">
+			<fileset dir="${folder.src.api}">
+				<exclude name="/**/.svn"/>
+				<exclude name="/**/.svn/**/*"/>
+			</fileset>
+			<fileset dir="${folder.src.impl}">
+				<exclude name="/**/.svn"/>
+				<exclude name="/**/.svn/**/*"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="make" depends="makejar, javadoc, makesrc"/>
 
 	<target name="makezip" depends="make">
 		<zip destfile="../${zip.name}">
@@ -93,6 +117,7 @@
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}/**/*"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
+				<exclude name="${project.folder}/${folder.libsrc}/${src.name}"/>
 				<exclude name="${project.folder}/**/.svn"/>
 				<exclude name="${project.folder}/**/.svn/**/*"/>
 			</fileset>
@@ -112,6 +137,9 @@
 				<exclude name="${webinf.debug}/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="${folder.libsrc}/${src.name}"/>
 			</fileset>
 			<manifest>
 				<attribute name="Title" value="${war.title}"/>

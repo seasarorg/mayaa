@@ -17,7 +17,7 @@ package org.seasar.maya.cycle.scope;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.Underlyable;
+import org.seasar.maya.Underlyable;
 
 /**
  * セッションレベルのスコープ。

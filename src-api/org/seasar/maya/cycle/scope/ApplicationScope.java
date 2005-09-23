@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.cycle.scope;
 
-import org.seasar.maya.cycle.Underlyable;
+import org.seasar.maya.Underlyable;
 
 /**
  * WEBアプリケーション全体で共有されるスコープ。

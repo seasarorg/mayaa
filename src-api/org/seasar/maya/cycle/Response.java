@@ -18,6 +18,8 @@ package org.seasar.maya.cycle;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import org.seasar.maya.Underlyable;
+
 /**
  * レスポンスのインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)

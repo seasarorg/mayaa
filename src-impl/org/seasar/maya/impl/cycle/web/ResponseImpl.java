@@ -32,26 +32,32 @@ public class ResponseImpl extends AbstractResponse {
 
     private HttpServletResponse _httpServletResponse;
 
-    private void check() {
+    protected void check() {
         if(_httpServletResponse == null) {
             throw new IllegalStateException();
         }
     }
-    
-    public void setUnderlyingObject(Object context) {
-        if(context == null || 
-                context instanceof HttpServletResponse == false) {
-            throw new IllegalArgumentException();
-        }
-        _httpServletResponse = (HttpServletResponse)context;
-        clearBuffer();
-    }
-    
-    public Object getUnderlyingObject() {
+
+    public void redirect(String url) {
         check();
-        return _httpServletResponse;
+        try {
+            _httpServletResponse.sendRedirect(url);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    protected void setContentTypeToUnderlyingObject(
+            String contentType) {
+        check();
+        if(StringUtil.isEmpty(contentType)) {
+            throw new IllegalArgumentException();
+        }
+        _httpServletResponse.setContentType(contentType);
+    }
+
+    // Response implements -----------------------------------------
+    
     public void addHeader(String name, String value) {
         check();
         if(StringUtil.isEmpty(name)) {
@@ -63,14 +69,6 @@ public class ResponseImpl extends AbstractResponse {
     public void setStatus(int code) {
         check();
         _httpServletResponse.setStatus(code);
-    }
-
-    protected void setContentTypeToUnderlyingObject(String contentType) {
-        check();
-        if(StringUtil.isEmpty(contentType)) {
-            throw new IllegalArgumentException();
-        }
-        _httpServletResponse.setContentType(contentType);
     }
 
     public OutputStream getOutputStream() {
@@ -90,13 +88,20 @@ public class ResponseImpl extends AbstractResponse {
         return _httpServletResponse.encodeURL(url);
     }
 
-    public void redirect(String url) {
+    // Underlyable implemetns ----------------------------------------
+    
+    public void setUnderlyingObject(Object context) {
+        if(context == null || 
+                context instanceof HttpServletResponse == false) {
+            throw new IllegalArgumentException();
+        }
+        _httpServletResponse = (HttpServletResponse)context;
+        clearBuffer();
+    }
+    
+    public Object getUnderlyingObject() {
         check();
-    	try {
-    		_httpServletResponse.sendRedirect(url);
-    	} catch(IOException e) {
-    		throw new RuntimeException(e);
-    	}
+        return _httpServletResponse;
     }
     
 }

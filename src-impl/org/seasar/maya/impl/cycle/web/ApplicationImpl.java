@@ -37,23 +37,13 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
 
     private ServletContext _servletContext;
 
-    private void check() {
+    protected void check() {
         if(_servletContext == null) {
             throw new IllegalStateException();
         }
     }
     
-    public void setUnderlyingObject(Object context) {
-        if(context == null || context instanceof ServletContext == false) {
-            throw new IllegalArgumentException();
-        }
-        _servletContext = (ServletContext)context;
-    }
-    
-    public Object getUnderlyingObject() {
-        check();
-        return _servletContext;
-    }
+    // Application implements ----------------------------------------
     
     public String getMimeType(String fileName) {
         check();
@@ -70,6 +60,8 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
         }
         return _servletContext.getRealPath(contextRelatedPath);
     }
+    
+    // AttributeScope implements -------------------------------------
 
     public String getScopeName() {
         return ServiceCycle.SCOPE_APPLICATION;
@@ -77,7 +69,8 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
     
     public Iterator iterateAttributeNames() {
         check();
-        return EnumerationIterator.getInstance(_servletContext.getAttributeNames());
+        return EnumerationIterator.getInstance(
+                _servletContext.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
@@ -100,7 +93,8 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
             return null;
         }
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
-        return env.convertFromScriptObject(_servletContext.getAttribute(name));
+        return env.convertFromScriptObject(
+                _servletContext.getAttribute(name));
     }
 
     public void setAttribute(String name, Object attribute) {
@@ -118,6 +112,22 @@ public class ApplicationImpl extends AbstractWritableAttributeScope
         }
         _servletContext.removeAttribute(name);
     }
+
+    // Underlyable implemetns ----------------------------------------
+    
+    public void setUnderlyingObject(Object context) {
+        if(context == null || context instanceof ServletContext == false) {
+            throw new IllegalArgumentException();
+        }
+        _servletContext = (ServletContext)context;
+    }
+    
+    public Object getUnderlyingObject() {
+        check();
+        return _servletContext;
+    }
+    
+    // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);

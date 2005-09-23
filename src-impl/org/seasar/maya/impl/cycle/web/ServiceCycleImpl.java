@@ -35,6 +35,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     private ResponseImpl _response = new ResponseImpl();
     private SessionImpl _session;
 
+    // ServiceCycle implements --------------------------------------
+    
     public Request getRequest() {
     	return _request;
     }
@@ -65,6 +67,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 		_response.redirect(url);
     }
 
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

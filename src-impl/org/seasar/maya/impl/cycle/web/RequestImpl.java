@@ -43,32 +43,18 @@ public class RequestImpl extends AbstractRequest {
     private ParamValuesScope _paramValues;
     private HeaderValuesScope _headerValues;
     
-    private void check() {
+    protected void check() {
         if(_httpServletRequest == null) {
             throw new IllegalStateException();
         }
     }
     
-    public void setUnderlyingObject(Object context) {
-        if(context == null || 
-                context instanceof HttpServletRequest == false) {
-            throw new IllegalArgumentException();
-        }
-        _httpServletRequest = (HttpServletRequest)context;
-        _locales = null;
-        _paramValues = null;
-        _headerValues = null;
-        parsePath(getRequestedPath());
-    }
-    
-    public Object getUnderlyingObject() {
-        check();
-        return _httpServletRequest;
-    }
+    // Request implements ------------------------------------------
     
     public String getRequestedPath() {
         check();
-        String path = StringUtil.preparePath(_httpServletRequest.getServletPath()) +
+        String path = 
+            StringUtil.preparePath(_httpServletRequest.getServletPath()) +
             StringUtil.preparePath(_httpServletRequest.getPathInfo());
         if(StringUtil.isEmpty(path) || "/".equals(path)) {
             return EngineUtil.getEngineSetting(
@@ -110,6 +96,8 @@ public class RequestImpl extends AbstractRequest {
         return _headerValues;
     }
     
+    // AttributeScope implements -------------------------------------
+    
     public Iterator iterateAttributeNames() {
         check();
         return EnumerationIterator.getInstance(
@@ -136,7 +124,8 @@ public class RequestImpl extends AbstractRequest {
             return null;
         }
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
-        return env.convertFromScriptObject(_httpServletRequest.getAttribute(name));
+        return env.convertFromScriptObject(
+                _httpServletRequest.getAttribute(name));
     }
 
     public void setAttribute(String name, Object attribute) {
@@ -154,7 +143,28 @@ public class RequestImpl extends AbstractRequest {
         }
         _httpServletRequest.removeAttribute(name);
     }
+
+    // Underlyable implemetns ----------------------------------------
     
+    public void setUnderlyingObject(Object context) {
+        if(context == null || 
+                context instanceof HttpServletRequest == false) {
+            throw new IllegalArgumentException();
+        }
+        _httpServletRequest = (HttpServletRequest)context;
+        _locales = null;
+        _paramValues = null;
+        _headerValues = null;
+        parsePath(getRequestedPath());
+    }
+    
+    public Object getUnderlyingObject() {
+        check();
+        return _httpServletRequest;
+    }
+
+    // Parameterizable implements ------------------------------------
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

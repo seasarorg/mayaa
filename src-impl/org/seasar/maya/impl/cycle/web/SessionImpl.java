@@ -42,7 +42,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
     private HttpServletRequest _httpRequest;
     private HttpSession _httpSession;
     
-    private void check(boolean force) {
+    protected void check(boolean force) {
         if(_httpRequest == null) {
             throw new IllegalStateException();
         }
@@ -51,20 +51,7 @@ public class SessionImpl extends AbstractWritableAttributeScope
         }
     }
     
-    public void setUnderlyingObject(Object context) {
-        // When setting, UnderlyingObject is "HttpServletRequest"
-        if(context == null || 
-                context instanceof HttpServletRequest == false) {
-            throw new IllegalArgumentException();
-        }
-        _httpRequest = (HttpServletRequest)context;
-    }
-
-    public Object getUnderlyingObject() {
-        // When getting, UnderlyingObject is "HttpSession"
-        check(true);
-        return _httpSession;
-    }
+    // Session implements -------------------------------------------
     
     public String getSessionID() {
         check(false);
@@ -74,6 +61,8 @@ public class SessionImpl extends AbstractWritableAttributeScope
         return _httpSession.getId();
     }
 
+    // AttributeScope implements -------------------------------------
+    
     public String getScopeName() {
         return ServiceCycle.SCOPE_SESSION;
     }
@@ -125,6 +114,25 @@ public class SessionImpl extends AbstractWritableAttributeScope
         }
         _httpSession.removeAttribute(name);
     }
+
+    // Underlyable implemetns ----------------------------------------
+    
+    public void setUnderlyingObject(Object context) {
+        // When setting, UnderlyingObject is "HttpServletRequest"
+        if(context == null || 
+                context instanceof HttpServletRequest == false) {
+            throw new IllegalArgumentException();
+        }
+        _httpRequest = (HttpServletRequest)context;
+    }
+
+    public Object getUnderlyingObject() {
+        // When getting, UnderlyingObject is "HttpSession"
+        check(true);
+        return _httpSession;
+    }
+    
+    // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);

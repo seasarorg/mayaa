@@ -25,7 +25,8 @@ import org.seasar.maya.impl.util.collection.EnumerationIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class ParamValuesScope extends AbstractReadOnlyAttributeScope {
+public class ParamValuesScope 
+        extends AbstractReadOnlyAttributeScope {
 
 	private HttpServletRequest _request;
 	

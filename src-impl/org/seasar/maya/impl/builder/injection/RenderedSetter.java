@@ -22,6 +22,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -31,7 +32,12 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
 	
-	private boolean isRendered(SpecificationNode node, boolean def) {
+    protected static final QName QM_NULL = 
+        new QNameImpl("null");
+    protected static final QName QM_RENDERED = 
+        new QNameImpl("rendered");
+
+	protected boolean isRendered(SpecificationNode node, boolean def) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
 	    }
@@ -73,7 +79,9 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
    		}
         return injected;
     }
-
+    
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

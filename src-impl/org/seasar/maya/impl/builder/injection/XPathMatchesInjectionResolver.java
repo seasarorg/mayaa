@@ -23,10 +23,12 @@ import org.seasar.maya.engine.specification.CopyToFilter;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeObject;
+import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -37,8 +39,13 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
 public class XPathMatchesInjectionResolver 
         implements InjectionResolver, CONST_IMPL {
 
-    private final CheckXPathCopyToFilter _xpathFilter = 
-        new CheckXPathCopyToFilter(); 
+    protected static final QName QM_XPATH = new QNameImpl("xpath");
+    
+    private CopyToFilter _xpathFilter = new CheckXPathCopyToFilter(); 
+
+    protected CopyToFilter getCopyToFilter() {
+        return _xpathFilter;
+    }
     
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
@@ -46,7 +53,8 @@ public class XPathMatchesInjectionResolver
             throw new IllegalArgumentException();
         }
         Namespace namespace = new NamespaceImpl();
-        namespace.addPrefixMapping(new PrefixMappingImpl("m", URI_MAYA));
+        namespace.addPrefixMapping(
+                new PrefixMappingImpl("m", URI_MAYA));
         String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
         for(Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespace, true); it.hasNext(); ) {
@@ -54,17 +62,21 @@ public class XPathMatchesInjectionResolver
             String mayaPath = SpecificationUtil.getAttributeValue(
             		injected, QM_XPATH);
             if(XPathUtil.matches(original, mayaPath, injected)) {
-                return injected.copyTo(_xpathFilter);
+                return injected.copyTo(getCopyToFilter());
             }
         }
         return chain.getNode(original);
     }
     
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }
     
-    private class CheckXPathCopyToFilter implements CopyToFilter {
+    // support class -------------------------------------------------
+    
+    protected class CheckXPathCopyToFilter implements CopyToFilter {
         
         public boolean accept(NodeObject test) {
             if(test instanceof NodeAttribute) {

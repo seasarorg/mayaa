@@ -65,7 +65,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     private List _resolvers = new ArrayList();
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
-
+    private InjectionChain _chain = new DefaultInjectionChain();
+    
     public void addInjectionResolver(InjectionResolver resolver) {
         if(resolver == null) {
             throw new IllegalArgumentException();
@@ -153,6 +154,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return null;
     }
 
+    protected InjectionChain getDefaultInjectionChain() {
+        return _chain; 
+    }
+    
     protected TemplateProcessor resolveInjectedNode(Template template, 
             Stack stack, SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
@@ -167,7 +172,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
             String defaultURI = mapping.getNamespaceURI();
             if(defaultURI.equals(injected.getQName().getNamespaceURI())) {
-                InjectionChain chain = DefaultInjectionChain.getInstance(); 
+                InjectionChain chain = getDefaultInjectionChain(); 
                 SpecificationNode retry = chain.getNode(injected);
                 processor = createProcessor(original, retry);
             }
@@ -229,7 +234,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             if(QM_MAYA.equals(child.getQName())) {
                 continue;
             }
-            InjectionChain chain = DefaultInjectionChain.getInstance(); 
+            InjectionChain chain = getDefaultInjectionChain(); 
             SpecificationNode injected = resolveOriginalNode(child, chain);
             if(injected == null) {
                 throw new TemplateNodeNotResolvedException(

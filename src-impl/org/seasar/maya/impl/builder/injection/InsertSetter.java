@@ -22,6 +22,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -32,6 +33,11 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class InsertSetter implements InjectionResolver, CONST_IMPL {
+
+    protected static final QName QM_INSERT = 
+        new QNameImpl("insert");
+    protected static final QName QM_PATH = 
+        new QNameImpl("path");
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
@@ -46,7 +52,8 @@ public class InsertSetter implements InjectionResolver, CONST_IMPL {
 	        LibraryManager libraryManager = provider.getLibraryManager();
 	        if(libraryManager.getProcessorDefinition(qName) == null) {
 	            String name = qName.getLocalName();
-	            String path = StringUtil.preparePath(uri) + StringUtil.preparePath(name);
+	            String path = 
+                    StringUtil.preparePath(uri) + StringUtil.preparePath(name);
                 SpecificationNode node = BuilderUtil.createInjectedNode(
                         QM_INSERT, uri, injected, false);
                 node.addAttribute(QM_PATH, path);
@@ -60,7 +67,9 @@ public class InsertSetter implements InjectionResolver, CONST_IMPL {
         }
         return injected;
     }
-
+    
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

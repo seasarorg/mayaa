@@ -30,6 +30,7 @@ import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.NamespaceImpl;
 import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -51,6 +52,15 @@ public class SpecificationNodeHandler
     
     private static final Log LOG = 
         LogFactory.getLog(SpecificationNodeHandler.class);
+
+    protected static final QName QM_DATA = 
+        new QNameImpl("data");
+    protected static final QName QM_PUBLIC_ID = 
+        new QNameImpl("publicID");
+    protected static final QName QM_SYSTEM_ID = 
+        new QNameImpl("systemID");
+    protected static final QName QM_TARGET = 
+        new QNameImpl("target");
 
     private Specification _specification;
     private NodeTreeWalker _current;

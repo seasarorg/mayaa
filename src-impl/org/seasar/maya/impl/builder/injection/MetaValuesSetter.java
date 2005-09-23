@@ -38,7 +38,6 @@ public class MetaValuesSetter
         new QNameImpl(URI_HTML, "http-equiv");    
     protected static final QName QH_META = 
         new QNameImpl(URI_HTML, "meta");
-
     protected static final QName QX_CONTENT = 
         new QNameImpl(URI_XHTML, "content");
     protected static final QName QX_HTTP_EQUIV = 
@@ -91,6 +90,8 @@ public class MetaValuesSetter
         }
         return chain.getNode(original);
     }
+    
+    // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);

@@ -42,9 +42,13 @@ public class EqualsIDInjectionResolver
     private static final Log LOG = 
         LogFactory.getLog(EqualsIDInjectionResolver.class);
     
-    private CheckIDCopyToFilter _idFilter = new CheckIDCopyToFilter();
+    private CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private boolean _reportResolvedID = true;
 
+    protected CopyToFilter getCopyToFilter() {
+        return _idFilter;
+    }
+    
     protected String getID(SpecificationNode node) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
@@ -105,7 +109,7 @@ public class EqualsIDInjectionResolver
 	            if(QM_IGNORE.equals(injected.getQName())) {
 	                return chain.getNode(original);
 	            }
-                return injected.copyTo(_idFilter);
+                return injected.copyTo(getCopyToFilter());
 	        }
             if(isReportResolvedID()) {
                 if(LOG.isWarnEnabled()) {
@@ -137,7 +141,7 @@ public class EqualsIDInjectionResolver
     
     // support class ------------------------------------------------
     
-    private class CheckIDCopyToFilter implements CopyToFilter {
+    protected class CheckIDCopyToFilter implements CopyToFilter {
    
         public boolean accept(NodeObject test) {
             if(test instanceof NodeAttribute) {

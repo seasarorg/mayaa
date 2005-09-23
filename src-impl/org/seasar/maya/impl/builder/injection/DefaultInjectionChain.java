@@ -25,29 +25,25 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
-    
-    private static final DefaultInjectionChain _instance = 
-        new DefaultInjectionChain();
-    
-    public static InjectionChain getInstance() {
-        return _instance;
-    }
+public class DefaultInjectionChain 
+        implements InjectionChain, CONST_IMPL {
 
     private QName[] _specialNames = new QName[] {
-        QM_CDATA,
-        QM_CHARACTERS,
-        QM_COMMENT,
-        QM_DOCTYPE,
-        QM_PI
-    };
-    
-    private DefaultInjectionChain() {
-    }
+            QM_CDATA,
+            QM_CHARACTERS,
+            QM_COMMENT,
+            QM_DOCTYPE,
+            QM_PI
+        };
 
-    private boolean isSpecialNode(QName qName) {
-        for(int i = 0; i < _specialNames.length; i++) {
-            if(_specialNames[i].equals(qName)) {
+    protected QName[] getSpecialNames() {
+        return _specialNames;
+    }
+    
+    protected boolean isSpecialNode(QName qName) {
+        QName[] specialNames =  getSpecialNames();
+        for(int i = 0; i < specialNames.length; i++) {
+            if(specialNames[i].equals(qName)) {
                 return true;
             }
         }

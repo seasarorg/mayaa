@@ -72,12 +72,12 @@ public class PrefixMappingImpl implements PrefixMapping {
     }
     
     public boolean equals(Object test) {
-        if(test == null || (test instanceof PrefixMappingImpl) == false) {
+        if(test == null || (test instanceof PrefixMapping) == false) {
             return false;
         }
         PrefixMappingImpl ns = (PrefixMappingImpl)test;
-        return _prefix.equals(ns.getPrefix()) && 
-        		_namespaceURI.equals(ns.getNamespaceURI());
+        return getPrefix().equals(ns.getPrefix()) && 
+                getNamespaceURI().equals(ns.getNamespaceURI());
     }
     
     public int hashCode() {

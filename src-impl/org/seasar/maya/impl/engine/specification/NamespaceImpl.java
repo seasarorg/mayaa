@@ -48,14 +48,21 @@ public class NamespaceImpl implements Namespace {
         return _parentSpace;
     }
 
-    public void addPrefixMapping(PrefixMapping mapping) {
-        if(mapping == null) {
+    protected PrefixMapping createPrefixMapping(
+            String prefix, String namespaceURI) {
+        return new PrefixMappingImpl(prefix, namespaceURI);
+    }
+    
+    public void addPrefixMapping(String prefix, String namespaceURI) {
+        if(prefix == null || StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
 	    synchronized(this) {
 	        if(_mappings == null) {
 	            _mappings = new ArrayList();
 	        }
+            PrefixMapping mapping = 
+                createPrefixMapping(prefix, namespaceURI);
 	        if(_mappings.contains(mapping) == false) {
 	            _mappings.add(mapping);
 	            mapping.setNamespace(this);
@@ -120,12 +127,12 @@ public class NamespaceImpl implements Namespace {
     
     // support class -------------------------------------------------
     
-    private class AllNamespaceIterator implements Iterator {
+    protected class AllNamespaceIterator implements Iterator {
         
         private Namespace _current;
         private Iterator _it;
         
-        private AllNamespaceIterator(Namespace current) {
+        public AllNamespaceIterator(Namespace current) {
             if(current == null) {
                 throw new IllegalArgumentException();
             }

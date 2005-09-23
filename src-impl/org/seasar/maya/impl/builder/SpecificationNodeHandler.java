@@ -28,10 +28,9 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.NamespaceImpl;
-import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationNodeImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -86,13 +85,13 @@ public class SpecificationNodeHandler
     }
 
     protected void initNamespace() {
-        _namespace = new NamespaceImpl();
-        _namespace.addPrefixMapping(new PrefixMappingImpl("", URI_HTML));
+        _namespace = SpecificationUtil.createNamespace();
+        _namespace.addPrefixMapping("", URI_HTML);
     }
 
     protected void pushNamespace() {
         Namespace parentSpace = _namespace;
-        _namespace = new NamespaceImpl();
+        _namespace = SpecificationUtil.createNamespace();
         _namespace.setParentSpace(parentSpace);
     }
     
@@ -111,8 +110,7 @@ public class SpecificationNodeHandler
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        PrefixMapping mapping = new PrefixMappingImpl(prefix, uri);
-        _namespace.addPrefixMapping(mapping);
+        _namespace.addPrefixMapping(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix) {
@@ -174,10 +172,9 @@ public class SpecificationNodeHandler
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         SpecificationNode node = addNode(nodeQName);
-        Namespace elementNS = new NamespaceImpl();
+        Namespace elementNS = SpecificationUtil.createNamespace();
         elementNS.setParentSpace(_namespace);
-        PrefixMapping mapping = new PrefixMappingImpl("", nodeURI);
-        elementNS.addPrefixMapping(mapping);
+        elementNS.addPrefixMapping("", nodeURI);
         for(int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);

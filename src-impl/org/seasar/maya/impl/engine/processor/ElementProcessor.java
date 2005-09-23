@@ -26,8 +26,7 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.NamespaceImpl;
-import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
+import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -63,7 +62,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected Namespace getCurrentNS() {
         Namespace currentNS = (Namespace)_currentNS.get();
         if(currentNS == null) {
-            currentNS = new NamespaceImpl();
+            currentNS = SpecificationUtil.createNamespace();
             currentNS.setParentSpace(getOriginalNode().getParentSpace());
             _currentNS.set(currentNS);
         }
@@ -84,11 +83,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
         Namespace namespace = getInjectedNode().getParentSpace();
         mapping = namespace.getMappingFromURI(namespaceURI, true);
         if(mapping != null) {
-            currentNS.addPrefixMapping(mapping);
+            currentNS.addPrefixMapping(
+                    mapping.getPrefix(), mapping.getNamespaceURI());
             return;
         }
-        currentNS.addPrefixMapping(
-                new PrefixMappingImpl(name.getPrefix(), namespaceURI));
+        currentNS.addPrefixMapping(name.getPrefix(), namespaceURI);
     }
     
     protected void resolvePrefixAll() {

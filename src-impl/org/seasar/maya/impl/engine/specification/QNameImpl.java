@@ -54,8 +54,8 @@ public class QNameImpl implements QName, CONST_IMPL {
     public boolean equals(Object test) {
         if(test instanceof QNameImpl) {
             QNameImpl qName = (QNameImpl)test;
-            return _namespaceURI.equals(qName.getNamespaceURI()) &&
-            	_localName.equalsIgnoreCase(qName.getLocalName());
+            return getNamespaceURI().equals(qName.getNamespaceURI()) &&
+                getLocalName().equalsIgnoreCase(qName.getLocalName());
         }
         return false;
     }

@@ -89,7 +89,7 @@ public class NodeAttributeImpl implements NodeAttribute {
         return null;
     }
 
-    public void addPrefixMapping(PrefixMapping mapping) {
+    public void addPrefixMapping(String prefix, String namespaceURI) {
         throw new UnsupportedOperationException();
     }
 

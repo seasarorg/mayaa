@@ -49,6 +49,10 @@ public class EqualsIDInjectionResolver
         return _idFilter;
     }
     
+    protected boolean isReportResolvedID() {
+        return _reportResolvedID;
+    }
+    
     protected String getID(SpecificationNode node) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
@@ -126,10 +130,6 @@ public class EqualsIDInjectionResolver
     }
 
     // Parameterizable implements ------------------------------------
-    
-    protected boolean isReportResolvedID() {
-        return _reportResolvedID;
-    }
     
     public void setParameter(String name, String value) {
         if("reportUnresolvedID".equals(name)) {

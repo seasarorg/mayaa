@@ -26,8 +26,6 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.NamespaceImpl;
-import org.seasar.maya.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
@@ -52,9 +50,8 @@ public class XPathMatchesInjectionResolver
         if(original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-        Namespace namespace = new NamespaceImpl();
-        namespace.addPrefixMapping(
-                new PrefixMappingImpl("m", URI_MAYA));
+        Namespace namespace = SpecificationUtil.createNamespace();
+        namespace.addPrefixMapping("m", URI_MAYA);
         String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
         for(Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespace, true); it.hasNext(); ) {

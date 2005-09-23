@@ -64,6 +64,7 @@ public class EngineImpl extends SpecificationImpl
         _paramNames.add(SUFFIX_SEPARATOR);
         _paramNames.add(WELCOME_FILE_NAME);
     }
+    public static final String THROWABLE = "THROWABLE";
 
     private Map _parameters;
     private ErrorHandler _errorHandler;
@@ -183,7 +184,10 @@ public class EngineImpl extends SpecificationImpl
     protected void handleError(Throwable t) {
         t = removeWrapperRuntimeException(t);
         try {
+            Request request = CycleUtil.getRequest();
+            request.setAttribute(THROWABLE, t);
             getErrorHandler().doErrorHandle(t);
+            request.removeAttribute(THROWABLE);
             CycleUtil.getResponse().flushAll();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {

@@ -36,9 +36,10 @@ public interface Namespace extends NodeObject {
     
     /**
      * 名前空間モデルの追加。
-     * @param mapping 名前空間モデル。
+     * @param prefix 名前空間プレフィックス。
+     * @param namespaceURI 名前空間URI。
      */
-    void addPrefixMapping(PrefixMapping mapping);
+    void addPrefixMapping(String prefix, String namespaceURI);
     
     /**
      * このスコープにて、名前空間モデルを追加したかどうか。

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
@@ -38,6 +39,10 @@ public class SpecificationUtil implements CONST_IMPL {
     private SpecificationUtil() {
     }
 
+    public static Namespace createNamespace() {
+        return new NamespaceImpl();
+    }
+    
     public static String getAttributeValue(
             SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);

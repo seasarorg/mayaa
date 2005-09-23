@@ -34,33 +34,26 @@ public interface CONST_IMPL {
     String ATTR_ID = "id";
     String ATTR_INJECT = "inject";
 
-    String PUBLIC_MLD10 = "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
-    String PUBLIC_PROVIDER10 = "-//The Seasar Foundation//DTD Maya Provider 1.0//EN";
+    String PUBLIC_MLD10 = 
+        "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
+    String PUBLIC_PROVIDER10 = 
+        "-//The Seasar Foundation//DTD Maya Provider 1.0//EN";
     
-    QName QH_CONTENT = new QNameImpl(URI_HTML, "content");
-    QName QH_HTML = new QNameImpl(URI_HTML, "html");
-    QName QH_HTTP_EQUIV = new QNameImpl(URI_HTML, "http-equiv");    
     QName QH_ID = new QNameImpl(URI_HTML, ATTR_ID);
-    QName QH_META = new QNameImpl(URI_HTML, "meta");
-    
-    QName QX_CONTENT = new QNameImpl(URI_XHTML, "content");
-    QName QX_HTML = new QNameImpl(URI_XHTML, "html");
-    QName QX_HTTP_EQUIV = new QNameImpl(URI_XHTML, "http-equiv");    
     QName QX_ID = new QNameImpl(URI_XHTML, ATTR_ID);
-    QName QX_META = new QNameImpl(URI_XHTML, "meta");
 
     QName QM_ATTRIBUTE = new QNameImpl("attribute");
     QName QM_CDATA = new QNameImpl("cdata");
     QName QM_CHARACTERS = new QNameImpl("characters");
     QName QM_COMMENT = new QNameImpl("comment");
     QName QM_DOCTYPE = new QNameImpl("doctype");
-    QName QM_DUPLECATED_ELEMENT = new QNameImpl("duplecatedElement");
+    QName QM_DUPLECATED = new QNameImpl("duplecatedElement");
     QName QM_ELEMENT = new QNameImpl("element");
     QName QM_ENGINE = new QNameImpl("engine");
     QName QM_INSERT = new QNameImpl("insert");
     QName QM_MAYA = new QNameImpl("maya");
     QName QM_NULL = new QNameImpl("null");
-    QName QM_PROCESSING_INSTRUCTION = new QNameImpl("processingInstruction");
+    QName QM_PI = new QNameImpl("processingInstruction");
     QName QM_TEMPLATE = new QNameImpl("template");
     QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
 
@@ -73,6 +66,7 @@ public interface CONST_IMPL {
     QName QM_IGNORE = new QNameImpl("ignore");
     QName QM_INJECT = new QNameImpl(ATTR_INJECT);
     QName QM_NAME = new QNameImpl("name");
+    QName QM_NO_CACHE = new QNameImpl("noCache");
     QName QM_PATH = new QNameImpl("path");
     QName QM_PUBLIC_ID = new QNameImpl("publicID");
     QName QM_RENDERED = new QNameImpl("rendered");

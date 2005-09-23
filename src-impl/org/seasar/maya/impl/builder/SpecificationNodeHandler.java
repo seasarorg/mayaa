@@ -216,7 +216,7 @@ public class SpecificationNodeHandler
     
     public void xmlDecl(String version, String encoding, String standalone) {
         addCharactersNode();
-        SpecificationNode node = addNode(QM_PROCESSING_INSTRUCTION);
+        SpecificationNode node = addNode(QM_PI);
         node.addAttribute(QM_TARGET, "xml");
         StringBuffer buffer = new StringBuffer();
         if(StringUtil.hasValue(version)) {
@@ -235,7 +235,7 @@ public class SpecificationNodeHandler
 
     public void processingInstruction(String target, String data) {
         addCharactersNode();
-		SpecificationNode node = addNode(QM_PROCESSING_INSTRUCTION);
+		SpecificationNode node = addNode(QM_PI);
 		node.addAttribute(QM_TARGET, target);
 		if(StringUtil.hasValue(data)) {
 			node.addAttribute(QM_DATA, data);

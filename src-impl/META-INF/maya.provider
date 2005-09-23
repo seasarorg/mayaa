@@ -57,7 +57,7 @@
 	</libraryManager>
 	
 	<templateBuilder class="org.seasar.maya.impl.builder.TemplateBuilderImpl">
-		<resolver class="org.seasar.maya.impl.builder.injection.ContentTypeSetter"/>
+		<resolver class="org.seasar.maya.impl.builder.injection.MetaValuesSetter"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.RenderedSetter"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.InsertSetter"/>
 		<resolver class="org.seasar.maya.impl.builder.injection.InjectAttributeInjectionResolver"/>

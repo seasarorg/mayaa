@@ -33,6 +33,7 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -88,13 +89,28 @@ public class TemplateImpl extends SpecificationImpl
         return ret ;
     }
     
+    protected boolean isNoCache() {
+        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
+        if(maya != null) {
+            String noCache = SpecificationUtil.getAttributeValue(
+                    maya, QM_NO_CACHE);
+            return ObjectUtil.booleanValue(noCache, false);
+        }
+        return false;
+    }
+    
     protected void prepareCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         String contentType = getContentType();
         response.setContentType(contentType);
+        if(isNoCache()) {
+            response.addHeader("Pragma", "no-cache");
+            response.addHeader("Cache-Control", "no-cache");
+            response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+        }
     }
-    
+
     public ProcessStatus doTemplateRender(Page topLevelPage) {
         RenderUtil.saveToCycle(this);
         prepareCycle();

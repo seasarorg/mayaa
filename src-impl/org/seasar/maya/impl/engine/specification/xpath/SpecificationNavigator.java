@@ -312,7 +312,7 @@ public class SpecificationNavigator extends DefaultNavigator
 	public boolean isProcessingInstruction(Object obj) {
 	    if(obj instanceof SpecificationNode) {
 			SpecificationNode node = (SpecificationNode)obj;
-			return QM_PROCESSING_INSTRUCTION.equals(node.getQName());
+			return QM_PI.equals(node.getQName());
 	    }
 	    return false;
 	}

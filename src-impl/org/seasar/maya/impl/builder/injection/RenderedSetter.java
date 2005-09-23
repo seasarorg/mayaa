@@ -60,7 +60,7 @@ public class RenderedSetter	implements InjectionResolver, CONST_IMPL {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = BuilderUtil.createInjectedNode(
-   		            QM_DUPLECATED_ELEMENT, uri, original, false);
+   		            QM_DUPLECATED, uri, original, false);
             StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();
 	        if(StringUtil.hasValue(prefix)) {

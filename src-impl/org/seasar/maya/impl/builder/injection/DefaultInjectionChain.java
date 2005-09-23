@@ -39,7 +39,7 @@ public class DefaultInjectionChain implements InjectionChain, CONST_IMPL {
         QM_CHARACTERS,
         QM_COMMENT,
         QM_DOCTYPE,
-        QM_PROCESSING_INSTRUCTION
+        QM_PI
     };
     
     private DefaultInjectionChain() {

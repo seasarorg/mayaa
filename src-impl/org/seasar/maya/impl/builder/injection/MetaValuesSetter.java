@@ -21,6 +21,7 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.engine.specification.QNameImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
@@ -28,20 +29,51 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
+public class MetaValuesSetter
+        implements InjectionResolver, CONST_IMPL {
 
-    private void setContentType(SpecificationNode original,
+    protected static final QName QH_CONTENT = 
+        new QNameImpl(URI_HTML, "content");
+    protected static final QName QH_HTTP_EQUIV = 
+        new QNameImpl(URI_HTML, "http-equiv");    
+    protected static final QName QH_META = 
+        new QNameImpl(URI_HTML, "meta");
+
+    protected static final QName QX_CONTENT = 
+        new QNameImpl(URI_XHTML, "content");
+    protected static final QName QX_HTTP_EQUIV = 
+        new QNameImpl(URI_XHTML, "http-equiv");    
+    protected static final QName QX_META = 
+        new QNameImpl(URI_XHTML, "meta");
+    
+    protected void addMayaAttribute(
+            SpecificationNode original, QName qName, String value) {
+        if(original == null || qName == null || StringUtil.isEmpty(value)) {
+            throw new IllegalArgumentException();
+        }
+        SpecificationNode maya = SpecificationUtil.getMayaNode(original);
+        if(maya == null) {
+            throw new IllegalStateException();
+        }
+        maya.addAttribute(qName, value);
+    }
+    
+    protected void setContentValue(SpecificationNode original,
             QName httpEquivName, QName contentName) {
         NodeAttribute equiv = original.getAttribute(httpEquivName);
-        if(equiv != null && "Content-Type".equalsIgnoreCase(equiv.getValue())) {
+        if(equiv != null) {
+            String equivValue = equiv.getValue();
             NodeAttribute content = original.getAttribute(contentName);
-            String value = content.getValue();
-            if(StringUtil.hasValue(value)) {
-        		SpecificationNode maya = SpecificationUtil.getMayaNode(original);
-        		if(maya == null) {
-        		    throw new IllegalStateException();
-        		}
-        		maya.addAttribute(QM_CONTENT_TYPE, value);
+            String contentValue = content.getValue();
+            if(StringUtil.hasValue(contentValue)) {
+                if("Content-Type".equalsIgnoreCase(equivValue)) {
+                    addMayaAttribute(original, QM_CONTENT_TYPE, contentValue);
+                } else if("Pragma".equalsIgnoreCase(equivValue) ||
+                        "Cache-Control".equalsIgnoreCase(equivValue)) {
+                    if("no-cache".equalsIgnoreCase(contentValue)) {
+                        addMayaAttribute(original, QM_NO_CACHE, "true");
+                    }
+                }
             }
         }
     }
@@ -53,9 +85,9 @@ public class ContentTypeSetter implements InjectionResolver, CONST_IMPL {
         }
         QName originalName = original.getQName();
         if(QH_META.equals(originalName)) {
-            setContentType(original, QH_HTTP_EQUIV, QH_CONTENT);
+            setContentValue(original, QH_HTTP_EQUIV, QH_CONTENT);
         } else if(QX_META.equals(originalName)) {
-            setContentType(original, QX_HTTP_EQUIV, QX_CONTENT);
+            setContentValue(original, QX_HTTP_EQUIV, QX_CONTENT);
         }
         return chain.getNode(original);
     }

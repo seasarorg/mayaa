@@ -32,7 +32,8 @@ public class ExpressionImpl extends Expression {
         _script = script;
     }
     
-    public Object evaluate(VariableResolver vResolver) throws ELException {
+    public Object evaluate(VariableResolver vResolver)
+            throws ELException {
         return _script.execute();
     }
 

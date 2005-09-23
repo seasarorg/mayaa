@@ -29,20 +29,23 @@ import org.seasar.maya.impl.cycle.script.ScriptUtil;
  */
 public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
 
-    private static ExpressionEvaluator _instance = new ExpressionEvaluatorImpl();
+    private static ExpressionEvaluator _instance = 
+        new ExpressionEvaluatorImpl();
     
     public static ExpressionEvaluator getInstance() {
         return _instance;
     }
     
     public Object evaluate(String expression, Class expectedType,
-            VariableResolver vResolver, FunctionMapper fMapper) throws ELException {
+            VariableResolver vResolver, FunctionMapper fMapper)
+            throws ELException {
         Expression exp = parseExpression(expression, expectedType, fMapper);
         return exp.evaluate(vResolver);
     }
 
-    public Expression parseExpression(String expression, Class expectedType, 
-            FunctionMapper fMapper) throws ELException {
+    public Expression parseExpression(String expression, 
+            Class expectedType, FunctionMapper fMapper)
+            throws ELException {
         CompiledScript script = ScriptUtil.compile(expression, expectedType);
         return new ExpressionImpl(script);
     }

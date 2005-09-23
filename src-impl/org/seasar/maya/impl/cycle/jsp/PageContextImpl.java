@@ -105,20 +105,24 @@ public class PageContextImpl extends PageContext {
         return new BodyContentImpl(response.pushWriter());
     }
 
-    public void forward(String relativeUrlPath) throws ServletException, IOException {
+    public void forward(String relativeUrlPath)
+            throws ServletException, IOException {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
     	cycle.forward(relativeUrlPath);
     }
 
-    public void include(String relativeUrlPath) throws ServletException, IOException {
+    public void include(String relativeUrlPath)
+            throws ServletException, IOException {
         throw new UnsupportedOperationException();
     }
 
-    public void handlePageException(Exception e) throws ServletException, IOException {
+    public void handlePageException(Exception e)
+            throws ServletException, IOException {
     	throw new UnsupportedOperationException();
     }
     
-    public void handlePageException(Throwable t) throws ServletException, IOException {
+    public void handlePageException(Throwable t)
+            throws ServletException, IOException {
     	throw new UnsupportedOperationException();
     }
 
@@ -126,7 +130,7 @@ public class PageContextImpl extends PageContext {
         throw new UnsupportedOperationException();
     }
 
-    // Underlying object -----------------------------------------------
+    // getting underlying object ---------------------------------------
     
     public ServletContext getServletContext() {
         ServiceProvider provider = ProviderFactory.getServiceProvider();
@@ -193,7 +197,8 @@ public class PageContextImpl extends PageContext {
         return VariableResolverImpl.getInstance();
 	}
 
-	// Attributes ------------------------------------------------------------
+	// Attributes --------------------------------------------------
+    
     public Object findAttribute(String name) {
         for(int i = 0; i < CYCLE_SCOPES.length; i++) {
             Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
@@ -249,7 +254,8 @@ public class PageContextImpl extends PageContext {
         String scopeName = getScopeFromInt(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
-        return IteratorEnumeration.getInstance(attrScope.iterateAttributeNames());
+        return IteratorEnumeration.getInstance(
+                attrScope.iterateAttributeNames());
     }
 
     public int getAttributesScope(String name) {
@@ -262,7 +268,8 @@ public class PageContextImpl extends PageContext {
         return 0;
     }
     
-    // support class -----------------------------------------------------
+    // support class -------------------------------------------------
+    
     private class CycleServletConfig implements ServletConfig {
 
         public String getInitParameter(String name) {

@@ -53,12 +53,15 @@ public class RequestScopeImpl extends AbstractRequestScope {
     
     public String getRequestedPath() {
         check();
-        String path = 
-            StringUtil.preparePath(_httpServletRequest.getServletPath()) +
-            StringUtil.preparePath(_httpServletRequest.getPathInfo());
-        if(StringUtil.isEmpty(path) || "/".equals(path)) {
-            return EngineUtil.getEngineSetting(
+        String path = _httpServletRequest.getPathInfo();
+        if(path == null) {
+            path = _httpServletRequest.getServletPath();
+        }
+        if(StringUtil.isEmpty(path) || path.endsWith("/")) {
+            String welcome = EngineUtil.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
+            path = StringUtil.preparePath(path) + 
+                    StringUtil.preparePath(welcome); 
         }
         return path;
     }

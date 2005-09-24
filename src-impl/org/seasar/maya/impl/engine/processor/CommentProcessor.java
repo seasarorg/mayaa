@@ -29,7 +29,7 @@ public class CommentProcessor extends CharactersProcessor {
 	public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("<!--");
-        Object value = getText().getValue().execute();
+        Object value = getText().getValue().execute(null);
         if(value != null) {
             cycle.getResponse().write(value.toString());
         }

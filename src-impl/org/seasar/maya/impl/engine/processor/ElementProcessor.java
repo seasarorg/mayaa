@@ -147,7 +147,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(attrPrefix).append(":");
         }
         buffer.append(qName.getLocalName());
-        buffer.append("=\"").append(prop.getValue().execute()).append("\"");
+        buffer.append("=\"").append(prop.getValue().execute(null)).append("\"");
     }
     
     protected boolean isHTML(QName qName) {

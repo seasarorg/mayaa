@@ -70,7 +70,7 @@ public abstract class AbstractScriptEnvironment
     public CompiledScript compile(
             String script, String sourceName, int lineno) {
         if(StringUtil.isEmpty(script)) {
-            return new NullScript();
+            return new LiteralScript("");
         }
         List list = new ArrayList();
         for(Iterator it = new ScriptBlockIterator(script, _blockSign);

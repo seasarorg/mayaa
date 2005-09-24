@@ -49,15 +49,22 @@ public class ComplexScript implements CompiledScript {
         return _expectedType;
     }
     
-    public Object execute() {
+    public Object execute(Object[] args) {
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].execute());
+            buffer.append(_compiled[i].execute(null));
         }
         if(_expectedType == Void.class) {
             return null;
         }
         return ObjectUtil.convert(_expectedType, buffer.toString());
+    }
+
+    public void setMethodArgTypes(Class[] methodArgTypes) {
+    }
+    
+    public Class[] getMethodArgTypes() {
+        return null;
     }
 
     public boolean isLiteral() {

@@ -123,7 +123,7 @@ public class SpecificationUtil implements CONST_IMPL {
         if(StringUtil.hasValue(text)) {
             CompiledScript script = 
                 ScriptUtil.compile(text, Void.class);
-            script.execute();
+            script.execute(null);
         }
     }
 

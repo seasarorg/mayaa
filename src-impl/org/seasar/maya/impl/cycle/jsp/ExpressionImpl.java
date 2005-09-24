@@ -34,7 +34,7 @@ public class ExpressionImpl extends Expression {
     
     public Object evaluate(VariableResolver vResolver)
             throws ELException {
-        return _script.execute();
+        return _script.execute(null);
     }
 
 }

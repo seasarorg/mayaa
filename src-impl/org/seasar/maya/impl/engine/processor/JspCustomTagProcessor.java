@@ -155,7 +155,7 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
             String propertyName = property.getName().getQName().getLocalName();
-            Object value = property.getValue().execute();
+            Object value = property.getValue().execute(null);
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
         ProcessorTreeWalker processor = this;

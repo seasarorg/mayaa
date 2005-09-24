@@ -49,7 +49,7 @@ public class ScriptUtil {
             compiled = environment.compile(
                     text, node.getSystemID(), node.getLineNumber());
         } else {
-            compiled = new NullScript();
+            compiled = new LiteralScript("");
         }
         compiled.setExpectedType(expectedType);
         return compiled;

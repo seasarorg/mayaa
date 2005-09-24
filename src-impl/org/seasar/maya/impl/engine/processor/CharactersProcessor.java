@@ -38,7 +38,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     }
     
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        Object value = getText().getValue().execute();
+        Object value = getText().getValue().execute(null);
         if(value != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());

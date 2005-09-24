@@ -16,8 +16,6 @@
 package org.seasar.maya.impl.cycle.script;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -25,30 +23,14 @@ import org.seasar.maya.source.SourceDescriptor;
 public abstract class AbstractCompiledScript 
         implements CompiledScript {
 
-    private String _text;
-    private SourceDescriptor _source;
-    private String _encoding;
-    private Class _expectedType = Object.class;
-    
-    public AbstractCompiledScript(String text) {
-        if(text == null) {
-            throw new IllegalArgumentException();
-        }
-        _text = text;
-    }
+    private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
-    public AbstractCompiledScript(
-            SourceDescriptor source, String encoding) {
-        if(source == null) {
-            throw new IllegalArgumentException();
-        }
-        _source = source;
-        _encoding = encoding;
-    }
+    private Class _expectedType = Object.class;
+    private Class[] _methodArgTypes;
     
     public void setExpectedType(Class expectedType) {
         if(expectedType == null) {
-            throw new IllegalArgumentException();
+            expectedType = Object.class;
         }
         _expectedType = expectedType;
     }
@@ -56,41 +38,20 @@ public abstract class AbstractCompiledScript
     public Class getExpectedType() {
         return _expectedType;
     }
+
+    public void setMethodArgTypes(Class[] methodArgTypes) {
+        if(methodArgTypes == null) {
+            methodArgTypes = ZERO_ARGS_TYPE;
+        }
+        _methodArgTypes = methodArgTypes;
+    }
+    
+    public Class[] getMethodArgTypes() {
+        return _methodArgTypes;
+    }
     
     public boolean isLiteral() {
         return false;
     }
-
-    public boolean isReadOnly() {
-        return usingSource();
-    }
-
-    protected boolean usingSource() {
-        return _source != null;
-    }
-    
-    protected String getText() {
-        return _text;
-    }
-    
-    protected SourceDescriptor getSource() {
-        return _source;
-    }
-
-    protected String getEncoding() {
-        if(StringUtil.isEmpty(_encoding)) {
-            return System.getProperty("file.encoding", "UTF-8");
-        }
-        return _encoding;
-    }
-
-    public String toString() {
-        if(usingSource()) {
-            return _source.getSystemID();
-        }
-        return ScriptUtil.getBlockSignedText(_text);
-    }
-    
-    
     
 }

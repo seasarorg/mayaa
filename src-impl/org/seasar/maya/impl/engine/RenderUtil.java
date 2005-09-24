@@ -243,7 +243,7 @@ public class RenderUtil implements CONST_IMPL {
             if(StringUtil.isEmpty(suffix)) {
                 if(StringUtil.isEmpty(requestedSuffix)) {
                     CompiledScript script = page.getSuffixScript();
-                    suffix = (String)script.execute();
+                    suffix = (String)script.execute(null);
                 } else {
                     suffix = requestedSuffix;
                 }

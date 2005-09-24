@@ -56,12 +56,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        CompiledScriptImpl compiled = 
-            new CompiledScriptImpl(text, sourceName, lineno);
-        if(_wrap != null) {
-            compiled.setWrapFactory(_wrap);
-        }
-        return compiled;
+        return new TextCompiledScriptImpl(text, _wrap, sourceName, lineno);
     }
 
     // ScriptEnvironment implements ----------------------------------
@@ -81,12 +76,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(source == null) {
             throw new IllegalArgumentException();
         }
-        CompiledScriptImpl compiled = new CompiledScriptImpl(
-                source, encoding);
-        if(_wrap != null) {
-            compiled.setWrapFactory(_wrap);
-        }
-        return compiled;
+        return new SourceCompiledScriptImpl(source, encoding, _wrap);
     }
     
     protected Scriptable getStandardObjects() {

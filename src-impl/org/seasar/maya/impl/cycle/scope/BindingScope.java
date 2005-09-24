@@ -83,7 +83,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
                     it.hasNext(); ) {
     			ProcessorProperty prop = (ProcessorProperty)it.next();
     			if(prop.getName().getQName().getLocalName().equals(name)) {
-    				return prop.getValue().execute();
+    				return prop.getValue().execute(null);
     			}
     		}
             return null;

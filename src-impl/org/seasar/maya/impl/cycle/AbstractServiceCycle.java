@@ -70,7 +70,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         }
         ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
         CompiledScript script = env.compile(source, encoding);
-        script.execute();
+        script.execute(null);
     }
 
     public Iterator iterateAttributeScope() {

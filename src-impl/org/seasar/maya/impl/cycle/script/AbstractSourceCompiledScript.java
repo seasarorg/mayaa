@@ -15,34 +15,36 @@
  */
 package org.seasar.maya.impl.cycle.script;
 
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NullScript implements CompiledScript {
+public abstract class AbstractSourceCompiledScript
+        extends AbstractCompiledScript {
 
-    private static final long serialVersionUID = -804147517585067610L;
+    private SourceDescriptor _source;
+    private String _encoding;
 
-    private Class _expectedType = Object.class;
-    
-    public void setExpectedType(Class expectedType) {
-        if(expectedType == null) {
+    public AbstractSourceCompiledScript(
+            SourceDescriptor source, String encoding) {
+        if(source == null) {
             throw new IllegalArgumentException();
         }
-        _expectedType = expectedType;
+        _source = source;
+        _encoding = encoding;
+    }
+    
+    protected SourceDescriptor getSource() {
+        return _source;
     }
 
-    public Class getExpectedType() {
-        return _expectedType;
-    }
-
-    public Object execute() {
-        return "";
-    }
-
-    public boolean isLiteral() {
-        return true;
+    protected String getEncoding() {
+        if(StringUtil.isEmpty(_encoding)) {
+            return System.getProperty("file.encoding", "UTF-8");
+        }
+        return _encoding;
     }
 
     public boolean isReadOnly() {
@@ -54,7 +56,7 @@ public class NullScript implements CompiledScript {
     }
 
     public String toString() {
-        return "";
+        return _source.getSystemID();
     }
-
+    
 }

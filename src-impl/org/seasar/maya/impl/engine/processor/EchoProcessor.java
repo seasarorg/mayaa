@@ -67,7 +67,7 @@ public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(
                         prop.getName().getQName().getLocalName(),
-                        prop.getValue().execute());
+                        prop.getValue().execute(null));
             }
             return attributeMap;
         }

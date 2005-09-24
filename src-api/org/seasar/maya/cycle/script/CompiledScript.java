@@ -22,18 +22,18 @@ import java.io.Serializable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface CompiledScript extends Serializable {
-    
-    /**
-     * スクリプト実行結果への期待型の取得。
-     * @return 実行結果に期待されるクラス型。
-     */
-    Class getExpectedType();
 
     /**
      * スクリプト実行結果への期待型の設定。
      * @param expectedType 実行結果に期待するクラス型。
      */
     void setExpectedType(Class expectedType);
+    
+    /**
+     * スクリプト実行結果への期待型の取得。
+     * @return 実行結果に期待されるクラス型。
+     */
+    Class getExpectedType();
     
     /**
      * リテラルテキストかどうか。
@@ -43,17 +43,34 @@ public interface CompiledScript extends Serializable {
 
     /**
      * スクリプトを実行して値を取得する。
+     * @param args nullもしくは、実行時引数（JSF等ミドルウェア対応）。
      * @return 実行結果の値。
      */
-    Object execute();
+    Object execute(Object[] args);
     
     /**
-     * 読み取りのみかどうか。
+     * JSF等の式言語様式実行ミドルウェア対応。
+     * 式言語様式のメソッドコールのための引数型を設定する。 
+     * @param methodArgTypes メソッド引数型配列。
+     */
+    void setMethodArgTypes(Class[] methodArgTypes);
+
+    /**
+     * JSF等の式言語様式実行ミドルウェア対応。
+     * 式言語様式のメソッドコールのための引数型を取得する。 
+     * @return メソッド引数型配列。
+     */
+    Class[] getMethodArgTypes();
+    
+    /**
+     * JSF等の式言語様式実行ミドルウェア対応。
+     * スクリプトブロックの状態を調べ、読み取りのみかどうかを返す。
      * @return コンパイル結果が、値設定可能であればtrue。
      */
     boolean isReadOnly();
 
     /**
+     * JSF等ミドルウェア対応機能。 
      * スクリプトを実行して値設定する。
      * @param value 設定する値。
      */

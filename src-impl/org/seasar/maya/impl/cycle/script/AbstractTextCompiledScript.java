@@ -16,29 +16,33 @@
 package org.seasar.maya.impl.cycle.script;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LiteralScript  implements CompiledScript {
+public abstract class AbstractTextCompiledScript 
+        implements CompiledScript {
 
-	private static final long serialVersionUID = -3791475287481727514L;
-    
-	private String _text;
+    private static final Class[] ZERO_ARGS_TYPE = new Class[0];
+
+    private String _text;
     private Class _expectedType = Object.class;
+    private Class[] _methodArgTypes;
     
-    public LiteralScript(String text) {
+    public AbstractTextCompiledScript(String text) {
         if(text == null) {
             throw new IllegalArgumentException();
         }
         _text = text;
     }
+
+    protected String getText() {
+        return _text;
+    }
     
     public void setExpectedType(Class expectedType) {
         if(expectedType == null) {
-            throw new IllegalArgumentException();
+            expectedType = Object.class;
         }
         _expectedType = expectedType;
     }
@@ -46,35 +50,28 @@ public class LiteralScript  implements CompiledScript {
     public Class getExpectedType() {
         return _expectedType;
     }
-    
-    public Object execute(Object[] args) {
-        if(_expectedType == Void.class || StringUtil.isEmpty(_text)) {
-            return null;
-        }
-        return ObjectUtil.convert(_expectedType, _text);
-    }
 
     public void setMethodArgTypes(Class[] methodArgTypes) {
+        if(methodArgTypes == null) {
+            methodArgTypes = ZERO_ARGS_TYPE;
+        }
+        _methodArgTypes = methodArgTypes;
     }
     
     public Class[] getMethodArgTypes() {
-        return null;
+        return _methodArgTypes;
     }
-
+    
     public boolean isLiteral() {
-        return true;
+        return false;
     }
 
     public boolean isReadOnly() {
-        return true;
-    }
-
-    public void assignValue(Object value) {
-        throw new ReadOnlyScriptBlockException(toString());
+        return false;
     }
 
     public String toString() {
-        return _text;
+        return ScriptUtil.getBlockSignedText(_text);
     }
     
 }

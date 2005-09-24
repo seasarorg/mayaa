@@ -31,6 +31,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.AbstractCompiledScript;
+import org.seasar.maya.impl.cycle.script.ReadOnlyScriptBlockException;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -40,10 +41,13 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
     
-    private Script _script;
     private String _sourceName;
     int _lineno;
     private WrapFactory _wrap;
+    private Script _execScript;
+    private boolean _assignParsed;
+    private Script _assignScript;
+    private String _assignName;
     
     public CompiledScriptImpl(String text, String sourceName, int lineno) {
         super(text);
@@ -62,6 +66,10 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
             throw new IllegalArgumentException();
         }
         _wrap = wrap;
+    }
+    
+    protected WrapFactory getWrapFactory() {
+        return _wrap;
     }
     
     protected Scriptable getScope() {
@@ -92,43 +100,86 @@ public class CompiledScriptImpl extends AbstractCompiledScript {
         return cx.compileString(getText(), _sourceName, _lineno, null);
     }
 
-    protected Object convertToPrimitive(Object obj) {
-    	return obj;
-    }
-    
-    // CompiledScript implements -------------------------------------
-    
-    public Object execute() {
+    protected Object convertResult(Context cx, Object jsRet) {
         Object ret = null;
         Class expectedType = getExpectedType();
-        Context cx = Context.enter();
-        if(_wrap != null) {
-            cx.setWrapFactory(_wrap);
+        if(expectedType.equals(Boolean.TYPE)) {
+            // workaround to ECMA1.3 
+            ret = JavaAdapter.convertResult(jsRet, Object.class);
+        } else if(expectedType != Void.class) {
+            ret = JavaAdapter.convertResult(jsRet, expectedType);
         }
-        try {
-            if(_script == null) {
-                _script = compile(cx);
-            }
-            Object value = _script.exec(cx, getScope());
-            if(expectedType.equals(Boolean.TYPE)) {
-                // workaround to ECMA1.3 
-                ret = JavaAdapter.convertResult(value, Object.class);
-            } else if(expectedType != Void.class) {
-                ret = JavaAdapter.convertResult(value, expectedType);
-            }
-        } catch(WrappedException e) {
-            Throwable t = e.getWrappedException();
-            if(t instanceof RuntimeException) {
-                throw (RuntimeException)t;
-            }
-            throw new RuntimeException(t);
-        } finally {
-            Context.exit();
-        }
-        if(expectedType == Void.class || ret == null) {
-            return null;
+        if(expectedType == Void.class) {
+            ret = null;
         }
         return ret;
     }
+
+    protected void removeWrappedException(WrappedException e) {
+        Throwable t = e.getWrappedException();
+        if(t instanceof RuntimeException) {
+            throw (RuntimeException)t;
+        }
+        throw new RuntimeException(t);
+    }
     
+    public Object execute() {
+        Object ret = null;
+        Context cx = Context.enter();
+        WrapFactory wrap = getWrapFactory();
+        if(wrap != null) {
+            cx.setWrapFactory(wrap);
+        }
+        try {
+            if(_execScript == null) {
+                _execScript = compile(cx);
+            }
+            Object jsRet = _execScript.exec(cx, getScope());
+            ret = convertResult(cx, jsRet);
+        } catch(WrappedException e) {
+            removeWrappedException(e);
+        } finally {
+            Context.exit();
+        }
+        return ret;
+    }
+
+    protected void parseForAssigne() {
+        if(_assignParsed == false) {
+
+            // TODO ŽÀ‘•
+            
+            _assignParsed = true;
+        }
+    }
+    
+    public boolean isReadOnly() {
+        parseForAssigne();
+        return _assignName == null;
+    }
+
+    public void assignValue(Object value) {
+        if(isReadOnly()) {
+            throw new ReadOnlyScriptBlockException(toString());
+        }
+        Context cx = Context.enter();
+        WrapFactory wrap = getWrapFactory();
+        if(wrap != null) {
+            cx.setWrapFactory(wrap);
+        }
+        try {
+            Scriptable scope = getScope();
+            if(_assignScript != null) {
+                Scriptable host =  (Scriptable)_assignScript.exec(cx, scope);
+                host.put(_assignName, scope, value);
+            } else {
+                scope.put(_assignName, scope, value);
+            }
+        } catch(WrappedException e) {
+            removeWrappedException(e);
+        } finally {
+            Context.exit();
+        }
+    }
+
 }

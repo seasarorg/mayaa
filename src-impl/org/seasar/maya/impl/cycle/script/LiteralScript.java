@@ -57,6 +57,14 @@ public class LiteralScript  implements CompiledScript {
     public boolean isLiteral() {
         return true;
     }
+
+    public boolean isReadOnly() {
+        return true;
+    }
+
+    public void assignValue(Object value) {
+        throw new ReadOnlyScriptBlockException(toString());
+    }
     
     public String toString() {
         return _text;

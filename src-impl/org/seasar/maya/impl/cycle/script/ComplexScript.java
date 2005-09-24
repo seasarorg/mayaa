@@ -64,7 +64,15 @@ public class ComplexScript implements CompiledScript {
         return false;
     }
 
-    public String getScript() {
+    public boolean isReadOnly() {
+        return true;
+    }
+
+    public void assignValue(Object value) {
+        throw new ReadOnlyScriptBlockException(toString());
+    }
+    
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
         for(int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].toString());

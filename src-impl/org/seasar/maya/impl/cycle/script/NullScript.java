@@ -45,6 +45,14 @@ public class NullScript implements CompiledScript {
         return true;
     }
 
+    public boolean isReadOnly() {
+        return true;
+    }
+
+    public void assignValue(Object value) {
+        throw new ReadOnlyScriptBlockException(toString());
+    }
+
     public String toString() {
         return "";
     }

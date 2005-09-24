@@ -61,6 +61,10 @@ public abstract class AbstractCompiledScript
         return false;
     }
 
+    public boolean isReadOnly() {
+        return usingSource();
+    }
+
     protected boolean usingSource() {
         return _source != null;
     }

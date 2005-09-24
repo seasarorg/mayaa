@@ -22,12 +22,6 @@ import java.io.Serializable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface CompiledScript extends Serializable {
-
-    /**
-     * スクリプトを実行して値を取得する。
-     * @return 実行結果の値。
-     */
-    Object execute();
     
     /**
      * スクリプト実行結果への期待型の取得。
@@ -46,5 +40,23 @@ public interface CompiledScript extends Serializable {
      * @return コンパイル結果が、リテラルだったらtrue。
      */
     boolean isLiteral();
+
+    /**
+     * スクリプトを実行して値を取得する。
+     * @return 実行結果の値。
+     */
+    Object execute();
+    
+    /**
+     * 読み取りのみかどうか。
+     * @return コンパイル結果が、値設定可能であればtrue。
+     */
+    boolean isReadOnly();
+
+    /**
+     * スクリプトを実行して値設定する。
+     * @param value 設定する値。
+     */
+    void assignValue(Object value);
     
 }

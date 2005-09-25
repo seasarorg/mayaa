@@ -68,7 +68,10 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     }
     
     public Object execute(Object[] args) {
-        Context cx = RhinoUtil.enter(_wrap);
+        
+    	// TODO 式様式のメソッドコール。
+    	
+    	Context cx = RhinoUtil.enter(_wrap);
         Object ret = null;
         try {
             processText();

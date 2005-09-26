@@ -24,7 +24,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
-import org.seasar.maya.impl.engine.processor.JspCustomTagProcessor;
+import org.seasar.maya.impl.engine.processor.JspProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -49,7 +49,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     protected TemplateProcessor newInstance(SpecificationNode injected) {
-        JspCustomTagProcessor processor = new JspCustomTagProcessor();
+        JspProcessor processor = new JspProcessor();
         processor.setTagClass(getProcessorClass());
         return processor;
     }
@@ -60,8 +60,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
             PropertyDefinition property = (PropertyDefinition)it.next();
             Object prop = property.createProcessorProperty(injected);
             if(prop != null) {
-    	        JspCustomTagProcessor jsp =
-                    (JspCustomTagProcessor)processor;
+    	        JspProcessor jsp =
+                    (JspProcessor)processor;
     	        jsp.addProcessorProperty((ProcessorProperty)prop);
             }
         }

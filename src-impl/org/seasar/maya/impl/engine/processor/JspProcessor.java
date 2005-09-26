@@ -46,8 +46,9 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * @author suga
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class JspCustomTagProcessor extends TemplateProcessorSupport
-        implements ChildEvaluationProcessor, TryCatchFinallyProcessor, CONST_IMPL {
+public class JspProcessor extends TemplateProcessorSupport
+        implements ChildEvaluationProcessor, 
+        TryCatchFinallyProcessor, CONST_IMPL {
     
 	private static final long serialVersionUID = -4416320364576454337L;
 	private static PageContext _pageContext = new PageContextImpl();
@@ -160,9 +161,9 @@ public class JspCustomTagProcessor extends TemplateProcessorSupport
         }
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
-            if (processor instanceof JspCustomTagProcessor) {
-            	JspCustomTagProcessor jspProcessor = 
-            		(JspCustomTagProcessor)processor;
+            if (processor instanceof JspProcessor) {
+            	JspProcessor jspProcessor = 
+            		(JspProcessor)processor;
                 Tag parentTag = jspProcessor.getLoadedTag();
                 if(parentTag == null) {
                     throw new IllegalStateException(

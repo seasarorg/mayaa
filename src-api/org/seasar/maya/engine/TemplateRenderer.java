@@ -22,13 +22,20 @@ import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateRenderer {
-
-    /**
+	
+	/**
      * 指定テンプレートを描画する。
      * @param topLevelPage  描画トップレベルのページ。
      * @param template 描画するテンプレート。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
     ProcessStatus renderTemplate(Page topLevelPage, Template template);
+
+	/**
+	 * 指定テンプレートをデコードする。
+     * @param topLevelPage  描画トップレベルのページ。
+     * @param template 描画するテンプレート。
+	 */
+    void decodeTemplate(Page topLevelPage, Template template);
     
 }

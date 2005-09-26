@@ -160,6 +160,9 @@ public class InsertProcessor extends TemplateProcessorSupport
     
     public ProcessStatus renderTemplate(
             Page topLevelPage, Template template) {
+        if(topLevelPage == null || template == null) {
+            throw new IllegalArgumentException();
+        }
         DoRenderProcessor doRender = findDoRender(template, _name);
         if(doRender == null) {
             throw new DoRenderNotFoundException(_name);
@@ -170,6 +173,20 @@ public class InsertProcessor extends TemplateProcessorSupport
             RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot); 
         doRender.popInsertProcessor();
         return ret;
-    }    
+    }
+
+	public void decodeTemplate(Page topLevelPage, Template template) {
+        if(topLevelPage == null || template == null) {
+            throw new IllegalArgumentException();
+        }
+        DoRenderProcessor doRender = findDoRender(template, _name);
+        if(doRender == null) {
+            throw new DoRenderNotFoundException(_name);
+        }
+        TemplateProcessor insertRoot = getRenderRoot(doRender);
+        doRender.pushInsertProcessor(this);
+        RenderUtil.decodeTemplateProcessor(topLevelPage, insertRoot); 
+        doRender.popInsertProcessor();
+	}    
 
 }

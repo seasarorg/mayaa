@@ -95,6 +95,20 @@ public class RenderUtil implements CONST_IMPL {
         return (TryCatchFinallyProcessor)current;
     }
 
+    public static void saveToCycle(ProcessorTreeWalker current) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.setProcessor(current);
+        if(current instanceof TemplateProcessor) {
+            TemplateProcessor proc = (TemplateProcessor)current;
+            cycle.setOriginalNode(proc.getOriginalNode());
+            cycle.setInjectedNode(proc.getInjectedNode());
+        } else if(current instanceof Template) {
+            Template temp = (Template)current;
+            cycle.setOriginalNode(temp);
+            cycle.setInjectedNode(temp);
+        }
+    }
+
     // main rendering method
     public static ProcessStatus renderTemplateProcessor(
             Page topLevelPage, TemplateProcessor current) {
@@ -174,7 +188,7 @@ public class RenderUtil implements CONST_IMPL {
         }
         return ret;
     }
-
+    
     // Rendering entry point
     public static ProcessStatus renderProcessorTree(
             Page topLevelPage, ProcessorTreeWalker root) {
@@ -192,20 +206,6 @@ public class RenderUtil implements CONST_IMPL {
             }
         }
         return EVAL_PAGE;
-    }
-
-    public static void saveToCycle(ProcessorTreeWalker current) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setProcessor(current);
-        if(current instanceof TemplateProcessor) {
-            TemplateProcessor proc = (TemplateProcessor)current;
-            cycle.setOriginalNode(proc.getOriginalNode());
-            cycle.setInjectedNode(proc.getInjectedNode());
-        } else if(current instanceof Template) {
-            Template temp = (Template)current;
-            cycle.setOriginalNode(temp);
-            cycle.setInjectedNode(temp);
-        }
     }
     
     public static void saveToCycle(Page page) {
@@ -256,5 +256,15 @@ public class RenderUtil implements CONST_IMPL {
         SpecificationUtil.endScope();
         return ret;
     }
+ 
+    public static void decodeTemplateProcessor(
+    		Page topLevelPage, TemplateProcessor current) {
+    	// TODO ŽÀ‘•
+    }
     
+    public static void decodeProcessorTree(
+            Page topLevelPage, ProcessorTreeWalker root) {
+    	// TODO ŽÀ‘•
+    }
+
 }

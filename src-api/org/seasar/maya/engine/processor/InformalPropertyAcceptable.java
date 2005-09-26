@@ -21,7 +21,8 @@ package org.seasar.maya.engine.processor;
  * このメソッドを経由しないで、直接、Beanプロパティアクセスで設定される。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface InformalPropertyAcceptable extends TemplateProcessor {
+public interface InformalPropertyAcceptable 
+		extends ProcessorTreeWalker {
 
 	/**
 	 * 非MLDなインフォーマルプロパティの受け入れメソッド。

@@ -42,8 +42,8 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateImpl extends SpecificationImpl
-		implements Template, CONST_IMPL {
+public class TemplateImpl 
+		extends SpecificationImpl implements Template, CONST_IMPL {
 
 	private static final long serialVersionUID = -5368325487192629078L;
 
@@ -51,7 +51,6 @@ public class TemplateImpl extends SpecificationImpl
     private String _suffix ;
     private String _extension;
     private List _childProcessors = new ArrayList();
-    private Object _underlying;
     
     public TemplateImpl(Page page, String suffix, String extension) {
         if(page == null || suffix == null || extension == null) {
@@ -196,18 +195,5 @@ public class TemplateImpl extends SpecificationImpl
         checkTimestamps();
         return (ProcessorTreeWalker)_childProcessors.get(index);
     }
-    
-    // Underlyable implements ----------------------------------------
-
-	public void setUnderlyingObject(Object context) {
-		if(context == null) {
-			throw new IllegalArgumentException();
-		}
-		_underlying = context;
-	}
-
-	public Object getUnderlyingObject() {
-		return _underlying;
-	}
     
 }

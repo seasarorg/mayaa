@@ -17,7 +17,6 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.Underlyable;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
@@ -28,8 +27,8 @@ import org.seasar.maya.engine.specification.Specification;
  * リクエストに対して、ステートレスである。 シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Template extends Specification, ProcessorTreeWalker,
-		Underlyable, Serializable {
+public interface Template 
+		extends Specification, ProcessorTreeWalker, Serializable {
     
 	/**
 	 * ページへの参照を取得する。

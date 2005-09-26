@@ -214,5 +214,12 @@ public class PageImpl extends SpecificationImpl
         }
         return template.doTemplateRender(topLevelPage);
     }
+
+	public void decodeTemplate(Page topLevelPage, Template template) {
+        if(topLevelPage == null || template == null) {
+            throw new IllegalArgumentException();
+        }
+        RenderUtil.decodeProcessorTree(topLevelPage, template);
+	}
     
 }

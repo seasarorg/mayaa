@@ -274,9 +274,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
 		private static final long serialVersionUID = -5203349759797583368L;
 
-		protected HtmlReaderPool() {
-		}
-
 		protected Object createObject() {
 			return new TemplateParser(new TemplateScanner());
 		}

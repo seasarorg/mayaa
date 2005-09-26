@@ -162,6 +162,9 @@ public abstract class AbstractAttributableProcessor
             if(property == null) {
                 throw new IllegalArgumentException();
             }
+            if(_processtimeProperties == null) {
+                return false;
+            }
             return _processtimeProperties.contains(property);
         }
         

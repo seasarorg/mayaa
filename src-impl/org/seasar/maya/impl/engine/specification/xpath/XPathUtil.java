@@ -82,21 +82,25 @@ public class XPathUtil {
                     specification, xpathExpr, namespaceable);
         }
         try {
-            XPath xpath = SpecificationXPath.createXPath(xpathExpr, namespaceable);
+            XPath xpath = 
+                SpecificationXPath.createXPath(xpathExpr, namespaceable);
             return xpath.selectNodes(specification).iterator();
         } catch(JaxenException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static class CascadeSelectNodesIterator implements Iterator {
+    // support class ------------------------------------------------
+    
+    public static class CascadeSelectNodesIterator 
+            implements Iterator {
 
         private Specification _specification;
         private String _xpathExpr;
         private Namespace _namespaceable;
         private Iterator _iterator;
         
-        private CascadeSelectNodesIterator(Specification specification, 
+        public CascadeSelectNodesIterator(Specification specification, 
                 String xpathExpr, Namespace namespaceable) {
             if(specification == null || StringUtil.isEmpty(xpathExpr)) {
                 throw new IllegalArgumentException();

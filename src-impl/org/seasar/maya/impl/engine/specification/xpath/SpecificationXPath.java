@@ -41,7 +41,7 @@ public class SpecificationXPath extends BaseXPath {
         }
     }
     
-    private SpecificationXPath(String xpathExpr) throws JaxenException {
+    protected SpecificationXPath(String xpathExpr) throws JaxenException {
         super(xpathExpr, SpecificationNavigator.getInstance());
     }
     

@@ -56,32 +56,32 @@ public class RenderUtil implements CONST_IMPL {
     private RenderUtil() {
     }
 
-    private static boolean isEvaluation(TemplateProcessor current) {
+    public static boolean isEvaluation(TemplateProcessor current) {
         return current instanceof ChildEvaluationProcessor && 
         		((ChildEvaluationProcessor)current).isChildEvaluation();
     }
 
-    private static ChildEvaluationProcessor getEvaluation(
+    public static ChildEvaluationProcessor getEvaluation(
             TemplateProcessor current) {
         return (ChildEvaluationProcessor)current;
     }
 
-    private static boolean isIteration(TemplateProcessor current) {
+    public static boolean isIteration(TemplateProcessor current) {
         return current instanceof IterationProcessor &&
         		((IterationProcessor)current).isIteration();
     }
 
-    private static IterationProcessor getIteration(
+    public static IterationProcessor getIteration(
             TemplateProcessor current) {
         return (IterationProcessor)current;
     }
 
-    private static boolean isDuplicated(TemplateProcessor current) {
+    public static boolean isDuplicated(TemplateProcessor current) {
         return current instanceof ElementProcessor &&
         		((ElementProcessor)current).isDuplicated(); 
     }
 
-    private static boolean isTryCatchFinally(TemplateProcessor current) {
+    public static boolean isTryCatchFinally(TemplateProcessor current) {
         if( current instanceof TryCatchFinallyProcessor ){
             TryCatchFinallyProcessor tryCatchFinallyProcessor 
                                         = (TryCatchFinallyProcessor)current;
@@ -90,7 +90,7 @@ public class RenderUtil implements CONST_IMPL {
         return false ;
     }
 
-    private static TryCatchFinallyProcessor getTryCatchFinally(
+    public static TryCatchFinallyProcessor getTryCatchFinally(
             TemplateProcessor current) {
         return (TryCatchFinallyProcessor)current;
     }
@@ -208,7 +208,7 @@ public class RenderUtil implements CONST_IMPL {
         }
     }
     
-    private static void saveToCycle(Page page) {
+    public static void saveToCycle(Page page) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(page);
         cycle.setInjectedNode(page);

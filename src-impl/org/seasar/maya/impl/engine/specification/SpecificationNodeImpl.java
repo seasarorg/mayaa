@@ -169,7 +169,7 @@ public class SpecificationNodeImpl extends QNameableImpl
 
     // support class --------------------------------------------------
     
-    private static class AllCopyToFilter implements CopyToFilter {
+    protected static class AllCopyToFilter implements CopyToFilter {
         
         public boolean accept(NodeObject test) {
             return true;

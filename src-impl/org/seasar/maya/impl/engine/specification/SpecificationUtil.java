@@ -119,7 +119,7 @@ public class SpecificationUtil implements CONST_IMPL {
         ScriptUtil.getScriptEnvironment().endScope();
     }
 
-    private static void execEventScript(String text) {
+    public static void execEventScript(String text) {
         if(StringUtil.hasValue(text)) {
             CompiledScript script = 
                 ScriptUtil.compile(text, Void.class);

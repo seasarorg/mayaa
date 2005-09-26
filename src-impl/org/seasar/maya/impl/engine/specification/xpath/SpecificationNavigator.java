@@ -50,17 +50,19 @@ public class SpecificationNavigator extends DefaultNavigator
         return _instance;
     }
     
-    private SpecificationNavigator() {
+    protected SpecificationNavigator() {
     }
 
-	private String getNamespaceURI(Namespace namespace, String prefix) {
+	protected String getNamespaceURI(
+            Namespace namespace, String prefix) {
 	    if(namespace == null) {
 	        throw new IllegalArgumentException();
 	    }
 	    if(prefix == null) {
 	        prefix = "";
 	    }
-        PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+        PrefixMapping mapping =
+            namespace.getMappingFromPrefix(prefix, true);
         if(mapping != null) {
             return mapping.getNamespaceURI();
         }
@@ -341,11 +343,14 @@ public class SpecificationNavigator extends DefaultNavigator
 	    return false;
 	}
     
-	private class QNameFilteredIterator extends AbstractScanningIterator {
+    // support class ------------------------------------------------
+    
+	protected class QNameFilteredIterator
+        extends AbstractScanningIterator {
 
 	    private QName _qName;
 	    
-	    private QNameFilteredIterator(QName qName, Iterator iterator) {
+	    public QNameFilteredIterator(QName qName, Iterator iterator) {
 	        super(iterator);
 	        if(qName == null) {
 	            throw new IllegalArgumentException();

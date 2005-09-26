@@ -94,7 +94,8 @@ public class JspProcessor extends TemplateProcessorSupport
             StringBuffer buffer = new StringBuffer();
             for (Iterator it = iterateProperties(); it.hasNext();) {
                 ProcessorProperty property = (ProcessorProperty) it.next();
-                String localName = property.getName().getQName().getLocalName();
+                String localName = 
+                    property.getName().getQName().getLocalName();
                 buffer.append("%").append(localName);
             }
             _attributesKey = buffer.toString();
@@ -131,7 +132,8 @@ public class JspProcessor extends TemplateProcessorSupport
         getTagPool().returnTag(tag);
     }
     
-    protected ProcessStatus getProcessStatus(int status, boolean doStart) {
+    protected ProcessStatus getProcessStatus(
+            int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
             return EVAL_BODY_INCLUDE;
         } else if(status == Tag.SKIP_BODY) {
@@ -155,7 +157,8 @@ public class JspProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag();
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
-            String propertyName = property.getName().getQName().getLocalName();
+            String propertyName = 
+                property.getName().getQName().getLocalName();
             Object value = property.getValue().execute(null);
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
@@ -287,11 +290,12 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected class TagPool extends AbstractSoftReferencePool {
 
-		private static final long serialVersionUID = -4519484537723904500L;
+		private static final long serialVersionUID =
+            -4519484537723904500L;
 
 		private Class _clazz;
 
-		protected TagPool(Class clazz) {
+		public TagPool(Class clazz) {
         	if(clazz == null || 
         			Tag.class.isAssignableFrom(clazz) == false) {
         		throw new IllegalArgumentException();

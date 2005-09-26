@@ -16,12 +16,16 @@
 package org.seasar.maya.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
+import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.maya.impl.cycle.script.ReadOnlyScriptBlockException;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -35,10 +39,9 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     int _lineNumber;
     private WrapFactory _wrap;
     private Script _rhinoScript;
-    private boolean _parsed;
-    private boolean _elStyle;
     private String _scriptText;
     private String _elStyleName;
+    private boolean _elStyle;
     
     public TextCompiledScriptImpl(String text, WrapFactory wrap, 
             String sourceName, int lineNumber) {
@@ -46,40 +49,86 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         _wrap = wrap;
         _sourceName = sourceName;
         _lineNumber = lineNumber;
+        processText(text);
     }
     
-    protected void compileFromText(Context cx, String text) {
+    protected boolean maybeELStyle(String text) {
+        boolean start = true;
+        for(int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if(start) {
+                if(Character.isJavaIdentifierStart(c)) {
+                    start = false;
+                    continue;
+                }
+            } else {
+                if(Character.isJavaIdentifierPart(c)) {
+                    continue;
+                }
+            }
+            if(c == '.') {
+                start = true;
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    
+    protected void processText(String text) {
+        if(text == null) {
+            throw new IllegalArgumentException();
+        }
+        text = text.trim();
+        String script = text;
+        String name = null;
+        if(maybeELStyle(text)) {
+            int pos = text.lastIndexOf('.');
+            if(pos != -1 && pos != (text.length() - 1)) {
+                script = text.substring(0, pos);
+                name = text.substring(pos + 1);
+            }
+        }
+        _scriptText = script;
+        _elStyleName = name;
+        _elStyle = name != null;
+    }
+    
+    protected void compileFromText(Context cx) {
         if(_rhinoScript == null && StringUtil.hasValue(_scriptText)) {
             _rhinoScript = cx.compileString(
-                    text, _sourceName, _lineNumber, null);
-        }
-    }
-    
-    protected void processText() {
-        if(_parsed == false) {
-            
-            // TODO 実装。
-            
-            _scriptText = getText();
-            _elStyleName = null;
-            _elStyle = false;
-            _parsed = true;
+                    _scriptText, _sourceName, _lineNumber, null);
         }
     }
     
     public Object execute(Object[] args) {
-        
-    	// TODO 式様式のメソッドコール。
-    	
     	Context cx = RhinoUtil.enter(_wrap);
         Object ret = null;
         try {
-            processText();
-            compileFromText(cx, _scriptText);
             Scriptable scope = RhinoUtil.getScope();
             Object jsRet;
-            if(_rhinoScript != null) {
+            if(_scriptText != null) {
+                compileFromText(cx);
+                if(_elStyle == false) {
+                    Object jsArgs = Context.javaToJS(args, scope);
+                    ScriptableObject.putProperty(scope, "ARGS", jsArgs);
+                }
                 jsRet = _rhinoScript.exec(cx, scope);
+                if(_elStyle) {
+                    Object host = jsRet;
+                    if(host instanceof Scriptable) {
+                        jsRet = ((Scriptable)host).get(_elStyleName, scope);
+                    } else if(host instanceof AttributeScope) {
+                        jsRet = ((AttributeScope)host).getAttribute(_elStyleName);
+                    } else {
+                        jsRet = ObjectUtil.getProperty(host, _elStyleName);
+                    }
+                    if(args != null && host instanceof Scriptable &&
+                            jsRet instanceof Function) {
+                        Function func = (Function)jsRet;
+                        jsRet = func.call(cx, scope, (Scriptable)host, args);
+                    }
+                }
             } else {
                 jsRet = scope.get(_elStyleName, scope);
             }
@@ -93,7 +142,6 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     }
 
     public boolean isReadOnly() {
-        processText();
         return _elStyle;
     }
 
@@ -104,10 +152,16 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         Context cx = RhinoUtil.enter(_wrap);
         try {
             Scriptable scope = RhinoUtil.getScope();
-            compileFromText(cx, _scriptText);
-            if(_rhinoScript != null) {
-                Scriptable host =  (Scriptable)_rhinoScript.exec(cx, scope);
-                host.put(_elStyleName, scope, value);
+            if(_scriptText != null) {
+                compileFromText(cx);
+                Object host =  _rhinoScript.exec(cx, scope);
+                if(host instanceof Scriptable) {
+                    ((Scriptable)host).put(_elStyleName, scope, value);
+                } else if(host instanceof AttributeScope) {
+                    ((AttributeScope)host).setAttribute(_elStyleName, value);
+                } else {
+                    ObjectUtil.setProperty(host, _elStyleName, value);
+                }
             } else {
                 scope.put(_elStyleName, scope, value);
             }

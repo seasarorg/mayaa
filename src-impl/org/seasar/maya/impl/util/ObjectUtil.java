@@ -180,6 +180,18 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
     }
+    
+    public static Object getProperty(Object bean, String propertyName) {
+        try {
+            return PropertyUtils.getProperty(bean, propertyName);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static boolean booleanValue(Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;

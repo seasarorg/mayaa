@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.converters.BooleanConverter;
 
@@ -193,6 +194,19 @@ public class ObjectUtil {
         }
     }
 
+    public static Object invoke(
+            Object bean, String methodName, Object[] args, Class[] types) {
+        try {
+            return MethodUtils.invokeMethod(bean, methodName, args, types);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public static boolean booleanValue(Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);

@@ -19,7 +19,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.maya.cycle.scope.AttributeScope;
@@ -39,7 +38,9 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     int _lineNumber;
     private WrapFactory _wrap;
     private Script _rhinoScript;
-    private String _scriptText;
+    // for el style --------------
+    private Script _elRhinoScript;
+    private String _elScriptText;
     private String _elStyleName;
     private boolean _elStyle;
     
@@ -89,16 +90,47 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                 name = text.substring(pos + 1);
             }
         }
-        _scriptText = script;
+        _elScriptText = script;
         _elStyleName = name;
         _elStyle = name != null;
     }
-    
-    protected void compileFromText(Context cx) {
-        if(_rhinoScript == null && StringUtil.hasValue(_scriptText)) {
-            _rhinoScript = cx.compileString(
-                    _scriptText, _sourceName, _lineNumber, null);
+
+    protected Object normalExecute(Context cx, Scriptable scope) {
+        if(cx == null || scope == null) {
+            throw new IllegalArgumentException();
         }
+        if(_rhinoScript == null) {
+            _rhinoScript = cx.compileString(
+                    getText(), _sourceName, _lineNumber, null);
+        }
+        return _rhinoScript.exec(cx, scope);
+    }
+    
+    protected Object getELStyleHost(Context cx, Scriptable scope) {
+        if(cx == null || scope == null) {
+            throw new IllegalArgumentException();
+        }
+        if(StringUtil.isEmpty(_elScriptText)) {
+            return null;
+        }
+        if(_elRhinoScript == null) {
+            _elRhinoScript = cx.compileString(
+                    _elScriptText, _sourceName, _lineNumber, null);
+        }
+        return _elRhinoScript.exec(cx, scope);
+    }
+    
+    protected Object functionExecute(
+            Context cx, Scriptable scope, Object host, Object[] args) {
+        if(cx == null || scope == null || host == null || args == null) {
+            throw new IllegalArgumentException();
+        }
+        if(host instanceof Scriptable) {
+            Object func = ((Scriptable)host).get(_elStyleName, scope);
+            return ((Function)func).call(cx, scope, (Scriptable)host, args);
+        }
+        Class[] types = getMethodArgTypes();
+        return ObjectUtil.invoke(host, _elStyleName, args, types);
     }
     
     public Object execute(Object[] args) {
@@ -107,30 +139,11 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         try {
             Scriptable scope = RhinoUtil.getScope();
             Object jsRet;
-            if(_scriptText != null) {
-                compileFromText(cx);
-                if(_elStyle == false) {
-                    Object jsArgs = Context.javaToJS(args, scope);
-                    ScriptableObject.putProperty(scope, "ARGS", jsArgs);
-                }
-                jsRet = _rhinoScript.exec(cx, scope);
-                if(_elStyle) {
-                    Object host = jsRet;
-                    if(host instanceof Scriptable) {
-                        jsRet = ((Scriptable)host).get(_elStyleName, scope);
-                    } else if(host instanceof AttributeScope) {
-                        jsRet = ((AttributeScope)host).getAttribute(_elStyleName);
-                    } else {
-                        jsRet = ObjectUtil.getProperty(host, _elStyleName);
-                    }
-                    if(args != null && host instanceof Scriptable &&
-                            jsRet instanceof Function) {
-                        Function func = (Function)jsRet;
-                        jsRet = func.call(cx, scope, (Scriptable)host, args);
-                    }
-                }
+            if(_elStyle && args != null) {
+                Object host = getELStyleHost(cx, scope);
+                jsRet = functionExecute(cx, scope, host, args);
             } else {
-                jsRet = scope.get(_elStyleName, scope);
+                jsRet = normalExecute(cx, scope);
             }
             ret = RhinoUtil.convertResult(cx, getExpectedType(), jsRet);
         } catch(WrappedException e) {
@@ -152,10 +165,11 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         Context cx = RhinoUtil.enter(_wrap);
         try {
             Scriptable scope = RhinoUtil.getScope();
-            if(_scriptText != null) {
-                compileFromText(cx);
-                Object host =  _rhinoScript.exec(cx, scope);
-                if(host instanceof Scriptable) {
+            if(_elStyle) {
+                Object host =  getELStyleHost(cx, scope);
+                if(host == null) {
+                    scope.put(_elStyleName, scope, value);
+                } else if(host instanceof Scriptable) {
                     ((Scriptable)host).put(_elStyleName, scope, value);
                 } else if(host instanceof AttributeScope) {
                     ((AttributeScope)host).setAttribute(_elStyleName, value);
@@ -163,7 +177,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                     ObjectUtil.setProperty(host, _elStyleName, value);
                 }
             } else {
-                scope.put(_elStyleName, scope, value);
+                throw new IllegalStateException();
             }
         } catch(WrappedException e) {
             RhinoUtil.removeWrappedException(e);

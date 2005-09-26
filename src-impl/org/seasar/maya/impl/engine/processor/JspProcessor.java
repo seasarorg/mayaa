@@ -311,11 +311,11 @@ public class JspProcessor extends TemplateProcessorSupport
             return object instanceof Tag;
         }
         
-        protected Tag borrowTag() {
+        public Tag borrowTag() {
         	return (Tag)borrowObject();
         }
         
-        protected void returnTag(Tag tag) {
+        public void returnTag(Tag tag) {
         	if(tag != null) {
         		returnObject(tag);
         	}

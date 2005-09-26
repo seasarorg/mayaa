@@ -28,7 +28,8 @@ import org.seasar.maya.impl.CONST_IMPL;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
+public class EchoProcessor extends ElementProcessor
+        implements CONST_IMPL {
 
     private static final long serialVersionUID = 3924111635172574833L;
 
@@ -37,7 +38,7 @@ public class EchoProcessor extends ElementProcessor implements CONST_IMPL {
         setupElement(node);
     }
 
-    private void setupElement(SpecificationNode node) {
+    protected void setupElement(SpecificationNode node) {
         super.setName(node);
         for (Iterator it = node.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();

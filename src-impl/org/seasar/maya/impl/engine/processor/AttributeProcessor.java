@@ -31,7 +31,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     private QNameable _name;
 	private ProcessorProperty _value;
 
-    private AbstractAttributableProcessor findParentAttributable() {
+    protected AbstractAttributableProcessor findParentAttributable() {
         for(ProcessorTreeWalker parent = getParentProcessor();
         		parent != null;
         		parent = parent.getParentProcessor()) {
@@ -68,13 +68,15 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         return SKIP_BODY;
     }
 
-    private class ProcessorPropertyWrapper 
+    // support class ------------------------------------------------
+    
+    protected class ProcessorPropertyWrapper 
             implements ProcessorProperty {
 
         private QNameable _attrName;
         private ProcessorProperty _attrValue;
 
-        private ProcessorPropertyWrapper(
+        public ProcessorPropertyWrapper(
                 QNameable name, ProcessorProperty property) {
             if(name == null || property == null) {
                 throw new IllegalArgumentException();
@@ -106,5 +108,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         public String toString() {
             return _name.toString() + "=\"" + _attrValue.getValue() + "\"";
         }
+ 
     }
+    
 }

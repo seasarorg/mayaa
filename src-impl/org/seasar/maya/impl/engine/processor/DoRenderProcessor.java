@@ -49,7 +49,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return _name;
     }
 
-    private Stack getStack() {
+    protected Stack getStack() {
     	Stack stack = (Stack)_insertProcs.get();
     	if(stack == null) {
     		stack = new Stack();

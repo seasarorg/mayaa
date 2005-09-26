@@ -64,12 +64,7 @@ public abstract class AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
-        if(info._processtimeProperties == null) {
-        	info._processtimeProperties = new ArrayList();
-        }
-        if(info._processtimeProperties.contains(prop) == false) {
-        	info._processtimeProperties.add(prop);
-        }
+       	info.addProcesstimeProperty(prop);
     }
     
     public boolean hasProcesstimeProperty(ProcessorProperty prop) {
@@ -77,18 +72,12 @@ public abstract class AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
-        if(info._processtimeProperties == null) {
-        	return false;
-        }
-        return info._processtimeProperties.contains(prop);
+        return info.hasProcesstimeProperty(prop);
     }
     
     public Iterator iterateProcesstimeProperties() {
         ProcesstimeInfo info = getProcesstimeInfo();
-        if(info._processtimeProperties == null) {
-            return NullIterator.getInstance();
-        }
-        return info._processtimeProperties.iterator();
+        return info.iterateProcesstimeProperties();
     }
     
     protected abstract ProcessStatus writeStartElement();
@@ -111,7 +100,7 @@ public abstract class AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
-        info._body = body;
+        info.setBody(body);
     }
 
     public void doInitChildProcess() {
@@ -129,9 +118,10 @@ public abstract class AbstractAttributableProcessor
         ProcesstimeInfo info = getProcesstimeInfo();
         if(_childEvaluation) {
             writeStartElement();
-            if(info._body != null) {
+            CycleWriter body = info.getBody();
+            if(body != null) {
             	try {
-                    info._body.flush();
+                    body.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -156,6 +146,43 @@ public abstract class AbstractAttributableProcessor
         
         private CycleWriter _body; 
         private List _processtimeProperties;
+        
+        public void setBody(CycleWriter body) {
+            if(body == null) {
+                throw new IllegalArgumentException();
+            }
+            _body = body;
+        }
+        
+        public CycleWriter getBody() {
+            return _body;
+        }
+        
+        public boolean hasProcesstimeProperty(ProcessorProperty property) {
+            if(property == null) {
+                throw new IllegalArgumentException();
+            }
+            return _processtimeProperties.contains(property);
+        }
+        
+        public void addProcesstimeProperty(ProcessorProperty property) {
+            if(property == null) {
+                throw new IllegalArgumentException();
+            }
+            if(_processtimeProperties == null) {
+                _processtimeProperties = new ArrayList();
+            }
+            if(_processtimeProperties.contains(property) == false) {
+                _processtimeProperties.add(property);
+            }
+        }
+        
+        public Iterator iterateProcesstimeProperties() {
+            if(_processtimeProperties == null) {
+                return NullIterator.getInstance();
+            }
+            return _processtimeProperties.iterator();
+        }
         
     }
     

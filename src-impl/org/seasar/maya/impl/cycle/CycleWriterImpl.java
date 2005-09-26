@@ -53,7 +53,7 @@ public class CycleWriterImpl extends CycleWriter {
 
     public void writeOut(Writer writer) throws IOException {
         if(writer == null) {
-            throw new IllegalArgumentException();
+            return;
         }
         // don't flush.
         writer.write(_buffer.toCharArray());

@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -57,13 +57,21 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     // Response implements -----------------------------------------
-    
+
     public void addHeader(String name, String value) {
         check();
         if(StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletResponse.addHeader(name, value);
+    }
+
+    public void setHeader(String name, String value) {
+        check();
+        if(StringUtil.isEmpty(name)) {
+            return;
+        }
+        _httpServletResponse.setHeader(name, value);
     }
 
     public void setStatus(int code) {
@@ -79,7 +87,7 @@ public class ResponseImpl extends AbstractResponse {
             throw new RuntimeException(e);
         }
     }
-    
+
     public String encodeURL(String url) {
         check();
         if(StringUtil.isEmpty(url)) {
@@ -89,19 +97,19 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     // Underlyable implemetns ----------------------------------------
-    
+
     public void setUnderlyingObject(Object context) {
-        if(context == null || 
+        if(context == null ||
                 context instanceof HttpServletResponse == false) {
             throw new IllegalArgumentException();
         }
         _httpServletResponse = (HttpServletResponse)context;
         clearBuffer();
     }
-    
+
     public Object getUnderlyingObject() {
         check();
         return _httpServletResponse;
     }
-    
+
 }

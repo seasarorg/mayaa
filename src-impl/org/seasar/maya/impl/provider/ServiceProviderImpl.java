@@ -204,23 +204,21 @@ public class ServiceProviderImpl
 		if(requestContext == null || responseContext == null) {
 			throw new IllegalArgumentException();
 		}
-		ServiceCycle cycle = (ServiceCycle)_currentServiceCycle.get();
-    	if(cycle == null) {
-            if(_serviceCycleClass == null) {
-                throw new IllegalStateException();
+        if(_serviceCycleClass == null) {
+            throw new IllegalStateException();
+        }
+		ServiceCycle cycle = 
+            (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
+        cycle.setApplicationScope(getApplication());
+		if(_serviceCycleParams != null) {
+            for(Iterator it = _serviceCycleParams.keySet().iterator();
+            		it.hasNext(); ) {
+                String key = (String)it.next();
+                String value = (String)_serviceCycleParams.get(key);
+                cycle.setParameter(key, value);
             }
-    		cycle = (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
-            cycle.setApplicationScope(getApplication());
-    		if(_serviceCycleParams != null) {
-                for(Iterator it = _serviceCycleParams.keySet().iterator();
-                		it.hasNext(); ) {
-                    String key = (String)it.next();
-                    String value = (String)_serviceCycleParams.get(key);
-                    cycle.setParameter(key, value);
-                }
-            }
-    		_currentServiceCycle.set(cycle);
-    	}
+        }
+		_currentServiceCycle.set(cycle);
 		RequestScope request = cycle.getRequestScope();
         request.setUnderlyingObject(requestContext);
         Response response = cycle.getResponse();

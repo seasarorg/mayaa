@@ -15,22 +15,27 @@
  */
 package org.seasar.maya.engine.processor;
 
+import org.seasar.maya.engine.Page;
+
 /**
  * 描画前に、ツリー構造やデータ構造の復元処理を行うプロセッサが実装する。
  * JSF等のミドルウェア対応機能。
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public interface DecodePhaseTreeWalker extends ProcessorTreeWalker {
+public interface DecodeTreeWalker extends ProcessorTreeWalker {
 
 	/**
 	 * 開きタグにおけるデコードイベント。
-	 * @param parentDecode 直近のデコードウォーカー。
+     * @param topLevelPage 描画トップレベルのページ。
+	 * @param parentDecode 直近のデコード。
 	 */
-	void doStartDecode(DecodePhaseTreeWalker parentDecode);
+	void doStartDecode(
+            Page topLevelPage, DecodeTreeWalker parentDecode);
 	
 	/**
 	 * 閉じタグにおけるデコードイベント。
+     * @param parentDecode 直近のデコード。
 	 */
-	void deEndDecode();
+	void deEndDecode(DecodeTreeWalker parentDecode);
 	
 }

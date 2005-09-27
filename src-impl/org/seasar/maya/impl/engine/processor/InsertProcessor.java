@@ -25,6 +25,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.TemplateRenderer;
+import org.seasar.maya.engine.processor.DecodeTreeWalker;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -39,9 +40,9 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InsertProcessor extends TemplateProcessorSupport
-        implements InformalPropertyAcceptable, 
-            TemplateRenderer, CONST_IMPL {
+public class InsertProcessor 
+        extends TemplateProcessorSupport implements CONST_IMPL,
+        InformalPropertyAcceptable, TemplateRenderer, DecodeTreeWalker {
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	
@@ -51,6 +52,7 @@ public class InsertProcessor extends TemplateProcessorSupport
     private String _suffix;
     private String _extension;
     private List _attributes;
+    private ThreadLocal _parentDecode = new ThreadLocal();
     
     // MLD property, required
     public void setPath(String path) {
@@ -87,7 +89,7 @@ public class InsertProcessor extends TemplateProcessorSupport
             _extension = pagePath[2];
         }
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         synchronized(this) {
             preparePage();
@@ -97,7 +99,7 @@ public class InsertProcessor extends TemplateProcessorSupport
         String extension = _extension;
         boolean findSuper = true;
         if(renderPage == null) {
-        	ServiceCycle cycle = CycleUtil.getServiceCycle();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
             RequestScope request = cycle.getRequestScope();
             requestedSuffix = request.getRequestedSuffix();
@@ -121,6 +123,17 @@ public class InsertProcessor extends TemplateProcessorSupport
             ret = SKIP_BODY;
         }
         return ret;
+    }
+
+    // DecodeTreeWalker --------------------------------------------
+
+    public void doStartDecode(
+            Page topLevelPage, DecodeTreeWalker parentDecode) {
+        _parentDecode.set(parentDecode);
+    }
+
+    public void deEndDecode(DecodeTreeWalker parentDecode) {
+        _parentDecode.set(null);
     }
     
     // TemplateRenderer implements ----------------------------------
@@ -169,24 +182,12 @@ public class InsertProcessor extends TemplateProcessorSupport
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
-        ProcessStatus ret = 
-            RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot); 
+        DecodeTreeWalker decode = (DecodeTreeWalker)_parentDecode.get();
+        RenderUtil.decodeProcessorTree(topLevelPage, insertRoot, decode);
+        ProcessStatus ret = RenderUtil.renderTemplateProcessor(
+                topLevelPage, insertRoot); 
         doRender.popInsertProcessor();
         return ret;
     }
-
-	public void decodeTemplate(Page topLevelPage, Template template) {
-        if(topLevelPage == null || template == null) {
-            throw new IllegalArgumentException();
-        }
-        DoRenderProcessor doRender = findDoRender(template, _name);
-        if(doRender == null) {
-            throw new DoRenderNotFoundException(_name);
-        }
-        TemplateProcessor insertRoot = getRenderRoot(doRender);
-        doRender.pushInsertProcessor(this);
-        RenderUtil.decodeTemplateProcessor(topLevelPage, insertRoot); 
-        doRender.popInsertProcessor();
-	}    
-
+    
 }

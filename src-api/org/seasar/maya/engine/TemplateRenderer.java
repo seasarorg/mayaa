@@ -30,12 +30,5 @@ public interface TemplateRenderer {
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
     ProcessStatus renderTemplate(Page topLevelPage, Template template);
-
-	/**
-	 * 指定テンプレートをデコードする。
-     * @param topLevelPage  描画トップレベルのページ。
-     * @param template 描画するテンプレート。
-	 */
-    void decodeTemplate(Page topLevelPage, Template template);
     
 }

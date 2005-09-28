@@ -19,6 +19,7 @@
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
+		<parameter name="decodeProcessorTree" value="false"/>
 	</engine>
 	
 	<scriptEnvironment class="org.seasar.maya.impl.cycle.script.rhino.ScriptEnvironmentImpl">

@@ -21,6 +21,7 @@
 	<property name="folder.src.api"  value="src-api"/>
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
+	<property name="folder.context.debug" value="${folder.context}/debug"/>
 	
 	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
@@ -28,7 +29,6 @@
 	<property name="webinf.classes" value="${webinf}/classes"/>
 	<property name="webinf.lib" value="${webinf}/lib"/>
 	<property name="webinf.lib-servlet" value="${webinf}/lib-servlet"/>
-	<property name="webinf.debug" value="${webinf}/page/debug"/>
 
 	<target name="cleanjar">
 		<delete verbose="${project.verbose}">
@@ -127,14 +127,14 @@
 	<target name="makewar" depends="make">
 		<war destfile="../${war.name}" webxml="${folder.context}/${webinf}/web.xml">
 			<fileset dir="${folder.context}">
-				<include name="${webinf}/**/*"/>
+				<include name="**/*"/>
 				<exclude name="${webinf}/web.xml"/>
+				<exclude name="${folder.context.debug}"/>
+				<exclude name="${folder.context.debug}/**/*"/>
 				<exclude name="${webinf.classes}"/>
 				<exclude name="${webinf.classes}/**/*"/>
 				<exclude name="${webinf.lib-servlet}"/>
 				<exclude name="${webinf.lib-servlet}/**/*"/>
-				<exclude name="${webinf.debug}"/>
-				<exclude name="${webinf.debug}/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>

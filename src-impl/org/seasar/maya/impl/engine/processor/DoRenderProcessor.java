@@ -17,8 +17,8 @@ package org.seasar.maya.impl.engine.processor;
 
 import java.util.Stack;
 
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.processor.ProcessStatus;
+import org.seasar.maya.cycle.scope.RequestScope;
+import org.seasar.maya.impl.cycle.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -27,19 +27,22 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
 	private static final long serialVersionUID = 4309532215454978747L;
 
+    private static final String INSERT_PROCESSOR_STACK =
+        DoRenderProcessor.class.getName();
+    
     private boolean _rendered = false;
     private String _name = "";
-    private ThreadLocal _insertProcessorStack = new ThreadLocal();
 
-    protected void clearInsertProcessorStack() {
-        _insertProcessorStack.set(null);
+    protected String getStackKey() {
+        return INSERT_PROCESSOR_STACK + ":" + hashCode();
     }
     
     protected Stack getInsertProcessorStack() {
-        Stack stack = (Stack)_insertProcessorStack.get();
+        RequestScope request = CycleUtil.getRequest();
+        Stack stack = (Stack)request.getAttribute(getStackKey());
         if(stack == null) {
             stack = new Stack();
-            _insertProcessorStack.set(stack);
+            request.setAttribute(getStackKey(), stack);
         }
         return stack;
     }
@@ -72,18 +75,16 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     
     public InsertProcessor peekInsertProcessor() {
        	Stack stack = getInsertProcessorStack();
-       	InsertProcessor proc = (InsertProcessor)stack.peek();
-        return proc;
+        if(stack.size() > 0) {
+           	InsertProcessor proc = (InsertProcessor)stack.peek();
+            return proc;
+        }
+        return null;
     }
     
     public void popInsertProcessor() {
     	Stack stack = getInsertProcessorStack();
     	stack.pop();
-    }
-
-    public ProcessStatus doStartProcess(Page topLevelPage) {
-        clearInsertProcessorStack();
-        return super.doStartProcess(topLevelPage);
     }
     
 }

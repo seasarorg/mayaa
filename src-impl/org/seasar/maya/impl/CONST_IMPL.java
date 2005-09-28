@@ -26,7 +26,6 @@ public interface CONST_IMPL {
     String CHECK_TIMESTAMP = "checkTimestamp";
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
-    String DECODE_PROCESSOR_TREE = "decodeProcessorTree";
     
     String URI_MAYA = "http://maya.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";

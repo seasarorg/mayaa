@@ -63,41 +63,14 @@ public class EngineImpl extends SpecificationImpl
         _paramNames.add(CHECK_TIMESTAMP);
         _paramNames.add(SUFFIX_SEPARATOR);
         _paramNames.add(WELCOME_FILE_NAME);
-        _paramNames.add(DECODE_PROCESSOR_TREE);
     }
     public static final String THROWABLE = "THROWABLE";
 
     private Map _parameters;
     private ErrorHandler _errorHandler;
     private List _pages;
-    
-    public void setParameter(String name, String value) {
-        if("defaultSpecification".equals(name)) {
-            SourceDescriptor source = new DelaySourceDescriptor();
-            source.setSystemID(value);
-            setSource(source);
-        } else if(_paramNames.contains(name)) {
-            if(_parameters == null) {
-                _parameters = new HashMap();
-            }
-            if(StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _parameters.put(name, value);
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
-        }
-    }
-
-    public String getParameter(String name) {
-        if(_paramNames.contains(name)) {
-            if(_parameters == null) {
-                return null;
-            }
-            return (String)_parameters.get(name);
-        }
-        throw new UnsupportedParameterException(getClass(), name);
-    }
+    private String _defaultSpecification = "";
+    private boolean _processDecode;
     
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -149,18 +122,9 @@ public class EngineImpl extends SpecificationImpl
             return page;
         }
     }
-   
-	public void doService() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if(isPageRequested()) {
-            doPageService(cycle);
-        } else {
-            doResourceService(cycle);
-        }
-	}
 
     protected boolean isPageRequested() {
-        RequestScope request = CycleUtil.getServiceCycle().getRequestScope();
+        RequestScope request = CycleUtil.getRequestScope();
         if ("maya".equals(request.getExtension())) {
             return true;
         }
@@ -270,4 +234,54 @@ public class EngineImpl extends SpecificationImpl
         }
     }
     
+    public void doService() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        if(isPageRequested()) {
+            doPageService(cycle);
+        } else {
+            doResourceService(cycle);
+        }
+    }
+    
+    public void setProcessDecode(boolean processDecode) {
+        _processDecode = processDecode;
+    }
+    
+    public boolean isProcessDecode() {
+        return _processDecode;
+    }
+
+    public String getParameter(String name) {
+        if("defaultSpecification".equals(name)) {
+            return _defaultSpecification;
+        } else if(_paramNames.contains(name)) {
+            if(_parameters == null) {
+                return null;
+            }
+            return (String)_parameters.get(name);
+        }
+        throw new UnsupportedParameterException(getClass(), name);
+    }
+
+    // Parameterizable implements ------------------------------------
+    
+    public void setParameter(String name, String value) {
+        if("defaultSpecification".equals(name)) {
+            SourceDescriptor source = new DelaySourceDescriptor();
+            source.setSystemID(value);
+            setSource(source);
+            _defaultSpecification = value;
+        } else if(_paramNames.contains(name)) {
+            if(_parameters == null) {
+                _parameters = new HashMap();
+            }
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _parameters.put(name, value);
+        } else {
+            throw new UnsupportedParameterException(getClass(), name);
+        }
+    }
+
 }

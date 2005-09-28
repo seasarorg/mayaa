@@ -27,13 +27,6 @@ import org.seasar.maya.provider.Parameterizable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Engine extends Parameterizable, Specification, Serializable {
-
-    /**
-     * カスタム設定項目の取得メソッド。
-     * @param name 設定名。
-     * @return 設定された項目。
-     */
-    String getParameter(String name);
     
     /**
      * エラーハンドラの設定。
@@ -58,5 +51,24 @@ public interface Engine extends Parameterizable, Specification, Serializable {
      * サービスメソッド。
      */
     void doService();
+
+    /**
+     * プロセッサツリーのデコードフェーズを起動するかどうかを設定する。
+     * @param processDecode tureだとデコードフェーズ起動。
+     */
+    void setProcessDecode(boolean processDecode);
+    
+    /**
+     * プロセッサツリーのデコードフェーズを起動するかどうかを取得する。
+     * @return tureだとデコードフェーズ起動。デフォルトfalse。
+     */
+    boolean isProcessDecode();
+
+    /**
+     * カスタム設定項目の取得メソッド。
+     * @param name 設定名。
+     * @return 設定された項目。
+     */
+    String getParameter(String name);
     
 }

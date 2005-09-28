@@ -212,8 +212,7 @@ public class PageImpl extends SpecificationImpl
         if(topLevelPage == null || template == null) {
             throw new IllegalArgumentException();
         }
-        if(EngineUtil.getEngineSettingBoolean(
-                DECODE_PROCESSOR_TREE, false)) {
+        if(EngineUtil.getEngine().isProcessDecode()) {
             RenderUtil.decodeProcessorTree(topLevelPage, template, null);
         }
         return template.doTemplateRender(topLevelPage);

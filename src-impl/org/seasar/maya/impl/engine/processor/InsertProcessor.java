@@ -183,8 +183,7 @@ public class InsertProcessor
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
-        if(EngineUtil.getEngineSettingBoolean(
-                DECODE_PROCESSOR_TREE, false)) {
+        if(EngineUtil.getEngine().isProcessDecode()) {
             DecodeTreeWalker decode = 
                 (DecodeTreeWalker)_parentDecode.get();
             RenderUtil.decodeProcessorTree(

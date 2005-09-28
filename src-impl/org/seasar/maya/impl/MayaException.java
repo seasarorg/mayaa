@@ -20,17 +20,16 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.util.AbstractMessagedException;
 
 /**
- * メッセージ設定機能付き実行時例外。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class MayaException extends RuntimeException {
+public abstract class MayaException 
+        extends AbstractMessagedException {
 
-	private static final Log LOG = LogFactory.getLog(MayaException.class);
-    
-    protected static final String[] ZERO_PARAM = new String[0];
+    private static final Log LOG = 
+        LogFactory.getLog(MayaException.class);
     
     private String _originalSystemID;
     private int _originalLineNumber = -1;
@@ -53,13 +52,9 @@ public abstract class MayaException extends RuntimeException {
         }
     }
     
-    protected int getMessageID() {
-        return 0;
-    }
-    
     protected abstract String[] getMessageParams();
     
-    public String getMessage() {
+    protected String[] getParamValues() {
         String[] params = ZERO_PARAM;
         try {
             params = getMessageParams();
@@ -78,21 +73,9 @@ public abstract class MayaException extends RuntimeException {
         newParams[2] = _injectedSystemID;
         newParams[3] = Integer.toString(_injectedLineNumber);
         System.arraycopy(params, 0, newParams, 4, paramLength);
-        String message = StringUtil.getMessage(
-                getClass(), getMessageID(), newParams);
-        if(StringUtil.isEmpty(message)) {
-            Throwable cause = getCause();
-            if(cause != null) {
-                return cause.getMessage();
-            }
-        }
-        return message;
+        return newParams;
     }
-    
-    public String getClassName() {
-        return getClass().getName();
-    }
-    
+
     public String getOriginalSystemID() {
     	return _originalSystemID;
     }

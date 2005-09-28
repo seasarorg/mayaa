@@ -22,11 +22,6 @@ package org.seasar.maya.engine.processor;
 public interface IterationProcessor extends TemplateProcessor {
 
     /**
-     * リターンフラグ。この値をdoAfterChildProcess()が返すと、再イテレートする。
-     */
-    ProcessStatus EVAL_BODY_AGAIN = new ProcessStatus();
-    
-    /**
      * イテレート実行するかどうかを返す。JSPのIterationTagやBodyTagをホスト
      * している場合に利用する。デフォルトではfalseを返す。trueだと、子プロセッサ
      * の実行後にdoAfterChildProcess()メソッドがコンテナより呼び出される。

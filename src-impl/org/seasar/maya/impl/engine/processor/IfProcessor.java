@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.ObjectUtil;
 
@@ -41,7 +42,7 @@ public class IfProcessor extends TemplateProcessorSupport {
         	throw new IllegalStateException();
         }
         boolean test = ObjectUtil.booleanValue(_test.getValue().execute(null), false);
-        return test ? EVAL_BODY_INCLUDE : SKIP_BODY;
+        return test ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
     
 }

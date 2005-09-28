@@ -24,6 +24,7 @@ import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
@@ -100,7 +101,7 @@ public abstract class AbstractAttributableProcessor
     public ProcessStatus doStartProcess(Page topLevelPage) {
         clearProcesstimeInfo();
         if(_childEvaluation) {
-            return EVAL_BODY_BUFFERED;
+            return ProcessStatus.EVAL_BODY_BUFFERED;
         }
         return writeStartElement();
     }
@@ -125,7 +126,7 @@ public abstract class AbstractAttributableProcessor
     }
     
     public ProcessStatus doAfterChildProcess() {
-        return SKIP_BODY;
+        return ProcessStatus.SKIP_BODY;
     }
     
     public ProcessStatus doEndProcess() {
@@ -142,7 +143,7 @@ public abstract class AbstractAttributableProcessor
             }
         }
         writeEndElement();
-        return EVAL_PAGE;
+        return ProcessStatus.EVAL_PAGE;
     }
 
     //helper class, methods ----------------------------------------

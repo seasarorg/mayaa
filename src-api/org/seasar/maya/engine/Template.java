@@ -17,8 +17,8 @@ package org.seasar.maya.engine;
 
 import java.io.Serializable;
 
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.engine.specification.Specification;
 
 /**

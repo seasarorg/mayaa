@@ -44,7 +44,7 @@ public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
         appSource.setSystemID(systemID);
         ApplicationScopeImpl application = new ApplicationScopeImpl();
         application.setUnderlyingObject(_servletContext);
-        appSource.setApplication(application);
+        appSource.setApplicationScope(application);
         addSourceDescriptor(appSource);
         ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);

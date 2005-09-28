@@ -25,7 +25,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;

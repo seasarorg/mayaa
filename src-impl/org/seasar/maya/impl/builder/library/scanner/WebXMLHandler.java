@@ -32,7 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class WebXMLHandler extends DefaultHandler {
 
-    private static final Log LOG = LogFactory.getLog(WebXMLHandler.class);
+    private static final Log LOG = 
+        LogFactory.getLog(WebXMLHandler.class);
 
     private TagHandlerStack _stack;
     private WebAppTagHandler _handler;
@@ -54,12 +55,13 @@ public class WebXMLHandler extends DefaultHandler {
         return J2EEEntityResolver.resolveEntity(publicId, systemId);
     }
     
-    public void startElement(
-            String namespaceURI, String localName, String qName, Attributes attributes) {
+    public void startElement(String namespaceURI, 
+            String localName, String qName, Attributes attributes) {
         _stack.startElement(localName, attributes);
     }
 
-    public void endElement(String namespaceURI, String localName, String qName) {
+    public void endElement(String namespaceURI, 
+            String localName, String qName) {
         _stack.endElement();
     }
 

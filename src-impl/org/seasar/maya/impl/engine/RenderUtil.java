@@ -25,10 +25,10 @@ import org.seasar.maya.engine.TemplateRenderer;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.DecodeTreeWalker;
 import org.seasar.maya.engine.processor.IterationProcessor;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
@@ -42,17 +42,17 @@ import org.seasar.maya.source.SourceDescriptor;
 public class RenderUtil implements CONST_IMPL {
 
     private static final ProcessStatus SKIP_BODY = 
-            TemplateProcessor.SKIP_BODY;
+            ProcessStatus.SKIP_BODY;
     private static final ProcessStatus EVAL_BODY_INCLUDE = 
-            TemplateProcessor.EVAL_BODY_INCLUDE;
+            ProcessStatus.EVAL_BODY_INCLUDE;
     private static final ProcessStatus SKIP_PAGE = 
-            TemplateProcessor.SKIP_PAGE;
+            ProcessStatus.SKIP_PAGE;
     private static final ProcessStatus EVAL_PAGE = 
-            TemplateProcessor.EVAL_PAGE;
+            ProcessStatus.EVAL_PAGE;
     private static final ProcessStatus EVAL_BODY_AGAIN =
-            IterationProcessor.EVAL_BODY_AGAIN;
+            ProcessStatus.EVAL_BODY_AGAIN;
     private static final ProcessStatus EVAL_BODY_BUFFERED =
-            ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
+            ProcessStatus.EVAL_BODY_BUFFERED;
 
     private RenderUtil() {
     }

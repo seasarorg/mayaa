@@ -58,16 +58,19 @@ public class WebAppTagHandler extends TagHandler {
             }
             
             protected void end(String body) {
-                if(StringUtil.isEmpty(_taglibURI) || StringUtil.isEmpty(_taglibLocation)) {
+                if(StringUtil.isEmpty(_taglibURI) || 
+                        StringUtil.isEmpty(_taglibLocation)) {
                     String systemID = "/WEB-INF/web.xml";
                     int lineNumber = -1;
                     if(_locator != null) {
                         systemID = _locator.getSystemId();
                         lineNumber = _locator.getLineNumber();
                     }
-                    throw new IllegalTaglibDefinitionException(systemID, lineNumber);
+                    throw new IllegalTaglibDefinitionException(
+                            systemID, lineNumber);
                 }
-                _locations.add(new SourceAlias(_taglibURI, _taglibLocation, null));
+                _locations.add(
+                        new SourceAlias(_taglibURI, _taglibLocation, null));
             }
         });
     }

@@ -27,6 +27,7 @@ import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.TemplateRenderer;
 import org.seasar.maya.engine.processor.DecodeTreeWalker;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
@@ -119,8 +120,8 @@ public class InsertProcessor
                         renderPage.getPageName(), extension);
             }
         }
-        if(ret == EVAL_PAGE) {
-            ret = SKIP_BODY;
+        if(ret == ProcessStatus.EVAL_PAGE) {
+            ret = ProcessStatus.SKIP_BODY;
         }
         return ret;
     }

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.engine.processor;
 import java.util.Stack;
 
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -32,7 +32,8 @@ public class WalkaroundSourceScanner implements SourceScanner {
     
     public WalkaroundSourceScanner() {
         _sources = new HashSet();
-        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
+        ClassLoaderSourceDescriptor loader = 
+            new ClassLoaderSourceDescriptor();
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
         loader.setSystemID("maya.mld");
         _sources.add(loader);
@@ -41,6 +42,8 @@ public class WalkaroundSourceScanner implements SourceScanner {
     public Iterator scan() {
         return _sources.iterator();
     }
+
+    // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);

@@ -15,9 +15,6 @@
  */
 package org.seasar.maya.engine.processor;
 
-
-import java.io.Serializable;
-
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -67,41 +64,5 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      * @return インジェクトされたノード。
      */    
     SpecificationNode getInjectedNode();
-    
-    /**
-     * プロセッサ動作にて状態遷移を示すステータス。
-     */
-    class ProcessStatus implements Serializable {
-
-        private static final long serialVersionUID = 473586899180314059L;
-
-        protected ProcessStatus() {
-        }
-        
-    }
-
-    /**
-     * リターンフラグ。doStartProcess()がこの値を返すと、
-     * プロセッサボディを出力しない。
-     */
-    ProcessStatus SKIP_BODY = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doStartProcess()がこの値を返すと、
-     * プロセッサボディをバッファリング無しで出力する。
-     */
-    ProcessStatus EVAL_BODY_INCLUDE = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、
-     * 以降の出力をただちに中止する。
-     */
-    ProcessStatus SKIP_PAGE = new ProcessStatus();
-    
-    /**
-     * リターンフラグ。doEndProcess()がこの値を返すと、
-     * 以降のプロセッサ出力を続ける。
-     */
-    ProcessStatus EVAL_PAGE = new ProcessStatus();
 
 }

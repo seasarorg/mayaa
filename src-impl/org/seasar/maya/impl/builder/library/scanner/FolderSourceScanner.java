@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
@@ -45,28 +46,6 @@ public class FolderSourceScanner implements SourceScanner {
     private boolean _recursive = false;
 
     private Set _extensions = new HashSet();
-
-    public void setParameter(String name, String value) {
-        if ("folder".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _folder = value;
-        } else if ("recursive".equals(name)) {
-            _recursive = Boolean.valueOf(value).booleanValue();
-        } else if ("extension".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            if (value.charAt(0) != '.') {
-                _extensions.add('.' + value);
-            } else {
-                _extensions.add(value);
-            }
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
-        }
-    }
 
     public String getFolder() {
         if (StringUtil.isEmpty(_folder)) {
@@ -89,7 +68,8 @@ public class FolderSourceScanner implements SourceScanner {
             _source.setRoot(getFolder());
         }
         if (_source.exists() && _source.getFile().isDirectory()) {
-            return new FileToSourceIterator(iterateFiles(_source.getFile()));
+            return new FileToSourceIterator(_source.getApplicationScope(),
+                    _source.getRoot(), iterateFiles(_source.getFile()));
         }
         return NullIterator.getInstance();
     }
@@ -107,7 +87,7 @@ public class FolderSourceScanner implements SourceScanner {
         return NullIterator.getInstance();
     }
 
-    private FileFilter createExtensionFilter() {
+    protected FileFilter createExtensionFilter() {
         return new FileFilter() {
             String[] extensions =
                 (String[])_extensions.toArray(new String[_extensions.size()]);
@@ -126,7 +106,7 @@ public class FolderSourceScanner implements SourceScanner {
         };
     }
 
-    private File[] listFiles(File dir) {
+    protected File[] listFiles(File dir) {
         List sources = new ArrayList();
         FileFilter filter = createExtensionFilter();
 
@@ -138,7 +118,7 @@ public class FolderSourceScanner implements SourceScanner {
         return (File[]) sources.toArray(new File[sources.size()]);
     }
 
-    private void listFilesNonRecursive(List list, File dir, FileFilter filter) {
+    protected void listFilesNonRecursive(List list, File dir, FileFilter filter) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(filter);
             for (int i = 0; i < files.length; i++) {
@@ -149,7 +129,7 @@ public class FolderSourceScanner implements SourceScanner {
         }
     }
 
-    private void listFilesRecursive(List list, File dir, FileFilter filter) {
+    protected void listFilesRecursive(List list, File dir, FileFilter filter) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(filter);
             for (int i = 0; i < files.length; i++) {
@@ -162,13 +142,39 @@ public class FolderSourceScanner implements SourceScanner {
         }
     }
 
-    private static class FileArrayIterator implements Iterator {
+    // Parameterizable implements ------------------------------------
+    
+    public void setParameter(String name, String value) {
+        if ("folder".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _folder = value;
+        } else if ("recursive".equals(name)) {
+            _recursive = Boolean.valueOf(value).booleanValue();
+        } else if ("extension".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            if (value.charAt(0) != '.') {
+                _extensions.add('.' + value);
+            } else {
+                _extensions.add(value);
+            }
+        } else {
+            throw new UnsupportedParameterException(getClass(), name);
+        }
+    }
+
+    // support class ------------------------------------------------
+    
+    protected static class FileArrayIterator implements Iterator {
 
         private File[] _files;
 
         private int _index;
 
-        private FileArrayIterator(File[] files) {
+        public FileArrayIterator(File[] files) {
             if (files == null) {
                 throw new IllegalArgumentException();
             }
@@ -192,14 +198,19 @@ public class FolderSourceScanner implements SourceScanner {
 
     }
 
-    private class FileToSourceIterator implements Iterator {
+    protected class FileToSourceIterator implements Iterator {
 
+        private ApplicationScope _applicationScope;
+        private String _root;
         private Iterator _iterator;
 
-        private FileToSourceIterator(Iterator iterator) {
-            if (iterator == null) {
+        public FileToSourceIterator(ApplicationScope applicationScope,
+                String root, Iterator iterator) {
+            if (applicationScope == null || iterator == null) {
                 throw new IllegalArgumentException();
             }
+            _applicationScope = applicationScope;
+            _root = root;
             _iterator = iterator;
         }
 
@@ -208,11 +219,11 @@ public class FolderSourceScanner implements SourceScanner {
         }
 
         private String getSystemID(File file) {
-            String sourceRoot = _source.getRoot();
+            String sourceRoot = _root;
             if (StringUtil.isEmpty(sourceRoot)) {
                 sourceRoot = "/";
             }
-            String root = _source.getApplication().getRealPath(sourceRoot);
+            String root = _applicationScope.getRealPath(sourceRoot);
             String absolutePath = file.getAbsolutePath();
             String path = absolutePath.substring(root.length());
             return StringUtil.preparePath(path);
@@ -223,8 +234,9 @@ public class FolderSourceScanner implements SourceScanner {
             if (ret instanceof File) {
                 File file = (File) ret;
                 String systemID = getSystemID(file);
-                ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
-                source.setRoot(_source.getRoot());
+                ApplicationSourceDescriptor source = 
+                    new ApplicationSourceDescriptor();
+                source.setRoot(_root);
                 source.setSystemID(systemID);
                 source.setFile(file);
                 return source;

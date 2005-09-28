@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.engine;
 
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.engine.processor.ProcessStatus;
 
 /**
  * テンプレートを描画するオブジェクト。

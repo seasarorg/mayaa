@@ -37,20 +37,9 @@ public class MetaInfSourceScanner implements SourceScanner {
 
     private static Map _cache = new HashMap();
 
-    private FolderSourceScanner _folderScanner = new FolderSourceScanner();
-
+    private FolderSourceScanner _folderScanner = 
+        new FolderSourceScanner();
     private Set _ignores = new HashSet();
-
-    public void setParameter(String name, String value) {
-        if ("ignore".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _ignores.add(value);
-        } else {
-            _folderScanner.setParameter(name, value);
-        }
-    }
 
     protected String getJarName(String systemID) {
         if (StringUtil.hasValue(systemID)) {
@@ -80,15 +69,20 @@ public class MetaInfSourceScanner implements SourceScanner {
             throw new IllegalArgumentException();
         }
         String jarName = getJarName(source.getSystemID());
-        if (StringUtil.hasValue(jarName) && containIgnores(jarName) == false) {
+        if (StringUtil.hasValue(jarName) &&
+                containIgnores(jarName) == false) {
             try {
-                JarInputStream jar = new JarInputStream(source.getInputStream());
+                JarInputStream jar = 
+                    new JarInputStream(source.getInputStream());
                 JarEntry entry;
                 while ((entry = jar.getNextJarEntry()) != null) {
                     String entryName = entry.getName();
-                    if (entryName.startsWith("META-INF/")
-                            && "META-INF/MANIFEST.MF".equals(entryName) == false) {
-                        aliases.add(new SourceAlias(jarName, entryName, source.getTimestamp()));
+                    if (entryName.startsWith("META-INF/")) {
+                        if("META-INF/MANIFEST.MF".equals(
+                                entryName) == false) {
+                            aliases.add(new SourceAlias(
+                                    jarName, entryName, source.getTimestamp()));
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -119,11 +113,26 @@ public class MetaInfSourceScanner implements SourceScanner {
         return new MetaInfSourceIterator(aliases.iterator());
     }
 
-    private class MetaInfSourceIterator implements Iterator {
+    // Parameterizable implements ------------------------------------
+    
+    public void setParameter(String name, String value) {
+        if ("ignore".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _ignores.add(value);
+        } else {
+            _folderScanner.setParameter(name, value);
+        }
+    }
+
+    // suppport class -----------------------------------------------
+
+    protected class MetaInfSourceIterator implements Iterator {
 
         private Iterator _it;
 
-        private MetaInfSourceIterator(Iterator it) {
+        public MetaInfSourceIterator(Iterator it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }
@@ -136,7 +145,8 @@ public class MetaInfSourceScanner implements SourceScanner {
 
         public Object next() {
             SourceAlias alias = (SourceAlias) _it.next();
-            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            ClassLoaderSourceDescriptor source =
+                new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());
             source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
             source.setTimestamp(alias.getTimestamp());

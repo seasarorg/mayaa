@@ -46,14 +46,14 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private Map _attributes;
     
     // use while building ServiceProvider.
-    public void setApplication(ApplicationScope application) {
+    public void setApplicationScope(ApplicationScope application) {
         if(application == null) {
             throw new IllegalArgumentException();
         }
         _application = application;
     }
     
-    public ApplicationScope getApplication() {
+    public ApplicationScope getApplicationScope() {
         if(_application == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             _application = cycle.getApplicationScope();
@@ -92,7 +92,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     
     public boolean exists() {
         if(_file == null) {
-            String realPath = getApplication().getRealPath(_root + _systemID);
+            String realPath = getApplicationScope().getRealPath(_root + _systemID);
             if(StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if(file.exists()) {

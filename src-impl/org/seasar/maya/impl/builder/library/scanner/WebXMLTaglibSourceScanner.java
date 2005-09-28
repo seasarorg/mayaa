@@ -29,7 +29,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class WebXMLTaglibSourceScanner implements SourceScanner {
 
-    public static final String ASSIGNED = WebXMLTaglibSourceScanner.class + ".ASSIGNED";
+    public static final String ASSIGNED = 
+        WebXMLTaglibSourceScanner.class + ".ASSIGNED";
 
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
@@ -44,12 +45,14 @@ public class WebXMLTaglibSourceScanner implements SourceScanner {
         }
         InputStream stream = source.getInputStream();
         WebXMLHandler handler = new WebXMLHandler();
-        XMLUtil.parse(handler, stream, "web.xml", source.getSystemID(), true, true, true);
+        XMLUtil.parse(handler, stream, "web.xml", 
+                source.getSystemID(), true, true, true);
         return handler.iterateTaglibLocations();
     }
 
     public Iterator scan() {
-        ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
+        ApplicationSourceDescriptor source = 
+            new ApplicationSourceDescriptor();
         source.setRoot(ApplicationSourceDescriptor.WEB_INF);
         source.setSystemID("web.xml");
         return new TaglibLocationIterator(scanWebXml(source));
@@ -76,7 +79,8 @@ public class WebXMLTaglibSourceScanner implements SourceScanner {
             if (systemID.startsWith("/WEB-INF/")) {
                 systemID = systemID.substring(9);
             }
-            ApplicationSourceDescriptor source = new ApplicationSourceDescriptor();
+            ApplicationSourceDescriptor source = 
+                new ApplicationSourceDescriptor();
             if (systemID.startsWith("/") == false) {
                 source.setRoot(ApplicationSourceDescriptor.WEB_INF);
             }

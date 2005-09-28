@@ -24,11 +24,6 @@ import org.seasar.maya.cycle.CycleWriter;
 public interface ChildEvaluationProcessor extends IterationProcessor {
 
     /**
-     * リターンフラグ。この値をdoStartProcess()が返すと、プロセッサボディをバッファリングする。
-     */
-    ProcessStatus EVAL_BODY_BUFFERED = new ProcessStatus();
-    
-    /**
      * ボディのスタック評価を行うかを返す。JSPのBodyTagをホストしている場合に
      * 利用する。デフォルトではfalseを返す。trueだと、setBodyContent()メソッド
      * およびdoInitChildProcess()メソッドがコンテナより呼び出される。

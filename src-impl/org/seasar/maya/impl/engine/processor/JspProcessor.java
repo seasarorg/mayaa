@@ -31,7 +31,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 import org.seasar.maya.cycle.CycleWriter;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
-import org.seasar.maya.engine.processor.IterationProcessor;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
@@ -139,17 +139,17 @@ public class JspProcessor extends TemplateProcessorSupport
     protected ProcessStatus getProcessStatus(
             int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
-            return EVAL_BODY_INCLUDE;
+            return ProcessStatus.EVAL_BODY_INCLUDE;
         } else if(status == Tag.SKIP_BODY) {
-            return SKIP_BODY;
+            return ProcessStatus.SKIP_BODY;
         } else if(status == Tag.EVAL_PAGE) {
-            return EVAL_PAGE;
+            return ProcessStatus.EVAL_PAGE;
         } else if(status == Tag.SKIP_PAGE) {
-            return SKIP_PAGE;
+            return ProcessStatus.SKIP_PAGE;
         } else if(!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
-            return IterationProcessor.EVAL_BODY_AGAIN;
+            return ProcessStatus.EVAL_BODY_AGAIN;
         } else if(doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
-            return ChildEvaluationProcessor.EVAL_BODY_BUFFERED;
+            return ProcessStatus.EVAL_BODY_BUFFERED;
         }
         throw new IllegalArgumentException();
     }

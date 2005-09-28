@@ -17,6 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -70,7 +71,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
         docTypeDecl.append(">");
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(docTypeDecl.toString());
-        return SKIP_BODY;
+        return ProcessStatus.SKIP_BODY;
     }
 
 }

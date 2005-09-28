@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.impl.engine.RenderUtil;
 
@@ -43,7 +44,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
             return RenderUtil.renderProcessorTree(topLevelPage, insert);
         }
         // direct access to component page.
-        return EVAL_BODY_INCLUDE;
+        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
     
 }

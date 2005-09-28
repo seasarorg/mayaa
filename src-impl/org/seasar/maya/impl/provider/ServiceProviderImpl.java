@@ -188,7 +188,7 @@ public class ServiceProviderImpl
         return source;
     }
     
-    protected ApplicationScope getApplication() {
+    protected ApplicationScope getApplicationScope() {
         if(_application == null) {
             if(_context instanceof ServletContext == false) {
                 throw new IllegalStateException();
@@ -209,7 +209,7 @@ public class ServiceProviderImpl
         }
 		ServiceCycle cycle = 
             (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
-        cycle.setApplicationScope(getApplication());
+        cycle.setApplicationScope(getApplicationScope());
 		if(_serviceCycleParams != null) {
             for(Iterator it = _serviceCycleParams.keySet().iterator();
             		it.hasNext(); ) {

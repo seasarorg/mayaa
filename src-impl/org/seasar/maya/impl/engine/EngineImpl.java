@@ -35,7 +35,7 @@ import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.engine.processor.TemplateProcessor.ProcessStatus;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;

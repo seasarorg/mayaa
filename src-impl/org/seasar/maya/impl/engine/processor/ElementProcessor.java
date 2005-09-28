@@ -20,6 +20,7 @@ import java.util.Iterator;
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
@@ -213,7 +214,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append("/>");
         }
         write(buffer);
-        return EVAL_BODY_INCLUDE;
+        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
     
     protected void writeEndElement() {

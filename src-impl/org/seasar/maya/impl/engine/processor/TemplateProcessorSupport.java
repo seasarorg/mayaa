@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -45,13 +46,13 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_evalBodyInclude) {
-            return EVAL_BODY_INCLUDE;
+            return ProcessStatus.EVAL_BODY_INCLUDE;
         }
-        return SKIP_BODY;
+        return ProcessStatus.SKIP_BODY;
     }
 
     public ProcessStatus doEndProcess() {
-        return EVAL_PAGE;
+        return ProcessStatus.EVAL_PAGE;
     }
 
     public void setOriginalNode(SpecificationNode node) {

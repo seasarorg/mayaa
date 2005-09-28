@@ -17,6 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.engine.Page;
+import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.cycle.CycleUtil;
 
@@ -56,7 +57,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
         if(_script != null) {
             _script.getValue().execute(null);
         }
-        return EVAL_BODY_INCLUDE;
+        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
     
 }

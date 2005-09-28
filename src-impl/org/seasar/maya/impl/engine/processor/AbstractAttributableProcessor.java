@@ -38,6 +38,19 @@ public abstract class AbstractAttributableProcessor
     private List _attributes;
     private ThreadLocal _processtimeInfo = new ThreadLocal();
 
+    protected void clearProcesstimeInfo() {
+        _processtimeInfo.set(null);
+    }
+    
+    protected ProcesstimeInfo getProcesstimeInfo() {
+        ProcesstimeInfo info = (ProcesstimeInfo)_processtimeInfo.get();
+        if(info == null) {
+            info = new ProcesstimeInfo();
+            _processtimeInfo.set(info);
+        }
+        return info;
+    }
+    
     // MLD property
     public void setChildEvaluation(boolean childEvaluation) {
         _childEvaluation = childEvaluation;
@@ -85,6 +98,7 @@ public abstract class AbstractAttributableProcessor
     protected abstract void writeEndElement();
     
     public ProcessStatus doStartProcess(Page topLevelPage) {
+        clearProcesstimeInfo();
         if(_childEvaluation) {
             return EVAL_BODY_BUFFERED;
         }
@@ -132,15 +146,6 @@ public abstract class AbstractAttributableProcessor
     }
 
     //helper class, methods ----------------------------------------
-    
-    protected ProcesstimeInfo getProcesstimeInfo() {
-        ProcesstimeInfo info = (ProcesstimeInfo)_processtimeInfo.get();
-        if(info == null) {
-            info = new ProcesstimeInfo();
-            _processtimeInfo.set(info);
-        }
-        return info;
-    }
     
     protected class ProcesstimeInfo {
         

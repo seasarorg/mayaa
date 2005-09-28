@@ -91,6 +91,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     public void initScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(null);
+        _parent.set(null);
     }
 
     public void startScope(Map variables) {

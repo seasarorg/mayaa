@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
@@ -41,6 +42,20 @@ public class ElementProcessor extends AbstractAttributableProcessor
     private boolean _duplicated;
     private ThreadLocal _currentNS = new ThreadLocal();
 
+    protected void clearCurrentNS() {
+        _currentNS.set(null);
+    }
+    
+    protected Namespace getCurrentNS() {
+        Namespace currentNS = (Namespace)_currentNS.get();
+        if(currentNS == null) {
+            currentNS = SpecificationUtil.createNamespace();
+            currentNS.setParentSpace(getOriginalNode().getParentSpace());
+            _currentNS.set(currentNS);
+        }
+        return currentNS;
+    }
+
     // exported property
     public boolean isDuplicated() {
     	return _duplicated;
@@ -57,16 +72,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         _name = name;
-    }
-    
-    protected Namespace getCurrentNS() {
-        Namespace currentNS = (Namespace)_currentNS.get();
-        if(currentNS == null) {
-            currentNS = SpecificationUtil.createNamespace();
-            currentNS.setParentSpace(getOriginalNode().getParentSpace());
-            _currentNS.set(currentNS);
-        }
-        return currentNS;
     }
     
     protected void resolvePrefix(QNameable name) {
@@ -225,6 +230,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(qName.getLocalName()).append(">");
             write(buffer);
         }
+    }
+    
+    public ProcessStatus doStartProcess(Page topLevelPage) {
+        clearCurrentNS();
+        return super.doStartProcess(topLevelPage);
     }
     
 }

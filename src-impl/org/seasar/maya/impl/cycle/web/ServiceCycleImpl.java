@@ -31,12 +31,14 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     private static final long serialVersionUID = 5971443264903384152L;
 
 	private ApplicationScope _application;
-    private RequestScopeImpl _request = new RequestScopeImpl();
-    private ResponseImpl _response = new ResponseImpl();
+    private RequestScopeImpl _request;
+    private ResponseImpl _response;
     private SessionScopeImpl _session;
 
-    // ServiceCycle implements --------------------------------------
-
+    public ServiceCycleImpl() {
+        _request = new RequestScopeImpl();
+    }
+    
     public void setApplicationScope(ApplicationScope application) {
     	if(application == null) {
     		throw new IllegalArgumentException();
@@ -65,6 +67,9 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 	}
 
 	public Response getResponse() {
+        if(_response == null) {
+            _response = new ResponseImpl();
+        }
         return _response;
     }
 

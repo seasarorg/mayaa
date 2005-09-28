@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.cycle;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.AttributeScope;
@@ -50,7 +49,8 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if (sid.startsWith("/WEB-INF/")) {
             sid = sid.substring(9);
         }
-        ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
+        ApplicationSourceDescriptor appSource =
+            new ApplicationSourceDescriptor();
         if (sid.startsWith("/") == false) {
             appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         }
@@ -75,14 +75,15 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 
     public Iterator iterateAttributeScope() {
         Iterator it = ScriptUtil.getScriptEnvironment().iterateAttributeScope();
-        return new ScopeIterator(it);
+        return new ScopeIterator(this, it);
     }
 
     public boolean hasAttributeScope(String scopeName) {
         if(StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
+                it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
             if(scope.getScopeName().equals(scopeName)) {
                 return true;
@@ -95,7 +96,8 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
+        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
+                it.hasNext(); ) {
             AttributeScope scope = (AttributeScope)it.next();
             if(scope.getScopeName().equals(scopeName)) {
                 return scope;
@@ -134,60 +136,6 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 
     public ProcessorTreeWalker getProcessor() {
         return _processor;
-    }
-    
-    // support class ---------------------------------------------------
-    
-    private class ScopeIterator implements Iterator {
-
-        private Iterator _it;
-        private String _current;
-        
-        public ScopeIterator(Iterator it) {
-            if(it == null) {
-                throw new IllegalArgumentException();
-            }
-            _it = it;
-        }
-        
-        public boolean hasNext() {
-            return SCOPE_APPLICATION.equals(_current) == false; 
-        }
-
-        public Object next() {
-            AttributeScope scope = null;
-            if(_current == null) {
-                if(_page != null) {
-                    scope = _page;
-                    _current = SCOPE_PAGE;
-                } else if(_it.hasNext()) {
-                    scope = (AttributeScope)_it.next();
-                    _current = scope.getScopeName();
-                }
-            } else if(SCOPE_REQUEST.equals(_current)) {
-                scope = getSessionScope();
-                _current = SCOPE_SESSION;
-            } else if(SCOPE_SESSION.equals(_current)) {
-                scope = getApplicationScope();
-                _current = SCOPE_APPLICATION;
-            } else if(SCOPE_APPLICATION.equals(_current)) {
-                throw new NoSuchElementException();
-            } else {
-                if(_it.hasNext()) {
-                    scope = (AttributeScope)_it.next();
-                    _current = scope.getScopeName();
-                } else {
-                    scope = getRequestScope();
-                    _current = SCOPE_REQUEST;
-                }
-            }
-            return scope;
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-        
     }
     
 }

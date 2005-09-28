@@ -17,6 +17,8 @@ package org.seasar.maya.impl.engine.processor;
 
 import java.util.Stack;
 
+import org.seasar.maya.engine.Page;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -26,7 +28,20 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     private boolean _rendered = false;
     private String _name = "";
-    private ThreadLocal _insertProcs = new ThreadLocal();
+    private ThreadLocal _insertProcessorStack = new ThreadLocal();
+
+    protected void clearInsertProcessorStack() {
+        _insertProcessorStack.set(null);
+    }
+    
+    protected Stack getInsertProcessorStack() {
+        Stack stack = (Stack)_insertProcessorStack.get();
+        if(stack == null) {
+            stack = new Stack();
+            _insertProcessorStack.set(stack);
+        }
+        return stack;
+    }
     
     // MLD property, default=false
     public void setRendered(boolean rendered) {
@@ -48,30 +63,26 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     public String getName() {
         return _name;
     }
-
-    protected Stack getStack() {
-    	Stack stack = (Stack)_insertProcs.get();
-    	if(stack == null) {
-    		stack = new Stack();
-    		_insertProcs.set(stack);
-    	}
-    	return stack;
-    }
     
     public void pushInsertProcessor(InsertProcessor proc) {
-    	Stack stack = getStack();
+    	Stack stack = getInsertProcessorStack();
         stack.push(proc);
     }
     
     public InsertProcessor peekInsertProcessor() {
-       	Stack stack = getStack();
+       	Stack stack = getInsertProcessorStack();
        	InsertProcessor proc = (InsertProcessor)stack.peek();
         return proc;
     }
     
     public void popInsertProcessor() {
-    	Stack stack = getStack();
+    	Stack stack = getInsertProcessorStack();
     	stack.pop();
+    }
+
+    public ProcessStatus doStartProcess(Page topLevelPage) {
+        clearInsertProcessorStack();
+        return super.doStartProcess(topLevelPage);
     }
     
 }

@@ -115,6 +115,10 @@ public class JspProcessor extends TemplateProcessorSupport
         }
     }
     
+    protected void clearLoadedTag() {
+        _loadedTag.set(null);
+    }
+    
     protected Tag getLoadedTag() {
         Tag tag = (Tag)_loadedTag.get();
         if(tag == null) {
@@ -154,6 +158,7 @@ public class JspProcessor extends TemplateProcessorSupport
         if(_tagClass == null) {
             throw new IllegalStateException();
         }
+        clearLoadedTag();
         Tag customTag = getLoadedTag();
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();

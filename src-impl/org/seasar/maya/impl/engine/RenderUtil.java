@@ -215,6 +215,9 @@ public class RenderUtil implements CONST_IMPL {
         cycle.setInjectedNode(page);
     }
 
+    //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
+    //TODO レイアウト適用のbeforeRenderの呼び出し順の検討。
+    //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
     public static ProcessStatus renderPage(boolean findSuper, 
             TemplateRenderer renderer, Map variables, 
             Page topLevelPage, String requestedSuffix, String extension) {

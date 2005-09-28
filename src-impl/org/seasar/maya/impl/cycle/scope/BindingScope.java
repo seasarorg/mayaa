@@ -76,6 +76,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         return param.hasAttribute(name);
     }
 
+    //TODO コンポーネントのテスト時と実行時の区別を明確化する。
+    //リクエストパラメータでモードを渡すなど。
 	public Object getAttribute(String name) {
 		InsertProcessor processor = getInsertProcessor();
         if(processor != null) {

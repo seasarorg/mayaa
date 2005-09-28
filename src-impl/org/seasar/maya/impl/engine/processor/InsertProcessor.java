@@ -183,8 +183,13 @@ public class InsertProcessor
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
-        DecodeTreeWalker decode = (DecodeTreeWalker)_parentDecode.get();
-        RenderUtil.decodeProcessorTree(topLevelPage, insertRoot, decode);
+        if(EngineUtil.getEngineSettingBoolean(
+                DECODE_PROCESSOR_TREE, false)) {
+            DecodeTreeWalker decode = 
+                (DecodeTreeWalker)_parentDecode.get();
+            RenderUtil.decodeProcessorTree(
+                    topLevelPage, insertRoot, decode);
+        }
         ProcessStatus ret = RenderUtil.renderTemplateProcessor(
                 topLevelPage, insertRoot); 
         doRender.popInsertProcessor();

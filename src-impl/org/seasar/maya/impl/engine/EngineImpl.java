@@ -63,6 +63,7 @@ public class EngineImpl extends SpecificationImpl
         _paramNames.add(CHECK_TIMESTAMP);
         _paramNames.add(SUFFIX_SEPARATOR);
         _paramNames.add(WELCOME_FILE_NAME);
+        _paramNames.add(DECODE_PROCESSOR_TREE);
     }
     public static final String THROWABLE = "THROWABLE";
 

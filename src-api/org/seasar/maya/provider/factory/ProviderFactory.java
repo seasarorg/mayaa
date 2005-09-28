@@ -20,6 +20,9 @@ import java.io.Serializable;
 import org.seasar.maya.provider.ServiceProvider;
 
 /**
+ * TODO JSFスタイルのプロバイダー初期化サイクルの実装。
+ * JSFのアダプター群のように、重層化した初期化サイクルを行う。
+ * 
  * アプリケーションサービスプロバイダのファクトリクラス
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

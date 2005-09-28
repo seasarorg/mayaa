@@ -51,12 +51,6 @@ public class PageContextImpl extends PageContext {
             PageContext.SESSION_SCOPE,
             PageContext.APPLICATION_SCOPE
     }; 
-    private static final String[] CYCLE_SCOPES = {
-            ServiceCycle.SCOPE_PAGE,
-            ServiceCycle.SCOPE_REQUEST,
-            ServiceCycle.SCOPE_SESSION,
-            ServiceCycle.SCOPE_APPLICATION
-    };
 
     private ServletConfig _config;
 
@@ -201,8 +195,9 @@ public class PageContextImpl extends PageContext {
 	// Attributes --------------------------------------------------
     
     public Object findAttribute(String name) {
-        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
+        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+            Object ret = CycleUtil.getAttribute(
+                    name, CycleUtil.STANDARD_SCOPES[i]);
             if(ret != null) {
                 return ret;
             }
@@ -234,8 +229,9 @@ public class PageContextImpl extends PageContext {
         if(name == null) {
             throw new IllegalArgumentException();
         }
-        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            CycleUtil.removeAttribute(name, CYCLE_SCOPES[i]);
+        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+            CycleUtil.removeAttribute(
+                    name, CycleUtil.STANDARD_SCOPES[i]);
         }
     }
 
@@ -260,8 +256,9 @@ public class PageContextImpl extends PageContext {
     }
 
     public int getAttributesScope(String name) {
-        for(int i = 0; i < CYCLE_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(name, CYCLE_SCOPES[i]);
+        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+            Object ret = CycleUtil.getAttribute(
+                    name, CycleUtil.STANDARD_SCOPES[i]);
             if(ret != null) {
                 return JSP_SCOPES[i];
             }

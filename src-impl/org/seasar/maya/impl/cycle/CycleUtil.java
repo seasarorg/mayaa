@@ -29,7 +29,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  */
 public class CycleUtil {
 
-    private static final String[] STANDARD_SCOPES = new String[] {
+    public static final String[] STANDARD_SCOPES = new String[] {
         ServiceCycle.SCOPE_PAGE,
         ServiceCycle.SCOPE_REQUEST,
         ServiceCycle.SCOPE_SESSION,

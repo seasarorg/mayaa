@@ -66,13 +66,14 @@ public abstract class MayaException
                 LOG.error(t.getMessage(), t);
             }
         }
-        int paramLength = params.length; 
-        String[] newParams = new String[paramLength + 4];
+        int paramLength = params.length;
+        int magicNumber = 4;
+        String[] newParams = new String[paramLength + magicNumber];
         newParams[0] = _originalSystemID;
         newParams[1] = Integer.toString(_originalLineNumber);
         newParams[2] = _injectedSystemID;
         newParams[3] = Integer.toString(_injectedLineNumber);
-        System.arraycopy(params, 0, newParams, 4, paramLength);
+        System.arraycopy(params, 0, newParams, magicNumber, paramLength);
         return newParams;
     }
 

@@ -48,8 +48,11 @@ public class LiteralScript  implements CompiledScript {
     }
     
     public Object execute(Object[] args) {
-        if(_expectedType == Void.class || StringUtil.isEmpty(_text)) {
+        if(_expectedType == Void.class) {
             return null;
+        }
+        if (StringUtil.isEmpty(_text)) {
+            return "";
         }
         return ObjectUtil.convert(_expectedType, _text);
     }

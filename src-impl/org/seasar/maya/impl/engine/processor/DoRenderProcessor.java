@@ -38,7 +38,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     }
     
     protected Stack getInsertProcessorStack() {
-        RequestScope request = CycleUtil.getRequest();
+        RequestScope request = CycleUtil.getRequestScope();
         Stack stack = (Stack)request.getAttribute(getStackKey());
         if(stack == null) {
             stack = new Stack();

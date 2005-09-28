@@ -32,18 +32,18 @@ public class ParamScope extends AbstractReadOnlyAttributeScope {
 	}
 
     public Iterator iterateAttributeNames() {
-        AttributeScope values = CycleUtil.getRequest().getParamValues();
+        AttributeScope values = CycleUtil.getRequestScope().getParamValues();
         return values.iterateAttributeNames();
     }
 
     public boolean hasAttribute(String name) {
-        AttributeScope values = CycleUtil.getRequest().getParamValues();
+        AttributeScope values = CycleUtil.getRequestScope().getParamValues();
         return values.hasAttribute(name);
     }
 
     public Object getAttribute(String name) {
         if(hasAttribute(name)) {
-            AttributeScope values = CycleUtil.getRequest().getParamValues();
+            AttributeScope values = CycleUtil.getRequestScope().getParamValues();
             String[] params = (String[])values.getAttribute(name);
             if(params.length == 0) {
                 return "";

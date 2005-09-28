@@ -35,7 +35,7 @@ public class VariableResolverImpl implements VariableResolver {
 
     public Object resolveVariable(String pName) throws ELException {
         if(StringUtil.hasValue(pName)) {
-            AttributeScope scope = CycleUtil.findAttributeScope(pName);
+            AttributeScope scope = CycleUtil.findStandardAttributeScope(pName);
             if(scope != null) {
                 return scope.getAttribute(pName);
             }

@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.cycle;
 
-import java.util.Iterator;
-
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.AttributeScope;
@@ -31,10 +29,17 @@ import org.seasar.maya.provider.factory.ProviderFactory;
  */
 public class CycleUtil {
 
+    private static final String[] STANDARD_SCOPES = new String[] {
+        ServiceCycle.SCOPE_PAGE,
+        ServiceCycle.SCOPE_REQUEST,
+        ServiceCycle.SCOPE_SESSION,
+        ServiceCycle.SCOPE_APPLICATION
+    };
+    
     private CycleUtil() {
     }
 
-    public static RequestScope getRequest() {
+    public static RequestScope getRequestScope() {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	return cycle.getRequestScope();
     }
@@ -49,12 +54,14 @@ public class CycleUtil {
         return provider.getServiceCycle();
     }
 
-    public static AttributeScope findAttributeScope(String name) {
+    public static AttributeScope findStandardAttributeScope(String name) {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        for(Iterator it = getServiceCycle().iterateAttributeScope(); it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
+        for(int i = 0; i < STANDARD_SCOPES.length; i++) {
+            ServiceCycle cycle = getServiceCycle();
+            AttributeScope scope = 
+                cycle.getAttributeScope(STANDARD_SCOPES[i]);
             if(scope.hasAttribute(name)) {
                 return scope;
             }
@@ -68,7 +75,8 @@ public class CycleUtil {
         return scope.getAttribute(name);
     }
 
-    public static void setAttribute(String name, Object value, String scopeName) {
+    public static void setAttribute(
+            String name, Object value, String scopeName) {
         ServiceCycle cycle = getServiceCycle();
         AttributeScope scope = cycle.getAttributeScope(scopeName);
         if(scope.isAttributeWritable()) {

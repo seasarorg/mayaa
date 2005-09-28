@@ -82,7 +82,7 @@ public class TemplateImpl
                 return contentType;
             }
         }
-        RequestScope request = CycleUtil.getRequest();
+        RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";

@@ -32,18 +32,18 @@ public class HeaderScope extends AbstractReadOnlyAttributeScope {
 	}
 
     public Iterator iterateAttributeNames() {
-        AttributeScope values = CycleUtil.getRequest().getHeaderValues();
+        AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
         return values.iterateAttributeNames();
     }
 
     public boolean hasAttribute(String name) {
-        AttributeScope values = CycleUtil.getRequest().getHeaderValues();
+        AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
         return values.hasAttribute(name);
     }
 
     public Object getAttribute(String name) {
         if(hasAttribute(name)) {
-            AttributeScope values = CycleUtil.getRequest().getHeaderValues();
+            AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
             String[] headers = (String[])values.getAttribute(name);
             if(headers.length == 0) {
                 return "";

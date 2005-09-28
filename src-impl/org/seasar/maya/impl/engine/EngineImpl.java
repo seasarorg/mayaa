@@ -185,7 +185,7 @@ public class EngineImpl extends SpecificationImpl
     protected void handleError(Throwable t) {
         t = removeWrapperRuntimeException(t);
         try {
-            RequestScope request = CycleUtil.getRequest();
+            RequestScope request = CycleUtil.getRequestScope();
             request.setAttribute(THROWABLE, t);
             getErrorHandler().doErrorHandle(t);
             request.removeAttribute(THROWABLE);

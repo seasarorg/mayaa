@@ -54,6 +54,13 @@ public class CycleUtil {
         return provider.getServiceCycle();
     }
 
+    public static ServiceCycle getServiceCycleSafely() {
+        if(ProviderFactory.isInithialized()) {
+            return getServiceCycle();
+        }
+        return null;
+    }
+    
     public static AttributeScope findStandardAttributeScope(String name) {
         if(StringUtil.isEmpty(name)) {
             return null;

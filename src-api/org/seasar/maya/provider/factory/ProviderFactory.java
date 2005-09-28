@@ -52,7 +52,14 @@ public abstract class ProviderFactory implements Serializable {
 	    }
 	    _context = context;
 	}
-	 
+	
+    public static boolean isInithialized() {
+        if(_factory == null || _context == null) {
+            throw new IllegalStateException();
+        }
+        return _factory.isProviderInithialized();
+    }
+    
 	/**
 	 * サービスプロバイダの取得。
 	 * @return サービスプロバイダ。
@@ -63,6 +70,12 @@ public abstract class ProviderFactory implements Serializable {
 	    }
 		return _factory.getServiceProvider(_context);
 	}
+
+    /**
+     * プロバイダが初期化されているかどうかを取得する。
+     * @return trueだと初期化済み。
+     */
+    protected abstract boolean isProviderInithialized();
 	
 	/**
 	 * サービスプロバイダの取得。生成もしくはキャッシュしているプロバイダを取り出す。

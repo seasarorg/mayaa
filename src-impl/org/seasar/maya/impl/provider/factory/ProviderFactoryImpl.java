@@ -33,8 +33,9 @@ public class ProviderFactoryImpl extends ProviderFactory
 		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 3581634661222113559L;
-
-	protected static final String KEY_SERVICE = ServiceProvider.class.getName();
+	protected static final String KEY_SERVICE = 
+        ServiceProvider.class.getName();
+    private boolean _inithialized;
     
     private ServiceProvider createServiceProvider(ServletContext servletContext) {
         BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
@@ -45,12 +46,17 @@ public class ProviderFactoryImpl extends ProviderFactory
             InputStream stream = source.getInputStream();
 	        XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10, 
                     source.getSystemID(), true, true, false);
+            _inithialized = true;
             return handler.getResult();
     	}
     	throw new RuntimeException(
                 new FileNotFoundException(source.getSystemID()));
     }
     
+    protected boolean isProviderInithialized() {
+        return _inithialized;
+    }
+
     public ServiceProvider getServiceProvider(Object context) {
         if(context == null || context instanceof ServletContext == false) {
             throw new IllegalArgumentException();

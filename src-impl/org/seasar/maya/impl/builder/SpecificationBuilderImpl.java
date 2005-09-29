@@ -82,8 +82,8 @@ public class SpecificationBuilderImpl
                 }
                 throw new RuntimeException(t);
             } finally {
-                IOUtil.close(stream);
                 pool.returnXMLReader(xmlReader);
+                IOUtil.close(stream);
             }
         }
     }

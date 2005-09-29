@@ -42,8 +42,6 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private String _root = "";
     private String _systemID = "";
 
-    //TODO ファイルハンドルをロックしない方法を検討（suga）
-
     private File _file;
     private ApplicationScope _application;
     private Map _attributes;
@@ -103,7 +101,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
                  }
             }
         }
-        return _file != null;
+        return (_file != null) && _file.exists();
     }
 
     public InputStream getInputStream() {

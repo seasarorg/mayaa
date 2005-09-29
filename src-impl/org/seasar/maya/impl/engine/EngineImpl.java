@@ -93,8 +93,6 @@ public class EngineImpl extends SpecificationImpl
                     Page page = (Page)child;
                     String name = page.getPageName();
                     if(pageName.equals(name)) {
-                        // TODO 2005/09/29 mayaファイル有効チェック
-                        // ファイルが無ければnullを返す (タイムスタンプチェック有効時)
                         return page;
                     }
                 }
@@ -132,6 +130,7 @@ public class EngineImpl extends SpecificationImpl
             return true;
         }
 
+        // TODO MIME判定をしっかりやる
         String mimeType = request.getMimeType();
         return mimeType != null
                 && (mimeType.indexOf("html") != -1
@@ -190,8 +189,8 @@ public class EngineImpl extends SpecificationImpl
                     String requestedSuffix = request.getRequestedSuffix();
                     String extension = request.getExtension();
                     Page page = getPage(pageName);
-                    ProcessStatus ret = page.doPageRender(
-                            requestedSuffix, extension);
+                    ProcessStatus ret =
+                            page.doPageRender(requestedSuffix, extension);
                     saveToCycle();
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();

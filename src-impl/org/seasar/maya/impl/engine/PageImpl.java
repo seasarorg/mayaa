@@ -132,8 +132,6 @@ public class PageImpl extends SpecificationImpl
                 String templateExtension = template.getExtension();
                 if(templateSuffix.equals(suffix) && 
                         templateExtension.equals(extension)) {
-                    // TODO 2005/09/29 テンプレートが有効かどうかの判定
-                    // ファイルが無ければnullを返す (タイムスタンプチェック有効時)
                     return template;
                 }
             }
@@ -170,7 +168,11 @@ public class PageImpl extends SpecificationImpl
         synchronized(this) {
         	Template template = findTemplateFromCache(suffix, extension);
         	if(template != null) {
-        		return template;
+                if (template.getSource().exists()) {
+                    return template;
+                } else {
+                    return null;
+                }
         	}
     		template = createNewTemplate(suffix, extension);
     		if(template == null) {

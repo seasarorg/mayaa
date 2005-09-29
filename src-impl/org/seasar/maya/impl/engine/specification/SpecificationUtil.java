@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -80,8 +80,7 @@ public class SpecificationUtil implements CONST_IMPL {
             NodeTreeWalker current, QName qName) {
         SpecificationNode maya = getMayaNode(current);
         if(maya != null) {
-            String value = getAttributeValue(
-                    maya, qName);
+            String value = getAttributeValue(maya, qName);
             if(value != null) {
                 return value;
             }
@@ -121,7 +120,7 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static void execEventScript(String text) {
         if(StringUtil.hasValue(text)) {
-            CompiledScript script = 
+            CompiledScript script =
                 ScriptUtil.compile(text, Void.class);
             script.execute(null);
         }
@@ -150,7 +149,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     // factory methods ----------------------------------------------
-    
+
     public static Namespace createNamespace() {
         return new NamespaceImpl();
     }
@@ -163,14 +162,14 @@ public class SpecificationUtil implements CONST_IMPL {
             String namespaceURI, String localName) {
         return new QNameImpl(namespaceURI, localName);
     }
-    
+
     public static QNameable createQNameable(QName qName) {
         return new QNameableImpl(qName);
     }
-    
+
     public static SpecificationNode createSpecificationNode(
             QName qName, String systemID, int lineNumber) {
         return new SpecificationNodeImpl(qName, systemID, lineNumber);
     }
-    
+
 }

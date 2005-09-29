@@ -152,7 +152,7 @@ public class TemplateImpl
             }
         }
         synchronized(this) {
-            if(isOldSpecification()) {
+            if(isSourceNotExists() || isOldSpecification()) {
                 parseSpecification();
             }
         }

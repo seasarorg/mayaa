@@ -50,20 +50,25 @@ public class SpecificationImpl
             }
         }
     }
-    
+
+    protected boolean checkTimestamp() {
+        return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
+    }
+
+    protected boolean isSourceNotExists() {
+        if (checkTimestamp() == false) {
+            return false;
+        }
+        return getSource().exists() == false;
+    }
+
     protected boolean isOldSpecification() {
-        boolean check = EngineUtil.getEngineSettingBoolean(
-                CHECK_TIMESTAMP, true);
-        if(check == false) {
+        if (checkTimestamp() == false) {
             return false;
         }
         if(getTimestamp() == null) {
             return true;
         }
-        // TODO ÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇ»Ç¢èÍçáèÍçáÇÕå√Ç¢Ç∆Ç∑ÇÈ
-//        if(getSource().exists() == false) {
-//            return true;
-//        }
         Date source = getSource().getTimestamp();
         Date now = new Date();
         return source.after(getTimestamp()) && now.after(source);

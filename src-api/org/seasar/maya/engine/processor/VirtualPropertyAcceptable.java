@@ -29,6 +29,6 @@ public interface VirtualPropertyAcceptable
      * @param name プロパティ名。
      * @param value プロパティ値。
      */
-    void addProperty(String name, String value);
+    void addProperty(String name, Object value);
     
 }

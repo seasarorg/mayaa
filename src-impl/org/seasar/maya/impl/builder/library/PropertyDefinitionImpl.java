@@ -165,6 +165,8 @@ public class PropertyDefinitionImpl
                     processorName, qName);
         }
         if(value != null) {
+            // TODO プロパティの型にあわせて型変換する箇所をアダプター化
+            // ProcessorProperty, QNameable, ValueBinding, etc...
 	        Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the processor.

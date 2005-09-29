@@ -18,6 +18,9 @@ package org.seasar.maya.impl.util;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
@@ -31,7 +34,8 @@ public class IOUtil {
             try {
                 stream.close();
             } catch (IOException ignore) {
-                ignore.printStackTrace();
+                Log log = LogFactory.getLog(IOUtil.class);
+                log.fatal(ignore.getMessage(), ignore);
             }
         }
     }

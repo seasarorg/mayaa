@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -44,6 +44,7 @@ import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
@@ -54,8 +55,8 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class EngineImpl extends SpecificationImpl
         implements Engine, CONST_IMPL {
-    
-	private static final long serialVersionUID = 1428444571422324206L;
+
+    private static final long serialVersionUID = 1428444571422324206L;
     private static final Log LOG = LogFactory.getLog(EngineImpl.class);
     private static Set _paramNames;
     static {
@@ -71,18 +72,18 @@ public class EngineImpl extends SpecificationImpl
     private List _pages;
     private String _defaultSpecification = "";
     private boolean _processDecode;
-    
+
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
     }
 
     public ErrorHandler getErrorHandler() {
-	    if(_errorHandler == null) {
+        if(_errorHandler == null) {
             throw new IllegalStateException();
-	    }
+        }
         return _errorHandler;
     }
-    
+
     protected Page findPageFromCache(String pageName) {
         if(_pages != null) {
             for(Iterator it = new ChildSpecificationsIterator(_pages);
@@ -92,6 +93,8 @@ public class EngineImpl extends SpecificationImpl
                     Page page = (Page)child;
                     String name = page.getPageName();
                     if(pageName.equals(name)) {
+                        // TODO 2005/09/29 mayaファイル有効チェック
+                        // ファイルが無ければnullを返す (タイムスタンプチェック有効時)
                         return page;
                     }
                 }
@@ -99,26 +102,26 @@ public class EngineImpl extends SpecificationImpl
         }
         return null;
     }
-    
+
     protected Page createNewPage(String pageName) {
-    	Page page = new PageImpl(pageName);
+        Page page = new PageImpl(pageName);
         ServiceProvider provider = ProviderFactory.getServiceProvider();
         String path = pageName + ".maya";
         SourceDescriptor source = provider.getPageSourceDescriptor(path);
         page.setSource(source);
         return page;
     }
-    
+
     public Page getPage(String pageName) {
         synchronized(this) {
-        	Page page = findPageFromCache(pageName);
-        	if(page == null) {
-	        	page = createNewPage(pageName);
-	            if(_pages == null) {
-	                _pages = new ArrayList();
-	            }
-	            _pages.add(new SoftReference(page));
-        	}
+            Page page = findPageFromCache(pageName);
+            if(page == null) {
+                page = createNewPage(pageName);
+                if(_pages == null) {
+                    _pages = new ArrayList();
+                }
+                _pages.add(new SoftReference(page));
+            }
             return page;
         }
     }
@@ -145,7 +148,7 @@ public class EngineImpl extends SpecificationImpl
         }
         return throwable ;
     }
-    
+
     protected void handleError(Throwable t) {
         t = removeWrapperRuntimeException(t);
         try {
@@ -166,17 +169,17 @@ public class EngineImpl extends SpecificationImpl
             throw new RuntimeException(t);
         }
     }
-    
+
     protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(this);
         cycle.setInjectedNode(this);
     }
-    
+
     protected void doPageService(ServiceCycle cycle) {
         try {
             boolean service = true;
-        	while(service) {
+            while(service) {
                 try {
                     saveToCycle();
                     SpecificationUtil.initScope();
@@ -188,7 +191,7 @@ public class EngineImpl extends SpecificationImpl
                     String extension = request.getExtension();
                     Page page = getPage(pageName);
                     ProcessStatus ret = page.doPageRender(
-                    		requestedSuffix, extension);
+                            requestedSuffix, extension);
                     saveToCycle();
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();
@@ -210,7 +213,7 @@ public class EngineImpl extends SpecificationImpl
             handleError(t);
         }
     }
-    
+
     protected void doResourceService(ServiceCycle cycle) {
         if(cycle == null) {
             throw new IllegalArgumentException();
@@ -228,12 +231,14 @@ public class EngineImpl extends SpecificationImpl
                 out.flush();
             } catch(IOException e) {
                 throw new RuntimeException(e);
+            } finally {
+                IOUtil.close(stream);
             }
         } else {
             cycle.getResponse().setStatus(404);
         }
     }
-    
+
     public void doService() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(isPageRequested()) {
@@ -242,11 +247,11 @@ public class EngineImpl extends SpecificationImpl
             doResourceService(cycle);
         }
     }
-    
+
     public void setProcessDecode(boolean processDecode) {
         _processDecode = processDecode;
     }
-    
+
     public boolean isProcessDecode() {
         return _processDecode;
     }
@@ -264,7 +269,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if("defaultSpecification".equals(name)) {
             SourceDescriptor source = new DelaySourceDescriptor();

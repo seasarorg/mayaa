@@ -9,13 +9,14 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 package org.seasar.maya.impl.builder.library.scanner;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import java.util.jar.JarInputStream;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -37,7 +39,7 @@ public class MetaInfSourceScanner implements SourceScanner {
 
     private static Map _cache = new HashMap();
 
-    private FolderSourceScanner _folderScanner = 
+    private FolderSourceScanner _folderScanner =
         new FolderSourceScanner();
     private Set _ignores = new HashSet();
 
@@ -71,9 +73,9 @@ public class MetaInfSourceScanner implements SourceScanner {
         String jarName = getJarName(source.getSystemID());
         if (StringUtil.hasValue(jarName) &&
                 containIgnores(jarName) == false) {
+            InputStream stream = source.getInputStream();
             try {
-                JarInputStream jar = 
-                    new JarInputStream(source.getInputStream());
+                JarInputStream jar = new JarInputStream(stream);
                 JarEntry entry;
                 while ((entry = jar.getNextJarEntry()) != null) {
                     String entryName = entry.getName();
@@ -87,6 +89,8 @@ public class MetaInfSourceScanner implements SourceScanner {
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } finally {
+                IOUtil.close(stream);
             }
         }
     }
@@ -114,7 +118,7 @@ public class MetaInfSourceScanner implements SourceScanner {
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if ("ignore".equals(name)) {
             if (StringUtil.isEmpty(value)) {

@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -36,18 +36,18 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ApplicationSourceDescriptor implements SourceDescriptor {
 
     public static final String WEB_INF = "/WEB-INF";
-    
-	private static final long serialVersionUID = -2775274363708858237L;
+
+    private static final long serialVersionUID = -2775274363708858237L;
 
     private String _root = "";
     private String _systemID = "";
-    
+
     //TODO ファイルハンドルをロックしない方法を検討（suga）
-    
+
     private File _file;
     private ApplicationScope _application;
     private Map _attributes;
-    
+
     // use while building ServiceProvider.
     public void setApplicationScope(ApplicationScope application) {
         if(application == null) {
@@ -55,7 +55,7 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
         }
         _application = application;
     }
-    
+
     public ApplicationScope getApplicationScope() {
         if(_application == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
@@ -63,12 +63,12 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
         }
         return _application;
     }
-    
+
     // use at InternalApplicationSourceScanner.FileToSourceIterator
     public void setFile(File file) {
         _file = file;
     }
-    
+
     public File getFile() {
         exists();
         return _file;
@@ -88,11 +88,11 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
         }
         _systemID = StringUtil.preparePath(systemID);
     }
-    
+
     public String getSystemID() {
         return _systemID;
     }
-    
+
     public boolean exists() {
         if(_file == null) {
             String realPath = getApplicationScope().getRealPath(_root + _systemID);
@@ -133,14 +133,14 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
         }
         _attributes.put(name, value);
     }
-    
+
     public String getAttribute(String name) {
         if(_attributes == null) {
             return null;
         }
         return (String)_attributes.get(name);
     }
-    
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }

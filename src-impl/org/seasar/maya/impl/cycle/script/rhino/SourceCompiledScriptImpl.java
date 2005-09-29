@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -26,25 +26,26 @@ import org.mozilla.javascript.Script;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.maya.impl.cycle.script.AbstractSourceCompiledScript;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceCompiledScriptImpl 
+public class SourceCompiledScriptImpl
         extends AbstractSourceCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
-    
+
     private WrapFactory _wrap;
     private Script _rhinoScript;
-    
+
     public SourceCompiledScriptImpl(
             SourceDescriptor source, String encoding, WrapFactory wrap) {
         super(source, encoding);
         _wrap = wrap;
     }
-    
+
     protected void compileFromSource(
             Context cx, SourceDescriptor source) {
         if(source == null) {
@@ -62,6 +63,8 @@ public class SourceCompiledScriptImpl
                         reader, source.getSystemID(), 1, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } finally {
+                IOUtil.close(stream);
             }
         }
     }

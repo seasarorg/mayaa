@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -24,6 +24,7 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -34,11 +35,11 @@ import org.seasar.maya.source.SourceDescriptor;
 public class TLDDefinitionBuilder implements DefinitionBuilder {
 
     private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
-    
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }
-    
+
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
@@ -54,6 +55,8 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
                     LOG.error("TLD parse error on " + systemID, t);
                 }
                 return null;
+            } finally {
+                IOUtil.close(stream);
             }
             TLDLibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
@@ -65,5 +68,5 @@ public class TLDDefinitionBuilder implements DefinitionBuilder {
         }
         return null;
     }
-    
+
 }

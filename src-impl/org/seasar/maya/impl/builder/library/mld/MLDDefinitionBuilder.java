@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -26,6 +26,7 @@ import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -37,11 +38,11 @@ public class MLDDefinitionBuilder
         implements DefinitionBuilder, CONST_IMPL {
 
     private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
-    
+
     public void setParameter(String name, String value) {
         throw new UnsupportedParameterException(getClass(), name);
     }
-    
+
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
@@ -51,23 +52,25 @@ public class MLDDefinitionBuilder
             MLDHandler handler = new MLDHandler();
             InputStream stream = source.getInputStream();
             try {
-                XMLUtil.parse(handler, stream, PUBLIC_MLD10, 
+                XMLUtil.parse(handler, stream, PUBLIC_MLD10,
                         systemID, true, true, false);
             } catch(Throwable t) {
                 if(LOG.isErrorEnabled()) {
                     LOG.error("MLD parse error on " + systemID, t);
                 }
                 return null;
+            } finally {
+                IOUtil.close(stream);
             }
             LibraryDefinitionImpl library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
             if(assigned) {
                 library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
-            }            
+            }
             return library;
         }
         return null;
     }
-    
+
 }

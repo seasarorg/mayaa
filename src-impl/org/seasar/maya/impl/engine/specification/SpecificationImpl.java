@@ -60,6 +60,10 @@ public class SpecificationImpl
         if(getTimestamp() == null) {
             return true;
         }
+        // TODO ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ê‡ê‡‚ÍŒÃ‚¢‚Æ‚·‚é
+//        if(getSource().exists() == false) {
+//            return true;
+//        }
         Date source = getSource().getTimestamp();
         Date now = new Date();
         return source.after(getTimestamp()) && now.after(source);

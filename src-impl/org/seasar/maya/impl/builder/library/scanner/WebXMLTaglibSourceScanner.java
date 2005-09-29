@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
+import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -29,7 +30,7 @@ import org.seasar.maya.source.SourceDescriptor;
  */
 public class WebXMLTaglibSourceScanner implements SourceScanner {
 
-    public static final String ASSIGNED = 
+    public static final String ASSIGNED =
         WebXMLTaglibSourceScanner.class + ".ASSIGNED";
 
     public void setParameter(String name, String value) {
@@ -44,14 +45,18 @@ public class WebXMLTaglibSourceScanner implements SourceScanner {
             throw new IllegalStateException();
         }
         InputStream stream = source.getInputStream();
-        WebXMLHandler handler = new WebXMLHandler();
-        XMLUtil.parse(handler, stream, "web.xml", 
-                source.getSystemID(), true, true, true);
-        return handler.iterateTaglibLocations();
+        try {
+            WebXMLHandler handler = new WebXMLHandler();
+            XMLUtil.parse(handler, stream, "web.xml",
+                    source.getSystemID(), true, true, true);
+            return handler.iterateTaglibLocations();
+        } finally {
+            IOUtil.close(stream);
+        }
     }
 
     public Iterator scan() {
-        ApplicationSourceDescriptor source = 
+        ApplicationSourceDescriptor source =
             new ApplicationSourceDescriptor();
         source.setRoot(ApplicationSourceDescriptor.WEB_INF);
         source.setSystemID("web.xml");
@@ -79,7 +84,7 @@ public class WebXMLTaglibSourceScanner implements SourceScanner {
             if (systemID.startsWith("/WEB-INF/")) {
                 systemID = systemID.substring(9);
             }
-            ApplicationSourceDescriptor source = 
+            ApplicationSourceDescriptor source =
                 new ApplicationSourceDescriptor();
             if (systemID.startsWith("/") == false) {
                 source.setRoot(ApplicationSourceDescriptor.WEB_INF);

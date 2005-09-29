@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -17,6 +17,7 @@ package org.seasar.maya.impl.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,10 +136,13 @@ public final class StringUtil {
             properties = new Properties();
             _propFiles.put(key, properties);
             if (source.exists()) {
+                InputStream stream = source.getInputStream();
                 try {
-                    properties.load(source.getInputStream());
+                    properties.load(stream);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } finally {
+                    IOUtil.close(stream);
                 }
             }
         }

@@ -135,17 +135,32 @@ public class ObjectUtil {
         }
     }
 
-    public static Class getPropertyType(Class beanClass, String propertyName) {
-        PropertyDescriptor[] descs = PropertyUtils.getPropertyDescriptors(beanClass);
-        for(int i = 0; i < descs.length; i++) {
-            if(descs[i].getName().equals(propertyName)) {
-                return descs[i].getPropertyType();
+    public static boolean hasProperty(
+            Class beanClass, String propertyName) {
+        PropertyDescriptor[] descriptors = 
+            PropertyUtils.getPropertyDescriptors(beanClass);
+        for(int i = 0; i < descriptors.length; i++) {
+            if(descriptors[i].getName().equals(propertyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Class getPropertyType(
+            Class beanClass, String propertyName) {
+        PropertyDescriptor[] descriptors = 
+            PropertyUtils.getPropertyDescriptors(beanClass);
+        for(int i = 0; i < descriptors.length; i++) {
+            if(descriptors[i].getName().equals(propertyName)) {
+                return descriptors[i].getPropertyType();
             }
         }
         return null;
     }
 
-    public static Class getPropertyType(Object bean, String propertyName) {
+    public static Class getPropertyType(
+            Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
         } catch (IllegalAccessException e) {
@@ -164,12 +179,14 @@ public class ObjectUtil {
         }
         return value;
     }
-
-    public static void setProperty(Object bean, String propertyName, Object value) {
+    
+    public static void setProperty(
+            Object bean, String propertyName, Object value) {
         try {
             Class propertyType = getPropertyType(bean, propertyName);
             if(propertyType == null) {
-                throw new NoSuchPropertyException(bean.getClass(), propertyName);
+                throw new NoSuchPropertyException(
+                        bean.getClass(), propertyName);
             }
             value = convert(propertyType, value);
             PropertyUtils.setProperty(bean, propertyName, value);

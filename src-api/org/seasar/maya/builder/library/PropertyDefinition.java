@@ -22,6 +22,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface PropertyDefinition {
+
+    // TODO 定義ファイルでの位置を取得できるようにする。
     
     /**
      * 所属するプロセッサ情報モデルの取得。
@@ -44,7 +46,8 @@ public interface PropertyDefinition {
     boolean isRequired();
     
     /**
-     * MLDにexpectedType属性で記述された属性型。デフォルトはjava.lang.Object。
+     * MLDにexpectedType属性で記述された属性型。
+     * デフォルトはjava.lang.Object。
      * @return 属性型。
      */
     Class getExpectedType();

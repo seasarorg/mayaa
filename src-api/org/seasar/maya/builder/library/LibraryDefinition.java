@@ -24,6 +24,8 @@ import java.util.Iterator;
  */
 public interface LibraryDefinition {
     
+    // TODO 定義ファイルのSystemIDを取れるようにする。 
+    
     /**
      * 当該ライブラリの名前空間URIを取得する。
      * @return 名前空間URI。

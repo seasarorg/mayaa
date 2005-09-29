@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.processor.ProcessorProperty;
+import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixMapping;
@@ -124,9 +125,13 @@ public class PropertyDefinitionImpl
         return _finalValue;
     }
     
+    protected Class getProcessorType() {
+        return getProcessorDefinition().getProcessorClass();
+    }
+    
     protected Class getPropertyType() {
-        Class processorClass = getProcessorDefinition().getProcessorClass();
-        Class ret = ObjectUtil.getPropertyType(processorClass, getName());
+        Class processorType = getProcessorType();
+        Class ret = ObjectUtil.getPropertyType(processorType, getName());
         if(ret == null) {
             if(LOG.isWarnEnabled()) {
                 String[] params = new String[] {
@@ -163,6 +168,11 @@ public class PropertyDefinitionImpl
 	        Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the processor.
+                Class processotType = getProcessorType();
+                if(processotType.isAssignableFrom(
+                        VirtualPropertyAcceptable.class)) {
+                    return value;
+                }
                 return null;
             }
 	        if(propertyType.equals(ProcessorProperty.class)) {

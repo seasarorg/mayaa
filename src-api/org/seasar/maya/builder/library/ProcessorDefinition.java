@@ -26,6 +26,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public interface ProcessorDefinition {
     
+    // TODO 定義ファイルでの位置を取得できるようにする。
+    
     /**
      * 所属ライブラリの情報モデル取得。
      * @return ライブラリ情報。
@@ -45,7 +47,8 @@ public interface ProcessorDefinition {
     Class getProcessorClass();
     
     /**
-     * プロセッサへのバインディング情報モデル（PropertyDefinition）オブジェクトのイテレート。
+     * プロセッサへのバインディング情報モデル（PropertyDefinition）
+     * オブジェクトのイテレート。
      * @return バインディング情報イテレーター。
      */
     Iterator iteratePropertyDefinition();        

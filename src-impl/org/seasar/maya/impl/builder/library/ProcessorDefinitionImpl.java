@@ -19,11 +19,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
@@ -35,6 +38,9 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorDefinitionImpl implements ProcessorDefinition {
+
+    private static final Log LOG =
+        LogFactory.getLog(ProcessorDefinitionImpl.class);
     
     private LibraryDefinition _library;
     private String _name;
@@ -102,24 +108,36 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     protected TemplateProcessor newInstance(SpecificationNode injected) {
         return (TemplateProcessor)ObjectUtil.newInstance(_processorClass);
     }
-
-    protected Class getTargetType(TemplateProcessor processor) {
-        return processor.getClass();
-    }
     
     protected void settingProperties(SpecificationNode injected, 
             TemplateProcessor processor) {
         for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = property.createProcessorProperty(injected);
-            if(prop != null) {
-                ObjectUtil.setProperty(processor, property.getName(), prop);
+            Object value = property.createProcessorProperty(injected);
+            if(value != null) {
+                String propertyName = property.getName();
+                Class processorClass = getProcessorClass();
+                if(ObjectUtil.hasProperty(processorClass, propertyName)) {
+                    ObjectUtil.setProperty(processor, propertyName, value);
+                } else if(processor instanceof VirtualPropertyAcceptable) {
+                    VirtualPropertyAcceptable acceptable =
+                        (VirtualPropertyAcceptable)processor;
+                    acceptable.addProperty(propertyName, value.toString());
+                } else {
+                    if(LOG.isWarnEnabled()) {
+                        String[] params = new String[] {
+                                processorClass.getName(), propertyName };
+                        LOG.warn(StringUtil.getMessage(
+                                ProcessorDefinitionImpl.class, 0, params));
+                    }
+                }
             }
         }
     }
     
     protected void settingInformalProperties(SpecificationNode injected, 
             InformalPropertyAcceptable acceptable) {
+        // TODO MLDプロパティは除外する。        
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             acceptable.addInformalProperty(

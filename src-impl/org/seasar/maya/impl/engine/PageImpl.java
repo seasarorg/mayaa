@@ -170,9 +170,8 @@ public class PageImpl extends SpecificationImpl
         	if(template != null) {
                 if (template.getSource().exists()) {
                     return template;
-                } else {
-                    return null;
                 }
+                return null;
         	}
     		template = createNewTemplate(suffix, extension);
     		if(template == null) {

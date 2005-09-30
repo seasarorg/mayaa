@@ -46,6 +46,8 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     private ApplicationScope _application;
     private Map _attributes;
 
+    private boolean _denyWebInf = true;
+
     // use while building ServiceProvider.
     public void setApplicationScope(ApplicationScope application) {
         if(application == null) {
@@ -60,6 +62,10 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
             _application = cycle.getApplicationScope();
         }
         return _application;
+    }
+
+    public void setDenyWebInf(boolean denyWebInf) {
+        _denyWebInf = denyWebInf;
     }
 
     // use at InternalApplicationSourceScanner.FileToSourceIterator
@@ -81,8 +87,10 @@ public class ApplicationSourceDescriptor implements SourceDescriptor {
     }
 
     public void setSystemID(String systemID) {
-        if(systemID != null && systemID.indexOf(WEB_INF) != -1) {
-            throw new ForbiddenPathException(systemID);
+        if (_denyWebInf) {
+            if(systemID != null && systemID.indexOf(WEB_INF) != -1) {
+                throw new ForbiddenPathException(systemID);
+            }
         }
         _systemID = StringUtil.preparePath(systemID);
     }

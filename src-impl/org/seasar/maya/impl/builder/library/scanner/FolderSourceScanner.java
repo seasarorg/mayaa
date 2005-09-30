@@ -65,6 +65,7 @@ public class FolderSourceScanner implements SourceScanner {
     public Iterator scan() {
         if (_source == null) {
             _source = new ApplicationSourceDescriptor();
+            _source.setDenyWebInf(false);
             _source.setRoot(getFolder());
         }
         if (_source.exists() && _source.getFile().isDirectory()) {
@@ -236,6 +237,7 @@ public class FolderSourceScanner implements SourceScanner {
                 String systemID = getSystemID(file);
                 ApplicationSourceDescriptor source = 
                     new ApplicationSourceDescriptor();
+                source.setDenyWebInf(false);
                 source.setRoot(_root);
                 source.setSystemID(systemID);
                 source.setFile(file);

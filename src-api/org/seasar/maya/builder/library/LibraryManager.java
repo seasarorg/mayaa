@@ -17,6 +17,7 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.provider.Parameterizable;
@@ -27,6 +28,19 @@ import org.seasar.maya.provider.Parameterizable;
  */
 public interface LibraryManager extends Parameterizable {
 
+    /**
+     * プロパティ型コンバータの登録。
+     * @param propertyConverter コンバータ。
+     */
+    void addPropertyConverter(PropertyConverter propertyConverter);
+    
+    /**
+     * プロパティ型コンバータの取得。
+     * @param propertyType プロパティ型。
+     * @return コンバータ。もしくはnull。
+     */
+    PropertyConverter getPropertyConverter(Class propertyType);
+    
     /**
      * ライブラリ定義ソーススキャナの追加。
      * @param scanner ライブラリ定義ソーススキャナ。

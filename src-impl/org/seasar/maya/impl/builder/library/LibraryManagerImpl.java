@@ -25,6 +25,7 @@ import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -42,10 +43,33 @@ public class LibraryManagerImpl implements LibraryManager {
 	private List _scanners;
 	private List _builders;
     private List _libraries;
+    private List _converters;
     
     public LibraryManagerImpl() {
     	_scanners = new ArrayList();
     	_builders = new ArrayList();
+        _converters = new ArrayList();
+    }
+
+    public void addPropertyConverter(PropertyConverter propertyConverter) {
+        if(propertyConverter == null) {
+            throw new IllegalArgumentException();
+        }
+        _converters.add(propertyConverter);
+    }
+
+    public PropertyConverter getPropertyConverter(Class propertyType) {
+        if(propertyType == null) {
+            throw new IllegalArgumentException();
+        }
+        for(Iterator it = _converters.iterator(); it.hasNext(); ) {
+            PropertyConverter propertyConverter = (PropertyConverter)it.next();
+            Class converterType = propertyConverter.getPropetyType();
+            if(propertyType.isAssignableFrom(converterType)) {
+                return propertyConverter;
+            }
+        }
+        return null;
     }
 
     protected void buildAll() {
@@ -59,8 +83,9 @@ public class LibraryManagerImpl implements LibraryManager {
 			    	LibraryDefinition library = builder.build(source);
 			    	if(library != null) {
 			            _libraries.add(library);
-                        if(LOG.isTraceEnabled()) {
-                            LOG.trace("loaded library - " + source.getSystemID() + 
+                        if(LOG.isInfoEnabled()) {
+                            // TODO i18n
+                            LOG.info("loaded library - " + source.getSystemID() + 
                                     " - " + library.getNamespaceURI());
                         }
 			            break;
@@ -76,6 +101,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 		synchronized (_scanners) {
             if(LOG.isInfoEnabled()) {
+                // TODO i18n
                 LOG.info("adding SourceScanner[" + _scanners.size() + "] - " +
                         scanner.getClass());
             }
@@ -89,6 +115,7 @@ public class LibraryManagerImpl implements LibraryManager {
     	}
     	synchronized(_builders) {
             if(LOG.isInfoEnabled()) {
+                // TODO i18n
                 LOG.info("adding DefinitionBuilder[" + _builders.size() + "] - " +
                         builder.getClass());
             }

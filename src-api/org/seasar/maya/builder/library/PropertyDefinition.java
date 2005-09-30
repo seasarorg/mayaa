@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.builder.library;
 
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
 /**
@@ -23,7 +24,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public interface PropertyDefinition {
 
-    // TODO 定義ファイルでの位置を取得できるようにする。
+    PropertyConverter getPropertyConverter();
     
     /**
      * 所属するプロセッサ情報モデルの取得。

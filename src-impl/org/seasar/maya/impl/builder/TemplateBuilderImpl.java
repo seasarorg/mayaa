@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.builder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -61,7 +62,7 @@ import org.xml.sax.XMLReader;
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
 		implements TemplateBuilder, CONST_IMPL {
 
-	private static final long serialVersionUID = 4578697145887676787L;
+    private static final long serialVersionUID = -1031702086020145692L;
 
     private List _resolvers = new ArrayList();
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
@@ -74,6 +75,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         synchronized (_resolvers) {
             _resolvers.add(resolver);
         }
+    }
+
+    protected List getInjectionResolvers() {
+        return Collections.unmodifiableList(_resolvers);
     }
 
     protected boolean isHTML(String mimeType) {
@@ -312,12 +317,12 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             if(original == null) {
                 throw new IllegalArgumentException();
             }
-            if(_index < _resolvers.size()) {
+            if(_index < getInjectionResolvers().size()) {
                 InjectionResolver resolver =
-                    (InjectionResolver)_resolvers.get(_index);
+                    (InjectionResolver)getInjectionResolvers().get(_index);
                 _index++;
                 InjectionChain chain;
-                if(_index == _resolvers.size()) {
+                if(_index == getInjectionResolvers().size()) {
                     chain = _external;
                 } else {
                     chain = this;

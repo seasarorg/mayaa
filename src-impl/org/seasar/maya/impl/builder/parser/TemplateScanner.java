@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -34,12 +34,12 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
     public static final String NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
     public static final String LEXICAL_HANDLER = "http://xml.org/sax/properties/lexical-handler";
     public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
-    
+
     protected void unread(int n) {
         fCurrentEntity.offset -= n;
         fCurrentEntity.columnNumber -= n;
     }
-    
+
     protected void outputCharacters(XMLStringBuffer str, boolean content) {
         if (content && fDocumentHandler != null && fElementCount >= fElementDepth) {
             fEndLineNumber = fCurrentEntity.lineNumber;
@@ -47,7 +47,7 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
             fDocumentHandler.characters(str, locationAugs());
         }
     }
-    
+
     protected int scanEntityRef(XMLStringBuffer str, boolean content)
             throws IOException {
         str.clear();
@@ -78,5 +78,5 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
         outputCharacters(str, content);
         return -1;
     }
-    
+
 }

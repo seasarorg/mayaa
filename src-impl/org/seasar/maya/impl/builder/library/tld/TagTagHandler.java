@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,22 +28,31 @@ import org.xml.sax.Attributes;
  */
 public class TagTagHandler extends TagHandler {
 
-    private static final Log LOG = LogFactory.getLog(TagTagHandler.class);
-    
+    protected static final Log LOG =
+            LogFactory.getLog(TagTagHandler.class);
+
     private TaglibTagHandler _parent;
     private TLDProcessorDefinition _processor;
-    
+
     public TagTagHandler(TaglibTagHandler parent) {
         super("tag");
         _parent = parent;
         putHandler(new AttributeTagHandler(this));
         putHandler(new TagHandler("name") {
             protected void end(String body) {
-                _processor.setName(body);
+                setProcessorName(body);
             }
         });
         putHandler(new TagClassSetter("tag-class", this));
         putHandler(new TagClassSetter("tagclass", this));
+    }
+
+    protected void setProcessorName(String name) {
+        _processor.setName(name);
+    }
+
+    protected void setProcessorClass(Class clazz) {
+        _processor.setProcessorClass(clazz);
     }
 
     protected void start(Attributes attributes) {
@@ -56,7 +65,7 @@ public class TagTagHandler extends TagHandler {
         _processor.setLibraryDefinition(library);
         _processor = null;
     }
-    
+
     public TLDProcessorDefinition getProcessorDefinition() {
         if(_processor == null) {
             throw new IllegalStateException();
@@ -66,25 +75,25 @@ public class TagTagHandler extends TagHandler {
 
     private class TagClassSetter extends TagHandler {
 
-        private TagTagHandler _parent;
-        
-        private TagClassSetter(String name, TagTagHandler parent) {
+        private TagTagHandler _handler;
+
+        private TagClassSetter(String name, TagTagHandler handler) {
             super(name);
-            _parent = parent;
+            _handler = handler;
         }
-        
+
         protected void end(String body) {
-			try {
+            try {
                 Class clazz = ObjectUtil.loadClass(body, Tag.class);
-                _processor.setProcessorClass(clazz);
+                setProcessorClass(clazz);
             } catch (RuntimeException e) {
                 if(LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());
                 }
-                _parent.invalidate();
+                _handler.invalidate();
             }
         }
-    
+
     }
-    
+
 }

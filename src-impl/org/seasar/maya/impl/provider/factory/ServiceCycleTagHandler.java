@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -26,7 +26,7 @@ public class ServiceCycleTagHandler
         extends AbstractParameterizableTagHandler {
 
     private ServiceTagHandler _parent;
-    
+
     public ServiceCycleTagHandler(ServiceTagHandler parent) {
         super("serviceCycle");
         if(parent == null) {
@@ -40,15 +40,19 @@ public class ServiceCycleTagHandler
                 attributes, "class", null);
         _parent.getServiceProvider().setServiceCycleClass(serviceCycleClass);
     }
-    
+
+    protected void setServiceCycleParameter(String name, String value) {
+        _parent.getServiceProvider().setServiceCycleParameter(name, value);
+    }
+
     public Parameterizable getParameterizable() {
         return new Parameterizable() {
 
             public void setParameter(String name, String value) {
-                _parent.getServiceProvider().setServiceCycleParameter(name, value);
+                setServiceCycleParameter(name, value);
             }
-            
+
         };
     }
-    
+
 }

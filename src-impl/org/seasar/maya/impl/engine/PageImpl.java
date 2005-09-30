@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,9 +42,9 @@ import org.seasar.maya.source.SourceDescriptor;
 public class PageImpl extends SpecificationImpl
         implements Page, Serializable, CONST_IMPL {
 
-	private static final long serialVersionUID = -8688634709901129128L;
+    private static final long serialVersionUID = -5345416943673041700L;
 
-    protected static final QName QM_EXTENDS = 
+    protected static final QName QM_EXTENDS =
         SpecificationUtil.createQName("extends");
 
     private Page _superPage;
@@ -59,48 +59,48 @@ public class PageImpl extends SpecificationImpl
         }
         _pageName = pageName;
     }
-    
+
     protected void clear() {
         synchronized(this) {
             _superPage = null;
             super.clear();
         }
     }
-    
+
     protected void prepareSuper() {
         synchronized(this) {
             if(_superPage != null) {
-            	return;
+                return;
             }
-	        String extendsPath = 
-	        	SpecificationUtil.getMayaAttributeValue(this, QM_EXTENDS);
-	        if(StringUtil.isEmpty(extendsPath)) {
-	        	return;
-	        }
+            String extendsPath =
+                SpecificationUtil.getMayaAttributeValue(this, QM_EXTENDS);
+            if(StringUtil.isEmpty(extendsPath)) {
+                return;
+            }
             Engine engine = EngineUtil.getEngine();
             String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
             String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
-            _superPage = engine.getPage(pagePath[0]);  
+            _superPage = engine.getPage(pagePath[0]);
             _superSuffix = pagePath[1];
             _superExtension = pagePath[2];
         }
     }
-    
+
     public Page getSuperPage() {
-       	prepareSuper();
+           prepareSuper();
         return _superPage;
     }
 
     public String getSuperSuffix() {
-       	prepareSuper();
+           prepareSuper();
         return _superSuffix;
     }
 
     public String getSuperExtension() {
-       	prepareSuper();
+           prepareSuper();
         return _superExtension;
     }
-    
+
     public String getPageName() {
         return _pageName;
     }
@@ -114,23 +114,23 @@ public class PageImpl extends SpecificationImpl
         }
         if(StringUtil.isEmpty(value)) {
             value = "";
-        }        
+        }
         return ScriptUtil.compile(value, String.class);
     }
 
     protected Template findTemplateFromCache(
-    		String suffix, String extension) {
+            String suffix, String extension) {
         if(_templates != null) {
-            for(Iterator it = new ChildSpecificationsIterator(_templates); 
+            for(Iterator it = new ChildSpecificationsIterator(_templates);
                     it.hasNext(); ) {
                 Object obj = it.next();
                 if(obj instanceof Template == false) {
-                	throw new IllegalStateException();
+                    throw new IllegalStateException();
                 }
                 Template template = (Template)obj;
                 String templateSuffix = template.getSuffix();
                 String templateExtension = template.getExtension();
-                if(templateSuffix.equals(suffix) && 
+                if(templateSuffix.equals(suffix) &&
                         templateExtension.equals(extension)) {
                     return template;
                 }
@@ -138,7 +138,7 @@ public class PageImpl extends SpecificationImpl
         }
         return null;
     }
-    
+
     protected Template createNewTemplate(String suffix, String extension) {
         StringBuffer name = new StringBuffer(_pageName);
         if(StringUtil.hasValue(suffix)) {
@@ -150,7 +150,7 @@ public class PageImpl extends SpecificationImpl
             name.append(".").append(extension);
         }
         ServiceProvider provider = ProviderFactory.getServiceProvider();
-        SourceDescriptor source = 
+        SourceDescriptor source =
             provider.getPageSourceDescriptor(name.toString());
         if(source.exists()) {
             Template template = new TemplateImpl(this, suffix, extension);
@@ -159,24 +159,25 @@ public class PageImpl extends SpecificationImpl
         }
         return null;
     }
-    
+
     protected Template getTemplateFromFixedSuffix(
-    		String suffix, String extension) {
+            String suffix, String extension) {
         if(suffix == null || extension == null) {
             throw new IllegalArgumentException();
         }
         synchronized(this) {
-        	Template template = findTemplateFromCache(suffix, extension);
-        	if(template != null) {
+            Template template = findTemplateFromCache(suffix, extension);
+            if(template != null) {
                 if (template.getSource().exists()) {
                     return template;
                 }
                 return null;
-        	}
-    		template = createNewTemplate(suffix, extension);
-    		if(template == null) {
-    			return null;
-    		}
+            }
+            template = createNewTemplate(suffix, extension);
+            if(template == null) {
+                return null;
+            }
+
             if (_templates == null) {
                 _templates = new ArrayList();
             }
@@ -184,14 +185,14 @@ public class PageImpl extends SpecificationImpl
             return template;
         }
     }
-    
+
     public Template getTemplate(String suffix, String extension) {
-    	if(suffix == null) {
-    		suffix = "";
-    	}
-    	if(extension == null) {
-    		extension = "";
-    	}
+        if(suffix == null) {
+            suffix = "";
+        }
+        if(extension == null) {
+            extension = "";
+        }
         Template template = getTemplateFromFixedSuffix(suffix, extension);
         if(template == null && StringUtil.hasValue(suffix)) {
             template = getTemplateFromFixedSuffix("", extension);
@@ -203,8 +204,8 @@ public class PageImpl extends SpecificationImpl
     }
 
     public ProcessStatus doPageRender(
-    		String requestedSuffix, String extension) {
-        return RenderUtil.renderPage(true, this, null, 
+            String requestedSuffix, String extension) {
+        return RenderUtil.renderPage(true, this, null,
                 this, requestedSuffix, extension);
     }
 
@@ -220,5 +221,5 @@ public class PageImpl extends SpecificationImpl
         }
         return template.doTemplateRender(topLevelPage);
     }
-    
+
 }

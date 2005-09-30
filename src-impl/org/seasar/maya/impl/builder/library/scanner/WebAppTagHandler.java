@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -31,60 +31,75 @@ public class WebAppTagHandler extends TagHandler {
 
     private List _locations = new ArrayList();
     private Locator _locator;
-    
+
     public WebAppTagHandler() {
         super("web-app");
         putHandler(new TagHandler("taglib") {
             private String _taglibURI;
             private String _taglibLocation;
-            
+
+            protected void setTaglibURI(String taglibURI) {
+                _taglibURI = taglibURI;
+            }
+
+            protected void setTaglibLocation(String taglibLocation) {
+                _taglibLocation = taglibLocation;
+            }
+
             // initialize
             {
                 putHandler(new TagHandler("taglib-uri") {
                     protected void end(String body) {
-                        _taglibURI = body;
+                        setTaglibURI(body);
                     }
                 });
                 putHandler(new TagHandler("taglib-location") {
                     protected void end(String body) {
-                        _taglibLocation = body;
+                        setTaglibLocation(body);
                     }
                 });
             }
-            
+
             protected void start(Attributes attributes) {
                 _taglibURI = null;
                 _taglibLocation = null;
             }
-            
+
             protected void end(String body) {
-                if(StringUtil.isEmpty(_taglibURI) || 
+                if(StringUtil.isEmpty(_taglibURI) ||
                         StringUtil.isEmpty(_taglibLocation)) {
                     String systemID = "/WEB-INF/web.xml";
                     int lineNumber = -1;
-                    if(_locator != null) {
-                        systemID = _locator.getSystemId();
-                        lineNumber = _locator.getLineNumber();
+                    if(getLocator() != null) {
+                        systemID = getLocator().getSystemId();
+                        lineNumber = getLocator().getLineNumber();
                     }
                     throw new IllegalTaglibDefinitionException(
                             systemID, lineNumber);
                 }
-                _locations.add(
-                        new SourceAlias(_taglibURI, _taglibLocation, null));
+                addLocation(new SourceAlias(_taglibURI, _taglibLocation, null));
             }
         });
     }
-    
+
     public void setLocator(Locator locator) {
         _locator = locator;
     }
-    
+
+    protected Locator getLocator() {
+        return _locator;
+    }
+
+    protected void addLocation(SourceAlias location) {
+        _locations.add(location);
+    }
+
     protected void start(Attributes attributes) {
         _locations.clear();
-    }    
+    }
 
     public Iterator iterateTaglibLocation() {
         return _locations.iterator();
     }
-    
+
 }

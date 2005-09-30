@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -30,21 +30,29 @@ public class TaglibTagHandler extends TagHandler {
         putHandler(new TagTagHandler(this));
         putHandler(new TagHandler("jsp-version") {
             protected void end(String body) {
-                _library.setRequiredVersion(body);
+                setRequiredVersion(body);
             }
         });
         putHandler(new TagHandler("jspversion") {
             protected void end(String body) {
-                _library.setRequiredVersion(body);
+                setRequiredVersion(body);
             }
         });
         putHandler(new TagHandler("uri") {
             protected void end(String body) {
-                _library.setNamespaceURI(body);
+                setNamespaceURI(body);
             }
         });
     }
-    
+
+    protected void setRequiredVersion(String requiredVersion) {
+        _library.setRequiredVersion(requiredVersion);
+    }
+
+    protected void setNamespaceURI(String namespaceURI) {
+        _library.setNamespaceURI(namespaceURI);
+    }
+
     protected void start(Attributes attributes) {
         _library = new TLDLibraryDefinition();
     }
@@ -52,5 +60,5 @@ public class TaglibTagHandler extends TagHandler {
     public TLDLibraryDefinition getLibraryDefinition() {
         return _library;
     }
-    
+
 }

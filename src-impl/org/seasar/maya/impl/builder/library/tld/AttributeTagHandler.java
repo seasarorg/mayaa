@@ -26,7 +26,8 @@ import org.xml.sax.Attributes;
  */
 public class AttributeTagHandler extends TagHandler {
 
-    private static final Log LOG = LogFactory.getLog(AttributeTagHandler.class);
+    protected static final Log LOG =
+            LogFactory.getLog(AttributeTagHandler.class);
             
     TLDPropertyDefinition _property;
     private TagTagHandler _parent;
@@ -47,7 +48,7 @@ public class AttributeTagHandler extends TagHandler {
                     if(LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);
                     }
-                    _parent.invalidate();
+                    invalidateParent();
                 }
             }
         });
@@ -60,10 +61,14 @@ public class AttributeTagHandler extends TagHandler {
                     if(LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);
                     }
-                    _parent.invalidate();
+                    invalidateParent();
                 } 
             }
         });
+    }
+
+    protected void invalidateParent() {
+        _parent.invalidate();
     }
 
     protected void start(Attributes attributes) {

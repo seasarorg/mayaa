@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,18 +27,18 @@ import org.seasar.maya.engine.specification.QNameable;
  */
 public class AttributeProcessor extends TemplateProcessorSupport {
 
-	private static final long serialVersionUID = -3985340947416654455L;
+    private static final long serialVersionUID = -3985340947416654455L;
 
     private QNameable _name;
-	private ProcessorProperty _value;
+    private ProcessorProperty _value;
 
     protected AbstractAttributableProcessor findParentAttributable() {
         for(ProcessorTreeWalker parent = getParentProcessor();
-        		parent != null;
-        		parent = parent.getParentProcessor()) {
-	        if(parent instanceof AbstractAttributableProcessor) {
-	            return (AbstractAttributableProcessor)parent;
-	        }
+                parent != null;
+                parent = parent.getParentProcessor()) {
+            if(parent instanceof AbstractAttributableProcessor) {
+                return (AbstractAttributableProcessor)parent;
+            }
         }
         throw new IllegalStateException();
     }
@@ -49,6 +49,10 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             throw new IllegalArgumentException();
         }
         _name = name;
+    }
+
+    protected QNameable getName() {
+        return _name;
     }
 
     // MLD property
@@ -70,8 +74,8 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     }
 
     // support class ------------------------------------------------
-    
-    protected class ProcessorPropertyWrapper 
+
+    protected class ProcessorPropertyWrapper
             implements ProcessorProperty {
 
         private QNameable _attrName;
@@ -97,7 +101,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         public boolean equals(Object obj) {
             if (obj instanceof ProcessorProperty) {
                 QNameable otherName = ((ProcessorProperty) obj).getName();
-                return _name.getQName().equals(otherName.getQName());
+                return getName().getQName().equals(otherName.getQName());
             }
             return false;
         }
@@ -107,9 +111,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
 
         public String toString() {
-            return _name.toString() + "=\"" + _attrValue.getValue() + "\"";
+            return getName().toString() + "=\"" + _attrValue.getValue() + "\"";
         }
- 
+
     }
-    
+
 }

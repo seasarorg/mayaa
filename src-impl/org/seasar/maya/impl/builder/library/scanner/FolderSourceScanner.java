@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -62,6 +62,10 @@ public class FolderSourceScanner implements SourceScanner {
         return Collections.unmodifiableSet(_extensions);
     }
 
+    protected String[] getExtensionArray() {
+        return (String[])_extensions.toArray(new String[_extensions.size()]);
+    }
+
     public Iterator scan() {
         if (_source == null) {
             _source = new ApplicationSourceDescriptor();
@@ -90,8 +94,7 @@ public class FolderSourceScanner implements SourceScanner {
 
     protected FileFilter createExtensionFilter() {
         return new FileFilter() {
-            String[] extensions =
-                (String[])_extensions.toArray(new String[_extensions.size()]);
+            String[] extensions = getExtensionArray();
             public boolean accept(File pathName) {
                 if (pathName.isDirectory()) {
                     return true;
@@ -144,7 +147,7 @@ public class FolderSourceScanner implements SourceScanner {
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if ("folder".equals(name)) {
             if (StringUtil.isEmpty(value)) {
@@ -168,7 +171,7 @@ public class FolderSourceScanner implements SourceScanner {
     }
 
     // support class ------------------------------------------------
-    
+
     protected static class FileArrayIterator implements Iterator {
 
         private File[] _files;
@@ -235,7 +238,7 @@ public class FolderSourceScanner implements SourceScanner {
             if (ret instanceof File) {
                 File file = (File) ret;
                 String systemID = getSystemID(file);
-                ApplicationSourceDescriptor source = 
+                ApplicationSourceDescriptor source =
                     new ApplicationSourceDescriptor();
                 source.setDenyWebInf(false);
                 source.setRoot(_root);

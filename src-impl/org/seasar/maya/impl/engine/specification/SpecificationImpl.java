@@ -42,6 +42,7 @@ public class SpecificationImpl
     private Date _buildTimestamp;
     private SourceDescriptor _source;
     private List _childNodes;
+    private boolean _hasSource;
 
     protected void clear() {
         synchronized(this) {
@@ -66,7 +67,15 @@ public class SpecificationImpl
         if (checkTimestamp() == false) {
             return false;
         }
-        if(getTimestamp() == null) {
+
+        if (_hasSource != getSource().exists()) {
+            clear();
+            kill();
+            _hasSource = getSource().exists();
+            return true;
+        }
+
+        if (getTimestamp() == null) {
             return true;
         }
         Date source = getSource().getTimestamp();

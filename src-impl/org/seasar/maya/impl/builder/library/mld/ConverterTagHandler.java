@@ -13,9 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.builder.library.mld;
 
-import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
+import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
+import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -23,35 +25,38 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ErrorHandlerTagHandler 
+public class ConverterTagHandler 
 		extends AbstractParameterizableTagHandler {
+
+    private PropertyTagHandler _parent;  
+    private PropertyConverter _propertyConverter;
     
-    private EngineTagHandler _parent;
-    private ErrorHandler _handler;
-    
-    public ErrorHandlerTagHandler(EngineTagHandler parent) {
-        super("errorHandler");
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
+    public ConverterTagHandler(PropertyTagHandler parent) {
+        super("converter");
         _parent = parent;
     }
     
     protected void start(Attributes attributes) {
-        _handler = (ErrorHandler)XMLUtil.getObjectValue(
-                attributes, "class", null, ErrorHandler.class);
-        _parent.getEngine().setErrorHandler(_handler);
+    	PropertyConverter converter =
+    		(PropertyConverter)XMLUtil.getObjectValue(
+    				attributes, "class", null, PropertyConverter.class);
+        if(converter == null) {
+        	throw new IllegalStateException();
+        }
+    	PropertyDefinitionImpl propertyDefinition =
+    		_parent.getPropertyDefinition();
+    	propertyDefinition.setPropertyConverter(converter);
     }
     
     protected void end(String body) {
-        _handler = null;
+        _propertyConverter = null;
     }
-    
-    public Parameterizable getParameterizable() {
-        if(_handler == null) {
+
+	public Parameterizable getParameterizable() {
+        if(_propertyConverter == null) {
             throw new IllegalStateException();
         }
-        return _handler;
-    }
+        return _propertyConverter;
+	}
     
 }

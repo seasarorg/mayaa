@@ -21,7 +21,8 @@ import org.seasar.maya.provider.Parameterizable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractParameterizableTagHandler extends TagHandler {
+public abstract class AbstractParameterizableTagHandler 
+		extends TagHandler {
     
     public AbstractParameterizableTagHandler(String name) {
         super(name);

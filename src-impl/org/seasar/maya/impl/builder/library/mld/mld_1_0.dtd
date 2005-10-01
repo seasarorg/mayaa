@@ -12,9 +12,16 @@
 <!ATTLIST processor name CDATA #REQUIRED>
 <!ATTLIST processor class CDATA #REQUIRED>
 
-<!ELEMENT property (description?)>
+<!ELEMENT property (description?, converter?)>
 <!ATTLIST property name CDATA #REQUIRED>
 <!ATTLIST property expectedType CDATA #IMPLIED>
 <!ATTLIST property required (true | false) "false">
 <!ATTLIST property final CDATA  #IMPLIED>
 <!ATTLIST property default CDATA  #IMPLIED>
+
+<!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter class CDATA #REQUIRED>
+
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>

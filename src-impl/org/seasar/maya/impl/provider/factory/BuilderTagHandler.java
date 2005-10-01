@@ -23,7 +23,8 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class BuilderTagHandler extends AbstractParameterizableTagHandler {
+public class BuilderTagHandler
+		extends AbstractParameterizableTagHandler {
     
     private LibraryManagerTagHandler _parent;
     private DefinitionBuilder _builder;

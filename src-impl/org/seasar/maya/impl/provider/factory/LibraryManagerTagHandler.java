@@ -23,7 +23,8 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryManagerTagHandler extends AbstractParameterizableTagHandler {
+public class LibraryManagerTagHandler
+		extends AbstractParameterizableTagHandler {
     
     private ServiceTagHandler _parent;
     private LibraryManager _libraryManager;
@@ -34,6 +35,7 @@ public class LibraryManagerTagHandler extends AbstractParameterizableTagHandler 
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        putHandler(new ConverterTagHandler(this));
         putHandler(new SourceTagHandler(this));
         putHandler(new BuilderTagHandler(this));
     }

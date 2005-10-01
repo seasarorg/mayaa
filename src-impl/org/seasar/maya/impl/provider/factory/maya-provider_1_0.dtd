@@ -33,8 +33,12 @@
 <!ELEMENT specificationBuilder (description?, parameter*)>
 <!ATTLIST specificationBuilder class CDATA #REQUIRED>
 
-<!ELEMENT libraryManager (description?, source*, builder*, parameter*)>
+<!ELEMENT libraryManager (description?, 
+		converter*, source*, builder*, parameter*)>
 <!ATTLIST libraryManager class CDATA #REQUIRED>
+
+<!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter class CDATA #REQUIRED>
 
 <!ELEMENT source (description?, parameter*)>
 <!ATTLIST source class CDATA #REQUIRED>

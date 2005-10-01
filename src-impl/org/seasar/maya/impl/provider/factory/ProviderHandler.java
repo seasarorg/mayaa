@@ -51,7 +51,8 @@ public class ProviderHandler extends DefaultHandler
     
 	public InputSource resolveEntity(String publicId, String systemId) {
         if(PUBLIC_PROVIDER10.equals(publicId)) {
-            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            ClassLoaderSourceDescriptor source = 
+            	new ClassLoaderSourceDescriptor();
             source.setSystemID("maya-provider_1_0.dtd");
             source.setNeighborClass(ProviderHandler.class);
             if(source.exists()) {
@@ -66,7 +67,8 @@ public class ProviderHandler extends DefaultHandler
         _stack.startElement(localName, attributes);
     }
     
-    public void endElement(String namespaceURI, String localName, String qName) {
+    public void endElement(
+    		String namespaceURI, String localName, String qName) {
         _stack.endElement();
     }
 

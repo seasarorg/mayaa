@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import org.seasar.maya.builder.library.scanner.SourceScanner;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -23,14 +23,14 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceTagHandler 
+public class ConverterTagHandler 
 		extends AbstractParameterizableTagHandler {
     
     private LibraryManagerTagHandler _parent;
-    private SourceScanner _scanner;
+    private PropertyConverter _converter;
     
-    public SourceTagHandler(LibraryManagerTagHandler parent) {
-        super("source");
+    public ConverterTagHandler(LibraryManagerTagHandler parent) {
+        super("converter");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
@@ -38,20 +38,20 @@ public class SourceTagHandler
     }
 
     public void start(Attributes attributes) {
-        _scanner = (SourceScanner)XMLUtil.getObjectValue(
-                attributes, "class", null, SourceScanner.class);
-        _parent.getLibraryManager().addSourceScanner(_scanner);
+        _converter = (PropertyConverter)XMLUtil.getObjectValue(
+                attributes, "class", null, PropertyConverter.class);
+        _parent.getLibraryManager().addPropertyConverter(_converter);
     }
     
     public void end(String body) {
-        _scanner = null;
+        _converter = null;
     }
     
     public Parameterizable getParameterizable() {
-        if(_scanner == null) {
+        if(_converter == null) {
             throw new IllegalStateException();
         }
-        return _scanner;
+        return _converter;
     }
 
 }

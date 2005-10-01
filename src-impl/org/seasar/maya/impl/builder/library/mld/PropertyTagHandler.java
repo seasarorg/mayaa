@@ -27,10 +27,12 @@ import org.xml.sax.Attributes;
 public class PropertyTagHandler extends TagHandler {
 
     private ProcessorTagHandler _parent;
+    private PropertyDefinitionImpl _propertyDefinition;
     
     public PropertyTagHandler(ProcessorTagHandler parent) {
         super("property");
         _parent = parent;
+        putHandler(new ConverterTagHandler(this));
     }
 
     protected void start(Attributes attributes) {
@@ -41,15 +43,26 @@ public class PropertyTagHandler extends TagHandler {
                 attributes, "expectedType", Object.class);
         String finalValue = attributes.getValue("final");
         String defaultValue = attributes.getValue("default");
-        PropertyDefinitionImpl property = new PropertyDefinitionImpl();
-        property.setName(name);
-        property.setRequired(required);
-        property.setExpectedType(expectedType);
-        property.setFinalValue(finalValue);
-        property.setDefaultValue(defaultValue);
+        _propertyDefinition = new PropertyDefinitionImpl();
+        _propertyDefinition.setName(name);
+        _propertyDefinition.setRequired(required);
+        _propertyDefinition.setExpectedType(expectedType);
+        _propertyDefinition.setFinalValue(finalValue);
+        _propertyDefinition.setDefaultValue(defaultValue);
         ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
-        processor.addPropertyDefinitiion(property);
-        property.setProcessorDefinition(processor);
+        processor.addPropertyDefinitiion(_propertyDefinition);
+        _propertyDefinition.setProcessorDefinition(processor);
+    }
+    
+    protected void end(String body) {
+    	_propertyDefinition = null;
+    }
+ 
+    public PropertyDefinitionImpl getPropertyDefinition() {
+    	if(_propertyDefinition == null) {
+    		throw new IllegalStateException();
+    	}
+    	return _propertyDefinition;
     }
     
 }

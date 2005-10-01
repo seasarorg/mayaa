@@ -16,12 +16,13 @@
 package org.seasar.maya.builder.library.converter;
 
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.provider.Parameterizable;
 
 /**
  * プロセッサ設定のプロパティ値を変換提供するコンバータ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PropertyConverter {
+public interface PropertyConverter extends Parameterizable {
 
     /**
      * このコンバータが処理を行うプロパティの静的型を取得する。

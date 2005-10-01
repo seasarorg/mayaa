@@ -19,6 +19,7 @@ import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.builder.BuilderUtil;
+import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -32,6 +33,10 @@ public class QNameableConverter implements PropertyConverter {
 	public Object convert(NodeAttribute attribute, Class expectedType) {
         return BuilderUtil.parseName(
         		attribute.getParentSpace(), attribute.getValue()); 
+	}
+
+	public void setParameter(String name, String value) {
+		throw new UnsupportedParameterException(getClass(), name);
 	}
 
 }

@@ -38,7 +38,8 @@ public class ProviderFactoryImpl extends ProviderFactory
         ServiceProvider.class.getName();
     private boolean _inithialized;
 
-    private ServiceProvider createServiceProvider(ServletContext servletContext) {
+    private ServiceProvider createServiceProvider(
+    		ServletContext servletContext) {
         BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
         source.setServletContext(servletContext);
         source.setSystemID("/maya.provider");

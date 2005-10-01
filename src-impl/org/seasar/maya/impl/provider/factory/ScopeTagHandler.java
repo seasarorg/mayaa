@@ -23,7 +23,8 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScopeTagHandler extends AbstractParameterizableTagHandler {
+public class ScopeTagHandler 
+		extends AbstractParameterizableTagHandler {
     
     private ScriptEnvirionmentTagHandler _parent;
     private AttributeScope _scope;

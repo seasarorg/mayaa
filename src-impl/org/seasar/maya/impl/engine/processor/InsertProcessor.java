@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class InsertProcessor
 	
     private String _path;
     private String _name;
-    private Page _page;
+    private SoftReference _page;
     private String _suffix;
     private String _extension;
     private List _attributes;
@@ -80,22 +81,39 @@ public class InsertProcessor
         return _attributes;
     }
     
+    protected Page getPage() {
+		Page page = null;
+        if(_page != null) {
+        	page = (Page)_page.get();
+        	if(page == null) {
+            	_page = null;
+        	}
+        }
+        return page;
+    }
+    
     protected void preparePage() {
-        if(_page == null && StringUtil.hasValue(_path)) {
-            Engine engine = EngineUtil.getEngine();
-            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-            _page = engine.getPage(pagePath[0]);  
-            _suffix = pagePath[1];
-            _extension = pagePath[2];
+    	if(StringUtil.hasValue(_path)) {
+            synchronized(this) {
+	    		Page page = getPage();
+		        if(page == null) {
+		            Engine engine = EngineUtil.getEngine();
+		            String suffixSeparator = 
+		            	engine.getParameter(SUFFIX_SEPARATOR);
+		            String[] pagePath = 
+		            	StringUtil.parsePath(_path, suffixSeparator);
+		            page = engine.getPage(pagePath[0]);
+		            _page = new SoftReference(page);  
+		            _suffix = pagePath[1];
+		            _extension = pagePath[2];
+		        }
+	    	}
         }
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        synchronized(this) {
-            preparePage();
-        }
-        Page renderPage = _page;
+        preparePage();
+        Page renderPage = getPage();
         String requestedSuffix = _suffix;
         String extension = _extension;
         boolean findSuper = true;

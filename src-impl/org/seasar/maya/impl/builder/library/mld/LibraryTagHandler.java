@@ -16,13 +16,15 @@
 package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
-import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
+import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryTagHandler extends TagHandler {
+public class LibraryTagHandler 
+		extends AbstractParameterizableTagHandler {
 
     private LibraryDefinitionImpl _libraryDefinition;
     
@@ -39,7 +41,14 @@ public class LibraryTagHandler extends TagHandler {
     }
     
     public LibraryDefinitionImpl getLibraryDefinition() {
+    	if(_libraryDefinition == null) {
+    		throw new IllegalStateException();
+    	}
         return _libraryDefinition;
     }
+
+	public Parameterizable getParameterizable() {
+		return getLibraryDefinition();
+	}
     
 }

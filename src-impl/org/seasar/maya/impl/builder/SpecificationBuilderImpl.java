@@ -88,6 +88,8 @@ public class SpecificationBuilderImpl
         }
     }
 
+    // Parameterizable implements ------------------------------------
+    
     public void setParameter(String name, String value) {
         if("outputWhitespace".equals(name)) {
             _outputWhitespace = ObjectUtil.booleanValue(value, true);

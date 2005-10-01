@@ -17,12 +17,14 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.provider.Parameterizable;
+
 
 /**
  * MLDのlibraryエレメントのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface LibraryDefinition {
+public interface LibraryDefinition extends Parameterizable {
     
     // TODO 定義ファイルのSystemIDを取れるようにする。 
     

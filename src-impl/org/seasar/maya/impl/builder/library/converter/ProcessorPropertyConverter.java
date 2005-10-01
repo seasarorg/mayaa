@@ -36,6 +36,8 @@ public class ProcessorPropertyConverter implements PropertyConverter {
                 attribute, value, expectedType);
 	}
 
+    // Parameterizable implements ------------------------------------
+    
 	public void setParameter(String name, String value) {
 		throw new UnsupportedParameterException(getClass(), name);
 	}

@@ -17,12 +17,15 @@ package org.seasar.maya.builder.library;
 
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.provider.Parameterizable;
 
 /**
  * MLDのpropertyノードのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PropertyDefinition {
+public interface PropertyDefinition extends Parameterizable {
+    
+    // TODO 定義ファイルでの位置を取得できるようにする。
 
     PropertyConverter getPropertyConverter();
     

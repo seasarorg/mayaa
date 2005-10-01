@@ -31,14 +31,14 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
+        Class propertyType = getPropertyType();
+        if(propertyType == null) {
+            // real property not found on the tag.
+            return null;
+        }
         QName qName = getQName(injected);
         NodeAttribute attribute = injected.getAttribute(qName);
         if(attribute != null) {
-            Class propertyType = getPropertyType();
-            if(propertyType == null) {
-                // real property not found on the tag.
-                return null;
-            }
             String value = attribute.getValue();
             return new ProcessorPropertyImpl(attribute, value, propertyType);
         } else if(isRequired()) {

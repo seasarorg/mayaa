@@ -35,6 +35,8 @@ public class QNameableConverter implements PropertyConverter {
         return BuilderUtil.parseName(attribute, value); 
 	}
 
+    // Parameterizable implements ------------------------------------
+    
 	public void setParameter(String name, String value) {
 		throw new UnsupportedParameterException(getClass(), name);
 	}

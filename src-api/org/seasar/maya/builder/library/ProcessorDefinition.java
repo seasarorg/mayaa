@@ -19,12 +19,13 @@ import java.util.Iterator;
 
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.maya.provider.Parameterizable;
 
 /**
  * MLDのprocessorエレメントのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorDefinition {
+public interface ProcessorDefinition extends Parameterizable {
     
     // TODO 定義ファイルでの位置を取得できるようにする。
     

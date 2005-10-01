@@ -3,16 +3,20 @@
 <!NOTATION mld_1_0 PUBLIC
         "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN">
 
-<!ELEMENT library (description?, processor*)>
-<!ATTLIST library uri CDATA #REQUIRED>
-
 <!ELEMENT description (#PCDATA)>
 
-<!ELEMENT processor (description?, property*)>
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>
+
+<!ELEMENT library (description?, processor*, parameter*)>
+<!ATTLIST library uri CDATA #REQUIRED>
+
+<!ELEMENT processor (description?, property*, parameter*)>
 <!ATTLIST processor name CDATA #REQUIRED>
 <!ATTLIST processor class CDATA #REQUIRED>
 
-<!ELEMENT property (description?, converter?)>
+<!ELEMENT property (description?, converter?, parameter*)>
 <!ATTLIST property name CDATA #REQUIRED>
 <!ATTLIST property expectedType CDATA #IMPLIED>
 <!ATTLIST property required (true | false) "false">
@@ -21,7 +25,3 @@
 
 <!ELEMENT converter (description?, parameter*)>
 <!ATTLIST converter class CDATA #REQUIRED>
-
-<!ELEMENT parameter (description?)>
-<!ATTLIST parameter name CDATA #REQUIRED>
-<!ATTLIST parameter value CDATA #REQUIRED>

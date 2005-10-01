@@ -64,17 +64,17 @@ public class BodyContentImpl extends BodyContent {
         return _writer.getString();
     }
 
-    public void clear() throws IOException {
+    public void clear() {
         // lazy implementation
         _writer.clearBuffer();
     }
     
-    public void clearBuffer() throws IOException {
+    public void clearBuffer() {
         // lazy implementation
         _writer.clearBuffer();
     }
     
-    public void close() throws IOException {
+    public void close() {
     }
     
     public int getRemaining() {

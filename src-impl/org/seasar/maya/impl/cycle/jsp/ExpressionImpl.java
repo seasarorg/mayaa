@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.cycle.jsp;
 
-import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.Expression;
 import javax.servlet.jsp.el.VariableResolver;
 
@@ -32,8 +31,7 @@ public class ExpressionImpl extends Expression {
         _script = script;
     }
     
-    public Object evaluate(VariableResolver vResolver)
-            throws ELException {
+    public Object evaluate(VariableResolver vResolver) {
         return _script.execute(null);
     }
 

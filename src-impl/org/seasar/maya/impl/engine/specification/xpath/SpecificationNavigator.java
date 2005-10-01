@@ -21,7 +21,6 @@ import org.jaxen.DefaultNavigator;
 import org.jaxen.NamedAccessNavigator;
 import org.jaxen.Navigator;
 import org.jaxen.XPath;
-import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -331,7 +330,7 @@ public class SpecificationNavigator extends DefaultNavigator
 		return false;
 	}
 	
-	public XPath parseXPath(String xpath) throws SAXPathException {
+	public XPath parseXPath(String xpath) {
 		return SpecificationXPath.createXPath(xpath, null);
 	}
 	

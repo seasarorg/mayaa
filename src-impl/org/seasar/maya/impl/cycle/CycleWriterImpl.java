@@ -63,7 +63,7 @@ public class CycleWriterImpl extends CycleWriter {
 
     // Writer implemtents --------------------------------------------
     
-    public void write(char[] cbuf, int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) {
         if (len == 0) {
             return;
         }

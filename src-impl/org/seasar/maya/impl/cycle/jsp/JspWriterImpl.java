@@ -59,12 +59,12 @@ public class JspWriterImpl extends JspWriter {
         _writer.clearBuffer();
     }
 
-    public void clearBuffer() throws IOException {
+    public void clearBuffer() {
         // lazy implementation
         _writer.clearBuffer();
     }
 
-    public void close() throws IOException {
+    public void close() {
         _closed = true;
     }
 

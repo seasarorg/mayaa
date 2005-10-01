@@ -15,13 +15,11 @@
  */
 package org.seasar.maya.impl.cycle.jsp;
 
-import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
@@ -97,14 +95,12 @@ public class PageContextImpl extends PageContext {
         return new BodyContentImpl(response.pushWriter());
     }
 
-    public void forward(String relativeUrlPath)
-            throws ServletException, IOException {
+    public void forward(String relativeUrlPath) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
     	cycle.forward(relativeUrlPath);
     }
 
-    public void include(String relativeUrlPath)
-            throws ServletException, IOException {
+    public void include(String relativeUrlPath) {
         include(relativeUrlPath, false);
     }
     
@@ -113,13 +109,11 @@ public class PageContextImpl extends PageContext {
         throw new UnsupportedOperationException();
     }
 
-    public void handlePageException(Exception e)
-            throws ServletException, IOException {
+    public void handlePageException(Exception e) {
         handlePageException((Throwable)e);
     }
     
-    public void handlePageException(Throwable t)
-            throws ServletException, IOException {
+    public void handlePageException(Throwable t) {
         // TODO impl for JSP API
     	throw new UnsupportedOperationException();
     }

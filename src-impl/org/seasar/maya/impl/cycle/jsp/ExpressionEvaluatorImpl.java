@@ -44,8 +44,7 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
     }
 
     public Expression parseExpression(String expression, 
-            Class expectedType, FunctionMapper fMapper)
-            throws ELException {
+            Class expectedType, FunctionMapper fMapper) {
         CompiledScript script = ScriptUtil.compile(expression, expectedType);
         return new ExpressionImpl(script);
     }

@@ -23,20 +23,17 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
@@ -189,26 +186,25 @@ public class PropertyDefinitionImpl
                     processorName, qName);
         }
         if(value != null) {
-            // TODO プロパティの型にあわせて型変換する箇所をアダプター化
-            // ProcessorProperty, QNameable, ValueBinding, etc...
 	        Class propertyType = getPropertyType();
             if(propertyType == null) {
                 // real property not found on the processor.
                 Class processotType = getProcessorType();
                 if(processotType.isAssignableFrom(
-                        VirtualPropertyAcceptable.class)) {
-                    return value;
+                        VirtualPropertyAcceptable.class) == false) {
+                    return null;
                 }
-                return null;
             }
-	        if(propertyType.equals(ProcessorProperty.class)) {
-                NodeAttribute attr = injected.getAttribute(qName);
-	            return new ProcessorPropertyImpl(
-                        attr, value, getExpectedType());
-	        } else if(propertyType.equals(QNameable.class)) {
-                return BuilderUtil.parseName(injected.getParentSpace(), value); 
-            }
-	        return value;
+        	PropertyConverter converter = getPropertyConverter();
+        	if(converter == null) {
+        		ServiceProvider provider = ProviderFactory.getServiceProvider();
+        		LibraryManager manager = provider.getLibraryManager();
+        		converter = manager.getPropertyConverter(getPropertyType());
+        	}
+        	if(converter == null) {
+        		return value;
+        	}
+       		return converter.convert(attribute, value, getExpectedType());
         } else if(_required) {
             String processorName = getProcessorDefinition().getName();
             throw new NoRequiredPropertyException(processorName, qName);

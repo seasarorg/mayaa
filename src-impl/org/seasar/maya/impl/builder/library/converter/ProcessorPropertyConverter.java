@@ -30,9 +30,10 @@ public class ProcessorPropertyConverter implements PropertyConverter {
 		return ProcessorProperty.class;
 	}
 
-	public Object convert(NodeAttribute attribute, Class expectedType) {
+	public Object convert(
+			NodeAttribute attribute, String value, Class expectedType) {
         return new ProcessorPropertyImpl(
-                attribute, attribute.getValue(), expectedType);
+                attribute, value, expectedType);
 	}
 
 	public void setParameter(String name, String value) {

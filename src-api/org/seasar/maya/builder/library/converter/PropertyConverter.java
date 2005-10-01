@@ -33,9 +33,10 @@ public interface PropertyConverter extends Parameterizable {
     /**
      * プロパティの変換を行う。
      * @param attribute 設定属性。
+     * @param value 変換する文字列値。
      * @param expectedType 動的値の場合に期待する動的型。
      * @return 変換値。
      */
-    Object convert(NodeAttribute attribute, Class expectedType);
+    Object convert(NodeAttribute attribute, String value, Class expectedType);
     
 }

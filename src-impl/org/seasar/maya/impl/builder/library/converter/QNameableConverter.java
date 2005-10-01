@@ -30,9 +30,9 @@ public class QNameableConverter implements PropertyConverter {
 		return QNameable.class;
 	}
 
-	public Object convert(NodeAttribute attribute, Class expectedType) {
-        return BuilderUtil.parseName(
-        		attribute.getParentSpace(), attribute.getValue()); 
+	public Object convert(
+			NodeAttribute attribute, String value, Class expectedType) {
+        return BuilderUtil.parseName(attribute, value); 
 	}
 
 	public void setParameter(String name, String value) {

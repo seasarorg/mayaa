@@ -124,7 +124,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
     
     protected void appendPrefixMappingString(
             StringBuffer buffer, Namespace namespace) {
-        if(namespace == null) {
+        
+    	// TODO XHTMLで、すべてのタグに出力されている。おそらく原因はここにくるまでに起きてると思う。
+    	
+    	if(namespace == null) {
             throw new IllegalArgumentException();
         }
         for(Iterator it = namespace.iteratePrefixMapping(false);

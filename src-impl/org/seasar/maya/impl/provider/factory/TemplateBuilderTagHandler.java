@@ -38,7 +38,8 @@ public class TemplateBuilderTagHandler
         putHandler(new ResolverTagHandler(this));
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _templateBuilder = (TemplateBuilder)XMLUtil.getObjectValue(
                 attributes, "class", null, TemplateBuilder.class);
         _parent.getServiceProvider().setTemplateBuilder(_templateBuilder);

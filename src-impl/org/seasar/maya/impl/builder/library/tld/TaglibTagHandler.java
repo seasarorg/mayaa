@@ -19,7 +19,7 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class TaglibTagHandler extends TagHandler {
 
@@ -53,8 +53,10 @@ public class TaglibTagHandler extends TagHandler {
         _library.setNamespaceURI(namespaceURI);
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _library = new TLDLibraryDefinition();
+        _library.setSystemID(systemID);
     }
 
     public TLDLibraryDefinition getLibraryDefinition() {

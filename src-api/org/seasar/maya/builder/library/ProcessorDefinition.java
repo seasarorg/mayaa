@@ -26,9 +26,13 @@ import org.seasar.maya.provider.Parameterizable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorDefinition extends Parameterizable {
-    
-    // TODO 定義ファイルでの位置を取得できるようにする。
-    
+
+	/**
+	 * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。
+	 * @return 行番号。
+	 */
+	int getLineNumber();
+	
     /**
      * 所属ライブラリの情報モデル取得。
      * @return ライブラリ情報。

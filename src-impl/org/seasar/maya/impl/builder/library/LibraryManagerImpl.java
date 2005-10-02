@@ -84,9 +84,12 @@ public class LibraryManagerImpl implements LibraryManager {
 			    	if(library != null) {
 			            _libraries.add(library);
                         if(LOG.isInfoEnabled()) {
-                            // TODO i18n
-                            LOG.info("loaded library - " + source.getSystemID() + 
-                                    " - " + library.getNamespaceURI());
+                            String msg = StringUtil.getMessage(
+                            		LibraryManagerImpl.class, 1, new String[] {
+                            			source.getSystemID(), 
+                            			library.getNamespaceURI()
+                            		});
+                            LOG.info(msg);
                         }
 			            break;
 			    	}
@@ -101,9 +104,12 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 		synchronized (_scanners) {
             if(LOG.isInfoEnabled()) {
-                // TODO i18n
-                LOG.info("adding SourceScanner[" + _scanners.size() + "] - " +
-                        scanner.getClass());
+                String msg = StringUtil.getMessage(
+                		LibraryManagerImpl.class, 2, new String[] {
+                			Integer.toString(_scanners.size()), 
+                			scanner.getClass().getName()
+                		});
+                LOG.info(msg);
             }
 			_scanners.add(scanner);
 		}
@@ -115,9 +121,12 @@ public class LibraryManagerImpl implements LibraryManager {
     	}
     	synchronized(_builders) {
             if(LOG.isInfoEnabled()) {
-                // TODO i18n
-                LOG.info("adding DefinitionBuilder[" + _builders.size() + "] - " +
-                        builder.getClass());
+                String msg = StringUtil.getMessage(
+                		LibraryManagerImpl.class, 3, new String[] {
+                			Integer.toString(_builders.size()), 
+                			builder.getClass().getName()
+                		});
+                LOG.info(msg);
             }
     		_builders.add(builder);
     	}

@@ -24,7 +24,7 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class TagTagHandler extends TagHandler {
 
@@ -55,8 +55,10 @@ public class TagTagHandler extends TagHandler {
         _processor.setProcessorClass(clazz);
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _processor = new TLDProcessorDefinition();
+        _processor.setLineNumber(lineNumber);
     }
 
     protected void end(String body) {

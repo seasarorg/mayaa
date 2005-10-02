@@ -23,12 +23,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class TagHandler {
     
-    protected static final AttributesImpl NULL_ATTR = new AttributesImpl();
-    private static TagHandler NULL_HANDLER = new TagHandler("null");
+    protected static final AttributesImpl NULL_ATTR = 
+    	new AttributesImpl();
+    private static TagHandler NULL_HANDLER = new TagHandler("_null_");
     
     private Map _children = new HashMap();
     private boolean _valid = true;
@@ -53,7 +54,8 @@ public class TagHandler {
         _children.put(child.getName(), child);
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
     }
     
     protected void end(String body) {
@@ -68,13 +70,14 @@ public class TagHandler {
     }
     
     // HandlerStackÇÊÇËåƒÇ—èoÇ≥ÇÍÇÈÅB
-    public TagHandler startElement(String name, Attributes attributes) {
+    public TagHandler startElement(String name, Attributes attributes, 
+    		String systemID, int lineNumber) {
         if(_valid) {
 	        TagHandler child = (TagHandler)_children.get(name);
 	        if(child != null) {
 	            child._valid = true;
 	            child._buffer.setLength(0);
-	            child.start(attributes);
+	            child.start(attributes, systemID, lineNumber);
 		        return child;
 	        }
         }

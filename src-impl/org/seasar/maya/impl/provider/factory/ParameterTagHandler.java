@@ -34,7 +34,8 @@ public class ParameterTagHandler extends TagHandler {
         _parent = parent;
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         String name = XMLUtil.getStringValue(attributes, "name", null);
         String value = XMLUtil.getStringValue(attributes, "value", null);
         _parent.getParameterizable().setParameter(name, value);

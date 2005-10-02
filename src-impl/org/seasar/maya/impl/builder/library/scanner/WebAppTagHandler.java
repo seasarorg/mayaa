@@ -22,7 +22,6 @@ import java.util.List;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,13 +29,13 @@ import org.xml.sax.Locator;
 public class WebAppTagHandler extends TagHandler {
 
     private List _locations = new ArrayList();
-    private Locator _locator;
 
     public WebAppTagHandler() {
         super("web-app");
         putHandler(new TagHandler("taglib") {
             private String _taglibURI;
             private String _taglibLocation;
+            private int _lineNumber;
 
             protected void setTaglibURI(String taglibURI) {
                 _taglibURI = taglibURI;
@@ -60,41 +59,30 @@ public class WebAppTagHandler extends TagHandler {
                 });
             }
 
-            protected void start(Attributes attributes) {
+            protected void start(
+            		Attributes attributes, String systemID, int lineNumber) {
                 _taglibURI = null;
                 _taglibLocation = null;
+                _lineNumber = lineNumber;
             }
 
             protected void end(String body) {
                 if(StringUtil.isEmpty(_taglibURI) ||
                         StringUtil.isEmpty(_taglibLocation)) {
-                    String systemID = "/WEB-INF/web.xml";
-                    int lineNumber = -1;
-                    if(getLocator() != null) {
-                        systemID = getLocator().getSystemId();
-                        lineNumber = getLocator().getLineNumber();
-                    }
                     throw new IllegalTaglibDefinitionException(
-                            systemID, lineNumber);
+                    		"/WEB-INF/web.xml", _lineNumber);
                 }
                 addLocation(new SourceAlias(_taglibURI, _taglibLocation, null));
             }
         });
     }
 
-    public void setLocator(Locator locator) {
-        _locator = locator;
-    }
-
-    protected Locator getLocator() {
-        return _locator;
-    }
-
     protected void addLocation(SourceAlias location) {
         _locations.add(location);
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _locations.clear();
     }
 

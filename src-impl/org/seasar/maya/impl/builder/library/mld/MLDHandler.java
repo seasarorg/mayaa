@@ -23,18 +23,21 @@ import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDHandler extends DefaultHandler implements CONST_IMPL {
+public class MLDHandler extends DefaultHandler
+		implements CONST_IMPL {
 
     private static final Log LOG = LogFactory.getLog(MLDHandler.class);
     
     private LibraryTagHandler _handler;
     private TagHandlerStack _stack;
+    private Locator _locator;
     
     public MLDHandler() {
         _handler = new LibraryTagHandler();
@@ -44,10 +47,11 @@ public class MLDHandler extends DefaultHandler implements CONST_IMPL {
     public LibraryDefinitionImpl getLibraryDefinition() {
         return _handler.getLibraryDefinition();
     }
-    
+
 	public InputSource resolveEntity(String publicId, String systemId) {
         if(PUBLIC_MLD10.equals(publicId)) {
-            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            ClassLoaderSourceDescriptor source = 
+            	new ClassLoaderSourceDescriptor();
             source.setSystemID("mld_1_0.dtd");
             source.setNeighborClass(MLDHandler.class);
             if(source.exists()) {
@@ -56,13 +60,32 @@ public class MLDHandler extends DefaultHandler implements CONST_IMPL {
         }
         return null;
     }
+    
+	public void setDocumentLocator(Locator locator) {
+		_locator = locator;
+	}
+
+	protected String getSystemID() {
+		if(_locator != null) {
+			return _locator.getSystemId();
+		}
+		return null;
+	}
+	
+	protected int getLineNumber() {
+		if(_locator != null) {
+			return _locator.getLineNumber();
+		}
+		return 0;
+	}
 	
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attr) {
-        _stack.startElement(localName, attr);
+        _stack.startElement(localName, attr, getSystemID(), getLineNumber());
     }
     
-    public void endElement(String namespaceURI, String localName, String qName) {
+    public void endElement(String namespaceURI, 
+    		String localName, String qName) {
         _stack.endElement();
     }
     

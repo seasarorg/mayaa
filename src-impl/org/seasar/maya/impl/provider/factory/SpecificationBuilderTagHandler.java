@@ -38,7 +38,8 @@ public class SpecificationBuilderTagHandler
         _parent = parent;
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _specificationBuilder = (SpecificationBuilder)XMLUtil.getObjectValue(
                 attributes, "class", null, SpecificationBuilder.class);
         ServiceProviderImpl provider = _parent.getServiceProvider();

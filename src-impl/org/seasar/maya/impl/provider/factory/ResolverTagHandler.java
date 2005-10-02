@@ -37,13 +37,14 @@ public class ResolverTagHandler
         _parent = parent;
     }
     
-    public void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _resolver = (InjectionResolver)XMLUtil.getObjectValue(
                 attributes, "class", null, InjectionResolver.class);
         _parent.getTemplateBuilder().addInjectionResolver(_resolver);
     }
     
-    public void end(String body) {
+    protected void end(String body) {
         _resolver = null;
     }
     

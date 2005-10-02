@@ -25,8 +25,12 @@ import org.seasar.maya.provider.Parameterizable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface LibraryDefinition extends Parameterizable {
-    
-    // TODO 定義ファイルのSystemIDを取れるようにする。 
+
+	/**
+	 * 例外やログのメッセージ用途として、ファイルのSystemIDを取得する。
+	 * @return ファイルSystemID。
+	 */
+	String getSystemID();
     
     /**
      * 当該ライブラリの名前空間URIを取得する。

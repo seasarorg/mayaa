@@ -25,9 +25,11 @@ import org.seasar.maya.provider.Parameterizable;
  */
 public interface PropertyDefinition extends Parameterizable {
     
-    // TODO 定義ファイルでの位置を取得できるようにする。
-
-    PropertyConverter getPropertyConverter();
+	/**
+	 * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。
+	 * @return 行番号。
+	 */
+	int getLineNumber();
     
     /**
      * 所属するプロセッサ情報モデルの取得。
@@ -67,6 +69,12 @@ public interface PropertyDefinition extends Parameterizable {
      * @return ファイナル値。
      */
     String getFinalValue();
+
+	/**
+	 * MLD指定のプロパティ値コンバータの取得。
+	 * @return コンバータ。
+	 */
+    PropertyConverter getPropertyConverter();
     
     /**
      * プロパティオブジェクトを生成する。

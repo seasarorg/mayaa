@@ -37,13 +37,14 @@ public class BuilderTagHandler
         _parent = parent;
     }
 
-    public void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
                 attributes, "class", null, DefinitionBuilder.class);
         _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }
     
-    public void end(String body) {
+    protected void end(String body) {
         _builder = null;
     }
     

@@ -43,7 +43,7 @@ import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class JspProcessor extends TemplateProcessorSupport

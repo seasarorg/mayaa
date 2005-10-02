@@ -36,7 +36,8 @@ public class ConverterTagHandler
         _parent = parent;
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
     	PropertyConverter converter =
     		(PropertyConverter)XMLUtil.getObjectValue(
     				attributes, "class", null, PropertyConverter.class);

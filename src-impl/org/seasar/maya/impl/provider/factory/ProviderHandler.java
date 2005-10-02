@@ -25,6 +25,7 @@ import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -37,6 +38,7 @@ public class ProviderHandler extends DefaultHandler
     private static Log LOG = LogFactory.getLog(ProviderHandler.class); 
     
     private TagHandlerStack _stack;
+    private Locator _locator;
     
     public ServiceProvider getResult() {
         return ((ServiceTagHandler)_stack.getRoot()).getServiceProvider();
@@ -61,10 +63,29 @@ public class ProviderHandler extends DefaultHandler
         }
         return null;
     }
+    
+	public void setDocumentLocator(Locator locator) {
+		_locator = locator;
+	}
+
+	protected String getSystemID() {
+		if(_locator != null) {
+			return _locator.getSystemId();
+		}
+		return null;
+	}
+
+	protected int getLineNumber() {
+		if(_locator != null) {
+			return _locator.getLineNumber();
+		}
+		return 0;
+	}
 
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
-        _stack.startElement(localName, attributes);
+        _stack.startElement(
+        		localName, attributes, getSystemID(), getLineNumber());
     }
     
     public void endElement(

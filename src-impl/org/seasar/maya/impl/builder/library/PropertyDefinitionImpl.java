@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.builder.library;
 
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryManager;
@@ -24,9 +22,7 @@ import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
-import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -53,36 +49,18 @@ public class PropertyDefinitionImpl
     private String _defaultValue;
     private String _finalValue;
     private PropertyConverter _propertyConverter;
-    
-    protected String getPrefix(Namespace namespace, QName qName) {
-        for(Iterator it = namespace.iteratePrefixMapping(true); it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping)it.next();
-            if(mapping.getNamespaceURI().equals(qName.getNamespaceURI())) {
-                return mapping.getPrefix(); 
-            }
-        }
-        return null;
-    }
+    private int _lineNumber;
 
-    public void setPropertyConverter(PropertyConverter propertyConverter) {
-        if(propertyConverter == null) {
-            throw new IllegalArgumentException();
-        }
-        _propertyConverter = propertyConverter;
+    public void setLineNumber(int lineNumber) {
+    	if(lineNumber < 0) {
+    		throw new IllegalArgumentException();
+    	}
+    	_lineNumber = lineNumber;
     }
     
-    public PropertyConverter getPropertyConverter() {
-        if(_propertyConverter == null) {
-            Class propertyType = getPropertyType();
-            if(propertyType == null) {
-                return null;
-            }
-            LibraryManager manager = 
-                ProviderFactory.getServiceProvider().getLibraryManager();
-            return manager.getPropertyConverter(propertyType);
-        }
-        return _propertyConverter;
-    }
+    public int getLineNumber() {
+		return _lineNumber;
+	}
 
     public void setProcessorDefinition(ProcessorDefinition processor) {
         if(processor == null) {
@@ -145,6 +123,26 @@ public class PropertyDefinitionImpl
     
     public String getFinalValue() {
         return _finalValue;
+    }
+
+    public void setPropertyConverter(PropertyConverter propertyConverter) {
+        if(propertyConverter == null) {
+            throw new IllegalArgumentException();
+        }
+        _propertyConverter = propertyConverter;
+    }
+    
+    public PropertyConverter getPropertyConverter() {
+        if(_propertyConverter == null) {
+            Class propertyType = getPropertyType();
+            if(propertyType == null) {
+                return null;
+            }
+            LibraryManager manager = 
+                ProviderFactory.getServiceProvider().getLibraryManager();
+            return manager.getPropertyConverter(propertyType);
+        }
+        return _propertyConverter;
     }
     
     protected Class getProcessorType() {

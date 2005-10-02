@@ -21,11 +21,12 @@ import org.seasar.maya.impl.builder.library.entity.J2EEEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class TLDHandler extends DefaultHandler {
     
@@ -33,6 +34,7 @@ public class TLDHandler extends DefaultHandler {
 	
     private TaglibTagHandler _handler;
 	private TagHandlerStack _stack;
+	private Locator _locator;
 	
     public TLDHandler() {
         _handler = new TaglibTagHandler();
@@ -46,13 +48,33 @@ public class TLDHandler extends DefaultHandler {
     public InputSource resolveEntity(String publicId, String systemId) {
         return J2EEEntityResolver.resolveEntity(publicId, systemId);
     }
-
-	public void startElement(
-			String namespaceURI, String localName, String qName, Attributes attributes) {
-		_stack.startElement(localName, attributes);
+    
+	public void setDocumentLocator(Locator locator) {
+		_locator = locator;
 	}
 
-	public void endElement(String namespaceURI, String localName, String qName) {
+	protected String getSystemID() {
+		if(_locator != null) {
+			return _locator.getSystemId();
+		}
+		return null;
+	}
+
+	protected int getLineNumber() {
+		if(_locator != null) {
+			return _locator.getLineNumber();
+		}
+		return 0;
+	}
+
+	public void startElement(String namespaceURI, 
+			String localName, String qName, Attributes attributes) {
+		_stack.startElement(
+				localName, attributes, getSystemID(), getLineNumber());
+	}
+
+	public void endElement(String namespaceURI,
+			String localName, String qName) {
         _stack.endElement();
 	}
 

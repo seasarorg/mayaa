@@ -40,13 +40,14 @@ public class LibraryManagerTagHandler
         putHandler(new BuilderTagHandler(this));
     }
     
-    public void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
     	_libraryManager = (LibraryManager)XMLUtil.getObjectValue(
                 attributes, "class", null, LibraryManager.class);
         _parent.getServiceProvider().setLibraryManager(_libraryManager);
     }
     
-    public void end(String body) {
+    protected void end(String body) {
         _libraryManager = null;
     }
     

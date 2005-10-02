@@ -35,8 +35,20 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
     private String _namespaceURI;
     private List _assignedURI = new ArrayList();
     private Map _processors;
+    private String _systemID;
     
-    public void setNamespaceURI(String namespaceURI) {
+    public void setSystemID(String systemID) {
+    	if(StringUtil.isEmpty(systemID)) {
+    		throw new IllegalArgumentException();
+    	}
+    	_systemID = systemID;
+    }
+    
+    public String getSystemID() {
+		return _systemID;
+	}
+
+	public void setNamespaceURI(String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }

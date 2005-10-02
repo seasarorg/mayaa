@@ -38,7 +38,8 @@ public class ScriptEnvirionmentTagHandler
         putHandler(new ScopeTagHandler(this));
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _scriptEnvironment = (ScriptEnvironment)XMLUtil.getObjectValue(
                 attributes, "class", null, ScriptEnvironment.class);
         _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);

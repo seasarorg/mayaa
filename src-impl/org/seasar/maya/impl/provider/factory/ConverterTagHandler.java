@@ -37,13 +37,14 @@ public class ConverterTagHandler
         _parent = parent;
     }
 
-    public void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _converter = (PropertyConverter)XMLUtil.getObjectValue(
                 attributes, "class", null, PropertyConverter.class);
         _parent.getLibraryManager().addPropertyConverter(_converter);
     }
     
-    public void end(String body) {
+    protected void end(String body) {
         _converter = null;
     }
     

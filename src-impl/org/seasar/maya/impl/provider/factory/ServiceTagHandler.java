@@ -44,7 +44,8 @@ public class ServiceTagHandler extends TagHandler {
         putHandler(new TemplateBuilderTagHandler(this));
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _provider = new ServiceProviderImpl(_context);
     }
     

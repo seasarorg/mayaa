@@ -35,7 +35,8 @@ public class ServiceCycleTagHandler
         _parent = parent;
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         Class serviceCycleClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _parent.getServiceProvider().setServiceCycleClass(serviceCycleClass);

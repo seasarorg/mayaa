@@ -35,7 +35,8 @@ public class PageSourceDescriptorTagHandler
         _parent = parent;
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         Class pageSourceClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _parent.getServiceProvider().setPageSourceClass(pageSourceClass);

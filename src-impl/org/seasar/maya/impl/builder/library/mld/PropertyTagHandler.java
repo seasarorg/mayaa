@@ -37,7 +37,8 @@ public class PropertyTagHandler
         putHandler(new ConverterTagHandler(this));
     }
 
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
         boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
@@ -51,6 +52,7 @@ public class PropertyTagHandler
         _propertyDefinition.setExpectedType(expectedType);
         _propertyDefinition.setFinalValue(finalValue);
         _propertyDefinition.setDefaultValue(defaultValue);
+        _propertyDefinition.setLineNumber(lineNumber);
         ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
         processor.addPropertyDefinitiion(_propertyDefinition);
         _propertyDefinition.setProcessorDefinition(processor);

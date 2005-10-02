@@ -21,7 +21,7 @@ import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 
 /**
- * @author suga
+ * @author Koji Suga (Gluegent, Inc.)
  */
 public class TagHandlerStack {
 
@@ -38,20 +38,22 @@ public class TagHandlerStack {
         _rootHandler = rootHandler; 
     }
     
-    public void startElement(String name, Attributes attributes) {
+    public void startElement(String name, Attributes attributes, 
+    		String systemID, int lineNumber) {
     	if(StringUtil.isEmpty(name)) {
     		throw new IllegalArgumentException();
     	}
     	if(_stack.size() == 0) {
     		if(_rootName.equalsIgnoreCase(name)) {
-    		    _rootHandler.start(attributes);
+    		    _rootHandler.start(attributes, systemID, lineNumber);
     	        _stack.push(_rootHandler);
     		} else {
     			throw new IllegalStateException();
     		}
     	} else {
 	        TagHandler top = (TagHandler)_stack.peek();
-	        TagHandler handler = top.startElement(name, attributes);
+	        TagHandler handler = top.startElement(
+	        		name, attributes, systemID, lineNumber);
 	        _stack.push(handler);
     	}
     }

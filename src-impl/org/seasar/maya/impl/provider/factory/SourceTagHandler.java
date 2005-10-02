@@ -37,13 +37,14 @@ public class SourceTagHandler
         _parent = parent;
     }
 
-    public void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         _scanner = (SourceScanner)XMLUtil.getObjectValue(
                 attributes, "class", null, SourceScanner.class);
         _parent.getLibraryManager().addSourceScanner(_scanner);
     }
     
-    public void end(String body) {
+    protected void end(String body) {
         _scanner = null;
     }
     

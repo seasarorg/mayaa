@@ -37,14 +37,11 @@ public class WebXMLHandler extends DefaultHandler {
 
     private TagHandlerStack _stack;
     private WebAppTagHandler _handler;
+    private Locator _locator;
 
     public WebXMLHandler() {
         _handler = new WebAppTagHandler();
         _stack = new TagHandlerStack(_handler);
-    }
-    
-    public void setDocumentLocator(Locator locator) {
-        _handler.setLocator(locator);
     }
 
     public Iterator iterateTaglibLocations() {
@@ -55,9 +52,28 @@ public class WebXMLHandler extends DefaultHandler {
         return J2EEEntityResolver.resolveEntity(publicId, systemId);
     }
     
+	public void setDocumentLocator(Locator locator) {
+		_locator = locator;
+	}
+
+	protected String getSystemID() {
+		if(_locator != null) {
+			return _locator.getSystemId();
+		}
+		return null;
+	}
+
+	protected int getLineNumber() {
+		if(_locator != null) {
+			return _locator.getLineNumber();
+		}
+		return 0;
+	}
+    
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
-        _stack.startElement(localName, attributes);
+        _stack.startElement(
+        		localName, attributes, getSystemID(), getLineNumber());
     }
 
     public void endElement(String namespaceURI, 

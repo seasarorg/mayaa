@@ -39,15 +39,18 @@ public class ProcessorTagHandler
         putHandler(new PropertyTagHandler(this));
     }
     
-    protected void start(Attributes attributes) {
+    protected void start(
+    		Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
-        Class processorClass = XMLUtil.getClassValue(attributes, "class", null);
+        Class processorClass = 
+        	XMLUtil.getClassValue(attributes, "class", null);
         if(StringUtil.isEmpty(name) || processorClass == null) {
             invalidate();
         } else {
 	        _processorDefinition = new ProcessorDefinitionImpl();
 	        _processorDefinition.setName(name);
 	        _processorDefinition.setProcessorClass(processorClass);
+	        _processorDefinition.setLineNumber(lineNumber);
 	        LibraryDefinitionImpl library = _parent.getLibraryDefinition();
             _processorDefinition.setLibraryDefinition(library);
 	        library.addProcessorDefinition(_processorDefinition);

@@ -47,8 +47,20 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     private String _name;
     private Class _processorClass;
     private List _properties;
+    private int _lineNumber;
 
-    public void setLibraryDefinition(LibraryDefinition library) {
+    public void setLineNumber(int lineNumber) {
+    	if(lineNumber < 0) {
+    		throw new IllegalArgumentException();
+    	}
+    	_lineNumber = lineNumber;
+    }
+    
+    public int getLineNumber() {
+		return _lineNumber;
+	}
+
+	public void setLibraryDefinition(LibraryDefinition library) {
         if(library == null) {
             throw new IllegalArgumentException();
         }

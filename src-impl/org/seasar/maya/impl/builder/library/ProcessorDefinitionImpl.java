@@ -16,8 +16,10 @@
 package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +49,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     private String _name;
     private Class _processorClass;
     private List _properties;
+    private Set _propertyNames;
     private int _lineNumber;
 
     public void setLineNumber(int lineNumber) {
@@ -106,9 +109,20 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
             throw new IllegalArgumentException();
         }
         if(_properties == null) {
+            _propertyNames = new HashSet();
             _properties = new ArrayList();
         }
-        _properties.add(property);
+        String propName = property.getName();
+        if(_propertyNames.add(propName)) {
+        	_properties.add(property);
+        } else {
+        	if(LOG.isWarnEnabled()) {
+        		String uri = getLibraryDefinition().getNamespaceURI();
+        		String msg = StringUtil.getMessage(ProcessorDefinition.class,
+        				1, new String[] { uri, getName(), propName });
+        		LOG.warn(msg);
+        	}
+        }
     }
     
     public Iterator iteratePropertyDefinition() {
@@ -118,7 +132,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         return _properties.iterator();
     }
 
-    protected TemplateProcessor newInstance(SpecificationNode injected) {
+    protected TemplateProcessor newInstance() {
         return (TemplateProcessor)ObjectUtil.newInstance(_processorClass);
     }
     
@@ -141,7 +155,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
                         String[] params = new String[] {
                                 processorClass.getName(), propertyName };
                         LOG.warn(StringUtil.getMessage(
-                                ProcessorDefinitionImpl.class, 0, params));
+                                ProcessorDefinitionImpl.class, 2, params));
                     }
                 }
             }
@@ -150,12 +164,13 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     
     protected void settingInformalProperties(SpecificationNode injected, 
             InformalPropertyAcceptable acceptable) {
-        // TODO MLDプロパティは除外する。        
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
-            acceptable.addInformalProperty(
-                    new ProcessorPropertyImpl(
-                            attr, attr.getValue(), Object.class));
+            String name = attr.getQName().getLocalName();
+            if(_propertyNames.contains(name) == false) {      
+	            acceptable.addInformalProperty(new ProcessorPropertyImpl(
+	            		attr, attr.getValue(), Object.class));
+            }
         }
     }
     
@@ -164,7 +179,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
-        TemplateProcessor processor = newInstance(injected);
+        TemplateProcessor processor = newInstance();
         settingProperties(injected, processor);
         if(processor instanceof InformalPropertyAcceptable) {
             settingInformalProperties(

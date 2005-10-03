@@ -48,7 +48,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return _tagClass;
     }
 
-    protected TemplateProcessor newInstance(SpecificationNode injected) {
+    protected TemplateProcessor newInstance() {
         JspProcessor processor = new JspProcessor();
         processor.setTagClass(getProcessorClass());
         return processor;

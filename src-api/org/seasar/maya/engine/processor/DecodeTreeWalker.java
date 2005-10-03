@@ -36,6 +36,6 @@ public interface DecodeTreeWalker extends ProcessorTreeWalker {
 	 * 閉じタグにおけるデコードイベント。
      * @param parentDecode 直近のデコード。
 	 */
-	void deEndDecode(DecodeTreeWalker parentDecode);
+	void doEndDecode(DecodeTreeWalker parentDecode);
 	
 }

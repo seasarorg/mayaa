@@ -280,7 +280,7 @@ public class RenderUtil implements CONST_IMPL {
         }
         saveToCycle(current);
         if(decodeWalker != null) {
-            decodeWalker.deEndDecode(decodeParent);
+            decodeWalker.doEndDecode(decodeParent);
         }
     }
 

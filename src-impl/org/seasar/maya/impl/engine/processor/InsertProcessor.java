@@ -151,7 +151,7 @@ public class InsertProcessor
         _parentDecode.set(parentDecode);
     }
 
-    public void deEndDecode(DecodeTreeWalker parentDecode) {
+    public void doEndDecode(DecodeTreeWalker parentDecode) {
         _parentDecode.set(null);
     }
     

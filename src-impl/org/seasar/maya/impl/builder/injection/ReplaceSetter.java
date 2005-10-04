@@ -17,12 +17,11 @@ package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -31,25 +30,21 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RenderedSetter	
+public class ReplaceSetter
         implements InjectionResolver, CONST_IMPL {
 	
-    protected static final QName QM_NULL = 
-        SpecificationUtil.createQName("null");
-    protected static final QName QM_RENDERED = 
-        SpecificationUtil.createQName("rendered");
+    protected static final QName QM_REPLACE =
+        SpecificationUtil.createQName("replace");
 
-	protected boolean isRendered(SpecificationNode node) {
+	protected boolean isReplace(SpecificationNode node) {
 	    if(node == null) {
 	        throw new IllegalArgumentException();
 	    }
-    	String rendered = 
-            SpecificationUtil.getAttributeValue(node, QM_RENDERED);
-    	if(StringUtil.hasValue(rendered)) {
-    	    CompiledScript script = ScriptUtil.compile(rendered, Boolean.TYPE);
-            return ObjectUtil.booleanValue(script.execute(null), true);
+    	NodeAttribute attr = node.getAttribute(QM_REPLACE);
+    	if(attr != null) {
+    		return ObjectUtil.booleanValue(attr.getValue(), false);
     	}
-    	return true;
+    	return false;
 	}
     
 	public SpecificationNode getNode( 
@@ -61,10 +56,21 @@ public class RenderedSetter
 	    if(injected == null) {
 	    	return null;
 	    }
-        if(isRendered(original) == false || isRendered(injected) == false) {
-                return BuilderUtil.createInjectedNode(
-                        QM_NULL, null, original, false);
-        } 
+        if(isReplace(original) || isReplace(injected)) {
+   		    QName qName = original.getQName(); 
+   		    String uri = qName.getNamespaceURI();
+   		    SpecificationNode element = BuilderUtil.createInjectedNode(
+   		            QM_DUPLECATED, uri, original, false);
+            StringBuffer name = new StringBuffer();
+            String prefix = original.getPrefix();
+	        if(StringUtil.hasValue(prefix)) {
+	            name.append(prefix).append(":");
+	        }
+	        name.append(qName.getLocalName());
+	        element.addAttribute(QM_NAME, name.toString());
+            element.addChildNode(injected);
+   			return element;
+   		}
         return injected;
     }
     

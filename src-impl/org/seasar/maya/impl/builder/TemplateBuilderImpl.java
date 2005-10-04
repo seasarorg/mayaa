@@ -116,7 +116,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             TemplateProcessor processor) {
         if(processor instanceof ElementProcessor &&
                 ((ElementProcessor)processor).isDuplicated()) {
-            // "processor"'s m:rendered is true, ripping duplicated element.
+            // "processor"'s m:replace is true, ripping duplicated element.
             return findConnectPoint(
                     (TemplateProcessor)processor.getChildProcessor(0));
         }

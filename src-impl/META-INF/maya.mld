@@ -47,7 +47,7 @@
 	<processor name="duplecatedElement"
 			class="org.seasar.maya.impl.engine.processor.ElementProcessor">
 		<description>
-			duplecated element on the template by m:replace="true"
+			duplecated element on the template by m:replace="false"
 		</description>
 		<property name="name" required="true"/>
 		<property name="duplicated" final="true"/>

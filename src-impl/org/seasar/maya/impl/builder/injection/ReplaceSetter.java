@@ -42,9 +42,9 @@ public class ReplaceSetter
 	    }
     	NodeAttribute attr = node.getAttribute(QM_REPLACE);
     	if(attr != null) {
-    		return ObjectUtil.booleanValue(attr.getValue(), false);
+    		return ObjectUtil.booleanValue(attr.getValue(), true);
     	}
-    	return false;
+    	return true;
 	}
     
 	public SpecificationNode getNode( 
@@ -56,7 +56,7 @@ public class ReplaceSetter
 	    if(injected == null) {
 	    	return null;
 	    }
-        if(isReplace(original) || isReplace(injected)) {
+        if(isReplace(original) == false || isReplace(injected) == false) {
    		    QName qName = original.getQName(); 
    		    String uri = qName.getNamespaceURI();
    		    SpecificationNode element = BuilderUtil.createInjectedNode(

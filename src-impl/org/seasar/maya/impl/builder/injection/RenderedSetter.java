@@ -17,16 +17,14 @@ package org.seasar.maya.impl.builder.injection;
 
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.cycle.script.CompiledScript;
+import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -43,12 +41,10 @@ public class RenderedSetter
 	    if(node == null) {
 	        throw new IllegalArgumentException();
 	    }
-    	String rendered = 
-            SpecificationUtil.getAttributeValue(node, QM_RENDERED);
-    	if(StringUtil.hasValue(rendered)) {
-    	    CompiledScript script = ScriptUtil.compile(rendered, Boolean.TYPE);
-            return ObjectUtil.booleanValue(script.execute(null), true);
-    	}
+        NodeAttribute attr = node.getAttribute(QM_RENDERED);
+        if(attr != null) {
+            return ObjectUtil.booleanValue(attr.getValue(), true);
+        }
     	return true;
 	}
     

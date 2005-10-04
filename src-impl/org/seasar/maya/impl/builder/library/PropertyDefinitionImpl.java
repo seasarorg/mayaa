@@ -189,16 +189,16 @@ public class PropertyDefinitionImpl
             if(propertyType == null) {
                 // real property not found on the processor.
                 Class processotType = getProcessorType();
-                if(processotType.isAssignableFrom(
-                        VirtualPropertyAcceptable.class) == false) {
+                if(VirtualPropertyAcceptable.class.isAssignableFrom(
+                        processotType) == false) {
                     return null;
                 }
             }
         	PropertyConverter converter = getPropertyConverter();
-        	if(converter == null) {
+        	if(converter == null && propertyType != null) {
         		ServiceProvider provider = ProviderFactory.getServiceProvider();
         		LibraryManager manager = provider.getLibraryManager();
-        		converter = manager.getPropertyConverter(getPropertyType());
+        		converter = manager.getPropertyConverter(propertyType);
         	}
         	if(converter == null) {
         		return value;

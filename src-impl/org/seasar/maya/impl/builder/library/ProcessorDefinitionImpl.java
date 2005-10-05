@@ -149,7 +149,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
                 } else if(processor instanceof VirtualPropertyAcceptable) {
                     VirtualPropertyAcceptable acceptable =
                         (VirtualPropertyAcceptable)processor;
-                    acceptable.addProperty(propertyName, value.toString());
+                    acceptable.addProperty(propertyName, value);
                 } else {
                     if(LOG.isWarnEnabled()) {
                         String[] params = new String[] {

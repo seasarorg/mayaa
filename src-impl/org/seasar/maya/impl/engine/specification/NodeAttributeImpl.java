@@ -83,7 +83,7 @@ public class NodeAttributeImpl implements NodeAttribute {
 
     public Namespace getParentSpace() {
         if(getNode() != null) {
-            getNode().getParentSpace();
+            return getNode().getParentSpace();
         }
         return null;
     }
@@ -109,7 +109,7 @@ public class NodeAttributeImpl implements NodeAttribute {
 
     public Iterator iteratePrefixMapping(boolean all) {
         if(getNode() != null) {
-            getNode().iteratePrefixMapping(all);
+            return getNode().iteratePrefixMapping(all);
         }
         return NullIterator.getInstance();
     }

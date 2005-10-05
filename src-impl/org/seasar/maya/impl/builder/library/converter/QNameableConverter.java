@@ -32,7 +32,10 @@ public class QNameableConverter implements PropertyConverter {
 
 	public Object convert(
 			NodeAttribute attribute, String value, Class expectedType) {
-        return BuilderUtil.parseName(attribute, value); 
+        if(attribute == null || value == null) {
+            throw new IllegalArgumentException();
+        }
+        return BuilderUtil.parseName(attribute.getParentSpace(), value); 
 	}
 
     // Parameterizable implements ------------------------------------

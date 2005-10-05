@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.engine;
 
 import java.util.Map;
+import java.util.Stack;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -216,19 +217,26 @@ public class RenderUtil implements CONST_IMPL {
     }
 
     //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
-    //TODO レイアウト適用のbeforeRenderの呼び出し順の検討。
     //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
     public static ProcessStatus renderPage(boolean findSuper, 
             TemplateRenderer renderer, Map variables, 
             Page topLevelPage, String requestedSuffix, String extension) {
         Page page = topLevelPage;
         String suffix = null;
-        saveToCycle(topLevelPage);
+        saveToCycle(page);
+        Stack pageStack = null;
         if(findSuper) {
+            pageStack = new Stack();
+            pageStack.push(page);
+            SpecificationUtil.startScope(variables);
+            SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             while(page.getSuperPage() != null) {
                 suffix = page.getSuperSuffix();
                 extension = page.getSuperExtension();
                 page = page.getSuperPage();
+                pageStack.push(page);
+                SpecificationUtil.startScope(null);
+                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
         }
         boolean maya = "maya".equals(extension);
@@ -239,9 +247,6 @@ public class RenderUtil implements CONST_IMPL {
                 throw new PageNotFoundException(pageName, extension);
             }
         }
-        saveToCycle(page);
-        SpecificationUtil.startScope(variables);
-        SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
         ProcessStatus ret = null;
         if(maya == false) {
             if(StringUtil.isEmpty(suffix)) {
@@ -256,8 +261,13 @@ public class RenderUtil implements CONST_IMPL {
             ret = renderer.renderTemplate(topLevelPage, template);
             saveToCycle(page);
         }
-        SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-        SpecificationUtil.endScope();
+        if(pageStack != null) {
+            while(pageStack.size() > 0) {
+                page = (Page)pageStack.pop();
+                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+                SpecificationUtil.endScope();
+            }
+        }
         return ret;
     }
  

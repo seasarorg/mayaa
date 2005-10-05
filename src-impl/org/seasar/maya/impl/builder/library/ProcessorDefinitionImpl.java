@@ -164,13 +164,17 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     
     protected void settingInformalProperties(SpecificationNode injected, 
             InformalPropertyAcceptable acceptable) {
+        String injectedNS = injected.getQName().getNamespaceURI();
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
-            //String name = attr.getQName().getLocalName();
-            //if(_propertyNames.contains(name) == false) {      
-	            acceptable.addInformalProperty(new ProcessorPropertyImpl(
-	            		attr, attr.getValue(), Object.class));
-            //}
+            String attrNS = attr.getQName().getNamespaceURI();
+            String attrName = attr.getQName().getLocalName();
+            if(_propertyNames.contains(attrName) && 
+                    injectedNS.equals(attrNS)) {
+                continue;
+            }
+            acceptable.addInformalProperty(new ProcessorPropertyImpl(
+            		attr, attr.getValue(), Object.class));
         }
     }
     

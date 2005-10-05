@@ -45,16 +45,29 @@ public interface LibraryDefinition extends Parameterizable {
     Iterator iterateAssignedURI();
     
     /**
+     * 登録プロパティセットのイテレータ。
+     * @return プロパティセットイテレータ。
+     */
+    Iterator iteratePropertySets();
+    
+    /**
+     * 登録プロパティセットの取得。
+     * @param name プロパティセット名。
+     * @return 指定名のプロパティセット、もしくはnull。
+     */
+    PropertySet getPropertySet(String name);
+    
+    /**
      * 子のprocessorノードのイテレータ。
      * @return ノードイテレータ。
      */
-    Iterator iterateProcessorDefinition();
+    Iterator iterateProcessorDefinitions();
     
     /**
      * 指定QNameで該当するProcessorDefinitionの取得。
-     * @param localName 取得したいProcessorDefinitionの名前。
+     * @param name 取得したいProcessorDefinitionの名前。
      * @return 該当ProcessorDefinitionもしくはnull。
      */
-    ProcessorDefinition getProcessorDefinition(String localName);
+    ProcessorDefinition getProcessorDefinition(String name);
     
 }

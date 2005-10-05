@@ -49,12 +49,12 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
         return _requiredVersion;
     }
 
-    public ProcessorDefinition getProcessorDefinition(String localName) {
+    public ProcessorDefinition getProcessorDefinition(String name) {
         if(_requiredVersion != null && 
                 VERSION_JSP.compareTo(_requiredVersion) < 0) {
             return null;
         }
-        return super.getProcessorDefinition(localName);
+        return super.getProcessorDefinition(name);
     }
     
 }

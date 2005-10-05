@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.builder.library;
 
+import java.util.Iterator;
+
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.provider.Parameterizable;
@@ -31,6 +33,12 @@ public interface ProcessorDefinition
      * @return 実装クラス名。
      */
     Class getProcessorClass();
+
+    /**
+     * 登録プロパティセットのイテレータ。
+     * @return プロパティセットイテレータ。
+     */
+    Iterator iteratePropertySets();
     
     /**
      * 当該設定より、テンプレートプロセッサを生成する。 

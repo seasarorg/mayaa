@@ -9,10 +9,13 @@
 <!ATTLIST parameter name CDATA #REQUIRED>
 <!ATTLIST parameter value CDATA #REQUIRED>
 
-<!ELEMENT library (description?, processor*, parameter*)>
+<!ELEMENT library (description?, propertySet*, processor*, parameter*)>
 <!ATTLIST library uri CDATA #REQUIRED>
 
-<!ELEMENT processor (description?, property*, parameter*)>
+<!ELEMENT propertySet (description?, property*)>
+<!ATTLIST propertySet name CDATA #REQUIRED>
+
+<!ELEMENT processor (description?, property*, propertySet*, parameter*)>
 <!ATTLIST processor name CDATA #REQUIRED>
 <!ATTLIST processor class CDATA #REQUIRED>
 

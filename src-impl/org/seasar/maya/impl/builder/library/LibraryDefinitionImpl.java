@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
+import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -34,6 +35,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
 
     private String _namespaceURI;
     private List _assignedURI = new ArrayList();
+    private Map _propertySets;
     private Map _processors;
     private String _systemID;
     
@@ -73,6 +75,38 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         return _assignedURI.iterator();
     }
 
+    public void addPropertySet(PropertySet propertySet) {
+        if(propertySet == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_propertySets == null) {
+            _propertySets = new HashMap();
+        }
+        String name = propertySet.getName();
+        if(_propertySets.containsKey(name)) {
+            //TODO åxçêÅB
+        } else {
+            _propertySets.put(name, propertySet);
+        }
+    }
+
+    public Iterator iteratePropertySets() {
+        if(_propertySets == null) {
+            return NullIterator.getInstance();
+        }
+        return _propertySets.values().iterator();
+    }
+    
+    public PropertySet getPropertySet(String name) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if(_propertySets == null) {
+            return null;
+        }
+        return (PropertySet)_propertySets.get(name);
+    }
+
     public void addProcessorDefinition(ProcessorDefinition processor) {
         if(processor == null) {
             throw new IllegalArgumentException();
@@ -80,24 +114,29 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         if(_processors == null) {
             _processors = new HashMap();
         }
-        _processors.put(processor.getName(), processor);
+        String name = processor.getName();
+        if(_processors.containsKey(name)) {
+            //TODO åxçêÅB
+        } else {
+            _processors.put(name, processor);
+        }
     }
     
-    public Iterator iterateProcessorDefinition() {
+    public Iterator iterateProcessorDefinitions() {
         if(_processors == null) {
             return NullIterator.getInstance();
         }
         return _processors.values().iterator();
     }
     
-    public ProcessorDefinition getProcessorDefinition(String localName) {
-        if(StringUtil.isEmpty(localName)) {
+    public ProcessorDefinition getProcessorDefinition(String name) {
+        if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         if(_processors == null) {
             return null;
         }
-        return (ProcessorDefinition)_processors.get(localName);
+        return (ProcessorDefinition)_processors.get(name);
     }
 
     // Parameterizable implements ------------------------------------

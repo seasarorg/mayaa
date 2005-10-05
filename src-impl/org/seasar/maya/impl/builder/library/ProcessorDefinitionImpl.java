@@ -16,14 +16,11 @@
 package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
@@ -35,61 +32,18 @@ import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProcessorDefinitionImpl implements ProcessorDefinition {
+public class ProcessorDefinitionImpl extends PropertySetImpl
+        implements ProcessorDefinition {
 
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
     
-    private LibraryDefinition _library;
-    private String _name;
     private Class _processorClass;
-    private List _properties;
-    private Set _propertyNames;
-    private int _lineNumber;
-
-    public void setLineNumber(int lineNumber) {
-    	if(lineNumber < 0) {
-    		throw new IllegalArgumentException();
-    	}
-    	_lineNumber = lineNumber;
-    }
-    
-    public int getLineNumber() {
-		return _lineNumber;
-	}
-
-	public void setLibraryDefinition(LibraryDefinition library) {
-        if(library == null) {
-            throw new IllegalArgumentException();
-        }
-        _library = library;
-    }
-    
-    public LibraryDefinition getLibraryDefinition() {
-        if(_library == null) {
-            throw new IllegalStateException();
-        }
-        return _library;
-    }
-    
-    public void setName(String name) {
-        if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
-        }
-        _name = name;
-    }
-    
-    public String getName() {
-        if(StringUtil.isEmpty(_name)) {
-            throw new IllegalStateException();
-        }
-        return _name;
-    }
+    private List _propertySetNames;
     
     public void setProcessorClass(Class processorClass) {
         if(processorClass == null || 
@@ -103,32 +57,20 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
     public Class getProcessorClass() {
         return _processorClass;
     }
-    
-    public void addPropertyDefinitiion(PropertyDefinition property) {
-        if(property == null) {
+
+    public void addPropertySetName(String name) {
+        if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_properties == null) {
-            _propertyNames = new HashSet();
-            _properties = new ArrayList();
+        if(_propertySetNames == null) {
+            _propertySetNames = new ArrayList();
         }
-        String propName = property.getName();
-        if(_propertyNames.add(propName)) {
-        	_properties.add(property);
-        } else {
-        	if(LOG.isWarnEnabled()) {
-        		String msg = StringUtil.getMessage(ProcessorDefinitionImpl.class,
-        				1, new String[] { getName(), propName });
-        		LOG.warn(msg);
-        	}
-        }
+        _propertySetNames.add(name);
     }
     
-    public Iterator iteratePropertyDefinition() {
-        if(_properties == null) {
-            return NullIterator.getInstance();
-        }
-        return _properties.iterator();
+    public Iterator iteratePropertySets() {
+        // TODO ŽÀ‘•B
+        throw new UnsupportedOperationException();
     }
 
     protected TemplateProcessor newInstance() {
@@ -154,7 +96,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
                         String[] params = new String[] {
                                 processorClass.getName(), propertyName };
                         LOG.warn(StringUtil.getMessage(
-                                ProcessorDefinitionImpl.class, 2, params));
+                                ProcessorDefinitionImpl.class, 0, params));
                     }
                 }
             }
@@ -166,10 +108,7 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         String injectedNS = injected.getQName().getNamespaceURI();
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
-            String attrNS = attr.getQName().getNamespaceURI();
-            String attrName = attr.getQName().getLocalName();
-            if(_propertyNames.contains(attrName) && 
-                    injectedNS.equals(attrNS)) {
+            if(contain(injectedNS, attr)) {
                 continue;
             }
             acceptable.addInformalProperty(new ProcessorPropertyImpl(

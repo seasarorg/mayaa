@@ -105,7 +105,7 @@ public class PageContextImpl extends PageContext {
     }
     
     public void include(String relativeUrlPath, boolean flush) {
-        // TODO impl for JSP API
+        // TODO impl JSP-include.
         throw new UnsupportedOperationException();
     }
 
@@ -114,13 +114,19 @@ public class PageContextImpl extends PageContext {
     }
     
     public void handlePageException(Throwable t) {
-        // TODO impl for JSP API
-    	throw new UnsupportedOperationException();
+        if(t instanceof RuntimeException) {
+            throw (RuntimeException)t;
+        }
+        throw new RuntimeException(t);
     }
 
     public Exception getException() {
-        // TODO impl for JSP API
-        throw new UnsupportedOperationException();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        Throwable t = cycle.getHandledError();
+        if(t instanceof Exception) {
+            return (Exception)t;
+        }
+        return null;
     }
 
     // getting underlying object ---------------------------------------

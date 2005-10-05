@@ -170,4 +170,16 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      */
     ProcessorTreeWalker getProcessor();
     
+    /**
+     * エラーハンドル時に参照する、発生した例外情報の取得。
+     * @param t 発生した例外。
+     */
+    void setHandledError(Throwable t);
+    
+    /**
+     * エラーハンドル時に、発生した例外情報を参照する。
+     * @return 発生した例外。もしくはnull。
+     */
+    Throwable getHandledError();
+    
 }

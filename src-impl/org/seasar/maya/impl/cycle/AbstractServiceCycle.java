@@ -40,6 +40,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
+    private Throwable _t;
     
     public void load(String systemID, String encoding) {
         if(StringUtil.isEmpty(systemID)) {
@@ -136,6 +137,14 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
 
     public ProcessorTreeWalker getProcessor() {
         return _processor;
+    }
+
+    public void setHandledError(Throwable t) {
+        _t = t;
+    }
+
+    public Throwable getHandledError() {
+        return _t;
     }
     
 }

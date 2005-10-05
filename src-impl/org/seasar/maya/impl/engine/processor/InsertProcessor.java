@@ -179,7 +179,7 @@ public class InsertProcessor
     
     protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
-        if(doRender.isRendered()) {
+        if(doRender.isReplace() == false) {
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
             if(duplecated == null ||
                     duplecated instanceof TemplateProcessor == false) {

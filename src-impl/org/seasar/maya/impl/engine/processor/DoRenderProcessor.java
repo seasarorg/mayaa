@@ -30,7 +30,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     private static final String INSERT_PROCESSOR_STACK =
         DoRenderProcessor.class.getName();
     
-    private boolean _rendered = false;
+    private boolean _replace = true;
     private String _name = "";
 
     protected String getStackKey() {
@@ -47,13 +47,13 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return stack;
     }
     
-    // MLD property, default=false
-    public void setRendered(boolean rendered) {
-        _rendered = rendered;
+    // MLD property, default=true
+    public void setReplace(boolean replace) {
+        _replace = replace;
     }
     
-    public boolean isRendered() {
-        return _rendered;
+    public boolean isReplace() {
+        return _replace;
     }
     
     // MLD property, default=""

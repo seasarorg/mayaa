@@ -117,9 +117,8 @@ public class ProcessorDefinitionImpl implements ProcessorDefinition {
         	_properties.add(property);
         } else {
         	if(LOG.isWarnEnabled()) {
-        		String uri = getLibraryDefinition().getNamespaceURI();
-        		String msg = StringUtil.getMessage(ProcessorDefinition.class,
-        				1, new String[] { uri, getName(), propName });
+        		String msg = StringUtil.getMessage(ProcessorDefinitionImpl.class,
+        				1, new String[] { getName(), propName });
         		LOG.warn(msg);
         	}
         }

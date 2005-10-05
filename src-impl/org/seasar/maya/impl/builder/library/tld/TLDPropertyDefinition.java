@@ -15,17 +15,23 @@
  */
 package org.seasar.maya.impl.builder.library.tld;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.builder.library.NoRequiredPropertyException;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
+import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TLDPropertyDefinition extends PropertyDefinitionImpl {
+
+    private static final Log LOG =
+        LogFactory.getLog(TLDPropertyDefinition.class);
     
     public Object createProcessorProperty(SpecificationNode injected) {
     	if(injected == null) {
@@ -34,6 +40,12 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         Class propertyType = getPropertyType();
         if(propertyType == null) {
             // real property not found on the tag.
+            String processorName = getProcessorDefinition().getName();
+            if(LOG.isWarnEnabled()) {
+                String msg = StringUtil.getMessage(TLDPropertyDefinition.class, 
+                        0, new String[] { processorName, getName() });
+                LOG.warn(msg);
+            }
             return null;
         }
         QName qName = getQName(injected);

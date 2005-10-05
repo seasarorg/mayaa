@@ -152,13 +152,13 @@ public class PropertyDefinitionImpl
     protected Class getPropertyType() {
         Class processorType = getProcessorType();
         Class ret = ObjectUtil.getPropertyType(processorType, getName());
-        if(ret == null) {
-            if(LOG.isWarnEnabled()) {
-                String[] params = new String[] {
-                        getProcessorDefinition().getName(), getName() };
-                LOG.warn(StringUtil.getMessage(getClass(), 0, params));
-            }
-        }
+//        if(ret == null) {
+//            if(LOG.isWarnEnabled()) {
+//                String[] params = new String[] {
+//                        getProcessorDefinition().getName(), getName() };
+//                LOG.warn(StringUtil.getMessage(getClass(), 0, params));
+//            }
+//        }
         return ret;
     }
 
@@ -191,6 +191,11 @@ public class PropertyDefinitionImpl
                 Class processotType = getProcessorType();
                 if(VirtualPropertyAcceptable.class.isAssignableFrom(
                         processotType) == false) {
+                    if(LOG.isWarnEnabled()) {
+                        String[] params = new String[] {
+                                getProcessorDefinition().getName(), getName() };
+                        LOG.warn(StringUtil.getMessage(getClass(), 0, params));
+                    }
                     return null;
                 }
             }

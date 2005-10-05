@@ -15,28 +15,36 @@
  */
 package org.seasar.maya.builder.library;
 
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.provider.Parameterizable;
+import java.util.Iterator;
 
 /**
- * MLDのprocessorエレメントのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorDefinition
-        extends PropertySet, Parameterizable {
+public interface PropertySet {
     
     /**
-     * class属性で指定した、TemplateProcessorの実装クラス完全修飾名。
-     * @return 実装クラス名。
+     * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。
+     * @return 行番号。
      */
-    Class getProcessorClass();
+    int getLineNumber();
     
     /**
-     * 当該設定より、テンプレートプロセッサを生成する。 
-     * @param injected インジェクションするスペックノード。
-     * @return テンプレートプロセッサ。
+     * 所属ライブラリの情報モデル取得。
+     * @return ライブラリ情報。
      */
-    TemplateProcessor createTemplateProcessor(SpecificationNode injected);
+    LibraryDefinition getLibraryDefinition();
     
+    /**
+     * プロパティセット名の取得。
+     * @return プロパティセット名。
+     */
+    String getName();
+    
+    /**
+     * プロセッサへのバインディング情報モデル（PropertyDefinition）
+     * オブジェクトのイテレート。
+     * @return バインディング情報イテレーター。
+     */
+    Iterator iteratePropertyDefinition();        
+
 }

@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
-import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
+import org.seasar.maya.impl.builder.library.PropertySetImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
@@ -28,10 +28,10 @@ import org.xml.sax.Attributes;
 public class PropertyTagHandler 
 		extends AbstractParameterizableTagHandler {
 
-    private ProcessorTagHandler _parent;
+    private PropertySetTagHandler _parent;
     private PropertyDefinitionImpl _propertyDefinition;
     
-    public PropertyTagHandler(ProcessorTagHandler parent) {
+    public PropertyTagHandler(PropertySetTagHandler parent) {
         super("property");
         _parent = parent;
         putHandler(new ConverterTagHandler(this));
@@ -53,9 +53,9 @@ public class PropertyTagHandler
         _propertyDefinition.setFinalValue(finalValue);
         _propertyDefinition.setDefaultValue(defaultValue);
         _propertyDefinition.setLineNumber(lineNumber);
-        ProcessorDefinitionImpl processor = _parent.getProcessorDefinition();
+        PropertySetImpl processor = _parent.getPropertySet();
         processor.addPropertyDefinitiion(_propertyDefinition);
-        _propertyDefinition.setProcessorDefinition(processor);
+        _propertyDefinition.setPropertySet(processor);
     }
     
     protected void end(String body) {

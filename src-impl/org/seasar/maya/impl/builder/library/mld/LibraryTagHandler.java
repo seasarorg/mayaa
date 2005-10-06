@@ -31,6 +31,7 @@ public class LibraryTagHandler
     public LibraryTagHandler() {
         super("library");
         putHandler( new ProcessorTagHandler(this));
+        putHandler(new PropertySetTagHandler("propertySet", this, this));
     }
     
     protected void start(

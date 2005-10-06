@@ -32,10 +32,10 @@ public interface PropertyDefinition extends Parameterizable {
 	int getLineNumber();
     
     /**
-     * 所属するプロセッサ情報モデルの取得。
-     * @return プロセッサ情報モデル。 
+     * 所属するプロパティセットの取得。
+     * @return プロパティセット。 
      */
-    ProcessorDefinition getProcessorDefinition();
+    PropertySet getPropertySet();
     
     /**
      * MLDのname属性であるプロパティ名。
@@ -72,15 +72,19 @@ public interface PropertyDefinition extends Parameterizable {
 
 	/**
 	 * MLD指定のプロパティ値コンバータの取得。
+     * @param processorDef プロセッサ定義。
 	 * @return コンバータ。
 	 */
-    PropertyConverter getPropertyConverter();
+    PropertyConverter getPropertyConverter(
+            ProcessorDefinition processorDef);
     
     /**
      * プロパティオブジェクトを生成する。
+     * @param processorDef プロセッサ定義。
      * @param injected インジェクションするノード。
      * @return プロパティオブジェクト。
      */
-    Object createProcessorProperty(SpecificationNode injected);
+    Object createProcessorProperty(
+            ProcessorDefinition processorDef, SpecificationNode injected);
     
 }

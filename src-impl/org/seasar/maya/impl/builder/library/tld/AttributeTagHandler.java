@@ -79,7 +79,7 @@ public class AttributeTagHandler extends TagHandler {
 
     protected void end(String body) {
         TLDProcessorDefinition processor = _parent.getProcessorDefinition();
-        _property.setProcessorDefinition(_parent.getProcessorDefinition());
+        _property.setPropertySet(_parent.getProcessorDefinition());
         processor.addPropertyDefinitiion(_property);
     }
 

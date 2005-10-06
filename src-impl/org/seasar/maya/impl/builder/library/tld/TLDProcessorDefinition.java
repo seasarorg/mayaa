@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.seasar.maya.builder.library.PropertyDefinition;
+import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -54,14 +55,13 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return processor;
     }
     
-    protected void settingProperties(
-            SpecificationNode injected, TemplateProcessor processor) {
-        for(Iterator it = iteratePropertyDefinition(); it.hasNext(); ) {
+    protected void settingPropertySet(SpecificationNode injected, 
+            TemplateProcessor processor, PropertySet propertySet) {
+        for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = property.createProcessorProperty(injected);
+            Object prop = property.createProcessorProperty(this, injected);
             if(prop != null) {
-    	        JspProcessor jsp =
-                    (JspProcessor)processor;
+    	        JspProcessor jsp = (JspProcessor)processor;
     	        jsp.addProcessorProperty((ProcessorProperty)prop);
             }
         }

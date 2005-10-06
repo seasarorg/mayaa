@@ -17,6 +17,7 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
@@ -33,14 +34,15 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     private static final Log LOG =
         LogFactory.getLog(TLDPropertyDefinition.class);
     
-    public Object createProcessorProperty(SpecificationNode injected) {
+    public Object createProcessorProperty(
+            ProcessorDefinition processorDef, SpecificationNode injected) {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
-        Class propertyType = getPropertyType();
+        Class propertyType = getPropertyType(processorDef);
         if(propertyType == null) {
             // real property not found on the tag.
-            String processorName = getProcessorDefinition().getName();
+            String processorName = processorDef.getName();
             if(LOG.isWarnEnabled()) {
                 String msg = StringUtil.getMessage(TLDPropertyDefinition.class, 
                         0, new String[] { processorName, getName() });
@@ -54,7 +56,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
             String value = attribute.getValue();
             return new ProcessorPropertyImpl(attribute, value, propertyType);
         } else if(isRequired()) {
-            String processorName = getProcessorDefinition().getName();
+            String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
         }
         return null;

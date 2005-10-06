@@ -17,8 +17,7 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
-import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.builder.library.PropertySetImpl;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -27,45 +26,40 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorTagHandler
-		extends AbstractParameterizableTagHandler {
-
-    private LibraryTagHandler _parent;
-    
-    private ProcessorDefinitionImpl _processorDefinition;
+		extends PropertySetTagHandler {
     
     public ProcessorTagHandler(LibraryTagHandler parent) {
-        super("processor");
-        _parent = parent;
+        super("processor", parent, parent);
         putHandler(new PropertyTagHandler(this));
+        putHandler(new PropertySetTagHandler("propertySet", this, parent));
+    }
+
+    protected PropertySetImpl createPropertySet() {
+        return new ProcessorDefinitionImpl();
+    }
+    
+    protected void addToLibrary(LibraryDefinitionImpl library) {
+        library.addProcessorDefinition(getProcessorDefinition());
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        String name = attributes.getValue("name");
+        super.start(attributes, systemID, lineNumber);
+        ProcessorDefinitionImpl processorDef = getProcessorDefinition();
         Class processorClass = 
-        	XMLUtil.getClassValue(attributes, "class", null);
-        if(StringUtil.isEmpty(name) || processorClass == null) {
-            invalidate();
-        } else {
-	        _processorDefinition = new ProcessorDefinitionImpl();
-	        _processorDefinition.setName(name);
-	        _processorDefinition.setProcessorClass(processorClass);
-	        _processorDefinition.setLineNumber(lineNumber);
-	        LibraryDefinitionImpl library = _parent.getLibraryDefinition();
-            _processorDefinition.setLibraryDefinition(library);
-	        library.addProcessorDefinition(_processorDefinition);
-        }
-    }
-    
-    protected void end(String body) {
-        _processorDefinition = null;
-    }
-
-    public ProcessorDefinitionImpl getProcessorDefinition() {
-        if(_processorDefinition == null) {
+            XMLUtil.getClassValue(attributes, "class", null);
+        if(processorClass == null) {
             throw new IllegalStateException();
         }
-        return _processorDefinition;
+        processorDef.setProcessorClass(processorClass);
+    }
+    
+    public ProcessorDefinitionImpl getProcessorDefinition() {
+        PropertySetImpl propertySet = getPropertySet();
+        if(propertySet instanceof ProcessorDefinitionImpl) {
+            return (ProcessorDefinitionImpl)propertySet;
+        }
+        throw new IllegalStateException();
     }
 
 	public Parameterizable getParameterizable() {

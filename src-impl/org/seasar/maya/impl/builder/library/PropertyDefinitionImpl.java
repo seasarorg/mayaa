@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
+import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.NodeAttribute;
@@ -42,7 +43,7 @@ public class PropertyDefinitionImpl
     private static final Log LOG =
         LogFactory.getLog(PropertyDefinitionImpl.class);
     
-    private ProcessorDefinition _processor;
+    private PropertySet _propertySet;
     private String _name;
     private boolean _required;
     private Class _expectedType;
@@ -62,18 +63,18 @@ public class PropertyDefinitionImpl
 		return _lineNumber;
 	}
 
-    public void setProcessorDefinition(ProcessorDefinition processor) {
-        if(processor == null) {
+    public void setPropertySet(PropertySet propertySet) {
+        if(propertySet == null) {
             throw new IllegalArgumentException();
         }
-        _processor = processor;
+        _propertySet = propertySet;
     }
     
-    public ProcessorDefinition getProcessorDefinition() {
-        if(_processor == null) {
+    public PropertySet getPropertySet() {
+        if(_propertySet == null) {
             throw new IllegalStateException();
         }
-        return _processor;
+        return _propertySet;
     }
     
     public void setName(String name) {
@@ -132,9 +133,10 @@ public class PropertyDefinitionImpl
         _propertyConverter = propertyConverter;
     }
     
-    public PropertyConverter getPropertyConverter() {
+    public PropertyConverter getPropertyConverter(
+            ProcessorDefinition processorDef) {
         if(_propertyConverter == null) {
-            Class propertyType = getPropertyType();
+            Class propertyType = getPropertyType(processorDef);
             if(propertyType == null) {
                 return null;
             }
@@ -145,21 +147,9 @@ public class PropertyDefinitionImpl
         return _propertyConverter;
     }
     
-    protected Class getProcessorType() {
-        return getProcessorDefinition().getProcessorClass();
-    }
-    
-    protected Class getPropertyType() {
-        Class processorType = getProcessorType();
-        Class ret = ObjectUtil.getPropertyType(processorType, getName());
-//        if(ret == null) {
-//            if(LOG.isWarnEnabled()) {
-//                String[] params = new String[] {
-//                        getProcessorDefinition().getName(), getName() };
-//                LOG.warn(StringUtil.getMessage(getClass(), 0, params));
-//            }
-//        }
-        return ret;
+    protected Class getPropertyType(ProcessorDefinition processorDef) {
+        Class processorType = processorDef.getProcessorClass();
+        return ObjectUtil.getPropertyType(processorType, getName());
     }
 
     protected QName getQName(SpecificationNode injected) {
@@ -167,7 +157,8 @@ public class PropertyDefinitionImpl
                 injected.getQName().getNamespaceURI(), _name);
     }
     
-    public Object createProcessorProperty(SpecificationNode injected) {
+    public Object createProcessorProperty(
+            ProcessorDefinition processorDef, SpecificationNode injected) {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
@@ -180,26 +171,26 @@ public class PropertyDefinitionImpl
                 value = attribute.getValue();
             }
         } else if(attribute != null) {
-            String processorName = getProcessorDefinition().getName();
+            String processorName = processorDef.getName();
             throw new FinalProcessorPropertyException(
                     processorName, qName);
         }
         if(value != null) {
-	        Class propertyType = getPropertyType();
+	        Class propertyType = getPropertyType(processorDef);
             if(propertyType == null) {
                 // real property not found on the processor.
-                Class processotType = getProcessorType();
+                Class processotType = processorDef.getProcessorClass();
                 if(VirtualPropertyAcceptable.class.isAssignableFrom(
                         processotType) == false) {
                     if(LOG.isWarnEnabled()) {
                         String[] params = new String[] {
-                                getProcessorDefinition().getName(), getName() };
+                                processorDef.getName(), getName() };
                         LOG.warn(StringUtil.getMessage(getClass(), 0, params));
                     }
                     return null;
                 }
             }
-        	PropertyConverter converter = getPropertyConverter();
+        	PropertyConverter converter = getPropertyConverter(processorDef);
         	if(converter == null && propertyType != null) {
         		ServiceProvider provider = ProviderFactory.getServiceProvider();
         		LibraryManager manager = provider.getLibraryManager();
@@ -210,7 +201,7 @@ public class PropertyDefinitionImpl
         	}
        		return converter.convert(attribute, value, getExpectedType());
         } else if(_required) {
-            String processorName = getProcessorDefinition().getName();
+            String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
         }
         return null;

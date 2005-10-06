@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
+import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertySetImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.StringUtil;
@@ -48,10 +49,6 @@ public class PropertySetTagHandler
         return new PropertySetImpl();
     }
     
-    protected void addToLibrary(LibraryDefinitionImpl library) {
-        library.addPropertySet(_propertySet);
-    }
-    
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
@@ -61,16 +58,23 @@ public class PropertySetTagHandler
         _propertySet = createPropertySet();
         _propertySet.setName(name);
         _propertySet.setLineNumber(lineNumber);
-        LibraryDefinitionImpl library = _libraryTagHandler.getLibraryDefinition();
-        _propertySet.setLibraryDefinition(library);
-        addToLibrary(library);
+    }
+    
+    protected void addToLibrary(LibraryDefinitionImpl library) {
         if(_parent instanceof ProcessorTagHandler) {
-            ProcessorTagHandler handler = (ProcessorTagHandler)_parent;
-            handler.getProcessorDefinition().addPropertySetName(name);
+            ProcessorDefinitionImpl processorDef = 
+                ((ProcessorTagHandler)_parent).getProcessorDefinition();
+            processorDef.addPropertySetName(_propertySet.getName());
+        }
+        if(_propertySet.iteratePropertyDefinition().hasNext()) {
+            library.addPropertySet(_propertySet);
         }
     }
 
     protected void end(String body) {
+        LibraryDefinitionImpl library = _libraryTagHandler.getLibraryDefinition();
+        _propertySet.setLibraryDefinition(library);
+        addToLibrary(library);
         _propertySet = null;
     }
     

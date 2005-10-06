@@ -248,6 +248,7 @@ public class SpecificationNodeHandler
     }
 
     public void skippedEntity(String name) {
+        // do nothing.
     }
 
     public InputSource resolveEntity(String publicId, String systemId) {
@@ -272,10 +273,12 @@ public class SpecificationNodeHandler
     }
 
     public void notationDecl(String name, String publicId, String systemId) {
+        // do nothing.
     }
 
     public void unparsedEntityDecl(
             String name, String publicId, String systemId, String notationName) {
+        // do nothing.
     }
 
     public void startDTD(String name, String publicID, String systemID) {
@@ -292,6 +295,7 @@ public class SpecificationNodeHandler
     }
 
     public void endDTD() {
+        // do nothing.
     }
 
     public void startCDATA() {

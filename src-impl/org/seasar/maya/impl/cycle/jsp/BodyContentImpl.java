@@ -75,6 +75,7 @@ public class BodyContentImpl extends BodyContent {
     }
     
     public void close() {
+        // do nothing.
     }
     
     public int getRemaining() {

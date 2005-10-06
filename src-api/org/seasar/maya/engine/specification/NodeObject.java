@@ -19,4 +19,5 @@ package org.seasar.maya.engine.specification;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface NodeObject {
+    // marker interface.    
 }

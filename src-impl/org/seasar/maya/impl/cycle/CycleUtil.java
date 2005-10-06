@@ -37,6 +37,7 @@ public class CycleUtil {
     };
     
     private CycleUtil() {
+        // no instanciation.
     }
 
     public static RequestScope getRequestScope() {

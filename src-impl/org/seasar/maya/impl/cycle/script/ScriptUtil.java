@@ -30,6 +30,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 public class ScriptUtil {
 
     private ScriptUtil() {
+        // no instantiation.
     }
 
     public static ScriptEnvironment getScriptEnvironment() {

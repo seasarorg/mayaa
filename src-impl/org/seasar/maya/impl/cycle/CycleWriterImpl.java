@@ -75,6 +75,7 @@ public class CycleWriterImpl extends CycleWriter {
     }
     
     public void close() {
+        // do nothing.
     }
     
 }

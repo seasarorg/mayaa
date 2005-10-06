@@ -56,6 +56,7 @@ public class SpecificationBuilderImpl
     }
 
     protected void afterBuild(Specification specification) {
+        // for TemplateBuilderImpl
     }
 
     public void build(Specification specification) {

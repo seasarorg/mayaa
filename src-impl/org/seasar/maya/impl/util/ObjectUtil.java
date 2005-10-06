@@ -30,6 +30,7 @@ import org.apache.commons.beanutils.converters.BooleanConverter;
 public class ObjectUtil {
 
     private ObjectUtil() {
+        // no instantiation.
     }
 
     protected static String getClassSignature(String className) {

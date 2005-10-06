@@ -30,6 +30,7 @@ import org.seasar.maya.impl.cycle.CycleUtil;
 public class RhinoUtil {
 
     private RhinoUtil() {
+        // no instantiation.
     }
 
     public static Context enter(WrapFactory wrap) {

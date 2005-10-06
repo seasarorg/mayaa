@@ -119,6 +119,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     public void doInitChildProcess() {
+        // do nothing.
     }
     
     public boolean isIteration() {

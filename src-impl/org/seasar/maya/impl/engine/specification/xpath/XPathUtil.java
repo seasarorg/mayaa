@@ -42,6 +42,7 @@ import org.seasar.maya.impl.util.StringUtil;
 public class XPathUtil {
 
     private XPathUtil() {
+        // no instantiation.
     }
 
     public static boolean matches(SpecificationNode test, 

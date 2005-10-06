@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 public class IOUtil {
 
     private IOUtil() {
+        // no instantiation.
     }
 
     public static void close(InputStream stream) {

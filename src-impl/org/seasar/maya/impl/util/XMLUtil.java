@@ -29,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class XMLUtil {
     
     private XMLUtil() {
+        // no instantiation.
     }
 
     public static void parse(DefaultHandler handler, 

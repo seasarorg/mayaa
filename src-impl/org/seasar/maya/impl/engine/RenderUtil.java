@@ -56,6 +56,7 @@ public class RenderUtil implements CONST_IMPL {
             ProcessStatus.EVAL_BODY_BUFFERED;
 
     private RenderUtil() {
+        // no instantiation.
     }
 
     public static boolean isEvaluation(TemplateProcessor current) {

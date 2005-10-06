@@ -34,6 +34,7 @@ public final class StringUtil {
     private static Map _propFiles = new HashMap();
 
     private StringUtil() {
+        // no instantiation.
     }
 
     public static boolean isEmpty(String test) {

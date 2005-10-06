@@ -61,6 +61,7 @@ public class ComplexScript implements CompiledScript {
     }
 
     public void setMethodArgTypes(Class[] methodArgTypes) {
+        // do nothing.
     }
     
     public Class[] getMethodArgTypes() {

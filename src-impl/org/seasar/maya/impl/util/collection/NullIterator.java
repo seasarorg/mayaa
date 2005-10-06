@@ -30,6 +30,7 @@ public class NullIterator implements Iterator {
     }
     
     private NullIterator() {
+        // singleton.
     }
     
     public boolean hasNext() {

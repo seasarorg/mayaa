@@ -56,9 +56,11 @@ public class TagHandler {
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
+        // override this method.
     }
     
     protected void end(String body) {
+        // override this method.
     }
 
     public void invalidate() {

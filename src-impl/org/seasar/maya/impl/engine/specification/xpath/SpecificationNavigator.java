@@ -50,6 +50,7 @@ public class SpecificationNavigator extends DefaultNavigator
     }
     
     protected SpecificationNavigator() {
+        // singleton
     }
 
 	protected String getNamespaceURI(

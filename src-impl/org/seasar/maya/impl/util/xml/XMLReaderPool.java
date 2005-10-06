@@ -43,6 +43,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
     }
     
     protected XMLReaderPool() {
+        // singleton.
     }
     
     protected Object createObject() {
@@ -59,7 +60,9 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         try {
             xmlReader.setFeature(name, value);
         } catch (SAXNotRecognizedException e) {
+            // do nothing
         } catch (SAXNotSupportedException e) {
+            // do nothing
         }
     }
     
@@ -68,7 +71,9 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         try {
             xmlReader.setProperty(name, value);
         } catch (SAXNotRecognizedException e) {
+            // do nothing
         } catch (SAXNotSupportedException e) {
+            // do nothing
         }
     }
     

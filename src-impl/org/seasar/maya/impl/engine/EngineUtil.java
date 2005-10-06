@@ -33,6 +33,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 public class EngineUtil implements CONST_IMPL {
 
     private EngineUtil() {
+        // no instantiation.
     }
 
     public static Engine getEngine() {

@@ -58,6 +58,7 @@ public class LiteralScript  implements CompiledScript {
     }
 
     public void setMethodArgTypes(Class[] methodArgTypes) {
+        // do nothing.
     }
     
     public Class[] getMethodArgTypes() {

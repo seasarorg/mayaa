@@ -30,6 +30,7 @@ public class NullEnumeration implements Enumeration {
     }
     
     private NullEnumeration() {
+        // singleton.
     }
 
     public boolean hasMoreElements() {

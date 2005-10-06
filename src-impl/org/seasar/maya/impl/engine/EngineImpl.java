@@ -203,6 +203,7 @@ public class EngineImpl extends SpecificationImpl
                     response.flushAll();
                     service = false;
                 } catch(PageForwarded f) {
+                    // do nothing.
                 }
             }
         } catch(Throwable t) {

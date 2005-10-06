@@ -38,6 +38,7 @@ import org.seasar.maya.impl.util.StringUtil;
 public class SpecificationUtil implements CONST_IMPL {
 
     private SpecificationUtil() {
+        // no instantiation.
     }
 
     public static String getAttributeValue(

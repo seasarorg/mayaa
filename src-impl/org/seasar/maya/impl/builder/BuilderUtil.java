@@ -33,6 +33,7 @@ import org.seasar.maya.impl.util.StringUtil;
 public class BuilderUtil implements CONST_IMPL {
 
     private BuilderUtil() {
+        // no instantiation.
     }
 
     public static SpecificationNode createInjectedNode(QName qName, 

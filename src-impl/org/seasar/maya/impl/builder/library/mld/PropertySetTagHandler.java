@@ -42,7 +42,7 @@ public class PropertySetTagHandler
         }
         _parent = parent;
         _libraryTagHandler = libraryTagHandler;
-        putHandler(new PropertyTagHandler(this));
+        putHandler(new PropertyTagHandler(this, libraryTagHandler));
     }
 
     protected PropertySetImpl createPropertySet() {

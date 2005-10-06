@@ -16,8 +16,10 @@
 package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,26 +45,37 @@ public class LibraryManagerImpl implements LibraryManager {
 	private List _scanners;
 	private List _builders;
     private List _libraries;
-    private List _converters;
+    private Map _converters;
     
     public LibraryManagerImpl() {
     	_scanners = new ArrayList();
     	_builders = new ArrayList();
-        _converters = new ArrayList();
+        _converters = new HashMap();
     }
 
-    public void addPropertyConverter(PropertyConverter propertyConverter) {
+    public void addPropertyConverter(
+    		String name, PropertyConverter propertyConverter) {
         if(propertyConverter == null) {
             throw new IllegalArgumentException();
         }
-        _converters.add(propertyConverter);
+        if(StringUtil.isEmpty(name)) {
+        	name = propertyConverter.getPropetyType().getName();
+        }
+        _converters.put(name, propertyConverter);
     }
 
-    public PropertyConverter getPropertyConverter(Class propertyType) {
+    public PropertyConverter getPropertyConverter(String converterName) {
+    	if(StringUtil.isEmpty(converterName)) {
+    		throw new IllegalArgumentException();
+    	}
+		return (PropertyConverter)_converters.get(converterName);
+	}
+
+	public PropertyConverter getPropertyConverter(Class propertyType) {
         if(propertyType == null) {
             throw new IllegalArgumentException();
         }
-        for(Iterator it = _converters.iterator(); it.hasNext(); ) {
+        for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
             PropertyConverter propertyConverter = (PropertyConverter)it.next();
             Class converterType = propertyConverter.getPropetyType();
             if(propertyType.isAssignableFrom(converterType)) {
@@ -72,31 +85,9 @@ public class LibraryManagerImpl implements LibraryManager {
         return null;
     }
 
-    protected void buildAll() {
-        _libraries = new ArrayList();
-    	for(int i = 0; i < _scanners.size(); i++) {
-	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
-	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
-		    	SourceDescriptor source = (SourceDescriptor)it.next();
-		    	for(int k = 0; k < _builders.size(); k++) {
-			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
-			    	LibraryDefinition library = builder.build(source);
-			    	if(library != null) {
-			            _libraries.add(library);
-                        if(LOG.isInfoEnabled()) {
-                            String msg = StringUtil.getMessage(
-                            		LibraryManagerImpl.class, 1, new String[] {
-                            			source.getSystemID(), 
-                            			library.getNamespaceURI()
-                            		});
-                            LOG.info(msg);
-                        }
-			            break;
-			    	}
-		    	}
-	    	}
-    	}
-    }
+    public Iterator iteratePropertyConverters() {
+		return _converters.values().iterator();
+	}
     
     public void addSourceScanner(SourceScanner scanner) {
 		if(scanner == null) {
@@ -129,6 +120,32 @@ public class LibraryManagerImpl implements LibraryManager {
                 LOG.info(msg);
             }
     		_builders.add(builder);
+    	}
+    }
+
+	protected void buildAll() {
+        _libraries = new ArrayList();
+    	for(int i = 0; i < _scanners.size(); i++) {
+	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
+	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
+		    	SourceDescriptor source = (SourceDescriptor)it.next();
+		    	for(int k = 0; k < _builders.size(); k++) {
+			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
+			    	LibraryDefinition library = builder.build(source);
+			    	if(library != null) {
+			            _libraries.add(library);
+                        if(LOG.isInfoEnabled()) {
+                            String msg = StringUtil.getMessage(
+                            		LibraryManagerImpl.class, 1, new String[] {
+                            			source.getSystemID(), 
+                            			library.getNamespaceURI()
+                            		});
+                            LOG.info(msg);
+                        }
+			            break;
+			    	}
+		    	}
+	    	}
     	}
     }
     

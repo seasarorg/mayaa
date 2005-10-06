@@ -9,7 +9,8 @@
 <!ATTLIST parameter name CDATA #REQUIRED>
 <!ATTLIST parameter value CDATA #REQUIRED>
 
-<!ELEMENT library (description?, propertySet*, processor*, parameter*)>
+<!ELEMENT library (description?, 
+		converter*, propertySet*, processor*, parameter*)>
 <!ATTLIST library uri CDATA #REQUIRED>
 
 <!ELEMENT propertySet (description?, property*)>
@@ -23,8 +24,10 @@
 <!ATTLIST property name CDATA #REQUIRED>
 <!ATTLIST property expectedType CDATA #IMPLIED>
 <!ATTLIST property required (true | false) "false">
-<!ATTLIST property final CDATA  #IMPLIED>
 <!ATTLIST property default CDATA  #IMPLIED>
+<!ATTLIST property final CDATA  #IMPLIED>
+<!ATTLIST property converterName CDATA  #IMPLIED>
 
 <!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter name CDATA #IMPLIED>
 <!ATTLIST converter class CDATA #REQUIRED>

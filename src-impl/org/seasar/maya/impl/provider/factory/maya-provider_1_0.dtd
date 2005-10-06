@@ -38,6 +38,7 @@
 <!ATTLIST libraryManager class CDATA #REQUIRED>
 
 <!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter name CDATA #IMPLIED>
 <!ATTLIST converter class CDATA #REQUIRED>
 
 <!ELEMENT source (description?, parameter*)>

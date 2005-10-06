@@ -31,10 +31,11 @@ public class PropertyTagHandler
     private PropertySetTagHandler _parent;
     private PropertyDefinitionImpl _propertyDefinition;
     
-    public PropertyTagHandler(PropertySetTagHandler parent) {
+    public PropertyTagHandler(PropertySetTagHandler parent, 
+    		LibraryTagHandler libraryTagHandler) {
         super("property");
         _parent = parent;
-        putHandler(new ConverterTagHandler(this));
+        putHandler(new ConverterTagHandler(this, libraryTagHandler));
     }
 
     protected void start(
@@ -46,12 +47,14 @@ public class PropertyTagHandler
                 attributes, "expectedType", Object.class);
         String finalValue = attributes.getValue("final");
         String defaultValue = attributes.getValue("default");
+        String converterName = attributes.getValue("converterName");
         _propertyDefinition = new PropertyDefinitionImpl();
         _propertyDefinition.setName(name);
         _propertyDefinition.setRequired(required);
         _propertyDefinition.setExpectedType(expectedType);
         _propertyDefinition.setFinalValue(finalValue);
         _propertyDefinition.setDefaultValue(defaultValue);
+        _propertyDefinition.setPropertyConverterName(converterName);
         _propertyDefinition.setLineNumber(lineNumber);
         PropertySetImpl processor = _parent.getPropertySet();
         processor.addPropertyDefinitiion(_propertyDefinition);

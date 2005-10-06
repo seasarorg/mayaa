@@ -70,6 +70,12 @@ public interface PropertyDefinition extends Parameterizable {
      */
     String getFinalValue();
 
+    /**
+     * MLD指定のプロパティ値コンバータ名。
+     * @return コンバータ名。
+     */
+    String getPropertyConverterName();
+    
 	/**
 	 * MLD指定のプロパティ値コンバータの取得。
      * @param processorDef プロセッサ定義。

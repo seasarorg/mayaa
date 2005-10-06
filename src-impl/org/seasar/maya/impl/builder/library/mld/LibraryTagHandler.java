@@ -30,6 +30,7 @@ public class LibraryTagHandler
     
     public LibraryTagHandler() {
         super("library");
+        putHandler(new ConverterTagHandler(this, this));
         putHandler( new ProcessorTagHandler(this));
         putHandler(new PropertySetTagHandler("propertySet", this, this));
     }

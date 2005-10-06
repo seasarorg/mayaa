@@ -17,6 +17,7 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.provider.Parameterizable;
 
 
@@ -43,6 +44,26 @@ public interface LibraryDefinition extends Parameterizable {
      * @return 追加アサインされた名前空間URIのイテレータ。
      */
     Iterator iterateAssignedURI();
+    
+    /**
+     * 登録コンバータの取得。
+     * @param converterName コンバータ登録名。
+     * @return 指定名のコンバータ、もしくはnull。
+     */
+    PropertyConverter getPropertyConverter(String converterName);
+    
+    /**
+     * 登録コンバータのイテレータ。
+     * @return コンバータイテレータ。
+     */
+    Iterator iteratePropertyConverters();
+    
+    /**
+     * 登録コンバータの取得。
+     * @param propertyType コンバート対象型。
+     * @return 指定型に対応したコンバータ、もしくはnull。
+     */
+    PropertyConverter getPropertyConverter(Class propertyType);
     
     /**
      * 登録プロパティセットのイテレータ。

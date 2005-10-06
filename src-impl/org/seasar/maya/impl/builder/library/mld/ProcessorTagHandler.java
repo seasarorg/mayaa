@@ -30,7 +30,7 @@ public class ProcessorTagHandler
     
     public ProcessorTagHandler(LibraryTagHandler parent) {
         super("processor", parent, parent);
-        putHandler(new PropertyTagHandler(this));
+        putHandler(new PropertyTagHandler(this, parent));
         putHandler(new PropertySetTagHandler("propertySet", this, parent));
     }
 

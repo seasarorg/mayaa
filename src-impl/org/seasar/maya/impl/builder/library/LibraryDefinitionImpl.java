@@ -24,6 +24,7 @@ import java.util.Map;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertySet;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -35,6 +36,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
 
     private String _namespaceURI;
     private List _assignedURI = new ArrayList();
+    private Map _converters;
     private Map _propertySets;
     private Map _processors;
     private String _systemID;
@@ -75,7 +77,48 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         return _assignedURI.iterator();
     }
 
-    public void addPropertySet(PropertySet propertySet) {
+    public void addPropertyConverter(
+    		String name, PropertyConverter converter) {
+    	if(converter == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	if(StringUtil.isEmpty(name)) {
+    		name = converter.getPropetyType().getName();
+    	}
+    	if(_converters == null) {
+    		_converters = new HashMap();
+    	}
+    	_converters.put(name, converter);
+    }
+    
+    public PropertyConverter getPropertyConverter(Class propertyType) {
+    	if(propertyType == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
+    		PropertyConverter converter = (PropertyConverter)it.next();
+    		if(propertyType.equals(converter.getPropetyType())) {
+    			return converter;
+    		}
+    	}
+    	return null;
+	}
+
+	public PropertyConverter getPropertyConverter(String converterName) {
+		if(StringUtil.isEmpty(converterName)) {
+			throw new IllegalArgumentException();
+		}
+		return (PropertyConverter)_converters.get(converterName);
+	}
+
+	public Iterator iteratePropertyConverters() {
+		if(_converters == null) {
+			return NullIterator.getInstance();
+		}
+		return _converters.values().iterator();
+	}
+
+	public void addPropertySet(PropertySet propertySet) {
         if(propertySet == null) {
             throw new IllegalArgumentException();
         }

@@ -41,7 +41,9 @@ public class ConverterTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _converter = (PropertyConverter)XMLUtil.getObjectValue(
                 attributes, "class", null, PropertyConverter.class);
-        _parent.getLibraryManager().addPropertyConverter(_converter);
+        String name = XMLUtil.getStringValue(
+        		attributes, "name", "");
+        _parent.getLibraryManager().addPropertyConverter(name, _converter);
     }
     
     protected void end(String body) {

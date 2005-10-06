@@ -16,9 +16,11 @@
 package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.builder.library.converter.PropertyConverter;
+import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.impl.util.xml.TagHandler;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
@@ -28,12 +30,18 @@ import org.xml.sax.Attributes;
 public class ConverterTagHandler 
 		extends AbstractParameterizableTagHandler {
 
-    private PropertyTagHandler _parent;  
+    private TagHandler _parent;
+    LibraryTagHandler _libraryTagHandler;
     private PropertyConverter _propertyConverter;
     
-    public ConverterTagHandler(PropertyTagHandler parent) {
+    public ConverterTagHandler(
+    		TagHandler parent, LibraryTagHandler libraryTagHandler) {
         super("converter");
+        if(parent == null || libraryTagHandler == null) {
+        	throw new IllegalArgumentException();
+        }
         _parent = parent;
+        _libraryTagHandler = libraryTagHandler;
     }
     
     protected void start(
@@ -44,9 +52,15 @@ public class ConverterTagHandler
         if(converter == null) {
         	throw new IllegalStateException();
         }
-    	PropertyDefinitionImpl propertyDefinition =
-    		_parent.getPropertyDefinition();
-    	propertyDefinition.setPropertyConverter(converter);
+        if(_parent instanceof PropertyTagHandler) {
+            PropertyDefinitionImpl propertyDef = 
+                ((PropertyTagHandler)_parent).getPropertyDefinition();
+            propertyDef.setPropertyConverter(converter);
+        }
+        String name = XMLUtil.getStringValue(attributes, "name", "");
+    	LibraryDefinitionImpl libraryDef =
+    		_libraryTagHandler.getLibraryDefinition();
+    	libraryDef.addPropertyConverter(name, converter);
     }
     
     protected void end(String body) {

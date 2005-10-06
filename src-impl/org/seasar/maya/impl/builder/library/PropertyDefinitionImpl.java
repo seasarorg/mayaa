@@ -49,6 +49,7 @@ public class PropertyDefinitionImpl
     private Class _expectedType;
     private String _defaultValue;
     private String _finalValue;
+    private String _propertyConverterName;
     private PropertyConverter _propertyConverter;
     private int _lineNumber;
 
@@ -126,7 +127,15 @@ public class PropertyDefinitionImpl
         return _finalValue;
     }
 
-    public void setPropertyConverter(PropertyConverter propertyConverter) {
+    public void setPropertyConverterName(String propertyConverterName) {
+    	_propertyConverterName = propertyConverterName;
+    }
+    
+    public String getPropertyConverterName() {
+		return _propertyConverterName;
+	}
+
+	public void setPropertyConverter(PropertyConverter propertyConverter) {
         if(propertyConverter == null) {
             throw new IllegalArgumentException();
         }
@@ -135,7 +144,11 @@ public class PropertyDefinitionImpl
     
     public PropertyConverter getPropertyConverter(
             ProcessorDefinition processorDef) {
-        if(_propertyConverter == null) {
+        
+    	// TODO converterName を用いての取得。
+    	// TODO libraryDef内のコンバータ登録からの取得。
+    	
+    	if(_propertyConverter == null) {
             Class propertyType = getPropertyType(processorDef);
             if(propertyType == null) {
                 return null;

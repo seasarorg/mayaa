@@ -29,17 +29,32 @@ import org.seasar.maya.provider.Parameterizable;
 public interface LibraryManager extends Parameterizable {
 
     /**
-     * プロパティ型コンバータの登録。
+     * プロパティ型コンバータの追加。
+     * @param name コンバータ名、もしくはnullや空白文字列。
      * @param propertyConverter コンバータ。
      */
-    void addPropertyConverter(PropertyConverter propertyConverter);
+    void addPropertyConverter(
+    		String name, PropertyConverter propertyConverter);
     
+    /**
+     * プロパティ型コンバータの取得。
+     * @param converterName コンバータ登録名。
+     * @return 指定名のコンバータ、もしくはnull。
+     */
+    PropertyConverter getPropertyConverter(String converterName);
+
     /**
      * プロパティ型コンバータの取得。
      * @param propertyType プロパティ型。
      * @return コンバータ。もしくはnull。
      */
     PropertyConverter getPropertyConverter(Class propertyType);
+
+    /**
+     * プロパティ型コンバータのイテレータ。
+     * @return コンバータイテレータ。
+     */
+    Iterator iteratePropertyConverters();
     
     /**
      * ライブラリ定義ソーススキャナの追加。

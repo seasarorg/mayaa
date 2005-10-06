@@ -33,8 +33,8 @@
 	</specificationBuilder>
 
 	<libraryManager class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
-		<converter class="org.seasar.maya.impl.builder.library.converter.ProcessorPropertyConverter"/>
-		<converter class="org.seasar.maya.impl.builder.library.converter.QNameableConverter"/>
+		<converter name="ProcessorProperty" class="org.seasar.maya.impl.builder.library.converter.ProcessorPropertyConverter"/>
+		<converter name="QNameable" class="org.seasar.maya.impl.builder.library.converter.QNameableConverter"/>
 		<source class="org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
 		<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
 			<parameter name="folder" value="/WEB-INF"/>

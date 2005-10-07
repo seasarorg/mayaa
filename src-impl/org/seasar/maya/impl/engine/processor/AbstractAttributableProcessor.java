@@ -64,7 +64,11 @@ public abstract class AbstractAttributableProcessor
         }
         _attributes.add(attr);
     }
-    
+
+    public Class getExpectedType() {
+        return Object.class;
+    }
+
     public Iterator iterateInformalProperties() {
         if(_attributes == null) {
             return NullIterator.getInstance();

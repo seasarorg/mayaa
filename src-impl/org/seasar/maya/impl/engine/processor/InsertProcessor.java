@@ -73,7 +73,11 @@ public class InsertProcessor
         }
         _attributes.add(attr);
     }
-    
+
+    public Class getExpectedType() {
+        return Object.class;
+    }
+
     public List getInformalProperties() {
         if(_attributes == null) {
             _attributes = new ArrayList();

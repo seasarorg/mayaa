@@ -109,7 +109,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             }
         }
     }
-    
+
     protected void settingPropertySet(SpecificationNode injected, 
             TemplateProcessor processor, PropertySet propertySet) {
         for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
@@ -117,7 +117,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             settingProperty(injected, processor, property);
         }
     }
-    
+
     protected void settingInformalProperties(SpecificationNode injected, 
             InformalPropertyAcceptable acceptable) {
         String injectedNS = injected.getQName().getNamespaceURI();
@@ -127,10 +127,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 continue;
             }
             acceptable.addInformalProperty(new ProcessorPropertyImpl(
-            		attr, attr.getValue(), Object.class));
+            		attr, attr.getValue(), acceptable.getExpectedType()));
         }
     }
-    
+
     public TemplateProcessor createTemplateProcessor(
             SpecificationNode injected) {
         if(injected == null) {

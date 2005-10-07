@@ -29,5 +29,11 @@ public interface InformalPropertyAcceptable
 	 * @param property インフォーマルプロパティ。
 	 */
 	void addInformalProperty(ProcessorProperty property);
-	
+
+    /**
+     * インフォーマルプロパティの予測される型を取得する。
+     * @return インフォーマルプロパティの予測される型。
+     */
+    Class getExpectedType();
+
 }

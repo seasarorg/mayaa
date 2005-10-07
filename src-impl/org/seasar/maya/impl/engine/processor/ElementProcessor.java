@@ -74,7 +74,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         _name = name;
     }
-    
+
+    public Class getExpectedType() {
+        return String.class;
+    }
+
     protected void resolvePrefix(QNameable name) {
         if(name == null) {
             throw new IllegalArgumentException();

@@ -114,6 +114,7 @@
 			class="org.seasar.maya.impl.engine.processor.WriteProcessor">
 		<property name="value" required="true" expectedType="java.lang.String"/>
 		<property name="default"/> 
+		<property name="escapeXml" expectedType="boolean"/> 
 	</processor>		
 
 	<processor name="for"

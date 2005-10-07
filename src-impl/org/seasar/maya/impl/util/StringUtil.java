@@ -166,4 +166,21 @@ public final class StringUtil {
         return MessageFormat.format(message, params);
     }
 
+    public static String escapeXml(String text) {
+        char[] chars = text.toCharArray();
+        StringBuffer sb = new StringBuffer(chars.length + 50);
+
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '&': sb.append("&amp;"); break;
+                case '<': sb.append("&lt;"); break;
+                case '>': sb.append("&gt;"); break;
+                case '"': sb.append("&quot;"); break;
+                default: sb.append(chars[i]);
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

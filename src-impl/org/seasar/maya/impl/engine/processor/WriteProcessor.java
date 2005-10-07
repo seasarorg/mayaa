@@ -20,6 +20,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -31,26 +32,39 @@ public class WriteProcessor extends TemplateProcessorSupport {
 
     private ProcessorProperty _value;
     private String _default;
-    
+    private ProcessorProperty _escapeXml;
+
     // MLD property, expectedType=java.lang.String
     public void setValue(ProcessorProperty value) {
         _value = value;
     }
-    
+
     public void setDefault(String defaultValue) {
     	_default = defaultValue;
     }
-    
+
+    public void setEscapeXml(ProcessorProperty escapeXml) {
+        _escapeXml = escapeXml;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value != null) {
             String ret = (String)_value.getValue().execute(null);
             if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
             	ret = _default;
             }
+
+            if (_escapeXml != null) {
+                boolean escapeXml = ObjectUtil.booleanValue(
+                        _escapeXml.getValue().execute(null), false);
+                if (escapeXml) {
+                    ret = StringUtil.escapeXml(ret);
+                }
+            }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(ret);
         }
         return ProcessStatus.SKIP_BODY;
     }
-    
+
 }

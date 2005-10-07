@@ -67,7 +67,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         if(StringUtil.isEmpty(assignedURI)) {
             throw new IllegalArgumentException();
         }
-        if(assignedURI.equals(_namespaceURI) || 
+        if(assignedURI.equals(_namespaceURI) == false && 
                 _assignedURI.contains(assignedURI) == false) {
             _assignedURI.add(assignedURI);
         }
@@ -88,7 +88,11 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
     	if(_converters == null) {
     		_converters = new HashMap();
     	}
-    	_converters.put(name, converter);
+        if(_converters.containsKey(name)) {
+            //TODO åxçêÅB
+        } else {
+            _converters.put(name, converter);
+        }
     }
     
     public PropertyConverter getPropertyConverter(Class propertyType) {
@@ -125,10 +129,10 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         if(propertySet == null) {
             throw new IllegalArgumentException();
         }
+        String name = propertySet.getName();
         if(_propertySets == null) {
             _propertySets = new HashMap();
         }
-        String name = propertySet.getName();
         if(_propertySets.containsKey(name)) {
             //TODO åxçêÅB
         } else {
@@ -157,10 +161,10 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         if(processor == null) {
             throw new IllegalArgumentException();
         }
+        String name = processor.getName();
         if(_processors == null) {
             _processors = new HashMap();
         }
-        String name = processor.getName();
         if(_processors.containsKey(name)) {
             //TODO åxçêÅB
         } else {

@@ -68,7 +68,11 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         if(_propertySetNames == null) {
             _propertySetNames = new ArrayList();
         }
-        _propertySetNames.add(name);
+        if(_propertySetNames.contains(name)) {
+            // TODO åxçê
+        } else {
+            _propertySetNames.add(name);
+        }
     }
     
     public Iterator iteratePropertySets() {

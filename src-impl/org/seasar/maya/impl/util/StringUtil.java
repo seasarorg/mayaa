@@ -167,6 +167,9 @@ public final class StringUtil {
     }
 
     public static String escapeXml(String text) {
+        if (text == null) {
+            return "";
+        }
         char[] chars = text.toCharArray();
         StringBuffer sb = new StringBuffer(chars.length + 50);
 

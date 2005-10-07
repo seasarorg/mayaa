@@ -17,6 +17,7 @@ package org.seasar.maya.impl.builder.library;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
@@ -142,22 +143,52 @@ public class PropertyDefinitionImpl
         _propertyConverter = propertyConverter;
     }
     
-    public PropertyConverter getPropertyConverter(
-            ProcessorDefinition processorDef) {
-        
-    	// TODO converterName を用いての取得。
-    	// TODO libraryDef内のコンバータ登録からの取得。
-    	
-    	if(_propertyConverter == null) {
-            Class propertyType = getPropertyType(processorDef);
-            if(propertyType == null) {
-                return null;
-            }
+    protected PropertyConverter getPropertyConverter(
+            String converterName) {
+        if(StringUtil.isEmpty(converterName)) {
+            throw new IllegalArgumentException();
+        }
+        LibraryDefinition library = getPropertySet().getLibraryDefinition();
+        PropertyConverter converter = 
+            library.getPropertyConverter(converterName);
+        if(converter == null) {
             LibraryManager manager = 
                 ProviderFactory.getServiceProvider().getLibraryManager();
-            return manager.getPropertyConverter(propertyType);
+            converter = manager.getPropertyConverter(converterName);
         }
-        return _propertyConverter;
+        return converter;
+    }
+    
+    protected PropertyConverter getPropertyConverter(
+            Class propertyType) {
+        if(propertyType == null) {
+            throw new IllegalArgumentException();
+        }
+        LibraryDefinition library = getPropertySet().getLibraryDefinition();
+        PropertyConverter converter = 
+            library.getPropertyConverter(propertyType);
+        if(converter == null) {
+            LibraryManager manager = 
+                ProviderFactory.getServiceProvider().getLibraryManager();
+            converter = manager.getPropertyConverter(propertyType);
+        }
+        return converter;
+    }
+    
+    public PropertyConverter getPropertyConverter(
+            ProcessorDefinition processorDef) {
+    	if(_propertyConverter != null) {
+            return _propertyConverter;
+        }
+        String converterName = getPropertyConverterName();
+        if(StringUtil.hasValue(converterName)) {
+            return getPropertyConverter(converterName);
+        }
+        Class propertyType = getPropertyType(processorDef);
+        if(propertyType != null) {
+            return getPropertyConverter(propertyType);
+        }
+        return null;
     }
     
     protected Class getPropertyType(ProcessorDefinition processorDef) {

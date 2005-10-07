@@ -95,6 +95,9 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
     	if(propertyType == null) {
     		throw new IllegalArgumentException();
     	}
+        if(_converters == null) {
+            return null;
+        }
     	for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
     		PropertyConverter converter = (PropertyConverter)it.next();
     		if(propertyType.equals(converter.getPropetyType())) {

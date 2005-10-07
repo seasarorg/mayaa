@@ -144,49 +144,18 @@ public class PropertyDefinitionImpl
     }
     
     protected PropertyConverter getPropertyConverter(
-            String converterName) {
-        if(StringUtil.isEmpty(converterName)) {
-            throw new IllegalArgumentException();
-        }
-        LibraryDefinition library = getPropertySet().getLibraryDefinition();
-        PropertyConverter converter = 
-            library.getPropertyConverter(converterName);
-        if(converter == null) {
-            LibraryManager manager = 
-                ProviderFactory.getServiceProvider().getLibraryManager();
-            converter = manager.getPropertyConverter(converterName);
-        }
-        return converter;
-    }
-    
-    protected PropertyConverter getPropertyConverter(
-            Class propertyType) {
-        if(propertyType == null) {
-            throw new IllegalArgumentException();
-        }
-        LibraryDefinition library = getPropertySet().getLibraryDefinition();
-        PropertyConverter converter = 
-            library.getPropertyConverter(propertyType);
-        if(converter == null) {
-            LibraryManager manager = 
-                ProviderFactory.getServiceProvider().getLibraryManager();
-            converter = manager.getPropertyConverter(propertyType);
-        }
-        return converter;
-    }
-    
-    public PropertyConverter getPropertyConverter(
             ProcessorDefinition processorDef) {
     	if(_propertyConverter != null) {
             return _propertyConverter;
         }
+        LibraryDefinition library = getPropertySet().getLibraryDefinition();
         String converterName = getPropertyConverterName();
         if(StringUtil.hasValue(converterName)) {
-            return getPropertyConverter(converterName);
+            return library.getPropertyConverter(converterName);
         }
         Class propertyType = getPropertyType(processorDef);
         if(propertyType != null) {
-            return getPropertyConverter(propertyType);
+            return library.getPropertyConverter(propertyType);
         }
         return null;
     }

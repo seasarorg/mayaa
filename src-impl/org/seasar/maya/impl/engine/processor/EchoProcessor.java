@@ -45,7 +45,7 @@ public class EchoProcessor extends ElementProcessor
             ProcessorPropertyImpl property =
                 new ProcessorPropertyImpl(
                         attribute, attribute.getValue(), String.class);
-            super.addInformalProperty(property);
+            super.addInformalProperty(property.getName(), property);
         }
     }
 

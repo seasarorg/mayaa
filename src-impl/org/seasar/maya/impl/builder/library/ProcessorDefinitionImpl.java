@@ -25,12 +25,12 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.library.PropertySet;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -126,8 +126,22 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             if(contain(injectedNS, attr)) {
                 continue;
             }
-            acceptable.addInformalProperty(new ProcessorPropertyImpl(
-            		attr, attr.getValue(), acceptable.getExpectedType()));
+            LibraryDefinition library = getLibraryDefinition();
+            Class propertyType = acceptable.getPropertyType();
+            PropertyConverter converter = 
+                library.getPropertyConverter(propertyType);
+            if(converter == null) {
+                // TODO 設定ミス例外。
+                throw new IllegalStateException();
+            }
+            Class expectedType = acceptable.getExpectedType();
+            String value = attr.getValue();
+            Object property = converter.convert(attr, value, expectedType);
+            if(property == null) {
+                // TODO ユーザーコンバーターの実装ミス例外。
+                throw new IllegalStateException();
+            }
+            acceptable.addInformalProperty(attr, property);
         }
     }
 

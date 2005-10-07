@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.seasar.maya.builder.library.LibraryDefinition;
+import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -99,23 +101,29 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
     	if(propertyType == null) {
     		throw new IllegalArgumentException();
     	}
-        if(_converters == null) {
-            return null;
+        if(_converters != null) {
+        	for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
+        		PropertyConverter converter = (PropertyConverter)it.next();
+        		if(propertyType.equals(converter.getPropetyType())) {
+        			return converter;
+        		}
+        	}
         }
-    	for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
-    		PropertyConverter converter = (PropertyConverter)it.next();
-    		if(propertyType.equals(converter.getPropetyType())) {
-    			return converter;
-    		}
-    	}
-    	return null;
+        LibraryManager manager = 
+            ProviderFactory.getServiceProvider().getLibraryManager();
+        return manager.getPropertyConverter(propertyType);
 	}
 
 	public PropertyConverter getPropertyConverter(String converterName) {
 		if(StringUtil.isEmpty(converterName)) {
 			throw new IllegalArgumentException();
 		}
-		return (PropertyConverter)_converters.get(converterName);
+        if(_converters != null && _converters.containsKey(converterName)) {
+            return (PropertyConverter)_converters.get(converterName);
+        }
+        LibraryManager manager = 
+            ProviderFactory.getServiceProvider().getLibraryManager();
+        return manager.getPropertyConverter(converterName);
 	}
 
 	public Iterator iteratePropertyConverters() {

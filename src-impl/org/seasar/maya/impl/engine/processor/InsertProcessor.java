@@ -32,6 +32,7 @@ import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
+import org.seasar.maya.engine.specification.QNameable;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
@@ -67,11 +68,15 @@ public class InsertProcessor
     }
     
     // MLD method
-    public void addInformalProperty(ProcessorProperty attr) {
+    public void addInformalProperty(QNameable name, Object attr) {
         if(_attributes == null) {
             _attributes = new ArrayList();
         }
         _attributes.add(attr);
+    }
+
+    public Class getPropertyType() {
+        return ProcessorProperty.class;
     }
 
     public Class getExpectedType() {

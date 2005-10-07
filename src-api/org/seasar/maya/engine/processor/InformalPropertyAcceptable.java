@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.engine.processor;
 
+import org.seasar.maya.engine.specification.QNameable;
+
 /**
  * あらかじめ、MLD（Maya Library Definition）ファイルに記述されてない
  * プロパティを受け入れる場合のインターフェイス。MLD記述されてるプロパティは
@@ -26,10 +28,17 @@ public interface InformalPropertyAcceptable
 
 	/**
 	 * 非MLDなインフォーマルプロパティの受け入れメソッド。
+     * @param name プロパティ名。
 	 * @param property インフォーマルプロパティ。
 	 */
-	void addInformalProperty(ProcessorProperty property);
+	void addInformalProperty(QNameable name, Object property);
 
+    /**
+     * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。
+     * @return インフォーマルプロパティ型。
+     */
+    Class getPropertyType();
+    
     /**
      * インフォーマルプロパティの予測される型を取得する。
      * @return インフォーマルプロパティの予測される型。

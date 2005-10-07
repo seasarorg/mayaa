@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.builder.library;
 
-import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.provider.Parameterizable;
 
@@ -75,14 +74,6 @@ public interface PropertyDefinition extends Parameterizable {
      * @return コンバータ名。
      */
     String getPropertyConverterName();
-    
-	/**
-	 * MLD指定のプロパティ値コンバータの取得。
-     * @param processorDef プロセッサ定義。
-	 * @return コンバータ。
-	 */
-    PropertyConverter getPropertyConverter(
-            ProcessorDefinition processorDef);
     
     /**
      * プロパティオブジェクトを生成する。

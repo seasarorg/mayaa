@@ -29,8 +29,8 @@ public interface VirtualPropertyAcceptable
     /**
      * バーチャルプロパティへの値設定。
      * @param name プロパティ名。
-     * @param value プロパティ値。
+     * @param property プロパティ値。
      */
-    void addVirtualProperty(QNameable name, Object value);
+    void addVirtualProperty(QNameable name, Object property);
     
 }

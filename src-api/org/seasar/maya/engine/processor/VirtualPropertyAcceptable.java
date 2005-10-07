@@ -15,6 +15,8 @@
  */
 package org.seasar.maya.engine.processor;
 
+import org.seasar.maya.engine.specification.QNameable;
+
 /**
  * あらかじめ、MLD（Maya Library Definition）ファイルに記述されているが、
  * プロセッサに固有のプロパティが無い場合（バーチャルプロパティ）
@@ -29,6 +31,6 @@ public interface VirtualPropertyAcceptable
      * @param name プロパティ名。
      * @param value プロパティ値。
      */
-    void addProperty(String name, Object value);
+    void addVirtualProperty(QNameable name, Object value);
     
 }

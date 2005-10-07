@@ -107,6 +107,9 @@ public class PropertySetImpl implements PropertySet {
         if(StringUtil.isEmpty(namespaceURI) || attr == null) {
             throw new IllegalArgumentException();
         }
+        if(_propertyNames == null) {
+            return false;
+        }
         String attrNS = attr.getQName().getNamespaceURI();
         String attrName = attr.getQName().getLocalName();
         return _propertyNames.contains(attrName) && 

@@ -32,7 +32,7 @@ public class ProcessorPropertyConverter implements PropertyConverter {
 
 	public Object convert(
 			NodeAttribute attribute, String value, Class expectedType) {
-        if(attribute == null || value == null || expectedType == null) {
+        if(attribute == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
         return new ProcessorPropertyImpl(

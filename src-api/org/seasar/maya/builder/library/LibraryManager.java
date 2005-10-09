@@ -45,10 +45,10 @@ public interface LibraryManager extends Parameterizable {
 
     /**
      * プロパティ型コンバータの取得。
-     * @param propertyType プロパティ型。
+     * @param propertyClass プロパティ型。
      * @return コンバータ。もしくはnull。
      */
-    PropertyConverter getPropertyConverter(Class propertyType);
+    PropertyConverter getPropertyConverter(Class propertyClass);
 
     /**
      * プロパティ型コンバータのイテレータ。

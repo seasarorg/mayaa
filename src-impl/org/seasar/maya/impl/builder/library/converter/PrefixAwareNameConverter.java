@@ -26,12 +26,12 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
  */
 public class PrefixAwareNameConverter implements PropertyConverter {
 
-	public Class getPropetyType() {
+	public Class getPropetyClass() {
 		return PrefixAwareName.class;
 	}
 
 	public Object convert(
-			NodeAttribute attribute, String value, Class expectedType) {
+			NodeAttribute attribute, String value, Class expectedClass) {
         if(attribute == null || value == null) {
             throw new IllegalArgumentException();
         }

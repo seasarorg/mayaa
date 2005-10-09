@@ -51,11 +51,11 @@ public interface PropertyDefinition extends Parameterizable {
     boolean isRequired();
     
     /**
-     * MLDにexpectedType属性で記述された属性型。
+     * MLDにexpectedClass属性で記述された属性型。
      * デフォルトはjava.lang.Object。
      * @return 属性型。
      */
-    Class getExpectedType();
+    Class getExpectedClass();
     
     /**
      * MLDのdefault属性値。カスタマイズで渡すプロパティのデフォルト値。

@@ -27,7 +27,7 @@ public class LiteralScript  implements CompiledScript {
 	private static final long serialVersionUID = -3791475287481727514L;
     
 	private String _text;
-    private Class _expectedType = Object.class;
+    private Class _expectedClass = Object.class;
     
     public LiteralScript(String text) {
         if(text == null) {
@@ -36,32 +36,32 @@ public class LiteralScript  implements CompiledScript {
         _text = text;
     }
     
-    public void setExpectedType(Class expectedType) {
-        if(expectedType == null) {
+    public void setExpectedClass(Class expectedClass) {
+        if(expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        _expectedType = expectedType;
+        _expectedClass = expectedClass;
     }
 
-    public Class getExpectedType() {
-        return _expectedType;
+    public Class getExpectedClass() {
+        return _expectedClass;
     }
     
     public Object execute(Object[] args) {
-        if(_expectedType == Void.class) {
+        if(_expectedClass == Void.class) {
             return null;
         }
         if (StringUtil.isEmpty(_text)) {
             return "";
         }
-        return ObjectUtil.convert(_expectedType, _text);
+        return ObjectUtil.convert(_expectedClass, _text);
     }
 
-    public void setMethodArgTypes(Class[] methodArgTypes) {
+    public void setMethodArgClasses(Class[] methodArgClasses) {
         // do nothing.
     }
     
-    public Class[] getMethodArgTypes() {
+    public Class[] getMethodArgClasses() {
         return null;
     }
 

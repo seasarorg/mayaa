@@ -36,16 +36,16 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
         return _instance;
     }
     
-    public Object evaluate(String expression, Class expectedType,
+    public Object evaluate(String expression, Class expectedClass,
             VariableResolver vResolver, FunctionMapper fMapper)
             throws ELException {
-        Expression exp = parseExpression(expression, expectedType, fMapper);
+        Expression exp = parseExpression(expression, expectedClass, fMapper);
         return exp.evaluate(vResolver);
     }
 
     public Expression parseExpression(String expression, 
-            Class expectedType, FunctionMapper fMapper) {
-        CompiledScript script = ScriptUtil.compile(expression, expectedType);
+            Class expectedClass, FunctionMapper fMapper) {
+        CompiledScript script = ScriptUtil.compile(expression, expectedClass);
         return new ExpressionImpl(script);
     }
 

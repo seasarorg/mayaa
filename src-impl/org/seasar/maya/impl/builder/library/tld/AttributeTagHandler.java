@@ -55,8 +55,8 @@ public class AttributeTagHandler extends TagHandler {
         putHandler(new TagHandler("type") {
             protected void end(String body) {
                 try {
-                    Class expetedType = ObjectUtil.loadClass(body);
-                    _property.setExpectedType(expetedType);
+                    Class expectedClass = ObjectUtil.loadClass(body);
+                    _property.setExpectedClass(expectedClass);
                 } catch (RuntimeException e) {
                     if(LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);

@@ -171,11 +171,11 @@ public class PageAttributeScope extends ScriptableObject
         }
     }
 
-    public Object newAttribute(String name, Class attributeType) {
+    public Object newAttribute(String name, Class attributeClass) {
         if(hasAttribute(name)) {
             return getAttribute(name); 
         }
-        Object model = ObjectUtil.newInstance(attributeType);
+        Object model = ObjectUtil.newInstance(attributeClass);
         setAttribute(name, model);
         return model;
     }

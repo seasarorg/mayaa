@@ -58,8 +58,8 @@ public class EchoProcessor extends ElementProcessor
         for (Iterator it = node.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
             String value = attribute.getValue();
-            Class type = getExpectedType();
-            Object property = converter.convert(attribute, value, type);
+            Class expectedClass = getExpectedClass();
+            Object property = converter.convert(attribute, value, expectedClass);
             super.addInformalProperty(attribute, property);
         }
     }

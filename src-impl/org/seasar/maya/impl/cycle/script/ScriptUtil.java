@@ -38,8 +38,8 @@ public class ScriptUtil {
         return provider.getScriptEnvironment();
     }
 
-    public static CompiledScript compile(String text, Class expectedType) {
-        if(expectedType == null) {
+    public static CompiledScript compile(String text, Class expectedClass) {
+        if(expectedClass == null) {
         	throw new IllegalArgumentException();
         }
         CompiledScript compiled;
@@ -52,7 +52,7 @@ public class ScriptUtil {
         } else {
             compiled = new LiteralScript("");
         }
-        compiled.setExpectedType(expectedType);
+        compiled.setExpectedClass(expectedClass);
         return compiled;
     }
 

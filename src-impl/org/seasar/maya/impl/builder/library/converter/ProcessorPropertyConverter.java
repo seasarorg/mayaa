@@ -26,17 +26,17 @@ import org.seasar.maya.impl.provider.UnsupportedParameterException;
  */
 public class ProcessorPropertyConverter implements PropertyConverter {
 
-	public Class getPropetyType() {
+	public Class getPropetyClass() {
 		return ProcessorProperty.class;
 	}
 
 	public Object convert(
-			NodeAttribute attribute, String value, Class expectedType) {
-        if(attribute == null || expectedType == null) {
+			NodeAttribute attribute, String value, Class expectedClass) {
+        if(attribute == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }
         return new ProcessorPropertyImpl(
-                attribute, value, expectedType);
+                attribute, value, expectedClass);
 	}
 
     // Parameterizable implements ------------------------------------

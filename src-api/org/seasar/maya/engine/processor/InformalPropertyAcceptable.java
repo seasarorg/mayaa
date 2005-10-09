@@ -37,12 +37,12 @@ public interface InformalPropertyAcceptable
      * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。
      * @return インフォーマルプロパティ型。
      */
-    Class getPropertyType();
+    Class getPropertyClass();
     
     /**
      * インフォーマルプロパティの予測される型を取得する。
      * @return インフォーマルプロパティの予測される型。
      */
-    Class getExpectedType();
+    Class getExpectedClass();
 
 }

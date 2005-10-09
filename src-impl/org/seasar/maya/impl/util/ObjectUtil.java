@@ -112,15 +112,15 @@ public class ObjectUtil {
         }
     }
 
-    public static Class loadClass(String className, Class expectedType) {
-        if(expectedType == null) {
+    public static Class loadClass(String className, Class expectedClass) {
+        if(expectedClass == null) {
             throw new IllegalArgumentException();
         }
         Class clazz = loadClass(className);
-        if(expectedType.isAssignableFrom(clazz)) {
+        if(expectedClass.isAssignableFrom(clazz)) {
             return clazz;
         }
-        throw new IllegalTypeException(expectedType, clazz);
+        throw new IllegalClassTypeException(expectedClass, clazz);
     }
 
     public static Object newInstance(Class clazz) {
@@ -148,7 +148,7 @@ public class ObjectUtil {
         return false;
     }
 
-    public static Class getPropertyType(
+    public static Class getPropertyClass(
             Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors = 
             PropertyUtils.getPropertyDescriptors(beanClass);
@@ -160,7 +160,7 @@ public class ObjectUtil {
         return null;
     }
 
-    public static Class getPropertyType(
+    public static Class getPropertyClass(
             Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
@@ -173,10 +173,10 @@ public class ObjectUtil {
         }
     }
 
-    public static Object convert(Class expectedType, Object value) {
-        Converter converter = ConvertUtils.lookup(expectedType);
+    public static Object convert(Class expectedClass, Object value) {
+        Converter converter = ConvertUtils.lookup(expectedClass);
         if(converter != null) {
-            return converter.convert(expectedType, value);
+            return converter.convert(expectedClass, value);
         }
         return value;
     }
@@ -184,12 +184,12 @@ public class ObjectUtil {
     public static void setProperty(
             Object bean, String propertyName, Object value) {
         try {
-            Class propertyType = getPropertyType(bean, propertyName);
-            if(propertyType == null) {
+            Class propertyClass = getPropertyClass(bean, propertyName);
+            if(propertyClass == null) {
                 throw new NoSuchPropertyException(
                         bean.getClass(), propertyName);
             }
-            value = convert(propertyType, value);
+            value = convert(propertyClass, value);
             PropertyUtils.setProperty(bean, propertyName, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -212,10 +212,11 @@ public class ObjectUtil {
         }
     }
 
-    public static Object invoke(
-            Object bean, String methodName, Object[] args, Class[] types) {
+    public static Object invoke(Object bean, 
+            String methodName, Object[] args, Class[] argClasses) {
         try {
-            return MethodUtils.invokeMethod(bean, methodName, args, types);
+            return MethodUtils.invokeMethod(
+                    bean, methodName, args, argClasses);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -225,7 +226,8 @@ public class ObjectUtil {
         }
     }
     
-    public static boolean booleanValue(Object obj, boolean defaultValue) {
+    public static boolean booleanValue(
+            Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);
         return ((Boolean)converter.convert(null, obj)).booleanValue();

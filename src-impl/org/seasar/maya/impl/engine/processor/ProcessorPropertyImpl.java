@@ -29,12 +29,12 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     private CompiledScript _compiled;
 
     public ProcessorPropertyImpl(
-            PrefixAwareName name, String value, Class expectedType) {
-        if(name == null || expectedType == null) {
+            PrefixAwareName name, String value, Class expectedClass) {
+        if(name == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }
         _name = name;
-        _compiled = ScriptUtil.compile(value, expectedType);
+        _compiled = ScriptUtil.compile(value, expectedClass);
     }
 
     public PrefixAwareName getName() {

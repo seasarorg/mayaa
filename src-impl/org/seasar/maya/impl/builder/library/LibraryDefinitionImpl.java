@@ -85,7 +85,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
     		throw new IllegalArgumentException();
     	}
     	if(StringUtil.isEmpty(name)) {
-    		name = converter.getPropetyType().getName();
+    		name = converter.getPropetyClass().getName();
     	}
     	if(_converters == null) {
     		_converters = new HashMap();
@@ -97,21 +97,21 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         }
     }
     
-    public PropertyConverter getPropertyConverter(Class propertyType) {
-    	if(propertyType == null) {
+    public PropertyConverter getPropertyConverter(Class propertyClass) {
+    	if(propertyClass == null) {
     		throw new IllegalArgumentException();
     	}
         if(_converters != null) {
         	for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
         		PropertyConverter converter = (PropertyConverter)it.next();
-        		if(propertyType.equals(converter.getPropetyType())) {
+        		if(propertyClass.equals(converter.getPropetyClass())) {
         			return converter;
         		}
         	}
         }
         LibraryManager manager = 
             ProviderFactory.getServiceProvider().getLibraryManager();
-        return manager.getPropertyConverter(propertyType);
+        return manager.getPropertyConverter(propertyClass);
 	}
 
 	public PropertyConverter getPropertyConverter(String converterName) {

@@ -35,12 +35,12 @@ public class ForProcessor extends TemplateProcessorSupport
     private int _max = 256;
     private ThreadLocal _counter = new ThreadLocal();
     
-    // MLD property, expectedType=void
+    // MLD property, expectedClass=void
     public void setInit(ProcessorProperty init) {
         _init = init;
     }
 
-    // MLD property, required=true, expectedType=boolean
+    // MLD property, required=true, expectedClass=boolean
     public void setTest(ProcessorProperty test) {
         if(test == null) {
         	throw new IllegalArgumentException();
@@ -48,7 +48,7 @@ public class ForProcessor extends TemplateProcessorSupport
         _test = test;
     }
     
-    // MLD property, expectedType=void
+    // MLD property, expectedClass=void
     public void setAfter(ProcessorProperty after) {
         _after = after;
     }

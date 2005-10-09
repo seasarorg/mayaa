@@ -59,7 +59,7 @@ public class LibraryManagerImpl implements LibraryManager {
             throw new IllegalArgumentException();
         }
         if(StringUtil.isEmpty(name)) {
-        	name = propertyConverter.getPropetyType().getName();
+        	name = propertyConverter.getPropetyClass().getName();
         }
         _converters.put(name, propertyConverter);
     }
@@ -71,14 +71,14 @@ public class LibraryManagerImpl implements LibraryManager {
 		return (PropertyConverter)_converters.get(converterName);
 	}
 
-	public PropertyConverter getPropertyConverter(Class propertyType) {
-        if(propertyType == null) {
+	public PropertyConverter getPropertyConverter(Class propertyClass) {
+        if(propertyClass == null) {
             throw new IllegalArgumentException();
         }
         for(Iterator it = _converters.values().iterator(); it.hasNext(); ) {
             PropertyConverter propertyConverter = (PropertyConverter)it.next();
-            Class converterType = propertyConverter.getPropetyType();
-            if(propertyType.isAssignableFrom(converterType)) {
+            Class converterClass = propertyConverter.getPropetyClass();
+            if(propertyClass.isAssignableFrom(converterClass)) {
                 return propertyConverter;
             }
         }

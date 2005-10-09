@@ -39,7 +39,7 @@ public abstract class AbstractReadOnlyAttributeScope
         throw new UnsupportedOperationException();
     }
 
-    public Object newAttribute(String name, Class attributeType) {
+    public Object newAttribute(String name, Class attributeClass) {
         throw new UnsupportedOperationException();
     }
     

@@ -25,7 +25,7 @@ public class ComplexScript implements CompiledScript {
 
  	private static final long serialVersionUID = -7356099026354564155L;
 
-    private Class _expectedType = Object.class;
+    private Class _expectedClass = Object.class;
     private CompiledScript[] _compiled;
     
     public ComplexScript(CompiledScript[] compiled) {
@@ -34,19 +34,19 @@ public class ComplexScript implements CompiledScript {
         }
         _compiled = compiled;
         for(int i = 0; i < compiled.length; i++) {
-            compiled[i].setExpectedType(String.class);
+            compiled[i].setExpectedClass(String.class);
         }
     }
     
-    public void setExpectedType(Class expectedType) {
-        if(expectedType == null) {
+    public void setExpectedClass(Class expectedClass) {
+        if(expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        _expectedType = expectedType;
+        _expectedClass = expectedClass;
     }
     
-    public Class getExpectedType() {
-        return _expectedType;
+    public Class getExpectedClass() {
+        return _expectedClass;
     }
     
     public Object execute(Object[] args) {
@@ -54,17 +54,17 @@ public class ComplexScript implements CompiledScript {
         for(int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].execute(null));
         }
-        if(_expectedType == Void.class) {
+        if(_expectedClass == Void.class) {
             return null;
         }
-        return ObjectUtil.convert(_expectedType, buffer.toString());
+        return ObjectUtil.convert(_expectedClass, buffer.toString());
     }
 
-    public void setMethodArgTypes(Class[] methodArgTypes) {
+    public void setMethodArgClasses(Class[] methodArgClasses) {
         // do nothing.
     }
     
-    public Class[] getMethodArgTypes() {
+    public Class[] getMethodArgClasses() {
         return null;
     }
 

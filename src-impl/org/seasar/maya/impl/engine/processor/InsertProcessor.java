@@ -75,11 +75,11 @@ public class InsertProcessor
         _attributes.add(attr);
     }
 
-    public Class getPropertyType() {
+    public Class getPropertyClass() {
         return ProcessorProperty.class;
     }
 
-    public Class getExpectedType() {
+    public Class getExpectedClass() {
         return Object.class;
     }
 

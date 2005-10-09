@@ -29,17 +29,17 @@ public abstract class AbstractWritableAttributeScope
         return true;
     }
 
-    public Object newAttribute(String name, Class attributeType) {
-        if(attributeType == null) {
+    public Object newAttribute(String name, Class attributeClass) {
+        if(attributeClass == null) {
             throw new IllegalArgumentException();
         }
         if(StringUtil.isEmpty(name)) {
-            name = attributeType.getName();
+            name = attributeClass.getName();
         }
         if(hasAttribute(name)) {
             return getAttribute(name); 
         }
-        Object model = ObjectUtil.newInstance(attributeType);
+        Object model = ObjectUtil.newInstance(attributeClass);
         setAttribute(name, model);
         return model;
     }

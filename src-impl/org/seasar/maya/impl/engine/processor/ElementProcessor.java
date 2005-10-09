@@ -75,7 +75,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _name = name;
     }
 
-    public Class getExpectedType() {
+    public Class getExpectedClass() {
         return String.class;
     }
 

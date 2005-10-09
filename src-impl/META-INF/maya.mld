@@ -24,13 +24,13 @@
 	<processor name="comment"
 			class="org.seasar.maya.impl.engine.processor.CommentProcessor">
 		<description>comment on the template</description>
-		<property name="text" expectedType="java.lang.String"/>
+		<property name="text" expectedClass="java.lang.String"/>
 	</processor>
 
 	<processor name="characters"
 			class="org.seasar.maya.impl.engine.processor.CharactersProcessor">
 		<description>text on the template</description>
-		<property name="text" expectedType="java.lang.String"/>
+		<property name="text" expectedClass="java.lang.String"/>
 	</processor>
 
 	<processor name="cdata"
@@ -64,7 +64,7 @@
 			class="org.seasar.maya.impl.engine.processor.AttributeProcessor">
 		<description>m:attribute injection</description>
 		<property name="name" required="true"/>
-		<property name="value" required="true" expectedType="java.lang.String"/>
+		<property name="value" required="true" expectedClass="java.lang.String"/>
 	</processor>
 
 	<processor name="doBody"
@@ -105,29 +105,29 @@
 
 	<processor name="exec"
 			class="org.seasar.maya.impl.engine.processor.ExecProcessor">
-		<property name="script" expectedType="void"/>
-		<property name="src" expectedType="java.lang.String"/> 
-		<property name="encoding" expectedType="java.lang.String"/> 
+		<property name="script" expectedClass="void"/>
+		<property name="src" expectedClass="java.lang.String"/> 
+		<property name="encoding" expectedClass="java.lang.String"/> 
 	</processor>		
 
 	<processor name="write"
 			class="org.seasar.maya.impl.engine.processor.WriteProcessor">
-		<property name="value" required="true" expectedType="java.lang.String"/>
+		<property name="value" required="true" expectedClass="java.lang.String"/>
 		<property name="default"/> 
-		<property name="escapeXml" expectedType="boolean"/> 
+		<property name="escapeXml" expectedClass="boolean"/> 
 	</processor>		
 
 	<processor name="for"
 			class="org.seasar.maya.impl.engine.processor.ForProcessor">
-		<property name="init" expectedType="void"/>
-		<property name="test" required="true" expectedType="boolean"/>
-		<property name="after" expectedType="void"/>
+		<property name="init" expectedClass="void"/>
+		<property name="test" required="true" expectedClass="boolean"/>
+		<property name="after" expectedClass="void"/>
 		<property name="max" default="256"/>
 	</processor>		
 
 	<processor name="if"
 			class="org.seasar.maya.impl.engine.processor.IfProcessor">
-		<property name="test" required="true" expectedType="boolean"/>
+		<property name="test" required="true" expectedClass="boolean"/>
 	</processor>		
 
 	<processor name="echo"

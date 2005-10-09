@@ -25,29 +25,29 @@ public abstract class AbstractCompiledScript
 
     private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
-    private Class _expectedType = Object.class;
-    private Class[] _methodArgTypes;
+    private Class _expectedClass = Object.class;
+    private Class[] _methodArgClasses;
     
-    public void setExpectedType(Class expectedType) {
-        if(expectedType == null) {
-            expectedType = Object.class;
+    public void setExpectedClass(Class expectedClass) {
+        if(expectedClass == null) {
+            expectedClass = Object.class;
         }
-        _expectedType = expectedType;
+        _expectedClass = expectedClass;
     }
 
-    public Class getExpectedType() {
-        return _expectedType;
+    public Class getExpectedClass() {
+        return _expectedClass;
     }
 
-    public void setMethodArgTypes(Class[] methodArgTypes) {
-        if(methodArgTypes == null) {
-            methodArgTypes = ZERO_ARGS_TYPE;
+    public void setMethodArgClasses(Class[] methodArgClasses) {
+        if(methodArgClasses == null) {
+            methodArgClasses = ZERO_ARGS_TYPE;
         }
-        _methodArgTypes = methodArgTypes;
+        _methodArgClasses = methodArgClasses;
     }
     
-    public Class[] getMethodArgTypes() {
-        return _methodArgTypes;
+    public Class[] getMethodArgClasses() {
+        return _methodArgClasses;
     }
     
     public boolean isLiteral() {

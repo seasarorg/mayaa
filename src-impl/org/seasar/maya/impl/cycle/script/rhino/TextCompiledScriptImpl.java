@@ -129,8 +129,8 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             Object func = ((Scriptable)host).get(_elStyleName, scope);
             return ((Function)func).call(cx, scope, (Scriptable)host, args);
         }
-        Class[] types = getMethodArgTypes();
-        return ObjectUtil.invoke(host, _elStyleName, args, types);
+        Class[] argClasses = getMethodArgClasses();
+        return ObjectUtil.invoke(host, _elStyleName, args, argClasses);
     }
     
     public Object execute(Object[] args) {
@@ -145,7 +145,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             } else {
                 jsRet = normalExecute(cx, scope);
             }
-            ret = RhinoUtil.convertResult(cx, getExpectedType(), jsRet);
+            ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
         } catch(WrappedException e) {
             RhinoUtil.removeWrappedException(e);
         } finally {

@@ -51,8 +51,8 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
-        Class propertyType = getPropertyType(processorDef);
-        if(propertyType == null) {
+        Class propertyClass = getPropertyClass(processorDef);
+        if(propertyClass == null) {
             // real property not found on the tag.
             String processorName = processorDef.getName();
             if(LOG.isWarnEnabled()) {
@@ -67,7 +67,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         if(attribute != null) {
             String value = attribute.getValue();
             PropertyConverter converter = getConverterForProcessorProperty(); 
-            return converter.convert(attribute, value, propertyType);
+            return converter.convert(attribute, value, propertyClass);
         } else if(isRequired()) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);

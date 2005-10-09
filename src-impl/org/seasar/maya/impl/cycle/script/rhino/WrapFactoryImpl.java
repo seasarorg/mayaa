@@ -30,7 +30,7 @@ import org.seasar.maya.cycle.scope.AttributeScope;
 public class WrapFactoryImpl extends WrapFactory {
 
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
-            Object javaObject, Class staticType) {
+            Object javaObject, Class staticClass) {
         if(javaObject instanceof Map) {
             return new NativeMap(scope, (Map)javaObject);
         } else if(javaObject instanceof List) {
@@ -43,7 +43,7 @@ public class WrapFactoryImpl extends WrapFactory {
             ServiceCycle cycle = (ServiceCycle)javaObject;
             return new NativeServiceCycle(scope, cycle);
         }
-        return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
+        return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);
     }
     
 }

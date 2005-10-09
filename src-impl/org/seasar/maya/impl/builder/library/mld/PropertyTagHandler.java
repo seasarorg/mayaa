@@ -43,15 +43,15 @@ public class PropertyTagHandler
         String name = attributes.getValue("name");
         boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
-        Class expectedType = XMLUtil.getClassValue(
-                attributes, "expectedType", Object.class);
+        Class expectedClass = XMLUtil.getClassValue(
+                attributes, "expectedClass", Object.class);
         String finalValue = attributes.getValue("final");
         String defaultValue = attributes.getValue("default");
         String converterName = attributes.getValue("converterName");
         _propertyDefinition = new PropertyDefinitionImpl();
         _propertyDefinition.setName(name);
         _propertyDefinition.setRequired(required);
-        _propertyDefinition.setExpectedType(expectedType);
+        _propertyDefinition.setExpectedClass(expectedClass);
         _propertyDefinition.setFinalValue(finalValue);
         _propertyDefinition.setDefaultValue(defaultValue);
         _propertyDefinition.setPropertyConverterName(converterName);

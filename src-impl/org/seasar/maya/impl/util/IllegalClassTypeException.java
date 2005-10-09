@@ -20,19 +20,19 @@ import org.seasar.maya.impl.MayaException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalTypeException extends MayaException {
+public class IllegalClassTypeException extends MayaException {
 
 	private static final long serialVersionUID = -5744177696584258746L;
-	private Class _expectedType;
+	private Class _expectedClass;
     private Class _value;
     
-    public IllegalTypeException(Class expectedType, Class value) {
-        _expectedType = expectedType;
+    public IllegalClassTypeException(Class expectedClass, Class value) {
+        _expectedClass = expectedClass;
         _value = value;
     }
     
-    public Class getExpectedType() {
-        return _expectedType;
+    public Class getExpectedClass() {
+        return _expectedClass;
     }
     
     public Class getValue() {
@@ -40,7 +40,7 @@ public class IllegalTypeException extends MayaException {
     }
     
     protected String[] getMessageParams() {
-        return new String[] { _expectedType.getName(), _value.getName() };
+        return new String[] { _expectedClass.getName(), _value.getName() };
     }
     
 }

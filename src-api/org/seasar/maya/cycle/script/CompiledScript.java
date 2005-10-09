@@ -25,15 +25,15 @@ public interface CompiledScript extends Serializable {
 
     /**
      * スクリプト実行結果への期待型の設定。
-     * @param expectedType 実行結果に期待するクラス型。
+     * @param expectedClass 実行結果に期待するクラス型。
      */
-    void setExpectedType(Class expectedType);
+    void setExpectedClass(Class expectedClass);
     
     /**
      * スクリプト実行結果への期待型の取得。
      * @return 実行結果に期待されるクラス型。
      */
-    Class getExpectedType();
+    Class getExpectedClass();
     
     /**
      * リテラルテキストかどうか。
@@ -51,16 +51,16 @@ public interface CompiledScript extends Serializable {
     /**
      * JSF等の式言語様式実行ミドルウェア対応。
      * 式言語様式のメソッドコールのための引数型を設定する。 
-     * @param methodArgTypes メソッド引数型配列。
+     * @param methodArgClasses メソッド引数型配列。
      */
-    void setMethodArgTypes(Class[] methodArgTypes);
+    void setMethodArgClasses(Class[] methodArgClasses);
 
     /**
      * JSF等の式言語様式実行ミドルウェア対応。
      * 式言語様式のメソッドコールのための引数型を取得する。 
      * @return メソッド引数型配列。
      */
-    Class[] getMethodArgTypes();
+    Class[] getMethodArgClasses();
     
     /**
      * JSF等の式言語様式実行ミドルウェア対応。

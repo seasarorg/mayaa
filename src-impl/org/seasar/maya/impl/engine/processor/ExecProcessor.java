@@ -32,17 +32,17 @@ public class ExecProcessor extends TemplateProcessorSupport {
     private ProcessorProperty _src;
     private ProcessorProperty _encoding;
     
-    // MLD property, expectedType=java.lang.String
+    // MLD property, expectedClass=java.lang.String
     public void setSrc(ProcessorProperty src) {
         _src = src;
     }
     
-    // MLD property, expectedType=java.lang.String
+    // MLD property, expectedClass=java.lang.String
     public void setEncoding(ProcessorProperty encoding) {
         _encoding = encoding;
     }
 
-    // MLD property, expectedType=void
+    // MLD property, expectedClass=void
     public void setScript(ProcessorProperty script) {
         _script = script;
     }

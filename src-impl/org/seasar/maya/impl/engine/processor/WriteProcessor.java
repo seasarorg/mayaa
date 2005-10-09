@@ -34,7 +34,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
     private String _default;
     private ProcessorProperty _escapeXml;
 
-    // MLD property, expectedType=java.lang.String
+    // MLD property, expectedClass=java.lang.String
     public void setValue(ProcessorProperty value) {
         _value = value;
     }

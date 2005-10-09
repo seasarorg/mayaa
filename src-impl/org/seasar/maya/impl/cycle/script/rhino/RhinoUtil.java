@@ -51,15 +51,15 @@ public class RhinoUtil {
     }
 
     public static Object convertResult(
-            Context cx, Class expectedType, Object jsRet) {
+            Context cx, Class expectedClass, Object jsRet) {
         Object ret = null;
-        if(expectedType.equals(Boolean.TYPE)) {
+        if(expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3 
             ret = JavaAdapter.convertResult(jsRet, Object.class);
-        } else if(expectedType != Void.class) {
-            ret = JavaAdapter.convertResult(jsRet, expectedType);
+        } else if(expectedClass != Void.class) {
+            ret = JavaAdapter.convertResult(jsRet, expectedClass);
         }
-        if(expectedType == Void.class) {
+        if(expectedClass == Void.class) {
             ret = null;
         }
         return ret;

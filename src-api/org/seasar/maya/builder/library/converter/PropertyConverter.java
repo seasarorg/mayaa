@@ -28,15 +28,15 @@ public interface PropertyConverter extends Parameterizable {
      * このコンバータが処理を行うプロパティの静的型を取得する。
      * @return プロパティ型。
      */
-    Class getPropetyType();
+    Class getPropetyClass();
     
     /**
      * プロパティの変換を行う。
      * @param attribute 設定属性。
      * @param value 変換する文字列値。
-     * @param expectedType 動的値の場合に期待する動的型。
+     * @param expectedClass 動的値の場合に期待する動的型。
      * @return 変換値。
      */
-    Object convert(NodeAttribute attribute, String value, Class expectedType);
+    Object convert(NodeAttribute attribute, String value, Class expectedClass);
     
 }

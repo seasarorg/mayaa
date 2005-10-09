@@ -139,16 +139,16 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 continue;
             }
             LibraryDefinition library = getLibraryDefinition();
-            Class propertyType = acceptable.getPropertyType();
+            Class propertyClass = acceptable.getPropertyClass();
             PropertyConverter converter = 
-                library.getPropertyConverter(propertyType);
+                library.getPropertyConverter(propertyClass);
             if(converter == null) {
                 // TODO 設定ミス例外。
                 throw new IllegalStateException();
             }
-            Class expectedType = acceptable.getExpectedType();
+            Class expectedClass = acceptable.getExpectedClass();
             String value = attr.getValue();
-            Object property = converter.convert(attr, value, expectedType);
+            Object property = converter.convert(attr, value, expectedClass);
             if(property == null) {
                 // TODO ユーザーコンバーターの実装ミス例外。
                 throw new IllegalStateException();

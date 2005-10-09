@@ -29,7 +29,7 @@ public class IfProcessor extends TemplateProcessorSupport {
 
 	private ProcessorProperty _test;
     
-    // MLD property, expectedType=boolean
+    // MLD property, expectedClass=boolean
     public void setTest(ProcessorProperty test) {
         if(test == null) {
         	throw new IllegalArgumentException();

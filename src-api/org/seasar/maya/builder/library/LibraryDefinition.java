@@ -60,10 +60,10 @@ public interface LibraryDefinition extends Parameterizable {
     
     /**
      * 登録コンバータの取得。
-     * @param propertyType コンバート対象型。
+     * @param propertyClass コンバート対象型。
      * @return 指定型に対応したコンバータ、もしくはnull。
      */
-    PropertyConverter getPropertyConverter(Class propertyType);
+    PropertyConverter getPropertyConverter(Class propertyClass);
     
     /**
      * 登録プロパティセットのイテレータ。

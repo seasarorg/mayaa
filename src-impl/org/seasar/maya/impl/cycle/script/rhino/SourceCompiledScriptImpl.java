@@ -75,7 +75,7 @@ public class SourceCompiledScriptImpl
         try {
             compileFromSource(cx, getSource());
             Object jsRet = _rhinoScript.exec(cx, RhinoUtil.getScope());
-            ret = RhinoUtil.convertResult(cx, getExpectedType(), jsRet);
+            ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
         } catch(WrappedException e) {
             RhinoUtil.removeWrappedException(e);
         } finally {

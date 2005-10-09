@@ -46,21 +46,20 @@ public class ConverterTagHandler
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-    	PropertyConverter converter =
-    		(PropertyConverter)XMLUtil.getObjectValue(
+        _propertyConverter = (PropertyConverter)XMLUtil.getObjectValue(
     				attributes, "class", null, PropertyConverter.class);
-        if(converter == null) {
+        if(_propertyConverter == null) {
         	throw new IllegalStateException();
         }
         if(_parent instanceof PropertyTagHandler) {
             PropertyDefinitionImpl propertyDef = 
                 ((PropertyTagHandler)_parent).getPropertyDefinition();
-            propertyDef.setPropertyConverter(converter);
+            propertyDef.setPropertyConverter(_propertyConverter);
         }
         String name = XMLUtil.getStringValue(attributes, "name", "");
     	LibraryDefinitionImpl libraryDef =
     		_libraryTagHandler.getLibraryDefinition();
-    	libraryDef.addPropertyConverter(name, converter);
+    	libraryDef.addPropertyConverter(name, _propertyConverter);
     }
     
     protected void end(String body) {

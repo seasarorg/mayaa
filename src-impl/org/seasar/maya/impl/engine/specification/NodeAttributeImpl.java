@@ -60,7 +60,7 @@ public class NodeAttributeImpl implements NodeAttribute {
         return getQName().toString();
     }
 
-    // QNameable implements ----------------------------------------
+    // PrefixAwareName implements ----------------------------------------
     
     public QName getQName() {
         return _qName;

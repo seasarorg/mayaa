@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.engine.processor;
 
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 
 /**
  * あらかじめ、MLD（Maya Library Definition）ファイルに記述されてない
@@ -31,7 +31,7 @@ public interface InformalPropertyAcceptable
      * @param name プロパティ名。
 	 * @param property インフォーマルプロパティ。
 	 */
-	void addInformalProperty(QNameable name, Object property);
+	void addInformalProperty(PrefixAwareName name, Object property);
 
     /**
      * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。

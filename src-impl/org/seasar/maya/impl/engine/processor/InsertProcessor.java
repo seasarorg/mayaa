@@ -32,7 +32,7 @@ import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
@@ -68,7 +68,7 @@ public class InsertProcessor
     }
     
     // MLD method
-    public void addInformalProperty(QNameable name, Object attr) {
+    public void addInformalProperty(PrefixAwareName name, Object attr) {
         if(_attributes == null) {
             _attributes = new ArrayList();
         }

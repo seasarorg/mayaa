@@ -25,7 +25,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -39,7 +39,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
 	private static final long serialVersionUID = 923306412062075314L;
 
-	private QNameable _name;
+	private PrefixAwareName _name;
     private boolean _duplicated;
     private ThreadLocal _currentNS = new ThreadLocal();
 
@@ -68,7 +68,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     // MLD property
-    public void setName(QNameable name) {
+    public void setName(PrefixAwareName name) {
         if(name == null) {
             throw new IllegalArgumentException();
         }
@@ -79,7 +79,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return String.class;
     }
 
-    protected void resolvePrefix(QNameable name) {
+    protected void resolvePrefix(PrefixAwareName name) {
         if(name == null) {
             throw new IllegalArgumentException();
         }
@@ -112,7 +112,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
     }
 
-    protected String getResolvedPrefix(QNameable name) {
+    protected String getResolvedPrefix(PrefixAwareName name) {
         if(name == null) {
             throw new IllegalArgumentException();
         }

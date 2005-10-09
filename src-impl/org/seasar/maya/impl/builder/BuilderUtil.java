@@ -21,7 +21,7 @@ import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
@@ -56,7 +56,7 @@ public class BuilderUtil implements CONST_IMPL {
         return node;
     }
 
-    public static QNameable parseName(
+    public static PrefixAwareName parseName(
             Namespace namespace, String qName) {
         String[] parsed = qName.split(":");
         String prefix = null;
@@ -81,7 +81,7 @@ public class BuilderUtil implements CONST_IMPL {
         } else {
             throw new IllegalNameException(qName);
         }
-        QNameable ret = SpecificationUtil.createQNameable(
+        PrefixAwareName ret = SpecificationUtil.createPrefixAwareName(
                 SpecificationUtil.createQName(namespaceURI, localName));
         ret.setParentSpace(namespace);
         return ret;

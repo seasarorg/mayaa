@@ -17,7 +17,7 @@ package org.seasar.maya.impl.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 
 /**
@@ -25,11 +25,11 @@ import org.seasar.maya.impl.cycle.script.ScriptUtil;
  */
 public class ProcessorPropertyImpl implements ProcessorProperty {
 
-    private QNameable _name;
+    private PrefixAwareName _name;
     private CompiledScript _compiled;
 
     public ProcessorPropertyImpl(
-            QNameable name, String value, Class expectedType) {
+            PrefixAwareName name, String value, Class expectedType) {
         if(name == null || expectedType == null) {
             throw new IllegalArgumentException();
         }
@@ -37,7 +37,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
         _compiled = ScriptUtil.compile(value, expectedType);
     }
 
-    public QNameable getName() {
+    public PrefixAwareName getName() {
         return _name;
     }
 
@@ -47,7 +47,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
 
     public boolean equals(Object obj) {
         if (obj instanceof ProcessorProperty) {
-            QNameable otherName = ((ProcessorProperty) obj).getName();
+            PrefixAwareName otherName = ((ProcessorProperty) obj).getName();
             return _name.getQName().equals(otherName.getQName());
         }
         return false;

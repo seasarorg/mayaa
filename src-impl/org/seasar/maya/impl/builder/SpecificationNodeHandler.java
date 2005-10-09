@@ -22,7 +22,7 @@ import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -165,7 +165,7 @@ public class SpecificationNodeHandler
     public void startElement(String namespaceURI, 
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
-        QNameable parsedName = 
+        PrefixAwareName parsedName = 
             BuilderUtil.parseName(_namespace, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
@@ -177,7 +177,7 @@ public class SpecificationNodeHandler
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
             if(checkAttribute(attrName, attrValue)) {
-	            QNameable parsedAttrName = 
+                PrefixAwareName parsedAttrName = 
 	                BuilderUtil.parseName(elementNS, attrName);
 	            QName attrQName = parsedAttrName.getQName();
 	            node.addAttribute(attrQName, attrValue);

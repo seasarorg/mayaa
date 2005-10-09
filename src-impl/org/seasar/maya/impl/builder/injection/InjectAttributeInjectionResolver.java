@@ -18,7 +18,7 @@ package org.seasar.maya.impl.builder.injection;
 import org.seasar.maya.builder.injection.InjectionChain;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
@@ -43,9 +43,9 @@ public class InjectAttributeInjectionResolver
     	String injectName = 
             SpecificationUtil.getAttributeValue(original, QM_INJECT);
         if(StringUtil.hasValue(injectName)) {
-            QNameable qNameable = 
+            PrefixAwareName prefixAwareName = 
                 BuilderUtil.parseName(original, injectName);
-            QName qName = qNameable.getQName();
+            QName qName = prefixAwareName.getQName();
             if(QM_IGNORE.equals(qName) == false) {
 	            String uri = qName.getNamespaceURI();
 	            return BuilderUtil.createInjectedNode(

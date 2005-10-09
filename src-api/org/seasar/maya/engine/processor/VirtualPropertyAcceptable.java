@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.engine.processor;
 
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 
 /**
  * あらかじめ、MLD（Maya Library Definition）ファイルに記述されているが、
@@ -31,6 +31,6 @@ public interface VirtualPropertyAcceptable
      * @param name プロパティ名。
      * @param property プロパティ値。
      */
-    void addVirtualProperty(QNameable name, Object property);
+    void addVirtualProperty(PrefixAwareName name, Object property);
     
 }

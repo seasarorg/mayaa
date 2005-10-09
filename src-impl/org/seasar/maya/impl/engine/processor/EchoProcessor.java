@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 
@@ -50,7 +50,7 @@ public class EchoProcessor extends ElementProcessor
     }
 
     // MLD property of ElementProcessor
-    public void setName(QNameable name) {
+    public void setName(PrefixAwareName name) {
         // doNothing
     }
 

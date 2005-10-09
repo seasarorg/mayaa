@@ -16,7 +16,7 @@
 package org.seasar.maya.engine.processor;
 
 import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 
 /**
  * プロセッサに設定するプロパティのランタイムオブジェクト。
@@ -28,7 +28,7 @@ public interface ProcessorProperty {
      * プロセッサのプロパティ名。
      * @return プロパティ名。
      */
-    QNameable getName();
+    PrefixAwareName getName();
 
     /**
      * プロパティ値のコンパイル済みスクリプトオブジェクトを取得する。

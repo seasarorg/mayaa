@@ -24,7 +24,7 @@ import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -164,8 +164,8 @@ public class SpecificationUtil implements CONST_IMPL {
         return new QNameImpl(namespaceURI, localName);
     }
 
-    public static QNameable createQNameable(QName qName) {
-        return new QNameableImpl(qName);
+    public static PrefixAwareName createPrefixAwareName(QName qName) {
+        return new PrefixAwareNameImpl(qName);
     }
 
     public static SpecificationNode createSpecificationNode(

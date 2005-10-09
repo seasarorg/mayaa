@@ -17,17 +17,17 @@ package org.seasar.maya.impl.builder.library.converter;
 
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class QNameableConverter implements PropertyConverter {
+public class PrefixAwareNameConverter implements PropertyConverter {
 
 	public Class getPropetyType() {
-		return QNameable.class;
+		return PrefixAwareName.class;
 	}
 
 	public Object convert(

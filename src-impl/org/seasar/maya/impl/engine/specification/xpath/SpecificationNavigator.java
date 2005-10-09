@@ -27,7 +27,7 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -359,11 +359,11 @@ public class SpecificationNavigator extends DefaultNavigator
 	    }
 
 	    protected boolean filter(Object test) {
-	        if(test == null || (test instanceof QNameable == false)) {
+	        if(test == null || (test instanceof PrefixAwareName == false)) {
 	            return false;
 	        }
-	        QNameable qNameable = (QNameable)test;
-		    return _qName.equals(qNameable.getQName());
+            PrefixAwareName prefixAwareName = (PrefixAwareName)test;
+		    return _qName.equals(prefixAwareName.getQName());
 	    }
 	    
 	}

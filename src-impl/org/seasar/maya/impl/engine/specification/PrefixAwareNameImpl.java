@@ -19,18 +19,18 @@ import java.util.Iterator;
 
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class QNameableImpl extends NamespaceImpl
-        implements QNameable {
+public class PrefixAwareNameImpl extends NamespaceImpl
+        implements PrefixAwareName {
 
     private QName _qName;
     
-    public QNameableImpl(QName qName) {
+    public PrefixAwareNameImpl(QName qName) {
         if(qName == null) {
 	        throw new IllegalArgumentException();
 	    }
@@ -40,7 +40,7 @@ public class QNameableImpl extends NamespaceImpl
     public QName getQName() {
         return _qName;
     }
-    
+
     public String getPrefix() {
         String namespaceURI = getQName().getNamespaceURI();
 	    for(Iterator it = iteratePrefixMapping(true); it.hasNext(); ) {
@@ -60,6 +60,10 @@ public class QNameableImpl extends NamespaceImpl
         }
         buffer.append(getQName().getLocalName());
         return buffer.toString();
+    }
+
+    public boolean equals(Object test) {
+        return getQName().equals(test);
     }
     
 }

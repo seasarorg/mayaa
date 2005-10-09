@@ -26,7 +26,7 @@ import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
@@ -59,7 +59,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     // MLD method
-    public void addInformalProperty(QNameable name, Object attr) {
+    public void addInformalProperty(PrefixAwareName name, Object attr) {
         if(_attributes == null) {
             _attributes = new ArrayList();
         }

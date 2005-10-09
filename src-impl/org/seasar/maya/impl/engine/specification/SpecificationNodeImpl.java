@@ -34,7 +34,7 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationNodeImpl extends QNameableImpl
+public class SpecificationNodeImpl extends PrefixAwareNameImpl
 		implements SpecificationNode, CONST_IMPL {
 
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();

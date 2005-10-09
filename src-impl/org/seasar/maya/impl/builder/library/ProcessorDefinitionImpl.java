@@ -31,7 +31,7 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
@@ -90,7 +90,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         return (TemplateProcessor)ObjectUtil.newInstance(_processorClass);
     }
 
-    protected QNameable getQNameable(
+    protected PrefixAwareName getPrefixAwareName(
             SpecificationNode injected, String propertyName) {
         QName qName = SpecificationUtil.createQName(
                 injected.getQName().getNamespaceURI(), propertyName);
@@ -108,7 +108,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             } else if(processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable)processor;
-                QNameable name = getQNameable(injected, propertyName); 
+                PrefixAwareName name =
+                    getPrefixAwareName(injected, propertyName); 
                 acceptable.addVirtualProperty(name, value);
             } else {
                 if(LOG.isWarnEnabled()) {

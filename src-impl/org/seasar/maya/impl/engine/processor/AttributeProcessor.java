@@ -20,7 +20,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.specification.QNameable;
+import org.seasar.maya.engine.specification.PrefixAwareName;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,7 +29,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -3985340947416654455L;
 
-    private QNameable _name;
+    private PrefixAwareName _name;
     private ProcessorProperty _value;
 
     protected AbstractAttributableProcessor findParentAttributable() {
@@ -44,14 +44,14 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     }
 
     // MLD property
-    public void setName(QNameable name) {
+    public void setName(PrefixAwareName name) {
         if(name == null) {
             throw new IllegalArgumentException();
         }
         _name = name;
     }
 
-    protected QNameable getName() {
+    protected PrefixAwareName getName() {
         return _name;
     }
 
@@ -78,11 +78,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     protected class ProcessorPropertyWrapper
             implements ProcessorProperty {
 
-        private QNameable _attrName;
+        private PrefixAwareName _attrName;
         private ProcessorProperty _attrValue;
 
         public ProcessorPropertyWrapper(
-                QNameable name, ProcessorProperty property) {
+                PrefixAwareName name, ProcessorProperty property) {
             if(name == null || property == null) {
                 throw new IllegalArgumentException();
             }
@@ -90,7 +90,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             _attrValue = property;
         }
 
-        public QNameable getName() {
+        public PrefixAwareName getName() {
             return _attrName;
         }
 
@@ -100,7 +100,8 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public boolean equals(Object obj) {
             if (obj instanceof ProcessorProperty) {
-                QNameable otherName = ((ProcessorProperty) obj).getName();
+                PrefixAwareName otherName = 
+                    ((ProcessorProperty) obj).getName();
                 return getName().getQName().equals(otherName.getQName());
             }
             return false;

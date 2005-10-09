@@ -61,7 +61,11 @@ public class LibraryManagerImpl implements LibraryManager {
         if(StringUtil.isEmpty(name)) {
         	name = propertyConverter.getPropetyClass().getName();
         }
-        _converters.put(name, propertyConverter);
+        if(_converters.containsKey(name)) {
+            // TODO åxçê
+        } else {
+            _converters.put(name, propertyConverter);
+        }
     }
 
     public PropertyConverter getPropertyConverter(String converterName) {
@@ -94,15 +98,19 @@ public class LibraryManagerImpl implements LibraryManager {
 			throw new IllegalArgumentException();
 		}
 		synchronized (_scanners) {
-            if(LOG.isInfoEnabled()) {
-                String msg = StringUtil.getMessage(
-                		LibraryManagerImpl.class, 2, new String[] {
-                			Integer.toString(_scanners.size()), 
-                			scanner.getClass().getName()
-                		});
-                LOG.info(msg);
+            if(_scanners.contains(scanner)) {
+                // TODO åxçê
+            } else {
+                _scanners.add(scanner);
+                if(LOG.isInfoEnabled()) {
+                    String msg = StringUtil.getMessage(
+                    		LibraryManagerImpl.class, 2, new String[] {
+                    			Integer.toString(_scanners.size()), 
+                    			scanner.getClass().getName()
+                    		});
+                    LOG.info(msg);
+                }
             }
-			_scanners.add(scanner);
 		}
 	}
 
@@ -111,15 +119,19 @@ public class LibraryManagerImpl implements LibraryManager {
     		throw new IllegalArgumentException();
     	}
     	synchronized(_builders) {
-            if(LOG.isInfoEnabled()) {
-                String msg = StringUtil.getMessage(
-                		LibraryManagerImpl.class, 3, new String[] {
-                			Integer.toString(_builders.size()), 
-                			builder.getClass().getName()
-                		});
-                LOG.info(msg);
+            if(_builders.contains(builder)) {
+                // TODO åxçê
+            } else {
+                _builders.add(builder);
+                if(LOG.isInfoEnabled()) {
+                    String msg = StringUtil.getMessage(
+                    		LibraryManagerImpl.class, 3, new String[] {
+                    			Integer.toString(_builders.size()), 
+                    			builder.getClass().getName()
+                    		});
+                    LOG.info(msg);
+                }
             }
-    		_builders.add(builder);
     	}
     }
 
@@ -133,6 +145,7 @@ public class LibraryManagerImpl implements LibraryManager {
 			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
 			    	LibraryDefinition library = builder.build(source);
 			    	if(library != null) {
+                        // TODO SystemIDÇ…ÇÊÇÈèdï°É`ÉFÉbÉN
 			            _libraries.add(library);
                         if(LOG.isInfoEnabled()) {
                             String msg = StringUtil.getMessage(

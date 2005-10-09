@@ -17,13 +17,15 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.ProcessorDefinition;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
+import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.builder.library.NoRequiredPropertyException;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
-import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -33,6 +35,16 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 
     private static final Log LOG =
         LogFactory.getLog(TLDPropertyDefinition.class);
+
+    protected PropertyConverter getConverterForProcessorProperty() {
+        LibraryDefinition library = getPropertySet().getLibraryDefinition();
+        PropertyConverter converter = 
+            library.getPropertyConverter(ProcessorProperty.class);
+        if(converter == null) {
+            throw new IllegalStateException();
+        }
+        return converter;
+    }
     
     public Object createProcessorProperty(
             ProcessorDefinition processorDef, SpecificationNode injected) {
@@ -54,7 +66,8 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         NodeAttribute attribute = injected.getAttribute(qName);
         if(attribute != null) {
             String value = attribute.getValue();
-            return new ProcessorPropertyImpl(attribute, value, propertyType);
+            PropertyConverter converter = getConverterForProcessorProperty(); 
+            return converter.convert(attribute, value, propertyType);
         } else if(isRequired()) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);

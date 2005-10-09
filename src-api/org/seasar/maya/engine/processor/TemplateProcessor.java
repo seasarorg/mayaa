@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.engine.processor;
 
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.specification.SpecificationNode;
 
@@ -65,4 +66,16 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      */    
     SpecificationNode getInjectedNode();
 
+    /**
+     * このプロセッサの定義への参照を設定する。
+     * @param definition プロセッサ定義。
+     */
+    void setProcessorDefinition(ProcessorDefinition definition);
+    
+    /**
+     * このプロセッサの定義を取得する。
+     * @return プロセッサ定義。
+     */
+    ProcessorDefinition getProcessorDefinition();
+    
 }

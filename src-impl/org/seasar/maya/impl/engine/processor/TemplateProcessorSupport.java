@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -38,6 +39,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
     private boolean _evalBodyInclude = true;
+    private ProcessorDefinition _definition;
     
     // MLD property
     public void setEvalBodyInclude(boolean evalBodyInclude) {
@@ -75,6 +77,20 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public SpecificationNode getInjectedNode() {
         return _injectedNode;
+    }
+
+    public void setProcessorDefinition(ProcessorDefinition definition) {
+        if(definition == null) {
+            throw new IllegalArgumentException();
+        }
+        _definition = definition;
+    }
+    
+    public ProcessorDefinition getProcessorDefinition() {
+        if(_definition == null) {
+            throw new IllegalStateException();
+        }
+        return _definition;
     }
     
     // ProcessorTreeWalker implements --------------------------------

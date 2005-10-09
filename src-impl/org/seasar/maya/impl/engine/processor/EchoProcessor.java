@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.seasar.maya.builder.library.LibraryDefinition;
+import org.seasar.maya.builder.library.ProcessorDefinition;
+import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixAwareName;
@@ -38,14 +41,26 @@ public class EchoProcessor extends ElementProcessor
         setupElement(node);
     }
 
+    protected PropertyConverter getConverterForProcessorProperty() {
+        ProcessorDefinition processorDef = getProcessorDefinition();
+        LibraryDefinition libraryDef = processorDef.getLibraryDefinition();
+        PropertyConverter converter =
+            libraryDef.getPropertyConverter(ProcessorProperty.class);
+        if(converter == null) {
+            throw new IllegalStateException();
+        }
+        return converter;
+    }
+    
     protected void setupElement(SpecificationNode node) {
         super.setName(node);
+        PropertyConverter converter = getConverterForProcessorProperty();
         for (Iterator it = node.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
-            ProcessorPropertyImpl property =
-                new ProcessorPropertyImpl(
-                        attribute, attribute.getValue(), String.class);
-            super.addInformalProperty(property.getName(), property);
+            String value = attribute.getValue();
+            Class type = getExpectedType();
+            Object property = converter.convert(attribute, value, type);
+            super.addInformalProperty(attribute, property);
         }
     }
 

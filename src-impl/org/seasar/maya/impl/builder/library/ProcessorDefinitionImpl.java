@@ -163,6 +163,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             throw new IllegalArgumentException();
         }
         TemplateProcessor processor = newInstance();
+        processor.setProcessorDefinition(this);
         settingPropertySet(injected, processor, this);
         for(Iterator it = iteratePropertySets(); it.hasNext(); ) {
             PropertySet propertySet = (PropertySet)it.next();

@@ -10,7 +10,7 @@
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/jaxen-src-1.1-beta-8.zip" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/el-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/el-2.1.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/jsp-src-2.0.zip" kind="lib" path="context/WEB-INF/lib-servlet/jsp-2.0.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/servlet-src-2.3.zip" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.4.jar"/>
 	<classpathentry kind="output" path="context/WEB-INF/classes"/>

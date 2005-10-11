@@ -21,8 +21,8 @@ import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.provider.ProviderFactory;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

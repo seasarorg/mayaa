@@ -18,15 +18,15 @@ package org.seasar.maya.impl;
 import java.util.Iterator;
 
 import org.seasar.maya.FactoryFactory;
-import org.seasar.maya.cycle.factory.CycleFactory;
-import org.seasar.maya.impl.cycle.factory.CycleFactoryImpl;
+import org.seasar.maya.cycle.CycleFactory;
+import org.seasar.maya.impl.cycle.CycleFactoryImpl;
 import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
-import org.seasar.maya.impl.provider.factory.ProviderFactoryImpl;
+import org.seasar.maya.impl.provider.ProviderFactoryImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.source.factory.SourceFactoryImpl;
+import org.seasar.maya.impl.source.SourceFactoryImpl;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.factory.SourceFactory;
+import org.seasar.maya.provider.ProviderFactory;
+import org.seasar.maya.source.SourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

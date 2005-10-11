@@ -13,32 +13,36 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.source.factory;
+package org.seasar.maya.cycle;
 
 import java.io.Serializable;
 
 import org.seasar.maya.ContextAware;
 import org.seasar.maya.ParameterAware;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
- * ソース定義のファクトリ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceFactory 
+public interface CycleFactory 
 		extends ContextAware, ParameterAware, Serializable {
 
 	/**
-	 * ソース定義のクラス型を取得する。
-	 * @return ソース定義クラス。
+	 * サービスサイクル実装クラスの取得。
+	 * @return 実装クラス。
 	 */
-	Class getSourceClass();
+	Class getCycleClass();
 	
     /**
-     * ソース定義の生成・取得をおこなう。
-     * @param systemID ソースのSystemID。
-     * @return ソース定義。
+     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
+     * @param requestContext カレントのリクエストオブジェクト。
+     * @param responseContext カレントのレスポンスオブジェクト。
      */
-    SourceDescriptor getSourceDescriptor(String systemID);
+    void initialize(Object requestContext, Object responseContext);
+
+    /**
+     * サービスサイクルの取得
+     * @return カレントスレッドでのサービスサイクル。
+     */
+    ServiceCycle getServiceCycle();
     
 }

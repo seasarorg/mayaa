@@ -13,25 +13,31 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.provider.factory;
+package org.seasar.maya.source;
 
 import java.io.Serializable;
 
 import org.seasar.maya.ContextAware;
 import org.seasar.maya.ParameterAware;
-import org.seasar.maya.provider.ServiceProvider;
 
 /**
- * アプリケーションサービスプロバイダのファクトリ
+ * ソース定義のファクトリ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProviderFactory
+public interface SourceFactory 
 		extends ContextAware, ParameterAware, Serializable {
 
 	/**
-	 * サービスプロバイダの取得。
-	 * @return サービスプロバイダ。
+	 * ソース定義のクラス型を取得する。
+	 * @return ソース定義クラス。
 	 */
-	ServiceProvider getServiceProvider();
+	Class getSourceClass();
 	
+    /**
+     * ソース定義の生成・取得をおこなう。
+     * @param systemID ソースのSystemID。
+     * @return ソース定義。
+     */
+    SourceDescriptor getSourceDescriptor(String systemID);
+    
 }

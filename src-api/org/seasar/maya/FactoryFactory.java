@@ -17,9 +17,9 @@ package org.seasar.maya;
 
 import java.io.Serializable;
 
-import org.seasar.maya.cycle.factory.CycleFactory;
-import org.seasar.maya.provider.factory.ProviderFactory;
-import org.seasar.maya.source.factory.SourceFactory;
+import org.seasar.maya.cycle.CycleFactory;
+import org.seasar.maya.provider.ProviderFactory;
+import org.seasar.maya.source.SourceFactory;
 
 /**
  * ファクトリのファクトリオブジェクト。

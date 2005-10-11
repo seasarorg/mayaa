@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.provider;
 
 import java.io.InputStream;
 
@@ -21,11 +21,12 @@ import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.ParameterAwareImpl;
+import org.seasar.maya.impl.provider.factory.ProviderHandler;
 import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ProviderFactory;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**

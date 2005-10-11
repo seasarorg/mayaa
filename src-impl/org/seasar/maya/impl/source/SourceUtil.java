@@ -18,7 +18,7 @@ package org.seasar.maya.impl.source;
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceFactory;
+import org.seasar.maya.source.SourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

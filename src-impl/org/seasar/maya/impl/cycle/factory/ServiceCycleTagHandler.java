@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.cycle.factory;
 
 import org.seasar.maya.ParameterAware;
-import org.seasar.maya.cycle.factory.CycleFactory;
+import org.seasar.maya.cycle.CycleFactory;
 import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.xml.sax.Attributes;

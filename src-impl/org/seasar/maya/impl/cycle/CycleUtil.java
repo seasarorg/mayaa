@@ -16,9 +16,9 @@
 package org.seasar.maya.impl.cycle;
 
 import org.seasar.maya.FactoryFactory;
+import org.seasar.maya.cycle.CycleFactory;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.factory.CycleFactory;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.impl.cycle.scope.ScopeNotWritableException;

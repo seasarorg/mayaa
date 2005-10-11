@@ -18,7 +18,7 @@ package org.seasar.maya.impl.source.factory;
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.source.factory.SourceFactory;
+import org.seasar.maya.source.SourceFactory;
 import org.xml.sax.Attributes;
 
 /**

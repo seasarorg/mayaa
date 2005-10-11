@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.source.factory;
+package org.seasar.maya.impl.source;
 
 import java.util.Iterator;
 
@@ -21,7 +21,7 @@ import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.factory.SourceFactory;
+import org.seasar.maya.source.SourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

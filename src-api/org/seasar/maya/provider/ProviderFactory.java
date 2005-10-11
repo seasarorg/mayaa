@@ -13,37 +13,24 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle.factory;
+package org.seasar.maya.provider;
 
 import java.io.Serializable;
 
 import org.seasar.maya.ContextAware;
 import org.seasar.maya.ParameterAware;
-import org.seasar.maya.cycle.ServiceCycle;
 
 /**
+ * アプリケーションサービスプロバイダのファクトリ
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface CycleFactory 
+public interface ProviderFactory
 		extends ContextAware, ParameterAware, Serializable {
 
 	/**
-	 * サービスサイクル実装クラスの取得。
-	 * @return 実装クラス。
+	 * サービスプロバイダの取得。
+	 * @return サービスプロバイダ。
 	 */
-	Class getCycleClass();
+	ServiceProvider getServiceProvider();
 	
-    /**
-     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
-     * @param requestContext カレントのリクエストオブジェクト。
-     * @param responseContext カレントのレスポンスオブジェクト。
-     */
-    void initialize(Object requestContext, Object responseContext);
-
-    /**
-     * サービスサイクルの取得
-     * @return カレントスレッドでのサービスサイクル。
-     */
-    ServiceCycle getServiceCycle();
-    
 }

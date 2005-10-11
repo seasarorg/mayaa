@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.factory;
+package org.seasar.maya.impl.cycle;
 
 import java.util.Iterator;
 
+import org.seasar.maya.cycle.CycleFactory;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.factory.CycleFactory;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;

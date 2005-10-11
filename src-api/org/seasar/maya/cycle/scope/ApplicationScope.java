@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.cycle.scope;
 
-import org.seasar.maya.cycle.ContextAware;
+import org.seasar.maya.ContextAware;
 
 /**
  * WEBアプリケーション全体で共有されるスコープ。

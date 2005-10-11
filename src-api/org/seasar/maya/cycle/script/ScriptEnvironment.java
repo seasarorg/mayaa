@@ -18,15 +18,15 @@ package org.seasar.maya.cycle.script;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * スクリプトの実行環境。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ScriptEnvironment extends Parameterizable {
+public interface ScriptEnvironment extends ParameterAware {
     
     /**
      * ユーザー定義スコープオブジェクトを追加する。

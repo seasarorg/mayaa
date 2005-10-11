@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.source.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.seasar.maya.source.factory.SourceFactory;
 import org.xml.sax.Attributes;
 
@@ -46,7 +46,7 @@ public class SourceFactoryTagHandler
         return _sourceFactory;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         return getSourceFactory();
     }
 

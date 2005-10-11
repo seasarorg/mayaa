@@ -27,13 +27,15 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.PropertyDefinition;
 import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertySetImpl implements PropertySet {
+public class PropertySetImpl extends ParameterAwareImpl
+		implements PropertySet {
 
     private static final Log LOG =
         LogFactory.getLog(PropertySetImpl.class);

@@ -17,13 +17,13 @@ package org.seasar.maya.cycle.scope;
 
 import java.util.Iterator;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ParameterAware;
 
 /**
  * 名前つきでオブジェクトを保存できる「スコープ」概念インターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface AttributeScope extends Parameterizable {
+public interface AttributeScope extends ParameterAware {
 
     /**
      * スコープ識別の取得を行う補助メソッド。

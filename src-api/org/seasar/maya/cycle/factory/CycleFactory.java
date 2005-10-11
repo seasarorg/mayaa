@@ -17,14 +17,22 @@ package org.seasar.maya.cycle.factory;
 
 import java.io.Serializable;
 
+import org.seasar.maya.ContextAware;
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface CycleFactory extends Parameterizable, Serializable {
+public interface CycleFactory 
+		extends ContextAware, ParameterAware, Serializable {
 
+	/**
+	 * サービスサイクル実装クラスの取得。
+	 * @return 実装クラス。
+	 */
+	Class getCycleClass();
+	
     /**
      * リクエストおよびレスポンスのコンテキストオブジェクト設定。
      * @param requestContext カレントのリクエストオブジェクト。

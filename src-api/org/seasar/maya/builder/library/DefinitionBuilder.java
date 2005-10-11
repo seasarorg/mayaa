@@ -15,14 +15,14 @@
  */
 package org.seasar.maya.builder.library;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * ライブラリ定義ソースビルダ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface DefinitionBuilder extends Parameterizable {
+public interface DefinitionBuilder extends ParameterAware {
 
     /**
      * ライブラリ定義ソースからライブラリをビルドする。

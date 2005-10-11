@@ -18,14 +18,15 @@ package org.seasar.maya.impl.source;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DelaySourceDescriptor implements SourceDescriptor {
+public class DelaySourceDescriptor extends ParameterAwareImpl
+		implements SourceDescriptor {
 
     private static final long serialVersionUID = 1596798824321986307L;
     
@@ -69,10 +70,6 @@ public class DelaySourceDescriptor implements SourceDescriptor {
             return _source.getAttribute(name);
         }
         return null;
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
     
 }

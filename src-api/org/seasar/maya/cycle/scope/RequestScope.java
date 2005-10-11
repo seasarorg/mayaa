@@ -18,7 +18,7 @@ package org.seasar.maya.cycle.scope;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.seasar.maya.cycle.ContextAware;
+import org.seasar.maya.ContextAware;
 
 /**
  * リクエストレベルのスコープ。

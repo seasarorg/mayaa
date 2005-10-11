@@ -15,11 +15,9 @@
  */
 package org.seasar.maya.impl.source.factory;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -28,12 +26,13 @@ import org.seasar.maya.source.factory.SourceFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceFactoryImpl implements SourceFactory {
+public class SourceFactoryImpl extends ParameterAwareImpl 
+		implements SourceFactory {
 
     private static final long serialVersionUID = 3334813227060846723L;
 
+    private Object _context;
     private Class _sourceClass;
-    private Map _sourceParams;
     
     public void setSourceClass(Class sourceClass) {
         if(sourceClass == null) {
@@ -42,18 +41,11 @@ public class SourceFactoryImpl implements SourceFactory {
         _sourceClass = sourceClass;
     }
     
-    protected Class getSourceClass() {
+    public Class getSourceClass() {
         if(_sourceClass == null) {
             throw new IllegalStateException();
         }
         return _sourceClass;
-    }
-    
-    protected Map getSourceParams() {
-        if(_sourceParams == null) {
-            return Collections.EMPTY_MAP;
-        }
-        return _sourceParams;
     }
     
     public SourceDescriptor getSourceDescriptor(String systemID) {
@@ -67,25 +59,28 @@ public class SourceFactoryImpl implements SourceFactory {
         SourceDescriptor source = 
             (SourceDescriptor)ObjectUtil.newInstance(sourceClass);
         source.setSystemID(systemID);
-        Map sourceParams = getSourceParams();
-        for(Iterator it = sourceParams.keySet().iterator(); it.hasNext(); ) {
+        for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
             String key = (String)it.next();
-            String value = (String)sourceParams.get(key);
+            String value = getParameter(key);
             source.setParameter(key, value);
         }
         return source;
     }
 
-    // Parameterizable implements ------------------------------------
+    // ContextAware implements -------------------------------------
     
-    public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_sourceParams == null) {
-            _sourceParams = new HashMap();
-        }
-        _sourceParams.put(name, value);
-    }
+	public void setUnderlyingContext(Object context) {
+		if(context == null) {
+			throw new IllegalArgumentException();
+		}
+		_context = context;
+	}
+    
+    public Object getUnderlyingContext() {
+    	if(_context == null) {
+    		throw new IllegalStateException();
+    	}
+		return _context;
+	}
 
 }

@@ -31,8 +31,8 @@ import org.mozilla.javascript.Wrapper;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -183,7 +183,14 @@ public class PageAttributeScope extends ScriptableObject
     // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
+
+	public String getParameter(String name) {
+		return null;
+	}
+
+	public Iterator iterateParameterNames() {
+		return NullIterator.getInstance();
+	}
     
 }

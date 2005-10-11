@@ -15,15 +15,18 @@
  */
 package org.seasar.maya.engine.specification;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * スペック情報にアクセスするためのインターフェイス
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Specification extends NodeTreeWalker {
+public interface Specification 
+		extends NodeTreeWalker, ParameterAware, Serializable {
 
     /**
      * 最終ビルド時を取得する。

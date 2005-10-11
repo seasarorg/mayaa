@@ -19,14 +19,12 @@ import java.util.Iterator;
 
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * MLDのprocessorエレメントのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorDefinition
-        extends PropertySet, Parameterizable {
+public interface ProcessorDefinition extends PropertySet {
     
     /**
      * class属性で指定した、TemplateProcessorの実装クラス完全修飾名。

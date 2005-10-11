@@ -32,7 +32,6 @@ import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.maya.impl.cycle.script.LiteralScript;
 import org.seasar.maya.impl.cycle.script.ScriptBlock;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
@@ -165,9 +164,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
         }
+        super.setParameter(name, value);
     }
     
 }

@@ -18,13 +18,14 @@ package org.seasar.maya.impl.builder.library.converter;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class ProcessorPropertyConverter implements PropertyConverter {
+public class ProcessorPropertyConverter
+		extends ParameterAwareImpl implements PropertyConverter {
 
 	public Class getPropetyClass() {
 		return ProcessorProperty.class;
@@ -37,12 +38,6 @@ public class ProcessorPropertyConverter implements PropertyConverter {
         }
         return new ProcessorPropertyImpl(
                 attribute, value, expectedClass);
-	}
-
-    // Parameterizable implements ------------------------------------
-    
-	public void setParameter(String name, String value) {
-		throw new UnsupportedParameterException(getClass(), name);
 	}
 	
 }

@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.util.xml.TagHandler;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,6 +29,6 @@ public abstract class AbstractParameterizableTagHandler
         putHandler(new ParameterTagHandler(this));
     }
 
-    public abstract Parameterizable getParameterizable(); 
+    public abstract ParameterAware getParameterizable(); 
     
 }

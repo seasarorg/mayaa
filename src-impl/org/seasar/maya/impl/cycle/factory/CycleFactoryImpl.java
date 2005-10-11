@@ -15,44 +15,27 @@
  */
 package org.seasar.maya.impl.cycle.factory;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.factory.CycleFactory;
-import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.RequestScope;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleFactoryImpl implements CycleFactory {
+public class CycleFactoryImpl 
+		extends ParameterAwareImpl implements CycleFactory {
 
     private static final long serialVersionUID = 6930908159752133949L;
 
-    private ApplicationScope _application;
+    private Object _context;
     private Class _cycleClass;
-    private Map _cycleParams;
     private ThreadLocal _currentCycle = new ThreadLocal();
 
-    public void setApplicationScope(ApplicationScope application) {
-        if(application == null) {
-            throw new IllegalArgumentException();
-        }
-        _application = application;
-    }
-    
-    protected ApplicationScope getApplicationScope() {
-        if(_application == null) {
-            throw new IllegalStateException();
-        }
-        return _application;
-    }
-    
     public void setCycleClass(Class serviceCycleClass) {
         if(serviceCycleClass == null) {
             throw new IllegalArgumentException();
@@ -60,7 +43,7 @@ public class CycleFactoryImpl implements CycleFactory {
         _cycleClass = serviceCycleClass;
     }
     
-    protected Class getCycleClass() {
+    public Class getCycleClass() {
         if(_cycleClass == null) {
             throw new IllegalArgumentException();
         }
@@ -77,14 +60,11 @@ public class CycleFactoryImpl implements CycleFactory {
         }
         ServiceCycle cycle = 
             (ServiceCycle)ObjectUtil.newInstance(serviceCycleClass);
-        cycle.setApplicationScope(getApplicationScope());
-        if(_cycleParams != null) {
-            for(Iterator it = _cycleParams.keySet().iterator();
-                    it.hasNext(); ) {
-                String key = (String)it.next();
-                String value = (String)_cycleParams.get(key);
-                cycle.setParameter(key, value);
-            }
+        cycle.setUnderlyingContext(getUnderlyingContext());
+        for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
+            String key = (String)it.next();
+            String value = getParameter(key);
+            cycle.setParameter(key, value);
         }
         _currentCycle.set(cycle);
         RequestScope request = cycle.getRequestScope();
@@ -102,14 +82,20 @@ public class CycleFactoryImpl implements CycleFactory {
         return cycle;
     }
 
-    public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_cycleParams == null) {
-            _cycleParams = new HashMap();
-        }
-        _cycleParams.put(name, value);
-    }
+    // ContextAware implements -------------------------------------
+    
+	public void setUnderlyingContext(Object context) {
+		if(context == null) {
+			throw new IllegalArgumentException();
+		}
+		_context = context;
+	}
+    
+    public Object getUnderlyingContext() {
+    	if(_context == null) {
+    		throw new IllegalStateException();
+    	}
+		return _context;
+	}
 
 }

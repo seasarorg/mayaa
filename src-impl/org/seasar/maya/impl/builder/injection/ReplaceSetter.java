@@ -21,16 +21,16 @@ import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ReplaceSetter
+public class ReplaceSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 	
     protected static final QName QM_REPLACE =
@@ -72,12 +72,6 @@ public class ReplaceSetter
    			return element;
    		}
         return injected;
-    }
-    
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 	
 }

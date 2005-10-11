@@ -20,13 +20,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WalkaroundSourceScanner implements SourceScanner {
+public class WalkaroundSourceScanner extends ParameterAwareImpl
+		implements SourceScanner {
 
     private Set _sources;
     
@@ -41,12 +42,6 @@ public class WalkaroundSourceScanner implements SourceScanner {
 
     public Iterator scan() {
         return _sources.iterator();
-    }
-
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 
 }

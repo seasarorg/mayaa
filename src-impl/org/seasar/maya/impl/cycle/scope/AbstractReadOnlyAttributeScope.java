@@ -16,12 +16,13 @@
 package org.seasar.maya.impl.cycle.scope;
 
 import org.seasar.maya.cycle.scope.AttributeScope;
+import org.seasar.maya.impl.ParameterAwareImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractReadOnlyAttributeScope 
-        implements AttributeScope {
+		extends ParameterAwareImpl implements AttributeScope {
 
     public boolean isAttributeWritable() {
         return false;

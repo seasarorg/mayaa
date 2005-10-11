@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -48,7 +48,7 @@ public class SourceTagHandler
         _scanner = null;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         if(_scanner == null) {
             throw new IllegalStateException();
         }

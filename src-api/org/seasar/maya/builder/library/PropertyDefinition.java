@@ -15,14 +15,14 @@
  */
 package org.seasar.maya.builder.library;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * MLDのpropertyノードのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PropertyDefinition extends Parameterizable {
+public interface PropertyDefinition extends ParameterAware {
     
 	/**
 	 * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。

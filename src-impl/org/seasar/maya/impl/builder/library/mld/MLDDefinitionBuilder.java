@@ -22,10 +22,10 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
@@ -34,14 +34,10 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDDefinitionBuilder
+public class MLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder, CONST_IMPL {
 
     private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
-    }
 
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {

@@ -30,7 +30,7 @@ import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
 import org.seasar.maya.source.SourceDescriptor;
@@ -38,7 +38,8 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryManagerImpl implements LibraryManager {
+public class LibraryManagerImpl extends ParameterAwareImpl
+		implements LibraryManager {
 
     private static Log LOG = LogFactory.getLog(LibraryManagerImpl.class);
     
@@ -192,12 +193,6 @@ public class LibraryManagerImpl implements LibraryManager {
             }
         }
         return null;
-    }
-    
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 
     // support class ------------------------------------------------

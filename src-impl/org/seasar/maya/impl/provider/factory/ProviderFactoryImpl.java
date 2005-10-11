@@ -20,6 +20,7 @@ import java.io.InputStream;
 import javax.servlet.ServletContext;
 
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
@@ -30,20 +31,13 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderFactoryImpl
+public class ProviderFactoryImpl extends ParameterAwareImpl
         implements ProviderFactory, CONST_IMPL {
 
     private static final long serialVersionUID = 3581634661222113559L;
 
-    private ServletContext _context;
+    private Object _context;
     private ServiceProvider _provider;
-    
-    public ProviderFactoryImpl(Object context) {
-        if(context == null || context instanceof ServletContext == false) {
-            throw new IllegalArgumentException();
-        }
-        _context = (ServletContext)context;
-    }
     
     protected ServiceProvider createServiceProvider(
     		ServletContext servletContext, SourceDescriptor source,
@@ -64,7 +58,8 @@ public class ProviderFactoryImpl
     }
 
     protected ServiceProvider createServiceProvider(
-            ServletContext servletContext) {
+            Object context) {
+    	ServletContext servletContext = (ServletContext)context;
         BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
         source.setServletContext(servletContext);
         source.setSystemID("/maya.provider");
@@ -79,5 +74,21 @@ public class ProviderFactoryImpl
         }
         return _provider;
     }
+
+    // ContextAware implements -------------------------------------
+    
+	public void setUnderlyingContext(Object context) {
+		if(context == null) {
+			throw new IllegalArgumentException();
+		}
+		_context = context;
+	}
+    
+    public Object getUnderlyingContext() {
+    	if(_context == null) {
+    		throw new IllegalStateException();
+    	}
+		return _context;
+	}
 
 }

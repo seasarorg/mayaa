@@ -26,15 +26,16 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryDefinitionImpl implements LibraryDefinition {
+public class LibraryDefinitionImpl extends ParameterAwareImpl
+		implements LibraryDefinition {
 
     private String _namespaceURI;
     private List _assignedURI = new ArrayList();
@@ -194,11 +195,5 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         }
         return (ProcessorDefinition)_processors.get(name);
     }
-
-    // Parameterizable implements ------------------------------------
-    
-	public void setParameter(String name, String value) {
-		throw new UnsupportedParameterException(getClass(), name);
-	}
 
 }

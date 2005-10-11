@@ -15,13 +15,13 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -66,7 +66,7 @@ public class ConverterTagHandler
         _propertyConverter = null;
     }
 
-	public Parameterizable getParameterizable() {
+	public ParameterAware getParameterizable() {
         if(_propertyConverter == null) {
             throw new IllegalStateException();
         }

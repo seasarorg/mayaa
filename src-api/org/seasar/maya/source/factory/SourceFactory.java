@@ -17,15 +17,23 @@ package org.seasar.maya.source.factory;
 
 import java.io.Serializable;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ContextAware;
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * ソース定義のファクトリ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceFactory extends Parameterizable, Serializable {
+public interface SourceFactory 
+		extends ContextAware, ParameterAware, Serializable {
 
+	/**
+	 * ソース定義のクラス型を取得する。
+	 * @return ソース定義クラス。
+	 */
+	Class getSourceClass();
+	
     /**
      * ソース定義の生成・取得をおこなう。
      * @param systemID ソースのSystemID。

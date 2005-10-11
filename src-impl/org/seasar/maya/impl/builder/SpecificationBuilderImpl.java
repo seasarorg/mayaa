@@ -20,7 +20,7 @@ import java.io.InputStream;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.XMLReaderPool;
@@ -32,7 +32,7 @@ import org.xml.sax.XMLReader;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationBuilderImpl
+public class SpecificationBuilderImpl extends ParameterAwareImpl
         implements SpecificationBuilder, CONST_IMPL {
 
     private static final long serialVersionUID = 7852577574830768959L;
@@ -94,9 +94,8 @@ public class SpecificationBuilderImpl
     public void setParameter(String name, String value) {
         if("outputWhitespace".equals(name)) {
             _outputWhitespace = ObjectUtil.booleanValue(value, true);
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
         }
+        super.setParameter(name, value);
     }
 
 }

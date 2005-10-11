@@ -15,8 +15,8 @@
  */
 package org.seasar.maya.builder.injection;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * テンプレートに記述されたHTMLタグに、追加的な情報を保持するノードを
@@ -24,7 +24,7 @@ import org.seasar.maya.provider.Parameterizable;
  * をカスタマイズすることができる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface InjectionResolver extends Parameterizable {
+public interface InjectionResolver extends ParameterAware {
 
     /**
      * テンプレート上のオリジナルなノードにインジェクションするノードを決定する。

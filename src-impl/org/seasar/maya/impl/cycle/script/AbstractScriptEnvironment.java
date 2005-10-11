@@ -22,14 +22,15 @@ import java.util.List;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractScriptEnvironment
-        implements ScriptEnvironment {
+public abstract class AbstractScriptEnvironment 
+		extends ParameterAwareImpl implements ScriptEnvironment {
     
     private List _attributeScopes;
     private String _blockSign = "$";

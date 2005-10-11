@@ -15,10 +15,10 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.impl.provider.ServiceProviderImpl;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -50,7 +50,7 @@ public class SpecificationBuilderTagHandler
         _specificationBuilder = null;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         if(_specificationBuilder == null) {
             throw new IllegalStateException();
         }

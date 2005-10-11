@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.injection.InjectionResolver;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -48,7 +48,7 @@ public class ResolverTagHandler
         _resolver = null;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         if(_resolver == null) {
             throw new IllegalStateException();
         }

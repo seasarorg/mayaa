@@ -26,14 +26,14 @@ import org.seasar.maya.engine.specification.NodeObject;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XPathMatchesInjectionResolver 
+public class XPathMatchesInjectionResolver extends ParameterAwareImpl 
         implements InjectionResolver, CONST_IMPL {
 
     protected static final QName QM_XPATH = 
@@ -63,12 +63,6 @@ public class XPathMatchesInjectionResolver
             }
         }
         return chain.getNode(original);
-    }
-    
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
     
     // support class -------------------------------------------------

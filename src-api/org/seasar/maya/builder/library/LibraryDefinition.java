@@ -17,15 +17,15 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.provider.Parameterizable;
 
 
 /**
  * MLDのlibraryエレメントのモデルオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface LibraryDefinition extends Parameterizable {
+public interface LibraryDefinition extends ParameterAware {
 
 	/**
 	 * 例外やログのメッセージ用途として、ファイルのSystemIDを取得する。

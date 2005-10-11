@@ -20,16 +20,17 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateErrorHandler  implements ErrorHandler {
+public class TemplateErrorHandler extends ParameterAwareImpl
+		implements ErrorHandler {
 
     private static final Log LOG = 
         LogFactory.getLog(TemplateErrorHandler.class);
@@ -87,16 +88,18 @@ public class TemplateErrorHandler  implements ErrorHandler {
     // Parameterizable implements ------------------------------------
     
     public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(value)) {
-            throw new IllegalParameterValueException(getClass(), name);
-        }
         if("folder".equals(name)) {
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
             _folder = value;
         } else if("extension".equals(name)) {
+            if(StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
             _extension = value;
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
         }
+        super.setParameter(name, value);
     }
     
 }

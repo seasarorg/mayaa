@@ -26,7 +26,6 @@ import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.scope.AbstractWritableAttributeScope;
 import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
 
@@ -124,12 +123,6 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         // When getting, UnderlyingObject is "HttpSession"
         check();
         return _httpSession;
-    }
-    
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 
 }

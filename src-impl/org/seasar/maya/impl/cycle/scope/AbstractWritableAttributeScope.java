@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.cycle.scope;
 
 import org.seasar.maya.cycle.scope.AttributeScope;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -23,7 +24,7 @@ import org.seasar.maya.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractWritableAttributeScope
-        implements AttributeScope {
+        extends ParameterAwareImpl implements AttributeScope {
 
     public boolean isAttributeWritable() {
         return true;

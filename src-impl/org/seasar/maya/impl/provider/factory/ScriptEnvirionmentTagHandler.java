@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -56,7 +56,7 @@ public class ScriptEnvirionmentTagHandler
         return _scriptEnvironment;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         return getScriptEnvironment();
     }
 

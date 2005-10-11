@@ -15,18 +15,16 @@
  */
 package org.seasar.maya.engine;
 
-import java.io.Serializable;
-
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * ランタイムエンジン。ホストサーブレットからservice()が呼び出される。 
  * リクエストに対して、ステートレスに実装。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Engine extends Parameterizable, Specification, Serializable {
+public interface Engine extends ParameterAware, Specification {
     
     /**
      * エラーハンドラの設定。
@@ -63,12 +61,5 @@ public interface Engine extends Parameterizable, Specification, Serializable {
      * @return tureだとデコードフェーズ起動。デフォルトfalse。
      */
     boolean isProcessDecode();
-
-    /**
-     * カスタム設定項目の取得メソッド。
-     * @param name 設定名。
-     * @return 設定された項目。
-     */
-    String getParameter(String name);
     
 }

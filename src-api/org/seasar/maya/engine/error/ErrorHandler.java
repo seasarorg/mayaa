@@ -15,13 +15,13 @@
  */
 package org.seasar.maya.engine.error;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ParameterAware;
 
 /**
  * エラー処理のためのハンドラ。リクエストの最後、エラー画面の出力などを行う。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ErrorHandler extends Parameterizable {
+public interface ErrorHandler extends ParameterAware {
 
     /**
      * エラー処理メソッド。

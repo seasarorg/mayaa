@@ -27,8 +27,8 @@ import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -37,7 +37,8 @@ import org.seasar.maya.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class FolderSourceScanner implements SourceScanner {
+public class FolderSourceScanner extends ParameterAwareImpl
+		implements SourceScanner {
 
     private ApplicationSourceDescriptor _source;
 
@@ -165,9 +166,8 @@ public class FolderSourceScanner implements SourceScanner {
             } else {
                 _extensions.add(value);
             }
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
         }
+        super.setParameter(name, value);
     }
 
     // support class ------------------------------------------------

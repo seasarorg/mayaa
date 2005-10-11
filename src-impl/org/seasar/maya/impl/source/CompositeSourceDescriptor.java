@@ -20,14 +20,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CompositeSourceDescriptor implements SourceDescriptor {
+public class CompositeSourceDescriptor extends ParameterAwareImpl
+		implements SourceDescriptor {
 
     private static final long serialVersionUID = 7557914925525488748L;
 
@@ -91,10 +92,6 @@ public class CompositeSourceDescriptor implements SourceDescriptor {
             return descriptor.getAttribute(name);
         }
         return null;
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
     
 }

@@ -26,6 +26,7 @@ import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
@@ -35,10 +36,12 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationImpl
+public class SpecificationImpl extends ParameterAwareImpl
 		implements Specification, CONST_IMPL {
     
-    private Date _buildTimestamp;
+	private static final long serialVersionUID = 174451168836001746L;
+
+	private Date _buildTimestamp;
     private SourceDescriptor _source;
     private List _childNodes;
     private boolean _hasSource;

@@ -15,13 +15,13 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertySetImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -85,7 +85,7 @@ public class PropertySetTagHandler
         return _propertySet;
     }
 
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         throw new IllegalStateException();
     }
 

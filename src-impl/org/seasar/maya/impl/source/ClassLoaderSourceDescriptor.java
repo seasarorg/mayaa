@@ -20,14 +20,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ClassLoaderSourceDescriptor implements SourceDescriptor {
+public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
+		implements SourceDescriptor {
     
     public static final String META_INF = "/META-INF";
     
@@ -115,10 +116,6 @@ public class ClassLoaderSourceDescriptor implements SourceDescriptor {
             return null;
         }
         return (String)_attributes.get(name);
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 
 }

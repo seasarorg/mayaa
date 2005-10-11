@@ -18,20 +18,22 @@ package org.seasar.maya.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.seasar.maya.ContextAware;
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、
  * サービスのコンテキストとなる。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceCycle extends Parameterizable, Serializable {
+public interface ServiceCycle
+		extends ContextAware, ParameterAware, Serializable {
     
     /**
      * アプリケーションレベルスコープ。
@@ -71,12 +73,6 @@ public interface ServiceCycle extends Parameterizable, Serializable {
      * @param encoding ソースエンコーディング。
      */
     void load(String systemID, String encoding);
-    
-    /**
-     * アプリケーションスコープオブジェクトの設定。
-     * @param application アプリケーション。
-     */
-    void setApplicationScope(ApplicationScope application);
     
     /**
      * アプリケーションスコープオブジェクトの取得。

@@ -17,10 +17,12 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.ParameterAware;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PropertySet {
+public interface PropertySet extends ParameterAware {
     
     /**
      * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。

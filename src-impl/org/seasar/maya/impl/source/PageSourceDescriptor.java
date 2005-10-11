@@ -16,7 +16,6 @@
 package org.seasar.maya.impl.source;
 
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,17 +25,6 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
 	private static final long serialVersionUID = -6124718310228340001L;
 
     private String _folder = "/WEB-INF/page";
-    
-    public void setParameter(String name, String value) {
-        if("folder".equals(name)) {
-            if(value == null) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _folder = value;
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
-        }
-    }
     
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
@@ -51,6 +39,16 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
         loader.setSystemID(systemID);
         addSourceDescriptor(loader);
+    }
+    
+    public void setParameter(String name, String value) {
+        if("folder".equals(name)) {
+            if(value == null) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _folder = value;
+        }
+        super.setParameter(name, value);
     }
 
 }

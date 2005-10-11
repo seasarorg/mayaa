@@ -21,16 +21,17 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
 import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InsertSetter implements InjectionResolver, CONST_IMPL {
+public class InsertSetter extends ParameterAwareImpl 
+		implements InjectionResolver, CONST_IMPL {
 
     protected static final QName QM_INSERT = 
         SpecificationUtil.createQName("insert");
@@ -63,12 +64,6 @@ public class InsertSetter implements InjectionResolver, CONST_IMPL {
 	        }
         }
         return injected;
-    }
-    
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
 
 }

@@ -34,7 +34,6 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -175,12 +174,6 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
         return processor;
     }
-
-    // Parameterizable implements ------------------------------------
-    
-	public void setParameter(String name, String value) {
-		throw new UnsupportedParameterException(getClass(), name);
-	}
     
     // support class ------------------------------------------------
 

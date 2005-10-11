@@ -18,13 +18,14 @@ package org.seasar.maya.impl.builder.library.converter;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.engine.specification.NodeAttribute;
 import org.seasar.maya.engine.specification.PrefixAwareName;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class PrefixAwareNameConverter implements PropertyConverter {
+public class PrefixAwareNameConverter
+		extends ParameterAwareImpl implements PropertyConverter {
 
 	public Class getPropetyClass() {
 		return PrefixAwareName.class;
@@ -36,12 +37,6 @@ public class PrefixAwareNameConverter implements PropertyConverter {
             throw new IllegalArgumentException();
         }
         return BuilderUtil.parseName(attribute.getParentSpace(), value); 
-	}
-
-    // Parameterizable implements ------------------------------------
-    
-	public void setParameter(String name, String value) {
-		throw new UnsupportedParameterException(getClass(), name);
 	}
 
 }

@@ -15,11 +15,11 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertySetImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -72,7 +72,7 @@ public class PropertyTagHandler
     	return _propertyDefinition;
     }
 
-	public Parameterizable getParameterizable() {
+	public ParameterAware getParameterizable() {
 		return getPropertyDefinition();
 	}
     

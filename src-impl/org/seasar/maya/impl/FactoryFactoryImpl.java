@@ -15,14 +15,16 @@
  */
 package org.seasar.maya.impl;
 
+import java.util.Iterator;
+
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.cycle.factory.CycleFactory;
 import org.seasar.maya.impl.cycle.factory.CycleFactoryImpl;
-import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
 import org.seasar.maya.impl.provider.factory.ProviderFactoryImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.source.factory.SourceFactoryImpl;
+import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.factory.SourceFactory;
 
@@ -37,15 +39,15 @@ public class FactoryFactoryImpl extends FactoryFactory {
         // TODO Žb’è
         CycleFactoryImpl factory = new CycleFactoryImpl();
         factory.setCycleClass(ServiceCycleImpl.class);
-        ApplicationScopeImpl application = new ApplicationScopeImpl();
-        application.setUnderlyingContext(context);
-        factory.setApplicationScope(application);
+        factory.setUnderlyingContext(context);
         return factory;
     }
 
     protected ProviderFactory createProviderFactory(Object context) {
         // TODO Žb’è
-        return new ProviderFactoryImpl(context);
+    	ProviderFactoryImpl factory = new ProviderFactoryImpl();
+    	factory.setUnderlyingContext(context);
+    	return factory;
     }
 
     protected SourceFactory createSourceFactory(Object context) {
@@ -55,5 +57,18 @@ public class FactoryFactoryImpl extends FactoryFactory {
         factory.setParameter("folder", "/WEB-INF/page");
         return factory;
     }
+
+    // Parameterizable implements ------------------------------------
+
+	public void setParameter(String name, String value) {
+	}
+
+	public String getParameter(String name) {
+		return null;
+	}
+
+	public Iterator iterateParameterNames() {
+		return NullIterator.getInstance();
+	}
     
 }

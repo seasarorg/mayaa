@@ -19,13 +19,13 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ParameterAware;
 
 /**
  * テンプレートファイルや設定XMLファイルのディスクリプタ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceDescriptor extends Serializable, Parameterizable {
+public interface SourceDescriptor extends Serializable, ParameterAware {
 
     /**
      * ソースSystemIDを設定する。

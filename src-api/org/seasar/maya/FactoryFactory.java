@@ -24,7 +24,8 @@ import org.seasar.maya.source.factory.SourceFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class FactoryFactory implements Serializable {
+public abstract class FactoryFactory 
+		implements ParameterAware, Serializable {
 
     private static FactoryFactory _instance; 
     private static Object _context;
@@ -94,6 +95,16 @@ public abstract class FactoryFactory implements Serializable {
             _sourceFactory = _instance.createSourceFactory(_context);
         }
         return _sourceFactory;
+    }
+    
+    /**
+     * パラメータを設定する。
+     * @param name パラメータ名。
+     * @param value パラメータ値。
+     */
+    public static void setParameterToInstance(String name, String value) {
+    	check();
+    	_instance.setParameter(name, value);
     }
     
     /**

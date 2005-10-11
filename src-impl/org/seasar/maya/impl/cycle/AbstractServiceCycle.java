@@ -23,6 +23,7 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.cycle.scope.ScopeNotFoundException;
 import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
@@ -33,8 +34,10 @@ import org.seasar.maya.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractServiceCycle implements ServiceCycle {
+public abstract class AbstractServiceCycle
+		extends ParameterAwareImpl implements ServiceCycle {
 
+    private Object _context;
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -144,5 +147,21 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
     public Throwable getHandledError() {
         return _t;
     }
+
+    // ContextAware implements -------------------------------------
     
+	public void setUnderlyingContext(Object context) {
+		if(context == null) {
+			throw new IllegalArgumentException();
+		}
+		_context = context;
+	}
+    
+    public Object getUnderlyingContext() {
+    	if(_context == null) {
+    		throw new IllegalStateException();
+    	}
+		return _context;
+	}
+
 }

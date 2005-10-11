@@ -17,15 +17,15 @@ package org.seasar.maya.builder;
 
 import java.io.Serializable;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * 設定XMLのビルダ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationBuilder
-        extends Parameterizable, Serializable {
+        extends ParameterAware, Serializable {
     
     /**
      * ページ設定のビルドを行う。

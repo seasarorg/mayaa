@@ -17,13 +17,13 @@ package org.seasar.maya.builder.library.scanner;
 
 import java.util.Iterator;
 
-import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.ParameterAware;
 
 /**
  * ライブラリ定義ソースの検索スキャナ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceScanner extends Parameterizable {
+public interface SourceScanner extends ParameterAware {
 
     /**
      * ライブラリ定義ソースをイテレートする。

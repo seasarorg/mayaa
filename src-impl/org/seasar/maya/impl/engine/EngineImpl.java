@@ -20,12 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,8 +36,6 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.IllegalParameterValueException;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.source.SourceUtil;
@@ -57,15 +51,9 @@ public class EngineImpl extends SpecificationImpl
 
     private static final long serialVersionUID = 1428444571422324206L;
     private static final Log LOG = LogFactory.getLog(EngineImpl.class);
-    private static Set _paramNames;
-    static {
-        _paramNames = new HashSet();
-        _paramNames.add(CHECK_TIMESTAMP);
-        _paramNames.add(SUFFIX_SEPARATOR);
-        _paramNames.add(WELCOME_FILE_NAME);
-    }
+    private static final String DEFAULT_SPECIFICATION =
+    	"defaultSpecification";
 
-    private Map _parameters;
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
@@ -253,37 +241,23 @@ public class EngineImpl extends SpecificationImpl
         return _processDecode;
     }
 
-    public String getParameter(String name) {
-        if("defaultSpecification".equals(name)) {
-            return _defaultSpecification;
-        } else if(_paramNames.contains(name)) {
-            if(_parameters == null) {
-                return null;
-            }
-            return (String)_parameters.get(name);
-        }
-        throw new UnsupportedParameterException(getClass(), name);
-    }
-
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("defaultSpecification".equals(name)) {
+        if(DEFAULT_SPECIFICATION.equals(name)) {
             SourceDescriptor source = new DelaySourceDescriptor();
             source.setSystemID(value);
             setSource(source);
             _defaultSpecification = value;
-        } else if(_paramNames.contains(name)) {
-            if(_parameters == null) {
-                _parameters = new HashMap();
-            }
-            if(StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _parameters.put(name, value);
-        } else {
-            throw new UnsupportedParameterException(getClass(), name);
         }
+        super.setParameter(name, value);
     }
 
+    public String getParameter(String name) {
+        if(DEFAULT_SPECIFICATION.equals(name)) {
+            return _defaultSpecification;
+        }
+        return super.getParameter(name);
+    }
+    
 }

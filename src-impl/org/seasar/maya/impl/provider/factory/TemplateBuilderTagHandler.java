@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -59,7 +59,7 @@ public class TemplateBuilderTagHandler
         return _templateBuilder;
     }
     
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         return getTemplateBuilder();
     }
 

@@ -18,13 +18,14 @@ package org.seasar.maya.impl.source;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NullSourceDescriptor implements SourceDescriptor {
+public class NullSourceDescriptor extends ParameterAwareImpl
+		implements SourceDescriptor {
 
 	private static final long serialVersionUID = -6864473214459610814L;
     private static final Date ZERO = new Date(0); 
@@ -33,10 +34,6 @@ public class NullSourceDescriptor implements SourceDescriptor {
     
     public static NullSourceDescriptor getInstance() {
         return _instance;
-    }
-
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
     
 	public boolean exists() {

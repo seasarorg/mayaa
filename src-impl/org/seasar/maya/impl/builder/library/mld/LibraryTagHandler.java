@@ -15,9 +15,9 @@
  */
 package org.seasar.maya.impl.builder.library.mld;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -51,7 +51,7 @@ public class LibraryTagHandler
         return _libraryDefinition;
     }
 
-	public Parameterizable getParameterizable() {
+	public ParameterAware getParameterizable() {
 		return getLibraryDefinition();
 	}
     

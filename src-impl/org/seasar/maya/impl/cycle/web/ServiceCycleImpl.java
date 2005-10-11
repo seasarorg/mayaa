@@ -21,7 +21,6 @@ import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.AbstractServiceCycle;
 import org.seasar.maya.impl.engine.PageForwarded;
-import org.seasar.maya.impl.provider.UnsupportedParameterException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,7 +29,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     private static final long serialVersionUID = 5971443264903384152L;
 
-	private ApplicationScope _application;
+    private ApplicationScope _application;
     private RequestScopeImpl _request;
     private ResponseImpl _response;
     private SessionScopeImpl _session;
@@ -48,7 +47,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     
     public ApplicationScope getApplicationScope() {
     	if(_application == null) {
-    		throw new IllegalStateException();
+    		_application = new ApplicationScopeImpl();
+    		_application.setUnderlyingContext(getUnderlyingContext());
     	}
         return _application;
     }
@@ -81,12 +81,6 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     public void redirect(String url) {
 		_response.redirect(url);
-    }
-
-    // Parameterizable implements ------------------------------------
-    
-    public void setParameter(String name, String value) {
-        throw new UnsupportedParameterException(getClass(), name);
     }
     
 }

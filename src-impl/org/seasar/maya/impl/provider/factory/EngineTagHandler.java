@@ -15,10 +15,10 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
 
 /**
@@ -57,7 +57,7 @@ public class EngineTagHandler
         return _engine;
     }
 
-    public Parameterizable getParameterizable() {
+    public ParameterAware getParameterizable() {
         return getEngine();
     }
     

@@ -17,16 +17,16 @@ package org.seasar.maya.builder.library;
 
 import java.util.Iterator;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.provider.Parameterizable;
 
 /**
  * MLDモデルオブジェクトのルート。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface LibraryManager extends Parameterizable {
+public interface LibraryManager extends ParameterAware {
 
     /**
      * プロパティ型コンバータの追加。

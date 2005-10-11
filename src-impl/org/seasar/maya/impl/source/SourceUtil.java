@@ -13,22 +13,28 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.provider.factory;
+package org.seasar.maya.impl.source;
 
-import java.io.Serializable;
-
-import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.maya.FactoryFactory;
+import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.maya.source.factory.SourceFactory;
 
 /**
- * アプリケーションサービスプロバイダのファクトリ
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProviderFactory extends Serializable {
+public class SourceUtil {
+    
+    private SourceUtil() {
+        // no instantiate.
+    }
 
-	/**
-	 * サービスプロバイダの取得。
-	 * @return サービスプロバイダ。
-	 */
-	ServiceProvider getServiceProvider();
-	
+    public static SourceDescriptor getSourceDescriptor(String systemID) {
+        if(StringUtil.isEmpty(systemID)) {
+            throw new IllegalArgumentException();
+        }
+        SourceFactory factory = FactoryFactory.getSourceFactory();
+        return factory.getSourceDescriptor(systemID);
+    }
+    
 }

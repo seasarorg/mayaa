@@ -48,10 +48,9 @@ import org.seasar.maya.impl.engine.processor.CharactersProcessor;
 import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
 import org.seasar.maya.impl.engine.processor.ElementProcessor;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.xml.XMLReaderPool;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -147,8 +146,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     protected TemplateProcessor createProcessor(
             SpecificationNode original, SpecificationNode injected) {
         QName name = injected.getQName();
-        ServiceProvider provider = ProviderFactory.getServiceProvider(); 
-        LibraryManager libraryManager = provider.getLibraryManager();
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         ProcessorDefinition def = libraryManager.getProcessorDefinition(name);
         if(def != null) {
             TemplateProcessor proc = def.createTemplateProcessor(injected);

@@ -15,13 +15,13 @@
  */
 package org.seasar.maya.cycle.scope;
 
-import org.seasar.maya.Underlyable;
+import org.seasar.maya.cycle.ContextAware;
 
 /**
  * WEBアプリケーション全体で共有されるスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ApplicationScope extends AttributeScope, Underlyable {
+public interface ApplicationScope extends AttributeScope, ContextAware {
 
     /**
      * MIME型をSystemIDから類推して返す。

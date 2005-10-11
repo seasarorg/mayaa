@@ -19,10 +19,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.provider.factory.ProviderFactoryImpl;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
+import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -34,8 +34,8 @@ public class MayaServlet extends HttpServlet {
     
     public void init() {
     	if(_inithialized == false) {
-            ProviderFactory.setDefaultFactory(new ProviderFactoryImpl());
-            ProviderFactory.setContext(getServletContext());
+            FactoryFactory.setInstance(new FactoryFactoryImpl());
+            FactoryFactory.setContext(getServletContext());
             _inithialized = true;
     	}
     }
@@ -47,9 +47,8 @@ public class MayaServlet extends HttpServlet {
 
     public void doPost(
             HttpServletRequest request, HttpServletResponse response) {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        provider.initialize(request, response);
-        Engine engine = provider.getEngine();
+        CycleUtil.initialize(request, response);
+        Engine engine = ProviderUtil.getEngine();
         engine.doService();
     }
     

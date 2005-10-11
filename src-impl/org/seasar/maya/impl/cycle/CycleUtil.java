@@ -15,14 +15,14 @@
  */
 package org.seasar.maya.impl.cycle;
 
+import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.cycle.Response;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.factory.CycleFactory;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.impl.cycle.scope.ScopeNotWritableException;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -40,6 +40,17 @@ public class CycleUtil {
         // no instanciation.
     }
 
+    public static void initialize(
+            Object requestContext, Object responseContext) {
+        CycleFactory factory = FactoryFactory.getCycleFactory();
+        factory.initialize(requestContext, responseContext);
+    }
+
+    public static ServiceCycle getServiceCycle() {
+        CycleFactory factory = FactoryFactory.getCycleFactory();
+        return factory.getServiceCycle();
+    }
+    
     public static RequestScope getRequestScope() {
     	ServiceCycle cycle = CycleUtil.getServiceCycle();
     	return cycle.getRequestScope();
@@ -50,18 +61,6 @@ public class CycleUtil {
         return cycle.getResponse();
     }
 
-    public static ServiceCycle getServiceCycle() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getServiceCycle();
-    }
-
-    public static ServiceCycle getServiceCycleSafely() {
-        if(ProviderFactory.isInithialized()) {
-            return getServiceCycle();
-        }
-        return null;
-    }
-    
     public static AttributeScope findStandardAttributeScope(String name) {
         if(StringUtil.isEmpty(name)) {
             return null;

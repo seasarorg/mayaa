@@ -35,9 +35,9 @@ import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.PrefixAwareName;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.RenderNotCompletedException;
 import org.seasar.maya.impl.engine.RenderUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -106,7 +106,7 @@ public class InsertProcessor
             synchronized(this) {
 	    		Page page = getPage();
 		        if(page == null) {
-		            Engine engine = EngineUtil.getEngine();
+		            Engine engine = ProviderUtil.getEngine();
 		            String suffixSeparator = 
 		            	engine.getParameter(SUFFIX_SEPARATOR);
 		            String[] pagePath = 
@@ -210,7 +210,7 @@ public class InsertProcessor
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
-        if(EngineUtil.getEngine().isProcessDecode()) {
+        if(ProviderUtil.getEngine().isProcessDecode()) {
             DecodeTreeWalker decode = 
                 (DecodeTreeWalker)_parentDecode.get();
             RenderUtil.decodeProcessorTree(

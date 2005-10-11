@@ -30,7 +30,7 @@ import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 
@@ -149,7 +149,7 @@ public class PageAttributeScope extends ScriptableObject
     public Object getAttribute(String name) {
         Scriptable scope = findScope(name);
         if(scope != null) {
-            ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
+            ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
             return env.convertFromScriptObject(scope.get(name, this));
         }
         return null;

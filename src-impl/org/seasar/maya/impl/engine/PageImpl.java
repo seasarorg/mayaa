@@ -31,9 +31,9 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
+import org.seasar.maya.impl.source.SourceUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -77,7 +77,7 @@ public class PageImpl extends SpecificationImpl
             if(StringUtil.isEmpty(extendsPath)) {
                 return;
             }
-            Engine engine = EngineUtil.getEngine();
+            Engine engine = ProviderUtil.getEngine();
             String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
             String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
             _superPage = engine.getPage(pagePath[0]);
@@ -110,7 +110,7 @@ public class PageImpl extends SpecificationImpl
                 this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.isEmpty(value)) {
             value = SpecificationUtil.getMayaAttributeValue(
-                    EngineUtil.getEngine(), QM_TEMPLATE_SUFFIX);
+                    ProviderUtil.getEngine(), QM_TEMPLATE_SUFFIX);
         }
         if(StringUtil.isEmpty(value)) {
             value = "";
@@ -149,9 +149,8 @@ public class PageImpl extends SpecificationImpl
         if(StringUtil.hasValue(extension)) {
             name.append(".").append(extension);
         }
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        SourceDescriptor source =
-            provider.getPageSourceDescriptor(name.toString());
+        SourceDescriptor source = 
+            SourceUtil.getSourceDescriptor(name.toString());
         if(source.exists()) {
             Template template = new TemplateImpl(this, suffix, extension);
             template.setSource(source);
@@ -216,7 +215,7 @@ public class PageImpl extends SpecificationImpl
         if(topLevelPage == null || template == null) {
             throw new IllegalArgumentException();
         }
-        if(EngineUtil.getEngine().isProcessDecode()) {
+        if(ProviderUtil.getEngine().isProcessDecode()) {
             RenderUtil.decodeProcessorTree(topLevelPage, template, null);
         }
         return template.doTemplateRender(topLevelPage);

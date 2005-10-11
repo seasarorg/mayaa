@@ -27,10 +27,9 @@ import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.EngineUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.source.NullSourceDescriptor;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -87,8 +86,7 @@ public class SpecificationImpl
         setTimestamp(new Date());
         if(getSource().exists()) {
             clear();
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            SpecificationBuilder builder = provider.getSpecificationBuilder();
+            SpecificationBuilder builder = ProviderUtil.getSpecificationBuilder();
             builder.build(this);
         }
     }

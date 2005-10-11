@@ -15,27 +15,13 @@
  */
 package org.seasar.maya.impl.provider;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -43,43 +29,12 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ServiceProviderImpl 
 		implements ServiceProvider, CONST_IMPL {
     
-    private Object _context;
-    private ApplicationScope _application;
-    private Class _serviceCycleClass;
-    private Map _serviceCycleParams;
     private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;
     private LibraryManager _libraryManager; 
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
-    private Class _pageSourceClass;
-    private Map _pageSourceParams;
-	private ThreadLocal _currentServiceCycle = new ThreadLocal();
 	
-    public ServiceProviderImpl(Object context) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        _context = context;
-    }
-
-    public void setServiceCycleClass(Class serviceCycleClass) {
-        if(serviceCycleClass == null) {
-            throw new IllegalArgumentException();
-        }
-        _serviceCycleClass = serviceCycleClass;
-    }
-
-    public void setServiceCycleParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_serviceCycleParams == null) {
-            _serviceCycleParams = new HashMap();
-        }
-        _serviceCycleParams.put(name, value);
-    }
-
     public void setEngine(Engine engine) {
         if(engine == null) {
             throw new IllegalArgumentException();
@@ -149,88 +104,6 @@ public class ServiceProviderImpl
     	    throw new IllegalStateException();
     	}
         return _templateBuilder;
-    }
-    
-    public void setPageSourceClass(Class pageSourceClass) {
-        if(pageSourceClass == null) {
-            throw new IllegalArgumentException();
-        }
-        _pageSourceClass = pageSourceClass;
-    }
-
-    public void setPageSourceParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
-            throw new IllegalArgumentException();
-        }
-        if(_pageSourceParams == null) {
-            _pageSourceParams = new HashMap();
-        }
-        _pageSourceParams.put(name, value);
-    }
-    
-    public SourceDescriptor getPageSourceDescriptor(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
-            throw new IllegalArgumentException();
-        }
-        if(_pageSourceClass == null) {
-            throw new IllegalStateException();
-        }
-        SourceDescriptor source = 
-            (SourceDescriptor)ObjectUtil.newInstance(_pageSourceClass);
-        source.setSystemID(systemID);
-        if(_pageSourceParams != null) {
-            for(Iterator it = _pageSourceParams.keySet().iterator(); it.hasNext(); ) {
-                String key = (String)it.next();
-                String value = (String)_pageSourceParams.get(key);
-                source.setParameter(key, value);
-            }
-        }
-        return source;
-    }
-    
-    protected ApplicationScope getApplicationScope() {
-        if(_application == null) {
-            if(_context instanceof ServletContext == false) {
-                throw new IllegalStateException();
-            }
-            ServletContext servletContext = (ServletContext)_context;
-            _application = new ApplicationScopeImpl();
-            _application.setUnderlyingObject(servletContext);
-        }
-        return _application;
-    }
-
-	public void initialize(Object requestContext, Object responseContext) {
-		if(requestContext == null || responseContext == null) {
-			throw new IllegalArgumentException();
-		}
-        if(_serviceCycleClass == null) {
-            throw new IllegalStateException();
-        }
-		ServiceCycle cycle = 
-            (ServiceCycle)ObjectUtil.newInstance(_serviceCycleClass);
-        cycle.setApplicationScope(getApplicationScope());
-		if(_serviceCycleParams != null) {
-            for(Iterator it = _serviceCycleParams.keySet().iterator();
-            		it.hasNext(); ) {
-                String key = (String)it.next();
-                String value = (String)_serviceCycleParams.get(key);
-                cycle.setParameter(key, value);
-            }
-        }
-		_currentServiceCycle.set(cycle);
-		RequestScope request = cycle.getRequestScope();
-        request.setUnderlyingObject(requestContext);
-        Response response = cycle.getResponse();
-        response.setUnderlyingObject(responseContext);
-	}
-
-	public ServiceCycle getServiceCycle() {
-		ServiceCycle cycle = (ServiceCycle)_currentServiceCycle.get();
-		if(cycle == null) {
-			throw new IllegalStateException();
-		}
-		return cycle;
     }
 
 }

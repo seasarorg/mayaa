@@ -30,6 +30,7 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.StringUtil;
 
 /**
@@ -108,15 +109,15 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static void initScope() {
-        ScriptUtil.getScriptEnvironment().initScope();
+        ProviderUtil.getScriptEnvironment().initScope();
     }
 
     public static void startScope(Map variables) {
-        ScriptUtil.getScriptEnvironment().startScope(variables);
+        ProviderUtil.getScriptEnvironment().startScope(variables);
     }
 
     public static void endScope() {
-        ScriptUtil.getScriptEnvironment().endScope();
+        ProviderUtil.getScriptEnvironment().endScope();
     }
 
     public static void execEventScript(String text) {

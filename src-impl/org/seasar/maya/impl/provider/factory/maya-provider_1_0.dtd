@@ -3,20 +3,14 @@
 <!NOTATION maya.conf_1_0 PUBLIC
         "-//The Seasar Foundation//DTD Maya Provider 1.0//EN">
 
-<!ELEMENT service (description?, serviceCycle, pageSourceDescriptor, engine, 
-		scriptEnvironment, specificationBuilder, libraryManager, templateBuilder) >
+<!ELEMENT service (description?, engine?, scriptEnvironment?, 
+		specificationBuilder?, libraryManager?, templateBuilder?) >
 
 <!ELEMENT description (#PCDATA)>
 
 <!ELEMENT parameter (description?)>
 <!ATTLIST parameter name CDATA #REQUIRED>
 <!ATTLIST parameter value CDATA #REQUIRED>
-
-<!ELEMENT serviceCycle (description?, parameter*)>
-<!ATTLIST serviceCycle class CDATA #REQUIRED>
-
-<!ELEMENT pageSourceDescriptor (description?, parameter*)>
-<!ATTLIST pageSourceDescriptor class CDATA #REQUIRED>
 
 <!ELEMENT engine (description?, errorHandler, parameter*)>
 <!ATTLIST engine class CDATA #REQUIRED>

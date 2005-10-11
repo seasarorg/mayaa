@@ -44,10 +44,9 @@ import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.source.DelaySourceDescriptor;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
+import org.seasar.maya.impl.source.SourceUtil;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -102,9 +101,8 @@ public class EngineImpl extends SpecificationImpl
 
     protected Page createNewPage(String pageName) {
         Page page = new PageImpl(pageName);
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
         String path = pageName + ".maya";
-        SourceDescriptor source = provider.getPageSourceDescriptor(path);
+        SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
         page.setSource(source);
         return page;
     }

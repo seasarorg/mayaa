@@ -44,11 +44,13 @@ public class ProviderHandler extends DefaultHandler
         return ((ServiceTagHandler)_stack.getRoot()).getServiceProvider();
     }
     
-    public ProviderHandler(ServletContext context) {
+    public ProviderHandler(
+            ServletContext context, ServiceProvider unmarshall) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
-        _stack = new TagHandlerStack(new ServiceTagHandler(context));
+        ServiceTagHandler handler = new ServiceTagHandler(unmarshall);
+        _stack = new TagHandlerStack(handler);
     }
     
 	public InputSource resolveEntity(String publicId, String systemId) {

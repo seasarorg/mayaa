@@ -13,8 +13,10 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.cycle.factory;
 
+import org.seasar.maya.cycle.factory.CycleFactory;
+import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
 import org.xml.sax.Attributes;
@@ -25,35 +27,24 @@ import org.xml.sax.Attributes;
 public class ServiceCycleTagHandler
         extends AbstractParameterizableTagHandler {
 
-    private ServiceTagHandler _parent;
-
-    public ServiceCycleTagHandler(ServiceTagHandler parent) {
+    private CycleFactory _cycleFactory;
+    
+    public ServiceCycleTagHandler() {
         super("serviceCycle");
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
-        _parent = parent;
     }
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        Class serviceCycleClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _parent.getServiceProvider().setServiceCycleClass(serviceCycleClass);
+        _cycleFactory = (CycleFactory)XMLUtil.getObjectValue(
+                attributes, "class", null, CycleFactory.class);
     }
 
-    protected void setServiceCycleParameter(String name, String value) {
-        _parent.getServiceProvider().setServiceCycleParameter(name, value);
+    public CycleFactory getCycleFactory() {
+        return _cycleFactory;
     }
-
+    
     public Parameterizable getParameterizable() {
-        return new Parameterizable() {
-
-            public void setParameter(String name, String value) {
-                setServiceCycleParameter(name, value);
-            }
-
-        };
+        return getCycleFactory(); 
     }
-
+    
 }

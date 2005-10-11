@@ -13,24 +13,29 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya;
+package org.seasar.maya.cycle.factory;
+
+import java.io.Serializable;
+
+import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.provider.Parameterizable;
 
 /**
- * 実サービスオブジェクトのProxyインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Underlyable {
-    
+public interface CycleFactory extends Parameterizable, Serializable {
+
     /**
-     * ホストする実サービスオブジェクトの設定メソッド。
-     * @param context 実サービスオブジェクト。
+     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
+     * @param requestContext カレントのリクエストオブジェクト。
+     * @param responseContext カレントのレスポンスオブジェクト。
      */
-    void setUnderlyingObject(Object context);
-    
+    void initialize(Object requestContext, Object responseContext);
+
     /**
-     * ホストする実サービスオブジェクトの取得メソッド。
-     * @return 実サービスオブジェクト。
+     * サービスサイクルの取得
+     * @return カレントスレッドでのサービスサイクル。
      */
-    Object getUnderlyingObject();
+    ServiceCycle getServiceCycle();
     
 }

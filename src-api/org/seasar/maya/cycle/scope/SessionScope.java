@@ -17,14 +17,14 @@ package org.seasar.maya.cycle.scope;
 
 import java.io.Serializable;
 
-import org.seasar.maya.Underlyable;
+import org.seasar.maya.cycle.ContextAware;
 
 /**
  * セッションレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SessionScope 
-		extends Serializable, AttributeScope, Underlyable {
+		extends Serializable, AttributeScope, ContextAware {
 
     /**
      * セッションIDの取得。

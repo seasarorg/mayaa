@@ -34,10 +34,9 @@ import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationImpl;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -136,8 +135,7 @@ public class TemplateImpl
     protected void parseSpecification() {
         setTimestamp(new Date());
         clear();
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        TemplateBuilder builder = provider.getTemplateBuilder();
+        TemplateBuilder builder = ProviderUtil.getTemplateBuilder();
         builder.build(this);
     }
 
@@ -146,7 +144,7 @@ public class TemplateImpl
         if(templateTime != null) {
             Page page = getPage();
             Date pageTime = page.getTimestamp();
-            Date engineTime = EngineUtil.getEngine().getTimestamp();
+            Date engineTime = ProviderUtil.getEngine().getTimestamp();
             if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
                 setTimestamp(null);
             }

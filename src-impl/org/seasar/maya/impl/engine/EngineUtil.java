@@ -23,9 +23,8 @@ import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,14 +35,9 @@ public class EngineUtil implements CONST_IMPL {
         // no instantiation.
     }
 
-    public static Engine getEngine() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getEngine();
-    }
-
     public static String getEngineSetting(
             String name, String defaultValue) {
-        Engine engine = getEngine();
+        Engine engine = ProviderUtil.getEngine();
         String value = engine.getParameter(name);
         if(value != null) {
             return value;
@@ -53,7 +47,7 @@ public class EngineUtil implements CONST_IMPL {
 
     public static boolean getEngineSettingBoolean(
             String name, boolean defaultValue) {
-        Engine engine = getEngine();
+        Engine engine = ProviderUtil.getEngine();
         String value = engine.getParameter(name);
         return ObjectUtil.booleanValue(value, defaultValue);
     }
@@ -86,7 +80,7 @@ public class EngineUtil implements CONST_IMPL {
 
     public static Specification getParentSpecification(Specification spec) {
         if(spec instanceof Page) {
-            return EngineUtil.getEngine();
+            return ProviderUtil.getEngine();
         } else if(spec instanceof Template) {
             return ((Template)spec).getPage();
         }

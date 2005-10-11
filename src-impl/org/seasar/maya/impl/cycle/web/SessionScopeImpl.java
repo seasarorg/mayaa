@@ -25,7 +25,7 @@ import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.scope.AbstractWritableAttributeScope;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -88,7 +88,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
             return null;
         }
         check();
-        ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
         return env.convertFromScriptObject(_httpSession.getAttribute(name));
     }
 
@@ -110,7 +110,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
 
     // Underlyable implemetns ----------------------------------------
     
-    public void setUnderlyingObject(Object context) {
+    public void setUnderlyingContext(Object context) {
         // When setting, UnderlyingObject is "HttpServletRequest"
         if(context == null || 
                 context instanceof HttpServletRequest == false) {
@@ -120,7 +120,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         _httpSession = null;
     }
 
-    public Object getUnderlyingObject() {
+    public Object getUnderlyingContext() {
         // When getting, UnderlyingObject is "HttpSession"
         check();
         return _httpSession;

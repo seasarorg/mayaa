@@ -23,10 +23,9 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.BuilderUtil;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -47,8 +46,7 @@ public class InsertSetter implements InjectionResolver, CONST_IMPL {
         QName qName = injected.getQName();
         String uri = qName.getNamespaceURI();
         if(uri.startsWith("/")) {
-	        ServiceProvider provider = ProviderFactory.getServiceProvider(); 
-	        LibraryManager libraryManager = provider.getLibraryManager();
+	        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
 	        if(libraryManager.getProcessorDefinition(qName) == null) {
 	            String name = qName.getLocalName();
 	            String path = 

@@ -24,7 +24,8 @@ import org.seasar.maya.provider.Parameterizable;
  * 設定XMLのビルダ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SpecificationBuilder extends Parameterizable, Serializable {
+public interface SpecificationBuilder
+        extends Parameterizable, Serializable {
     
     /**
      * ページ設定のビルドを行う。

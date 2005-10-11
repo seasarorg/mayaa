@@ -18,10 +18,8 @@ package org.seasar.maya.provider;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
-import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * アプリケーションスコープでのサービス提供オブジェクト。
@@ -58,25 +56,5 @@ public interface ServiceProvider {
      * @return テンプレートビルダ。
      */
     TemplateBuilder getTemplateBuilder();
-
-    /**
-     * テンプレートや設定XMLを読み出すソースを生成する。
-     * @param systemID ソースのSystemID。
-     * @return 指定SystemIDのソース。
-     */
-    SourceDescriptor getPageSourceDescriptor(String systemID);
-    
-    /**
-     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
-     * @param requestContext カレントのリクエストオブジェクト。
-     * @param responseContext カレントのレスポンスオブジェクト。
-     */
-    void initialize(Object requestContext, Object responseContext);
-    
-    /**
-     * サービスサイクルの取得
-     * @return カレントスレッドでのサービスサイクル。
-     */
-    ServiceCycle getServiceCycle();
     
 }

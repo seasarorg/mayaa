@@ -20,8 +20,6 @@ import java.util.Date;
 
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -47,8 +45,7 @@ public class DelaySourceDescriptor implements SourceDescriptor {
     
     public boolean exists() {
         if(_source == null) {
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            _source = provider.getPageSourceDescriptor(_systemID);
+            _source = SourceUtil.getSourceDescriptor(_systemID);
         }
         return _source.exists();
     }

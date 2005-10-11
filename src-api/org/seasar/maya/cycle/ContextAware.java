@@ -13,22 +13,24 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.provider.factory;
-
-import java.io.Serializable;
-
-import org.seasar.maya.provider.ServiceProvider;
+package org.seasar.maya.cycle;
 
 /**
- * アプリケーションサービスプロバイダのファクトリ
+ * 外部コンテキストオブジェクトのProxyインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProviderFactory extends Serializable {
-
-	/**
-	 * サービスプロバイダの取得。
-	 * @return サービスプロバイダ。
-	 */
-	ServiceProvider getServiceProvider();
-	
+public interface ContextAware {
+    
+    /**
+     * ホストするコンテキストオブジェクトの設定メソッド。
+     * @param context コンテキストオブジェクト。
+     */
+    void setUnderlyingContext(Object context);
+    
+    /**
+     * ホストするコンテキストオブジェクトの取得メソッド。
+     * @return コンテキストオブジェクト。
+     */
+    Object getUnderlyingContext();
+    
 }

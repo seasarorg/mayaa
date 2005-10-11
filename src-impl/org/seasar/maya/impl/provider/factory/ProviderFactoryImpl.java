@@ -15,7 +15,6 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
@@ -26,55 +25,59 @@ import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.seasar.maya.provider.factory.ProviderFactory;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderFactoryImpl extends ProviderFactory
-        implements CONST_IMPL {
+public class ProviderFactoryImpl
+        implements ProviderFactory, CONST_IMPL {
 
     private static final long serialVersionUID = 3581634661222113559L;
-    protected static final String KEY_SERVICE =
-        ServiceProvider.class.getName();
-    private boolean _inithialized;
 
-    private ServiceProvider createServiceProvider(
-    		ServletContext servletContext) {
-        BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
-        source.setServletContext(servletContext);
-        source.setSystemID("/maya.provider");
+    private ServletContext _context;
+    private ServiceProvider _provider;
+    
+    public ProviderFactoryImpl(Object context) {
+        if(context == null || context instanceof ServletContext == false) {
+            throw new IllegalArgumentException();
+        }
+        _context = (ServletContext)context;
+    }
+    
+    protected ServiceProvider createServiceProvider(
+    		ServletContext servletContext, SourceDescriptor source,
+            ServiceProvider unmarshall) {
         if(source.exists()) {
-            ProviderHandler handler = new ProviderHandler(servletContext);
+            ProviderHandler handler = 
+                new ProviderHandler(servletContext, unmarshall);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10,
                         source.getSystemID(), true, true, false);
-                _inithialized = true;
                 return handler.getResult();
             } finally {
                 IOUtil.close(stream);
             }
         }
-        throw new RuntimeException(
-                new FileNotFoundException(source.getSystemID()));
+        return unmarshall;
     }
 
-    protected boolean isProviderInithialized() {
-        return _inithialized;
-    }
-
-    public ServiceProvider getServiceProvider(Object context) {
-        if(context == null || context instanceof ServletContext == false) {
-            throw new IllegalArgumentException();
-        }
-        ServletContext servletContext = (ServletContext)context;
-        ServiceProvider provider =
-            (ServiceProvider)servletContext.getAttribute(KEY_SERVICE);
-        if(provider == null) {
-            provider = createServiceProvider(servletContext);
-            servletContext.setAttribute(KEY_SERVICE, provider);
-        }
+    protected ServiceProvider createServiceProvider(
+            ServletContext servletContext) {
+        BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
+        source.setServletContext(servletContext);
+        source.setSystemID("/maya.provider");
+        ServiceProvider provider = 
+            createServiceProvider(servletContext, source, null);
         return provider;
+    }
+
+    public ServiceProvider getServiceProvider() {
+        if(_provider == null) {
+            _provider = createServiceProvider(_context);
+        }
+        return _provider;
     }
 
 }

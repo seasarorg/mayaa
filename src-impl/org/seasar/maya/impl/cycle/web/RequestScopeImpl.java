@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.cycle.scope.AbstractRequestScope;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
 import org.seasar.maya.impl.engine.EngineUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.EnumerationIterator;
@@ -126,7 +126,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        ScriptEnvironment env = ScriptUtil.getScriptEnvironment(); 
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
         return env.convertFromScriptObject(
                 _httpServletRequest.getAttribute(name));
     }
@@ -149,7 +149,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     // Underlyable implemetns ----------------------------------------
     
-    public void setUnderlyingObject(Object context) {
+    public void setUnderlyingContext(Object context) {
         if(context == null || 
                 context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
@@ -161,7 +161,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         parsePath(getRequestedPath());
     }
     
-    public Object getUnderlyingObject() {
+    public Object getUnderlyingContext() {
         check();
         return _httpServletRequest;
     }

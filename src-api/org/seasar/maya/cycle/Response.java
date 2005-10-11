@@ -18,13 +18,12 @@ package org.seasar.maya.cycle;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.seasar.maya.Underlyable;
 
 /**
  * レスポンスのインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Response extends Serializable, Underlyable  {
+public interface Response extends Serializable, ContextAware  {
 
     /**
      * コンテンツタイプの指定を行う。

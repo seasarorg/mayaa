@@ -20,9 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.impl.engine.EngineUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.IllegalParameterValueException;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 
@@ -63,7 +63,7 @@ public class TemplateErrorHandler  implements ErrorHandler {
         		throwableClass = throwableClass.getSuperclass()) {
             String pageName = getPageName(throwableClass);
             try {
-                Engine engine = EngineUtil.getEngine();
+                Engine engine = ProviderUtil.getEngine();
             	Page page = engine.getPage(pageName);
                 page.doPageRender("", getExtension());
                 if(LOG.isErrorEnabled()) {

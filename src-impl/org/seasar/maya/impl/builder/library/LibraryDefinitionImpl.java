@@ -26,10 +26,10 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
 import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -109,8 +109,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         		}
         	}
         }
-        LibraryManager manager = 
-            ProviderFactory.getServiceProvider().getLibraryManager();
+        LibraryManager manager = ProviderUtil.getLibraryManager();
         return manager.getPropertyConverter(propertyClass);
 	}
 
@@ -121,8 +120,7 @@ public class LibraryDefinitionImpl implements LibraryDefinition {
         if(_converters != null && _converters.containsKey(converterName)) {
             return (PropertyConverter)_converters.get(converterName);
         }
-        LibraryManager manager = 
-            ProviderFactory.getServiceProvider().getLibraryManager();
+        LibraryManager manager = ProviderUtil.getLibraryManager();
         return manager.getPropertyConverter(converterName);
 	}
 

@@ -13,47 +13,41 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.source.factory;
 
+import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.Parameterizable;
+import org.seasar.maya.source.factory.SourceFactory;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceDescriptorTagHandler
+public class SourceFactoryTagHandler
         extends AbstractParameterizableTagHandler {
 
-    private ServiceTagHandler _parent;
-
-    public PageSourceDescriptorTagHandler(ServiceTagHandler parent) {
+    private SourceFactory _sourceFactory;
+    
+    public SourceFactoryTagHandler() {
         super("pageSourceDescriptor");
-        if(parent == null) {
-            throw new IllegalArgumentException();
-        }
-        _parent = parent;
     }
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        Class pageSourceClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _parent.getServiceProvider().setPageSourceClass(pageSourceClass);
+        _sourceFactory = (SourceFactory)XMLUtil.getObjectValue(
+                attributes, "class", null, SourceFactory.class);
     }
 
-    protected void setPageSourceParameter(String name, String value) {
-        _parent.getServiceProvider().setPageSourceParameter(name, value);
+    public SourceFactory getSourceFactory() {
+        if(_sourceFactory == null) {
+            throw new IllegalStateException();
+        }
+        return _sourceFactory;
     }
-
+    
     public Parameterizable getParameterizable() {
-        return new Parameterizable() {
-
-            public void setParameter(String name, String value) {
-                setPageSourceParameter(name, value);
-            }
-
-        };
+        return getSourceFactory();
     }
 
 }

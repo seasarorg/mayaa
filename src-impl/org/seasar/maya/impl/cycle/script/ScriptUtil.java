@@ -20,9 +20,8 @@ import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,18 +32,13 @@ public class ScriptUtil {
         // no instantiation.
     }
 
-    public static ScriptEnvironment getScriptEnvironment() {
-        ServiceProvider provider = ProviderFactory.getServiceProvider();
-        return provider.getScriptEnvironment();
-    }
-
     public static CompiledScript compile(String text, Class expectedClass) {
         if(expectedClass == null) {
         	throw new IllegalArgumentException();
         }
         CompiledScript compiled;
         if(StringUtil.hasValue(text)) {
-            ScriptEnvironment environment = getScriptEnvironment();
+            ScriptEnvironment environment = ProviderUtil.getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             NodeTreeWalker node = cycle.getInjectedNode();
             compiled = environment.compile(
@@ -60,7 +54,7 @@ public class ScriptUtil {
         if(StringUtil.isEmpty(text)) {
             return text;
         }
-        String blockSign = getScriptEnvironment().getBlockSign();
+        String blockSign = ProviderUtil.getScriptEnvironment().getBlockSign();
         return text = blockSign + "{" + text.trim() + "}"; 
     }
     

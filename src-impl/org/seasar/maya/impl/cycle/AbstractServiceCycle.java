@@ -24,11 +24,10 @@ import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
 import org.seasar.maya.impl.cycle.scope.ScopeNotFoundException;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
+import org.seasar.maya.impl.source.SourceUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -60,8 +59,7 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(appSource.exists()) {
             source = appSource;
         } else {
-            ServiceProvider provider = ProviderFactory.getServiceProvider();
-            source = provider.getPageSourceDescriptor(sid);
+            source = SourceUtil.getSourceDescriptor(sid);
             if(source.exists() == false) {
                 source = null;
             }
@@ -69,13 +67,13 @@ public abstract class AbstractServiceCycle implements ServiceCycle {
         if(source == null) {
             throw new ScriptFileNotFoundException(systemID);
         }
-        ScriptEnvironment env = ScriptUtil.getScriptEnvironment();
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
         CompiledScript script = env.compile(source, encoding);
         script.execute(null);
     }
 
     public Iterator iterateAttributeScope() {
-        Iterator it = ScriptUtil.getScriptEnvironment().iterateAttributeScope();
+        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
         return new ScopeIterator(this, it);
     }
 

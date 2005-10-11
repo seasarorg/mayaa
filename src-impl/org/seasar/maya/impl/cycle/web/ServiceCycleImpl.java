@@ -60,8 +60,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     public SessionScope getSessionScope() {
         if(_session == null) {
             _session = new SessionScopeImpl();
-            Object underlying = _request.getUnderlyingObject();
-            _session.setUnderlyingObject(underlying);
+            Object underlying = _request.getUnderlyingContext();
+            _session.setUnderlyingContext(underlying);
         }
         return _session;
 	}

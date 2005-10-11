@@ -15,10 +15,9 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.impl.provider.ServiceProviderImpl;
 import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -26,17 +25,10 @@ import org.xml.sax.Attributes;
  */
 public class ServiceTagHandler extends TagHandler {
     
-    private ServletContext _context;
     private ServiceProviderImpl _provider;
     
-    public ServiceTagHandler(ServletContext context) {
+    public ServiceTagHandler(ServiceProvider unmarshall) {
         super("service");
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        _context = context;
-        putHandler(new ServiceCycleTagHandler(this));
-        putHandler(new PageSourceDescriptorTagHandler(this));
         putHandler(new EngineTagHandler(this));
         putHandler(new ScriptEnvirionmentTagHandler(this));
         putHandler(new SpecificationBuilderTagHandler(this));
@@ -46,7 +38,7 @@ public class ServiceTagHandler extends TagHandler {
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _provider = new ServiceProviderImpl(_context);
+        _provider = new ServiceProviderImpl();
     }
     
     public ServiceProviderImpl getServiceProvider() {

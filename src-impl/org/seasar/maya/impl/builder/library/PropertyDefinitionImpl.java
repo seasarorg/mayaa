@@ -29,11 +29,10 @@ import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.engine.specification.SpecificationUtil;
+import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.provider.UnsupportedParameterException;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.provider.ServiceProvider;
-import org.seasar.maya.provider.factory.ProviderFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -205,8 +204,7 @@ public class PropertyDefinitionImpl
             }
         	PropertyConverter converter = getPropertyConverter(processorDef);
         	if(converter == null && propertyClass != null) {
-        		ServiceProvider provider = ProviderFactory.getServiceProvider();
-        		LibraryManager manager = provider.getLibraryManager();
+        		LibraryManager manager = ProviderUtil.getLibraryManager();
         		converter = manager.getPropertyConverter(propertyClass);
         	}
         	if(converter == null) {

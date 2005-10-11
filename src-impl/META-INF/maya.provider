@@ -4,12 +4,6 @@
     "http://maya.seasar.org/dtd/maya-provider_1_0.dtd">
 <service>
 
-	<serviceCycle class="org.seasar.maya.impl.cycle.web.ServiceCycleImpl"/>
-
-	<pageSourceDescriptor class="org.seasar.maya.impl.source.PageSourceDescriptor">
-		<parameter name="folder" value="/WEB-INF/page"/>
-	</pageSourceDescriptor>
-
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
 		<errorHandler class="org.seasar.maya.impl.engine.error.TemplateErrorHandler">
 			<parameter name="folder" value="/"/>

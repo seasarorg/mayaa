@@ -37,7 +37,7 @@ public abstract class MayaException
     private int _injectedLineNumber = -1;
     
 	public MayaException() {
-        ServiceCycle cycle = CycleUtil.getServiceCycleSafely();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();
             if(original != null) {

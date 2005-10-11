@@ -98,7 +98,7 @@ public class ResponseImpl extends AbstractResponse {
 
     // Underlyable implemetns ----------------------------------------
 
-    public void setUnderlyingObject(Object context) {
+    public void setUnderlyingContext(Object context) {
         if(context == null ||
                 context instanceof HttpServletResponse == false) {
             throw new IllegalArgumentException();
@@ -107,7 +107,7 @@ public class ResponseImpl extends AbstractResponse {
         clearBuffer();
     }
 
-    public Object getUnderlyingObject() {
+    public Object getUnderlyingContext() {
         check();
         return _httpServletResponse;
     }

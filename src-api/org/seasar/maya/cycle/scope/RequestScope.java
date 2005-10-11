@@ -18,14 +18,14 @@ package org.seasar.maya.cycle.scope;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.seasar.maya.Underlyable;
+import org.seasar.maya.cycle.ContextAware;
 
 /**
  * リクエストレベルのスコープ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface RequestScope 
-		extends Serializable, AttributeScope, Underlyable {
+		extends Serializable, AttributeScope, ContextAware {
 
 	/**
 	 * リクエストされたパス文字列を取得する。

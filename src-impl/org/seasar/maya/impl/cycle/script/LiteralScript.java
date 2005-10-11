@@ -69,6 +69,10 @@ public class LiteralScript  implements CompiledScript {
         return true;
     }
 
+    public String getScriptText() {
+        return _text;
+    }
+
     public boolean isReadOnly() {
         return true;
     }
@@ -78,7 +82,7 @@ public class LiteralScript  implements CompiledScript {
     }
 
     public String toString() {
-        return _text;
+        return getScriptText();
     }
     
 }

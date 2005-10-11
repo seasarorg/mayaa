@@ -55,7 +55,7 @@ public abstract class AbstractSourceCompiledScript
         throw new ReadOnlyScriptBlockException(toString());
     }
 
-    public String toString() {
+    public String getScriptText() {
         return _source.getSystemID();
     }
     

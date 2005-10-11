@@ -70,7 +70,7 @@ public abstract class AbstractTextCompiledScript
         return false;
     }
 
-    public String toString() {
+    public String getScriptText() {
         return ScriptUtil.getBlockSignedText(_text);
     }
     

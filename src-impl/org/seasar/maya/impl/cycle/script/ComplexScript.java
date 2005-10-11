@@ -68,6 +68,14 @@ public class ComplexScript implements CompiledScript {
         return null;
     }
 
+    public String getScriptText() {
+        StringBuffer buffer = new StringBuffer();
+        for(int i = 0; i < _compiled.length; i++) {
+            buffer.append(_compiled[i].getScriptText());
+        }
+        return buffer.toString();
+    }
+
     public boolean isLiteral() {
         return false;
     }
@@ -81,11 +89,7 @@ public class ComplexScript implements CompiledScript {
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        for(int i = 0; i < _compiled.length; i++) {
-            buffer.append(_compiled[i].toString());
-        }
-        return buffer.toString();
+        return getScriptText();
     }
     
 }

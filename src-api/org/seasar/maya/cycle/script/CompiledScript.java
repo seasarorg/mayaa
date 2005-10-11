@@ -24,6 +24,12 @@ import java.io.Serializable;
 public interface CompiledScript extends Serializable {
 
     /**
+     * コンパイル可能およびリテラルを問わず、入力テキストを取得する。
+     * @return 入力テキスト。
+     */
+    String getScriptText();
+    
+    /**
      * スクリプト実行結果への期待型の設定。
      * @param expectedClass 実行結果に期待するクラス型。
      */

@@ -54,4 +54,8 @@ public abstract class AbstractCompiledScript
         return false;
     }
     
+    public String toString() {
+        return getScriptText();
+    }
+    
 }

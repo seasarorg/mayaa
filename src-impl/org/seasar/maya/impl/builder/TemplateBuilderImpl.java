@@ -126,7 +126,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 CharactersProcessor charsProc = (CharactersProcessor)child;
                 CompiledScript script = charsProc.getText().getValue(); 
                 if(script.isLiteral()) {
-                    String value = (String)script.execute(null);
+                    String value = script.getScriptText();
                     if(StringUtil.hasValue(value.trim())) {
                         // "processor" has child which is not empty.
                         return null;

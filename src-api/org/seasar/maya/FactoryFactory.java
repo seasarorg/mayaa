@@ -22,6 +22,7 @@ import org.seasar.maya.provider.factory.ProviderFactory;
 import org.seasar.maya.source.factory.SourceFactory;
 
 /**
+ * ファクトリのファクトリオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class FactoryFactory 

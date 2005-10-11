@@ -21,25 +21,14 @@ import java.io.Serializable;
  * コンパイル済みのスクリプトオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface CompiledScript extends Serializable {
+public interface CompiledScript
+        extends Serializable, ExpectedClassAware {
 
     /**
      * コンパイル可能およびリテラルを問わず、入力テキストを取得する。
      * @return 入力テキスト。
      */
     String getScriptText();
-    
-    /**
-     * スクリプト実行結果への期待型の設定。
-     * @param expectedClass 実行結果に期待するクラス型。
-     */
-    void setExpectedClass(Class expectedClass);
-    
-    /**
-     * スクリプト実行結果への期待型の取得。
-     * @return 実行結果に期待されるクラス型。
-     */
-    Class getExpectedClass();
     
     /**
      * リテラルテキストかどうか。

@@ -15,7 +15,7 @@
  */
 package org.seasar.maya.impl.source;
 
-import org.seasar.maya.impl.provider.IllegalParameterValueException;
+import org.seasar.maya.impl.IllegalParameterValueException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

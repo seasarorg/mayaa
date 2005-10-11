@@ -31,8 +31,11 @@ public class ParameterAwareImpl implements ParameterAware {
 	private Map _parameters;
 	
 	public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(name) || value == null) {
+        if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
+        }
+        if(value == null) {
+        	throw new IllegalParameterValueException(getClass(), name);
         }
         if(_parameters == null) {
             _parameters = new HashMap();

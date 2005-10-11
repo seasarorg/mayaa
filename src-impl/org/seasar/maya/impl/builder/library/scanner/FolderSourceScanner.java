@@ -27,8 +27,8 @@ import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.impl.IllegalParameterValueException;
 import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.provider.IllegalParameterValueException;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.NullIterator;

@@ -17,6 +17,8 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.impl.builder.library.TLDProcessorDefinition;
+import org.seasar.maya.impl.builder.library.TLDPropertyDefinition;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;

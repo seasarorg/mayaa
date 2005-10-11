@@ -19,6 +19,8 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.maya.impl.builder.library.TLDProcessorDefinition;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;

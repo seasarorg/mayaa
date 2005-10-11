@@ -17,6 +17,7 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
 import org.seasar.maya.impl.builder.library.entity.J2EEEntityResolver;
 import org.seasar.maya.impl.util.xml.TagHandlerStack;
 import org.xml.sax.Attributes;
@@ -27,6 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
+ * TODO util‚É‹¤’Ê‰»
  */
 public class TLDHandler extends DefaultHandler {
     

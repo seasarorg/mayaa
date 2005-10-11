@@ -48,8 +48,8 @@
 			<parameter name="ignore" value="rhino-"/>
 		</source>
 		<source class="org.seasar.maya.impl.builder.library.scanner.WalkaroundSourceScanner"/>
-		<builder class="org.seasar.maya.impl.builder.library.mld.MLDDefinitionBuilder"/>
-		<builder class="org.seasar.maya.impl.builder.library.tld.TLDDefinitionBuilder"/>
+		<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
+		<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
 	</libraryManager>
 	
 	<templateBuilder class="org.seasar.maya.impl.builder.TemplateBuilderImpl">

@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.builder.library.tld;
 
+import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 

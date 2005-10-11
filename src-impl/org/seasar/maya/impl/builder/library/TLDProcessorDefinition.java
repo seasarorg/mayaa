@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.tld;
+package org.seasar.maya.impl.builder.library;
 
 import java.util.Iterator;
 
@@ -24,7 +24,6 @@ import org.seasar.maya.builder.library.PropertySet;
 import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.TemplateProcessor;
 import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.builder.library.ProcessorDefinitionImpl;
 import org.seasar.maya.impl.engine.processor.JspProcessor;
 
 /**

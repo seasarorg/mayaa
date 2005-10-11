@@ -29,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * TODO util‚É‹¤’Ê‰»
  */
 public class MLDHandler extends DefaultHandler
 		implements CONST_IMPL {

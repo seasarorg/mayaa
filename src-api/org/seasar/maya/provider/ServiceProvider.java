@@ -15,6 +15,9 @@
  */
 package org.seasar.maya.provider;
 
+import java.io.Serializable;
+
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.SpecificationBuilder;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.builder.library.LibraryManager;
@@ -25,7 +28,7 @@ import org.seasar.maya.engine.Engine;
  * アプリケーションスコープでのサービス提供オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceProvider {
+public interface ServiceProvider extends ParameterAware, Serializable {
     
     /**
      * エンジンの生成を行う。

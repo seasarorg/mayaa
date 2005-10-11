@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class BuilderTagHandler
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private LibraryManagerTagHandler _parent;
     private DefinitionBuilder _builder;
@@ -48,7 +48,7 @@ public class BuilderTagHandler
         _builder = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_builder == null) {
             throw new IllegalStateException();
         }

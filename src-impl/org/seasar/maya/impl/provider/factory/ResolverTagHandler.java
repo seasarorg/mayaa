@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ResolverTagHandler 
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
     
     private TemplateBuilderTagHandler _parent;
     private InjectionResolver _resolver;
@@ -48,7 +48,7 @@ public class ResolverTagHandler
         _resolver = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_resolver == null) {
             throw new IllegalStateException();
         }

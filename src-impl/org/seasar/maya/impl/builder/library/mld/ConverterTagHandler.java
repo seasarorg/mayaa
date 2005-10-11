@@ -19,7 +19,7 @@ import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.converter.PropertyConverter;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
-import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
+import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -28,7 +28,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ConverterTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
 
     private TagHandler _parent;
     LibraryTagHandler _libraryTagHandler;
@@ -66,7 +66,7 @@ public class ConverterTagHandler
         _propertyConverter = null;
     }
 
-	public ParameterAware getParameterizable() {
+	public ParameterAware getParameterAware() {
         if(_propertyConverter == null) {
             throw new IllegalStateException();
         }

@@ -18,7 +18,7 @@ package org.seasar.maya.impl.builder.library.mld;
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.builder.library.PropertyDefinitionImpl;
 import org.seasar.maya.impl.builder.library.PropertySetImpl;
-import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
+import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.xml.sax.Attributes;
 
@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PropertyTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
 
     private PropertySetTagHandler _parent;
     private PropertyDefinitionImpl _propertyDefinition;
@@ -72,7 +72,7 @@ public class PropertyTagHandler
     	return _propertyDefinition;
     }
 
-	public ParameterAware getParameterizable() {
+	public ParameterAware getParameterAware() {
 		return getPropertyDefinition();
 	}
     

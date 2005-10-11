@@ -21,15 +21,18 @@ import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.provider.ServiceProvider;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceProviderImpl 
+public class ServiceProviderImpl extends ParameterAwareImpl
 		implements ServiceProvider, CONST_IMPL {
     
-    private Engine _engine;
+	private static final long serialVersionUID = -8659297907641816962L;
+
+	private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;
     private LibraryManager _libraryManager; 
     private SpecificationBuilder _specificationBuilder;

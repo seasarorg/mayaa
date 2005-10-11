@@ -17,14 +17,14 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
-import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
+import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LibraryTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
 
     private LibraryDefinitionImpl _libraryDefinition;
     
@@ -51,7 +51,7 @@ public class LibraryTagHandler
         return _libraryDefinition;
     }
 
-	public ParameterAware getParameterizable() {
+	public ParameterAware getParameterAware() {
 		return getLibraryDefinition();
 	}
     

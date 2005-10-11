@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class EngineTagHandler 
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
     
     private ServiceTagHandler _parent;
     private Engine _engine;
@@ -57,7 +57,7 @@ public class EngineTagHandler
         return _engine;
     }
 
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         return getEngine();
     }
     

@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ConverterTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private LibraryManagerTagHandler _parent;
     private PropertyConverter _converter;
@@ -50,7 +50,7 @@ public class ConverterTagHandler
         _converter = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_converter == null) {
             throw new IllegalStateException();
         }

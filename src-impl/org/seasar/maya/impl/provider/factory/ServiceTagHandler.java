@@ -15,15 +15,16 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
+import org.seasar.maya.ParameterAware;
 import org.seasar.maya.impl.provider.ServiceProviderImpl;
-import org.seasar.maya.impl.util.xml.TagHandler;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceTagHandler extends TagHandler {
+public class ServiceTagHandler 
+		extends AbstractParameterAwareTagHandler {
     
     private ServiceProviderImpl _provider;
     
@@ -47,5 +48,9 @@ public class ServiceTagHandler extends TagHandler {
         }
         return _provider;
     }
+
+	public ParameterAware getParameterAware() {
+		return getServiceProvider();
+	}
     
 }

@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScopeTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private ScriptEnvirionmentTagHandler _parent;
     private AttributeScope _scope;
@@ -48,7 +48,7 @@ public class ScopeTagHandler
         _scope = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_scope == null) {
             throw new IllegalStateException();
         }

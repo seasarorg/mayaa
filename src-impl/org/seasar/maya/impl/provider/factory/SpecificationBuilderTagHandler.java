@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationBuilderTagHandler
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
     
     private ServiceTagHandler _parent;
     private SpecificationBuilder _specificationBuilder;
@@ -50,7 +50,7 @@ public class SpecificationBuilderTagHandler
         _specificationBuilder = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_specificationBuilder == null) {
             throw new IllegalStateException();
         }

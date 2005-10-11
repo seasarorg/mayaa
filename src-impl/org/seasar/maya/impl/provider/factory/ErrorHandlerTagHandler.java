@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ErrorHandlerTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private EngineTagHandler _parent;
     private ErrorHandler _handler;
@@ -48,7 +48,7 @@ public class ErrorHandlerTagHandler
         _handler = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_handler == null) {
             throw new IllegalStateException();
         }

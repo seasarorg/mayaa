@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptEnvirionmentTagHandler
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
     
     private ServiceTagHandler _parent;
     private ScriptEnvironment _scriptEnvironment;
@@ -56,7 +56,7 @@ public class ScriptEnvirionmentTagHandler
         return _scriptEnvironment;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         return getScriptEnvironment();
     }
 

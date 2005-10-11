@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SourceTagHandler 
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private LibraryManagerTagHandler _parent;
     private SourceScanner _scanner;
@@ -48,7 +48,7 @@ public class SourceTagHandler
         _scanner = null;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         if(_scanner == null) {
             throw new IllegalStateException();
         }

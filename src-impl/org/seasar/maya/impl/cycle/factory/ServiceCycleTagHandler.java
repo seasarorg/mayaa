@@ -17,7 +17,7 @@ package org.seasar.maya.impl.cycle.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.factory.CycleFactory;
-import org.seasar.maya.impl.provider.factory.AbstractParameterizableTagHandler;
+import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.xml.sax.Attributes;
 
@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ServiceCycleTagHandler
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
 
     private CycleFactory _cycleFactory;
     
@@ -43,7 +43,7 @@ public class ServiceCycleTagHandler
         return _cycleFactory;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         return getCycleFactory(); 
     }
     

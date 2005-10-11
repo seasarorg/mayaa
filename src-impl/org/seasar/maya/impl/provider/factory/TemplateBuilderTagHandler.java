@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateBuilderTagHandler 
-        extends AbstractParameterizableTagHandler {
+        extends AbstractParameterAwareTagHandler {
     
     private ServiceTagHandler _parent;
     private TemplateBuilder _templateBuilder;
@@ -59,7 +59,7 @@ public class TemplateBuilderTagHandler
         return _templateBuilder;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         return getTemplateBuilder();
     }
 

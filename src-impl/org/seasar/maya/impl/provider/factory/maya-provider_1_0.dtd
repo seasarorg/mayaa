@@ -4,7 +4,7 @@
         "-//The Seasar Foundation//DTD Maya Provider 1.0//EN">
 
 <!ELEMENT service (description?, engine?, scriptEnvironment?, 
-		specificationBuilder?, libraryManager?, templateBuilder?) >
+		specificationBuilder?, libraryManager?, templateBuilder?, parameter*) >
 
 <!ELEMENT description (#PCDATA)>
 

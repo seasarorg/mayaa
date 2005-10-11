@@ -24,9 +24,9 @@ import org.xml.sax.Attributes;
  */
 public class ParameterTagHandler extends TagHandler {
     
-    private AbstractParameterizableTagHandler _parent;
+    private AbstractParameterAwareTagHandler _parent;
     
-    public ParameterTagHandler(AbstractParameterizableTagHandler parent) {
+    public ParameterTagHandler(AbstractParameterAwareTagHandler parent) {
         super("parameter");
         if(parent == null) {
             throw new IllegalArgumentException();
@@ -38,7 +38,7 @@ public class ParameterTagHandler extends TagHandler {
     		Attributes attributes, String systemID, int lineNumber) {
         String name = XMLUtil.getStringValue(attributes, "name", null);
         String value = XMLUtil.getStringValue(attributes, "value", null);
-        _parent.getParameterizable().setParameter(name, value);
+        _parent.getParameterAware().setParameter(name, value);
     }
     
 }

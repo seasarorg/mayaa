@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LibraryManagerTagHandler
-		extends AbstractParameterizableTagHandler {
+		extends AbstractParameterAwareTagHandler {
     
     private ServiceTagHandler _parent;
     private LibraryManager _libraryManager;
@@ -58,7 +58,7 @@ public class LibraryManagerTagHandler
         return _libraryManager;
     }
     
-    public ParameterAware getParameterizable() {
+    public ParameterAware getParameterAware() {
         return getLibraryManager();
     }
 

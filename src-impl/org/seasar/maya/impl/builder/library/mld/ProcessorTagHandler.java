@@ -62,7 +62,7 @@ public class ProcessorTagHandler
         throw new IllegalStateException();
     }
 
-	public ParameterAware getParameterizable() {
+	public ParameterAware getParameterAware() {
 		return getProcessorDefinition();
 	}
     

@@ -21,14 +21,14 @@ import org.seasar.maya.impl.util.xml.TagHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractParameterizableTagHandler 
+public abstract class AbstractParameterAwareTagHandler 
 		extends TagHandler {
     
-    public AbstractParameterizableTagHandler(String name) {
+    public AbstractParameterAwareTagHandler(String name) {
         super(name);
         putHandler(new ParameterTagHandler(this));
     }
 
-    public abstract ParameterAware getParameterizable(); 
+    public abstract ParameterAware getParameterAware(); 
     
 }

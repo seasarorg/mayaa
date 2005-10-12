@@ -88,15 +88,19 @@ public final class XMLUtil {
 	}
 	
 	public static Object getObjectValue(Attributes attr, 
-	        String localName, Class defaultValue, Class expectedClass) {
-        Class clazz = getClassValue(attr, localName, defaultValue);
-        if(clazz == null) {
-            throw new IllegalStateException();
+	        String localName, Class expectedClass) {
+		if(attr == null || StringUtil.isEmpty(localName) ||
+				expectedClass == null) {
+			throw new IllegalArgumentException();
+		}
+        Class clazz = getClassValue(attr, localName, null);
+        if(clazz != null) {
+	        if(expectedClass.isAssignableFrom(clazz)) {
+	            return ObjectUtil.newInstance(clazz);
+	        }
+	        throw new IllegalClassTypeException(expectedClass, clazz);
         }
-        if(expectedClass.isAssignableFrom(clazz)) {
-            return ObjectUtil.newInstance(clazz);
-        }
-        throw new IllegalClassTypeException(expectedClass, clazz);
+        return null;
 	}
 
 }

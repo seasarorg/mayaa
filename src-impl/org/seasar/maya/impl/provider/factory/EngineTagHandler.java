@@ -42,7 +42,7 @@ public class EngineTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _engine = (EngineImpl)XMLUtil.getObjectValue(
-                attributes, "class", null, Engine.class);
+                attributes, "class", Engine.class);
         _parent.getServiceProvider().setEngine(_engine);
     }
     

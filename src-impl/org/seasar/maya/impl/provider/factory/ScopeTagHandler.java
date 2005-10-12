@@ -40,7 +40,7 @@ public class ScopeTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _scope = (AttributeScope)XMLUtil.getObjectValue(
-                attributes, "class", null, AttributeScope.class);
+                attributes, "class", AttributeScope.class);
         _parent.getScriptEnvironment().addAttributeScope(_scope);
     }
     

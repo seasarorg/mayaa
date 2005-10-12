@@ -40,7 +40,7 @@ public class SourceTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _scanner = (SourceScanner)XMLUtil.getObjectValue(
-                attributes, "class", null, SourceScanner.class);
+                attributes, "class", SourceScanner.class);
         _parent.getLibraryManager().addSourceScanner(_scanner);
     }
     

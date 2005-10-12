@@ -43,7 +43,7 @@ public class LibraryManagerTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
     	_libraryManager = (LibraryManager)XMLUtil.getObjectValue(
-                attributes, "class", null, LibraryManager.class);
+                attributes, "class", LibraryManager.class);
         _parent.getServiceProvider().setLibraryManager(_libraryManager);
     }
     

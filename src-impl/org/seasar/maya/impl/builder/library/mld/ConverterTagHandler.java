@@ -47,7 +47,7 @@ public class ConverterTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _propertyConverter = (PropertyConverter)XMLUtil.getObjectValue(
-    				attributes, "class", null, PropertyConverter.class);
+    				attributes, "class", PropertyConverter.class);
         if(_propertyConverter == null) {
         	throw new IllegalStateException();
         }

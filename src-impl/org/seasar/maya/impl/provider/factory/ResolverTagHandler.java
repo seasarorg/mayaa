@@ -40,7 +40,7 @@ public class ResolverTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _resolver = (InjectionResolver)XMLUtil.getObjectValue(
-                attributes, "class", null, InjectionResolver.class);
+                attributes, "class", InjectionResolver.class);
         _parent.getTemplateBuilder().addInjectionResolver(_resolver);
     }
     

@@ -41,7 +41,7 @@ public class ScriptEnvirionmentTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _scriptEnvironment = (ScriptEnvironment)XMLUtil.getObjectValue(
-                attributes, "class", null, ScriptEnvironment.class);
+                attributes, "class", ScriptEnvironment.class);
         _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
     }
     

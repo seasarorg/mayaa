@@ -40,7 +40,7 @@ public class BuilderTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
-                attributes, "class", null, DefinitionBuilder.class);
+                attributes, "class", DefinitionBuilder.class);
         _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }
     

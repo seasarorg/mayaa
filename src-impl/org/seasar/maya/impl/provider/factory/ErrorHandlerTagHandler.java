@@ -40,7 +40,7 @@ public class ErrorHandlerTagHandler
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _handler = (ErrorHandler)XMLUtil.getObjectValue(
-                attributes, "class", null, ErrorHandler.class);
+                attributes, "class", ErrorHandler.class);
         _parent.getEngine().setErrorHandler(_handler);
     }
     

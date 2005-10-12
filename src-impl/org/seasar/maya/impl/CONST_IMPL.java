@@ -31,6 +31,8 @@ public interface CONST_IMPL {
     String URI_HTML = "http://www.w3.org/TR/html4";
     String URI_XHTML = "http://www.w3.org/1999/xhtml";
 
+    String PUBLIC_FACTORY10 = 
+        "-//The Seasar Foundation//DTD Maya Factory 1.0//EN";
     String PUBLIC_MLD10 = 
         "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
     String PUBLIC_PROVIDER10 = 

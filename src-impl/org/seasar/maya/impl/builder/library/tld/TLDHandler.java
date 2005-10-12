@@ -17,7 +17,7 @@ package org.seasar.maya.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.builder.library.entity.J2EEEntities;
 import org.seasar.maya.impl.util.xml.XMLHandler;
 
@@ -38,7 +38,7 @@ public class TLDHandler extends XMLHandler {
         getEntityMap().putAll(J2EEEntities.getEntityMap());
     }
     
-    public TLDLibraryDefinition getLibraryDefinition() {
+    public LibraryDefinition getLibraryDefinition() {
         return _rootHandler.getLibraryDefinition();
     }
 	

@@ -56,7 +56,7 @@ public class TLDDefinitionBuilder extends ParameterAwareImpl
             } finally {
                 IOUtil.close(stream);
             }
-            TLDLibraryDefinition library = handler.getLibraryDefinition();
+            LibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
             if(assigned || "/META-INF/taglib.tld".equals(systemID)) {

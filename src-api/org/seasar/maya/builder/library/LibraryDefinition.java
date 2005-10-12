@@ -40,6 +40,12 @@ public interface LibraryDefinition extends ParameterAware {
     String getNamespaceURI();
     
     /**
+     * 当該ライブラリに、名前空間URIを追加アサインする。
+     * @param assignedURI 追加アサインする名前空間URI。
+     */
+    void addAssignedURI(String assignedURI);
+    
+    /**
      * 当該ライブラリに追加アサインされた名前空間URIをイテレートする。
      * @return 追加アサインされた名前空間URIのイテレータ。
      */

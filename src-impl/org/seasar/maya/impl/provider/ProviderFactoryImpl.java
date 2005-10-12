@@ -51,7 +51,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10,
                         source.getSystemID(), true, true, false);
-                return handler.getResult();
+                return handler.getServiceProvider();
             } finally {
                 IOUtil.close(stream);
             }

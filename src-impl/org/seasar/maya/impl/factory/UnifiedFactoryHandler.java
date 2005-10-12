@@ -13,39 +13,33 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
-
-import javax.servlet.ServletContext;
+package org.seasar.maya.impl.factory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.util.xml.XMLHandler;
-import org.seasar.maya.provider.ServiceProvider;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderHandler extends XMLHandler
+public class UnifiedFactoryHandler extends XMLHandler
         implements CONST_IMPL {
 
-    private static Log LOG = LogFactory.getLog(ProviderHandler.class); 
+    private static Log LOG = LogFactory.getLog(UnifiedFactoryHandler.class); 
     
-    private ServiceTagHandler _rootHandler;
+    private FactoryTagHandler _rootHandler;
     
-    public ProviderHandler(
-            ServletContext context, ServiceProvider unmarshall) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        _rootHandler = new ServiceTagHandler(unmarshall);
+    public UnifiedFactoryHandler() {
+        _rootHandler = new FactoryTagHandler();
         setRootHandler(_rootHandler);
         setLog(LOG);
-        getEntityMap().put(PUBLIC_PROVIDER10, "maya-provider_1_0.dtd");
+        getEntityMap().put(PUBLIC_FACTORY10, "maya-factory_1_0.dtd");
     }
     
-    public ServiceProvider getServiceProvider() {
-        return _rootHandler.getServiceProvider();
+    public UnifiedFactory getUnifiedFactory() {
+        return _rootHandler.getFactory();
     }
     
 }

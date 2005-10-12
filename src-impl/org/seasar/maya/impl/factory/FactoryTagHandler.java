@@ -13,41 +13,44 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.source.factory;
+package org.seasar.maya.impl.factory;
 
 import org.seasar.maya.ParameterAware;
+import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.source.SourceFactory;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceFactoryTagHandler
+public class FactoryTagHandler
         extends AbstractParameterAwareTagHandler {
 
-    private SourceFactory _sourceFactory;
+    private UnifiedFactory _factory;
     
-    public SourceFactoryTagHandler() {
-        super("pageSourceDescriptor");
+    public FactoryTagHandler() {
+        super("factory");
     }
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _sourceFactory = (SourceFactory)XMLUtil.getObjectValue(
-                attributes, "class", null, SourceFactory.class);
+        _factory = (UnifiedFactory)XMLUtil.getObjectValue(
+                attributes, "class", null, UnifiedFactory.class);
+        Class serviceClass = XMLUtil.getClassValue(
+                attributes, "serviceClass", null);
+        _factory.setServiceClass(serviceClass);
     }
 
-    public SourceFactory getSourceFactory() {
-        if(_sourceFactory == null) {
+    public UnifiedFactory getFactory() {
+        if(_factory == null) {
             throw new IllegalStateException();
         }
-        return _sourceFactory;
+        return _factory;
     }
     
     public ParameterAware getParameterAware() {
-        return getSourceFactory();
+        return getFactory();
     }
 
 }

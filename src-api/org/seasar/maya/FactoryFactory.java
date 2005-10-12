@@ -23,8 +23,7 @@ import java.util.Map;
  * ファクトリのファクトリオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class FactoryFactory 
-		implements ParameterAware, Serializable {
+public abstract class FactoryFactory implements Serializable {
 
     private static FactoryFactory _instance; 
     private static Object _context;
@@ -74,16 +73,6 @@ public abstract class FactoryFactory
             _factories.put(interfaceClass, factory);
         }
         return factory;
-    }
-    
-    /**
-     * パラメータを設定する。
-     * @param name パラメータ名。
-     * @param value パラメータ値。
-     */
-    public static void setParameterToInstance(String name, String value) {
-    	check();
-    	_instance.setParameter(name, value);
     }
     
     /**

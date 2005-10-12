@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl;
 
-import java.util.Iterator;
-
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.cycle.CycleFactory;
@@ -26,7 +24,6 @@ import org.seasar.maya.impl.provider.ProviderFactoryImpl;
 import org.seasar.maya.impl.provider.ServiceProviderImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.source.SourceFactoryImpl;
-import org.seasar.maya.impl.util.collection.NullIterator;
 import org.seasar.maya.provider.ProviderFactory;
 import org.seasar.maya.source.SourceFactory;
 
@@ -63,19 +60,5 @@ public class FactoryFactoryImpl extends FactoryFactory {
 	    }
         throw new IllegalArgumentException();
     }
-
-    // Parameterizable implements ------------------------------------
-
-	public void setParameter(String name, String value) {
-        // do nothing.
-	}
-
-	public String getParameter(String name) {
-		return null;
-	}
-
-	public Iterator iterateParameterNames() {
-		return NullIterator.getInstance();
-	}
     
 }

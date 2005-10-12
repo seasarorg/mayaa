@@ -27,7 +27,8 @@ import org.seasar.maya.impl.util.xml.XMLHandler;
 public class UnifiedFactoryHandler extends XMLHandler
         implements CONST_IMPL {
 
-    private static Log LOG = LogFactory.getLog(UnifiedFactoryHandler.class); 
+    private static Log LOG = 
+        LogFactory.getLog(UnifiedFactoryHandler.class); 
     
     private FactoryTagHandler _rootHandler;
     

@@ -35,6 +35,7 @@ public class FactoryTagHandler
 
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
+        // TODO 設定がないときのマーシャル処理。
         _factory = (UnifiedFactory)XMLUtil.getObjectValue(
                 attributes, "class", null, UnifiedFactory.class);
         Class serviceClass = XMLUtil.getClassValue(

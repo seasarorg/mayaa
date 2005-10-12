@@ -61,6 +61,7 @@ public class FactoryFactoryImpl extends FactoryFactory {
     // Parameterizable implements ------------------------------------
 
 	public void setParameter(String name, String value) {
+        // do nothing.
 	}
 
 	public String getParameter(String name) {

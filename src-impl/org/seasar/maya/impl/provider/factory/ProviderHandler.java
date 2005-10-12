@@ -20,94 +20,32 @@ import javax.servlet.ServletContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.maya.impl.util.xml.TagHandlerStack;
+import org.seasar.maya.impl.util.xml.XMLHandler;
 import org.seasar.maya.provider.ServiceProvider;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
- * TODO util‚É‹¤’Ê‰»
  */
-public class ProviderHandler extends DefaultHandler
+public class ProviderHandler extends XMLHandler
         implements CONST_IMPL {
 
     private static Log LOG = LogFactory.getLog(ProviderHandler.class); 
     
-    private TagHandlerStack _stack;
-    private Locator _locator;
-    
-    public ServiceProvider getResult() {
-        return ((ServiceTagHandler)_stack.getRoot()).getServiceProvider();
-    }
+    private ServiceTagHandler _rootHandler;
     
     public ProviderHandler(
             ServletContext context, ServiceProvider unmarshall) {
         if(context == null) {
             throw new IllegalArgumentException();
         }
-        ServiceTagHandler handler = new ServiceTagHandler(unmarshall);
-        _stack = new TagHandlerStack(handler);
+        _rootHandler = new ServiceTagHandler(unmarshall);
+        setRootHandler(_rootHandler);
+        setLog(LOG);
+        getEntityMap().put(PUBLIC_PROVIDER10, "maya-provider_1_0.dtd");
     }
     
-	public InputSource resolveEntity(String publicId, String systemId) {
-        if(PUBLIC_PROVIDER10.equals(publicId)) {
-            ClassLoaderSourceDescriptor source = 
-            	new ClassLoaderSourceDescriptor();
-            source.setSystemID("maya-provider_1_0.dtd");
-            source.setNeighborClass(ProviderHandler.class);
-            if(source.exists()) {
-                return new InputSource(source.getInputStream());
-            }
-        }
-        return null;
-    }
-    
-	public void setDocumentLocator(Locator locator) {
-		_locator = locator;
-	}
-
-	protected String getSystemID() {
-		if(_locator != null) {
-			return _locator.getSystemId();
-		}
-		return null;
-	}
-
-	protected int getLineNumber() {
-		if(_locator != null) {
-			return _locator.getLineNumber();
-		}
-		return 0;
-	}
-
-    public void startElement(String namespaceURI, 
-            String localName, String qName, Attributes attributes) {
-        _stack.startElement(
-        		localName, attributes, getSystemID(), getLineNumber());
-    }
-    
-    public void endElement(
-    		String namespaceURI, String localName, String qName) {
-        _stack.endElement();
-    }
-
-    public void fatalError(SAXParseException e) {
-        error(e);
-    }
-
-    public void error(SAXParseException e) {
-        throw new RuntimeException(e);
-    }
-    
-    public void warning(SAXParseException e) {
-        if(LOG.isWarnEnabled()) {
-            LOG.warn(e.getMessage(), e);
-        }
+    public ServiceProvider getResult() {
+        return _rootHandler.getServiceProvider();
     }
     
 }

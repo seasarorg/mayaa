@@ -18,88 +18,28 @@ package org.seasar.maya.impl.builder.library.tld;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
-import org.seasar.maya.impl.builder.library.entity.J2EEEntityResolver;
-import org.seasar.maya.impl.util.xml.TagHandlerStack;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.seasar.maya.impl.builder.library.entity.J2EEEntities;
+import org.seasar.maya.impl.util.xml.XMLHandler;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
- * TODO util‚É‹¤’Ê‰»
  */
-public class TLDHandler extends DefaultHandler {
+public class TLDHandler extends XMLHandler {
     
     private static final Log LOG = LogFactory.getLog(TLDHandler.class);
 	
-    private TaglibTagHandler _handler;
-	private TagHandlerStack _stack;
-	private Locator _locator;
+    private TaglibTagHandler _rootHandler;
 	
     public TLDHandler() {
-        _handler = new TaglibTagHandler();
-        _stack = new TagHandlerStack(_handler);
+        _rootHandler = new TaglibTagHandler();
+        setRootHandler(_rootHandler);
+        setLog(LOG);
+        setNeighborClass(J2EEEntities.class);
+        getEntityMap().putAll(J2EEEntities.getEntityMap());
     }
     
     public TLDLibraryDefinition getLibraryDefinition() {
-        return _handler.getLibraryDefinition();
+        return _rootHandler.getLibraryDefinition();
     }
-
-    public InputSource resolveEntity(String publicId, String systemId) {
-        return J2EEEntityResolver.resolveEntity(publicId, systemId);
-    }
-    
-	public void setDocumentLocator(Locator locator) {
-		_locator = locator;
-	}
-
-	protected String getSystemID() {
-		if(_locator != null) {
-			return _locator.getSystemId();
-		}
-		return null;
-	}
-
-	protected int getLineNumber() {
-		if(_locator != null) {
-			return _locator.getLineNumber();
-		}
-		return 0;
-	}
-
-	public void startElement(String namespaceURI, 
-			String localName, String qName, Attributes attributes) {
-		_stack.startElement(
-				localName, attributes, getSystemID(), getLineNumber());
-	}
-
-	public void endElement(String namespaceURI,
-			String localName, String qName) {
-        _stack.endElement();
-	}
-
-	public void characters(char[] ch, int start, int length) {
-        _stack.characters(ch, start, length);
-	}
-
-	public void warning(SAXParseException e) {
-        LOG.warn(e.getMessage(), e);
-	}
-
-	public void error(SAXParseException e) {
-        if(LOG.isErrorEnabled()) {
-            LOG.error(e.getMessage(), e);
-        }
-        throw new RuntimeException(e);
-	}
-
-	public void fatalError(SAXParseException e) {
-        if(LOG.isFatalEnabled()) {
-            LOG.fatal(e.getMessage(), e);
-        }
-        throw new RuntimeException(e);
-	}
 	
 }

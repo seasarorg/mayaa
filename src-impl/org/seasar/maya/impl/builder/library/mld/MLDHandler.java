@@ -19,93 +19,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.maya.impl.util.xml.TagHandlerStack;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.seasar.maya.impl.util.xml.XMLHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
- * TODO util‚É‹¤’Ê‰»
  */
-public class MLDHandler extends DefaultHandler
-		implements CONST_IMPL {
+public class MLDHandler extends XMLHandler 
+        implements CONST_IMPL {
 
     private static final Log LOG = LogFactory.getLog(MLDHandler.class);
     
-    private LibraryTagHandler _handler;
-    private TagHandlerStack _stack;
-    private Locator _locator;
+    private LibraryTagHandler _rootHandler;
     
     public MLDHandler() {
-        _handler = new LibraryTagHandler();
-        _stack = new TagHandlerStack(_handler);
+        _rootHandler = new LibraryTagHandler();
+        setRootHandler(_rootHandler);
+        setLog(LOG);
+        getEntityMap().put(PUBLIC_MLD10, "mld_1_0.dtd");
     }
 
     public LibraryDefinitionImpl getLibraryDefinition() {
-        return _handler.getLibraryDefinition();
-    }
-
-	public InputSource resolveEntity(String publicId, String systemId) {
-        if(PUBLIC_MLD10.equals(publicId)) {
-            ClassLoaderSourceDescriptor source = 
-            	new ClassLoaderSourceDescriptor();
-            source.setSystemID("mld_1_0.dtd");
-            source.setNeighborClass(MLDHandler.class);
-            if(source.exists()) {
-                return new InputSource(source.getInputStream());
-            }
-        }
-        return null;
-    }
-    
-	public void setDocumentLocator(Locator locator) {
-		_locator = locator;
-	}
-
-	protected String getSystemID() {
-		if(_locator != null) {
-			return _locator.getSystemId();
-		}
-		return null;
-	}
-	
-	protected int getLineNumber() {
-		if(_locator != null) {
-			return _locator.getLineNumber();
-		}
-		return 0;
-	}
-	
-    public void startElement(String namespaceURI, 
-            String localName, String qName, Attributes attr) {
-        _stack.startElement(localName, attr, getSystemID(), getLineNumber());
-    }
-    
-    public void endElement(String namespaceURI, 
-    		String localName, String qName) {
-        _stack.endElement();
-    }
-    
-    public void warning(SAXParseException e) {
-        LOG.warn(e.getMessage(), e);
-    }
-
-    public void error(SAXParseException e) {
-        if(LOG.isErrorEnabled()) {
-            LOG.error(e.getMessage(), e);
-        }
-        throw new RuntimeException(e);
-    }
-
-    public void fatalError(SAXParseException e) {
-        if(LOG.isFatalEnabled()) {
-            LOG.fatal(e.getMessage(), e);
-        }
-        throw new RuntimeException(e);
+        return _rootHandler.getLibraryDefinition();
     }
 
 }

@@ -27,12 +27,14 @@ public class CommentProcessor extends CharactersProcessor {
     
 	private static final long serialVersionUID = -5176372123366627130L;
 
-	public ProcessStatus doStartProcess(Page topLevelPage) {
+    public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("<!--");
-        Object value = getText().getValue().execute(null);
-        if(value != null) {
-            cycle.getResponse().write(value.toString());
+        if (getText() != null) {
+            Object value = getText().getValue().execute(null);
+            if(value != null) {
+                cycle.getResponse().write(value.toString());
+            }
         }
         cycle.getResponse().write("-->");
         return ProcessStatus.SKIP_BODY;

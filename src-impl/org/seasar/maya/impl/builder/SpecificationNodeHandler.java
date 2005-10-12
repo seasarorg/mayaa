@@ -266,10 +266,12 @@ public class SpecificationNodeHandler
     }
     
     public void comment(char[] buffer, int start, int length) {
-        addCharactersNode();
-        String comment = new String(buffer, start, length);
-        SpecificationNode node = addNode(QM_COMMENT);
-        node.addAttribute(QM_TEXT, comment);
+        if (_specification.getSystemID().endsWith(".maya") == false) {
+            addCharactersNode();
+            String comment = new String(buffer, start, length);
+            SpecificationNode node = addNode(QM_COMMENT);
+            node.addAttribute(QM_TEXT, comment);
+        }
     }
 
     public void notationDecl(String name, String publicId, String systemId) {

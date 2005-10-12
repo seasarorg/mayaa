@@ -36,8 +36,13 @@ public class CommentProcessor extends CharactersProcessor {
                 cycle.getResponse().write(value.toString());
             }
         }
+        return ProcessStatus.EVAL_BODY_INCLUDE;
+    }
+
+    public ProcessStatus doEndProcess() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write("-->");
-        return ProcessStatus.SKIP_BODY;
+        return ProcessStatus.EVAL_PAGE;
     }
 
 }

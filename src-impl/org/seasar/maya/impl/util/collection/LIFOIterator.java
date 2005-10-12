@@ -25,24 +25,34 @@ import java.util.Stack;
 public class LIFOIterator implements Iterator {
 
 	private Stack _stack = new Stack();
+
+	public LIFOIterator() {
+		// do nothing.
+	}
+	
+	public LIFOIterator(Iterator it) {
+		if(it == null) {
+			throw new IllegalArgumentException();
+		}
+		while(it.hasNext()) {
+			add(it.next());
+		}
+	}
+	
+	public LIFOIterator(Enumeration enumeration) {
+		if(enumeration == null) {
+			throw new IllegalArgumentException();
+		}
+		while(enumeration.hasMoreElements()) {
+			add(enumeration.nextElement());
+		}
+	}
 	
 	public void add(Object item) {
 		if(item == null) {
 			throw new IllegalArgumentException();
 		}
 		_stack.push(item);
-	}
-	
-	public void addAll(Iterator it) {
-		while(it.hasNext()) {
-			_stack.push(it.next());
-		}
-	}
-	
-	public void addAll(Enumeration enumeration) {
-		while(enumeration.hasMoreElements()) {
-			_stack.push(enumeration.nextElement());
-		}
 	}
 
 	public boolean hasNext() {
@@ -54,6 +64,7 @@ public class LIFOIterator implements Iterator {
 	}
 
 	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 	
 }

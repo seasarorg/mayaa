@@ -33,28 +33,28 @@ public class CycleFactoryImpl
     private static final long serialVersionUID = 6930908159752133949L;
 
     private Object _context;
-    private Class _cycleClass;
+    private Class _serviceClass;
     private ThreadLocal _currentCycle = new ThreadLocal();
 
-    public void setCycleClass(Class serviceCycleClass) {
-        if(serviceCycleClass == null) {
+    public void setServiceClass(Class serviceClass) {
+        if(serviceClass == null) {
             throw new IllegalArgumentException();
         }
-        _cycleClass = serviceCycleClass;
+        _serviceClass = serviceClass;
     }
     
-    public Class getCycleClass() {
-        if(_cycleClass == null) {
+    public Class getServiceClass() {
+        if(_serviceClass == null) {
             throw new IllegalArgumentException();
         }
-        return _cycleClass;
+        return _serviceClass;
     }
     
     public void initialize(Object requestContext, Object responseContext) {
         if(requestContext == null || responseContext == null) {
             throw new IllegalArgumentException();
         }
-        Class serviceCycleClass = getCycleClass();
+        Class serviceCycleClass = getServiceClass();
         if(serviceCycleClass == null) {
             throw new IllegalStateException();
         }

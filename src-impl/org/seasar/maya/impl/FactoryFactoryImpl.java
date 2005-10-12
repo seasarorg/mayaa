@@ -22,6 +22,7 @@ import org.seasar.maya.cycle.CycleFactory;
 import org.seasar.maya.impl.cycle.CycleFactoryImpl;
 import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
 import org.seasar.maya.impl.provider.ProviderFactoryImpl;
+import org.seasar.maya.impl.provider.ServiceProviderImpl;
 import org.seasar.maya.impl.source.PageSourceDescriptor;
 import org.seasar.maya.impl.source.SourceFactoryImpl;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -38,7 +39,7 @@ public class FactoryFactoryImpl extends FactoryFactory {
     protected CycleFactory createCycleFactory(Object context) {
         // TODO Žb’è
         CycleFactoryImpl factory = new CycleFactoryImpl();
-        factory.setCycleClass(ServiceCycleImpl.class);
+        factory.setServiceClass(ServiceCycleImpl.class);
         factory.setUnderlyingContext(context);
         return factory;
     }
@@ -46,6 +47,7 @@ public class FactoryFactoryImpl extends FactoryFactory {
     protected ProviderFactory createProviderFactory(Object context) {
         // TODO Žb’è
     	ProviderFactoryImpl factory = new ProviderFactoryImpl();
+        factory.setServiceClass(ServiceProviderImpl.class);
     	factory.setUnderlyingContext(context);
     	return factory;
     }
@@ -53,7 +55,7 @@ public class FactoryFactoryImpl extends FactoryFactory {
     protected SourceFactory createSourceFactory(Object context) {
         // TODO Žb’è
         SourceFactoryImpl factory = new SourceFactoryImpl();
-        factory.setSourceClass(PageSourceDescriptor.class);
+        factory.setServiceClass(PageSourceDescriptor.class);
         factory.setParameter("folder", "/WEB-INF/page");
         return factory;
     }

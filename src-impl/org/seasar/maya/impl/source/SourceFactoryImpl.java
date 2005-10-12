@@ -32,27 +32,27 @@ public class SourceFactoryImpl extends ParameterAwareImpl
     private static final long serialVersionUID = 3334813227060846723L;
 
     private Object _context;
-    private Class _sourceClass;
-    
-    public void setSourceClass(Class sourceClass) {
-        if(sourceClass == null) {
+    private Class _serviceClass;
+
+    public void setServiceClass(Class serviceClass) {
+        if(serviceClass == null) {
             throw new IllegalArgumentException();
         }
-        _sourceClass = sourceClass;
+        _serviceClass = serviceClass;
     }
     
-    public Class getSourceClass() {
-        if(_sourceClass == null) {
-            throw new IllegalStateException();
+    public Class getServiceClass() {
+        if(_serviceClass == null) {
+            throw new IllegalArgumentException();
         }
-        return _sourceClass;
+        return _serviceClass;
     }
     
     public SourceDescriptor getSourceDescriptor(String systemID) {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        Class sourceClass = getSourceClass();
+        Class sourceClass = getServiceClass();
         if(sourceClass == null) {
             throw new IllegalStateException();
         }

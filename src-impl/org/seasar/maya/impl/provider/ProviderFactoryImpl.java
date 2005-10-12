@@ -38,6 +38,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     private static final long serialVersionUID = 3581634661222113559L;
 
     private Object _context;
+    private Class _serviceClass;
     private ServiceProvider _provider;
     
     protected ServiceProvider createServiceProvider(
@@ -67,6 +68,20 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
         ServiceProvider provider = 
             createServiceProvider(servletContext, source, null);
         return provider;
+    }
+
+    public void setServiceClass(Class serviceClass) {
+        if(serviceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _serviceClass = serviceClass;
+    }
+    
+    public Class getServiceClass() {
+        if(_serviceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        return _serviceClass;
     }
 
     public ServiceProvider getServiceProvider() {

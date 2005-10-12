@@ -13,21 +13,26 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.source;
+package org.seasar.maya;
 
-import org.seasar.maya.UnifiedFactory;
+import java.io.Serializable;
 
 /**
- * ソース定義のファクトリ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceFactory extends UnifiedFactory {
+public interface UnifiedFactory 
+    extends ContextAware, ParameterAware, Serializable {
 
     /**
-     * ソース定義の生成・取得をおこなう。
-     * @param systemID ソースのSystemID。
-     * @return ソース定義。
+     * ファクトリの初期化。作成するサービス対象の実装クラスの設定。
+     * @param serviceClass サービス対象実装クラス型。
      */
-    SourceDescriptor getSourceDescriptor(String systemID);
+    void setServiceClass(Class serviceClass);
+
+    /**
+     * 作成するサービス対象実装クラスの取得。
+     * @return サービス対象実装クラス型。
+     */
+    Class getServiceClass();
     
 }

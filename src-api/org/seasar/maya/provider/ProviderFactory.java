@@ -15,17 +15,13 @@
  */
 package org.seasar.maya.provider;
 
-import java.io.Serializable;
-
-import org.seasar.maya.ContextAware;
-import org.seasar.maya.ParameterAware;
+import org.seasar.maya.UnifiedFactory;
 
 /**
  * アプリケーションサービスプロバイダのファクトリ
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProviderFactory
-		extends ContextAware, ParameterAware, Serializable {
+public interface ProviderFactory extends UnifiedFactory {
 
 	/**
 	 * サービスプロバイダの取得。

@@ -43,7 +43,11 @@ public abstract class AbstractServiceCycle
     private NodeTreeWalker _injectedNode;
     private ProcessorTreeWalker _processor;
     private Throwable _t;
-    
+
+    public void load(String systemID) {
+        load(systemID, "UTF-8");
+    }
+
     public void load(String systemID, String encoding) {
         if(StringUtil.isEmpty(systemID)) {
             throw new ScriptFileNotFoundException("");

@@ -42,8 +42,10 @@ public class ScriptBlockIterator implements Iterator {
 		return _offset < _text.length();
 	}
 
+    // FIXME コメントアウトされた {} を数えてしまう
     protected int scanBlockCloseOffset(int start) {
         char c = _text.charAt(start);
+
         if(c != '{') {
             throw new IllegalArgumentException();
         }

@@ -69,6 +69,13 @@ public interface ServiceCycle
 
     /**
      * カレントのページスコープにてスクリプトを読み込み、実行する。
+     * ソースエンコーディングはUTF-8とする。
+     * @param systemID スクリプトソースのSystemID。
+     */
+    void load(String systemID);
+
+    /**
+     * カレントのページスコープにてスクリプトを読み込み、実行する。
      * @param systemID スクリプトソースのSystemID。
      * @param encoding ソースエンコーディング。
      */

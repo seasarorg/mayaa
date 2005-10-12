@@ -18,6 +18,7 @@ package org.seasar.maya.impl;
 import java.util.Iterator;
 
 import org.seasar.maya.FactoryFactory;
+import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.cycle.CycleFactory;
 import org.seasar.maya.impl.cycle.CycleFactoryImpl;
 import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
@@ -36,28 +37,31 @@ public class FactoryFactoryImpl extends FactoryFactory {
 
     private static final long serialVersionUID = -1393736148065197812L;
 
-    protected CycleFactory createCycleFactory(Object context) {
+    protected UnifiedFactory createFactory(
+    		Class interfaceClass, Object context) {
+    	if(interfaceClass == null || context == null) {
+    		throw new IllegalArgumentException();
+    	}
         // TODO Žb’è
-        CycleFactoryImpl factory = new CycleFactoryImpl();
-        factory.setServiceClass(ServiceCycleImpl.class);
-        factory.setUnderlyingContext(context);
-        return factory;
-    }
-
-    protected ProviderFactory createProviderFactory(Object context) {
-        // TODO Žb’è
-    	ProviderFactoryImpl factory = new ProviderFactoryImpl();
-        factory.setServiceClass(ServiceProviderImpl.class);
-    	factory.setUnderlyingContext(context);
-    	return factory;
-    }
-
-    protected SourceFactory createSourceFactory(Object context) {
-        // TODO Žb’è
-        SourceFactoryImpl factory = new SourceFactoryImpl();
-        factory.setServiceClass(PageSourceDescriptor.class);
-        factory.setParameter("folder", "/WEB-INF/page");
-        return factory;
+        if(CycleFactory.class.isAssignableFrom(interfaceClass)) {
+	    	CycleFactoryImpl factory = new CycleFactoryImpl();
+	        factory.setServiceClass(ServiceCycleImpl.class);
+	        factory.setUnderlyingContext(context);
+	        return factory;
+        }
+        if(ProviderFactory.class.isAssignableFrom(interfaceClass)) {
+	    	ProviderFactoryImpl factory = new ProviderFactoryImpl();
+	        factory.setServiceClass(ServiceProviderImpl.class);
+	    	factory.setUnderlyingContext(context);
+	    	return factory;
+	    }
+        if(SourceFactory.class.isAssignableFrom(interfaceClass)) {
+	        SourceFactoryImpl factory = new SourceFactoryImpl();
+	        factory.setServiceClass(PageSourceDescriptor.class);
+	        factory.setParameter("folder", "/WEB-INF/page");
+	        return factory;
+	    }
+        throw new IllegalArgumentException();
     }
 
     // Parameterizable implements ------------------------------------

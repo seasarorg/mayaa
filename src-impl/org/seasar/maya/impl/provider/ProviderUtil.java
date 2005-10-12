@@ -34,7 +34,8 @@ public class ProviderUtil {
     }
     
     private static ServiceProvider getServiceProvider() {
-        ProviderFactory factory = FactoryFactory.getProviderFactory();
+        ProviderFactory factory = 
+        	(ProviderFactory)FactoryFactory.getFactory(ProviderFactory.class);
         return factory.getServiceProvider();
     }
     

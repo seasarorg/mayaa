@@ -42,12 +42,14 @@ public class CycleUtil {
 
     public static void initialize(
             Object requestContext, Object responseContext) {
-        CycleFactory factory = FactoryFactory.getCycleFactory();
+        CycleFactory factory = 
+        	(CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
         factory.initialize(requestContext, responseContext);
     }
 
     public static ServiceCycle getServiceCycle() {
-        CycleFactory factory = FactoryFactory.getCycleFactory();
+        CycleFactory factory = 
+        	(CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
         return factory.getServiceCycle();
     }
     

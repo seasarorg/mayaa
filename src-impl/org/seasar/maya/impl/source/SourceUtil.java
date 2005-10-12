@@ -33,7 +33,8 @@ public class SourceUtil {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        SourceFactory factory = FactoryFactory.getSourceFactory();
+        SourceFactory factory = 
+        	(SourceFactory)FactoryFactory.getFactory(SourceFactory.class);
         return factory.getSourceDescriptor(systemID);
     }
     

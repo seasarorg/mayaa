@@ -16,10 +16,8 @@
 package org.seasar.maya;
 
 import java.io.Serializable;
-
-import org.seasar.maya.cycle.CycleFactory;
-import org.seasar.maya.provider.ProviderFactory;
-import org.seasar.maya.source.SourceFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ファクトリのファクトリオブジェクト。
@@ -30,9 +28,7 @@ public abstract class FactoryFactory
 
     private static FactoryFactory _instance; 
     private static Object _context;
-    private static ProviderFactory _providerFactory;
-    private static CycleFactory _cycleFactory;
-    private static SourceFactory _sourceFactory;
+    private static Map _factories = new HashMap();
     
     /**
      * ファクトリの初期化。 
@@ -63,39 +59,21 @@ public abstract class FactoryFactory
     }
     
     /**
-     * サービスプロバイダのファクトリを取得する。
-     * @return サービスプロバイダファクトリ。
+     * ファクトリを取得する。
+     * @param 取得するファクトリのインターフェイス。
+     * @return 指定インターフェイスに対応したファクトリ。
      */
-    public static ProviderFactory getProviderFactory() {
+    public static UnifiedFactory getFactory(Class interfaceClass) {
         check();
-        if(_providerFactory == null) {
-            _providerFactory = _instance.createProviderFactory(_context);
+        UnifiedFactory factory = (UnifiedFactory)_factories.get(interfaceClass);
+        if(factory == null) {
+            factory = _instance.createFactory(interfaceClass, _context);
+            if(factory == null) {
+            	throw new IllegalStateException();
+            }
+            _factories.put(interfaceClass, factory);
         }
-        return _providerFactory;
-    }
-    
-    /**
-     * サービスサイクルのファクトリを取得する。
-     * @return サービスサイクルファクトリ。
-     */
-    public static CycleFactory getCycleFactory() {
-        check();
-        if(_cycleFactory == null) {
-            _cycleFactory = _instance.createCycleFactory(_context);
-        }
-        return _cycleFactory;
-    }
-    
-    /**
-     * ソース定義のファクトリを取得する。
-     * @return ソース定義ファクトリ。
-     */
-    public static SourceFactory getSourceFactory() {
-        check();
-        if(_sourceFactory == null) {
-            _sourceFactory = _instance.createSourceFactory(_context);
-        }
-        return _sourceFactory;
+        return factory;
     }
     
     /**
@@ -109,24 +87,11 @@ public abstract class FactoryFactory
     }
     
     /**
-     * サービスプロバイダのファクトリを生成する。
+     * ファクトリを生成する。
      * @param context コンテキストオブジェクト。
-     * @return サービスプロバイダのファクトリ。
+     * @return ファクトリ。
      */
-    protected abstract ProviderFactory createProviderFactory(Object context);
-    
-    /**
-     * サービスサイクルのファクトリを生成する。
-     * @param context コンテキストオブジェクト。
-     * @return サービスサイクルのファクトリ。
-     */
-    protected abstract CycleFactory createCycleFactory(Object context);
-    
-    /**
-     * ソース定義のファクトリを生成する。
-     * @param context コンテキストオブジェクト。
-     * @return ソース定義のファクトリ。
-     */
-    protected abstract SourceFactory createSourceFactory(Object context);
+    protected abstract UnifiedFactory createFactory(
+    		Class interfaceClass, Object context);
     
 }

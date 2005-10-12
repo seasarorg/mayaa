@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -117,9 +118,9 @@ public class XMLHandler extends DefaultHandler {
         }
         Log log = getLog();
         if(log != null && log.isWarnEnabled()) {
-            // TODO i18n
-            log.warn("Entity not resolved locally, publicId=" + publicId + 
-                    ", systemId=" + systemId);
+            String message = StringUtil.getMessage(XMLHandler.class, 0,
+                    new String[] { publicId, systemId });
+            log.warn(message);
         }
         return null;
     }

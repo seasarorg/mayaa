@@ -15,7 +15,10 @@
  */
 package org.seasar.maya.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +28,7 @@ import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.impl.util.collection.LIFOIterator;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -44,12 +48,14 @@ public class FactoryFactoryImpl extends FactoryFactory
         return false;
     }
     
-    protected UnifiedFactory createFactory(Class interfaceClass,
+    protected UnifiedFactory createFactory(
+            Class interfaceClass, Object context,
             SourceDescriptor source, UnifiedFactory beforeFactory) {
         if(source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
+        UnifiedFactory factory;
         if(source.exists()) {
             UnifiedFactoryHandler handler = 
                 new UnifiedFactoryHandler(interfaceClass, beforeFactory);
@@ -61,13 +67,44 @@ public class FactoryFactoryImpl extends FactoryFactory
                 if(LOG.isErrorEnabled()) {
                     LOG.error("Factory parse error on " + systemID, t);
                 }
-                return beforeFactory;
+                factory = beforeFactory;
             } finally {
                 IOUtil.close(stream);
             }
-            return handler.getUnifiedFactory();
+            factory = handler.getUnifiedFactory();
         }
-        return beforeFactory;
+        factory = beforeFactory;
+        if(factory != null) {
+            factory.setUnderlyingContext(context);
+        }
+        return factory;
+    }
+    
+    protected SourceDescriptor getDefaultSource(Class interfaceClass) {
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        String systemID = interfaceClass.getName();
+        ClassLoaderSourceDescriptor defaultSource =
+            new ClassLoaderSourceDescriptor();
+        defaultSource.setSystemID(systemID);
+        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
+        return defaultSource;
+    }
+
+    protected Iterator iterateMetaInfSource(Class interfaceClass) {
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        String systemID = interfaceClass.getName();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try {
+            Enumeration resources =
+                loader.getResources("META-INF/" + systemID);
+            return new LIFOIterator(resources);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     protected UnifiedFactory createFactory(
@@ -75,16 +112,9 @@ public class FactoryFactoryImpl extends FactoryFactory
     	if(checkInterface(interfaceClass) == false || context == null) {
     		throw new IllegalArgumentException();
     	}
-        String systemID = interfaceClass.getName();
-        ClassLoaderSourceDescriptor defaultSource =
-            new ClassLoaderSourceDescriptor();
-        defaultSource.setSystemID(systemID);
-        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
+        SourceDescriptor source = getDefaultSource(interfaceClass);
         UnifiedFactory factory = createFactory(
-                interfaceClass, defaultSource, null);
-        if(factory != null) {
-            factory.setUnderlyingContext(context);
-        }
+                interfaceClass, context, source, null);
         return factory;
     }
     

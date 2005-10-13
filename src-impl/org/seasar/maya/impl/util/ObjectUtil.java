@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.util;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.ConvertUtils;
@@ -132,6 +133,35 @@ public class ObjectUtil {
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static Constructor getConstructor(
+            Class clazz, Class[] argTypes) {
+        if(clazz == null || argTypes == null) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            return clazz.getConstructor(argTypes);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+    
+    public static Object newInstance(
+            Constructor constructor, Object[] argValues) {
+        if(constructor == null || argValues == null || 
+                constructor.getParameterTypes().length != argValues.length) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            return constructor.newInstance(argValues);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

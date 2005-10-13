@@ -37,7 +37,8 @@ import org.seasar.maya.source.SourceDescriptor;
 public class MLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder, CONST_IMPL {
 
-    private static Log LOG = LogFactory.getLog(MLDDefinitionBuilder.class);
+    private static Log LOG = 
+        LogFactory.getLog(MLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {
         if(source == null) {

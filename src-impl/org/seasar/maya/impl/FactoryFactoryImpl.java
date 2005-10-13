@@ -15,50 +15,77 @@
  */
 package org.seasar.maya.impl;
 
+import java.io.InputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.UnifiedFactory;
-import org.seasar.maya.cycle.CycleFactory;
-import org.seasar.maya.impl.cycle.CycleFactoryImpl;
-import org.seasar.maya.impl.cycle.web.ServiceCycleImpl;
-import org.seasar.maya.impl.provider.ProviderFactoryImpl;
-import org.seasar.maya.impl.provider.ServiceProviderImpl;
-import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.source.SourceFactoryImpl;
-import org.seasar.maya.provider.ProviderFactory;
-import org.seasar.maya.source.SourceFactory;
+import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
+import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.util.IOUtil;
+import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class FactoryFactoryImpl extends FactoryFactory {
+public class FactoryFactoryImpl extends FactoryFactory
+        implements CONST_IMPL{
 
     private static final long serialVersionUID = -1393736148065197812L;
+    private static Log LOG = LogFactory.getLog(FactoryFactoryImpl.class);
 
+    protected boolean checkInterface(Class clazz) {
+        if(clazz != null && clazz.isInterface() &&
+                UnifiedFactory.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+        return false;
+    }
+    
+    protected UnifiedFactory createFactory(Class interfaceClass,
+            SourceDescriptor source, UnifiedFactory beforeFactory) {
+        if(source == null) {
+            throw new IllegalArgumentException();
+        }
+        String systemID = source.getSystemID();
+        if(source.exists()) {
+            UnifiedFactoryHandler handler = 
+                new UnifiedFactoryHandler(interfaceClass, beforeFactory);
+            InputStream stream = source.getInputStream();
+            try {
+                XMLUtil.parse(handler, stream, PUBLIC_FACTORY10,
+                        systemID, true, true, false);
+            } catch(Throwable t) {
+                if(LOG.isErrorEnabled()) {
+                    LOG.error("Factory parse error on " + systemID, t);
+                }
+                return beforeFactory;
+            } finally {
+                IOUtil.close(stream);
+            }
+            return handler.getUnifiedFactory();
+        }
+        return beforeFactory;
+    }
+    
     protected UnifiedFactory createFactory(
     		Class interfaceClass, Object context) {
-    	if(interfaceClass == null || context == null) {
+    	if(checkInterface(interfaceClass) == false || context == null) {
     		throw new IllegalArgumentException();
     	}
-        // TODO Žb’è
-        if(CycleFactory.class.isAssignableFrom(interfaceClass)) {
-	    	CycleFactoryImpl factory = new CycleFactoryImpl();
-	        factory.setServiceClass(ServiceCycleImpl.class);
-	        factory.setUnderlyingContext(context);
-	        return factory;
+        String systemID = interfaceClass.getName();
+        ClassLoaderSourceDescriptor defaultSource =
+            new ClassLoaderSourceDescriptor();
+        defaultSource.setSystemID(systemID);
+        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
+        UnifiedFactory factory = createFactory(
+                interfaceClass, defaultSource, null);
+        if(factory != null) {
+            factory.setUnderlyingContext(context);
         }
-        if(ProviderFactory.class.isAssignableFrom(interfaceClass)) {
-	    	ProviderFactoryImpl factory = new ProviderFactoryImpl();
-	        factory.setServiceClass(ServiceProviderImpl.class);
-	    	factory.setUnderlyingContext(context);
-	    	return factory;
-	    }
-        if(SourceFactory.class.isAssignableFrom(interfaceClass)) {
-	        SourceFactoryImpl factory = new SourceFactoryImpl();
-	        factory.setServiceClass(PageSourceDescriptor.class);
-	        factory.setParameter("folder", "/WEB-INF/page");
-	        return factory;
-	    }
-        throw new IllegalArgumentException();
+        return factory;
     }
     
 }

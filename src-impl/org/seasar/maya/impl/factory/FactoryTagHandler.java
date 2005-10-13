@@ -15,9 +15,12 @@
  */
 package org.seasar.maya.impl.factory;
 
+import java.lang.reflect.Constructor;
+
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.xml.sax.Attributes;
 
@@ -27,27 +30,62 @@ import org.xml.sax.Attributes;
 public class FactoryTagHandler
         extends AbstractParameterAwareTagHandler {
 
-    private UnifiedFactory _factory;
+    private Class _interfaceClass;
+    private UnifiedFactory _beforeFactory;
+    private UnifiedFactory _currentFactory;
     
-    public FactoryTagHandler() {
+    public FactoryTagHandler(
+            Class interfaceClass, UnifiedFactory beforeFactory) {
         super("factory");
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _interfaceClass = interfaceClass;
+        _beforeFactory = beforeFactory;
     }
 
+    protected UnifiedFactory createFactory(Class factoryClass) {
+        if(factoryClass == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_beforeFactory != null) {
+            Constructor constructor = ObjectUtil.getConstructor(
+                    factoryClass, new Class[] { _interfaceClass });
+            if(constructor != null) {
+                return (UnifiedFactory)ObjectUtil.newInstance(
+                        constructor, new Object[] { _beforeFactory });
+            }
+        }
+        return (UnifiedFactory)ObjectUtil.newInstance(factoryClass);
+    }
+    
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        // TODO 設定がないときのマーシャル処理。
-        _factory = (UnifiedFactory)XMLUtil.getObjectValue(
-                attributes, "class", UnifiedFactory.class);
+        Class factoryClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        if(factoryClass != null) {
+            _currentFactory = createFactory(factoryClass);
+        } else if(_beforeFactory != null) {
+            _currentFactory = _beforeFactory;
+        } else {
+            throw new IllegalStateException();
+        }
         Class serviceClass = XMLUtil.getClassValue(
                 attributes, "serviceClass", null);
-        _factory.setServiceClass(serviceClass);
+        if(serviceClass != null) {
+            _currentFactory.setServiceClass(serviceClass);
+        } else {
+            if(_currentFactory.getServiceClass() == null) {
+                throw new IllegalStateException();
+            }
+        }
     }
 
     public UnifiedFactory getFactory() {
-        if(_factory == null) {
+        if(_currentFactory == null) {
             throw new IllegalStateException();
         }
-        return _factory;
+        return _currentFactory;
     }
     
     public ParameterAware getParameterAware() {

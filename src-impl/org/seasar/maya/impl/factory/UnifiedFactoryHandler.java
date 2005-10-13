@@ -32,8 +32,13 @@ public class UnifiedFactoryHandler extends XMLHandler
     
     private FactoryTagHandler _rootHandler;
     
-    public UnifiedFactoryHandler() {
-        _rootHandler = new FactoryTagHandler();
+    public UnifiedFactoryHandler(
+            Class interfaceClass, UnifiedFactory beforeFactory) {
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        _rootHandler = new FactoryTagHandler(
+                interfaceClass, beforeFactory);
         setRootHandler(_rootHandler);
         setLog(LOG);
         getEntityMap().put(PUBLIC_FACTORY10, "maya-factory_1_0.dtd");

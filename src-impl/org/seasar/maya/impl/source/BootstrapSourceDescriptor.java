@@ -19,6 +19,7 @@ import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @deprecated
  */
 public class BootstrapSourceDescriptor
         extends CompositeSourceDescriptor {

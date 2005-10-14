@@ -25,8 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.UnifiedFactory;
+import org.seasar.maya.cycle.scope.ApplicationScope;
+import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
-import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
+import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.source.URLSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
@@ -87,7 +89,7 @@ public class FactoryFactoryImpl extends FactoryFactory
         return urlSource;
     }
     
-    protected UnifiedFactory createFactory(
+    protected UnifiedFactory marshallFactory(
             Class interfaceClass, Object context,
             SourceDescriptor source, UnifiedFactory beforeFactory) {
         if(source == null) {
@@ -126,22 +128,30 @@ public class FactoryFactoryImpl extends FactoryFactory
     		throw new IllegalArgumentException();
     	}
         SourceDescriptor source = getDefaultSource(interfaceClass);
-        UnifiedFactory factory = createFactory(
+        UnifiedFactory factory = marshallFactory(
                 interfaceClass, context, source, null);
         for(Iterator it = iterateMetaInfURL(interfaceClass); it.hasNext(); ) {
             URL url = (URL)it.next();
             source = getURLSource(interfaceClass, url);
-            factory = createFactory(interfaceClass, context, source, factory);
+            factory = marshallFactory(interfaceClass, context, source, factory);
         }
         return factory;
     }
 
+    protected ApplicationScope getBootstrapApplication(Object context) {
+        ApplicationScope application = new ApplicationScopeImpl();
+        application.setUnderlyingContext(context);
+        return application;
+    }
+    
     protected SourceDescriptor getBootstrapSource(
             String systemID, Object context) {
-        BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
-        source.setSystemID(systemID);
-        source.setContext(context);
-        return source;
+        ApplicationSourceDescriptor appSource = 
+            new ApplicationSourceDescriptor();
+        appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        appSource.setSystemID(systemID);
+        appSource.setApplicationScope(getBootstrapApplication(context));
+        return appSource;
     }
     
 }

@@ -99,7 +99,8 @@ public class ApplicationSourceDescriptor
 
     public boolean exists() {
         if(_file == null) {
-            String realPath = getApplicationScope().getRealPath(_root + _systemID);
+            String realPath = 
+                getApplicationScope().getRealPath(_root + _systemID);
             if(StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if(file.exists()) {

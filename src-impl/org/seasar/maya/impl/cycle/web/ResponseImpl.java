@@ -96,7 +96,7 @@ public class ResponseImpl extends AbstractResponse {
         return _httpServletResponse.encodeURL(url);
     }
 
-    // Underlyable implemetns ----------------------------------------
+    // ContextAware implemetns --------------------------------------
 
     public void setUnderlyingContext(Object context) {
         if(context == null ||

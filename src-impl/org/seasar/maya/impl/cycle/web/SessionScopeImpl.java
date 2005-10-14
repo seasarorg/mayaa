@@ -107,7 +107,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         _httpSession.removeAttribute(name);
     }
 
-    // Underlyable implemetns ----------------------------------------
+    // ContextAware implemetns ----------------------------------------
     
     public void setUnderlyingContext(Object context) {
         // When setting, UnderlyingObject is "HttpServletRequest"

@@ -47,8 +47,11 @@ public class RequestScopeImpl extends AbstractRequestScope {
             throw new IllegalStateException();
         }
     }
-    
-    // Request implements ------------------------------------------
+
+    public String getContextPath() {
+        check();
+        return StringUtil.preparePath(_httpServletRequest.getContextPath());
+    }
     
     public String getRequestedPath() {
         check();
@@ -146,7 +149,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         _httpServletRequest.removeAttribute(name);
     }
 
-    // Underlyable implemetns ----------------------------------------
+    // ContextAware implemetns --------------------------------------
     
     public void setUnderlyingContext(Object context) {
         if(context == null || 

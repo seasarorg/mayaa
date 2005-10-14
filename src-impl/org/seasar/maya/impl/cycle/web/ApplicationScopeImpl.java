@@ -43,8 +43,6 @@ public class ApplicationScopeImpl
         }
     }
     
-    // Application implements ----------------------------------------
-    
     public String getMimeType(String fileName) {
         check();
         if(StringUtil.isEmpty(fileName)) {
@@ -113,7 +111,7 @@ public class ApplicationScopeImpl
         _servletContext.removeAttribute(name);
     }
 
-    // Underlyable implemetns ----------------------------------------
+    // ContextAware implemetns --------------------------------------
     
     public void setUnderlyingContext(Object context) {
         if(context == null || context instanceof ServletContext == false) {

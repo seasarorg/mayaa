@@ -27,6 +27,12 @@ import org.seasar.maya.ContextAware;
 public interface RequestScope 
 		extends Serializable, AttributeScope, ContextAware {
 
+    /**
+     * WEBアプリケーションコンテキストのパス部を返す。
+     * @return コンテキストパス。
+     */
+    String getContextPath();
+    
 	/**
 	 * リクエストされたパス文字列を取得する。
 	 * @return パス文字列。

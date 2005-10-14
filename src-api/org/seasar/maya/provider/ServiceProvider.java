@@ -31,7 +31,7 @@ import org.seasar.maya.engine.Engine;
 public interface ServiceProvider extends ParameterAware, Serializable {
     
     /**
-     * エンジンの生成を行う。
+     * エンジンを取得する。
      * @return	エンジン
      */
     Engine getEngine();

@@ -18,6 +18,7 @@ package org.seasar.maya.impl.provider.factory;
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -26,10 +27,11 @@ import org.xml.sax.Attributes;
 public class LibraryManagerTagHandler
 		extends AbstractParameterAwareTagHandler {
     
-    private ServiceTagHandler _parent;
+    private ProviderTagHandler _parent;
     private LibraryManager _libraryManager;
     
-    public LibraryManagerTagHandler(ServiceTagHandler parent) {
+    public LibraryManagerTagHandler(
+            ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("libraryManager");
         if(parent == null) {
             throw new IllegalArgumentException();

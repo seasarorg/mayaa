@@ -19,6 +19,7 @@ import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -27,10 +28,11 @@ import org.xml.sax.Attributes;
 public class EngineTagHandler 
         extends AbstractParameterAwareTagHandler {
     
-    private ServiceTagHandler _parent;
+    private ProviderTagHandler _parent;
     private Engine _engine;
     
-    public EngineTagHandler(ServiceTagHandler parent) {
+    public EngineTagHandler(
+            ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("engine");
         if(parent == null) {
             throw new IllegalArgumentException();

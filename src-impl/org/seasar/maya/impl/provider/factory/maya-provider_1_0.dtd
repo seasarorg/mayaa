@@ -3,8 +3,9 @@
 <!NOTATION maya.conf_1_0 PUBLIC
         "-//The Seasar Foundation//DTD Maya Provider 1.0//EN">
 
-<!ELEMENT service (description?, engine?, scriptEnvironment?, 
+<!ELEMENT provider (description?, engine?, scriptEnvironment?, 
 		specificationBuilder?, libraryManager?, templateBuilder?, parameter*) >
+<!ATTLIST provider class CDATA #IMPLIED>
 
 <!ELEMENT description (#PCDATA)>
 
@@ -13,23 +14,23 @@
 <!ATTLIST parameter value CDATA #REQUIRED>
 
 <!ELEMENT engine (description?, errorHandler, parameter*)>
-<!ATTLIST engine class CDATA #REQUIRED>
+<!ATTLIST engine class CDATA #IMPLIED>
 
 <!ELEMENT errorHandler (description?, parameter*)>
 <!ATTLIST errorHandler class CDATA #REQUIRED>
 
 <!ELEMENT scriptEnvironment (description?, scope*, parameter*)>
-<!ATTLIST scriptEnvironment class CDATA #REQUIRED>
+<!ATTLIST scriptEnvironment class CDATA #IMPLIED>
 
 <!ELEMENT scope (description?, parameter*)>
 <!ATTLIST scope class CDATA #REQUIRED>
 
 <!ELEMENT specificationBuilder (description?, parameter*)>
-<!ATTLIST specificationBuilder class CDATA #REQUIRED>
+<!ATTLIST specificationBuilder class CDATA #IMPLIED>
 
 <!ELEMENT libraryManager (description?, 
 		converter*, source*, builder*, parameter*)>
-<!ATTLIST libraryManager class CDATA #REQUIRED>
+<!ATTLIST libraryManager class CDATA #IMPLIED>
 
 <!ELEMENT converter (description?, parameter*)>
 <!ATTLIST converter name CDATA #IMPLIED>
@@ -42,7 +43,7 @@
 <!ATTLIST builder class CDATA #REQUIRED>
 
 <!ELEMENT templateBuilder (description?, resolver*, parameter*)>
-<!ATTLIST templateBuilder class CDATA #REQUIRED>
+<!ATTLIST templateBuilder class CDATA #IMPLIED>
 
 <!ELEMENT resolver (description?, parameter*)>
 <!ATTLIST resolver class CDATA #REQUIRED>

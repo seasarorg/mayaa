@@ -18,6 +18,7 @@ package org.seasar.maya.impl.provider.factory;
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -26,10 +27,11 @@ import org.xml.sax.Attributes;
 public class ScriptEnvirionmentTagHandler
         extends AbstractParameterAwareTagHandler {
     
-    private ServiceTagHandler _parent;
+    private ProviderTagHandler _parent;
     private ScriptEnvironment _scriptEnvironment;
     
-    public ScriptEnvirionmentTagHandler(ServiceTagHandler parent) {
+    public ScriptEnvirionmentTagHandler(
+            ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("scriptEnvironment");
         if(parent == null) {
             throw new IllegalArgumentException();

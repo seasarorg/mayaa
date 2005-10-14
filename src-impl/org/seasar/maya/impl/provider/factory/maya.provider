@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE service
+<!DOCTYPE provider
 	PUBLIC "-//The Seasar Foundation//DTD Maya Provider 1.0//EN"
     "http://maya.seasar.org/dtd/maya-provider_1_0.dtd">
-<service>
+<provider class="org.seasar.maya.impl.provider.ServiceProviderImpl">
 
 	<engine class="org.seasar.maya.impl.engine.EngineImpl">
 		<errorHandler class="org.seasar.maya.impl.engine.error.TemplateErrorHandler">
@@ -65,4 +65,4 @@
 		<parameter name="outputWhitespace" value="true"/>
 	</templateBuilder>
 	
-</service>
+</provider>

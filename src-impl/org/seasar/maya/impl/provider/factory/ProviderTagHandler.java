@@ -16,33 +16,34 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
-import org.seasar.maya.impl.provider.ServiceProviderImpl;
+import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ServiceTagHandler 
+public class ProviderTagHandler 
 		extends AbstractParameterAwareTagHandler {
     
-    private ServiceProviderImpl _provider;
+    private ServiceProvider _provider;
     
-    public ServiceTagHandler(ServiceProvider unmarshall) {
-        super("service");
-        putHandler(new EngineTagHandler(this));
-        putHandler(new ScriptEnvirionmentTagHandler(this));
-        putHandler(new SpecificationBuilderTagHandler(this));
-        putHandler(new LibraryManagerTagHandler(this));
-        putHandler(new TemplateBuilderTagHandler(this));
+    public ProviderTagHandler(ServiceProvider beforeProvider) {
+        super("provider");
+        putHandler(new EngineTagHandler(this, beforeProvider));
+        putHandler(new ScriptEnvirionmentTagHandler(this, beforeProvider));
+        putHandler(new SpecificationBuilderTagHandler(this, beforeProvider));
+        putHandler(new LibraryManagerTagHandler(this, beforeProvider));
+        putHandler(new TemplateBuilderTagHandler(this, beforeProvider));
     }
-
+    
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _provider = new ServiceProviderImpl();
+        _provider = (ServiceProvider)XMLUtil.getObjectValue(
+                attributes, "class", ServiceProvider.class);
     }
     
-    public ServiceProviderImpl getServiceProvider() {
+    public ServiceProvider getServiceProvider() {
         if(_provider == null) {
             throw new IllegalStateException();
         }

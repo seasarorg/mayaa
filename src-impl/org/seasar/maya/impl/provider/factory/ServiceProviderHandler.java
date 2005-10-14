@@ -30,10 +30,10 @@ public class ServiceProviderHandler extends XMLHandler
     private static Log LOG = 
         LogFactory.getLog(ServiceProviderHandler.class); 
     
-    private ServiceTagHandler _rootHandler;
+    private ProviderTagHandler _rootHandler;
     
-    public ServiceProviderHandler(ServiceProvider unmarshall) {
-        _rootHandler = new ServiceTagHandler(unmarshall);
+    public ServiceProviderHandler(ServiceProvider beforeProvider) {
+        _rootHandler = new ProviderTagHandler(beforeProvider);
         setRootHandler(_rootHandler);
         setLog(LOG);
         getEntityMap().put(PUBLIC_PROVIDER10, "maya-provider_1_0.dtd");

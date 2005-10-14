@@ -18,6 +18,7 @@ package org.seasar.maya.impl.provider.factory;
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.TemplateBuilder;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -26,10 +27,11 @@ import org.xml.sax.Attributes;
 public class TemplateBuilderTagHandler 
         extends AbstractParameterAwareTagHandler {
     
-    private ServiceTagHandler _parent;
+    private ProviderTagHandler _parent;
     private TemplateBuilder _templateBuilder;
     
-    public TemplateBuilderTagHandler(ServiceTagHandler parent) {
+    public TemplateBuilderTagHandler(
+            ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("templateBuilder");
         if(parent == null) {
             throw new IllegalArgumentException();

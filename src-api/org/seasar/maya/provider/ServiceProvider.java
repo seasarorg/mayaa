@@ -31,10 +31,22 @@ import org.seasar.maya.engine.Engine;
 public interface ServiceProvider extends ParameterAware, Serializable {
     
     /**
+     * エンジンを設定する。
+     * @param engine エンジン。
+     */
+    void setEngine(Engine engine);
+    
+    /**
      * エンジンを取得する。
      * @return	エンジン
      */
     Engine getEngine();
+    
+    /**
+     * スクリプト実行環境の設定。
+     * @param environment スクリプト実行環境。
+     */
+    void setScriptEnvironment(ScriptEnvironment environment);
     
     /**
      * スクリプト実行環境の取得。
@@ -43,17 +55,35 @@ public interface ServiceProvider extends ParameterAware, Serializable {
     ScriptEnvironment getScriptEnvironment();
 
     /**
-     * ライブラリマネージャーを取得する。
-     * @return ライブラリマネージャー。
+     * ライブラリマネージャを設定する。
+     * @param libraryManager ライブラリマネージャ。
+     */
+    void setLibraryManager(LibraryManager libraryManager);
+    
+    /**
+     * ライブラリマネージャを取得する。
+     * @return ライブラリマネージャ。
      */
     LibraryManager getLibraryManager();
 
+    /**
+     * 設定XMLのビルダを設定する。
+     * @param specificationBuilder 設定XMLビルダ。
+     */
+    void setSpecificationBuilder(SpecificationBuilder specificationBuilder);
+    
     /**
      * 設定XMLのビルダを取得する。
      * @return 設定XMLビルダ。
      */
     SpecificationBuilder getSpecificationBuilder();
 	
+    /**
+     * HTMLテンプレートファイルのビルダを設定する。
+     * @param templateBuilder テンプレートビルダ。
+     */
+    void setTemplateBuilder(TemplateBuilder templateBuilder);
+    
     /**
      * HTMLテンプレートファイルのビルダを取得する。
      * @return テンプレートビルダ。

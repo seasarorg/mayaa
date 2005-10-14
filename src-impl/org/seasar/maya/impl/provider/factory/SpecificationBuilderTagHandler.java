@@ -17,8 +17,8 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.impl.provider.ServiceProviderImpl;
 import org.seasar.maya.impl.util.XMLUtil;
+import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
 
 /**
@@ -27,10 +27,11 @@ import org.xml.sax.Attributes;
 public class SpecificationBuilderTagHandler
         extends AbstractParameterAwareTagHandler {
     
-    private ServiceTagHandler _parent;
+    private ProviderTagHandler _parent;
     private SpecificationBuilder _specificationBuilder;
     
-    public SpecificationBuilderTagHandler(ServiceTagHandler parent) {
+    public SpecificationBuilderTagHandler(
+            ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("specificationBuilder");
         if(parent == null) {
             throw new IllegalArgumentException();
@@ -42,7 +43,7 @@ public class SpecificationBuilderTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _specificationBuilder = (SpecificationBuilder)XMLUtil.getObjectValue(
                 attributes, "class", SpecificationBuilder.class);
-        ServiceProviderImpl provider = _parent.getServiceProvider();
+        ServiceProvider provider = _parent.getServiceProvider();
         provider.setSpecificationBuilder(_specificationBuilder);
     }
     

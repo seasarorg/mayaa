@@ -21,13 +21,13 @@ import org.seasar.maya.UnifiedFactory;
  * ソース定義のファクトリ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceFactory extends UnifiedFactory {
+public interface PageSourceFactory extends UnifiedFactory {
 
     /**
      * ソース定義の生成・取得をおこなう。
      * @param systemID ソースのSystemID。
      * @return ソース定義。
      */
-    SourceDescriptor getSourceDescriptor(String systemID);
+    SourceDescriptor getPageSource(String systemID);
     
 }

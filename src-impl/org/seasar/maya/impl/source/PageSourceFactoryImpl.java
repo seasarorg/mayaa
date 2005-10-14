@@ -21,13 +21,13 @@ import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.SourceFactory;
+import org.seasar.maya.source.PageSourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceFactoryImpl extends ParameterAwareImpl 
-		implements SourceFactory {
+public class PageSourceFactoryImpl extends ParameterAwareImpl 
+		implements PageSourceFactory {
 
     private static final long serialVersionUID = 3334813227060846723L;
 
@@ -48,7 +48,7 @@ public class SourceFactoryImpl extends ParameterAwareImpl
         return _serviceClass;
     }
     
-    public SourceDescriptor getSourceDescriptor(String systemID) {
+    public SourceDescriptor getPageSource(String systemID) {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }

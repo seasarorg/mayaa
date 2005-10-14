@@ -18,7 +18,7 @@ package org.seasar.maya.impl.source;
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.SourceFactory;
+import org.seasar.maya.source.PageSourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,9 +33,9 @@ public class SourceUtil {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        SourceFactory factory = 
-        	(SourceFactory)FactoryFactory.getFactory(SourceFactory.class);
-        return factory.getSourceDescriptor(systemID);
+        PageSourceFactory factory = 
+        	(PageSourceFactory)FactoryFactory.getFactory(PageSourceFactory.class);
+        return factory.getPageSource(systemID);
     }
     
 }

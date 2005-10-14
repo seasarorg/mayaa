@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.provider.factory;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -34,7 +32,7 @@ public class ProviderHandler extends XMLHandler
     private ServiceTagHandler _rootHandler;
     
     public ProviderHandler(
-            ServletContext context, ServiceProvider unmarshall) {
+            Object context, ServiceProvider unmarshall) {
         if(context == null) {
             throw new IllegalArgumentException();
         }

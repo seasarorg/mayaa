@@ -17,8 +17,6 @@ package org.seasar.maya.impl.provider;
 
 import java.io.InputStream;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.provider.factory.ProviderHandler;
@@ -42,11 +40,10 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     private ServiceProvider _provider;
     
     protected ServiceProvider createServiceProvider(
-    		ServletContext servletContext, SourceDescriptor source,
+    		Object context, SourceDescriptor source,
             ServiceProvider unmarshall) {
         if(source.exists()) {
-            ProviderHandler handler = 
-                new ProviderHandler(servletContext, unmarshall);
+            ProviderHandler handler = new ProviderHandler(context, unmarshall);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10,
@@ -61,12 +58,11 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
 
     protected ServiceProvider createServiceProvider(
             Object context) {
-    	ServletContext servletContext = (ServletContext)context;
         BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
-        source.setServletContext(servletContext);
+        source.setContext(context);
         source.setSystemID("/maya.provider");
         ServiceProvider provider = 
-            createServiceProvider(servletContext, source, null);
+            createServiceProvider(context, source, null);
         return provider;
     }
 

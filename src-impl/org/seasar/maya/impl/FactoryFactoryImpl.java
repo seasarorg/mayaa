@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
+import org.seasar.maya.impl.source.BootstrapSourceDescriptor;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.source.URLSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
@@ -119,8 +120,8 @@ public class FactoryFactoryImpl extends FactoryFactory
         return factory;
     }
     
-    protected UnifiedFactory createFactory(
-    		Class interfaceClass, Object context) {
+    protected UnifiedFactory getFactory(
+            Class interfaceClass, Object context) {
     	if(checkInterface(interfaceClass) == false || context == null) {
     		throw new IllegalArgumentException();
     	}
@@ -133,6 +134,14 @@ public class FactoryFactoryImpl extends FactoryFactory
             factory = createFactory(interfaceClass, context, source, factory);
         }
         return factory;
+    }
+
+    protected SourceDescriptor getBootstrapSource(
+            String systemID, Object context) {
+        BootstrapSourceDescriptor source = new BootstrapSourceDescriptor();
+        source.setSystemID(systemID);
+        source.setContext(context);
+        return source;
     }
     
 }

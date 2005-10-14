@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.maya.source.SourceDescriptor;
+
 /**
  * ファクトリのファクトリオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -56,6 +58,12 @@ public abstract class FactoryFactory implements Serializable {
             throw new IllegalStateException();
         }
     }
+
+    protected static SourceDescriptor getBootstrapSource(
+            String systemID) {
+        check();
+        return _instance.getBootstrapSource(systemID, _context);
+    }
     
     /**
      * ファクトリを取得する。
@@ -66,7 +74,7 @@ public abstract class FactoryFactory implements Serializable {
         check();
         UnifiedFactory factory = (UnifiedFactory)_factories.get(interfaceClass);
         if(factory == null) {
-            factory = _instance.createFactory(interfaceClass, _context);
+            factory = _instance.getFactory(interfaceClass, _context);
             if(factory == null) {
             	throw new IllegalStateException();
             }
@@ -80,7 +88,10 @@ public abstract class FactoryFactory implements Serializable {
      * @param context コンテキストオブジェクト。
      * @return ファクトリ。
      */
-    protected abstract UnifiedFactory createFactory(
+    protected abstract UnifiedFactory getFactory(
     		Class interfaceClass, Object context);
+    
+    protected abstract SourceDescriptor getBootstrapSource(
+            String systemID, Object context);
     
 }

@@ -15,8 +15,6 @@
  */
 package org.seasar.maya.impl.source;
 
-import javax.servlet.ServletContext;
-
 import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 
 /**
@@ -26,17 +24,17 @@ public class BootstrapSourceDescriptor
         extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -7436518426506691163L;
-    private ServletContext _servletContext;
+    private Object _context;
 
-    public void setServletContext(ServletContext servletContext) {
-        if(servletContext == null) {
+    public void setContext(Object context) {
+        if(context == null) {
             throw new IllegalArgumentException();
         }
-        _servletContext = servletContext;
+        _context = context;
     }
     
     public void setSystemID(String systemID) {
-        if(_servletContext == null) {
+        if(_context == null) {
             throw new IllegalStateException();
         }
         super.setSystemID(systemID);
@@ -44,7 +42,7 @@ public class BootstrapSourceDescriptor
         appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         appSource.setSystemID(systemID);
         ApplicationScopeImpl application = new ApplicationScopeImpl();
-        application.setUnderlyingContext(_servletContext);
+        application.setUnderlyingContext(_context);
         appSource.setApplicationScope(application);
         addSourceDescriptor(appSource);
         ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();

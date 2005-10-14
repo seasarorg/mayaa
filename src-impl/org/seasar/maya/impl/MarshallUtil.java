@@ -16,12 +16,14 @@
 package org.seasar.maya.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.source.URLSourceDescriptor;
+import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.LIFOIterator;
 import org.seasar.maya.source.SourceDescriptor;
@@ -35,6 +37,22 @@ public class MarshallUtil {
         // no instantiate.
     }
 
+    public static Object marshall(Class instanceClass, 
+            Class interfaceClass, Object beforeObject) {
+        if(instanceClass == null) {
+            return beforeObject;
+        }
+        if(beforeObject != null) {
+            Constructor constructor = ObjectUtil.getConstructor(
+                    instanceClass, new Class[] { interfaceClass });
+            if(constructor != null) {
+                return ObjectUtil.newInstance(
+                        constructor, new Object[] { beforeObject });
+            }
+        }
+        return ObjectUtil.newInstance(instanceClass);
+    }
+    
     public static SourceDescriptor getDefaultSource(
             String systemID, Class neighborClass) {
         if(StringUtil.isEmpty(systemID) || neighborClass == null) {

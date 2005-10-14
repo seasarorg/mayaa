@@ -59,7 +59,12 @@ public abstract class FactoryFactory implements Serializable {
         }
     }
 
-    protected static SourceDescriptor getBootstrapSource(
+    /**
+     * ブートストラップ時に用いる、/WEB-INFフォルダを読むソース。
+     * @param systemID ソースのSystemID。
+     * @return /WEB-INF相対のソース。
+     */
+    public static SourceDescriptor getBootstrapSource(
             String systemID) {
         check();
         return _instance.getBootstrapSource(systemID, _context);

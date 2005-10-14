@@ -16,11 +16,13 @@
 package org.seasar.maya.impl.provider;
 
 import java.io.InputStream;
+import java.util.Iterator;
 
+import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.provider.factory.ServiceProviderHandler;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ProviderFactory;
@@ -39,12 +41,11 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     private Class _serviceClass;
     private ServiceProvider _provider;
     
-    protected ServiceProvider createServiceProvider(
-    		Object context, SourceDescriptor source,
-            ServiceProvider unmarshall) {
+    protected ServiceProvider marshallServiceProvider(
+            SourceDescriptor source, ServiceProvider beforeProvider) {
         if(source.exists()) {
             ServiceProviderHandler handler = 
-                new ServiceProviderHandler(context, unmarshall);
+                new ServiceProviderHandler(beforeProvider);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10,
@@ -54,17 +55,21 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
                 IOUtil.close(stream);
             }
         }
-        return unmarshall;
+        return beforeProvider;
     }
 
-    protected ServiceProvider createServiceProvider(
-            Object context) {
-        ClassLoaderSourceDescriptor defaultSource =
-            new ClassLoaderSourceDescriptor();
-        defaultSource.setNeighborClass(ServiceProviderHandler.class);
-        defaultSource.setSystemID("/maya.provider");
-        ServiceProvider provider = 
-            createServiceProvider(context, defaultSource, null);
+    protected ServiceProvider getServiceProvider(Object context) {
+        final String systemID = "maya.provider";
+        SourceDescriptor source = MarshallUtil.getDefaultSource(
+                systemID, ServiceProviderHandler.class);
+        ServiceProvider provider = marshallServiceProvider(source, null);
+        Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
+        while(it.hasNext()) {
+            source = (SourceDescriptor)it.next();
+            provider = marshallServiceProvider(source, provider);
+        }
+        source = FactoryFactory.getBootstrapSource(systemID);
+        provider = marshallServiceProvider(source, provider);
         return provider;
     }
 
@@ -84,7 +89,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
 
     public ServiceProvider getServiceProvider() {
         if(_provider == null) {
-            _provider = createServiceProvider(_context);
+            _provider = getServiceProvider(_context);
         }
         return _provider;
     }

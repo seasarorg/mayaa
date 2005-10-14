@@ -15,10 +15,7 @@
  */
 package org.seasar.maya.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -29,11 +26,8 @@ import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
 import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.maya.impl.source.URLSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.impl.util.collection.LIFOIterator;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -51,42 +45,6 @@ public class FactoryFactoryImpl extends FactoryFactory
             return true;
         }
         return false;
-    }
-    
-    protected SourceDescriptor getDefaultSource(Class interfaceClass) {
-        if(interfaceClass == null) {
-            throw new IllegalArgumentException();
-        }
-        String systemID = interfaceClass.getName();
-        ClassLoaderSourceDescriptor defaultSource =
-            new ClassLoaderSourceDescriptor();
-        defaultSource.setSystemID(systemID);
-        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
-        return defaultSource;
-    }
-
-    protected Iterator iterateMetaInfURL(Class interfaceClass) {
-        if(interfaceClass == null) {
-            throw new IllegalArgumentException();
-        }
-        String systemID = interfaceClass.getName();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try {
-            Enumeration resources =
-                loader.getResources("META-INF/" + systemID);
-            return new LIFOIterator(resources);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    protected SourceDescriptor getURLSource(
-            Class interfaceClass, URL url) {
-        String systemID = interfaceClass.getName();
-        URLSourceDescriptor urlSource = new URLSourceDescriptor();
-        urlSource.setURL(url);
-        urlSource.setSystemID("META-INF/" + systemID);
-        return urlSource;
     }
     
     protected UnifiedFactory marshallFactory(
@@ -127,14 +85,18 @@ public class FactoryFactoryImpl extends FactoryFactory
     	if(checkInterface(interfaceClass) == false || context == null) {
     		throw new IllegalArgumentException();
     	}
-        SourceDescriptor source = getDefaultSource(interfaceClass);
+        String systemID = interfaceClass.getName();
+        SourceDescriptor source = MarshallUtil.getDefaultSource(
+                systemID, UnifiedFactoryHandler.class);
         UnifiedFactory factory = marshallFactory(
                 interfaceClass, context, source, null);
-        for(Iterator it = iterateMetaInfURL(interfaceClass); it.hasNext(); ) {
-            URL url = (URL)it.next();
-            source = getURLSource(interfaceClass, url);
+        Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
+        while(it.hasNext()) {
+            source = (SourceDescriptor)it.next();
             factory = marshallFactory(interfaceClass, context, source, factory);
         }
+        source = getBootstrapSource(systemID);
+        factory = marshallFactory(interfaceClass, context, source, factory);
         return factory;
     }
 

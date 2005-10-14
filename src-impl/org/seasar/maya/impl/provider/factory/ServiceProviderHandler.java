@@ -32,11 +32,7 @@ public class ServiceProviderHandler extends XMLHandler
     
     private ServiceTagHandler _rootHandler;
     
-    public ServiceProviderHandler(
-            Object context, ServiceProvider unmarshall) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
+    public ServiceProviderHandler(ServiceProvider unmarshall) {
         _rootHandler = new ServiceTagHandler(unmarshall);
         setRootHandler(_rootHandler);
         setLog(LOG);

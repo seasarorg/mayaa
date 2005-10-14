@@ -59,7 +59,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     }
 
     protected ServiceProvider getServiceProvider(Object context) {
-        final String systemID = "maya.provider";
+        final String systemID = "org.seasar.maya.provider.ServiceProvider";
         SourceDescriptor source = MarshallUtil.getDefaultSource(
                 systemID, ServiceProviderHandler.class);
         ServiceProvider provider = marshallServiceProvider(source, null);

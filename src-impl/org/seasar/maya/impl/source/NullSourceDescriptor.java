@@ -56,8 +56,4 @@ public class NullSourceDescriptor extends ParameterAwareImpl
         return ZERO;
     }
 
-    public String getAttribute(String name) {
-        return null;
-    }
-
 }

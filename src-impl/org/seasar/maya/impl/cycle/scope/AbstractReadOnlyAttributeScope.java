@@ -36,10 +36,6 @@ public abstract class AbstractReadOnlyAttributeScope
         throw new ScopeNotWritableException(getScopeName());
     }
 
-    public void setParameter(String name, String value) {
-        throw new UnsupportedOperationException();
-    }
-
     public Object newAttribute(String name, Class attributeClass) {
         throw new UnsupportedOperationException();
     }

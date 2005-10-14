@@ -47,6 +47,9 @@ public class ParameterAwareImpl implements ParameterAware {
 		if(StringUtil.isEmpty(name)) {
 			throw new IllegalArgumentException();
 		}
+        if(_parameters == null) {
+            return null;
+        }
 		return (String)_parameters.get(name);
 	}
 

@@ -15,65 +15,69 @@
  */
 package org.seasar.maya.impl.source;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
-import java.util.Iterator;
 
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DelaySourceDescriptor implements SourceDescriptor {
+public class URLSourceDescriptor extends ParameterAwareImpl
+		implements SourceDescriptor {
 
-    private static final long serialVersionUID = 1596798824321986307L;
-    
-    private String _systemID;
-    private SourceDescriptor _source;
+    private static final long serialVersionUID = 292763675133184838L;
 
-    public void setSystemID(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
+    private String _systemID = "";
+    private URL _url; 
+    private Date _timestamp;
+
+    public void setURL(URL url) {
+        if(url == null) {
             throw new IllegalArgumentException();
         }
-        _systemID = systemID;
+        _url = url;
     }
     
+    public void setSystemID(String systemID) {
+        if(systemID != null) {
+            throw new IllegalArgumentException();
+        }
+        _systemID = StringUtil.preparePath(systemID);
+    }
+
     public String getSystemID() {
         return _systemID;
     }
     
     public boolean exists() {
-        if(_source == null) {
-            _source = SourceUtil.getSourceDescriptor(_systemID);
-        }
-        return _source.exists();
+        return true;
     }
 
     public InputStream getInputStream() {
-        if(exists()) {
-            return _source.getInputStream();
+        try {
+            return _url.openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
+    }
+    
+    public void setTimestamp(Date timestamp) {
+    	if(timestamp == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	_timestamp = timestamp;
     }
     
     public Date getTimestamp() {
-        if(exists()) {
-            return _source.getTimestamp();
-        }
+    	if(_timestamp != null) {
+    		return _timestamp;
+    	}
         return new Date(0);
     }
 
-    public void setParameter(String name, String value) {
-        _source.setParameter(name, value);
-    }
-
-    public String getParameter(String name) {
-        return _source.getParameter(name);
-    }
-
-    public Iterator iterateParameterNames() {
-        return _source.iterateParameterNames();
-    }
-    
 }

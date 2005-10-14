@@ -82,16 +82,5 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
         return new Date(0);
 
     }
-
-    public String getAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
-        }
-        SourceDescriptor descriptor = findDescriptor();
-        if(descriptor != null) {
-            return descriptor.getAttribute(name);
-        }
-        return null;
-    }
     
 }

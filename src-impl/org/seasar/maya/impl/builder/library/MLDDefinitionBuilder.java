@@ -60,10 +60,10 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
                 IOUtil.close(stream);
             }
             LibraryDefinitionImpl library = handler.getLibraryDefinition();
-            boolean assigned = ObjectUtil.booleanValue(source.getAttribute(
+            boolean assigned = ObjectUtil.booleanValue(source.getParameter(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
             if(assigned) {
-                library.addAssignedURI(source.getAttribute(SourceAlias.ALIAS));
+                library.addAssignedURI(source.getParameter(SourceAlias.ALIAS));
             }
             return library;
         }

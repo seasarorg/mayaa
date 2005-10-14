@@ -17,8 +17,6 @@ package org.seasar.maya.impl.source;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.util.StringUtil;
@@ -38,7 +36,6 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     private Class _neighbor;
     private String _systemID = "";
     private InputStream _inputStream;
-    private Map _attributes;
     private Date _timestamp;
 
     public void setNeighborClass(Class neighbor) {
@@ -99,23 +96,6 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     		return _timestamp;
     	}
         return new Date(0);
-    }
-
-    public void setAttribute(String name, String value) {
-        if(StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
-        }
-        if(_attributes == null) {
-            _attributes = new HashMap();
-        }
-        _attributes.put(name, value);
-    }
-    
-    public String getAttribute(String name) {
-        if(_attributes == null) {
-            return null;
-        }
-        return (String)_attributes.get(name);
     }
 
 }

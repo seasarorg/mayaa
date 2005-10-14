@@ -130,6 +130,7 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         } else {
             _folderScanner.setParameter(name, value);
         }
+        super.setParameter(name, value);
     }
 
     // suppport class -----------------------------------------------
@@ -154,7 +155,7 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());
-            source.setAttribute(SourceAlias.ALIAS, alias.getAlias());
+            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
             source.setTimestamp(alias.getTimestamp());
             return source;
         }

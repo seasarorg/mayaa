@@ -17,6 +17,7 @@ package org.seasar.maya.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -26,6 +27,7 @@ import org.seasar.maya.FactoryFactory;
 import org.seasar.maya.UnifiedFactory;
 import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.maya.impl.source.URLSourceDescriptor;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.impl.util.collection.LIFOIterator;
@@ -46,6 +48,42 @@ public class FactoryFactoryImpl extends FactoryFactory
             return true;
         }
         return false;
+    }
+    
+    protected SourceDescriptor getDefaultSource(Class interfaceClass) {
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        String systemID = interfaceClass.getName();
+        ClassLoaderSourceDescriptor defaultSource =
+            new ClassLoaderSourceDescriptor();
+        defaultSource.setSystemID(systemID);
+        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
+        return defaultSource;
+    }
+
+    protected Iterator iterateMetaInfURL(Class interfaceClass) {
+        if(interfaceClass == null) {
+            throw new IllegalArgumentException();
+        }
+        String systemID = interfaceClass.getName();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try {
+            Enumeration resources =
+                loader.getResources("META-INF/" + systemID);
+            return new LIFOIterator(resources);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    protected SourceDescriptor getURLSource(
+            Class interfaceClass, URL url) {
+        String systemID = interfaceClass.getName();
+        URLSourceDescriptor urlSource = new URLSourceDescriptor();
+        urlSource.setURL(url);
+        urlSource.setSystemID("META-INF/" + systemID);
+        return urlSource;
     }
     
     protected UnifiedFactory createFactory(
@@ -72,39 +110,13 @@ public class FactoryFactoryImpl extends FactoryFactory
                 IOUtil.close(stream);
             }
             factory = handler.getUnifiedFactory();
+        } else {
+            factory = beforeFactory;
         }
-        factory = beforeFactory;
         if(factory != null) {
             factory.setUnderlyingContext(context);
         }
         return factory;
-    }
-    
-    protected SourceDescriptor getDefaultSource(Class interfaceClass) {
-        if(interfaceClass == null) {
-            throw new IllegalArgumentException();
-        }
-        String systemID = interfaceClass.getName();
-        ClassLoaderSourceDescriptor defaultSource =
-            new ClassLoaderSourceDescriptor();
-        defaultSource.setSystemID(systemID);
-        defaultSource.setNeighborClass(UnifiedFactoryHandler.class);
-        return defaultSource;
-    }
-
-    protected Iterator iterateMetaInfSource(Class interfaceClass) {
-        if(interfaceClass == null) {
-            throw new IllegalArgumentException();
-        }
-        String systemID = interfaceClass.getName();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try {
-            Enumeration resources =
-                loader.getResources("META-INF/" + systemID);
-            return new LIFOIterator(resources);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
     
     protected UnifiedFactory createFactory(
@@ -115,6 +127,11 @@ public class FactoryFactoryImpl extends FactoryFactory
         SourceDescriptor source = getDefaultSource(interfaceClass);
         UnifiedFactory factory = createFactory(
                 interfaceClass, context, source, null);
+        for(Iterator it = iterateMetaInfURL(interfaceClass); it.hasNext(); ) {
+            URL url = (URL)it.next();
+            source = getURLSource(interfaceClass, url);
+            factory = createFactory(interfaceClass, context, source, factory);
+        }
         return factory;
     }
     

@@ -56,12 +56,5 @@ public interface SourceDescriptor extends Serializable, ParameterAware {
      * @return ファイルの最終更新日付。ファイルが無い場合は「new Date(0)」を返す。
      */
     Date getTimestamp();
-
-    /**
-     * ソースの付加属性の取得。
-     * @param name 属性名。
-     * @return 属性値。
-     */
-    String getAttribute(String name);
     
 }

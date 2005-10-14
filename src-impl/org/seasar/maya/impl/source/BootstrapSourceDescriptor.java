@@ -22,7 +22,8 @@ import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class BootstrapSourceDescriptor extends CompositeSourceDescriptor {
+public class BootstrapSourceDescriptor
+        extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -7436518426506691163L;
     private ServletContext _servletContext;

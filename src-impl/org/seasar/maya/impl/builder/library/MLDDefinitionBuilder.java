@@ -23,7 +23,7 @@ import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.builder.library.mld.MLDHandler;
+import org.seasar.maya.impl.builder.library.mld.LibraryDefinitionHandler;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.maya.impl.util.IOUtil;
@@ -46,7 +46,7 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
         }
         String systemID = source.getSystemID();
         if(source.exists() && systemID.toLowerCase().endsWith(".mld")) {
-            MLDHandler handler = new MLDHandler();
+            LibraryDefinitionHandler handler = new LibraryDefinitionHandler();
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_MLD10,
@@ -59,7 +59,7 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
             } finally {
                 IOUtil.close(stream);
             }
-            LibraryDefinitionImpl library = handler.getLibraryDefinition();
+            LibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getParameter(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
             if(assigned) {

@@ -24,13 +24,13 @@ import org.seasar.maya.impl.util.xml.XMLHandler;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class TLDHandler extends XMLHandler {
+public class TLDLibraryDefinitionHandler extends XMLHandler {
     
-    private static final Log LOG = LogFactory.getLog(TLDHandler.class);
+    private static final Log LOG = LogFactory.getLog(TLDLibraryDefinitionHandler.class);
 	
     private TaglibTagHandler _rootHandler;
 	
-    public TLDHandler() {
+    public TLDLibraryDefinitionHandler() {
         _rootHandler = new TaglibTagHandler();
         setRootHandler(_rootHandler);
         setLog(LOG);

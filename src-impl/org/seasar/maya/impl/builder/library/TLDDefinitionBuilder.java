@@ -24,7 +24,7 @@ import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
 import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
-import org.seasar.maya.impl.builder.library.tld.TLDHandler;
+import org.seasar.maya.impl.builder.library.tld.TLDLibraryDefinitionHandler;
 import org.seasar.maya.impl.util.IOUtil;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.XMLUtil;
@@ -45,7 +45,7 @@ public class TLDDefinitionBuilder extends ParameterAwareImpl
         String systemID = source.getSystemID();
         if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
-            TLDHandler handler = new TLDHandler();
+            TLDLibraryDefinitionHandler handler = new TLDLibraryDefinitionHandler();
             try {
                 XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
             } catch(Throwable t) {

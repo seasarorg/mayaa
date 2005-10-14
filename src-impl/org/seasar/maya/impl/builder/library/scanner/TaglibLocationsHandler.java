@@ -13,37 +13,35 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.maya.impl.builder.library.scanner;
+
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.library.entity.J2EEEntities;
 import org.seasar.maya.impl.util.xml.XMLHandler;
-import org.seasar.maya.provider.ServiceProvider;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderHandler extends XMLHandler
-        implements CONST_IMPL {
+public class TaglibLocationsHandler extends XMLHandler {
 
-    private static Log LOG = LogFactory.getLog(ProviderHandler.class); 
-    
-    private ServiceTagHandler _rootHandler;
-    
-    public ProviderHandler(
-            Object context, ServiceProvider unmarshall) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        _rootHandler = new ServiceTagHandler(unmarshall);
+    private static final Log LOG = 
+        LogFactory.getLog(TaglibLocationsHandler.class);
+
+    private WebAppTagHandler _rootHandler;
+
+    public TaglibLocationsHandler() {
+        _rootHandler = new WebAppTagHandler();
         setRootHandler(_rootHandler);
         setLog(LOG);
-        getEntityMap().put(PUBLIC_PROVIDER10, "maya-provider_1_0.dtd");
+        setNeighborClass(J2EEEntities.class);
+        getEntityMap().putAll(J2EEEntities.getEntityMap());
     }
-    
-    public ServiceProvider getServiceProvider() {
-        return _rootHandler.getServiceProvider();
+
+    public Iterator iterateTaglibLocations() {
+        return _rootHandler.iterateTaglibLocation();
     }
     
 }

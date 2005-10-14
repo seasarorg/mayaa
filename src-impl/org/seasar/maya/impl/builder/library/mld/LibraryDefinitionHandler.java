@@ -17,28 +17,28 @@ package org.seasar.maya.impl.builder.library.mld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
 import org.seasar.maya.impl.util.xml.XMLHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDHandler extends XMLHandler 
+public class LibraryDefinitionHandler extends XMLHandler 
         implements CONST_IMPL {
 
-    private static final Log LOG = LogFactory.getLog(MLDHandler.class);
+    private static final Log LOG = LogFactory.getLog(LibraryDefinitionHandler.class);
     
     private LibraryTagHandler _rootHandler;
     
-    public MLDHandler() {
+    public LibraryDefinitionHandler() {
         _rootHandler = new LibraryTagHandler();
         setRootHandler(_rootHandler);
         setLog(LOG);
         getEntityMap().put(PUBLIC_MLD10, "mld_1_0.dtd");
     }
 
-    public LibraryDefinitionImpl getLibraryDefinition() {
+    public LibraryDefinition getLibraryDefinition() {
         return _rootHandler.getLibraryDefinition();
     }
 

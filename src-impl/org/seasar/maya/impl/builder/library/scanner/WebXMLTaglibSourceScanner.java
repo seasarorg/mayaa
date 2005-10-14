@@ -43,7 +43,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
         }
         InputStream stream = source.getInputStream();
         try {
-            WebXMLHandler handler = new WebXMLHandler();
+            TaglibLocationsHandler handler = new TaglibLocationsHandler();
             XMLUtil.parse(handler, stream, "web.xml",
                     source.getSystemID(), true, true, true);
             return handler.iterateTaglibLocations();

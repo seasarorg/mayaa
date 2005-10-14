@@ -17,6 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.library.LibraryManager;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -28,7 +29,8 @@ public class LibraryManagerTagHandler
 		extends AbstractParameterAwareTagHandler {
     
     private ProviderTagHandler _parent;
-    private LibraryManager _libraryManager;
+    private LibraryManager _beforeManager;
+    private LibraryManager _currentManager;
     
     public LibraryManagerTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
@@ -37,6 +39,9 @@ public class LibraryManagerTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        if(beforeProvider != null) {
+            _beforeManager = beforeProvider.getLibraryManager();
+        }
         putHandler(new ConverterTagHandler(this));
         putHandler(new SourceTagHandler(this));
         putHandler(new BuilderTagHandler(this));
@@ -44,20 +49,22 @@ public class LibraryManagerTagHandler
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-    	_libraryManager = (LibraryManager)XMLUtil.getObjectValue(
-                attributes, "class", LibraryManager.class);
-        _parent.getServiceProvider().setLibraryManager(_libraryManager);
+        Class managerClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+    	_currentManager = (LibraryManager)MarshallUtil.marshall(
+                managerClass, LibraryManager.class, _beforeManager);
+        _parent.getServiceProvider().setLibraryManager(_currentManager);
     }
     
     protected void end(String body) {
-        _libraryManager = null;
+        _currentManager = null;
     }
     
     public LibraryManager getLibraryManager() {
-        if(_libraryManager == null) {
+        if(_currentManager == null) {
             throw new IllegalStateException();
         }
-        return _libraryManager;
+        return _currentManager;
     }
     
     public ParameterAware getParameterAware() {

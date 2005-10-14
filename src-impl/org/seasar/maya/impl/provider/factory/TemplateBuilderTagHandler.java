@@ -17,6 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.TemplateBuilder;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -28,7 +29,8 @@ public class TemplateBuilderTagHandler
         extends AbstractParameterAwareTagHandler {
     
     private ProviderTagHandler _parent;
-    private TemplateBuilder _templateBuilder;
+    private TemplateBuilder _beforeBuilder;
+    private TemplateBuilder _currentBuilder;
     
     public TemplateBuilderTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
@@ -37,28 +39,33 @@ public class TemplateBuilderTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        if(beforeProvider != null) {
+            _beforeBuilder = beforeProvider.getTemplateBuilder();
+        }
         putHandler(new ResolverTagHandler(this));
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _templateBuilder = (TemplateBuilder)XMLUtil.getObjectValue(
-                attributes, "class", TemplateBuilder.class);
-        _parent.getServiceProvider().setTemplateBuilder(_templateBuilder);
+        Class builderClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentBuilder = (TemplateBuilder)MarshallUtil.marshall(
+                builderClass, TemplateBuilder.class, _beforeBuilder);
+        _parent.getServiceProvider().setTemplateBuilder(_currentBuilder);
     }
     
     protected void end(String body) {
-        if(_templateBuilder == null) {
+        if(_currentBuilder == null) {
             throw new IllegalStateException();
         }
-        _templateBuilder = null;
+        _currentBuilder = null;
     }
     
     public TemplateBuilder getTemplateBuilder() {
-        if(_templateBuilder == null) {
+        if(_currentBuilder == null) {
             throw new IllegalStateException();
         }
-        return _templateBuilder;
+        return _currentBuilder;
     }
     
     public ParameterAware getParameterAware() {

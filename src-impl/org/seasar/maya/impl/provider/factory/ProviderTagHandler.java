@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -26,10 +27,12 @@ import org.xml.sax.Attributes;
 public class ProviderTagHandler 
 		extends AbstractParameterAwareTagHandler {
     
-    private ServiceProvider _provider;
+    private ServiceProvider _beforeProvider;
+    private ServiceProvider _currentProvider;
     
     public ProviderTagHandler(ServiceProvider beforeProvider) {
         super("provider");
+        _beforeProvider = beforeProvider;
         putHandler(new EngineTagHandler(this, beforeProvider));
         putHandler(new ScriptEnvirionmentTagHandler(this, beforeProvider));
         putHandler(new SpecificationBuilderTagHandler(this, beforeProvider));
@@ -39,15 +42,17 @@ public class ProviderTagHandler
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _provider = (ServiceProvider)XMLUtil.getObjectValue(
-                attributes, "class", ServiceProvider.class);
+        Class providerClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentProvider = (ServiceProvider)MarshallUtil.marshall(
+                providerClass, ServiceProvider.class, _beforeProvider);
     }
     
     public ServiceProvider getServiceProvider() {
-        if(_provider == null) {
+        if(_currentProvider == null) {
             throw new IllegalStateException();
         }
-        return _provider;
+        return _currentProvider;
     }
 
 	public ParameterAware getParameterAware() {

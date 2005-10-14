@@ -17,6 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.builder.SpecificationBuilder;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -28,7 +29,8 @@ public class SpecificationBuilderTagHandler
         extends AbstractParameterAwareTagHandler {
     
     private ProviderTagHandler _parent;
-    private SpecificationBuilder _specificationBuilder;
+    private SpecificationBuilder _beforeBuilder;
+    private SpecificationBuilder _currentBuilder;
     
     public SpecificationBuilderTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
@@ -37,25 +39,29 @@ public class SpecificationBuilderTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        if(beforeProvider != null) {
+            _beforeBuilder = beforeProvider.getSpecificationBuilder();
+        }
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _specificationBuilder = (SpecificationBuilder)XMLUtil.getObjectValue(
-                attributes, "class", SpecificationBuilder.class);
-        ServiceProvider provider = _parent.getServiceProvider();
-        provider.setSpecificationBuilder(_specificationBuilder);
+        Class builderClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentBuilder = (SpecificationBuilder)MarshallUtil.marshall(
+                builderClass, SpecificationBuilder.class, _beforeBuilder);
+        _parent.getServiceProvider().setSpecificationBuilder(_currentBuilder);
     }
     
     protected void end(String body) {
-        _specificationBuilder = null;
+        _currentBuilder = null;
     }
     
     public ParameterAware getParameterAware() {
-        if(_specificationBuilder == null) {
+        if(_currentBuilder == null) {
             throw new IllegalStateException();
         }
-        return _specificationBuilder;
+        return _currentBuilder;
     }
 
 }

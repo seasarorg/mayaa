@@ -17,6 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.engine.Engine;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.engine.EngineImpl;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
@@ -29,7 +30,8 @@ public class EngineTagHandler
         extends AbstractParameterAwareTagHandler {
     
     private ProviderTagHandler _parent;
-    private Engine _engine;
+    private Engine _beforeEngine;
+    private Engine _currentEngine;
     
     public EngineTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
@@ -38,25 +40,30 @@ public class EngineTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        putHandler(new ErrorHandlerTagHandler(this));
+        if(beforeProvider != null) {
+            _beforeEngine = beforeProvider.getEngine();
+        }
+        putHandler(new ErrorHandlerTagHandler(this, _beforeEngine));
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _engine = (EngineImpl)XMLUtil.getObjectValue(
-                attributes, "class", Engine.class);
-        _parent.getServiceProvider().setEngine(_engine);
+        Class engineClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentEngine = (EngineImpl)MarshallUtil.marshall(
+                engineClass, Engine.class, _beforeEngine);
+        _parent.getServiceProvider().setEngine(_currentEngine);
     }
     
     protected void end(String body) {
-        _engine = null;
+        _currentEngine = null;
     }
     
     public Engine getEngine() {
-        if(_engine == null) {
+        if(_currentEngine == null) {
             throw new IllegalStateException();
         }
-        return _engine;
+        return _currentEngine;
     }
 
     public ParameterAware getParameterAware() {

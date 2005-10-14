@@ -16,7 +16,9 @@
 package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
+import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.error.ErrorHandler;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.xml.sax.Attributes;
 
@@ -27,32 +29,39 @@ public class ErrorHandlerTagHandler
 		extends AbstractParameterAwareTagHandler {
     
     private EngineTagHandler _parent;
-    private ErrorHandler _handler;
+    private ErrorHandler _beforeHandler;
+    private ErrorHandler _currentHandler;
     
-    public ErrorHandlerTagHandler(EngineTagHandler parent) {
+    public ErrorHandlerTagHandler(
+            EngineTagHandler parent, Engine beforeEngine) {
         super("errorHandler");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        if(beforeEngine != null) {
+            _beforeHandler = beforeEngine.getErrorHandler();
+        }
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _handler = (ErrorHandler)XMLUtil.getObjectValue(
-                attributes, "class", ErrorHandler.class);
-        _parent.getEngine().setErrorHandler(_handler);
+        Class handlerClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentHandler = (ErrorHandler)MarshallUtil.marshall(
+                handlerClass, ErrorHandler.class, _beforeHandler);
+        _parent.getEngine().setErrorHandler(_currentHandler);
     }
     
     protected void end(String body) {
-        _handler = null;
+        _currentHandler = null;
     }
     
     public ParameterAware getParameterAware() {
-        if(_handler == null) {
+        if(_currentHandler == null) {
             throw new IllegalStateException();
         }
-        return _handler;
+        return _currentHandler;
     }
     
 }

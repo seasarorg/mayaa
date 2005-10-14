@@ -40,6 +40,9 @@ public class MarshallUtil {
     public static Object marshall(Class instanceClass, 
             Class interfaceClass, Object beforeObject) {
         if(instanceClass == null) {
+            if(beforeObject == null) {
+                throw new IllegalArgumentException();
+            }
             return beforeObject;
         }
         if(beforeObject != null) {

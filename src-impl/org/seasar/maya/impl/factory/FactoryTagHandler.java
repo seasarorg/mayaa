@@ -48,9 +48,6 @@ public class FactoryTagHandler
                 attributes, "class", null);
         _currentFactory = (UnifiedFactory)MarshallUtil.marshall(
                 factoryClass, _interfaceClass, _beforeFactory);
-        if(_currentFactory == null) {
-            throw new IllegalStateException();
-        }
         Class serviceClass = XMLUtil.getClassValue(
                 attributes, "serviceClass", null);
         if(serviceClass != null) {

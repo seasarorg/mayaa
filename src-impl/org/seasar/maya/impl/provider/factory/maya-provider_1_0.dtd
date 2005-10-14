@@ -13,11 +13,11 @@
 <!ATTLIST parameter name CDATA #REQUIRED>
 <!ATTLIST parameter value CDATA #REQUIRED>
 
-<!ELEMENT engine (description?, errorHandler, parameter*)>
+<!ELEMENT engine (description?, errorHandler?, parameter*)>
 <!ATTLIST engine class CDATA #IMPLIED>
 
 <!ELEMENT errorHandler (description?, parameter*)>
-<!ATTLIST errorHandler class CDATA #REQUIRED>
+<!ATTLIST errorHandler class CDATA #IMPLIED>
 
 <!ELEMENT scriptEnvironment (description?, scope*, parameter*)>
 <!ATTLIST scriptEnvironment class CDATA #IMPLIED>

@@ -17,6 +17,7 @@ package org.seasar.maya.impl.provider.factory;
 
 import org.seasar.maya.ParameterAware;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
+import org.seasar.maya.impl.MarshallUtil;
 import org.seasar.maya.impl.util.XMLUtil;
 import org.seasar.maya.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -28,7 +29,8 @@ public class ScriptEnvirionmentTagHandler
         extends AbstractParameterAwareTagHandler {
     
     private ProviderTagHandler _parent;
-    private ScriptEnvironment _scriptEnvironment;
+    private ScriptEnvironment _beforeEnv;
+    private ScriptEnvironment _currentEnv;
     
     public ScriptEnvirionmentTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
@@ -37,25 +39,30 @@ public class ScriptEnvirionmentTagHandler
             throw new IllegalArgumentException();
         }
         _parent = parent;
+        if(beforeProvider != null) {
+            _beforeEnv = beforeProvider.getScriptEnvironment();
+        }
         putHandler(new ScopeTagHandler(this));
     }
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _scriptEnvironment = (ScriptEnvironment)XMLUtil.getObjectValue(
-                attributes, "class", ScriptEnvironment.class);
-        _parent.getServiceProvider().setScriptEnvironment(_scriptEnvironment);
+        Class environmentClass = XMLUtil.getClassValue(
+                attributes, "class", null);
+        _currentEnv = (ScriptEnvironment)MarshallUtil.marshall(
+                environmentClass, ScriptEnvironment.class, _beforeEnv);
+        _parent.getServiceProvider().setScriptEnvironment(_currentEnv);
     }
     
     protected void end(String body) {
-        _scriptEnvironment = null;
+        _currentEnv = null;
     }
     
     public ScriptEnvironment getScriptEnvironment() {
-        if(_scriptEnvironment == null) {
+        if(_currentEnv == null) {
             throw new IllegalStateException();
         }
-        return _scriptEnvironment;
+        return _currentEnv;
     }
     
     public ParameterAware getParameterAware() {

@@ -73,20 +73,24 @@ public class TemplateImpl
     }
     
     protected String getContentType() {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(this);
-        if(maya != null) {
-            String contentType = SpecificationUtil.getAttributeValue(
-                    maya, QM_CONTENT_TYPE);
-            if(StringUtil.hasValue(contentType)) {
-                return contentType;
+        Specification spec = this;
+        while(spec != null) {
+            SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
+            if(maya != null) {
+                String contentType = SpecificationUtil.getAttributeValue(
+                        maya, QM_CONTENT_TYPE);
+                if(StringUtil.hasValue(contentType)) {
+                    return contentType;
+                }
             }
+            spec = EngineUtil.getParentSpecification(spec);
         }
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if(ret == null) {
             ret = "text/html; charset=UTF-8";
         }
-        return ret ;
+        return ret;
     }
     
     protected boolean isNoCache() {

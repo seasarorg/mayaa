@@ -17,9 +17,11 @@ package org.seasar.maya.impl.builder.library;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -138,16 +140,20 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 
 	protected void buildAll() {
         _libraries = new ArrayList();
+        Set systemIDs = new HashSet();
     	for(int i = 0; i < _scanners.size(); i++) {
 	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
 	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
 		    	SourceDescriptor source = (SourceDescriptor)it.next();
+		    	if(systemIDs.contains(source.getSystemID())) {
+		    		continue;
+		    	}
 		    	for(int k = 0; k < _builders.size(); k++) {
 			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
 			    	LibraryDefinition library = builder.build(source);
 			    	if(library != null) {
-                        // TODO SystemIDによる重複チェック
 			            _libraries.add(library);
+			            systemIDs.add(library.getSystemID());
                         if(LOG.isInfoEnabled()) {
                             String msg = StringUtil.getMessage(
                             		LibraryManagerImpl.class, 1, new String[] {
@@ -226,6 +232,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
             }
             return false;
         }
+        
     }
     
 }

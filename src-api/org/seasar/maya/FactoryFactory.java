@@ -72,7 +72,7 @@ public abstract class FactoryFactory implements Serializable {
     
     /**
      * ファクトリを取得する。
-     * @param 取得するファクトリのインターフェイス。
+     * @param interfaceClass 取得するファクトリのインターフェイス。
      * @return 指定インターフェイスに対応したファクトリ。
      */
     public static UnifiedFactory getFactory(Class interfaceClass) {

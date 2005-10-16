@@ -21,21 +21,22 @@ import java.util.Set;
 
 import org.seasar.maya.builder.library.scanner.SourceScanner;
 import org.seasar.maya.impl.ParameterAwareImpl;
+import org.seasar.maya.impl.engine.processor.TemplateProcessorSupport;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WalkaroundSourceScanner extends ParameterAwareImpl
+public class DefaultSourceScanner extends ParameterAwareImpl
 		implements SourceScanner {
 
     private Set _sources;
     
-    public WalkaroundSourceScanner() {
+    public DefaultSourceScanner() {
         _sources = new HashSet();
         ClassLoaderSourceDescriptor loader = 
             new ClassLoaderSourceDescriptor();
-        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setNeighborClass(TemplateProcessorSupport.class);
         loader.setSystemID("maya.mld");
         _sources.add(loader);
     }

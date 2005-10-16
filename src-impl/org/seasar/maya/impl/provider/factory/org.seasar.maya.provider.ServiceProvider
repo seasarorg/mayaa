@@ -47,7 +47,7 @@
 			<parameter name="ignore" value="xercesImpl-"/>
 			<parameter name="ignore" value="rhino-"/>
 		</source>
-		<source class="org.seasar.maya.impl.builder.library.scanner.WalkaroundSourceScanner"/>
+		<source class="org.seasar.maya.impl.builder.library.scanner.DefaultSourceScanner"/>
 		<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
 		<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
 	</libraryManager>

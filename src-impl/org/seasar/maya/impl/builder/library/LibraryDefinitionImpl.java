@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
@@ -37,6 +39,9 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 public class LibraryDefinitionImpl extends ParameterAwareImpl
 		implements LibraryDefinition {
 
+    private static Log LOG = 
+        LogFactory.getLog(LibraryDefinitionImpl.class);
+    
     private String _namespaceURI;
     private List _assignedURI = new ArrayList();
     private Map _converters;
@@ -92,7 +97,12 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
     		_converters = new HashMap();
     	}
         if(_converters.containsKey(name)) {
-            //TODO åxçêÅB
+            if(LOG.isWarnEnabled()) {
+                String systemID = converter.getSystemID();
+                String lineNumber = Integer.toString(converter.getLineNumber());
+                LOG.warn(StringUtil.getMessage(LibraryDefinitionImpl.class, 1,
+                        name, systemID, lineNumber));
+            }
         } else {
             _converters.put(name, converter);
         }

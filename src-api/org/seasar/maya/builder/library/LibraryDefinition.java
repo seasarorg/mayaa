@@ -27,12 +27,6 @@ import org.seasar.maya.builder.library.converter.PropertyConverter;
  */
 public interface LibraryDefinition extends ParameterAware {
 
-	/**
-	 * 例外やログのメッセージ用途として、ファイルのSystemIDを取得する。
-	 * @return ファイルSystemID。
-	 */
-	String getSystemID();
-    
     /**
      * 当該ライブラリの名前空間URIを取得する。
      * @return 名前空間URI。

@@ -193,5 +193,21 @@ public class PageAttributeScope extends ScriptableObject
 	public Iterator iterateParameterNames() {
 		return NullIterator.getInstance();
 	}
+
+    public void setLineNumber(int lineNumber) {
+        // do nothing
+    }
+
+    public int getLineNumber() {
+        return 0;
+    }
+
+    public void setSystemID(String systemID) {
+        // do nothing
+    }
+
+    public String getSystemID() {
+        return null;
+    }
     
 }

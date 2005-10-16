@@ -51,18 +51,6 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     private String _finalValue;
     private String _propertyConverterName;
     private PropertyConverter _propertyConverter;
-    private int _lineNumber;
-
-    public void setLineNumber(int lineNumber) {
-    	if(lineNumber < 0) {
-    		throw new IllegalArgumentException();
-    	}
-    	_lineNumber = lineNumber;
-    }
-    
-    public int getLineNumber() {
-		return _lineNumber;
-	}
 
     public void setPropertySet(PropertySet propertySet) {
         if(propertySet == null) {

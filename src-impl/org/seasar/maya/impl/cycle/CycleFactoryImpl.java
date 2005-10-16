@@ -76,8 +76,7 @@ public class CycleFactoryImpl
     public ServiceCycle getServiceCycle() {
         ServiceCycle cycle = (ServiceCycle)_currentCycle.get();
         if(cycle == null) {
-            // TODO èâä˙âªÇçsÇ¡ÇƒÇ¢Ç»Ç¢ó·äO
-            throw new IllegalStateException();
+            throw new CycleNotInitializedException();
         }
         return cycle;
     }

@@ -171,7 +171,10 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static SpecificationNode createSpecificationNode(
             QName qName, String systemID, int lineNumber) {
-        return new SpecificationNodeImpl(qName, systemID, lineNumber);
+        SpecificationNodeImpl node = new SpecificationNodeImpl(qName);
+        node.setSystemID(systemID);
+        node.setLineNumber(lineNumber);
+        return node;
     }
 
 }

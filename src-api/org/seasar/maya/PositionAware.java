@@ -13,39 +13,35 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.specification;
-
-import java.util.Iterator;
-
-import org.seasar.maya.PositionAware;
+package org.seasar.maya;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeTreeWalker extends PositionAware {
+public interface PositionAware {
     
     /**
-     * 親ノードの設定をセットする。
-     * @param parentNode 親ノード。
+     * ソースのSystemIDを設定する。
+     * @param systemID ソースSystemID。
      */
-    void setParentNode(NodeTreeWalker parentNode);
-
-    /**
-     * 親ノードを取得する。
-     * @return 親ノード。
-     */
-    NodeTreeWalker getParentNode();
+    void setSystemID(String systemID);
     
     /**
-     * 子ノードの設定をセットする。
-     * @param childNode 子ノード。
+     * ソースのSystemIDを取得する。
+     * @return ソースSystemID。
      */
-    void addChildNode(NodeTreeWalker childNode);
+    String getSystemID();
 
     /**
-     * 子ノードのイテレータを取得する。
-     * @return 子ノード（<code>NodeTreeWalker</code>）を保持したイテレータ。
+     * ソース上の行位置を設定する。
+     * @param lineNumber 位置情報。
      */
-    Iterator iterateChildNode();
+    void setLineNumber(int lineNumber);
+    
+    /**
+     * ソース上の行位置を取得する。
+     * @return 位置情報。
+     */
+    int getLineNumber();
     
 }

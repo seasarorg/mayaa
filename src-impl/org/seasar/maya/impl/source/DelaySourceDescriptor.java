@@ -19,33 +19,27 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.maya.impl.ParameterAwareImpl;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DelaySourceDescriptor implements SourceDescriptor {
+public class DelaySourceDescriptor extends 
+        ParameterAwareImpl implements SourceDescriptor {
 
     private static final long serialVersionUID = 1596798824321986307L;
     
-    private String _systemID;
     private SourceDescriptor _source;
-
-    public void setSystemID(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
-            throw new IllegalArgumentException();
-        }
-        _systemID = systemID;
-    }
-    
-    public String getSystemID() {
-        return _systemID;
-    }
     
     public boolean exists() {
         if(_source == null) {
-            _source = SourceUtil.getSourceDescriptor(_systemID);
+            _source = SourceUtil.getSourceDescriptor(getSystemID());
+            for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
+                String name = (String)it.next();
+                String value = getParameter(name);
+                _source.setParameter(name, value);
+            }
         }
         return _source.exists();
     }
@@ -62,18 +56,6 @@ public class DelaySourceDescriptor implements SourceDescriptor {
             return _source.getTimestamp();
         }
         return new Date(0);
-    }
-
-    public void setParameter(String name, String value) {
-        _source.setParameter(name, value);
-    }
-
-    public String getParameter(String name) {
-        return _source.getParameter(name);
-    }
-
-    public Iterator iterateParameterNames() {
-        return _source.iterateParameterNames();
     }
     
 }

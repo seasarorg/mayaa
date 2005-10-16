@@ -45,14 +45,8 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     private String _systemID;
     private int _lineNumber;
 
-	public SpecificationNodeImpl(
-            QName qName, String systemID, int lineNumber) {
+	public SpecificationNodeImpl(QName qName) {
 	    super(qName);
-	    if(systemID == null) {
-	    	throw new IllegalArgumentException();
-	    }
-	    _systemID = systemID;
-	    _lineNumber = lineNumber;
     }
     
 	public void addAttribute(QName qName, String value) {
@@ -91,8 +85,9 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public SpecificationNode copyTo(CopyToFilter filter) {
-        SpecificationNodeImpl copy = new SpecificationNodeImpl(
-                getQName(), getSystemID(), getLineNumber());
+        SpecificationNodeImpl copy = new SpecificationNodeImpl(getQName());
+        copy.setSystemID(getSystemID());
+        copy.setLineNumber(getLineNumber());
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(filter.accept(attr)) {
@@ -159,8 +154,21 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         return _childNodes.iterator();
     }
 
+    // PositionAware implements -------------------------------------
+    
+    public void setSystemID(String systemID) {
+        if(systemID == null) {
+            throw new IllegalArgumentException();
+        }
+        _systemID = systemID;
+    }
+
     public String getSystemID() {
         return _systemID;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        _lineNumber = lineNumber;
     }
 
     public int getLineNumber() {

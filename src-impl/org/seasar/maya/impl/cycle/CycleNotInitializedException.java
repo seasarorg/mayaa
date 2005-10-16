@@ -13,34 +13,19 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya;
+package org.seasar.maya.impl.cycle;
 
-import java.util.Iterator;
+import org.seasar.maya.impl.MayaException;
 
 /**
- * オブジェクトのチューニング設定。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ParameterAware extends PositionAware {
+public class CycleNotInitializedException extends MayaException {
 
-	/**
-	 * ユーザー設定の受け入れメソッド。
-	 * @param name 設定名。
-	 * @param value 設定値。
-	 */
-	void setParameter(String name, String value);
+    private static final long serialVersionUID = 3337314180596603715L;
 
-	/**
-	 * 設定パラメータの取得。
-	 * @param name 設定名。
-	 * @return 設定値。
-	 */
-	String getParameter(String name);
-	
-	/**
-	 * 設定パラメータ名をイテレートする。
-	 * @return 設定パラメータ名イテレータ。
-	 */
-	Iterator iterateParameterNames();
-
+    protected String[] getMessageParams() {
+        return ZERO_PARAM;
+    }
+    
 }

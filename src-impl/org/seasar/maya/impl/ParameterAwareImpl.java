@@ -29,6 +29,8 @@ import org.seasar.maya.impl.util.collection.NullIterator;
 public class ParameterAwareImpl implements ParameterAware {
 
 	private Map _parameters;
+    private String _systemID = "";
+    private int _lineNumber;
 	
 	public void setParameter(String name, String value) {
         if(StringUtil.isEmpty(name)) {
@@ -59,5 +61,24 @@ public class ParameterAwareImpl implements ParameterAware {
 		}
 		return _parameters.keySet().iterator();
 	}
+
+    public void setSystemID(String systemID) {
+        _systemID = systemID;
+    }
+
+    public String getSystemID() {
+        return _systemID;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        if(lineNumber < 0) {
+            throw new IllegalArgumentException();
+        }
+        _lineNumber = lineNumber;
+    }
+
+    public int getLineNumber() {
+        return _lineNumber;
+    }
 
 }

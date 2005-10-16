@@ -24,12 +24,6 @@ import org.seasar.maya.engine.specification.SpecificationNode;
  */
 public interface PropertyDefinition extends ParameterAware {
     
-	/**
-	 * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。
-	 * @return 行番号。
-	 */
-	int getLineNumber();
-    
     /**
      * 所属するプロパティセットの取得。
      * @return プロパティセット。 

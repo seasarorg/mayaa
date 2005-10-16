@@ -41,6 +41,11 @@ public class BuilderTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
                 attributes, "class", DefinitionBuilder.class);
+        if(_builder == null) {
+            throw new IllegalStateException();
+        }
+        _builder.setSystemID(systemID);
+        _builder.setLineNumber(lineNumber);
         _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }
     

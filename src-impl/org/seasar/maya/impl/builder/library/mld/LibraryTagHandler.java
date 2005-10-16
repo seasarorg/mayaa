@@ -37,11 +37,11 @@ public class LibraryTagHandler
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _libraryDefinition = new LibraryDefinitionImpl();
 		String uri = attributes.getValue("uri");
 		_libraryDefinition = new LibraryDefinitionImpl();
 		_libraryDefinition.setNamespaceURI(uri);
 		_libraryDefinition.setSystemID(systemID);
+        _libraryDefinition.setLineNumber(lineNumber);
     }
     
     public LibraryDefinitionImpl getLibraryDefinition() {

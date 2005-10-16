@@ -58,6 +58,7 @@ public class TaglibTagHandler extends TagHandler {
     		Attributes attributes, String systemID, int lineNumber) {
         _library = new TLDLibraryDefinition();
         _library.setSystemID(systemID);
+        _library.setLineNumber(lineNumber);
     }
 
     public TLDLibraryDefinition getLibraryDefinition() {

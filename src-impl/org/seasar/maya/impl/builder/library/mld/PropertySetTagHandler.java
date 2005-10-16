@@ -56,7 +56,11 @@ public class PropertySetTagHandler
             throw new IllegalStateException();
         }
         _propertySet = createPropertySet();
+        if(_propertySet == null) {
+            throw new IllegalStateException();
+        }
         _propertySet.setName(name);
+        _propertySet.setSystemID(systemID);
         _propertySet.setLineNumber(lineNumber);
     }
     

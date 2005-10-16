@@ -41,6 +41,11 @@ public class ResolverTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _resolver = (InjectionResolver)XMLUtil.getObjectValue(
                 attributes, "class", InjectionResolver.class);
+        if(_resolver == null) {
+            throw new IllegalStateException();
+        }
+        _resolver.setSystemID(systemID);
+        _resolver.setLineNumber(lineNumber);
         _parent.getTemplateBuilder().addInjectionResolver(_resolver);
     }
     

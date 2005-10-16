@@ -60,6 +60,7 @@ public class TagTagHandler extends TagHandler {
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _processor = new TLDProcessorDefinition();
+        _processor.setSystemID(systemID);
         _processor.setLineNumber(lineNumber);
     }
 

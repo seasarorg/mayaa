@@ -76,6 +76,7 @@ public class AttributeTagHandler extends TagHandler {
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _property = new TLDPropertyDefinition();
+        _property.setSystemID(systemID);
         _property.setLineNumber(lineNumber);
     }
 

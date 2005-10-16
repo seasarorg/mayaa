@@ -41,6 +41,11 @@ public class ScopeTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _scope = (AttributeScope)XMLUtil.getObjectValue(
                 attributes, "class", AttributeScope.class);
+        if(_scope == null) {
+            throw new IllegalStateException();
+        }
+        _scope.setSystemID(systemID);
+        _scope.setLineNumber(lineNumber);
         _parent.getScriptEnvironment().addAttributeScope(_scope);
     }
     

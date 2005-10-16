@@ -37,6 +37,7 @@ public class MarshallUtil {
         // no instantiate.
     }
 
+    // TODO PositionAware‚Ìİ’èB
     public static Object marshall(Class instanceClass, 
             Class interfaceClass, Object beforeObject) {
         if(instanceClass == null) {

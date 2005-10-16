@@ -43,7 +43,7 @@ public class LibraryManagerTagHandler
             _beforeManager = beforeProvider.getLibraryManager();
         }
         putHandler(new ConverterTagHandler(this));
-        putHandler(new SourceTagHandler(this));
+        putHandler(new ScannerTagHandler(this));
         putHandler(new BuilderTagHandler(this));
     }
     

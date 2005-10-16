@@ -29,15 +29,15 @@
 <!ATTLIST specificationBuilder class CDATA #IMPLIED>
 
 <!ELEMENT libraryManager (description?, 
-		converter*, source*, builder*, parameter*)>
+		converter*, scanner*, builder*, parameter*)>
 <!ATTLIST libraryManager class CDATA #IMPLIED>
 
 <!ELEMENT converter (description?, parameter*)>
 <!ATTLIST converter name CDATA #IMPLIED>
 <!ATTLIST converter class CDATA #REQUIRED>
 
-<!ELEMENT source (description?, parameter*)>
-<!ATTLIST source class CDATA #REQUIRED>
+<!ELEMENT scanner (description?, parameter*)>
+<!ATTLIST scanner class CDATA #REQUIRED>
 
 <!ELEMENT builder (description?, parameter*)>
 <!ATTLIST builder class CDATA #REQUIRED>

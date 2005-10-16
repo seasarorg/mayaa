@@ -23,14 +23,14 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SourceTagHandler 
+public class ScannerTagHandler 
 		extends AbstractParameterAwareTagHandler {
     
     private LibraryManagerTagHandler _parent;
     private SourceScanner _scanner;
     
-    public SourceTagHandler(LibraryManagerTagHandler parent) {
-        super("source");
+    public ScannerTagHandler(LibraryManagerTagHandler parent) {
+        super("scanner");
         if(parent == null) {
             throw new IllegalArgumentException();
         }
@@ -41,6 +41,11 @@ public class SourceTagHandler
     		Attributes attributes, String systemID, int lineNumber) {
         _scanner = (SourceScanner)XMLUtil.getObjectValue(
                 attributes, "class", SourceScanner.class);
+        if(_scanner == null) {
+            throw new IllegalStateException();
+        }
+        _scanner.setSystemID(systemID);
+        _scanner.setLineNumber(lineNumber);
         _parent.getLibraryManager().addSourceScanner(_scanner);
     }
     

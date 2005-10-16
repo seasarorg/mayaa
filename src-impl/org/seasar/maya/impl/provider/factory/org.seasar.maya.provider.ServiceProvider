@@ -29,14 +29,14 @@
 	<libraryManager class="org.seasar.maya.impl.builder.library.LibraryManagerImpl">
 		<converter name="ProcessorProperty" class="org.seasar.maya.impl.builder.library.converter.ProcessorPropertyConverter"/>
 		<converter name="PrefixAwareName" class="org.seasar.maya.impl.builder.library.converter.PrefixAwareNameConverter"/>
-		<source class="org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
-		<source class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
+		<scanner class="org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
+		<scanner class="org.seasar.maya.impl.builder.library.scanner.FolderSourceScanner">
 			<parameter name="folder" value="/WEB-INF"/>
 			<parameter name="recursive" value="true"/>
 			<parameter name="extension" value=".tld"/>
 			<parameter name="extension" value=".mld"/>
-		</source>
-		<source class="org.seasar.maya.impl.builder.library.scanner.MetaInfSourceScanner">
+		</scanner>
+		<scanner class="org.seasar.maya.impl.builder.library.scanner.MetaInfSourceScanner">
 			<parameter name="folder" value="/WEB-INF/lib"/>
 			<parameter name="extension" value=".jar"/>
 			<parameter name="ignore" value="commons-beanutils-"/>
@@ -46,8 +46,8 @@
 			<parameter name="ignore" value="xml-apis-"/>
 			<parameter name="ignore" value="xercesImpl-"/>
 			<parameter name="ignore" value="rhino-"/>
-		</source>
-		<source class="org.seasar.maya.impl.builder.library.scanner.DefaultSourceScanner"/>
+		</scanner>
+		<scanner class="org.seasar.maya.impl.builder.library.scanner.DefaultSourceScanner"/>
 		<builder class="org.seasar.maya.impl.builder.library.MLDDefinitionBuilder"/>
 		<builder class="org.seasar.maya.impl.builder.library.TLDDefinitionBuilder"/>
 	</libraryManager>

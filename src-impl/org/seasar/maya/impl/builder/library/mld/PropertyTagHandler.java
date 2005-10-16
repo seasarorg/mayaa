@@ -55,6 +55,7 @@ public class PropertyTagHandler
         _propertyDefinition.setFinalValue(finalValue);
         _propertyDefinition.setDefaultValue(defaultValue);
         _propertyDefinition.setPropertyConverterName(converterName);
+        _propertyDefinition.setSystemID(systemID);
         _propertyDefinition.setLineNumber(lineNumber);
         PropertySetImpl processor = _parent.getPropertySet();
         processor.addPropertyDefinitiion(_propertyDefinition);

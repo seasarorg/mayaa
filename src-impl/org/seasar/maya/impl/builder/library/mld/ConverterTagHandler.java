@@ -32,7 +32,7 @@ public class ConverterTagHandler
 
     private TagHandler _parent;
     LibraryTagHandler _libraryTagHandler;
-    private PropertyConverter _propertyConverter;
+    private PropertyConverter _converter;
     
     public ConverterTagHandler(
     		TagHandler parent, LibraryTagHandler libraryTagHandler) {
@@ -46,31 +46,33 @@ public class ConverterTagHandler
     
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
-        _propertyConverter = (PropertyConverter)XMLUtil.getObjectValue(
+        _converter = (PropertyConverter)XMLUtil.getObjectValue(
     				attributes, "class", PropertyConverter.class);
-        if(_propertyConverter == null) {
+        if(_converter == null) {
         	throw new IllegalStateException();
         }
+        _converter.setSystemID(systemID);
+        _converter.setLineNumber(lineNumber);
         if(_parent instanceof PropertyTagHandler) {
             PropertyDefinitionImpl propertyDef = 
                 ((PropertyTagHandler)_parent).getPropertyDefinition();
-            propertyDef.setPropertyConverter(_propertyConverter);
+            propertyDef.setPropertyConverter(_converter);
         }
         String name = XMLUtil.getStringValue(attributes, "name", "");
     	LibraryDefinitionImpl libraryDef =
     		_libraryTagHandler.getLibraryDefinition();
-    	libraryDef.addPropertyConverter(name, _propertyConverter);
+    	libraryDef.addPropertyConverter(name, _converter);
     }
     
     protected void end(String body) {
-        _propertyConverter = null;
+        _converter = null;
     }
 
 	public ParameterAware getParameterAware() {
-        if(_propertyConverter == null) {
+        if(_converter == null) {
             throw new IllegalStateException();
         }
-        return _propertyConverter;
+        return _converter;
 	}
     
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryManager;
 import org.seasar.maya.builder.library.ProcessorDefinition;
@@ -85,6 +86,16 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         return _assignedURI.iterator();
     }
 
+    protected void warnAlreadyRegisted(
+            PositionAware obj, String name, int index) {
+        if(LOG.isWarnEnabled()) {
+            String systemID = obj.getSystemID();
+            String lineNumber = Integer.toString(obj.getLineNumber());
+            LOG.warn(StringUtil.getMessage(LibraryDefinitionImpl.class, index,
+                    name, systemID, lineNumber));
+        }
+    }
+    
     public void addPropertyConverter(
     		String name, PropertyConverter converter) {
     	if(converter == null) {
@@ -97,12 +108,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
     		_converters = new HashMap();
     	}
         if(_converters.containsKey(name)) {
-            if(LOG.isWarnEnabled()) {
-                String systemID = converter.getSystemID();
-                String lineNumber = Integer.toString(converter.getLineNumber());
-                LOG.warn(StringUtil.getMessage(LibraryDefinitionImpl.class, 1,
-                        name, systemID, lineNumber));
-            }
+            warnAlreadyRegisted(converter, name, 1);
         } else {
             _converters.put(name, converter);
         }
@@ -151,7 +157,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             _propertySets = new HashMap();
         }
         if(_propertySets.containsKey(name)) {
-            //TODO åxçêÅB
+            warnAlreadyRegisted(propertySet, name, 2);
         } else {
             _propertySets.put(name, propertySet);
         }
@@ -183,7 +189,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             _processors = new HashMap();
         }
         if(_processors.containsKey(name)) {
-            //TODO åxçêÅB
+            warnAlreadyRegisted(processor, name, 3);
         } else {
             _processors.put(name, processor);
         }

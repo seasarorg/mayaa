@@ -138,7 +138,13 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
         String converterName = getPropertyConverterName();
         if(StringUtil.hasValue(converterName)) {
-            return library.getPropertyConverter(converterName);
+            PropertyConverter converter =
+                library.getPropertyConverter(converterName);
+            if(converter == null) {
+                throw new ConverterNotFoundException(
+                        converterName, getSystemID(), getLineNumber());
+            }
+            return converter;
         }
         Class propertyClass = getPropertyClass(processorDef);
         if(propertyClass != null) {

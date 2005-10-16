@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.builder.library.DefinitionBuilder;
 import org.seasar.maya.builder.library.LibraryDefinition;
 import org.seasar.maya.builder.library.LibraryManager;
@@ -56,6 +57,16 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         _converters = new HashMap();
     }
 
+    protected void warnAlreadyRegisted(
+            PositionAware obj, String name, int index) {
+        if(LOG.isWarnEnabled()) {
+            String systemID = obj.getSystemID();
+            String lineNumber = Integer.toString(obj.getLineNumber());
+            LOG.warn(StringUtil.getMessage(LibraryManagerImpl.class, index,
+                    name, systemID, lineNumber));
+        }
+    }
+    
     public void addPropertyConverter(
     		String name, PropertyConverter propertyConverter) {
         if(propertyConverter == null) {
@@ -65,7 +76,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         	name = propertyConverter.getPropetyClass().getName();
         }
         if(_converters.containsKey(name)) {
-            // TODO åxçê
+            warnAlreadyRegisted(propertyConverter, name, 1);
         } else {
             _converters.put(name, propertyConverter);
         }
@@ -102,16 +113,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 		}
 		synchronized (_scanners) {
             if(_scanners.contains(scanner)) {
-                // TODO åxçê
+                warnAlreadyRegisted(scanner, scanner.getClass().getName(), 1);
             } else {
                 _scanners.add(scanner);
-                if(LOG.isInfoEnabled()) {
-                    String msg = StringUtil.getMessage(
-                    		LibraryManagerImpl.class, 2, 
-                                Integer.toString(_scanners.size()), 
-                    			scanner.getClass().getName());
-                    LOG.info(msg);
-                }
             }
 		}
 	}
@@ -122,16 +126,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     	}
     	synchronized(_builders) {
             if(_builders.contains(builder)) {
-                // TODO åxçê
+                warnAlreadyRegisted(builder, builder.getClass().getName(), 3);
             } else {
                 _builders.add(builder);
-                if(LOG.isInfoEnabled()) {
-                    String msg = StringUtil.getMessage(
-                    		LibraryManagerImpl.class, 3,
-                    			Integer.toString(_builders.size()), 
-                    			builder.getClass().getName());
-                    LOG.info(msg);
-                }
             }
     	}
     }
@@ -153,11 +150,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 			            _libraries.add(library);
 			            systemIDs.add(library.getSystemID());
                         if(LOG.isInfoEnabled()) {
-                            String msg = StringUtil.getMessage(
-                            		LibraryManagerImpl.class, 1,
-                            			source.getSystemID(), 
-                            			library.getNamespaceURI());
-                            LOG.info(msg);
+                            LOG.info(StringUtil.getMessage(
+                            	LibraryManagerImpl.class, 4,
+                            	source.getSystemID(), library.getNamespaceURI()));
                         }
 			            break;
 			    	}

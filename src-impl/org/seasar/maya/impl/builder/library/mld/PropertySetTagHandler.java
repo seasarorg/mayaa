@@ -68,7 +68,8 @@ public class PropertySetTagHandler
         if(_parent instanceof ProcessorTagHandler) {
             ProcessorDefinitionImpl processorDef = 
                 ((ProcessorTagHandler)_parent).getProcessorDefinition();
-            processorDef.addPropertySetName(_propertySet.getName());
+            processorDef.addPropertySetRef(_propertySet.getName(),
+                    _propertySet.getSystemID(), _propertySet.getLineNumber());
         }
         if(_propertySet.iteratePropertyDefinition().hasNext()) {
             library.addPropertySet(_propertySet);

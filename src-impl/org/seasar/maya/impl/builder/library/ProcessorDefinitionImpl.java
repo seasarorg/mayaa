@@ -48,7 +48,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         LogFactory.getLog(ProcessorDefinitionImpl.class);
     
     private Class _processorClass;
-    private List _propertySetNames;
+    private List _propertySetRefs;
     
     public void setProcessorClass(Class processorClass) {
         if(processorClass == null || 
@@ -63,25 +63,31 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         return _processorClass;
     }
 
-    public void addPropertySetName(String name) {
+    public void addPropertySetRef(
+            String name, String systemID, int lineNumber) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_propertySetNames == null) {
-            _propertySetNames = new ArrayList();
+        if(_propertySetRefs == null) {
+            _propertySetRefs = new ArrayList();
         }
-        if(_propertySetNames.contains(name)) {
-            // TODO 警告
+        if(_propertySetRefs.contains(name)) {
+            if(LOG.isWarnEnabled()) {
+                String line = Integer.toString(lineNumber);
+                LOG.warn(StringUtil.getMessage(
+                        ProcessorDefinitionImpl.class, 1, name, systemID, line));
+            }
         } else {
-            _propertySetNames.add(name);
+            _propertySetRefs.add(
+                    new PropertySetRef(name, systemID, lineNumber));
         }
     }
     
     public Iterator iteratePropertySets() {
-        if(_propertySetNames == null) {
+        if(_propertySetRefs == null) {
             return NullIterator.getInstance();
         }
-        Iterator it = _propertySetNames.iterator();
+        Iterator it = _propertySetRefs.iterator();
         return new PropertySetIterator(it, getLibraryDefinition());
     }
 
@@ -113,7 +119,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             } else {
                 if(LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(
-                            ProcessorDefinitionImpl.class, 0,
+                            ProcessorDefinitionImpl.class, 2,
                             processorClass.getName(), propertyName));
                 }
             }
@@ -141,15 +147,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             PropertyConverter converter = 
                 library.getPropertyConverter(propertyClass);
             if(converter == null) {
-                // TODO 設定ミス例外。
-                throw new IllegalStateException();
+                throw new ConverterNotFoundException(
+                        propertyClass.getName(), getSystemID(), getLineNumber());
             }
             Class expectedClass = acceptable.getExpectedClass();
             String value = attr.getValue();
             Object property = converter.convert(attr, value, expectedClass);
             if(property == null) {
-                // TODO ユーザーコンバーターの実装ミス例外。
-                throw new IllegalStateException();
+                throw new ConverterOperationException(converter, value);
             }
             acceptable.addInformalProperty(attr, property);
         }
@@ -176,6 +181,36 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     
     // support class ------------------------------------------------
 
+    protected class PropertySetRef {
+        
+        private String _name;
+        private String _systemID;
+        private int _lineNumber;
+        
+        public PropertySetRef(String name, String systemID, int lineNumber) {
+            if(StringUtil.isEmpty(name) || 
+                    StringUtil.isEmpty(systemID) || lineNumber < 0) {
+                throw new IllegalArgumentException();
+            }
+            _name = name;
+            _systemID = systemID;
+            _lineNumber = lineNumber;
+        }
+        
+        public String getName() {
+            return _name;
+        }
+        
+        public String getSystemID() {
+            return _systemID;
+        }
+        
+        public int getLineNumber() {
+            return _lineNumber;
+        }
+        
+    }
+    
     protected class PropertySetIterator implements Iterator {
 
         private Iterator _it;
@@ -194,10 +229,11 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
 
         public Object next() {
-            String name = (String)_it.next();
-            PropertySet propertySet = _library.getPropertySet(name);
+            PropertySetRef ref = (PropertySetRef)_it.next();
+            PropertySet propertySet = _library.getPropertySet(ref.getName());
             if(propertySet == null) {
-                throw new IllegalStateException();
+                throw new PropertySetNotFoundException(ref.getName(), 
+                        ref.getSystemID(), ref.getLineNumber());
             }
             return propertySet;
         }

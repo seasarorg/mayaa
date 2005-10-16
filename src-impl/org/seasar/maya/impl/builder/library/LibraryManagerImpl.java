@@ -140,9 +140,11 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
 	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
 		    	SourceDescriptor source = (SourceDescriptor)it.next();
+                /* pending.
 		    	if(systemIDs.contains(source.getSystemID())) {
 		    		continue;
 		    	}
+                */
 		    	for(int k = 0; k < _builders.size(); k++) {
 			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
 			    	LibraryDefinition library = builder.build(source);

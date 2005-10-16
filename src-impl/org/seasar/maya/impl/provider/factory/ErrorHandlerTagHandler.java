@@ -49,7 +49,8 @@ public class ErrorHandlerTagHandler
         Class handlerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentHandler = (ErrorHandler)MarshallUtil.marshall(
-                handlerClass, ErrorHandler.class, _beforeHandler);
+                handlerClass, ErrorHandler.class, _beforeHandler,
+                systemID, lineNumber);
         _parent.getEngine().setErrorHandler(_currentHandler);
     }
     

@@ -51,7 +51,8 @@ public class EngineTagHandler
         Class engineClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentEngine = (EngineImpl)MarshallUtil.marshall(
-                engineClass, Engine.class, _beforeEngine);
+                engineClass, Engine.class, _beforeEngine,
+                systemID, lineNumber);
         _parent.getServiceProvider().setEngine(_currentEngine);
     }
     

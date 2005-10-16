@@ -50,7 +50,8 @@ public class TemplateBuilderTagHandler
         Class builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentBuilder = (TemplateBuilder)MarshallUtil.marshall(
-                builderClass, TemplateBuilder.class, _beforeBuilder);
+                builderClass, TemplateBuilder.class, _beforeBuilder,
+                systemID, lineNumber);
         _parent.getServiceProvider().setTemplateBuilder(_currentBuilder);
     }
     

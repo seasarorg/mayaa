@@ -47,7 +47,8 @@ public class FactoryTagHandler
         Class factoryClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentFactory = (UnifiedFactory)MarshallUtil.marshall(
-                factoryClass, _interfaceClass, _beforeFactory);
+                factoryClass, _interfaceClass, _beforeFactory,
+                systemID, lineNumber);
         Class serviceClass = XMLUtil.getClassValue(
                 attributes, "serviceClass", null);
         if(serviceClass != null) {

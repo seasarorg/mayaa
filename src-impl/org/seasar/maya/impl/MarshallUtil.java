@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.maya.impl.source.URLSourceDescriptor;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -37,9 +38,20 @@ public class MarshallUtil {
         // no instantiate.
     }
 
-    // TODO PositionAwareÇÃê›íËÅB
-    public static Object marshall(Class instanceClass, 
-            Class interfaceClass, Object beforeObject) {
+    protected static void setPosition(
+            Object obj, String systemID, int lineNumber) {
+        if(obj == null || StringUtil.isEmpty(systemID) || lineNumber < 0) {
+            throw new IllegalArgumentException();
+        }
+        if(obj instanceof PositionAware) {
+            PositionAware positionAware = (PositionAware)obj;
+            positionAware.setSystemID(systemID);
+            positionAware.setLineNumber(lineNumber);
+        }
+    }
+    
+    public static Object marshall(Class instanceClass, Class interfaceClass, 
+            Object beforeObject, String systemID, int lineNumber) {
         if(instanceClass == null) {
             if(beforeObject == null) {
                 throw new IllegalArgumentException();
@@ -50,11 +62,15 @@ public class MarshallUtil {
             Constructor constructor = ObjectUtil.getConstructor(
                     instanceClass, new Class[] { interfaceClass });
             if(constructor != null) {
-                return ObjectUtil.newInstance(
+                Object obj = ObjectUtil.newInstance(
                         constructor, new Object[] { beforeObject });
+                setPosition(obj, systemID, lineNumber);
+                return obj;
             }
         }
-        return ObjectUtil.newInstance(instanceClass);
+        Object obj = ObjectUtil.newInstance(instanceClass);
+        setPosition(obj, systemID, lineNumber);
+        return obj;
     }
     
     public static SourceDescriptor getDefaultSource(

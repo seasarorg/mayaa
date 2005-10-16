@@ -45,7 +45,8 @@ public class ProviderTagHandler
         Class providerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentProvider = (ServiceProvider)MarshallUtil.marshall(
-                providerClass, ServiceProvider.class, _beforeProvider);
+                providerClass, ServiceProvider.class, _beforeProvider,
+                systemID, lineNumber);
     }
     
     public ServiceProvider getServiceProvider() {

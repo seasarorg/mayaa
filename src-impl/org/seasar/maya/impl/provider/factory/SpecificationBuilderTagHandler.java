@@ -49,7 +49,8 @@ public class SpecificationBuilderTagHandler
         Class builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentBuilder = (SpecificationBuilder)MarshallUtil.marshall(
-                builderClass, SpecificationBuilder.class, _beforeBuilder);
+                builderClass, SpecificationBuilder.class, _beforeBuilder,
+                systemID, lineNumber);
         _parent.getServiceProvider().setSpecificationBuilder(_currentBuilder);
     }
     

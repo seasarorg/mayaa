@@ -50,7 +50,8 @@ public class ScriptEnvirionmentTagHandler
         Class environmentClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentEnv = (ScriptEnvironment)MarshallUtil.marshall(
-                environmentClass, ScriptEnvironment.class, _beforeEnv);
+                environmentClass, ScriptEnvironment.class, _beforeEnv,
+                systemID, lineNumber);
         _parent.getServiceProvider().setScriptEnvironment(_currentEnv);
     }
     

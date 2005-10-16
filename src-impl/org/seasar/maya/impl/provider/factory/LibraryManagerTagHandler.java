@@ -52,7 +52,8 @@ public class LibraryManagerTagHandler
         Class managerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
     	_currentManager = (LibraryManager)MarshallUtil.marshall(
-                managerClass, LibraryManager.class, _beforeManager);
+                managerClass, LibraryManager.class, _beforeManager,
+                systemID, lineNumber);
         _parent.getServiceProvider().setLibraryManager(_currentManager);
     }
     

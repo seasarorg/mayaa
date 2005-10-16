@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -33,12 +32,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     private static final long serialVersionUID = 7557914925525488748L;
 
     private List _descriptors = new ArrayList();
-    private String _systemID;
     
-    public void setSystemID(String systemID) {
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
     public void addSourceDescriptor(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
@@ -46,10 +40,6 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
         synchronized(_descriptors) {
             _descriptors.add(source);
         }
-    }
-    
-    public String getSystemID() {
-        return _systemID;
     }
     
     private SourceDescriptor findDescriptor() {

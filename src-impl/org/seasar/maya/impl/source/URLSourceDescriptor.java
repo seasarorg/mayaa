@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.Date;
 
 import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.source.SourceDescriptor;
 
 /**
@@ -32,7 +31,6 @@ public class URLSourceDescriptor extends ParameterAwareImpl
 
     private static final long serialVersionUID = 292763675133184838L;
 
-    private String _systemID = "";
     private URL _url; 
     private Date _timestamp;
 
@@ -41,17 +39,6 @@ public class URLSourceDescriptor extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         _url = url;
-    }
-    
-    public void setSystemID(String systemID) {
-        if(systemID != null) {
-            throw new IllegalArgumentException();
-        }
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
-    public String getSystemID() {
-        return _systemID;
     }
     
     public boolean exists() {

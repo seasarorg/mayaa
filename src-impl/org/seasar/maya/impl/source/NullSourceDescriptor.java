@@ -44,14 +44,6 @@ public class NullSourceDescriptor extends ParameterAwareImpl
         return null;
     }
     
-    public void setSystemID(String systemID) {
-        // do nothing.
-    }
-
-    public String getSystemID() {
-        return "/";
-    }
-    
     public Date getTimestamp() {
         return ZERO;
     }

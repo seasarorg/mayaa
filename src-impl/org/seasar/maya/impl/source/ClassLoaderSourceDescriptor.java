@@ -28,13 +28,12 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
 		implements SourceDescriptor {
     
-    public static final String META_INF = "/META-INF";
-    
 	private static final long serialVersionUID = -4924522601395047024L;
+    
+    public static final String META_INF = "/META-INF";
 
     private String _root = "";
     private Class _neighbor;
-    private String _systemID = "";
     private InputStream _inputStream;
     private Date _timestamp;
 
@@ -58,15 +57,11 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         if(systemID != null && systemID.indexOf(META_INF) != -1) {
             throw new ForbiddenPathException(systemID);
         }
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
-    public String getSystemID() {
-        return _systemID;
+        super.setSystemID(StringUtil.preparePath(systemID));
     }
     
     public boolean exists() {
-        String path = (_root + _systemID).substring(1);
+        String path = (_root + getSystemID()).substring(1);
         if(_neighbor != null) {
             _inputStream = _neighbor.getResourceAsStream(path);
         }

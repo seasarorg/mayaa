@@ -63,7 +63,7 @@ public class ParameterAwareImpl implements ParameterAware {
 	}
 
     public void setSystemID(String systemID) {
-        _systemID = systemID;
+        _systemID = StringUtil.preparePath(systemID);
     }
 
     public String getSystemID() {
@@ -72,7 +72,7 @@ public class ParameterAwareImpl implements ParameterAware {
 
     public void setLineNumber(int lineNumber) {
         if(lineNumber < 0) {
-            throw new IllegalArgumentException();
+        	lineNumber = 0;
         }
         _lineNumber = lineNumber;
     }

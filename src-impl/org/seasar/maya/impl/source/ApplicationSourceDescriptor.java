@@ -34,12 +34,11 @@ import org.seasar.maya.source.SourceDescriptor;
 public class ApplicationSourceDescriptor
 		extends ParameterAwareImpl implements SourceDescriptor {
 
+    private static final long serialVersionUID = -2775274363708858237L;
+    
     public static final String WEB_INF = "/WEB-INF";
 
-    private static final long serialVersionUID = -2775274363708858237L;
-
     private String _root = "";
-    private String _systemID = "";
 
     private File _file;
     private ApplicationScope _application;
@@ -90,17 +89,13 @@ public class ApplicationSourceDescriptor
                 throw new ForbiddenPathException(systemID);
             }
         }
-        _systemID = StringUtil.preparePath(systemID);
-    }
-
-    public String getSystemID() {
-        return _systemID;
+        super.setSystemID(StringUtil.preparePath(systemID));
     }
 
     public boolean exists() {
         if(_file == null) {
             String realPath = 
-                getApplicationScope().getRealPath(_root + _systemID);
+                getApplicationScope().getRealPath(_root + getSystemID());
             if(StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if(file.exists()) {

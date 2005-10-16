@@ -107,10 +107,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
                 _scanners.add(scanner);
                 if(LOG.isInfoEnabled()) {
                     String msg = StringUtil.getMessage(
-                    		LibraryManagerImpl.class, 2, new String[] {
-                    			Integer.toString(_scanners.size()), 
-                    			scanner.getClass().getName()
-                    		});
+                    		LibraryManagerImpl.class, 2, 
+                                Integer.toString(_scanners.size()), 
+                    			scanner.getClass().getName());
                     LOG.info(msg);
                 }
             }
@@ -128,10 +127,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
                 _builders.add(builder);
                 if(LOG.isInfoEnabled()) {
                     String msg = StringUtil.getMessage(
-                    		LibraryManagerImpl.class, 3, new String[] {
+                    		LibraryManagerImpl.class, 3,
                     			Integer.toString(_builders.size()), 
-                    			builder.getClass().getName()
-                    		});
+                    			builder.getClass().getName());
                     LOG.info(msg);
                 }
             }
@@ -156,10 +154,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 			            systemIDs.add(library.getSystemID());
                         if(LOG.isInfoEnabled()) {
                             String msg = StringUtil.getMessage(
-                            		LibraryManagerImpl.class, 1, new String[] {
+                            		LibraryManagerImpl.class, 1,
                             			source.getSystemID(), 
-                            			library.getNamespaceURI()
-                            		});
+                            			library.getNamespaceURI());
                             LOG.info(msg);
                         }
 			            break;

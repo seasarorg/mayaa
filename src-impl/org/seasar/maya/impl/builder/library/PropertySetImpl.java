@@ -99,7 +99,7 @@ public class PropertySetImpl extends ParameterAwareImpl
         } else {
             if(LOG.isWarnEnabled()) {
                 String msg = StringUtil.getMessage(PropertySetImpl.class,
-                        0, new String[] { getName(), propName });
+                        0, getName(), propName);
                 LOG.warn(msg);
             }
         }

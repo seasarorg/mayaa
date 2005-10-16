@@ -112,10 +112,9 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 acceptable.addVirtualProperty(name, value);
             } else {
                 if(LOG.isWarnEnabled()) {
-                    String[] params = new String[] {
-                            processorClass.getName(), propertyName };
                     LOG.warn(StringUtil.getMessage(
-                            ProcessorDefinitionImpl.class, 0, params));
+                            ProcessorDefinitionImpl.class, 0,
+                            processorClass.getName(), propertyName));
                 }
             }
         }

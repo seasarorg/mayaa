@@ -69,7 +69,7 @@ public class NamespaceImpl implements Namespace {
 	        } else {
                 if(LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0, 
-                            new String[] { mapping.toString() }));
+                            mapping.toString()));
                 }
             }
 	    }

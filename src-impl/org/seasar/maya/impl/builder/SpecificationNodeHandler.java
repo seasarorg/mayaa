@@ -157,7 +157,7 @@ public class SpecificationNodeHandler
     	}
         if(LOG.isWarnEnabled()) {
         	LOG.warn(StringUtil.getMessage(SpecificationNodeHandler.class, 
-        			0, new String[] { prefix, value }));
+        			0, prefix, value));
         }
         return false;
     }

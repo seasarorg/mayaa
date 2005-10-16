@@ -144,7 +144,7 @@ public class EngineImpl extends SpecificationImpl
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
-                        EngineImpl.class, 0, new String[] { internal.getMessage() });
+                        EngineImpl.class, 0, internal.getMessage());
                 LOG.fatal(fatalMsg, internal);
             }
             if(t instanceof RuntimeException) {

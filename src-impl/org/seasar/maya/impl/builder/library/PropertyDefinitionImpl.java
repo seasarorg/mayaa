@@ -195,9 +195,9 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
                 if(VirtualPropertyAcceptable.class.isAssignableFrom(
                         processotClass) == false) {
                     if(LOG.isWarnEnabled()) {
-                        String[] params = new String[] {
-                                processorDef.getName(), getName() };
-                        LOG.warn(StringUtil.getMessage(getClass(), 0, params));
+                        LOG.warn(StringUtil.getMessage(
+                                PropertyDefinitionImpl.class, 0,
+                                processorDef.getName(), getName()));
                     }
                     return null;
                 }

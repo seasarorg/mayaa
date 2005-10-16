@@ -55,7 +55,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
             String processorName = processorDef.getName();
             if(LOG.isWarnEnabled()) {
                 String msg = StringUtil.getMessage(TLDPropertyDefinition.class, 
-                        0, new String[] { processorName, getName() });
+                        0, processorName, getName());
                 LOG.warn(msg);
             }
             return null;

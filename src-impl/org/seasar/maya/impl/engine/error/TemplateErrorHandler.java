@@ -69,16 +69,14 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 page.doPageRender("", getExtension());
                 if(LOG.isErrorEnabled()) {
                     String msg = StringUtil.getMessage(
-                            TemplateErrorHandler.class, 1, 
-                            new String[] { t.getMessage() });
+                            TemplateErrorHandler.class, 1, t.getMessage());
                     LOG.error(msg, t);
                 }
 	            break;
             } catch(PageNotFoundException ignore) {
                 if(LOG.isInfoEnabled()) {
                     String msg = StringUtil.getMessage(
-                            TemplateErrorHandler.class, 2, 
-                            new String[] { pageName });
+                            TemplateErrorHandler.class, 2, pageName);
                     LOG.info(msg);
                 }
             }

@@ -121,7 +121,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
                     String lineNumber = Integer.toString(original.getLineNumber());
                     String msg = StringUtil.getMessage(
                             EqualsIDInjectionResolver.class, 0, 
-                            new String[] { id, systemID, lineNumber });
+                            id, systemID, lineNumber);
                     LOG.warn(msg);
                 }
             }

@@ -127,11 +127,34 @@ public final class StringUtil {
         return ret;
     }
 
-    public static String getMessage(Class clazz, int index, String[] params) {
+    public static String getMessage(Class clazz, int index, String param0) {
+        return getMessage(clazz, index, new String[] { param0 });
+    }
+
+    public static String getMessage(Class clazz, int index, 
+            String param0, String param1) {
+        return getMessage(clazz, index, new String[] { param0, param1 });
+    }
+
+    public static String getMessage(Class clazz, int index, 
+            String param0, String param1, String param2) {
+        return getMessage(clazz, index,
+                new String[] { param0, param1, param2 });
+    }
+
+//    public static String getMessage(Class clazz, int index, 
+//            String param0, String param1, String param2, String param3) {
+//        return getMessage(clazz, index,
+//                new String[] { param0, param1, param2, param3 });
+//    }
+    
+    protected static String getMessage(
+            Class clazz, int index, String[] params) {
         Package key = clazz.getPackage();
         Properties properties = (Properties) _propFiles.get(key);
         if (properties == null) {
-            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
+            ClassLoaderSourceDescriptor source = 
+                new ClassLoaderSourceDescriptor();
             source.setSystemID("message.properties");
             source.setNeighborClass(clazz);
             properties = new Properties();

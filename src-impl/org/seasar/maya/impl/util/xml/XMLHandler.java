@@ -119,7 +119,7 @@ public class XMLHandler extends DefaultHandler {
         Log log = getLog();
         if(log != null && log.isWarnEnabled()) {
             String message = StringUtil.getMessage(XMLHandler.class, 0,
-                    new String[] { publicId, systemId });
+                    publicId, systemId);
             log.warn(message);
         }
         return null;

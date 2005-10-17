@@ -17,7 +17,6 @@ package org.seasar.maya.impl.builder.parser;
 
 import org.apache.xerces.xni.Augmentations;
 import org.apache.xerces.xni.XNIException;
-import org.apache.xerces.xni.parser.XMLConfigurationException;
 import org.cyberneko.html.filters.DefaultFilter;
 
 /**
@@ -35,7 +34,7 @@ public class AdditionalHandlerFilter extends DefaultFilter {
         return _recognizedProps;
     }
 
-    public void setProperty(String propertyId, Object value) throws XMLConfigurationException {
+    public void setProperty(String propertyId, Object value) {
         if(AdditionalHandler.ADDITIONAL_HANDLER.equals(propertyId)) {
             if(value instanceof AdditionalHandler == false) {
                 throw new IllegalArgumentException();

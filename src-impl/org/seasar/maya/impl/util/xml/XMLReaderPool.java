@@ -15,7 +15,8 @@
  */
 package org.seasar.maya.impl.util.xml;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.seasar.maya.impl.builder.parser.AdditionalHandler;
+import org.seasar.maya.impl.util.xml.AddableSAXParser;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -47,7 +48,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
     }
     
     protected Object createObject() {
-        XMLReader xmlReader = new SAXParser();
+        XMLReader xmlReader = new AddableSAXParser();
         return xmlReader;
     }
     
@@ -77,7 +78,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         }
     }
     
-	public XMLReader borrowXMLReader(ContentHandler handler, 
+	public XMLReader borrowXMLReader(final ContentHandler handler, 
 	        boolean namespaces, boolean validation, boolean xmlSchema) {
 	    XMLReader xmlReader = (XMLReader)borrowObject();
         setFeature(xmlReader,
@@ -86,6 +87,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
            	"http://xml.org/sax/features/validation", validation);
         setFeature(xmlReader,
             "http://apache.org/xml/features/validation/schema", xmlSchema);
+
         xmlReader.setContentHandler(handler);
         if(handler instanceof EntityResolver) {
             xmlReader.setEntityResolver((EntityResolver)handler);
@@ -100,7 +102,14 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
 			setProperty(xmlReader,
 				"http://xml.org/sax/properties/lexical-handler", handler);
         }
-	    return xmlReader;
+
+        if(handler instanceof AdditionalHandler
+                && xmlReader instanceof AddableSAXParser) {
+            ((AddableSAXParser) xmlReader).setAdditionalHandler(
+                    (AdditionalHandler) handler);
+        }
+
+        return xmlReader;
 	}
 	
 	public void returnXMLReader(XMLReader xmlReader) {

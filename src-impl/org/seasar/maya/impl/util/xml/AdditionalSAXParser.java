@@ -25,11 +25,11 @@ import org.xml.sax.SAXNotSupportedException;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class AddableSAXParser extends SAXParser {
+public class AdditionalSAXParser extends SAXParser {
 
     AdditionalHandlerFilter _filter;
 
-    public AddableSAXParser() {
+    public AdditionalSAXParser() {
         super();
 
         _filter = new AdditionalHandlerFilter();

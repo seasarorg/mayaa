@@ -16,7 +16,7 @@
 package org.seasar.maya.impl.util.xml;
 
 import org.seasar.maya.impl.builder.parser.AdditionalHandler;
-import org.seasar.maya.impl.util.xml.AddableSAXParser;
+import org.seasar.maya.impl.util.xml.AdditionalSAXParser;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -48,7 +48,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
     }
     
     protected Object createObject() {
-        XMLReader xmlReader = new AddableSAXParser();
+        XMLReader xmlReader = new AdditionalSAXParser();
         return xmlReader;
     }
     

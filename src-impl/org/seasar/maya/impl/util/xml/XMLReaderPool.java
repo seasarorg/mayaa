@@ -102,11 +102,9 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
 			setProperty(xmlReader,
 				"http://xml.org/sax/properties/lexical-handler", handler);
         }
-
-        if(handler instanceof AdditionalHandler
-                && xmlReader instanceof AddableSAXParser) {
-            ((AddableSAXParser) xmlReader).setAdditionalHandler(
-                    (AdditionalHandler) handler);
+        if(handler instanceof AdditionalHandler) {
+            setProperty(xmlReader,
+                AdditionalHandler.ADDITIONAL_HANDLER, handler);
         }
 
         return xmlReader;

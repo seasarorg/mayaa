@@ -15,29 +15,43 @@
  */
 package org.seasar.maya.impl.util.xml;
 
+import org.apache.xerces.parsers.SAXParser;
 import org.apache.xerces.xni.Augmentations;
 import org.apache.xerces.xni.XNIException;
-import org.seasar.maya.impl.builder.parser.AdditionalHandler;
+import org.seasar.maya.impl.builder.parser.AdditionalHandlerFilter;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class AddableSAXParser extends org.apache.xerces.parsers.SAXParser {
+public class AddableSAXParser extends SAXParser {
 
-    private AdditionalHandler _documentHandler;
+    AdditionalHandlerFilter _filter;
+
+    public AddableSAXParser() {
+        super();
+
+        _filter = new AdditionalHandlerFilter();
+        fConfiguration.addRecognizedProperties(
+                _filter.getRecognizedProperties()
+        );
+    }
+
+    public void setProperty(String propertyId, Object value)
+            throws SAXNotRecognizedException, SAXNotSupportedException {
+        super.setProperty(propertyId, value);
+
+        _filter.setProperty(propertyId, value);
+    }
 
     public void xmlDecl(
-            String version, String encoding, String standalone, Augmentations augs)
+            String version, String encoding, String standalone,
+            Augmentations augs)
             throws XNIException {
         super.xmlDecl(version, encoding, standalone, augs);
 
-        if (_documentHandler != null) {
-            _documentHandler.xmlDecl(version, encoding, standalone);
-        }
-    }
-
-    public void setAdditionalHandler(AdditionalHandler documentHandler) {
-        _documentHandler = documentHandler;
+        _filter.xmlDecl(version, encoding, standalone, augs);
     }
 
 }

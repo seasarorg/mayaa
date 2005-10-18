@@ -272,22 +272,22 @@ public class RenderUtil implements CONST_IMPL {
         return ret;
     }
  
-    public static void decodeProcessorTree(Page topLevelPage, 
+    public static void decodeProcessorTree( 
             ProcessorTreeWalker current, DecodeTreeWalker decodeParent) {
-        if(topLevelPage == null || current == null) {
+        if(current == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(current);
         DecodeTreeWalker decodeWalker = null;
         if(current instanceof DecodeTreeWalker) {
             decodeWalker = (DecodeTreeWalker)current;
-            decodeWalker.doStartDecode(topLevelPage, decodeParent);
+            decodeWalker.doStartDecode(decodeParent);
         }
         for(int i = 0; i < current.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = current.getChildProcessor(i);
             DecodeTreeWalker parent = 
                 decodeWalker != null ? decodeWalker : decodeParent;
-            decodeProcessorTree(topLevelPage, child, parent);
+            decodeProcessorTree(child, parent);
         }
         saveToCycle(current);
         if(decodeWalker != null) {

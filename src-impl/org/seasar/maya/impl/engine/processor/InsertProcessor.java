@@ -155,8 +155,7 @@ public class InsertProcessor
 
     // DecodeTreeWalker --------------------------------------------
 
-    public void doStartDecode(
-            Page topLevelPage, DecodeTreeWalker parentDecode) {
+    public void doStartDecode(DecodeTreeWalker parentDecode) {
         _parentDecode.set(parentDecode);
     }
 
@@ -213,8 +212,7 @@ public class InsertProcessor
         if(ProviderUtil.getEngine().isProcessDecode()) {
             DecodeTreeWalker decode = 
                 (DecodeTreeWalker)_parentDecode.get();
-            RenderUtil.decodeProcessorTree(
-                    topLevelPage, insertRoot, decode);
+            RenderUtil.decodeProcessorTree(insertRoot, decode);
         }
         ProcessStatus ret = RenderUtil.renderTemplateProcessor(
                 topLevelPage, insertRoot); 

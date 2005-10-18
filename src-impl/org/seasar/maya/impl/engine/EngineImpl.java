@@ -57,6 +57,7 @@ public class EngineImpl extends SpecificationImpl
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
+    private boolean _processDecode;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -230,6 +231,14 @@ public class EngineImpl extends SpecificationImpl
         } else {
             doResourceService(cycle);
         }
+    }
+
+    public void setProcessDecode(boolean processDecode) {
+        _processDecode = processDecode;
+    }
+
+    public boolean isProcessDecode() {
+        return _processDecode;
     }
 
     // Parameterizable implements ------------------------------------

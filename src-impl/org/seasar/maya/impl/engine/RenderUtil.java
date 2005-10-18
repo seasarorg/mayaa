@@ -24,6 +24,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.TemplateRenderer;
 import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
+import org.seasar.maya.engine.processor.DecodeTreeWalker;
 import org.seasar.maya.engine.processor.IterationProcessor;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
@@ -271,4 +272,27 @@ public class RenderUtil implements CONST_IMPL {
         return ret;
     }
  
+    public static void decodeProcessorTree(Page topLevelPage, 
+            ProcessorTreeWalker current, DecodeTreeWalker decodeParent) {
+        if(topLevelPage == null || current == null) {
+            throw new IllegalArgumentException();
+        }
+        saveToCycle(current);
+        DecodeTreeWalker decodeWalker = null;
+        if(current instanceof DecodeTreeWalker) {
+            decodeWalker = (DecodeTreeWalker)current;
+            decodeWalker.doStartDecode(topLevelPage, decodeParent);
+        }
+        for(int i = 0; i < current.getChildProcessorSize(); i++) {
+            ProcessorTreeWalker child = current.getChildProcessor(i);
+            DecodeTreeWalker parent = 
+                decodeWalker != null ? decodeWalker : decodeParent;
+            decodeProcessorTree(topLevelPage, child, parent);
+        }
+        saveToCycle(current);
+        if(decodeWalker != null) {
+            decodeWalker.doEndDecode(decodeParent);
+        }
+    }
+
 }

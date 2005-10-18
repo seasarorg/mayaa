@@ -26,6 +26,7 @@ import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.TemplateRenderer;
+import org.seasar.maya.engine.processor.DecodeTreeWalker;
 import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -44,7 +45,7 @@ import org.seasar.maya.impl.util.StringUtil;
  */
 public class InsertProcessor 
         extends TemplateProcessorSupport implements CONST_IMPL,
-        InformalPropertyAcceptable, TemplateRenderer {
+        InformalPropertyAcceptable, TemplateRenderer, DecodeTreeWalker {
 
 	private static final long serialVersionUID = -1240398725406503403L;
 	
@@ -54,6 +55,7 @@ public class InsertProcessor
     private String _suffix;
     private String _extension;
     private List _attributes;
+    private ThreadLocal _parentDecode = new ThreadLocal();
     
     // MLD property, required
     public void setPath(String path) {
@@ -151,6 +153,17 @@ public class InsertProcessor
         return ret;
     }
 
+    // DecodeTreeWalker --------------------------------------------
+
+    public void doStartDecode(
+            Page topLevelPage, DecodeTreeWalker parentDecode) {
+        _parentDecode.set(parentDecode);
+    }
+
+    public void doEndDecode(DecodeTreeWalker parentDecode) {
+        _parentDecode.set(null);
+    }
+    
     // TemplateRenderer implements ----------------------------------
 
     protected DoRenderProcessor findDoRender(
@@ -197,6 +210,12 @@ public class InsertProcessor
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
+        if(ProviderUtil.getEngine().isProcessDecode()) {
+            DecodeTreeWalker decode = 
+                (DecodeTreeWalker)_parentDecode.get();
+            RenderUtil.decodeProcessorTree(
+                    topLevelPage, insertRoot, decode);
+        }
         ProcessStatus ret = RenderUtil.renderTemplateProcessor(
                 topLevelPage, insertRoot); 
         doRender.popInsertProcessor();

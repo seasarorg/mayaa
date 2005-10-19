@@ -32,7 +32,8 @@ import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
 public final class StringUtil {
 
     private static Map _propFiles = new HashMap();
-
+    private static String[] ZERO = new String[0];
+    
     private StringUtil() {
         // no instantiation.
     }
@@ -127,6 +128,10 @@ public final class StringUtil {
         return ret;
     }
 
+    public static String getMessage(Class clazz, int index) {
+        return getMessage(clazz, index, ZERO);
+    }
+    
     public static String getMessage(Class clazz, int index, String param0) {
         return getMessage(clazz, index, new String[] { param0 });
     }
@@ -184,7 +189,7 @@ public final class StringUtil {
             message = "!" + clazz.getName() + "!";
         }
         if (params == null) {
-            params = new String[0];
+            params = ZERO;
         }
         return MessageFormat.format(message, params);
     }

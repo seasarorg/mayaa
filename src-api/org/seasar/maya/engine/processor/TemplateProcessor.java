@@ -27,6 +27,12 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public interface TemplateProcessor extends ProcessorTreeWalker {
     
     /**
+     * テンプレート内でユニークなID値を取得する。
+     * @return テンプレート中でユニークなID。
+     */
+    String getUniqueID();
+    
+    /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、
      * このメソッドで出力する。
      * @param topLevelPage 描画トップレベルのページ。

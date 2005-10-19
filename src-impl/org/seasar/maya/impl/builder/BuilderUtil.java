@@ -41,8 +41,11 @@ public class BuilderUtil implements CONST_IMPL {
         if(qName == null || original == null) {
             throw new IllegalArgumentException();
         }
+        String systemID = original.getSystemID();
+        int lineNumber = original.getLineNumber();
+        int sequenceID = original.getSequenceID();
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
-                qName, original.getSystemID(), original.getLineNumber());
+                qName, systemID, lineNumber, sequenceID);
         if(StringUtil.hasValue(uri)) {
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
                 NodeAttribute attr = (NodeAttribute)it.next();
@@ -65,14 +68,16 @@ public class BuilderUtil implements CONST_IMPL {
         if(parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+            PrefixMapping mapping =
+                namespace.getMappingFromPrefix(prefix, true);
             if(mapping == null) {
                 throw new PrefixMappingNotFoundException(prefix);
             }
             namespaceURI = mapping.getNamespaceURI();
         } else if(parsed.length == 1) {
             localName = parsed[0];
-            PrefixMapping mapping = namespace.getMappingFromPrefix("", true);
+            PrefixMapping mapping =
+                namespace.getMappingFromPrefix("", true);
             if(mapping != null) {
                 namespaceURI = mapping.getNamespaceURI();
             } else {

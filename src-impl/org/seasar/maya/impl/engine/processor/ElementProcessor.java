@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorProperty;
@@ -38,7 +39,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
 		implements CONST_IMPL {
 
 	private static final long serialVersionUID = 923306412062075314L;
-
+	private static final String SUFFIX_DUPLICATED = "_d"; 
+    
 	private PrefixAwareName _name;
     private boolean _duplicated;
     private ThreadLocal _currentNS = new ThreadLocal();
@@ -73,6 +75,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         _name = name;
+    }
+
+    public String getUniqueID() {
+        String uniqueID = super.getUniqueID();
+        if(_duplicated) {
+            uniqueID = uniqueID + SUFFIX_DUPLICATED;
+        }
+        return uniqueID;
     }
 
     public Class getExpectedClass() {
@@ -146,18 +156,25 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected void appendAttributeString(
-            StringBuffer buffer, ProcessorProperty prop) {
-        QName qName = prop.getName().getQName();
+            StringBuffer buffer, PrefixAwareName propName, Object value) {
+        QName qName = propName.getQName();
         if(URI_MAYA.equals(qName.getNamespaceURI())) {
             return;
         }
         buffer.append(" ");
-        String attrPrefix = getResolvedPrefix(prop.getName());
+        String attrPrefix = getResolvedPrefix(propName);
         if(StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
         buffer.append(qName.getLocalName());
-        buffer.append("=\"").append(prop.getValue().execute(null)).append("\"");
+        buffer.append("=\"");
+        if(value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript)value;
+            buffer.append(script.execute(null));
+        } else {
+            buffer.append(value.toString());
+        }
+        buffer.append("\"");
     }
     
     protected boolean isHTML(QName qName) {
@@ -180,6 +197,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
         cycle.getResponse().write(buffer.toString());
     }
     
+    protected PrefixAwareName getIDName() {
+        String namespaceURI = _name.getQName().getNamespaceURI();
+        PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
+                SpecificationUtil.createQName(namespaceURI, "id"));
+        name.setParentSpace(_name.getParentSpace());
+        return name;
+    }
+    
     protected ProcessStatus writeStartElement() {
         if(_name == null) {
             throw new IllegalStateException();
@@ -191,25 +216,37 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append(prefix).append(":");
         }
         QName qName = _name.getQName();
+        String uri = qName.getNamespaceURI();
         buffer.append(qName.getLocalName());
         if(isHTML(qName) == false) {
             appendPrefixMappingString(buffer, getCurrentNS());
             appendPrefixMappingString(buffer, _name.getParentSpace());
         }
+        boolean hasID = false;
         for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
-            if(_duplicated) {
-            	QName propQName = prop.getName().getQName(); 
-            	if(QH_ID.equals(propQName) || QX_ID.equals(propQName)) {
-            		continue;
-            	}
-            }
-            appendAttributeString(buffer, prop);
+            PrefixAwareName propName = prop.getName();  
+        	QName propQName = propName.getQName();
+            String propURI = propQName.getNamespaceURI();
+            String propLocalName = propQName.getLocalName(); 
+        	if(uri.equals(propURI) && "id".equals(propLocalName)) {
+                if(_duplicated) {
+                    String id = prop.getValue().execute(null) + 
+                            SUFFIX_DUPLICATED;
+                    appendAttributeString(buffer, propName, id);
+                }
+                hasID = true;
+        	}
+        	appendAttributeString(buffer, propName, prop.getValue());
+        }
+        if(hasID == false) {
+            PrefixAwareName idName = getIDName(); 
+            appendAttributeString(buffer, idName, getUniqueID());
         }
         for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             if(hasProcesstimeProperty(prop) == false) {
-                appendAttributeString(buffer, prop);
+                appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
         if(isHTML(qName) || getChildProcessorSize() > 0) {

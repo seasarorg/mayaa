@@ -39,6 +39,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
     
+    private int _sequenceID = -1;
     private Map _attributes;
     private NodeTreeWalker _parent;
     private List _childNodes;
@@ -47,6 +48,20 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
 	public SpecificationNodeImpl(QName qName) {
 	    super(qName);
+    }
+    
+    public void setSequenceID(int sequenceID) {
+        if(sequenceID < 0) {
+            throw new IllegalArgumentException();
+        }
+        _sequenceID = sequenceID;
+    }
+    
+    public int getSequenceID() {
+        if(_sequenceID < 0) {
+            throw new IllegalStateException();
+        }
+        return _sequenceID;
     }
     
 	public void addAttribute(QName qName, String value) {
@@ -86,6 +101,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     public SpecificationNode copyTo(CopyToFilter filter) {
         SpecificationNodeImpl copy = new SpecificationNodeImpl(getQName());
+        copy.setSequenceID(getSequenceID());
         copy.setSystemID(getSystemID());
         copy.setLineNumber(getLineNumber());
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {

@@ -66,6 +66,7 @@ public class SpecificationNodeHandler
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace = true;
     private int _inEntity;
+    private int _sequenceID;
     
     public SpecificationNodeHandler(Specification specification) {
         if(specification == null) {
@@ -101,6 +102,7 @@ public class SpecificationNodeHandler
     }
     
     public void startDocument() {
+        _sequenceID = 1;
         _charactersBuffer = new StringBuffer(128);
         _current = _specification;
         initNamespace();
@@ -112,15 +114,19 @@ public class SpecificationNodeHandler
     }
     
     public void endPrefixMapping(String prefix) {
-        PrefixMapping mapping = _namespace.getMappingFromPrefix(prefix, false);
+        PrefixMapping mapping = 
+            _namespace.getMappingFromPrefix(prefix, false);
         if(mapping == null) {
             throw new IllegalStateException();
         }
     }
     
     protected SpecificationNode addNode(QName qName) {
+        String systemID = _locator.getSystemId();
+        int lineNumber = _locator.getLineNumber();
 		SpecificationNode child = SpecificationUtil.createSpecificationNode(
-				qName, _locator.getSystemId(), _locator.getLineNumber());
+				qName, systemID, lineNumber, _sequenceID);
+        _sequenceID++;
         child.setParentSpace(_namespace);
 	    _current.addChildNode(child);
 		return child;

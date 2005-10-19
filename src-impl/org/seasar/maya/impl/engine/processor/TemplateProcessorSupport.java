@@ -32,7 +32,8 @@ import org.seasar.maya.engine.specification.SpecificationNode;
 public class TemplateProcessorSupport implements TemplateProcessor {
 
 	private static final long serialVersionUID = -3521980479718620027L;
-
+	private static final String PREFIX_UNIQUE_ID = "_maya_";
+    
 	private ProcessorTreeWalker _parent;
     private int _index;
     private List _children = new ArrayList();
@@ -41,6 +42,11 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private boolean _evalBodyInclude = true;
     private ProcessorDefinition _definition;
     
+    public String getUniqueID() {
+        int sequenceID = getOriginalNode().getSequenceID();
+        return PREFIX_UNIQUE_ID + sequenceID;
+    }
+
     // MLD property
     public void setEvalBodyInclude(boolean evalBodyInclude) {
         _evalBodyInclude = evalBodyInclude;
@@ -65,6 +71,9 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public SpecificationNode getOriginalNode() {
+        if(_originalNode == null) {
+            throw new IllegalArgumentException();
+        }
         return _originalNode;
     }
 
@@ -76,6 +85,9 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public SpecificationNode getInjectedNode() {
+        if(_injectedNode == null) {
+            throw new IllegalStateException();
+        }
         return _injectedNode;
     }
 

@@ -23,6 +23,18 @@ import java.util.Iterator;
  */
 public interface SpecificationNode 
         extends NodeTreeWalker, PrefixAwareName {
+
+    /**
+     * ビルド時に、スペック内でユニークに採番される値を設定する。
+     * @param sequenceID スペック内のユニーク値。
+     */
+    void setSequenceID(int sequenceID);
+    
+    /**
+     * スペック内でユニークに設定された値を取得する。
+     * @return スペック内のユニーク値。
+     */
+    int getSequenceID();
     
 	/**
 	 * ノード属性の追加。

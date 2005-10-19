@@ -58,15 +58,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         return currentNS;
     }
-
-    // exported property
-    public boolean isDuplicated() {
-    	return _duplicated;
-    }
     
     // MLD property
     public void setDuplicated(boolean duplicated) {
         _duplicated = duplicated;
+    }
+
+    // exported property
+    public boolean isDuplicated() {
+        return _duplicated;
     }
     
     // MLD property
@@ -76,10 +76,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         _name = name;
     }
+    
+    protected PrefixAwareName getName() {
+        if(_name == null) {
+            throw new IllegalStateException();
+        }
+        return _name;
+    }
 
     public String getUniqueID() {
         String uniqueID = super.getUniqueID();
-        if(_duplicated) {
+        if(isDuplicated()) {
             uniqueID = uniqueID + SUFFIX_DUPLICATED;
         }
         return uniqueID;
@@ -111,7 +118,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected void resolvePrefixAll() {
-        resolvePrefix(_name);
+        resolvePrefix(getName());
         for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             resolvePrefix(prop.getName());
@@ -198,50 +205,42 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected PrefixAwareName getIDName() {
-        String namespaceURI = _name.getQName().getNamespaceURI();
+        String namespaceURI = getName().getQName().getNamespaceURI();
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
                 SpecificationUtil.createQName(namespaceURI, "id"));
-        name.setParentSpace(_name.getParentSpace());
+        name.setParentSpace(getName().getParentSpace());
         return name;
     }
     
     protected ProcessStatus writeStartElement() {
-        if(_name == null) {
+        if(getName() == null) {
             throw new IllegalStateException();
         }
         resolvePrefixAll();
         StringBuffer buffer = new StringBuffer("<");
-        String prefix = getResolvedPrefix(_name);
+        String prefix = getResolvedPrefix(getName());
         if(StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
-        QName qName = _name.getQName();
+        QName qName = getName().getQName();
         String uri = qName.getNamespaceURI();
         buffer.append(qName.getLocalName());
         if(isHTML(qName) == false) {
             appendPrefixMappingString(buffer, getCurrentNS());
-            appendPrefixMappingString(buffer, _name.getParentSpace());
+            appendPrefixMappingString(buffer, getName().getParentSpace());
         }
-        boolean hasID = false;
         for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
             PrefixAwareName propName = prop.getName();  
         	QName propQName = propName.getQName();
             String propURI = propQName.getNamespaceURI();
             String propLocalName = propQName.getLocalName(); 
-        	if(uri.equals(propURI) && "id".equals(propLocalName)) {
-                if(_duplicated) {
-                    String id = prop.getValue().execute(null) + 
-                            SUFFIX_DUPLICATED;
-                    appendAttributeString(buffer, propName, id);
+            if(isDuplicated()) {
+                if(uri.equals(propURI) && "id".equals(propLocalName)) {
+                    continue;
                 }
-                hasID = true;
         	}
         	appendAttributeString(buffer, propName, prop.getValue());
-        }
-        if(hasID == false) {
-            PrefixAwareName idName = getIDName(); 
-            appendAttributeString(buffer, idName, getUniqueID());
         }
         for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
@@ -259,13 +258,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
     
     protected void writeEndElement() {
-        if(_name == null) {
+        if(getName() == null) {
             throw new IllegalStateException();
         }
-        QName qName = _name.getQName();
+        QName qName = getName().getQName();
         if(needsCloseElement(qName)) {
             StringBuffer buffer = new StringBuffer("</");
-            String prefix = getResolvedPrefix(_name);
+            String prefix = getResolvedPrefix(getName());
             if(StringUtil.hasValue(prefix)) {
                 buffer.append(prefix).append(":");
             }

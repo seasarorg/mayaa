@@ -26,12 +26,8 @@ import org.seasar.maya.impl.CONST_IMPL;
  */
 public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
 
-    public static final String DEFAULT_ENCODING = HTMLScanner.DEFAULT_ENCODING;
-    public static final String NOTIFY_CHAR_REFS = HTMLScanner.NOTIFY_CHAR_REFS;
-    public static final String NOTIFY_XML_BUILTIN_REFS = HTMLScanner.NOTIFY_XML_BUILTIN_REFS;
-    public static final String NOTIFY_HTML_BUILTIN_REFS = HTMLScanner.NOTIFY_HTML_BUILTIN_REFS;
-    public static final String NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
-    public static final String NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
+    public static final String _NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
+    public static final String _NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
     public static final String LEXICAL_HANDLER = "http://xml.org/sax/properties/lexical-handler";
     public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
 

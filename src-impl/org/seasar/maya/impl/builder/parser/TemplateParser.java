@@ -34,8 +34,8 @@ public class TemplateParser extends AbstractSAXParser {
     	public TemplateParserConfiguration(HTMLScanner scanner) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
-            setProperty(TemplateScanner.NAMES_ELEMS, "match");
-            setProperty(TemplateScanner.NAMES_ATTRS, "no-change");
+            setProperty(TemplateScanner._NAMES_ELEMS, "match");
+            setProperty(TemplateScanner._NAMES_ATTRS, "no-change");
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);

@@ -114,7 +114,6 @@ public class EngineImpl extends SpecificationImpl
         if ("maya".equals(request.getExtension())) {
             return true;
         }
-
         // TODO MIME”»’è‚ð‚µ‚Á‚©‚è‚â‚é
         String mimeType = request.getMimeType();
         return mimeType != null
@@ -133,14 +132,13 @@ public class EngineImpl extends SpecificationImpl
         return throwable ;
     }
 
-    protected void handleError(Throwable t) {
+    protected void handleError(Throwable t, boolean pageFlush) {
         t = removeWrapperRuntimeException(t);
         try {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.setHandledError(t);
-            getErrorHandler().doErrorHandle(t);
+            getErrorHandler().doErrorHandle(t, pageFlush);
             cycle.setHandledError(null);
-            cycle.getResponse().flushAll();
         } catch(Throwable internal) {
             if(LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -160,7 +158,7 @@ public class EngineImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
-    protected void doPageService(ServiceCycle cycle) {
+    protected void doPageService(ServiceCycle cycle, boolean pageFlush) {
         try {
             boolean service = true;
             while(service) {
@@ -186,7 +184,9 @@ public class EngineImpl extends SpecificationImpl
                                     pageName, extension);
                         }
                     }
-                    response.flushAll();
+                    if(pageFlush) {
+                        response.flush();
+                    }
                     service = false;
                 } catch(PageForwarded f) {
                     // do nothing.
@@ -195,7 +195,7 @@ public class EngineImpl extends SpecificationImpl
         } catch(Throwable t) {
             cycle.getResponse().clearBuffer();
             SpecificationUtil.initScope();
-            handleError(t);
+            handleError(t, pageFlush);
         }
     }
 
@@ -224,10 +224,10 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    public void doService() {
+    public void doService(boolean pageFlush) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(isPageRequested()) {
-            doPageService(cycle);
+            doPageService(cycle, pageFlush);
         } else {
             doResourceService(cycle);
         }

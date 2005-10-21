@@ -49,7 +49,7 @@ public class MayaServlet extends HttpServlet {
             HttpServletRequest request, HttpServletResponse response) {
         CycleUtil.initialize(request, response);
         Engine engine = ProviderUtil.getEngine();
-        engine.doService();
+        engine.doService(true);
     }
     
 }

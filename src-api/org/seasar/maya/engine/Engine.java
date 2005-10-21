@@ -47,8 +47,9 @@ public interface Engine extends ParameterAware, Specification {
 
     /**
      * サービスメソッド。
+     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
-    void doService();
+    void doService(boolean pageFlush);
 
     /**
      * プロセッサツリーのデコードフェーズを起動するかどうかを設定する。

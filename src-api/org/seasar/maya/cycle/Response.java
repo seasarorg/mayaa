@@ -100,11 +100,6 @@ public interface Response extends Serializable, ContextAware  {
     void flush();
 
     /**
-     * 強制的に全バッファをフラッシュして、実際の出力ストリームに書き出す。
-     */
-    void flushAll();
-
-    /**
      * バッファされたライタを取得する。
      * @return バッファされたライタ。
      */

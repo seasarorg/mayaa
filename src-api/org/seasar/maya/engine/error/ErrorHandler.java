@@ -26,7 +26,8 @@ public interface ErrorHandler extends ParameterAware {
     /**
      * エラー処理メソッド。
      * @param t 処理対象のThrowable。
+     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
-    void doErrorHandle(Throwable t);
+    void doErrorHandle(Throwable t, boolean pageFlush);
 
 }

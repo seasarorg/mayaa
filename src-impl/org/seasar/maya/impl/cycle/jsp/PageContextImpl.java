@@ -86,7 +86,7 @@ public class PageContextImpl extends PageContext {
     public JspWriter popBody() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-    	return new JspWriterImpl(response.popWriter());
+    	return new JspWriterImpl(response.getWriter());
     }
 
     public BodyContent pushBody() {

@@ -17,11 +17,13 @@ package org.seasar.maya.impl.engine.error;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.maya.cycle.Response;
 import org.seasar.maya.engine.Engine;
 import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.error.ErrorHandler;
 import org.seasar.maya.impl.IllegalParameterValueException;
 import org.seasar.maya.impl.ParameterAwareImpl;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.engine.PageNotFoundException;
 import org.seasar.maya.impl.provider.ProviderUtil;
 import org.seasar.maya.impl.util.StringUtil;
@@ -55,7 +57,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 StringUtil.preparePath(name);
     }
     
-    public void doErrorHandle(Throwable t) {
+    public void doErrorHandle(Throwable t, boolean pageFlush) {
         if(t == null) {
             throw new IllegalArgumentException();
         }
@@ -71,6 +73,10 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 1, t.getMessage());
                     LOG.error(msg, t);
+                }
+                if(pageFlush) {
+                    Response response = CycleUtil.getResponse();
+                    response.flush();
                 }
 	            break;
             } catch(PageNotFoundException ignore) {

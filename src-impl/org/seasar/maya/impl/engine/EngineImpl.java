@@ -132,7 +132,7 @@ public class EngineImpl extends SpecificationImpl
         return throwable ;
     }
 
-    protected void handleError(Throwable t, boolean pageFlush) {
+    public void handleError(Throwable t, boolean pageFlush) {
         t = removeWrapperRuntimeException(t);
         try {
             ServiceCycle cycle = CycleUtil.getServiceCycle();

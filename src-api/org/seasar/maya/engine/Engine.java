@@ -52,6 +52,13 @@ public interface Engine extends ParameterAware, Specification {
     void doService(boolean pageFlush);
 
     /**
+     * エラーハンドルページの表示。
+     * @param t 発生した例外。
+     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
+     */
+    void handleError(Throwable t, boolean pageFlush);
+    
+    /**
      * プロセッサツリーのデコードフェーズを起動するかどうかを設定する。
      * @param processDecode tureだとデコードフェーズ起動。
      */

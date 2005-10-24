@@ -15,13 +15,17 @@
  */
 package org.seasar.maya.impl.cycle.jsp;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -36,6 +40,7 @@ import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 
 /**
@@ -100,13 +105,42 @@ public class PageContextImpl extends PageContext {
     	cycle.forward(relativeUrlPath);
     }
 
-    public void include(String relativeUrlPath) {
+    public void include(String relativeUrlPath) 
+            throws ServletException, IOException {
         include(relativeUrlPath, false);
     }
     
-    public void include(String relativeUrlPath, boolean flush) {
-        // TODO impl JSP-include.
-        throw new UnsupportedOperationException();
+    protected String getContextRelativePath(
+            ServletRequest request, String relativePath) {
+        if (relativePath.startsWith("/") || 
+                request instanceof HttpServletRequest == false) {
+            return relativePath;
+        }
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String uri = httpRequest.getServletPath();
+        if(StringUtil.hasValue(uri)) {
+            int pos = uri.lastIndexOf('/');
+            if (pos >= 0) {
+                uri = uri.substring(0, pos);
+            }
+        } else {
+            uri = "";
+        }
+        return uri + '/' + relativePath;
+    }
+    
+    public void include(String relativeUrlPath, boolean flush)
+            throws ServletException, IOException {
+        if(flush) {
+            Response response = CycleUtil.getResponse();
+            response.getWriter().flush();
+        }
+        ServletRequest request = getRequest();
+        String contextRelativePath = 
+            getContextRelativePath(request, relativeUrlPath);
+        RequestDispatcher dispatcher = 
+            request.getRequestDispatcher(contextRelativePath);
+        dispatcher.include(request, getResponse());
     }
 
     public void handlePageException(Exception e) {

@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -43,12 +43,12 @@ import org.seasar.maya.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InsertProcessor 
+public class InsertProcessor
         extends TemplateProcessorSupport implements CONST_IMPL,
         InformalPropertyAcceptable, TemplateRenderer, DecodeTreeWalker {
 
-	private static final long serialVersionUID = -1240398725406503403L;
-	
+    private static final long serialVersionUID = -1240398725406503403L;
+
     private String _path;
     private String _name;
     private SoftReference _page;
@@ -56,17 +56,17 @@ public class InsertProcessor
     private String _extension;
     private List _attributes;
     private ThreadLocal _parentDecode = new ThreadLocal();
-    
+
     // MLD property, required
     public void setPath(String path) {
         _path = path;
     }
-    
+
     // MLD property
     public void setName(String name) {
         _name = name;
     }
-    
+
     // MLD method
     public void addInformalProperty(PrefixAwareName name, Object attr) {
         if(_attributes == null) {
@@ -89,34 +89,34 @@ public class InsertProcessor
         }
         return _attributes;
     }
-    
+
     protected Page getPage() {
-		Page page = null;
+        Page page = null;
         if(_page != null) {
-        	page = (Page)_page.get();
-        	if(page == null) {
-            	_page = null;
-        	}
+            page = (Page)_page.get();
+            if(page == null) {
+                _page = null;
+            }
         }
         return page;
     }
-    
+
     protected void preparePage() {
-    	if(StringUtil.hasValue(_path)) {
+        if(StringUtil.hasValue(_path)) {
             synchronized(this) {
-	    		Page page = getPage();
-		        if(page == null) {
-		            Engine engine = ProviderUtil.getEngine();
-		            String suffixSeparator = 
-		            	engine.getParameter(SUFFIX_SEPARATOR);
-		            String[] pagePath = 
-		            	StringUtil.parsePath(_path, suffixSeparator);
-		            page = engine.getPage(pagePath[0]);
-		            _page = new SoftReference(page);  
-		            _suffix = pagePath[1];
-		            _extension = pagePath[2];
-		        }
-	    	}
+                Page page = getPage();
+                if(page == null) {
+                    Engine engine = ProviderUtil.getEngine();
+                    String suffixSeparator =
+                        engine.getParameter(SUFFIX_SEPARATOR);
+                    String[] pagePath =
+                        StringUtil.parsePath(_path, suffixSeparator);
+                    page = engine.getPage(pagePath[0]);
+                    _page = new SoftReference(page);
+                    _suffix = pagePath[1];
+                    _extension = pagePath[2];
+                }
+            }
         }
     }
 
@@ -162,7 +162,7 @@ public class InsertProcessor
     public void doEndDecode(DecodeTreeWalker parentDecode) {
         _parentDecode.set(null);
     }
-    
+
     // TemplateRenderer implements ----------------------------------
 
     protected DoRenderProcessor findDoRender(
@@ -172,7 +172,7 @@ public class InsertProcessor
             ProcessorTreeWalker child = proc.getChildProcessor(i);
             if(child instanceof DoRenderProcessor) {
                 doRender =  (DoRenderProcessor)child;
-                if(StringUtil.isEmpty(name) || 
+                if(StringUtil.isEmpty(name) ||
                         name.equals(doRender.getName())) {
                     break;
                 }
@@ -184,7 +184,7 @@ public class InsertProcessor
         }
         return doRender;
     }
-    
+
     protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
         if(doRender.isReplace() == false) {
@@ -197,7 +197,7 @@ public class InsertProcessor
         }
         return doRender;
     }
-    
+
     public ProcessStatus renderTemplate(
             Page topLevelPage, Template template) {
         if(topLevelPage == null || template == null) {
@@ -205,19 +205,21 @@ public class InsertProcessor
         }
         DoRenderProcessor doRender = findDoRender(template, _name);
         if(doRender == null) {
+            // TODO レイアウトが別レイアウトを継承している場合、レイアウト上のdoRenderを探さない
+            // maya-sample/component/layout_user.html で再現
             throw new DoRenderNotFoundException(_name);
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
         if(ProviderUtil.getEngine().isProcessDecode()) {
-            DecodeTreeWalker decode = 
+            DecodeTreeWalker decode =
                 (DecodeTreeWalker)_parentDecode.get();
             RenderUtil.decodeProcessorTree(insertRoot, decode);
         }
         ProcessStatus ret = RenderUtil.renderTemplateProcessor(
-                topLevelPage, insertRoot); 
+                topLevelPage, insertRoot);
         doRender.popInsertProcessor();
         return ret;
     }
-    
+
 }

@@ -155,12 +155,12 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     }
 
     public boolean isReadOnly() {
-        return _elStyle;
+        return _elStyle == false;
     }
 
     public void assignValue(Object value) {
         if(isReadOnly()) {
-            throw new ReadOnlyScriptBlockException(toString());
+            throw new ReadOnlyScriptBlockException(getScriptText());
         }
         Context cx = RhinoUtil.enter(_wrap);
         try {

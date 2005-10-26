@@ -243,23 +243,28 @@ public class RenderUtil implements CONST_IMPL {
     
     //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
     //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
-    public static ProcessStatus renderPage(boolean findSuper, 
+    public static ProcessStatus renderPage(boolean fireEvent, 
             TemplateRenderer renderer, Map variables, 
             Page topLevelPage, String requestedSuffix, String extension) {
+        if(renderer == null || topLevelPage == null) {
+            throw new IllegalArgumentException();
+        }
         Page page = topLevelPage;
         String suffix = null;
         saveToCycle(page);
-        List pageStack = new LinkedList();
-        Template template = null;
+        List pageStack = fireEvent ? new LinkedList() : null;
         List templateStack = new LinkedList();
         do {
-            if(findSuper) {
+            if(fireEvent) {
+                // stack for afterRender event.
                 pageStack.add(0, page);
                 SpecificationUtil.startScope(variables);
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
-            template = getTemplate(requestedSuffix, page, suffix, extension);
+            Template template = 
+                getTemplate(requestedSuffix, page, suffix, extension);
             if(template != null) {
+                // LIFO access
                 templateStack.add(0, template);
             }
             suffix = page.getSuperSuffix();
@@ -275,11 +280,13 @@ public class RenderUtil implements CONST_IMPL {
             ret = renderer.renderTemplate(topLevelPage, templates);
             saveToCycle(page);
         }
-        for(int i = 0; i < pageStack.size(); i++) {
-            page = (Page)pageStack.get(i);
-            saveToCycle(page);
-            SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-            SpecificationUtil.endScope();
+        if(fireEvent) {
+            for(int i = 0; i < pageStack.size(); i++) {
+                page = (Page)pageStack.get(i);
+                saveToCycle(page);
+                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+                SpecificationUtil.endScope();
+            }
         }
         return ret;
     }

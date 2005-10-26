@@ -123,21 +123,20 @@ public class InsertProcessor
         Page renderPage = getPage();
         String requestedSuffix = _suffix;
         String extension = _extension;
-        boolean findSuper = true;
+        boolean fireEvent = true;
         if(renderPage == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
             RequestScope request = cycle.getRequestScope();
             requestedSuffix = request.getRequestedSuffix();
             extension = request.getExtension();
-            findSuper = false;
+            fireEvent = false;
         }
         if(renderPage == null) {
             throw new IllegalStateException();
         }
-        ProcessStatus ret = RenderUtil.renderPage(
-                findSuper, this, getVariables(),
-                renderPage, requestedSuffix, extension);
+        ProcessStatus ret = RenderUtil.renderPage(fireEvent, this, 
+                getVariables(), renderPage, requestedSuffix, extension);
         if(ret == null) {
             Response response = CycleUtil.getResponse();
             if(response.getWriter().isDirty() == false) {

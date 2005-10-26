@@ -211,14 +211,11 @@ public class PageImpl extends SpecificationImpl
     // TemplateRenderer implements ----------------------------------
 
     public ProcessStatus renderTemplate(
-            Page topLevelPage, Template template) {
-        if(topLevelPage == null || template == null) {
+            Page topLevelPage, Template[] templates) {
+        if(topLevelPage == null || templates == null || templates.length == 0) {
             throw new IllegalArgumentException();
         }
-        if(ProviderUtil.getEngine().isProcessDecode()) {
-            RenderUtil.decodeProcessorTree(template, null);
-        }
-        return template.doTemplateRender(topLevelPage);
+        return templates[0].doTemplateRender(topLevelPage);
     }
 
 }

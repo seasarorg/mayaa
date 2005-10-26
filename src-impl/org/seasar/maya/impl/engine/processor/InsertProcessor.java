@@ -185,6 +185,17 @@ public class InsertProcessor
         return doRender;
     }
 
+    protected DoRenderProcessor findDoRender(
+            Template[] templates, String name) {
+        for(int i = templates.length -1; 0 <= i; i--) {
+            DoRenderProcessor doRender = findDoRender(templates[i], name);
+            if(doRender != null) {
+                return doRender;
+            }
+        }
+        return null;
+    }
+    
     protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
         if(doRender.isReplace() == false) {
@@ -199,11 +210,11 @@ public class InsertProcessor
     }
 
     public ProcessStatus renderTemplate(
-            Page topLevelPage, Template template) {
-        if(topLevelPage == null || template == null) {
+            Page topLevelPage, Template templates[]) {
+        if(topLevelPage == null || templates == null || templates.length == 0) {
             throw new IllegalArgumentException();
         }
-        DoRenderProcessor doRender = findDoRender(template, _name);
+        DoRenderProcessor doRender = findDoRender(templates, _name);
         if(doRender == null) {
             // TODO レイアウトが別レイアウトを継承している場合、レイアウト上のdoRenderを探さない
             // maya-sample/component/layout_user.html で再現

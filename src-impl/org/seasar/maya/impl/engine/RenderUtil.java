@@ -217,29 +217,8 @@ public class RenderUtil implements CONST_IMPL {
         cycle.setInjectedNode(page);
     }
 
-    //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
-    //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
-    public static ProcessStatus renderPage(boolean findSuper, 
-            TemplateRenderer renderer, Map variables, 
-            Page topLevelPage, String requestedSuffix, String extension) {
-        Page page = topLevelPage;
-        String suffix = null;
-        saveToCycle(page);
-        Stack pageStack = null;
-        if(findSuper) {
-            pageStack = new Stack();
-            pageStack.push(page);
-            SpecificationUtil.startScope(variables);
-            SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-            while(page.getSuperPage() != null) {
-                suffix = page.getSuperSuffix();
-                extension = page.getSuperExtension();
-                page = page.getSuperPage();
-                pageStack.push(page);
-                SpecificationUtil.startScope(null);
-                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-            }
-        }
+    protected static Template findTemplate(String requestedSuffix,
+            Page page, String suffix, String extension) {
         boolean maya = "maya".equals(extension);
         if(maya) {
             SourceDescriptor source = page.getSource();
@@ -248,7 +227,6 @@ public class RenderUtil implements CONST_IMPL {
                 throw new PageNotFoundException(pageName, extension);
             }
         }
-        ProcessStatus ret = null;
         if(maya == false) {
             if(StringUtil.isEmpty(suffix)) {
                 if(StringUtil.isEmpty(requestedSuffix)) {
@@ -258,13 +236,54 @@ public class RenderUtil implements CONST_IMPL {
                     suffix = requestedSuffix;
                 }
             }
-            Template template = page.getTemplate(suffix, extension);
-            ret = renderer.renderTemplate(topLevelPage, template);
+            return page.getTemplate(suffix, extension);
+        }
+        return null;
+    }
+    
+    //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
+    //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
+    public static ProcessStatus renderPage(boolean findSuper, 
+            TemplateRenderer renderer, Map variables, 
+            Page topLevelPage, String requestedSuffix, String extension) {
+        Page page = topLevelPage;
+        String suffix = null;
+        saveToCycle(page);
+        Stack pageStack = null;
+        Template template = null;
+        Stack templateStack = new Stack();
+        if(findSuper) {
+            pageStack = new Stack();
+            do {
+                pageStack.push(page);
+                SpecificationUtil.startScope(variables);
+                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
+                template = findTemplate(requestedSuffix, page, suffix, extension);
+                if(template != null) {
+                    templateStack.push(template);
+                }
+                suffix = page.getSuperSuffix();
+                extension = page.getSuperExtension();
+                page = page.getSuperPage();
+                variables = null;
+            } while(page != null);
+        } else {
+            template = findTemplate(requestedSuffix, page, suffix, extension);
+            if(template != null) {
+                templateStack.push(template);
+            }
+        }
+        ProcessStatus ret = null;
+        if(template != null) {
+            Template[] templates = (Template[])templateStack.toArray(
+                    new Template[templateStack.size()]);
+            ret = renderer.renderTemplate(topLevelPage, templates);
             saveToCycle(page);
         }
         if(pageStack != null) {
             while(pageStack.size() > 0) {
                 page = (Page)pageStack.pop();
+                saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
                 SpecificationUtil.endScope();
             }

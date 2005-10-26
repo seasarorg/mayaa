@@ -26,9 +26,10 @@ public interface TemplateRenderer {
 	/**
      * 指定テンプレートを描画する。
      * @param topLevelPage  描画トップレベルのページ。
-     * @param template 描画するテンプレート。
+     * @param templates 描画するテンプレート。レイアウト利用の場合、
+     * インデックス0に描画テンプレート、1,2,3,...と親のテンプレートが積みこまれる。
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
-    ProcessStatus renderTemplate(Page topLevelPage, Template template);
+    ProcessStatus renderTemplate(Page topLevelPage, Template[] templates);
     
 }

@@ -58,16 +58,4 @@ public interface Engine extends ParameterAware, Specification {
      */
     void handleError(Throwable t, boolean pageFlush);
     
-    /**
-     * プロセッサツリーのデコードフェーズを起動するかどうかを設定する。
-     * @param processDecode tureだとデコードフェーズ起動。
-     */
-    void setProcessDecode(boolean processDecode);
-    
-    /**
-     * プロセッサツリーのデコードフェーズを起動するかどうかを取得する。
-     * @return tureだとデコードフェーズ起動。デフォルトfalse。
-     */
-    boolean isProcessDecode();
-    
 }

@@ -73,8 +73,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         return _response;
     }
 
-    public void forward(String relativeUrlPath) {
-        _request.setForwardPath(relativeUrlPath);
+    public void forward(String forwardPath) {
+        _request.setForwardPath(forwardPath);
         _response.clearBuffer();
         throw new PageForwarded();
     }

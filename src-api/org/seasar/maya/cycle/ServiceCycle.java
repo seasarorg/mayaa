@@ -57,9 +57,9 @@ public interface ServiceCycle
     
     /**
      * フォワードを行う。
-     * @param relativeUrlPath パス文字列。
+     * @param forwardPath パス文字列。
      */
-    void forward(String relativeUrlPath);
+    void forward(String forwardPath);
     
     /**
      * リダイレクトを行う。

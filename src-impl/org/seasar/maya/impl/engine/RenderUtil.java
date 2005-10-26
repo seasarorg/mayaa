@@ -15,8 +15,9 @@
  */
 package org.seasar.maya.impl.engine;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.script.CompiledScript;
@@ -216,7 +217,7 @@ public class RenderUtil implements CONST_IMPL {
         cycle.setInjectedNode(page);
     }
 
-    protected static Template findTemplate(String requestedSuffix,
+    protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
         boolean maya = "maya".equals(extension);
         if(maya) {
@@ -248,44 +249,37 @@ public class RenderUtil implements CONST_IMPL {
         Page page = topLevelPage;
         String suffix = null;
         saveToCycle(page);
-        Stack pageStack = null;
+        List pageStack = new LinkedList();
         Template template = null;
-        Stack templateStack = new Stack();
-        if(findSuper) {
-            pageStack = new Stack();
-            do {
-                pageStack.push(page);
+        List templateStack = new LinkedList();
+        do {
+            if(findSuper) {
+                pageStack.add(0, page);
                 SpecificationUtil.startScope(variables);
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-                template = findTemplate(requestedSuffix, page, suffix, extension);
-                if(template != null) {
-                    templateStack.push(template);
-                }
-                suffix = page.getSuperSuffix();
-                extension = page.getSuperExtension();
-                page = page.getSuperPage();
-                variables = null;
-            } while(page != null);
-        } else {
-            template = findTemplate(requestedSuffix, page, suffix, extension);
-            if(template != null) {
-                templateStack.push(template);
             }
-        }
+            template = getTemplate(requestedSuffix, page, suffix, extension);
+            if(template != null) {
+                templateStack.add(0, template);
+            }
+            suffix = page.getSuperSuffix();
+            extension = page.getSuperExtension();
+            page = page.getSuperPage();
+            variables = null;
+        } while(page != null);
         ProcessStatus ret = null;
-        if(template != null) {
-            Template[] templates = (Template[])templateStack.toArray(
-                    new Template[templateStack.size()]);
+        int templateSize = templateStack.size();
+        if(templateSize > 0) {
+            Template[] templates = (Template[])
+                    templateStack.toArray(new Template[templateSize]);
             ret = renderer.renderTemplate(topLevelPage, templates);
             saveToCycle(page);
         }
-        if(pageStack != null) {
-            while(pageStack.size() > 0) {
-                page = (Page)pageStack.pop();
-                saveToCycle(page);
-                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-                SpecificationUtil.endScope();
-            }
+        for(int i = 0; i < pageStack.size(); i++) {
+            page = (Page)pageStack.get(i);
+            saveToCycle(page);
+            SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+            SpecificationUtil.endScope();
         }
         return ret;
     }

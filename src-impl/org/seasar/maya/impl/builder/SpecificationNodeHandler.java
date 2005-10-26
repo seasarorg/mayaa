@@ -135,11 +135,34 @@ public class SpecificationNodeHandler
     protected void addCharactersNode() {
     	if(_charactersBuffer.length() > 0) {
     		SpecificationNode node = addNode(QM_CHARACTERS);
-    		node.addAttribute(QM_TEXT, _charactersBuffer.toString());
+
+            String characters = _charactersBuffer.toString();
+            if(_outputWhitespace == false) {
+                characters = removeIgnorableWhitespace(characters);
+            }
+            node.addAttribute(QM_TEXT, characters);
             _charactersBuffer = new StringBuffer(128);
     	}
     }
-    
+
+    private String removeIgnorableWhitespace(String characters) {
+        StringBuffer buffer = new StringBuffer(characters.length());
+        String[] line = characters.split("\n");
+        for (int i = 0 ; i < line.length; i++) {
+            if (line[i].trim().length() > 0) {
+                String token = line[i].replaceAll("^[ \t]+", "");
+                token = token.replaceAll("[ \t]+$", "");
+                buffer.append(token.replaceAll("[ \t]+", " "));
+                buffer.append("\n");
+            } else {
+                if (i == 0) {
+                    buffer.append("\n");
+                }
+            }
+        }
+        return buffer.toString();
+    }
+
     protected void saveToCycle(NodeTreeWalker originalNode) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
@@ -208,21 +231,12 @@ public class SpecificationNodeHandler
 
     public void characters(char[] buffer, int start, int length) {
     	if(_inEntity == 0) {
-	    	if(_outputWhitespace) {
-	            _charactersBuffer.append(buffer, start, length);
-	    	} else {
-	    	    String characters = new String(buffer, start, length).trim();
-		        if(characters.length() > 0) {
-		            _charactersBuffer.append(characters);
-		        }
-	    	}
+            _charactersBuffer.append(buffer, start, length);
     	}
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-    	if(_outputWhitespace) {
-    		_charactersBuffer.append(buffer, start, length);
-    	}
+		_charactersBuffer.append(buffer, start, length);
     }
     
     public void xmlDecl(String version, String encoding, String standalone) {

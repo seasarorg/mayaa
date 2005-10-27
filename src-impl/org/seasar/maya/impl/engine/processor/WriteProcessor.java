@@ -31,7 +31,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
 	private static final long serialVersionUID = -8069702863937020350L;
 
     private ProcessorProperty _value;
-    private String _default;
+    private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
 
     // MLD property, expectedClass=java.lang.String
@@ -39,7 +39,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
         _value = value;
     }
 
-    public void setDefault(String defaultValue) {
+    public void setDefault(ProcessorProperty defaultValue) {
     	_default = defaultValue;
     }
 
@@ -50,10 +50,9 @@ public class WriteProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value != null) {
             String ret = (String)_value.getValue().execute(null);
-            if(StringUtil.isEmpty(ret) && StringUtil.hasValue(_default)) {
-            	ret = _default;
+            if(StringUtil.isEmpty(ret) && _default != null) {
+                ret = (String)_default.getValue().execute(null);
             }
-
             if (_escapeXml != null) {
                 boolean escapeXml = ObjectUtil.booleanValue(
                         _escapeXml.getValue().execute(null), false);

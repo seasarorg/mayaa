@@ -36,9 +36,6 @@ public class ScriptBlock {
 	}
     
     public String getBlockString() {
-        if(_literal) {
-            return _blockString;
-        }
         return _blockString;
     }
 

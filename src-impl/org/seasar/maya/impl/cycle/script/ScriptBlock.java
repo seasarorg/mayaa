@@ -39,7 +39,7 @@ public class ScriptBlock {
         if(_literal) {
             return _blockString;
         }
-        return StringUtil.resolveEntity(_blockString);      
+        return _blockString;
     }
 
 	public boolean isLiteral() {

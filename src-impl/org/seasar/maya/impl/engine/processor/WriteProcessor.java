@@ -33,6 +33,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
     private ProcessorProperty _value;
     private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
+    private ProcessorProperty _escapeWhitespace;
 
     // MLD property, expectedClass=java.lang.String
     public void setValue(ProcessorProperty value) {
@@ -47,6 +48,10 @@ public class WriteProcessor extends TemplateProcessorSupport {
         _escapeXml = escapeXml;
     }
 
+    public void setEscapeWhitespace(ProcessorProperty escapeWhitespace) {
+        _escapeWhitespace = escapeWhitespace;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value != null) {
             String ret = (String)_value.getValue().execute(null);
@@ -58,6 +63,13 @@ public class WriteProcessor extends TemplateProcessorSupport {
                         _escapeXml.getValue().execute(null), false);
                 if (escapeXml) {
                     ret = StringUtil.escapeXml(ret);
+                }
+            }
+            if (_escapeWhitespace != null) {
+                boolean escapeWhitespace = ObjectUtil.booleanValue(
+                        _escapeWhitespace.getValue().execute(null), false);
+                if (escapeWhitespace) {
+                    ret = StringUtil.escapeWhitespace(ret);
                 }
             }
             ServiceCycle cycle = CycleUtil.getServiceCycle();

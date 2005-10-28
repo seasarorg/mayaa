@@ -115,6 +115,7 @@
 		<property name="value" required="true" expectedClass="java.lang.String"/>
 		<property name="default" expectedClass="java.lang.String"/> 
 		<property name="escapeXml" expectedClass="boolean"/> 
+		<property name="escapeWhitespace" expectedClass="boolean"/> 
 	</processor>
 
 	<processor name="for"

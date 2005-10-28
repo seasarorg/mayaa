@@ -207,6 +207,26 @@ public final class StringUtil {
                 case '<': sb.append("&lt;"); break;
                 case '>': sb.append("&gt;"); break;
                 case '"': sb.append("&quot;"); break;
+                case '\'': sb.append("&#39;"); break;
+                default: sb.append(chars[i]);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String escapeWhitespace(String text) {
+        if (text == null) {
+            return "";
+        }
+        char[] chars = text.toCharArray();
+        StringBuffer sb = new StringBuffer(chars.length + 50);
+
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '\r': sb.append("&#xd;"); break;
+                case '\n': sb.append("&#xa;"); break;
+                case '\t': sb.append("&#x9;"); break;
                 default: sb.append(chars[i]);
             }
         }

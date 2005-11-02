@@ -28,14 +28,17 @@ public class ScriptBlockIterator implements Iterator {
 	private String _text;
 	private String _blockSign;
 	private int _offset;
+    private boolean _onTemplate = true;
 
-	public ScriptBlockIterator(String text, String blockSign) {
+    public ScriptBlockIterator(
+            String text, String blockSign, boolean onTemplate) {
 		if (StringUtil.isEmpty(text) || StringUtil.isEmpty(blockSign)) {
 			throw new IllegalArgumentException();
 		}
 		_text = text;
 		_blockSign = blockSign;
 		_offset = 0;
+        _onTemplate = onTemplate;
 	}
 
 	public boolean hasNext() {
@@ -81,6 +84,9 @@ public class ScriptBlockIterator implements Iterator {
                 }
                 String text = _text.substring(_offset + blockStart.length(), close);
                 _offset = close + 1;
+                if (_onTemplate) {
+                    text = StringUtil.resolveEntity(text);
+                }
                 return new ScriptBlock(text, false, _blockSign);
             }
             // literal

@@ -43,5 +43,17 @@ public interface PositionAware {
      * @return 位置情報。
      */
     int getLineNumber();
-    
+
+    /**
+     * ソースがテンプレートかを設定する。
+     * @param onTemplate ソースがテンプレートか。
+     */
+    void setOnTemplate(boolean onTemplate);
+
+    /**
+     * ソースがテンプレートかを取得する。
+     * @return ソースがテンプレートか。
+     */
+    boolean isOnTemplate();
+
 }

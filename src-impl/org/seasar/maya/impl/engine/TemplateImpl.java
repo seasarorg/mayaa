@@ -197,5 +197,11 @@ public class TemplateImpl
         checkTimestamps();
         return (ProcessorTreeWalker)_childProcessors.get(index);
     }
-    
+
+    // PositionAware implements ------------------------------------
+
+    public boolean isOnTemplate() {
+        return true;
+    }
+
 }

@@ -153,7 +153,9 @@ public class SpecificationImpl extends ParameterAwareImpl
         }        
         return _childNodes.iterator();
     }
-    
+
+    // PositionAware implements ------------------------------------
+
     public String getSystemID() {
         if(getSource() == null) {
             return null;
@@ -163,6 +165,10 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     public int getLineNumber() {
         return 0;
+    }
+
+    public boolean isOnTemplate() {
+        return false;
     }
 
     // support class -------------------------------------------------

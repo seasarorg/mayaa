@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.maya.ParameterAware;
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.source.SourceDescriptor;
 
@@ -49,11 +50,10 @@ public interface ScriptEnvironment extends ParameterAware {
     /**
      * 式文字列をコンパイルする。
      * @param script スクリプト。
-     * @param sourceName ソースファイル名。
-     * @param lineno 開始行番号。
+     * @param position スクリプトソースの位置情報。
      * @return コンパイル済みスクリプトオブジェクト。
      */
-    CompiledScript compile(String script, String sourceName, int lineno);
+    CompiledScript compile(String script, PositionAware position);
 
     /**
      * スクリプトソースファイルを読み込んでコンパイルする。

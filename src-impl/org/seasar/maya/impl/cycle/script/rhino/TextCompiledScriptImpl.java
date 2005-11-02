@@ -21,6 +21,7 @@ import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.maya.impl.cycle.script.ReadOnlyScriptBlockException;
@@ -45,24 +46,12 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     private boolean _elStyle;
     
     public TextCompiledScriptImpl(String text, WrapFactory wrap, 
-            String sourceName, int lineNumber) {
-        super(resolveEntity(text, sourceName));
+            PositionAware position) {
+        super(text);
         _wrap = wrap;
-        _sourceName = sourceName;
-        _lineNumber = lineNumber;
+        _sourceName = position.getSystemID();
+        _lineNumber = position.getLineNumber();
         processText(text);
-    }
-
-    protected static String resolveEntity(String text, String sourceName) {
-        if (needResolveEntity(sourceName)) {
-            return StringUtil.resolveEntity(text);
-        }
-        return text;
-    }
-
-    // TODO îªífèÍèäÇëºÇ…ÇµÇΩÇ¢
-    protected static boolean needResolveEntity(String sourceName) {
-        return sourceName.endsWith(".maya") == false;
     }
 
     protected boolean maybeELStyle(String text) {

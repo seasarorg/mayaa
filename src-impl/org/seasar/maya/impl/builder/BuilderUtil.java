@@ -43,9 +43,10 @@ public class BuilderUtil implements CONST_IMPL {
         }
         String systemID = original.getSystemID();
         int lineNumber = original.getLineNumber();
+        boolean onTemplate = original.isOnTemplate();
         int sequenceID = original.getSequenceID();
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
-                qName, systemID, lineNumber, sequenceID);
+                qName, systemID, lineNumber, onTemplate, sequenceID);
         if(StringUtil.hasValue(uri)) {
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
                 NodeAttribute attr = (NodeAttribute)it.next();

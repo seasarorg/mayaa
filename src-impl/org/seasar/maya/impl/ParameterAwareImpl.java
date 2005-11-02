@@ -31,7 +31,8 @@ public class ParameterAwareImpl implements ParameterAware {
 	private Map _parameters;
     private String _systemID = "";
     private int _lineNumber;
-	
+    private boolean _onTemplate;
+
 	public void setParameter(String name, String value) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
@@ -79,6 +80,14 @@ public class ParameterAwareImpl implements ParameterAware {
 
     public int getLineNumber() {
         return _lineNumber;
+    }
+
+    public void setOnTemplate(boolean onTemplate) {
+        _onTemplate = onTemplate;
+    }
+
+    public boolean isOnTemplate() {
+        return _onTemplate;
     }
 
 }

@@ -45,6 +45,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     private List _childNodes;
     private String _systemID;
     private int _lineNumber;
+    private boolean _onTemplate;
 
 	public SpecificationNodeImpl(QName qName) {
 	    super(qName);
@@ -104,6 +105,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         copy.setSequenceID(getSequenceID());
         copy.setSystemID(getSystemID());
         copy.setLineNumber(getLineNumber());
+        copy.setOnTemplate(isOnTemplate());
         for(Iterator it = iterateAttribute(); it.hasNext(); ) {
             NodeAttribute attr = (NodeAttribute)it.next();
             if(filter.accept(attr)) {
@@ -189,6 +191,14 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     public int getLineNumber() {
         return _lineNumber;
+    }
+
+    public void setOnTemplate(boolean onTemplate) {
+        _onTemplate = onTemplate;
+    }
+
+    public boolean isOnTemplate() {
+        return _onTemplate;
     }
 
     // support class --------------------------------------------------

@@ -23,6 +23,7 @@ import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.cycle.ServiceCycle;
 import org.seasar.maya.cycle.scope.ApplicationScope;
 import org.seasar.maya.cycle.scope.AttributeScope;
@@ -47,7 +48,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private WrapFactory _wrap;
     
     protected CompiledScript compile(
-            ScriptBlock scriptBlock, String sourceName, int lineno) {
+            ScriptBlock scriptBlock, PositionAware position) {
         if(scriptBlock == null) {
             throw new IllegalArgumentException();
         }
@@ -55,7 +56,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if(scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new TextCompiledScriptImpl(text, _wrap, sourceName, lineno);
+        return new TextCompiledScriptImpl(text, _wrap, position);
     }
 
     // ScriptEnvironment implements ----------------------------------

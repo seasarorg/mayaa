@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.seasar.maya.PositionAware;
 import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.script.CompiledScript;
 import org.seasar.maya.cycle.script.ScriptEnvironment;
@@ -66,18 +67,17 @@ public abstract class AbstractScriptEnvironment
     }
     
     protected abstract CompiledScript compile(
-            ScriptBlock scriptBlock, String sourceName, int lineno);
+            ScriptBlock scriptBlock, PositionAware position);
     
-    public CompiledScript compile(
-            String script, String sourceName, int lineno) {
+    public CompiledScript compile(String script, PositionAware position) {
         if(StringUtil.isEmpty(script)) {
             return new LiteralScript("");
         }
         List list = new ArrayList();
-        for(Iterator it = new ScriptBlockIterator(script, _blockSign);
-        	it.hasNext();) {
+        for(Iterator it = new ScriptBlockIterator(
+                script, _blockSign, position.isOnTemplate()); it.hasNext();) {
             ScriptBlock block = (ScriptBlock)it.next();
-            list.add(compile(block, sourceName, lineno));
+            list.add(compile(block, position));
         }
         if(list.size() == 1) {
             return (CompiledScript)list.get(0);

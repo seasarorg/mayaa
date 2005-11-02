@@ -41,8 +41,7 @@ public class ScriptUtil {
             ScriptEnvironment environment = ProviderUtil.getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             NodeTreeWalker node = cycle.getInjectedNode();
-            compiled = environment.compile(
-                    text, node.getSystemID(), node.getLineNumber());
+            compiled = environment.compile(text, node);
         } else {
             compiled = new LiteralScript("");
         }

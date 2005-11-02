@@ -18,6 +18,7 @@ package org.seasar.maya.impl.builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.maya.cycle.ServiceCycle;
+import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.specification.Namespace;
 import org.seasar.maya.engine.specification.PrefixMapping;
 import org.seasar.maya.engine.specification.NodeTreeWalker;
@@ -65,6 +66,7 @@ public class SpecificationNodeHandler
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
     private boolean _outputWhitespace = true;
+    private boolean _onTemplate;
     private int _inEntity;
     private int _sequenceID;
     
@@ -73,6 +75,7 @@ public class SpecificationNodeHandler
             throw new IllegalArgumentException();
         }
         _specification = specification;
+        _onTemplate = specification instanceof Template;
     }
 
     public void setOutputWhitespace(boolean outputWhitespace) {
@@ -125,10 +128,10 @@ public class SpecificationNodeHandler
         String systemID = _locator.getSystemId();
         int lineNumber = _locator.getLineNumber();
 		SpecificationNode child = SpecificationUtil.createSpecificationNode(
-				qName, systemID, lineNumber, _sequenceID);
+				qName, systemID, lineNumber, _onTemplate, _sequenceID);
         _sequenceID++;
         child.setParentSpace(_namespace);
-	    _current.addChildNode(child);
+        _current.addChildNode(child);
 		return child;
     }
     

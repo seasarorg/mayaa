@@ -262,7 +262,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         Stack stack = new Stack();
         stack.push(template);
         SpecificationNode maya = SpecificationUtil.createSpecificationNode(
-                QM_MAYA, template.getSystemID(), 0, 0);
+                QM_MAYA, template.getSystemID(), 0, true, 0);
         template.addChildNode(maya);
         walkParsedTree(template, stack, template);
         if(template.equals(stack.peek()) == false) {

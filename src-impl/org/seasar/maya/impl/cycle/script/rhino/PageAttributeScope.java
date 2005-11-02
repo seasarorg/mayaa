@@ -209,5 +209,13 @@ public class PageAttributeScope extends ScriptableObject
     public String getSystemID() {
         return null;
     }
-    
+
+    public void setOnTemplate(boolean onTemplate) {
+        // do nothing
+    }
+
+    public boolean isOnTemplate() {
+        return false;
+    }
+
 }

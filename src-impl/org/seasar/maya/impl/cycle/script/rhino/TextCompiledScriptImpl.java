@@ -46,13 +46,25 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     
     public TextCompiledScriptImpl(String text, WrapFactory wrap, 
             String sourceName, int lineNumber) {
-        super(text);
+        super(resolveEntity(text, sourceName));
         _wrap = wrap;
         _sourceName = sourceName;
         _lineNumber = lineNumber;
         processText(text);
     }
-    
+
+    protected static String resolveEntity(String text, String sourceName) {
+        if (needResolveEntity(sourceName)) {
+            return StringUtil.resolveEntity(text);
+        }
+        return text;
+    }
+
+    // TODO îªífèÍèäÇëºÇ…ÇµÇΩÇ¢
+    protected static boolean needResolveEntity(String sourceName) {
+        return sourceName.endsWith(".maya") == false;
+    }
+
     protected boolean maybeELStyle(String text) {
         boolean start = true;
         for(int i = 0; i < text.length(); i++) {

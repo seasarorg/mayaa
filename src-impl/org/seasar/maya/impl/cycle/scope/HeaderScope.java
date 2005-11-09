@@ -15,6 +15,7 @@
  */
 package org.seasar.maya.impl.cycle.scope;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.seasar.maya.cycle.scope.AttributeScope;
@@ -44,11 +45,11 @@ public class HeaderScope extends AbstractReadOnlyAttributeScope {
     public Object getAttribute(String name) {
         if(hasAttribute(name)) {
             AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
-            String[] headers = (String[])values.getAttribute(name);
-            if(headers.length == 0) {
+            Enumeration headers = (Enumeration) values.getAttribute(name);
+            if(headers.hasMoreElements() == false) {
                 return "";
             }
-            return headers[0];
+            return headers.nextElement();
         }
         return null;
     }

@@ -28,6 +28,7 @@ import org.seasar.maya.engine.Page;
 import org.seasar.maya.engine.Template;
 import org.seasar.maya.engine.processor.ProcessStatus;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
+import org.seasar.maya.engine.specification.QName;
 import org.seasar.maya.engine.specification.Specification;
 import org.seasar.maya.engine.specification.SpecificationNode;
 import org.seasar.maya.impl.CONST_IMPL;
@@ -71,20 +72,38 @@ public class TemplateImpl
     public String getExtension() {
     	return _extension;
     }
-    
-    protected String getContentType() {
+
+    protected String getMayaAttribute(Specification spec, QName qname) {
+        SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
+        if (maya != null) {
+            return SpecificationUtil.getAttributeValue(maya, qname);
+        }
+        return null;
+    }
+
+    protected String findMayaAttribute(Page topLevelPage, QName qname) {
+        String topLevelValue = getMayaAttribute(topLevelPage, qname);
+        if (StringUtil.hasValue(topLevelValue)) {
+            return topLevelValue;
+        }
+
         Specification spec = this;
-        while(spec != null) {
-            SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
-            if(maya != null) {
-                String contentType = SpecificationUtil.getAttributeValue(
-                        maya, QM_CONTENT_TYPE);
-                if(StringUtil.hasValue(contentType)) {
-                    return contentType;
-                }
+        while (spec != null) {
+            String value = getMayaAttribute(spec, qname);
+            if (StringUtil.hasValue(value)) {
+                return value;
             }
             spec = EngineUtil.getParentSpecification(spec);
         }
+        return null;
+    }
+
+    protected String getContentType(Page topLevelPage) {
+        String contentType = findMayaAttribute(topLevelPage, QM_CONTENT_TYPE);
+        if (contentType != null) {
+            return contentType;
+        }
+
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if(ret == null) {
@@ -92,29 +111,22 @@ public class TemplateImpl
         }
         return ret;
     }
-    
-    protected boolean isNoCache() {
-        Specification spec = this;
-        while(spec != null) {
-            SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
-            if(maya != null) {
-                String noCache = SpecificationUtil.getAttributeValue(
-                        maya, QM_NO_CACHE);
-                if(noCache != null) {
-                    return ObjectUtil.booleanValue(noCache, false);
-                }
-            }
-            spec = EngineUtil.getParentSpecification(spec);
+
+    protected boolean isNoCache(Page topLevelPage) {
+        String noCache = findMayaAttribute(topLevelPage, QM_NO_CACHE);
+        if (noCache != null) {
+            return ObjectUtil.booleanValue(noCache, false);
         }
+
         return false;
     }
-    
-    protected void prepareCycle() {
+
+    protected void prepareCycle(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-        String contentType = getContentType();
+        String contentType = getContentType(topLevelPage);
         response.setContentType(contentType);
-        if(isNoCache()) {
+        if(isNoCache(topLevelPage)) {
             response.addHeader("Pragma", "no-cache");
             response.addHeader("Cache-Control", "no-cache");
             response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
@@ -123,7 +135,7 @@ public class TemplateImpl
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
         RenderUtil.saveToCycle(this);
-        prepareCycle();
+        prepareCycle(topLevelPage);
         ProcessStatus ret = 
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;

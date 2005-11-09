@@ -87,14 +87,14 @@ public class CycleFactoryImpl
 		if(context == null) {
 			throw new IllegalArgumentException();
 		}
-		_context = context;
+        _context = context;
 	}
     
     public Object getUnderlyingContext() {
     	if(_context == null) {
     		throw new IllegalStateException();
     	}
-		return _context;
+        return _context;
 	}
 
 }

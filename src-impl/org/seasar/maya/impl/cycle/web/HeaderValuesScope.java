@@ -15,7 +15,10 @@
  */
 package org.seasar.maya.impl.cycle.web;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,7 +60,12 @@ public class HeaderValuesScope
 
 	public Object getAttribute(String name) {
         if(hasAttribute(name)) {
-            return _request.getHeaders(name);
+            Enumeration headers = _request.getHeaders(name);
+            List headerList = new ArrayList();
+            while (headers.hasMoreElements()) {
+                headerList.add(headers.nextElement());
+            }
+            return headerList.toArray(new String[headerList.size()]);
         }
         return null;
 	}

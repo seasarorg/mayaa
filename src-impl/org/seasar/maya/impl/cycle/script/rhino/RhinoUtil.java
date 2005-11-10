@@ -56,12 +56,13 @@ public class RhinoUtil {
         if(expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3 
             ret = JavaAdapter.convertResult(jsRet, Object.class);
-        } else if(expectedClass != Void.class) {
+        } else if(expectedClass == Void.class
+                || (jsRet instanceof org.mozilla.javascript.Undefined)) {
+            ret = null;
+        } else {
             ret = JavaAdapter.convertResult(jsRet, expectedClass);
         }
-        if(expectedClass == Void.class) {
-            ret = null;
-        }
+
         return ret;
     }
 

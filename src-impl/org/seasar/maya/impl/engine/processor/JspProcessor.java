@@ -36,6 +36,7 @@ import org.seasar.maya.engine.processor.ProcessorProperty;
 import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.maya.impl.builder.library.TLDScriptingVariableInfo;
 import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.maya.impl.cycle.jsp.PageContextImpl;
 import org.seasar.maya.impl.util.ObjectUtil;
@@ -59,6 +60,17 @@ public class JspProcessor extends TemplateProcessorSupport
     private String _attributesKey;
     private ThreadLocal _loadedTag = new ThreadLocal();
 
+    protected TLDScriptingVariableInfo _variableInfo =
+        new TLDScriptingVariableInfo();
+
+    public void setTLDScriptingVariableInfo(
+            TLDScriptingVariableInfo variableInfo) {
+        if(variableInfo == null) {
+            throw new IllegalArgumentException();
+        }
+        _variableInfo = variableInfo;
+    }
+
     // MLD method
     public void setTagClass(Class tagClass) {
         if(tagClass == null || 
@@ -67,7 +79,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         _tagClass = tagClass;
     }
-    
+
     // MLD method
     public void addProcessorProperty(ProcessorProperty property) {
         if(property == null) {
@@ -123,19 +135,19 @@ public class JspProcessor extends TemplateProcessorSupport
         Tag tag = (Tag)_loadedTag.get();
         if(tag == null) {
             tag = getTagPool().borrowTag();
-            tag.setPageContext(_pageContext);
+            tag.setPageContext(new PageContextWrapper(_pageContext));
             _loadedTag.set(tag);
         }
         return tag;
     }
-    
+
     protected void releaseLoadedTag() {
         Tag tag = (Tag)_loadedTag.get();
         _loadedTag.set(null);
         tag.release();
         getTagPool().returnTag(tag);
     }
-    
+
     protected ProcessStatus getProcessStatus(
             int status, boolean doStart) {
         if(status == Tag.EVAL_BODY_INCLUDE) {
@@ -170,8 +182,7 @@ public class JspProcessor extends TemplateProcessorSupport
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspProcessor) {
-            	JspProcessor jspProcessor = 
-            		(JspProcessor)processor;
+            	JspProcessor jspProcessor = (JspProcessor)processor;
                 Tag parentTag = jspProcessor.getLoadedTag();
                 if(parentTag == null) {
                     throw new IllegalStateException(
@@ -325,7 +336,47 @@ public class JspProcessor extends TemplateProcessorSupport
         		returnObject(tag);
         	}
         }
-        
+
+    }
+
+    protected class PageContextWrapper extends PageContextImpl {
+
+        PageContext _context;
+
+        public PageContextWrapper(PageContext context) {
+            _context = context;
+        }
+
+        public boolean useTop(String name, int scope) {
+            return scope == PageContext.PAGE_SCOPE
+                    && (_variableInfo.hasNestedVariable() == false
+                    || _variableInfo.isNestedVariable(name) == false);
+        }
+
+        public void removeAttribute(String name, int scope) {
+            if(name == null) {
+                throw new IllegalArgumentException();
+            }
+
+            if (useTop(name, scope)) {
+                super.removeAttributeFromPageTop(name);
+            } else {
+                super.removeAttribute(name, scope);
+            }
+        }
+
+        public void setAttribute(String name, Object value, int scope) {
+            if(name == null) {
+                throw new IllegalArgumentException();
+            }
+
+            if (useTop(name, scope)) {
+                super.setAttributeOnPageTop(name, value);
+            } else {
+                super.setAttribute(name, value, scope);
+            }
+        }
+
     }
 
 }

@@ -16,6 +16,7 @@
 package org.seasar.maya.impl.builder.library.tld;
 
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagExtraInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +40,7 @@ public class TagTagHandler extends TagHandler {
     public TagTagHandler(TaglibTagHandler parent) {
         super("tag");
         _parent = parent;
+        putHandler(new TeiTagHandler(this));
         putHandler(new AttributeTagHandler(this));
         putHandler(new TagHandler("name") {
             protected void end(String body) {
@@ -47,6 +49,8 @@ public class TagTagHandler extends TagHandler {
         });
         putHandler(new TagClassSetter("tag-class", this));
         putHandler(new TagClassSetter("tagclass", this));
+        putHandler(new TeiClassSetter("tei-class", this));
+        putHandler(new TeiClassSetter("teiclass", this));
     }
 
     protected void setProcessorName(String name) {
@@ -55,6 +59,10 @@ public class TagTagHandler extends TagHandler {
 
     protected void setProcessorClass(Class clazz) {
         _processor.setProcessorClass(clazz);
+    }
+
+    protected void setTeiClass(Class teiClass) {
+        _processor.setExtraInfoClass(teiClass);
     }
 
     protected void start(
@@ -91,6 +99,29 @@ public class TagTagHandler extends TagHandler {
             try {
                 Class clazz = ObjectUtil.loadClass(body, Tag.class);
                 setProcessorClass(clazz);
+            } catch (RuntimeException e) {
+                if(LOG.isErrorEnabled()) {
+                    LOG.error(e.getMessage());
+                }
+                _handler.invalidate();
+            }
+        }
+
+    }
+
+    private class TeiClassSetter extends TagHandler {
+
+        private TagTagHandler _handler;
+
+        private TeiClassSetter(String name, TagTagHandler handler) {
+            super(name);
+            _handler = handler;
+        }
+
+        protected void end(String body) {
+            try {
+                Class clazz = ObjectUtil.loadClass(body, TagExtraInfo.class);
+                setTeiClass(clazz);
             } catch (RuntimeException e) {
                 if(LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());

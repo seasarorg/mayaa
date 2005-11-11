@@ -69,23 +69,30 @@ public class PageAttributeScope extends ScriptableObject
         Class[] stringClassArg = new Class[] { String.class, Class.class };
         setMethod("newAttribute", stringClassArg);
     }
-    
+
     public String getClassName() {
         return "pageScope";
     }
-    
+
     public boolean has(String name, Scriptable start) {
         if(_methodMap.containsKey(name)) {
             return true;
         }
         return super.has(name, start);
-    }    
+    }
 
     public Object get(String name, Scriptable start) {
         if(_methodMap.containsKey(name)) {
             return _methodMap.get(name);
         }
-        return super.get(name, start);
+        Object ret = super.get(name, start);
+        if (ret == org.mozilla.javascript.UniqueTag.NOT_FOUND) {
+            Object attribute = getAttribute(name);
+            if (attribute != null) {
+                ret = attribute;
+            }
+        }
+        return ret;
     }
 
     public Object[] getIds() {

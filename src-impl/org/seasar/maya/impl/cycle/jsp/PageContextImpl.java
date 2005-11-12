@@ -40,7 +40,6 @@ import org.seasar.maya.cycle.scope.AttributeScope;
 import org.seasar.maya.cycle.scope.RequestScope;
 import org.seasar.maya.cycle.scope.SessionScope;
 import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.cycle.script.rhino.PageAttributeScope;
 import org.seasar.maya.impl.util.StringUtil;
 import org.seasar.maya.impl.util.collection.IteratorEnumeration;
 
@@ -252,24 +251,6 @@ public class PageContextImpl extends PageContext {
         return getAttribute(name, PAGE_SCOPE);
     }
 
-    protected PageAttributeScope findTopPageAttributeScope() {
-        PageAttributeScope pageScope =
-            (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
-        PageAttributeScope top = pageScope;
-        while (top.getParentScope() instanceof PageAttributeScope) {
-            top = (PageAttributeScope) top.getParentScope();
-        }
-        return top;
-    }
-
-    public void removeAttributeFromPageTop(String name) {
-        if(name == null) {
-            throw new IllegalArgumentException();
-        }
-        PageAttributeScope pageScope = findTopPageAttributeScope();
-        pageScope.removeAttribute(name);
-    }
-
     public void removeAttribute(String name, int scope) {
         if(name == null) {
             throw new IllegalArgumentException();
@@ -286,14 +267,6 @@ public class PageContextImpl extends PageContext {
             CycleUtil.removeAttribute(
                     name, CycleUtil.STANDARD_SCOPES[i]);
         }
-    }
-
-    public void setAttributeOnPageTop(String name, Object value) {
-        if(name == null) {
-            throw new IllegalArgumentException();
-        }
-        PageAttributeScope pageScope = findTopPageAttributeScope();
-        pageScope.setAttribute(name, value);
     }
 
     public void setAttribute(String name, Object value, int scope) {

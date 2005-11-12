@@ -15,14 +15,27 @@
  */
 package org.seasar.maya.impl.engine.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.ErrorData;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.Tag;
@@ -37,8 +50,10 @@ import org.seasar.maya.engine.processor.ProcessorTreeWalker;
 import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.maya.impl.CONST_IMPL;
 import org.seasar.maya.impl.builder.library.TLDScriptingVariableInfo;
+import org.seasar.maya.impl.cycle.CycleUtil;
 import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.maya.impl.cycle.jsp.PageContextImpl;
+import org.seasar.maya.impl.cycle.script.rhino.PageAttributeScope;
 import org.seasar.maya.impl.util.ObjectUtil;
 import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.maya.impl.util.collection.NullIterator;
@@ -54,11 +69,13 @@ public class JspProcessor extends TemplateProcessorSupport
 	private static final long serialVersionUID = -4416320364576454337L;
 	private static PageContext _pageContext = new PageContextImpl();
     private static Map _tagPools = new HashMap();
-    
+
     private Class _tagClass;
     private List _properties;
     private String _attributesKey;
     private ThreadLocal _loadedTag = new ThreadLocal();
+    private PageContextWrapper _wrappedContext =
+        new PageContextWrapper(_pageContext);
 
     protected TLDScriptingVariableInfo _variableInfo =
         new TLDScriptingVariableInfo();
@@ -126,16 +143,16 @@ public class JspProcessor extends TemplateProcessorSupport
 	        return pool;
         }
     }
-    
+
     protected void clearLoadedTag() {
         _loadedTag.set(null);
     }
-    
+
     protected Tag getLoadedTag() {
         Tag tag = (Tag)_loadedTag.get();
         if(tag == null) {
             tag = getTagPool().borrowTag();
-            tag.setPageContext(new PageContextWrapper(_pageContext));
+            tag.setPageContext(_wrappedContext);
             _loadedTag.set(tag);
         }
         return tag;
@@ -339,7 +356,7 @@ public class JspProcessor extends TemplateProcessorSupport
 
     }
 
-    protected class PageContextWrapper extends PageContextImpl {
+    protected class PageContextWrapper extends PageContext {
 
         PageContext _context;
 
@@ -353,15 +370,41 @@ public class JspProcessor extends TemplateProcessorSupport
                     || _variableInfo.isNestedVariable(name) == false);
         }
 
+        protected PageAttributeScope findTopPageAttributeScope() {
+            PageAttributeScope pageScope =
+                (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
+            PageAttributeScope top = pageScope;
+            while (top.getParentScope() instanceof PageAttributeScope) {
+                top = (PageAttributeScope) top.getParentScope();
+            }
+            return top;
+        }
+
+        public void removeAttributeFromPageTop(String name) {
+            if(name == null) {
+                throw new IllegalArgumentException();
+            }
+            PageAttributeScope pageScope = findTopPageAttributeScope();
+            pageScope.removeAttribute(name);
+        }
+
+        public void setAttributeOnPageTop(String name, Object value) {
+            if(name == null) {
+                throw new IllegalArgumentException();
+            }
+            PageAttributeScope pageScope = findTopPageAttributeScope();
+            pageScope.setAttribute(name, value);
+        }
+
         public void removeAttribute(String name, int scope) {
             if(name == null) {
                 throw new IllegalArgumentException();
             }
 
             if (useTop(name, scope)) {
-                super.removeAttributeFromPageTop(name);
+                removeAttributeFromPageTop(name);
             } else {
-                super.removeAttribute(name, scope);
+                _context.removeAttribute(name, scope);
             }
         }
 
@@ -371,10 +414,119 @@ public class JspProcessor extends TemplateProcessorSupport
             }
 
             if (useTop(name, scope)) {
-                super.setAttributeOnPageTop(name, value);
+                setAttributeOnPageTop(name, value);
             } else {
-                super.setAttribute(name, value, scope);
+                _context.setAttribute(name, value, scope);
             }
+        }
+
+        public void initialize(Servlet servlet, ServletRequest request,
+                ServletResponse response, String errorPageURL,
+                boolean needsSession, int bufferSize, boolean autoFlush)
+                throws IOException, IllegalStateException, IllegalArgumentException {
+            _context.initialize(servlet, request, response, errorPageURL,
+                    needsSession, bufferSize, autoFlush);
+        }
+
+        public void release() {
+            _context.release();
+        }
+
+        public HttpSession getSession() {
+            return _context.getSession();
+        }
+
+        public Object getPage() {
+            return _context.getPage();
+        }
+
+        public ServletRequest getRequest() {
+            return _context.getRequest();
+        }
+
+        public ServletResponse getResponse() {
+            return _context.getResponse();
+        }
+
+        public Exception getException() {
+            return _context.getException();
+        }
+
+        public ServletConfig getServletConfig() {
+            return _context.getServletConfig();
+        }
+
+        public ServletContext getServletContext() {
+            return _context.getServletContext();
+        }
+
+        public void forward(String relativeUrlPath)
+                throws ServletException, IOException {
+            _context.forward(relativeUrlPath);
+        }
+
+        public void include(String relativeUrlPath)
+                throws ServletException, IOException {
+            _context.include(relativeUrlPath);
+        }
+
+        public void include(String relativeUrlPath, boolean flush)
+                throws ServletException, IOException {
+            _context.include(relativeUrlPath, flush);
+        }
+
+        public void handlePageException(Exception e)
+                throws ServletException, IOException {
+            _context.handlePageException(e);
+        }
+
+        public void handlePageException(Throwable t)
+                throws ServletException, IOException {
+            _context.handlePageException(t);
+        }
+
+        public void setAttribute(String name, Object value) {
+            _context.setAttribute(name, value);
+        }
+
+        public Object getAttribute(String name) {
+            return _context.getAttribute(name);
+        }
+
+        public Object getAttribute(String name, int scope) {
+            return _context.getAttribute(name, scope);
+        }
+
+        public Object findAttribute(String name) {
+            return _context.findAttribute(name);
+        }
+
+        public void removeAttribute(String name) {
+            _context.removeAttribute(name);
+        }
+
+        public int getAttributesScope(String name) {
+            return _context.getAttributesScope(name);
+        }
+
+        public Enumeration getAttributeNamesInScope(int scope) {
+            return _context.getAttributeNamesInScope(scope);
+        }
+
+        public JspWriter getOut() {
+            return _context.getOut();
+        }
+
+        public ExpressionEvaluator getExpressionEvaluator() {
+            return _context.getExpressionEvaluator();
+        }
+
+        public VariableResolver getVariableResolver() {
+            return _context.getVariableResolver();
+        }
+
+        public ErrorData getErrorData() {
+            return _context.getErrorData();
         }
 
     }

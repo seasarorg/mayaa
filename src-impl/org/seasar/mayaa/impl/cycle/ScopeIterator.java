@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.mayaa.impl.cycle;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,10 +13,10 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.engine.specification.QNameImpl;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -27,16 +27,16 @@ public interface CONST_IMPL {
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
     
-    String URI_MAYA = "http://maya.seasar.org";
+    String URI_MAYA = "http://mayaa.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";
     String URI_XHTML = "http://www.w3.org/1999/xhtml";
 
     String PUBLIC_FACTORY10 = 
-        "-//The Seasar Foundation//DTD Maya Factory 1.0//EN";
+        "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";
     String PUBLIC_MLD10 = 
-        "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN";
+        "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN";
     String PUBLIC_PROVIDER10 = 
-        "-//The Seasar Foundation//DTD Maya Provider 1.0//EN";
+        "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN";
     
     QName QH_ID = new QNameImpl(URI_HTML, "id");
     QName QX_ID = new QNameImpl(URI_XHTML, "id");
@@ -46,7 +46,7 @@ public interface CONST_IMPL {
     QName QM_COMMENT = new QNameImpl("comment");
     QName QM_DOCTYPE = new QNameImpl("doctype");
     QName QM_DUPLECATED = new QNameImpl("duplecatedElement");
-    QName QM_MAYA = new QNameImpl("maya");
+    QName QM_MAYA = new QNameImpl("mayaa");
     QName QM_PI = new QNameImpl("processingInstruction");
     QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
 

@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script;
+package org.seasar.mayaa.impl.cycle.script;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class UnbalancedBraceException extends MayaException {
+public class UnbalancedBraceException extends MayaaException {
 
 	private static final long serialVersionUID = 9098125536269480736L;
 

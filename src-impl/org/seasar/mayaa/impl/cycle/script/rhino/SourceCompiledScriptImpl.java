@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script.rhino;
+package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,9 +25,9 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
-import org.seasar.maya.impl.cycle.script.AbstractSourceCompiledScript;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.impl.cycle.script.AbstractSourceCompiledScript;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

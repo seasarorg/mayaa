@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification.xpath;
+package org.seasar.mayaa.impl.engine.specification.xpath;
 
 import java.util.Iterator;
 
@@ -22,19 +22,19 @@ import org.jaxen.NamedAccessNavigator;
 import org.jaxen.Navigator;
 import org.jaxen.XPath;
 import org.jaxen.util.SingleObjectIterator;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.PrefixMapping;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
-import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

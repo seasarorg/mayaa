@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine;
+package org.seasar.mayaa.engine;
 
 import java.io.Serializable;
 
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.specification.Specification;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.Specification;
 
 /**
  * テンプレートオブジェクト。HTMLをパースした結果の、

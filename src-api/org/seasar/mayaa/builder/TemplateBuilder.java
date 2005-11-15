@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.builder;
+package org.seasar.mayaa.builder;
 
-import org.seasar.maya.builder.injection.InjectionResolver;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
 
 /**
  * HTMLテンプレートのビルダ

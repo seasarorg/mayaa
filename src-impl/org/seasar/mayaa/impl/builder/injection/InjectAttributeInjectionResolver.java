@@ -13,18 +13,18 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.injection;
+package org.seasar.mayaa.impl.builder.injection;
 
-import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.builder.BuilderUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.builder.BuilderUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

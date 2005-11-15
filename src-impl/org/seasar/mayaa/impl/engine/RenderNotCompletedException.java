@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine;
+package org.seasar.mayaa.impl.engine;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RenderNotCompletedException extends MayaException {
+public class RenderNotCompletedException extends MayaaException {
 
     private static final long serialVersionUID = -8360723105511806471L;
 

@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.builder.library.scanner;
+package org.seasar.mayaa.builder.library.scanner;
 
 import java.util.Iterator;
 
-import org.seasar.maya.ParameterAware;
+import org.seasar.mayaa.ParameterAware;
 
 /**
  * ライブラリ定義ソースの検索スキャナ。

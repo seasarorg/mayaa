@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.source;
+package org.seasar.mayaa.impl.source;
 
-import org.seasar.maya.FactoryFactory;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
-import org.seasar.maya.source.PageSourceFactory;
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.source.PageSourceFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.mayaa.engine.processor;
 
-import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.mayaa.cycle.CycleWriter;
 
 /**
  * TemplateProcessorの拡張インターフェイス。子要素の評価の機能を持つ。

@@ -13,10 +13,10 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.builder.library;
+package org.seasar.mayaa.builder.library;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * ライブラリ定義ソースビルダ。

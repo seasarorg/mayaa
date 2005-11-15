@@ -13,20 +13,20 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.error;
+package org.seasar.mayaa.impl.engine.error;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.impl.IllegalParameterValueException;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.PageNotFoundException;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.error.ErrorHandler;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.PageNotFoundException;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

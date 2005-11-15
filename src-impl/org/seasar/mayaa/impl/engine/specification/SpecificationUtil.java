@@ -13,25 +13,25 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -67,7 +67,7 @@ public class SpecificationUtil implements CONST_IMPL {
         return findSpecification(current);
     }
 
-    public static SpecificationNode getMayaNode(NodeTreeWalker current) {
+    public static SpecificationNode getMayaaNode(NodeTreeWalker current) {
         Specification specification = findSpecification(current);
         for(Iterator it = specification.iterateChildNode(); it.hasNext(); ) {
             SpecificationNode node = (SpecificationNode)it.next();
@@ -78,11 +78,11 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
-    public static String getMayaAttributeValue(
+    public static String getMayaaAttributeValue(
             NodeTreeWalker current, QName qName) {
-        SpecificationNode maya = getMayaNode(current);
-        if(maya != null) {
-            String value = getAttributeValue(maya, qName);
+        SpecificationNode mayaa = getMayaaNode(current);
+        if(mayaa != null) {
+            String value = getAttributeValue(mayaa, qName);
             if(value != null) {
                 return value;
             }
@@ -132,9 +132,9 @@ public class SpecificationUtil implements CONST_IMPL {
         if(eventName == null) {
             throw new IllegalArgumentException();
         }
-        SpecificationNode maya = getMayaNode(spec);
-        if(maya != null) {
-            for(Iterator it = maya.iterateChildNode(); it.hasNext(); ) {
+        SpecificationNode mayaa = getMayaaNode(spec);
+        if(mayaa != null) {
+            for(Iterator it = mayaa.iterateChildNode(); it.hasNext(); ) {
                 SpecificationNode child = (SpecificationNode)it.next();
                 if(eventName.equals(child.getQName())) {
                     String bodyText = getNodeBodyText(child);
@@ -142,7 +142,7 @@ public class SpecificationUtil implements CONST_IMPL {
                     execEventScript(bodyText);
                 }
             }
-            NodeAttribute attr = maya.getAttribute(eventName);
+            NodeAttribute attr = mayaa.getAttribute(eventName);
             if(attr != null) {
                 String attrText = attr.getValue();
                 execEventScript(attrText);

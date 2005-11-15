@@ -13,16 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.provider;
+package org.seasar.mayaa.provider;
 
 import java.io.Serializable;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.Engine;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.builder.SpecificationBuilder;
+import org.seasar.mayaa.builder.TemplateBuilder;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.engine.Engine;
 
 /**
  * アプリケーションスコープでのサービス提供オブジェクト。

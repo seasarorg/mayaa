@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.error;
+package org.seasar.mayaa.engine.error;
 
-import org.seasar.maya.ParameterAware;
+import org.seasar.mayaa.ParameterAware;
 
 /**
  * エラー処理のためのハンドラ。リクエストの最後、エラー画面の出力などを行う。

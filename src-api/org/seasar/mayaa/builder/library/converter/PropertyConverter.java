@@ -13,10 +13,10 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.builder.library.converter;
+package org.seasar.mayaa.builder.library.converter;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.engine.specification.NodeAttribute;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 
 /**
  * プロセッサ設定のプロパティ値を変換提供するコンバータ。

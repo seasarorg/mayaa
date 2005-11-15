@@ -13,21 +13,21 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.seasar.maya.FactoryFactory;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MayaServlet extends HttpServlet {
+public class MayaaServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5816552218525836552L;
     private static boolean _inithialized;

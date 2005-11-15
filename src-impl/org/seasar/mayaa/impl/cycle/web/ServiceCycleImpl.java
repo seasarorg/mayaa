@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.web;
+package org.seasar.mayaa.impl.cycle.web;
 
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.cycle.scope.SessionScope;
-import org.seasar.maya.impl.cycle.AbstractServiceCycle;
-import org.seasar.maya.impl.engine.PageForwarded;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.cycle.scope.SessionScope;
+import org.seasar.mayaa.impl.cycle.AbstractServiceCycle;
+import org.seasar.mayaa.impl.engine.PageForwarded;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

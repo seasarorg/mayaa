@@ -13,18 +13,18 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.mayaa.impl.builder;
 
 import java.io.InputStream;
 
-import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.xml.XMLReaderPool;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.builder.SpecificationBuilder;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
+import org.seasar.mayaa.source.SourceDescriptor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

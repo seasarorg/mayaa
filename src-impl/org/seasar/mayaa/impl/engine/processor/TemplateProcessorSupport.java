@@ -13,18 +13,18 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

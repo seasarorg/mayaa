@@ -13,25 +13,25 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.injection;
+package org.seasar.mayaa.impl.builder.injection;
 
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.specification.CopyToFilter;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeObject;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.EngineUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
+import org.seasar.mayaa.engine.specification.CopyToFilter;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -100,9 +100,9 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
             Specification spec = SpecificationUtil.findSpecification(original);
             SpecificationNode injected = null;
             while(spec != null) {
-                SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
-                if(maya != null) {
-                    injected = getEqualsIDNode(maya, id);
+                SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
+                if(mayaa != null) {
+                    injected = getEqualsIDNode(mayaa, id);
                     if(injected != null) {
                         break;
                     }

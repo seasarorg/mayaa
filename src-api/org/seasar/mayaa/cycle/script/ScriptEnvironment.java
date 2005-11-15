@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle.script;
+package org.seasar.mayaa.cycle.script;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.PositionAware;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * スクリプトの実行環境。

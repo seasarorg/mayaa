@@ -13,17 +13,17 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.injection;
+package org.seasar.mayaa.impl.builder.injection;
 
-import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -44,16 +44,16 @@ public class MetaValuesSetter extends ParameterAwareImpl
     protected static final QName QX_META = 
         SpecificationUtil.createQName(URI_XHTML, "meta");
     
-    protected void addMayaAttribute(
+    protected void addMayaaAttribute(
             SpecificationNode original, QName qName, String value) {
         if(original == null || qName == null || StringUtil.isEmpty(value)) {
             throw new IllegalArgumentException();
         }
-        SpecificationNode maya = SpecificationUtil.getMayaNode(original);
-        if(maya == null) {
+        SpecificationNode mayaa = SpecificationUtil.getMayaaNode(original);
+        if(mayaa == null) {
             throw new IllegalStateException();
         }
-        maya.addAttribute(qName, value);
+        mayaa.addAttribute(qName, value);
     }
     
     protected void setContentValue(SpecificationNode original,
@@ -65,11 +65,11 @@ public class MetaValuesSetter extends ParameterAwareImpl
             String contentValue = content.getValue();
             if(StringUtil.hasValue(contentValue)) {
                 if("Content-Type".equalsIgnoreCase(equivValue)) {
-                    addMayaAttribute(original, QM_CONTENT_TYPE, contentValue);
+                    addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
                 } else if("Pragma".equalsIgnoreCase(equivValue) ||
                         "Cache-Control".equalsIgnoreCase(equivValue)) {
                     if("no-cache".equalsIgnoreCase(contentValue)) {
-                        addMayaAttribute(original, QM_NO_CACHE, "true");
+                        addMayaaAttribute(original, QM_NO_CACHE, "true");
                     }
                 }
             }

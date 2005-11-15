@@ -13,26 +13,26 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.builder.library.PropertySet;
-import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.engine.processor.VirtualPropertyAcceptable;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.builder.library.PropertyDefinition;
+import org.seasar.mayaa.builder.library.PropertySet;
+import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.engine.processor.VirtualPropertyAcceptable;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

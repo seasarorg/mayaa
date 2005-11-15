@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalParameterValueException extends MayaException {
+public class IllegalParameterValueException extends MayaaException {
 
     private static final long serialVersionUID = -943480597929966946L;
 

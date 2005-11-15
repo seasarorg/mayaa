@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.jsp;
+package org.seasar.mayaa.impl.cycle.jsp;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,7 +23,7 @@ import java.io.Writer;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.seasar.maya.cycle.CycleWriter;
+import org.seasar.mayaa.cycle.CycleWriter;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -21,13 +21,13 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import org.seasar.maya.PositionAware;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.maya.impl.source.URLSourceDescriptor;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.LIFOIterator;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.mayaa.impl.source.URLSourceDescriptor;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.LIFOIterator;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

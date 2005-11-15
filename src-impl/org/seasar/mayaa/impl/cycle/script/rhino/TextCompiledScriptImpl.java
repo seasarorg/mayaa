@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script.rhino;
+package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -21,12 +21,12 @@ import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
-import org.seasar.maya.PositionAware;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.impl.cycle.script.AbstractTextCompiledScript;
-import org.seasar.maya.impl.cycle.script.ReadOnlyScriptBlockException;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
+import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

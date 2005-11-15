@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script.rhino;
+package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.util.List;
 

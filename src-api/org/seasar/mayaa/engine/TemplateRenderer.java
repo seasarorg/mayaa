@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine;
+package org.seasar.mayaa.engine;
 
-import org.seasar.maya.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
 
 /**
  * テンプレートを描画するオブジェクト。

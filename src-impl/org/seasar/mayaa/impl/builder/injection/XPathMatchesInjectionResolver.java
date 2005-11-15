@@ -13,22 +13,22 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.injection;
+package org.seasar.mayaa.impl.builder.injection;
 
 import java.util.Iterator;
 
-import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.engine.specification.CopyToFilter;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeObject;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.engine.specification.xpath.XPathUtil;
+import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
+import org.seasar.mayaa.engine.specification.CopyToFilter;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -52,13 +52,13 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         }
         Namespace namespace = SpecificationUtil.createNamespace();
         namespace.addPrefixMapping("m", URI_MAYA);
-        String xpathExpr = "/m:maya//*[string-length(@m:xpath) > 0]";
+        String xpathExpr = "/m:mayaa//*[string-length(@m:xpath) > 0]";
         for(Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespace, true); it.hasNext(); ) {
             SpecificationNode injected = (SpecificationNode)it.next();
-            String mayaPath = SpecificationUtil.getAttributeValue(
+            String mayaaPath = SpecificationUtil.getAttributeValue(
             		injected, QM_XPATH);
-            if(XPathUtil.matches(original, mayaPath, injected)) {
+            if(XPathUtil.matches(original, mayaaPath, injected)) {
                 return injected.copyTo(getCopyToFilter());
             }
         }

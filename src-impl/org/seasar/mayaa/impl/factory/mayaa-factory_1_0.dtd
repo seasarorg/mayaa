@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<!NOTATION maya.conf_1_0 PUBLIC
-        "-//The Seasar Foundation//DTD Maya Factory 1.0//EN">
+<!NOTATION mayaa.conf_1_0 PUBLIC
+        "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN">
 
 <!ELEMENT factory (description?, parameter*) >
 <!ATTLIST factory class CDATA #IMPLIED>

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.mayaa.impl.engine.specification;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -22,16 +22,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.EngineUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.source.NullSourceDescriptor;
-import org.seasar.maya.impl.util.collection.NullIterator;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.builder.SpecificationBuilder;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.NullSourceDescriptor;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

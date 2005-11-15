@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util.xml;
+package org.seasar.mayaa.impl.util.xml;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.apache.xerces.xni.Augmentations;
 import org.apache.xerces.xni.XNIException;
-import org.seasar.maya.impl.builder.parser.AdditionalHandlerFilter;
+import org.seasar.mayaa.impl.builder.parser.AdditionalHandlerFilter;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 

@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.impl.engine.RenderUtil;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.impl.engine.RenderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script.rhino;
+package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -23,19 +23,19 @@ import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
-import org.seasar.maya.PositionAware;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.IllegalParameterValueException;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.cycle.script.AbstractScriptEnvironment;
-import org.seasar.maya.impl.cycle.script.LiteralScript;
-import org.seasar.maya.impl.cycle.script.ScriptBlock;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
+import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.web;
+package org.seasar.mayaa.impl.cycle.web;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -21,13 +21,13 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.SessionScope;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.impl.cycle.scope.AbstractWritableAttributeScope;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.EnumerationIterator;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.SessionScope;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.impl.cycle.scope.AbstractWritableAttributeScope;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

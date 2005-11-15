@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine;
+package org.seasar.mayaa.impl.engine;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
@@ -21,20 +21,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.source.SourceUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -73,7 +73,7 @@ public class PageImpl extends SpecificationImpl
                 return;
             }
             String extendsPath =
-                SpecificationUtil.getMayaAttributeValue(this, QM_EXTENDS);
+                SpecificationUtil.getMayaaAttributeValue(this, QM_EXTENDS);
             if(StringUtil.isEmpty(extendsPath)) {
                 return;
             }
@@ -106,10 +106,10 @@ public class PageImpl extends SpecificationImpl
     }
 
     public CompiledScript getSuffixScript() {
-        String value = SpecificationUtil.getMayaAttributeValue(
+        String value = SpecificationUtil.getMayaaAttributeValue(
                 this, QM_TEMPLATE_SUFFIX);
         if(StringUtil.isEmpty(value)) {
-            value = SpecificationUtil.getMayaAttributeValue(
+            value = SpecificationUtil.getMayaaAttributeValue(
                     ProviderUtil.getEngine(), QM_TEMPLATE_SUFFIX);
         }
         if(StringUtil.isEmpty(value)) {

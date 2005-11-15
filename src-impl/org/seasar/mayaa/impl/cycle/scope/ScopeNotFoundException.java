@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.scope;
+package org.seasar.mayaa.impl.cycle.scope;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScopeNotFoundException extends MayaException {
+public class ScopeNotFoundException extends MayaaException {
 
     private static final long serialVersionUID = -5868339344208637137L;
 

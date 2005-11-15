@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.mayaa.impl.cycle;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,9 +21,9 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Stack;
 
-import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.CycleWriter;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

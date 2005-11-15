@@ -13,23 +13,23 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.mayaa.impl.cycle;
 
 import java.util.Iterator;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.cycle.scope.ScopeNotFoundException;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.source.SourceUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
+import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

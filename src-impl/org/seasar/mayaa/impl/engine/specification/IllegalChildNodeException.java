@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.mayaa.impl.engine.specification;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalChildNodeException extends MayaException {
+public class IllegalChildNodeException extends MayaaException {
 
 	private static final long serialVersionUID = 2431120366863355234L;
 

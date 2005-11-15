@@ -13,16 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle;
+package org.seasar.mayaa.impl.cycle;
 
-import org.seasar.maya.FactoryFactory;
-import org.seasar.maya.cycle.CycleFactory;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.impl.cycle.scope.ScopeNotWritableException;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.cycle.CycleFactory;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.impl.cycle.scope.ScopeNotWritableException;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

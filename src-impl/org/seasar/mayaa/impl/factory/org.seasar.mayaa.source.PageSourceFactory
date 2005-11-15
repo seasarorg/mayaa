@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE factory
-	PUBLIC "-//The Seasar Foundation//DTD Maya Factory 1.0//EN"
-    "http://maya.seasar.org/dtd/maya-factory_1_0.dtd">
-<factory class="org.seasar.maya.impl.source.PageSourceFactoryImpl"
-	serviceClass="org.seasar.maya.impl.source.PageSourceDescriptor">
+	PUBLIC "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN"
+    "http://mayaa.seasar.org/dtd/mayaa-factory_1_0.dtd">
+<factory class="org.seasar.mayaa.impl.source.PageSourceFactoryImpl"
+	serviceClass="org.seasar.mayaa.impl.source.PageSourceDescriptor">
 	<parameter name="folder" value="/WEB-INF/page"/>
 </factory>

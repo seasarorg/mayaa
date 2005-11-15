@@ -13,17 +13,17 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.tld;
+package org.seasar.mayaa.impl.builder.library.tld;
 
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.builder.library.TLDLibraryDefinition;
-import org.seasar.maya.impl.builder.library.TLDProcessorDefinition;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.mayaa.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.mayaa.impl.builder.library.TLDProcessorDefinition;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**

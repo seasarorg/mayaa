@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.mayaa.engine.processor;
 
-import org.seasar.maya.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
- * あらかじめ、MLD（Maya Library Definition）ファイルに記述されてない
+ * あらかじめ、MLD（Mayaa Library Definition）ファイルに記述されてない
  * プロパティを受け入れる場合のインターフェイス。MLD記述されてるプロパティは
  * このメソッドを経由しないで、直接、Beanプロパティアクセスで設定される。
  * @author Masataka Kurihara (Gluegent, Inc.)

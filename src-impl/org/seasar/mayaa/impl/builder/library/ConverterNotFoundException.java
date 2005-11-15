@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ConverterNotFoundException extends MayaException {
+public class ConverterNotFoundException extends MayaaException {
 
     private static final long serialVersionUID = 1562770035374725562L;
     private String _name;

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,15 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.maya.engine.specification.CopyToFilter;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.NodeObject;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.mayaa.engine.specification.CopyToFilter;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

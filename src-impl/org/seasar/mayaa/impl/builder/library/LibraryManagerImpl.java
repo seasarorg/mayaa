@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,18 +25,18 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.PositionAware;
-import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.builder.library.scanner.SourceScanner;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.AbstractScanningIterator;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.builder.library.DefinitionBuilder;
+import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.builder.library.scanner.SourceScanner;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

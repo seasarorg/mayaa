@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.web;
+package org.seasar.mayaa.impl.cycle.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.seasar.maya.impl.cycle.AbstractResponse;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.impl.cycle.AbstractResponse;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script;
+package org.seasar.mayaa.impl.cycle.script;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

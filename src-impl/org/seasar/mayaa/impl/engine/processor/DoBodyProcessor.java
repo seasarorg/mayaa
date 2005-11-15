@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

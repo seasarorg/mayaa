@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.source;
+package org.seasar.mayaa.source;
 
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.seasar.maya.ParameterAware;
+import org.seasar.mayaa.ParameterAware;
 
 /**
  * テンプレートファイルや設定XMLファイルのディスクリプタ。

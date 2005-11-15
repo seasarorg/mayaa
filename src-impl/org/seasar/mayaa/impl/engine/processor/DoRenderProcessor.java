@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 import java.util.Stack;
 
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

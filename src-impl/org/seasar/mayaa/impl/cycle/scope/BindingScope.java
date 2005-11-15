@@ -13,17 +13,17 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.scope;
+package org.seasar.mayaa.impl.cycle.scope;
 
 import java.util.Iterator;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.processor.DoRenderProcessor;
-import org.seasar.maya.impl.engine.processor.InsertProcessor;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.processor.DoRenderProcessor;
+import org.seasar.mayaa.impl.engine.processor.InsertProcessor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)

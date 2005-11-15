@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification;
+package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,10 +22,10 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.PrefixMapping;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

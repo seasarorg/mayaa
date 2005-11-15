@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util;
+package org.seasar.mayaa.impl.util;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NoSuchPropertyException extends MayaException {
+public class NoSuchPropertyException extends MayaaException {
 
     private static final long serialVersionUID = -803104025776369368L;
 

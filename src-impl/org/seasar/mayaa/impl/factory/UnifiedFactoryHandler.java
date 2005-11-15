@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.factory;
+package org.seasar.mayaa.impl.factory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.UnifiedFactory;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.util.xml.XMLHandler;
+import org.seasar.mayaa.UnifiedFactory;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.xml.XMLHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -41,7 +41,7 @@ public class UnifiedFactoryHandler extends XMLHandler
                 interfaceClass, beforeFactory);
         setRootHandler(_rootHandler);
         setLog(LOG);
-        getEntityMap().put(PUBLIC_FACTORY10, "maya-factory_1_0.dtd");
+        getEntityMap().put(PUBLIC_FACTORY10, "mayaa-factory_1_0.dtd");
     }
     
     public UnifiedFactory getUnifiedFactory() {

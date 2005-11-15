@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util;
+package org.seasar.mayaa.impl.util;
 
 import java.io.InputStream;
 
-import org.seasar.maya.impl.util.xml.XMLReaderPool;
+import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

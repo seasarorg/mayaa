@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!NOTATION mld_1_0 PUBLIC
-        "-//The Seasar Foundation//DTD Maya Library Definition 1.0//EN">
+        "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN">
 
 <!ELEMENT description (#PCDATA)>
 

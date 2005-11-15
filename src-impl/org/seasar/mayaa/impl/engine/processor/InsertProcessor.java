@@ -13,31 +13,31 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.TemplateRenderer;
-import org.seasar.maya.engine.processor.InformalPropertyAcceptable;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.RenderNotCompletedException;
-import org.seasar.maya.impl.engine.RenderUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.TemplateRenderer;
+import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.RenderNotCompletedException;
+import org.seasar.mayaa.impl.engine.RenderUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.tld;
+package org.seasar.mayaa.impl.builder.library.tld;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.impl.builder.library.entity.J2EEEntities;
-import org.seasar.maya.impl.util.xml.XMLHandler;
+import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.impl.builder.library.entity.J2EEEntities;
+import org.seasar.mayaa.impl.util.xml.XMLHandler;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)

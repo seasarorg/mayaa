@@ -13,24 +13,24 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.mayaa.impl.builder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.PrefixMapping;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.parser.AdditionalHandler;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -289,7 +289,7 @@ public class SpecificationNodeHandler
     }
     
     public void comment(char[] buffer, int start, int length) {
-        if (_specification.getSystemID().endsWith(".maya") == false) {
+        if (_specification.getSystemID().endsWith(".mayaa") == false) {
             addCharactersNode();
             String comment = new String(buffer, start, length);
             SpecificationNode node = addNode(QM_COMMENT);

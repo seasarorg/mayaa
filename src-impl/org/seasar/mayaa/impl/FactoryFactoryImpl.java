@@ -13,22 +13,22 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
 import java.io.InputStream;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.FactoryFactory;
-import org.seasar.maya.UnifiedFactory;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.impl.cycle.web.ApplicationScopeImpl;
-import org.seasar.maya.impl.factory.UnifiedFactoryHandler;
-import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.UnifiedFactory;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.impl.cycle.web.ApplicationScopeImpl;
+import org.seasar.mayaa.impl.factory.UnifiedFactoryHandler;
+import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.XMLUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

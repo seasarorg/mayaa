@@ -13,16 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.scanner;
+package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.seasar.maya.builder.library.scanner.SourceScanner;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.processor.TemplateProcessorSupport;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.mayaa.builder.library.scanner.SourceScanner;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport;
+import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,7 +37,7 @@ public class DefaultSourceScanner extends ParameterAwareImpl
         ClassLoaderSourceDescriptor loader = 
             new ClassLoaderSourceDescriptor();
         loader.setNeighborClass(TemplateProcessorSupport.class);
-        loader.setSystemID("maya.mld");
+        loader.setSystemID("mayaa.mld");
         _sources.add(loader);
     }
 

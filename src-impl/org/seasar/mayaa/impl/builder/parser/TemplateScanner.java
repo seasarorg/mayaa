@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.parser;
+package org.seasar.mayaa.impl.builder.parser;
 
 import java.io.IOException;
 
 import org.apache.xerces.util.XMLStringBuffer;
 import org.cyberneko.html.HTMLScanner;
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.CONST_IMPL;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.source;
+package org.seasar.mayaa.impl.source;
 
-import org.seasar.maya.impl.IllegalParameterValueException;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

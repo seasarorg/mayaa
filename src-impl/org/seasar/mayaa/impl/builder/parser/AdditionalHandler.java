@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.parser;
+package org.seasar.mayaa.impl.builder.parser;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface AdditionalHandler {
 
-    String ADDITIONAL_HANDLER = "org.seasar.maya.impl.builder.parser.AdditionalHandler";
+    String ADDITIONAL_HANDLER = "org.seasar.mayaa.impl.builder.parser.AdditionalHandler";
     
     void xmlDecl(String version, String encoding, String standalone);
     

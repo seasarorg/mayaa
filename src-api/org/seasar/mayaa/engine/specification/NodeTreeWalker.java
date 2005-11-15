@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.specification;
+package org.seasar.mayaa.engine.specification;
 
 import java.util.Iterator;
 
-import org.seasar.maya.PositionAware;
+import org.seasar.mayaa.PositionAware;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

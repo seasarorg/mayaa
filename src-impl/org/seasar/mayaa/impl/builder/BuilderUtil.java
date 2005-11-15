@@ -13,19 +13,19 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.mayaa.impl.builder;
 
 import java.util.Iterator;
 
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.PrefixMapping;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,7 +37,7 @@ public class BuilderUtil implements CONST_IMPL {
     }
 
     public static SpecificationNode createInjectedNode(QName qName, 
-            String uri, SpecificationNode original, boolean maya) {
+            String uri, SpecificationNode original, boolean mayaa) {
         if(qName == null || original == null) {
             throw new IllegalArgumentException();
         }
@@ -51,7 +51,7 @@ public class BuilderUtil implements CONST_IMPL {
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
                 NodeAttribute attr = (NodeAttribute)it.next();
                 String attrURI = attr.getQName().getNamespaceURI();
-                if(uri.equals(attrURI) || (maya && URI_MAYA.equals(attrURI))) {
+                if(uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
                     node.addAttribute(attr.getQName(), attr.getValue());
                 }
             }

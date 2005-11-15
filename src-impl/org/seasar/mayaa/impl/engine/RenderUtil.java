@@ -13,29 +13,29 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine;
+package org.seasar.mayaa.impl.engine;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.TemplateRenderer;
-import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
-import org.seasar.maya.engine.processor.IterationProcessor;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.processor.ElementProcessor;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.TemplateRenderer;
+import org.seasar.mayaa.engine.processor.ChildEvaluationProcessor;
+import org.seasar.mayaa.engine.processor.IterationProcessor;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -219,15 +219,15 @@ public class RenderUtil implements CONST_IMPL {
 
     protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
-        boolean maya = "maya".equals(extension);
-        if(maya) {
+        boolean mayaa = "mayaa".equals(extension);
+        if(mayaa) {
             SourceDescriptor source = page.getSource();
             if(source.exists() == false) {
                 String pageName = page.getPageName();
                 throw new PageNotFoundException(pageName, extension);
             }
         }
-        if(maya == false) {
+        if(mayaa == false) {
             if(StringUtil.isEmpty(suffix)) {
                 if(StringUtil.isEmpty(requestedSuffix)) {
                     CompiledScript script = page.getSuffixScript();

@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.source;
+package org.seasar.mayaa.impl.source;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

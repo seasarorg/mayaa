@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.mayaa.impl.builder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,36 +21,36 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.builder.injection.InjectionChain;
-import org.seasar.maya.builder.injection.InjectionResolver;
-import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.engine.specification.PrefixMapping;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.injection.DefaultInjectionChain;
-import org.seasar.maya.impl.builder.parser.AdditionalHandler;
-import org.seasar.maya.impl.builder.parser.TemplateParser;
-import org.seasar.maya.impl.builder.parser.TemplateScanner;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.processor.AttributeProcessor;
-import org.seasar.maya.impl.engine.processor.CharactersProcessor;
-import org.seasar.maya.impl.engine.processor.DoBodyProcessor;
-import org.seasar.maya.impl.engine.processor.ElementProcessor;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.xml.XMLReaderPool;
+import org.seasar.mayaa.builder.TemplateBuilder;
+import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.builder.injection.InjectionResolver;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
+import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
+import org.seasar.mayaa.impl.builder.parser.TemplateParser;
+import org.seasar.mayaa.impl.builder.parser.TemplateScanner;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
+import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
+import org.seasar.mayaa.impl.engine.processor.DoBodyProcessor;
+import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -189,7 +189,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if(it.hasNext() == false) {
             return processor;
         }
-        // "injected" node has children, nested node definition on .maya
+        // "injected" node has children, nested node definition on .mayaa
         stack.push(processor);
         TemplateProcessor connectionPoint = null;
         while(it.hasNext()) {
@@ -261,9 +261,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         saveToCycle(template, template);
         Stack stack = new Stack();
         stack.push(template);
-        SpecificationNode maya = SpecificationUtil.createSpecificationNode(
+        SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
                 QM_MAYA, template.getSystemID(), 0, true, 0);
-        template.addChildNode(maya);
+        template.addChildNode(mayaa);
         walkParsedTree(template, stack, template);
         if(template.equals(stack.peek()) == false) {
             throw new IllegalStateException();

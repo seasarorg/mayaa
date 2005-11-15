@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine;
+package org.seasar.mayaa.impl.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,23 +25,23 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.source.DelaySourceDescriptor;
-import org.seasar.maya.impl.source.PageSourceDescriptor;
-import org.seasar.maya.impl.source.SourceUtil;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.error.ErrorHandler;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
+import org.seasar.mayaa.impl.source.PageSourceDescriptor;
+import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -88,7 +88,7 @@ public class EngineImpl extends SpecificationImpl
 
     protected Page createNewPage(String pageName) {
         Page page = new PageImpl(pageName);
-        String path = pageName + ".maya";
+        String path = pageName + ".mayaa";
         SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
         page.setSource(source);
         return page;
@@ -110,7 +110,7 @@ public class EngineImpl extends SpecificationImpl
 
     protected boolean isPageRequested() {
         RequestScope request = CycleUtil.getRequestScope();
-        if ("maya".equals(request.getExtension())) {
+        if ("mayaa".equals(request.getExtension())) {
             return true;
         }
         // TODO MIME”»’è‚ð‚µ‚Á‚©‚è‚â‚é

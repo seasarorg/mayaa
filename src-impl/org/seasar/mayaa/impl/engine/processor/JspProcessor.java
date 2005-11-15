@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,22 +41,22 @@ import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
-import org.seasar.maya.cycle.CycleWriter;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.processor.ChildEvaluationProcessor;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.processor.TryCatchFinallyProcessor;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.builder.library.TLDScriptingVariableInfo;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.cycle.jsp.BodyContentImpl;
-import org.seasar.maya.impl.cycle.jsp.PageContextImpl;
-import org.seasar.maya.impl.cycle.script.rhino.PageAttributeScope;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
-import org.seasar.maya.impl.util.collection.NullIterator;
+import org.seasar.mayaa.cycle.CycleWriter;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.processor.ChildEvaluationProcessor;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.library.TLDScriptingVariableInfo;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
+import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
+import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)

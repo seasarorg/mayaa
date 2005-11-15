@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.mayaa.cycle;
 
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.seasar.maya.ContextAware;
+import org.seasar.mayaa.ContextAware;
 
 
 /**

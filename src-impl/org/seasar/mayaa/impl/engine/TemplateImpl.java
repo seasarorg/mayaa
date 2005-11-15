@@ -13,31 +13,31 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine;
+package org.seasar.mayaa.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.Template;
-import org.seasar.maya.engine.processor.ProcessStatus;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.engine.specification.Specification;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.engine.specification.SpecificationImpl;
-import org.seasar.maya.impl.engine.specification.SpecificationUtil;
-import org.seasar.maya.impl.provider.ProviderUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.builder.TemplateBuilder;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -73,23 +73,23 @@ public class TemplateImpl
     	return _extension;
     }
 
-    protected String getMayaAttribute(Specification spec, QName qname) {
-        SpecificationNode maya = SpecificationUtil.getMayaNode(spec);
-        if (maya != null) {
-            return SpecificationUtil.getAttributeValue(maya, qname);
+    protected String getMayaaAttribute(Specification spec, QName qname) {
+        SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
+        if (mayaa != null) {
+            return SpecificationUtil.getAttributeValue(mayaa, qname);
         }
         return null;
     }
 
-    protected String findMayaAttribute(Page topLevelPage, QName qname) {
-        String topLevelValue = getMayaAttribute(topLevelPage, qname);
+    protected String findMayaaAttribute(Page topLevelPage, QName qname) {
+        String topLevelValue = getMayaaAttribute(topLevelPage, qname);
         if (StringUtil.hasValue(topLevelValue)) {
             return topLevelValue;
         }
 
         Specification spec = this;
         while (spec != null) {
-            String value = getMayaAttribute(spec, qname);
+            String value = getMayaaAttribute(spec, qname);
             if (StringUtil.hasValue(value)) {
                 return value;
             }
@@ -99,7 +99,7 @@ public class TemplateImpl
     }
 
     protected String getContentType(Page topLevelPage) {
-        String contentType = findMayaAttribute(topLevelPage, QM_CONTENT_TYPE);
+        String contentType = findMayaaAttribute(topLevelPage, QM_CONTENT_TYPE);
         if (contentType != null) {
             return contentType;
         }
@@ -113,7 +113,7 @@ public class TemplateImpl
     }
 
     protected boolean isNoCache(Page topLevelPage) {
-        String noCache = findMayaAttribute(topLevelPage, QM_NO_CACHE);
+        String noCache = findMayaaAttribute(topLevelPage, QM_NO_CACHE);
         if (noCache != null) {
             return ObjectUtil.booleanValue(noCache, false);
         }

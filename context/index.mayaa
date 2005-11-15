@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<m:maya xmlns:m="http://maya.seasar.org">
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
 
 	<m:write m:id="message" 
-		value="Welcome to the Maya's template driven development!"/>
+		value="Welcome to the Mayaa's template driven development!"/>
 
-</m:maya>
+</m:mayaa>

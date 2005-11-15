@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya;
+package org.seasar.mayaa;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * ファクトリのファクトリオブジェクト。

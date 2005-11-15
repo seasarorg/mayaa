@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util.collection;
+package org.seasar.mayaa.impl.util.collection;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;

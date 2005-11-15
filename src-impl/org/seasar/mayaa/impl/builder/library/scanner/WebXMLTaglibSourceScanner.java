@@ -13,17 +13,17 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.scanner;
+package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.seasar.maya.builder.library.scanner.SourceScanner;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.source.ApplicationSourceDescriptor;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.builder.library.scanner.SourceScanner;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.XMLUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

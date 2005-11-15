@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

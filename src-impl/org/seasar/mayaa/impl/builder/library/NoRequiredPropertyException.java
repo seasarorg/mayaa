@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
-import org.seasar.maya.engine.specification.QName;
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NoRequiredPropertyException extends MayaException {
+public class NoRequiredPropertyException extends MayaaException {
 
 	private static final long serialVersionUID = -8388715165180536210L;
 

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util;
+package org.seasar.mayaa.impl.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.cyberneko.html.HTMLEntities;
-import org.seasar.maya.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

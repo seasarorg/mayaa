@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.script.rhino;
+package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,9 +22,9 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.impl.cycle.CycleUtil;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

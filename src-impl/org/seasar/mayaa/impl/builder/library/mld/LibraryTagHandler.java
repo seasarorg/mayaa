@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.mld;
+package org.seasar.mayaa.impl.builder.library.mld;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.impl.builder.library.LibraryDefinitionImpl;
-import org.seasar.maya.impl.provider.factory.AbstractParameterAwareTagHandler;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.impl.builder.library.LibraryDefinitionImpl;
+import org.seasar.mayaa.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.xml.sax.Attributes;
 
 /**

@@ -13,19 +13,19 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.mayaa.cycle;
 
 import java.io.Serializable;
 import java.util.Iterator;
 
-import org.seasar.maya.ContextAware;
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.cycle.scope.SessionScope;
-import org.seasar.maya.engine.processor.ProcessorTreeWalker;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.ContextAware;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.cycle.scope.SessionScope;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 
 /**
  * サービスのライフサイクルオブジェクト。HTTPリクエストの期間、

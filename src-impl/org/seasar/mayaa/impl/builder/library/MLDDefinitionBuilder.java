@@ -13,23 +13,23 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
 import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.builder.library.DefinitionBuilder;
-import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.builder.library.mld.LibraryDefinitionHandler;
-import org.seasar.maya.impl.builder.library.scanner.SourceAlias;
-import org.seasar.maya.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
-import org.seasar.maya.impl.util.IOUtil;
-import org.seasar.maya.impl.util.ObjectUtil;
-import org.seasar.maya.impl.util.XMLUtil;
-import org.seasar.maya.source.SourceDescriptor;
+import org.seasar.mayaa.builder.library.DefinitionBuilder;
+import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.builder.library.mld.LibraryDefinitionHandler;
+import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
+import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
+import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.XMLUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

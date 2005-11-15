@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.scanner;
+package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.xml.TagHandler;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
 /**

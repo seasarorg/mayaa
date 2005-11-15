@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle;
+package org.seasar.mayaa.cycle;
 
-import org.seasar.maya.UnifiedFactory;
+import org.seasar.mayaa.UnifiedFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.mayaa.engine.processor;
 
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.engine.Page;
-import org.seasar.maya.engine.specification.SpecificationNode;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
  * テンプレート中のHTMLタグを処理するクラス。

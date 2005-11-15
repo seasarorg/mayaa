@@ -13,16 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider;
+package org.seasar.mayaa.impl.provider;
 
-import org.seasar.maya.builder.SpecificationBuilder;
-import org.seasar.maya.builder.TemplateBuilder;
-import org.seasar.maya.builder.library.LibraryManager;
-import org.seasar.maya.cycle.script.ScriptEnvironment;
-import org.seasar.maya.engine.Engine;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.mayaa.builder.SpecificationBuilder;
+import org.seasar.mayaa.builder.TemplateBuilder;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.provider.ServiceProvider;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

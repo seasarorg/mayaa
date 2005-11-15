@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library.converter;
+package org.seasar.mayaa.impl.builder.library.converter;
 
-import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.impl.ParameterAwareImpl;
-import org.seasar.maya.impl.engine.processor.ProcessorPropertyImpl;
+import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.processor.ProcessorPropertyImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)

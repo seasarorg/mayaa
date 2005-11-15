@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.jsp;
+package org.seasar.mayaa.impl.cycle.jsp;
 
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.util.StringUtil;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

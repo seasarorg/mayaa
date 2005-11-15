@@ -13,15 +13,15 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
-import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ConverterOperationException extends MayaException {
+public class ConverterOperationException extends MayaaException {
 
     private static final long serialVersionUID = -5007393180957134578L;
     private PropertyConverter _converter;

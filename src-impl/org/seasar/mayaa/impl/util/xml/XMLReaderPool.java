@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.util.xml;
+package org.seasar.mayaa.impl.util.xml;
 
-import org.seasar.maya.impl.builder.parser.AdditionalHandler;
-import org.seasar.maya.impl.util.xml.AdditionalSAXParser;
-import org.seasar.maya.impl.util.collection.AbstractSoftReferencePool;
+import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
+import org.seasar.mayaa.impl.util.xml.AdditionalSAXParser;
+import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;

@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.specification.xpath;
+package org.seasar.mayaa.impl.engine.specification.xpath;
 
 import org.jaxen.NamespaceContext;
-import org.seasar.maya.engine.specification.Namespace;
-import org.seasar.maya.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

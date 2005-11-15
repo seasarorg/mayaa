@@ -13,10 +13,10 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.scope;
+package org.seasar.mayaa.impl.cycle.scope;
 
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.impl.ParameterAwareImpl;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine;
+package org.seasar.mayaa.engine;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.engine.error.ErrorHandler;
-import org.seasar.maya.engine.specification.Specification;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.engine.error.ErrorHandler;
+import org.seasar.mayaa.engine.specification.Specification;
 
 /**
  * ランタイムエンジン。ホストサーブレットからservice()が呼び出される。 

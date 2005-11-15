@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.engine.processor;
+package org.seasar.mayaa.engine.processor;
 
 import java.io.Serializable;
 import java.util.Map;

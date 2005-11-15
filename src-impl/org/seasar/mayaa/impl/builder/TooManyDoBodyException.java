@@ -13,14 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder;
+package org.seasar.mayaa.impl.builder;
 
-import org.seasar.maya.impl.MayaException;
+import org.seasar.mayaa.impl.MayaaException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TooManyDoBodyException extends MayaException {
+public class TooManyDoBodyException extends MayaaException {
 
 	private static final long serialVersionUID = 5164593430185077800L;
     

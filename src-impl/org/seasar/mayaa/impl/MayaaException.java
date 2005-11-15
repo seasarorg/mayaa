@@ -13,30 +13,30 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl;
+package org.seasar.mayaa.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.engine.specification.NodeTreeWalker;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.util.AbstractMessagedException;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.AbstractMessagedException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class MayaException 
+public abstract class MayaaException 
         extends AbstractMessagedException {
 
     private static final Log LOG = 
-        LogFactory.getLog(MayaException.class);
+        LogFactory.getLog(MayaaException.class);
     
     private String _originalSystemID;
     private int _originalLineNumber = -1;
     private String _injectedSystemID;
     private int _injectedLineNumber = -1;
     
-	public MayaException() {
+	public MayaaException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();

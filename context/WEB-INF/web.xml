@@ -4,12 +4,12 @@
 	"http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
     <servlet>
-        <servlet-name>MayaServlet</servlet-name>
-        <servlet-class>org.seasar.maya.impl.MayaServlet</servlet-class>
+        <servlet-name>MayaaServlet</servlet-name>
+        <servlet-class>org.seasar.mayaa.impl.MayaaServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>MayaServlet</servlet-name>
+        <servlet-name>MayaaServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 

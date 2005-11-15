@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.provider.factory;
+package org.seasar.mayaa.impl.provider.factory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.maya.impl.CONST_IMPL;
-import org.seasar.maya.impl.util.xml.XMLHandler;
-import org.seasar.maya.provider.ServiceProvider;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.xml.XMLHandler;
+import org.seasar.mayaa.provider.ServiceProvider;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,7 +36,7 @@ public class ServiceProviderHandler extends XMLHandler
         _rootHandler = new ProviderTagHandler(beforeProvider);
         setRootHandler(_rootHandler);
         setLog(LOG);
-        getEntityMap().put(PUBLIC_PROVIDER10, "maya-provider_1_0.dtd");
+        getEntityMap().put(PUBLIC_PROVIDER10, "mayaa-provider_1_0.dtd");
     }
     
     public ServiceProvider getServiceProvider() {

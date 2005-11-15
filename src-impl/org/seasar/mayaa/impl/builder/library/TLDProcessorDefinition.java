@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.builder.library;
+package org.seasar.mayaa.impl.builder.library;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -24,14 +24,14 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.seasar.maya.builder.library.PropertyDefinition;
-import org.seasar.maya.builder.library.PropertySet;
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.processor.TemplateProcessor;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.engine.processor.JspProcessor;
-import org.seasar.maya.impl.util.ObjectUtil;
+import org.seasar.mayaa.builder.library.PropertyDefinition;
+import org.seasar.mayaa.builder.library.PropertySet;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.engine.processor.JspProcessor;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -13,12 +13,12 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.builder;
+package org.seasar.mayaa.builder;
 
 import java.io.Serializable;
 
-import org.seasar.maya.ParameterAware;
-import org.seasar.maya.engine.specification.Specification;
+import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.engine.specification.Specification;
 
 /**
  * İ’èXML‚Ìƒrƒ‹ƒ_B

@@ -13,20 +13,20 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.engine.processor;
+package org.seasar.mayaa.impl.engine.processor;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.seasar.maya.builder.library.LibraryDefinition;
-import org.seasar.maya.builder.library.ProcessorDefinition;
-import org.seasar.maya.builder.library.converter.PropertyConverter;
-import org.seasar.maya.engine.processor.ProcessorProperty;
-import org.seasar.maya.engine.specification.NodeAttribute;
-import org.seasar.maya.engine.specification.PrefixAwareName;
-import org.seasar.maya.engine.specification.SpecificationNode;
-import org.seasar.maya.impl.CONST_IMPL;
+import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)

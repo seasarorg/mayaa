@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.jsp;
+package org.seasar.mayaa.impl.cycle.jsp;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -33,15 +33,15 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.seasar.maya.cycle.Response;
-import org.seasar.maya.cycle.ServiceCycle;
-import org.seasar.maya.cycle.scope.ApplicationScope;
-import org.seasar.maya.cycle.scope.AttributeScope;
-import org.seasar.maya.cycle.scope.RequestScope;
-import org.seasar.maya.cycle.scope.SessionScope;
-import org.seasar.maya.impl.cycle.CycleUtil;
-import org.seasar.maya.impl.util.StringUtil;
-import org.seasar.maya.impl.util.collection.IteratorEnumeration;
+import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.cycle.scope.SessionScope;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -317,7 +317,7 @@ public class PageContextImpl extends PageContext {
         }
         
         public String getServletName() {
-            return "Maya Servlet";
+            return "Mayaa Servlet";
         }
     
     }

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.impl.cycle.jsp;
+package org.seasar.mayaa.impl.cycle.jsp;
 
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.Expression;
@@ -21,8 +21,8 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.seasar.maya.cycle.script.CompiledScript;
-import org.seasar.maya.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

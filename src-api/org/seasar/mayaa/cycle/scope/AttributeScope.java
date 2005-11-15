@@ -13,11 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.maya.cycle.scope;
+package org.seasar.mayaa.cycle.scope;
 
 import java.util.Iterator;
 
-import org.seasar.maya.ParameterAware;
+import org.seasar.mayaa.ParameterAware;
 
 /**
  * 名前つきでオブジェクトを保存できる「スコープ」概念インターフェイス。

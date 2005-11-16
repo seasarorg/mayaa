@@ -69,7 +69,7 @@ MayaaのWEBサイト：
  ServiceProvider設定ファイルのengine/requestCharacterEncodingで指定します。
  mayaa-sampleで使用しています。
 
--TLDもしくはMLDに定義されているプロセッサプロパティについては、.mayaに値の定義
+-TLDもしくはMLDに定義されているプロセッサプロパティについては、.mayaaに値の定義
  が無い場合、テンプレート上のノードを参照し、ノードの名前空間に属する該当する
  名前の属性値があれば、それを用いるように機能追加しました。
 

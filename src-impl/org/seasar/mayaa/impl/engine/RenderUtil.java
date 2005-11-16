@@ -241,8 +241,6 @@ public class RenderUtil implements CONST_IMPL {
         return null;
     }
     
-    //TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
-    //TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
     public static ProcessStatus renderPage(boolean fireEvent, 
             TemplateRenderer renderer, Map variables, 
             Page topLevelPage, String requestedSuffix, String extension) {

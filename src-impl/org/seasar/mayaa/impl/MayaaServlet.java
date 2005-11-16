@@ -27,6 +27,7 @@ import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -66,8 +67,10 @@ public class MayaaServlet extends HttpServlet {
             try {
                 request.setCharacterEncoding(encoding);
             } catch (UnsupportedEncodingException e) {
+                String message =
+                    StringUtil.getMessage(MayaaServlet.class, 0, encoding);
                 Log log = LogFactory.getLog(MayaaServlet.class);
-                log.warn("unsupported requestCharacterEncoding", e);
+                log.warn(message, e);
             }
         }
     }

@@ -62,6 +62,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         QName qName = getQName(injected);
         NodeAttribute attribute = injected.getAttribute(qName);
+// TODO プロセッサプロパティ自動設定の設定仕様を考える
 //        if(attribute == null) {
 //            attribute = original.getAttribute(getQName(original));
 //        }

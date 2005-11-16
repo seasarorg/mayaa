@@ -171,6 +171,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     	QName qName = getQName(injected);
         String value = getFinalValue();
         NodeAttribute attribute = injected.getAttribute(qName);
+// TODO プロセッサプロパティ自動設定の設定仕様を考える
 //        if(attribute == null) {
 //            attribute = original.getAttribute(getQName(original));
 //        }

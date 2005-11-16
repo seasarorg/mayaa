@@ -171,9 +171,9 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     	QName qName = getQName(injected);
         String value = getFinalValue();
         NodeAttribute attribute = injected.getAttribute(qName);
-        if(attribute == null) {
-            attribute = original.getAttribute(getQName(original));
-        }
+//        if(attribute == null) {
+//            attribute = original.getAttribute(getQName(original));
+//        }
         if(value == null) {
             value = getDefaultValue();
             if(attribute != null) {

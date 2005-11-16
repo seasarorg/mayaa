@@ -13,6 +13,7 @@
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
+		<parameter name="requestCharacterEncoding" value="UTF-8"/>
 	</engine>
 	
 	<scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">

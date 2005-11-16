@@ -15,10 +15,14 @@
  */
 package org.seasar.mayaa.impl;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -49,7 +53,23 @@ public class MayaaServlet extends HttpServlet {
             HttpServletRequest request, HttpServletResponse response) {
         CycleUtil.initialize(request, response);
         Engine engine = ProviderUtil.getEngine();
+
+        setupCharacterEncoding(request,
+                engine.getParameter("requestCharacterEncoding"));
+
         engine.doService(true);
     }
-    
+
+    protected void setupCharacterEncoding(
+            HttpServletRequest request, String encoding) {
+        if (request.getCharacterEncoding() == null) {
+            try {
+                request.setCharacterEncoding(encoding);
+            } catch (UnsupportedEncodingException e) {
+                Log log = LogFactory.getLog(MayaaServlet.class);
+                log.warn("unsupported requestCharacterEncoding", e);
+            }
+        }
+    }
+
 }

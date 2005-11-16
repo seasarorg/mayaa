@@ -39,10 +39,12 @@ public interface ProcessorDefinition extends PropertySet {
     Iterator iteratePropertySets();
     
     /**
-     * 当該設定より、テンプレートプロセッサを生成する。 
+     * 当該設定より、テンプレートプロセッサを生成する。
+     * @param original テンプレート上のオリジナルノード。 
      * @param injected インジェクションするスペックノード。
      * @return テンプレートプロセッサ。
      */
-    TemplateProcessor createTemplateProcessor(SpecificationNode injected);
+    TemplateProcessor createTemplateProcessor(
+            SpecificationNode original, SpecificationNode injected);
     
 }

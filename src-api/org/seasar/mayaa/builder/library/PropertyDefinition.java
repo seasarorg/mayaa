@@ -72,10 +72,11 @@ public interface PropertyDefinition extends ParameterAware {
     /**
      * プロパティオブジェクトを生成する。
      * @param processorDef プロセッサ定義。
+     * @param original テンプレート上のオリジナルノード。 
      * @param injected インジェクションするノード。
      * @return プロパティオブジェクト。
      */
-    Object createProcessorProperty(
-            ProcessorDefinition processorDef, SpecificationNode injected);
+    Object createProcessorProperty(ProcessorDefinition processorDef,
+            SpecificationNode original, SpecificationNode injected);
     
 }

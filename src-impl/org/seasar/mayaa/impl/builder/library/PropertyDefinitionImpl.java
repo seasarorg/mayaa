@@ -158,19 +158,22 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         return ObjectUtil.getPropertyClass(processorClass, getName());
     }
 
-    protected QName getQName(SpecificationNode injected) {
+    protected QName getQName(SpecificationNode node) {
         return SpecificationUtil.createQName(
-                injected.getQName().getNamespaceURI(), _name);
+                node.getQName().getNamespaceURI(), _name);
     }
     
-    public Object createProcessorProperty(
-            ProcessorDefinition processorDef, SpecificationNode injected) {
-    	if(injected == null) {
+    public Object createProcessorProperty(ProcessorDefinition processorDef,
+            SpecificationNode original, SpecificationNode injected) {
+        if(injected == null) {
     		throw new IllegalArgumentException();
     	}
     	QName qName = getQName(injected);
         String value = getFinalValue();
         NodeAttribute attribute = injected.getAttribute(qName);
+        if(attribute == null) {
+            attribute = original.getAttribute(getQName(original));
+        }
         if(value == null) {
             value = getDefaultValue();
             if(attribute != null) {

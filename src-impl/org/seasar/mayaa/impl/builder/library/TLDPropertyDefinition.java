@@ -44,8 +44,8 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         return converter;
     }
     
-    public Object createProcessorProperty(
-            ProcessorDefinition processorDef, SpecificationNode injected) {
+    public Object createProcessorProperty(ProcessorDefinition processorDef,
+            SpecificationNode original, SpecificationNode injected) {
     	if(injected == null) {
     		throw new IllegalArgumentException();
     	}
@@ -62,6 +62,9 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         QName qName = getQName(injected);
         NodeAttribute attribute = injected.getAttribute(qName);
+        if(attribute == null) {
+            attribute = original.getAttribute(getQName(original));
+        }
         if(attribute != null) {
             String value = attribute.getValue();
             PropertyConverter converter = getConverterForProcessorProperty(); 

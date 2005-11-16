@@ -102,9 +102,11 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         return injected.getAttribute(qName);
     }
     
-    protected void settingProperty(SpecificationNode injected,
+    protected void settingProperty(
+            SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertyDefinition property) {
-        Object value = property.createProcessorProperty(this, injected);
+        Object value = 
+            property.createProcessorProperty(this, original, injected);
         if(value != null) {
             String propertyName = property.getName();
             Class processorClass = getProcessorClass();
@@ -126,11 +128,12 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
     }
 
-    protected void settingPropertySet(SpecificationNode injected, 
+    protected void settingPropertySet(
+            SpecificationNode original, SpecificationNode injected, 
             TemplateProcessor processor, PropertySet propertySet) {
         for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            settingProperty(injected, processor, property);
+            settingProperty(original, injected, processor, property);
         }
     }
 
@@ -161,16 +164,16 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     }
 
     public TemplateProcessor createTemplateProcessor(
-            SpecificationNode injected) {
+            SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
             throw new IllegalArgumentException();
         }
         TemplateProcessor processor = newInstance();
         processor.setProcessorDefinition(this);
-        settingPropertySet(injected, processor, this);
+        settingPropertySet(original, injected, processor, this);
         for(Iterator it = iteratePropertySets(); it.hasNext(); ) {
             PropertySet propertySet = (PropertySet)it.next();
-            settingPropertySet(injected, processor, propertySet);
+            settingPropertySet(original, injected, processor, propertySet);
         }
         if(processor instanceof InformalPropertyAcceptable) {
             settingInformalProperties(

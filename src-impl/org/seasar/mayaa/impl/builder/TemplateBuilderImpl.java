@@ -149,7 +149,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         ProcessorDefinition def = libraryManager.getProcessorDefinition(name);
         if(def != null) {
-            TemplateProcessor proc = def.createTemplateProcessor(injected);
+            TemplateProcessor proc =
+                def.createTemplateProcessor(original, injected);
             proc.setOriginalNode(original);
             proc.setInjectedNode(injected);
             return proc;

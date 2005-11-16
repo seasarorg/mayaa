@@ -56,12 +56,12 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return _tagClass;
     }
 
-    public void setExtraInfoClass(Class extraInfoClass) {
-        if(extraInfoClass == null || 
-                TagExtraInfo.class.isAssignableFrom(extraInfoClass) == false) {
+    public void setExtraInfoClass(Class teiClass) {
+        if(teiClass == null || 
+                TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
             throw new IllegalArgumentException();
         }
-        _teiClass = extraInfoClass;
+        _teiClass = teiClass;
     }
 
     public Class getExtraInfoClass() {
@@ -74,13 +74,15 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return processor;
     }
     
-    protected void settingPropertySet(SpecificationNode injected, 
+    protected void settingPropertySet(
+            SpecificationNode original, SpecificationNode injected, 
             TemplateProcessor processor, PropertySet propertySet) {
         Hashtable tagDataSeed = new Hashtable();
 
         for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = property.createProcessorProperty(this, injected);
+            Object prop = 
+                property.createProcessorProperty(this, original, injected);
             if(prop != null) {
                 ProcessorProperty currentProp = (ProcessorProperty) prop;
     	        JspProcessor jsp = (JspProcessor)processor;
@@ -98,7 +100,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         }
     }
 
-    protected void settingExtraInfo(JspProcessor processor, Hashtable seed) {
+    protected void settingExtraInfo(
+            JspProcessor processor, Hashtable seed) {
         TagExtraInfo tei =
                 (TagExtraInfo) ObjectUtil.newInstance(getExtraInfoClass());
 
@@ -122,7 +125,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         processor.setTLDScriptingVariableInfo(variableInfo);
     }
 
-    protected boolean existsNestedVariable(TagExtraInfo tei, Hashtable seed) {
+    protected boolean existsNestedVariable(
+            TagExtraInfo tei, Hashtable seed) {
         VariableInfo[] dummy = tei.getVariableInfo(new DummyTagData(seed));
         for (int i = 0; i < dummy.length; i++) {
             if (dummy[i].getScope() == VariableInfo.NESTED) {

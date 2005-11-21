@@ -61,6 +61,8 @@
 		<resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
 		<resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
 			<parameter name="reportUnresolvedID" value="true"/>
+			<parameter name="useXhtmlID" value="true"/>
+			<parameter name="useHtmlID" value="true"/>
 		</resolver>
 		<resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
 		<parameter name="outputWhitespace" value="true"/>

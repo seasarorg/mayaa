@@ -44,6 +44,8 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     
     private CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private boolean _reportResolvedID = true;
+    private boolean _useHtmlID = true;
+    private boolean _useXhtmlID = true;
 
     protected CopyToFilter getCopyToFilter() {
         return _idFilter;
@@ -61,14 +63,18 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     	if(attr != null) {
     		return attr.getValue();
     	}
-		attr = node.getAttribute(QX_ID);
-		if(attr != null) {
-			return attr.getValue();
-		}
-		attr = node.getAttribute(QH_ID);
-		if(attr != null) {
-			return attr.getValue();
-		}
+        if (_useXhtmlID) {
+    		attr = node.getAttribute(QX_ID);
+    		if(attr != null) {
+    			return attr.getValue();
+    		}
+        }
+        if (_useHtmlID) {
+    		attr = node.getAttribute(QH_ID);
+    		if(attr != null) {
+    			return attr.getValue();
+    		}
+        }
 		return null;
     }
 
@@ -134,6 +140,12 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     public void setParameter(String name, String value) {
         if("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
+        }
+        if ("useXhtmlID".equals(name)) {
+            _useXhtmlID = ObjectUtil.booleanValue(value, true);
+        }
+        if ("useHtmlID".equals(name)) {
+            _useHtmlID = ObjectUtil.booleanValue(value, true);
         }
         super.setParameter(name, value);
     }

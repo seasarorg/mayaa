@@ -64,6 +64,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private static final long serialVersionUID = -1031702086020145692L;
 
     private List _resolvers = new ArrayList();
+    private List _unmodifiableResolvers =
+        Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
     private InjectionChain _chain = new DefaultInjectionChain();
     
@@ -77,7 +79,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected List getInjectionResolvers() {
-        return Collections.unmodifiableList(_resolvers);
+        return _unmodifiableResolvers;
     }
 
     protected boolean isHTML(String mimeType) {

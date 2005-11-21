@@ -47,6 +47,8 @@ public class FolderSourceScanner extends ParameterAwareImpl
     private boolean _recursive = false;
 
     private Set _extensions = new HashSet();
+    private Set _unmodifiableExtensions =
+        Collections.unmodifiableSet(_extensions);
 
     public String getFolder() {
         if (StringUtil.isEmpty(_folder)) {
@@ -60,7 +62,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
     }
 
     public Set getExtensions() {
-        return Collections.unmodifiableSet(_extensions);
+        return _unmodifiableExtensions;
     }
 
     protected String[] getExtensionArray() {

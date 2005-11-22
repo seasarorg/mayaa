@@ -54,7 +54,7 @@ public class ScriptUtil {
             return text;
         }
         String blockSign = ProviderUtil.getScriptEnvironment().getBlockSign();
-        return text = blockSign + "{" + text.trim() + "}"; 
+        return text = blockSign + "{" + text.trim() + "\n}"; 
     }
     
 }

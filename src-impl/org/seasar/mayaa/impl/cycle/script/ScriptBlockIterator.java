@@ -45,17 +45,41 @@ public class ScriptBlockIterator implements Iterator {
 		return _offset < _text.length();
 	}
 
-    // FIXME コメントアウトされた {} を数えてしまう
     protected int scanBlockCloseOffset(int start) {
         char c = _text.charAt(start);
 
-        if(c != '{') {
+        if (c != '{') {
             throw new IllegalArgumentException();
         }
+
+        boolean inBlockComment = false;
+        boolean inLineComment = false;
         int depth = 0;
         for(int i = start; i < _text.length(); i++) {
             c = _text.charAt(i);
-            if(c == '{') {
+            if (inBlockComment) {
+                if (c != '/' || _text.charAt(i - 1) != '*') {
+                    continue;
+                }
+                inBlockComment = false;
+            } else if (inLineComment) {
+                if (c != '\n' && c != '\r') {
+                    continue;
+                }
+                inLineComment = false;
+            }
+
+            if (c == '/') {
+                if (i > 0 && _text.charAt(i - 1) == '/') {
+                    inLineComment = true;
+                    continue;
+                }
+            } else if (c == '*') {
+                if (i > 0 && _text.charAt(i - 1) == '/') {
+                    inBlockComment = true;
+                    continue;
+                }
+            } else if (c == '{') {
                 depth++;
             } else if(c == '}') {
                 depth--;

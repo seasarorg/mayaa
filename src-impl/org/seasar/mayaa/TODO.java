@@ -21,9 +21,9 @@ package org.seasar.mayaa;
 interface TODO {
 
     /*
-     * TODO JSF等のタグにおいて、テンプレート記述属性を適宜プロセッサに設定して二重設定を避ける。
-     *
-     * TODO コンポーネントのテスト時と実行時の区別を明確化する。リクエストパラメータでモードを渡すなど。
+     * FIXME 起動時にライブラリを初期化するために、ApplicationSourceDescriptor
+     * （->ServiceCycle）に依存するスキャナのソースをFactoryFactoryから取得される
+     * BootstrapSourceに変更する。
      * 
      * TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
      * 

@@ -61,13 +61,14 @@ public abstract class FactoryFactory implements Serializable {
 
     /**
      * ブートストラップ時に用いる、/WEB-INFフォルダを読むソース。
+     * @param root ルートパス。
      * @param systemID ソースのSystemID。
      * @return /WEB-INF相対のソース。
      */
     public static SourceDescriptor getBootstrapSource(
-            String systemID) {
+            String root, String systemID) {
         check();
-        return _instance.getBootstrapSource(systemID, _context);
+        return _instance.getBootstrapSource(root, systemID, _context);
     }
     
     /**
@@ -96,7 +97,14 @@ public abstract class FactoryFactory implements Serializable {
     protected abstract UnifiedFactory getFactory(
     		Class interfaceClass, Object context);
     
+    /**
+     * ブートストラップ用のソースディスクリプタを取得する。
+     * @param root ルートパス。
+     * @param systemID システムID。
+     * @param context コンテキストオブジェクト。
+     * @return ブートストラップ用のソース。
+     */
     protected abstract SourceDescriptor getBootstrapSource(
-            String systemID, Object context);
+            String root, String systemID, Object context);
     
 }

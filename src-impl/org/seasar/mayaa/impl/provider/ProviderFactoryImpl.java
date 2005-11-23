@@ -23,6 +23,7 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.MarshallUtil;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.provider.factory.ServiceProviderHandler;
+import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ProviderFactory;
@@ -68,7 +69,8 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
             source = (SourceDescriptor)it.next();
             provider = marshallServiceProvider(source, provider);
         }
-        source = FactoryFactory.getBootstrapSource(systemID);
+        source = FactoryFactory.getBootstrapSource(
+                ApplicationSourceDescriptor.WEB_INF, systemID);
         provider = marshallServiceProvider(source, provider);
         return provider;
     }

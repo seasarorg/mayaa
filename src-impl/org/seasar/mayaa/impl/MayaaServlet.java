@@ -43,6 +43,8 @@ public class MayaaServlet extends HttpServlet {
             FactoryFactory.setContext(getServletContext());
             _inithialized = true;
     	}
+        // TODO ƒ‰ƒCƒuƒ‰ƒŠ warm up
+        //ProviderUtil.getLibraryManager().iterateLibraryDefinition();
     }
 
     public void doGet(

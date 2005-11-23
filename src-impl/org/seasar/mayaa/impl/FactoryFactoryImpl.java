@@ -27,6 +27,7 @@ import org.seasar.mayaa.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.mayaa.impl.factory.UnifiedFactoryHandler;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -95,7 +96,8 @@ public class FactoryFactoryImpl extends FactoryFactory
             source = (SourceDescriptor)it.next();
             factory = marshallFactory(interfaceClass, context, source, factory);
         }
-        source = getBootstrapSource(systemID);
+        source = getBootstrapSource(
+                ApplicationSourceDescriptor.WEB_INF, systemID);
         factory = marshallFactory(interfaceClass, context, source, factory);
         return factory;
     }
@@ -107,10 +109,12 @@ public class FactoryFactoryImpl extends FactoryFactory
     }
     
     protected SourceDescriptor getBootstrapSource(
-            String systemID, Object context) {
+            String root, String systemID, Object context) {
         ApplicationSourceDescriptor appSource = 
             new ApplicationSourceDescriptor();
-        appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        if(StringUtil.hasValue(root)) {
+            appSource.setRoot(root);
+        }
         appSource.setSystemID(systemID);
         appSource.setApplicationScope(getBootstrapApplication(context));
         return appSource;

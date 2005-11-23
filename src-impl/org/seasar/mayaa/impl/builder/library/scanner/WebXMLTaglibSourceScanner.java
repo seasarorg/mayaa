@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.builder.library.scanner;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
@@ -53,10 +54,8 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
     }
 
     public Iterator scan() {
-        ApplicationSourceDescriptor source =
-            new ApplicationSourceDescriptor();
-        source.setRoot(ApplicationSourceDescriptor.WEB_INF);
-        source.setSystemID("web.xml");
+        SourceDescriptor source = FactoryFactory.getBootstrapSource(
+                ApplicationSourceDescriptor.WEB_INF, "web.xml");
         return new TaglibLocationIterator(scanWebXml(source));
     }
 

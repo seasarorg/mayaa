@@ -124,7 +124,11 @@ public class ScriptBlockIterator implements Iterator {
         return new ScriptBlock(lastLiteralBlock, true, _blockSign);
 	}
 
-	public void remove() {
+    protected int getOffset() {
+        return _offset;
+    }
+
+    public void remove() {
 		throw new UnsupportedOperationException();
 	}
 

@@ -15,8 +15,10 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -29,6 +31,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -37,6 +40,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
+
+    private static EventScriptEnvironment _eventScripts =
+        new EventScriptEnvironment();
 
     private SpecificationUtil() {
         // no instantiation.
@@ -120,14 +126,6 @@ public class SpecificationUtil implements CONST_IMPL {
         ProviderUtil.getScriptEnvironment().endScope();
     }
 
-    public static void execEventScript(String text) {
-        if(StringUtil.hasValue(text)) {
-            CompiledScript script =
-                ScriptUtil.compile(text, Void.class);
-            script.execute(null);
-        }
-    }
-
     public static void execEvent(Specification spec, QName eventName) {
         if(eventName == null) {
             throw new IllegalArgumentException();
@@ -137,15 +135,12 @@ public class SpecificationUtil implements CONST_IMPL {
             for(Iterator it = mayaa.iterateChildNode(); it.hasNext(); ) {
                 SpecificationNode child = (SpecificationNode)it.next();
                 if(eventName.equals(child.getQName())) {
-                    String bodyText = getNodeBodyText(child);
-                    bodyText = ScriptUtil.getBlockSignedText(bodyText);
-                    execEventScript(bodyText);
+                    _eventScripts.execEventScript(mayaa, child);
                 }
             }
             NodeAttribute attr = mayaa.getAttribute(eventName);
             if(attr != null) {
-                String attrText = attr.getValue();
-                execEventScript(attrText);
+                _eventScripts.execEventAttributeScript(mayaa, attr.getValue());
             }
         }
     }
@@ -178,6 +173,83 @@ public class SpecificationUtil implements CONST_IMPL {
         node.setLineNumber(lineNumber);
         node.setOnTemplate(onTemplate);
         return node;
+    }
+
+    // script cache ----------------------------------------------
+
+    // TODO SpecificationNode リビルド時にキャッシュが無駄になることを対処
+    // WeakHashMap を使っているから大丈夫？
+    protected static class EventScriptEnvironment {
+
+        private static final LiteralScript NULL_SCRIPT = new LiteralScript("");
+
+        private WeakHashMap _mayaaScriptCache = new WeakHashMap();
+
+        protected CompiledScript compile(String text, boolean fullScript) {
+            if(StringUtil.hasValue(text)) {
+                if (fullScript) {
+                    ScriptUtil.assertSingleScript(text);
+                }
+                return ScriptUtil.compile(text, Void.class);
+            }
+            return NULL_SCRIPT;
+        }
+
+        protected CompiledScript findScriptFromCache(
+                SpecificationNode mayaa, Object key) {
+            Map scriptMap = (Map) _mayaaScriptCache.get(mayaa);
+            if (scriptMap != null) {
+                return (CompiledScript) scriptMap.get(key);
+            }
+            return null;
+        }
+
+        protected CompiledScript newScriptFromCache(
+                SpecificationNode mayaa, Object key,
+                String scriptText, boolean fullScript) {
+
+            synchronized (_mayaaScriptCache) {
+                CompiledScript script = findScriptFromCache(mayaa, key);
+                if (script != null) {
+                    return script;
+                }
+    
+                script = compile(scriptText, fullScript);
+                Map scriptMap = (Map) _mayaaScriptCache.get(mayaa);
+                if (scriptMap == null) {
+                    scriptMap = new HashMap();
+                    _mayaaScriptCache.put(mayaa, scriptMap);
+                }
+                scriptMap.put(key, script);
+    
+                return script;
+            }
+        }
+
+        public void execEventScript(
+                SpecificationNode mayaa, SpecificationNode child) {
+            QName eventName = child.getQName();
+
+            CompiledScript script = findScriptFromCache(mayaa, eventName);
+            if (script == null) {
+                String bodyText = getNodeBodyText(child);
+                bodyText = ScriptUtil.getBlockSignedText(bodyText);
+
+                script = newScriptFromCache(mayaa, eventName, bodyText, true);
+            }
+            script.execute(null);
+        }
+
+        public void execEventAttributeScript(
+                SpecificationNode mayaa, String text) {
+            CompiledScript script = findScriptFromCache(mayaa, text);
+            if (script == null) {
+                String key = text;
+                script = newScriptFromCache(mayaa, key, text, false);
+            }
+            script.execute(null);
+        }
+
     }
 
 }

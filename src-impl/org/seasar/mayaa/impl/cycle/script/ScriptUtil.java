@@ -56,5 +56,20 @@ public class ScriptUtil {
         String blockSign = ProviderUtil.getScriptEnvironment().getBlockSign();
         return text = blockSign + "{" + text.trim() + "\n}"; 
     }
-    
+
+    public static void assertSingleScript(String text) {
+        String blockSign = ProviderUtil.getScriptEnvironment().getBlockSign();
+        ScriptBlockIterator iterator =
+                new ScriptBlockIterator(text, blockSign, false);
+        if (iterator.hasNext() == false) {
+            // no script
+            return;
+        }
+
+        iterator.next();
+        if (iterator.hasNext()) {
+            throw new UnbalancedBraceException(text, iterator.getOffset());
+        }
+    }
+
 }

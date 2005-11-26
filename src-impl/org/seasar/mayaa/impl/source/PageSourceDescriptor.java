@@ -15,26 +15,39 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.io.File;
+
 import org.seasar.mayaa.impl.IllegalParameterValueException;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PageSourceDescriptor extends CompositeSourceDescriptor {
 
-	private static final long serialVersionUID = -6124718310228340001L;
+    private static final long serialVersionUID = -6821253020265849514L;
 
     private String _folder = "/WEB-INF/page";
-    
+    private String _absolutePath = null;
+
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
         ApplicationSourceDescriptor app1 = new ApplicationSourceDescriptor();
         app1.setSystemID(systemID);
         addSourceDescriptor(app1);
+
+        if (_absolutePath != null) {
+            FileSourceDescriptor file = new FileSourceDescriptor();
+            file.setRoot(_absolutePath);
+            file.setSystemID(systemID);
+            addSourceDescriptor(file);
+        }
+
         ApplicationSourceDescriptor app2 = new ApplicationSourceDescriptor();
         app2.setRoot(_folder);
         app2.setSystemID(systemID);
         addSourceDescriptor(app2);
+
         ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
         loader.setSystemID(systemID);
@@ -43,10 +56,27 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
     
     public void setParameter(String name, String value) {
         if("folder".equals(name)) {
-            if(value == null) {
+            if(StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
+        } else if("absolutePath".equals(name)) {
+            String path = StringUtil.preparePath(value);
+            if (StringUtil.isEmpty(path)
+                    || new File(path).isDirectory() == false) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _absolutePath = path;
+        } else if("absolutePathProperty".equals(name)) {
+            if(value == null) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            String path = StringUtil.preparePath(System.getProperty(value));
+            if (StringUtil.isEmpty(path)
+                    || new File(path).isDirectory() == false) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _absolutePath = path;
         }
         super.setParameter(name, value);
     }

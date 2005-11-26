@@ -58,12 +58,12 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         SourceDescriptor source = 
             (SourceDescriptor)ObjectUtil.newInstance(sourceClass);
-        source.setSystemID(systemID);
         for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
             String key = (String)it.next();
             String value = getParameter(key);
             source.setParameter(key, value);
         }
+        source.setSystemID(systemID);
         return source;
     }
 

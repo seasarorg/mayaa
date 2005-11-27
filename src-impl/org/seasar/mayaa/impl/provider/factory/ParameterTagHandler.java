@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.provider.factory;
 
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -38,6 +39,7 @@ public class ParameterTagHandler extends TagHandler {
     		Attributes attributes, String systemID, int lineNumber) {
         String name = XMLUtil.getStringValue(attributes, "name", null);
         String value = XMLUtil.getStringValue(attributes, "value", null);
+        value = StringUtil.replaceSystemProperties(value);
         _parent.getParameterAware().setParameter(name, value);
     }
     

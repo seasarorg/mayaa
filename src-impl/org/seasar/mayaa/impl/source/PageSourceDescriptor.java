@@ -59,19 +59,10 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
             if(StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
+System.out.println("Å°"+ value);
             _folder = value;
         } else if("absolutePath".equals(name)) {
             String path = StringUtil.preparePath(value);
-            if (StringUtil.isEmpty(path)
-                    || new File(path).isDirectory() == false) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _absolutePath = path;
-        } else if("absolutePathProperty".equals(name)) {
-            if(value == null) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            String path = StringUtil.preparePath(System.getProperty(value));
             if (StringUtil.isEmpty(path)
                     || new File(path).isDirectory() == false) {
                 throw new IllegalParameterValueException(getClass(), name);

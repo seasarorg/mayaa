@@ -128,6 +128,53 @@ public final class StringUtil {
         return ret;
     }
 
+    private static final String SP_OPEN = "${";
+    private static final String SP_CLOSE = "}";
+
+    public static boolean hasSystemProperties(String value) {
+        int openIndex = value.indexOf(SP_OPEN);
+        int closeIndex = value.lastIndexOf(SP_CLOSE);
+        return (openIndex >= 0 && closeIndex >= 0 && openIndex < closeIndex);
+    }
+
+    public static String replaceSystemProperties(String value) {
+        if (hasSystemProperties(value) == false) {
+            return value;
+        }
+
+        StringBuffer buffer = new StringBuffer(value.length() + 100);
+
+        int openIndex = value.indexOf(SP_OPEN);
+        buffer.append(value.substring(0, openIndex));
+
+        while (openIndex < value.length()) {
+            int fromIndex = openIndex + SP_OPEN.length();
+
+            int closeIndex = value.indexOf(SP_CLOSE, fromIndex);
+            if (closeIndex >= 0) {
+                String key = value.substring(fromIndex, closeIndex).trim();
+
+                String propertyValue = System.getProperty(key);
+                if (propertyValue == null) {
+                    throw new IllegalStateException(key);
+                }
+                buffer.append(propertyValue);
+
+                int lastIndex = closeIndex + SP_CLOSE.length();
+                openIndex = value.indexOf(SP_OPEN, lastIndex);
+                if (openIndex < 0) {
+                    openIndex = value.length();
+                }
+                buffer.append(value.substring(lastIndex, openIndex));
+            } else {
+                buffer.append(value.substring(openIndex));
+                openIndex = value.length();
+            }
+        }
+
+        return buffer.toString();
+    }
+
     public static String getMessage(Class clazz, int index) {
         return getMessage(clazz, index, ZERO);
     }

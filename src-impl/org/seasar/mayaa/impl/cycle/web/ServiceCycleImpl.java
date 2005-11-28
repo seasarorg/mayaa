@@ -81,6 +81,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
 
     public void redirect(String url) {
 		_response.redirect(url);
+        _response.clearBuffer();
+        _response.flush();
     }
     
 }

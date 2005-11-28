@@ -178,6 +178,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.endScope();
                     Response response = CycleUtil.getResponse();
                     if(ret == null) {
+                        // TODO redirect Ç≥ÇÍÇΩÇ∆Ç´Ç…ó·äOÇ™èoÇ»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ
                         if(response.getWriter().isDirty() == false) {
                             throw new RenderNotCompletedException(
                                     pageName, extension);

@@ -228,14 +228,12 @@ public class SpecificationUtil implements CONST_IMPL {
 
         public void execEventScript(
                 SpecificationNode mayaa, SpecificationNode child) {
-            QName eventName = child.getQName();
-
-            CompiledScript script = findScriptFromCache(mayaa, eventName);
+            CompiledScript script = findScriptFromCache(mayaa, child);
             if (script == null) {
                 String bodyText = getNodeBodyText(child);
                 bodyText = ScriptUtil.getBlockSignedText(bodyText);
 
-                script = newScriptFromCache(mayaa, eventName, bodyText, true);
+                script = newScriptFromCache(mayaa, child, bodyText, true);
             }
             script.execute(null);
         }

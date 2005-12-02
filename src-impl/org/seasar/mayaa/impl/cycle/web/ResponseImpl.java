@@ -39,11 +39,13 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public void redirect(String url) {
-        check();
-        try {
-            _httpServletResponse.sendRedirect(url);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        if (isFlushed() == false) {
+            check();
+            try {
+                _httpServletResponse.sendRedirect(url);
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,6 +58,7 @@ public class EngineImpl extends SpecificationImpl
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
+    private Pattern _templatePathPattern;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -113,11 +115,9 @@ public class EngineImpl extends SpecificationImpl
         if ("mayaa".equals(request.getExtension())) {
             return true;
         }
-        // TODO MIME”»’è‚ð‚µ‚Á‚©‚è‚â‚é
-        String mimeType = request.getMimeType();
-        return mimeType != null
-                && (mimeType.indexOf("html") != -1
-                        || mimeType.indexOf("xml") != -1);
+
+        String path = request.getRequestedPath();
+        return _templatePathPattern.matcher(path).matches();
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -240,6 +240,9 @@ public class EngineImpl extends SpecificationImpl
             source.setSystemID(value);
             setSource(source);
             _defaultSpecification = value;
+        } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
+            Pattern pattern = Pattern.compile(value);
+            _templatePathPattern = pattern;
         }
         super.setParameter(name, value);
     }
@@ -247,6 +250,8 @@ public class EngineImpl extends SpecificationImpl
     public String getParameter(String name) {
         if(DEFAULT_SPECIFICATION.equals(name)) {
             return _defaultSpecification;
+        } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
+            return _templatePathPattern.pattern();
         }
         return super.getParameter(name);
     }

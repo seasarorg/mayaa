@@ -86,6 +86,22 @@ public class PageImpl extends SpecificationImpl
         }
     }
 
+    public void rebuild() {
+        if(isOldSpecification()) {
+            parseSpecification();
+        } else {
+            for(Iterator it = new ChildSpecificationsIterator(_templates);
+                        it.hasNext(); ) {
+                Object obj = it.next();
+                if(obj instanceof Template == false) {
+                    throw new IllegalStateException();
+                }
+                Template template = (Template)obj;
+                template.rebuild();
+            }
+        }
+    }
+
     public Page getSuperPage() {
            prepareSuper();
         return _superPage;

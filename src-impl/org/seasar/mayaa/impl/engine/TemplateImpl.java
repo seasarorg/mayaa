@@ -134,6 +134,8 @@ public class TemplateImpl
     }
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
+        rebuild();
+
         RenderUtil.saveToCycle(this);
         prepareCycle(topLevelPage);
         ProcessStatus ret = 

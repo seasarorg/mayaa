@@ -74,14 +74,19 @@ public class EngineImpl extends SpecificationImpl
 
     protected Page findPageFromCache(String pageName) {
         if(_pages != null) {
-            for(Iterator it = new ChildSpecificationsIterator(_pages);
-                    it.hasNext(); ) {
-                Object child = it.next();
-                if(child instanceof Page) {
-                    Page page = (Page)child;
-                    String name = page.getPageName();
-                    if(pageName.equals(name)) {
-                        return page;
+            synchronized (_pages) {
+                for(Iterator it = new ChildSpecificationsIterator(_pages);
+                        it.hasNext(); ) {
+                    Object child = it.next();
+                    if(child instanceof Page) {
+                        Page page = (Page)child;
+                        synchronized (page) {
+                            String name = page.getPageName();
+                            if(pageName.equals(name)) {
+                                page.rebuild();
+                                return page;
+                            }
+                        }
                     }
                 }
             }
@@ -105,6 +110,7 @@ public class EngineImpl extends SpecificationImpl
                 if(_pages == null) {
                     _pages = new ArrayList();
                 }
+                page.rebuild();
                 _pages.add(new SoftReference(page));
             }
             return page;
@@ -170,6 +176,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected void doPageService(ServiceCycle cycle, boolean pageFlush) {
+        rebuild();
         try {
             boolean service = true;
             while(service) {

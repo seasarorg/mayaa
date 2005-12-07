@@ -51,4 +51,9 @@ public interface Specification
 	 */
 	void kill();
 
+    /**
+     * ソースが更新されていたら再ビルドする。
+     */
+    void rebuild();
+
 }

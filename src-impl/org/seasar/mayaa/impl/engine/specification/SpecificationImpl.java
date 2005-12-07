@@ -116,7 +116,13 @@ public class SpecificationImpl extends ParameterAwareImpl
     public void kill() {
         setTimestamp(null);
     }
-    
+
+    public void rebuild() {
+        if(isOldSpecification()) {
+            parseSpecification();
+        }
+    }
+
     // NodeTreeWalker implements ------------------------------------
     
     public void setParentNode(NodeTreeWalker parentNode) {
@@ -143,11 +149,6 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public Iterator iterateChildNode() {
-        synchronized(this) {
-            if(isOldSpecification()) {
-                parseSpecification();
-            }
-        }
         if(_childNodes == null) {
             return NullIterator.getInstance();
         }        

@@ -27,6 +27,7 @@ public interface CONST_IMPL {
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
     String TEMPLATE_PATH_PATTERN = "templatePathPattern";
+    String NOT_TEMPLATE_PATH_PATTERN = "notTemplatePathPattern";
 
     String URI_MAYA = "http://mayaa.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";

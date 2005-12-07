@@ -59,6 +59,7 @@ public class EngineImpl extends SpecificationImpl
     private List _pages;
     private String _defaultSpecification = "";
     private Pattern _templatePathPattern;
+    private Pattern _notTemplatePathPattern;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -116,8 +117,19 @@ public class EngineImpl extends SpecificationImpl
             return true;
         }
 
-        String path = request.getRequestedPath();
-        return _templatePathPattern.matcher(path).matches();
+        return validPath(request.getRequestedPath());
+    }
+
+    private boolean validPath(String path) {
+        if (_notTemplatePathPattern != null) {
+            if (_notTemplatePathPattern.matcher(path).matches()) {
+                return false;
+            }
+        }
+        if (_templatePathPattern != null) {
+            return _templatePathPattern.matcher(path).matches();
+        }
+        return false;
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -241,8 +253,15 @@ public class EngineImpl extends SpecificationImpl
             setSource(source);
             _defaultSpecification = value;
         } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
-            Pattern pattern = Pattern.compile(value);
-            _templatePathPattern = pattern;
+            if (StringUtil.hasValue(value)) {
+                Pattern pathPattern = Pattern.compile(value);
+                _templatePathPattern = pathPattern;
+            }
+        } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Pattern notPathPattern = Pattern.compile(value);
+                _notTemplatePathPattern = notPathPattern;
+            }
         }
         super.setParameter(name, value);
     }
@@ -252,6 +271,8 @@ public class EngineImpl extends SpecificationImpl
             return _defaultSpecification;
         } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
             return _templatePathPattern.pattern();
+        } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+            return _notTemplatePathPattern.pattern();
         }
         return super.getParameter(name);
     }

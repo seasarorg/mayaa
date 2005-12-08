@@ -135,7 +135,7 @@ public class EngineImpl extends SpecificationImpl
         if (_templatePathPattern != null) {
             return _templatePathPattern.matcher(path).matches();
         }
-        return false;
+        return true;
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {

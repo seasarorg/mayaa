@@ -14,7 +14,6 @@
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 		<parameter name="requestCharacterEncoding" value="UTF-8"/>
-		<parameter name="templatePathPattern" value=".*"/>
 	</engine>
 	
 	<scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -59,7 +60,6 @@ public class EngineImpl extends SpecificationImpl
     private List _pages;
     private String _defaultSpecification = "";
     private List _templatePathPatterns;
-    private List _notTemplatePathPatterns;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -127,25 +127,16 @@ public class EngineImpl extends SpecificationImpl
     }
 
     private boolean validPath(String path) {
-        if (_notTemplatePathPatterns != null) {
-            if (matchPatterns(_notTemplatePathPatterns, path)) {
-                return false;
-            }
-        }
         if (_templatePathPatterns != null) {
-            return matchPatterns(_templatePathPatterns, path);
+            for (Iterator it = _templatePathPatterns.iterator();
+                    it.hasNext(); ) {
+                PathPattern pattern = (PathPattern) it.next();
+                if (pattern.matches(path)) {
+                    return pattern.isTemplate();
+                }
+            }
         }
         return true;
-    }
-
-    private boolean matchPatterns(List patterns, String path) {
-        for (int i = 0; i < patterns.size(); i++) {
-            Pattern pattern = (Pattern) patterns.get(i);
-            if (pattern.matcher(path).matches()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -273,18 +264,20 @@ public class EngineImpl extends SpecificationImpl
         } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
-                    _templatePathPatterns = new ArrayList();
+                    _templatePathPatterns = new LinkedList();
                 }
-                Pattern pathPattern = Pattern.compile(value);
-                _templatePathPatterns.add(pathPattern);
+                PathPattern pathPattern =
+                    new PathPattern(Pattern.compile(value), true);
+                _templatePathPatterns.add(0, pathPattern);
             }
         } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                if (_notTemplatePathPatterns == null) {
-                    _notTemplatePathPatterns = new ArrayList();
+                if (_templatePathPatterns == null) {
+                    _templatePathPatterns = new LinkedList();
                 }
-                Pattern pathPattern = Pattern.compile(value);
-                _notTemplatePathPatterns.add(pathPattern);
+                PathPattern pathPattern =
+                    new PathPattern(Pattern.compile(value), false);
+                _templatePathPatterns.add(0, pathPattern);
             }
         }
         super.setParameter(name, value);
@@ -297,24 +290,50 @@ public class EngineImpl extends SpecificationImpl
             if (_templatePathPatterns == null) {
                 return null;
             }
-            return patternToString(_templatePathPatterns);
+            return patternToString(_templatePathPatterns, true);
         } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
-            if (_notTemplatePathPatterns == null) {
+            if (_templatePathPatterns == null) {
                 return null;
             }
-            return patternToString(_notTemplatePathPatterns);
+            return patternToString(_templatePathPatterns, false);
         }
         return super.getParameter(name);
     }
 
-    private String patternToString(List patterns) {
+    private String patternToString(List patterns, boolean result) {
         StringBuffer sb = new StringBuffer();
-        sb.append(((Pattern) patterns.get(0)).pattern());
-        for (int i = 1; i < patterns.size(); i++) {
-            sb.append("|");
-            sb.append(((Pattern) patterns.get(i)).pattern());
+        for (Iterator it = patterns.iterator(); it.hasNext(); ) {
+            PathPattern pathPattern = (PathPattern) it.next();
+            if (pathPattern.isTemplate() == result) {
+                sb.append(pathPattern.getPattern());
+                sb.append("|");
+            }
         }
         return sb.toString();
+    }
+
+    //---- support class
+
+    private class PathPattern {
+        private Pattern _pattern;
+        private boolean _result;
+
+        public PathPattern(Pattern pattern, boolean result) {
+            _pattern = pattern;
+            _result = result;
+        }
+
+        public boolean matches(String path) {
+            return _pattern.matcher(path).matches();
+        }
+
+        public boolean isTemplate() {
+            return _result;
+        }
+
+        public String getPattern() {
+            return _pattern.pattern();
+        }
     }
 
 }

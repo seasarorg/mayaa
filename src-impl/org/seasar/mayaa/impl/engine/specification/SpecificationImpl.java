@@ -54,19 +54,19 @@ public class SpecificationImpl extends ParameterAwareImpl
         }
     }
 
-    protected boolean checkTimestamp() {
+    protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
     }
 
     protected boolean isSourceNotExists() {
-        if (checkTimestamp() == false) {
+        if (needCheckTimestamp() == false) {
             return false;
         }
         return getSource().exists() == false;
     }
 
     protected boolean isOldSpecification() {
-        if (checkTimestamp() == false) {
+        if (needCheckTimestamp() == false) {
             return false;
         }
 
@@ -80,6 +80,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         if (getTimestamp() == null) {
             return true;
         }
+
         Date source = getSource().getTimestamp();
         Date now = new Date();
         return source.after(getTimestamp()) && now.after(source);
@@ -117,7 +118,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         setTimestamp(null);
     }
 
-    public void rebuild() {
+    public void checkTimestamp() {
         if(isOldSpecification()) {
             parseSpecification();
         }

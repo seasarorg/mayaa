@@ -175,6 +175,7 @@ public class InsertProcessor
     protected DoRenderProcessor findDoRender(
             Template[] templates, String name) {
         for(int i = templates.length -1; 0 <= i; i--) {
+            templates[i].checkTimestamp();
             DoRenderProcessor doRender = findDoRender(templates[i], name);
             if(doRender != null) {
                 return doRender;

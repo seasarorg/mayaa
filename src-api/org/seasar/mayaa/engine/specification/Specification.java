@@ -54,6 +54,6 @@ public interface Specification
     /**
      * ソースが更新されていたら再ビルドする。
      */
-    void rebuild();
+    void checkTimestamp();
 
 }

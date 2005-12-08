@@ -83,7 +83,7 @@ public class EngineImpl extends SpecificationImpl
                         synchronized (page) {
                             String name = page.getPageName();
                             if(pageName.equals(name)) {
-                                page.rebuild();
+                                page.checkTimestamp();
                                 return page;
                             }
                         }
@@ -110,7 +110,7 @@ public class EngineImpl extends SpecificationImpl
                 if(_pages == null) {
                     _pages = new ArrayList();
                 }
-                page.rebuild();
+                page.checkTimestamp();
                 _pages.add(new SoftReference(page));
             }
             return page;
@@ -176,7 +176,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected void doPageService(ServiceCycle cycle, boolean pageFlush) {
-        rebuild();
+        checkTimestamp();
         try {
             boolean service = true;
             while(service) {
@@ -211,6 +211,7 @@ public class EngineImpl extends SpecificationImpl
                 }
             }
         } catch(Throwable t) {
+            // TODO エラーページが上手く出ない
             cycle.getResponse().clearBuffer();
             SpecificationUtil.initScope();
             handleError(t, pageFlush);

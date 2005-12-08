@@ -134,10 +134,11 @@ public class TemplateImpl
     }
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
-        rebuild();
-
-        RenderUtil.saveToCycle(this);
+         RenderUtil.saveToCycle(this);
         prepareCycle(topLevelPage);
+
+        checkTimestamp();
+
         ProcessStatus ret = 
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
@@ -157,7 +158,7 @@ public class TemplateImpl
         builder.build(this);
     }
 
-    protected void checkTimestamps() {
+    public void checkTimestamp() {
         Date templateTime = getTimestamp();
         if(templateTime != null) {
             Page page = getPage();
@@ -203,12 +204,10 @@ public class TemplateImpl
     }
 
     public int getChildProcessorSize() {
-        checkTimestamps();
         return _childProcessors.size();
     }
 
     public ProcessorTreeWalker getChildProcessor(int index) {
-        checkTimestamps();
         return (ProcessorTreeWalker)_childProcessors.get(index);
     }
 

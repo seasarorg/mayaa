@@ -86,7 +86,7 @@ public class PageImpl extends SpecificationImpl
         }
     }
 
-    public void rebuild() {
+    public void checkTimestamps() {
         if(isOldSpecification()) {
             parseSpecification();
         } else {
@@ -97,7 +97,7 @@ public class PageImpl extends SpecificationImpl
                     throw new IllegalStateException();
                 }
                 Template template = (Template)obj;
-                template.rebuild();
+                template.checkTimestamp();
             }
         }
     }

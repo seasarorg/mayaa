@@ -89,31 +89,24 @@ public class PageImpl extends SpecificationImpl
     public void checkTimestamps() {
         if(isOldSpecification()) {
             parseSpecification();
-        } else {
-            for(Iterator it = new ChildSpecificationsIterator(_templates);
-                        it.hasNext(); ) {
-                Object obj = it.next();
-                if(obj instanceof Template == false) {
-                    throw new IllegalStateException();
-                }
-                Template template = (Template)obj;
-                template.checkTimestamp();
-            }
         }
     }
 
     public Page getSuperPage() {
-           prepareSuper();
+        prepareSuper();
+        if (_superPage != null) {
+            _superPage.checkTimestamp();
+        }
         return _superPage;
     }
 
     public String getSuperSuffix() {
-           prepareSuper();
+        prepareSuper();
         return _superSuffix;
     }
 
     public String getSuperExtension() {
-           prepareSuper();
+        prepareSuper();
         return _superExtension;
     }
 

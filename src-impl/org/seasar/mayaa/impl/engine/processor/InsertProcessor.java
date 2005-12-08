@@ -135,6 +135,7 @@ public class InsertProcessor
         if(renderPage == null) {
             throw new IllegalStateException();
         }
+        renderPage.checkTimestamp();
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this, 
                 getVariables(), renderPage, requestedSuffix, extension);
         if(ret == null) {

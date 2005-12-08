@@ -134,11 +134,10 @@ public class TemplateImpl
     }
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
-         RenderUtil.saveToCycle(this);
-        prepareCycle(topLevelPage);
-
         checkTimestamp();
 
+        RenderUtil.saveToCycle(this);
+        prepareCycle(topLevelPage);
         ProcessStatus ret = 
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;

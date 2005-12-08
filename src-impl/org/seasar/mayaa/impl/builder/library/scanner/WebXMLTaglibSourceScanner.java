@@ -34,6 +34,8 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
 
     public static final String ASSIGNED =
         WebXMLTaglibSourceScanner.class + ".ASSIGNED";
+    public static final String REAL_PATH =
+        WebXMLTaglibSourceScanner.class + ".REAL_PATH";
 
     protected Iterator scanWebXml(SourceDescriptor source) {
         if (source == null) {
@@ -87,6 +89,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
             }
             source.setSystemID(systemID);
             source.setParameter(SourceAlias.ALIAS, alias.getAlias());
+            source.setParameter(REAL_PATH, alias.getSystemID());
             source.setParameter(ASSIGNED, "true");
             return source;
         }

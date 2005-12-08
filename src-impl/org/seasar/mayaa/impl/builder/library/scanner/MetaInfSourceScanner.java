@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,6 +69,19 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         return false;
     }
 
+    protected void addAliases(
+            JarInputStream jar, String jarPath, Date timestamp, Set aliases)
+            throws IOException {
+        JarEntry entry;
+        while ((entry = jar.getNextJarEntry()) != null) {
+            String entryName = entry.getName();
+            if ("META-INF/MANIFEST.MF".equals(entryName) == false
+                    && entryName.startsWith("META-INF/")) {
+                aliases.add(new SourceAlias(jarPath, entryName, timestamp));
+            }
+        }
+    }
+
     protected void scanSource(SourceDescriptor source, Set aliases) {
         if (source == null && source.exists() == false) {
             throw new IllegalArgumentException();
@@ -75,20 +89,13 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         String jarName = getJarName(source.getSystemID());
         if (StringUtil.hasValue(jarName) &&
                 containIgnores(jarName) == false) {
+
+            String jarPath = _folderScanner.getFolder() + source.getSystemID();
+            Date timestamp = source.getTimestamp();
             InputStream stream = source.getInputStream();
             try {
                 JarInputStream jar = new JarInputStream(stream);
-                JarEntry entry;
-                while ((entry = jar.getNextJarEntry()) != null) {
-                    String entryName = entry.getName();
-                    if (entryName.startsWith("META-INF/")) {
-                        if("META-INF/MANIFEST.MF".equals(
-                                entryName) == false) {
-                            aliases.add(new SourceAlias(
-                                    jarName, entryName, source.getTimestamp()));
-                        }
-                    }
-                }
+                addAliases(jar, jarPath, timestamp, aliases);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {

@@ -67,6 +67,9 @@ MayaaのWEBサイト：
  どうかで判定します。(requestedPathと完全マッチ)
  デフォルトではパターンなしです。
 
+-web.xmlのtaglib-locationにjarファイル名を書いた場合、jar内のMETA-INF/taglib.tld
+ にtaglib-uriをマッピングするよう修正しました。(WEB-INF/libにあるjarのみです)
+
 -------------------------------------------------------------------
 変更点 0.9.20a -> 1.0.0-beta1 (2005年11月28日)
 

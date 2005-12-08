@@ -34,6 +34,8 @@ import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
+import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -145,6 +147,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 		    		continue;
 		    	}
                 */
+                boolean built = false;
 		    	for(int k = 0; k < _builders.size(); k++) {
 			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
 			    	LibraryDefinition library = builder.build(source);
@@ -156,13 +159,46 @@ public class LibraryManagerImpl extends ParameterAwareImpl
                             	LibraryManagerImpl.class, 4,
                             	source.getSystemID(), library.getNamespaceURI()));
                         }
+                        built = true;
 			            break;
 			    	}
-		    	}
+                }
+
+                if (built == false) {
+                    assignTaglibLocation(source);
+                }
 	    	}
     	}
     }
-    
+
+    // condition: already loaded "META-INF/taglib.tld"
+    private void assignTaglibLocation(SourceDescriptor source) {
+        String realPath =
+            source.getParameter(WebXMLTaglibSourceScanner.REAL_PATH);
+        if (StringUtil.isEmpty(realPath)
+                || realPath.endsWith(".jar") == false) {
+            return;
+        }
+
+        for (int j = 0; j < _libraries.size(); j++) {
+            LibraryDefinition library = (LibraryDefinition) _libraries.get(j);
+            for (Iterator it = library.iterateAssignedURI(); it.hasNext(); ) {
+                String uri = (String) it.next();
+                if (realPath.equals(uri)) {
+                    library.addAssignedURI(
+                            source.getParameter(SourceAlias.ALIAS));
+                    if(LOG.isInfoEnabled()) {
+                        LOG.info(StringUtil.getMessage(
+                            LibraryManagerImpl.class, 4,
+                            library.getNamespaceURI() + " (alias)",
+                            source.getParameter(SourceAlias.ALIAS)));
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
     public Iterator iterateLibraryDefinition() {
         if(_libraries == null) {
             buildAll();

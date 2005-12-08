@@ -31,7 +31,6 @@
 	<libraryManager class="org.seasar.mayaa.impl.builder.library.LibraryManagerImpl">
 		<converter name="ProcessorProperty" class="org.seasar.mayaa.impl.builder.library.converter.ProcessorPropertyConverter"/>
 		<converter name="PrefixAwareName" class="org.seasar.mayaa.impl.builder.library.converter.PrefixAwareNameConverter"/>
-		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
 		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner">
 			<parameter name="folder" value="/WEB-INF"/>
 			<parameter name="recursive" value="true"/>
@@ -50,6 +49,10 @@
 			<parameter name="ignore" value="rhino-"/>
 		</scanner>
 		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>
+
+		<!-- after scan jars -->
+		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
+
 		<builder class="org.seasar.mayaa.impl.builder.library.MLDDefinitionBuilder"/>
 		<builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder"/>
 	</libraryManager>

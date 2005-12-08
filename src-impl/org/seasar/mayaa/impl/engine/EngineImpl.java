@@ -212,7 +212,6 @@ public class EngineImpl extends SpecificationImpl
                 }
             }
         } catch(Throwable t) {
-            // TODO エラーページが上手く出ない
             cycle.getResponse().clearBuffer();
             SpecificationUtil.initScope();
             handleError(t, pageFlush);

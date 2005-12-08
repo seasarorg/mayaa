@@ -107,7 +107,7 @@
 			class="org.seasar.mayaa.impl.engine.processor.ExecProcessor">
 		<property name="script" expectedClass="void"/>
 		<property name="src" expectedClass="java.lang.String"/>
-		<property name="encoding" expectedClass="java.lang.String" default="UTF-8"/>
+		<property name="encoding" expectedClass="java.lang.String"/>
 	</processor>
 
 	<processor name="write"

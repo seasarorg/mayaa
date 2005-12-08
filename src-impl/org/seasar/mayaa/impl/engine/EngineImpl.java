@@ -58,8 +58,8 @@ public class EngineImpl extends SpecificationImpl
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
-    private Pattern _templatePathPattern;
-    private Pattern _notTemplatePathPattern;
+    private List _templatePathPatterns;
+    private List _notTemplatePathPatterns;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -127,15 +127,25 @@ public class EngineImpl extends SpecificationImpl
     }
 
     private boolean validPath(String path) {
-        if (_notTemplatePathPattern != null) {
-            if (_notTemplatePathPattern.matcher(path).matches()) {
+        if (_notTemplatePathPatterns != null) {
+            if (matchPatterns(_notTemplatePathPatterns, path)) {
                 return false;
             }
         }
-        if (_templatePathPattern != null) {
-            return _templatePathPattern.matcher(path).matches();
+        if (_templatePathPatterns != null) {
+            return matchPatterns(_templatePathPatterns, path);
         }
         return true;
+    }
+
+    private boolean matchPatterns(List patterns, String path) {
+        for (int i = 0; i < patterns.size(); i++) {
+            Pattern pattern = (Pattern) patterns.get(i);
+            if (pattern.matcher(path).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -262,13 +272,19 @@ public class EngineImpl extends SpecificationImpl
             _defaultSpecification = value;
         } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
+                if (_templatePathPatterns == null) {
+                    _templatePathPatterns = new ArrayList();
+                }
                 Pattern pathPattern = Pattern.compile(value);
-                _templatePathPattern = pathPattern;
+                _templatePathPatterns.add(pathPattern);
             }
         } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                Pattern notPathPattern = Pattern.compile(value);
-                _notTemplatePathPattern = notPathPattern;
+                if (_notTemplatePathPatterns == null) {
+                    _notTemplatePathPatterns = new ArrayList();
+                }
+                Pattern pathPattern = Pattern.compile(value);
+                _notTemplatePathPatterns.add(pathPattern);
             }
         }
         super.setParameter(name, value);
@@ -278,11 +294,27 @@ public class EngineImpl extends SpecificationImpl
         if(DEFAULT_SPECIFICATION.equals(name)) {
             return _defaultSpecification;
         } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
-            return _templatePathPattern.pattern();
+            if (_templatePathPatterns == null) {
+                return null;
+            }
+            return patternToString(_templatePathPatterns);
         } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
-            return _notTemplatePathPattern.pattern();
+            if (_notTemplatePathPatterns == null) {
+                return null;
+            }
+            return patternToString(_notTemplatePathPatterns);
         }
         return super.getParameter(name);
     }
-    
+
+    private String patternToString(List patterns) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(((Pattern) patterns.get(0)).pattern());
+        for (int i = 1; i < patterns.size(); i++) {
+            sb.append("|");
+            sb.append(((Pattern) patterns.get(i)).pattern());
+        }
+        return sb.toString();
+    }
+
 }

@@ -32,7 +32,7 @@ public class WebAppTagHandler extends TagHandler {
 
     public WebAppTagHandler() {
         super("web-app");
-        putHandler(new TagHandler("taglib") {
+        final TagHandler taglibHandler = new TagHandler("taglib") {
             private String _taglibURI;
             private String _taglibLocation;
             private int _lineNumber;
@@ -60,7 +60,7 @@ public class WebAppTagHandler extends TagHandler {
             }
 
             protected void start(
-            		Attributes attributes, String systemID, int lineNumber) {
+                    Attributes attributes, String systemID, int lineNumber) {
                 _taglibURI = null;
                 _taglibLocation = null;
                 _lineNumber = lineNumber;
@@ -70,9 +70,20 @@ public class WebAppTagHandler extends TagHandler {
                 if(StringUtil.isEmpty(_taglibURI) ||
                         StringUtil.isEmpty(_taglibLocation)) {
                     throw new IllegalTaglibDefinitionException(
-                    		"/WEB-INF/web.xml", _lineNumber);
+                            "/WEB-INF/web.xml", _lineNumber);
                 }
                 addLocation(new SourceAlias(_taglibURI, _taglibLocation, null));
+            }
+        };
+
+        // servlet2.3
+        putHandler(taglibHandler);
+
+        // servlet2.4
+        putHandler(new TagHandler("jsp-config") {
+            // initialize
+            {
+                putHandler(taglibHandler);
             }
         });
     }

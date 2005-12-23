@@ -29,6 +29,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.specification.NodeAttributeImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -178,6 +179,8 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
             value = getDefaultValue();
             if(attribute != null) {
                 value = attribute.getValue();
+            } else if (value != null) {
+                attribute = new NodeAttributeImpl(qName, value);
             }
         } else if(attribute != null) {
             String processorName = processorDef.getName();

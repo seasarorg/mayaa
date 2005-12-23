@@ -281,4 +281,27 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    public static String escapeEol(String text) {
+        if (text == null) {
+            return "";
+        }
+        char[] chars = text.toCharArray();
+        StringBuffer sb = new StringBuffer(chars.length + 50);
+
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '\r':
+                    sb.append("<br />");
+                    if (chars.length > i + 1 && chars[i + 1] == '\n') {
+                        i++;
+                    }
+                    break;
+                case '\n': sb.append("<br />"); break;
+                default: sb.append(chars[i]);
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

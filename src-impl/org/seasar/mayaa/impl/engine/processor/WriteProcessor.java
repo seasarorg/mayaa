@@ -34,6 +34,7 @@ public class WriteProcessor extends TemplateProcessorSupport {
     private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
     private ProcessorProperty _escapeWhitespace;
+    private ProcessorProperty _escapeEol;
 
     // MLD property, expectedClass=java.lang.String
     public void setValue(ProcessorProperty value) {
@@ -52,6 +53,10 @@ public class WriteProcessor extends TemplateProcessorSupport {
         _escapeWhitespace = escapeWhitespace;
     }
 
+    public void setEscapeEol(ProcessorProperty escapeEol) {
+        _escapeEol = escapeEol;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_value != null) {
             String ret = (String)_value.getValue().execute(null);
@@ -59,16 +64,17 @@ public class WriteProcessor extends TemplateProcessorSupport {
                 ret = (String)_default.getValue().execute(null);
             }
             if (_escapeXml != null) {
-                boolean escapeXml = ObjectUtil.booleanValue(
-                        _escapeXml.getValue().execute(null), false);
-                if (escapeXml) {
+                if (toBoolean(_escapeXml)) {
                     ret = StringUtil.escapeXml(ret);
                 }
             }
+            if (_escapeEol != null) {
+                if (toBoolean(_escapeEol)) {
+                    ret = StringUtil.escapeEol(ret);
+                }
+            }
             if (_escapeWhitespace != null) {
-                boolean escapeWhitespace = ObjectUtil.booleanValue(
-                        _escapeWhitespace.getValue().execute(null), false);
-                if (escapeWhitespace) {
+                if (toBoolean(_escapeWhitespace)) {
                     ret = StringUtil.escapeWhitespace(ret);
                 }
             }
@@ -76,6 +82,11 @@ public class WriteProcessor extends TemplateProcessorSupport {
             cycle.getResponse().write(ret);
         }
         return ProcessStatus.SKIP_BODY;
+    }
+
+    private boolean toBoolean(ProcessorProperty property) {
+        return ObjectUtil.booleanValue(
+                property.getValue().execute(null), false);
     }
 
 }

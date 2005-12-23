@@ -105,7 +105,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingProperty(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertyDefinition property) {
-        Object value = 
+        Object value =
             property.createProcessorProperty(this, original, injected);
         if(value != null) {
             String propertyName = property.getName();

@@ -128,6 +128,46 @@ public final class StringUtil {
         return ret;
     }
 
+    public static String adjustRelativeName(String base, String relative) {
+        if (isEmpty(base) || isEmpty(relative)) {
+            throw new IllegalArgumentException();
+        }
+
+        if (relative.charAt(0) == '/') {
+            return relative;
+        }
+
+        try {
+            String baseDir = base.substring(0, base.lastIndexOf('/'));
+            return adjustRelative(baseDir, relative);
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected static String adjustRelative(String dir, String relative) {
+        if (isEmpty(relative)) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            if (relative.startsWith("../")) {
+                if (isEmpty(dir)) {
+                    return adjustRelative(dir, relative.substring(3));
+                }
+
+                String parentDir = dir.substring(0, dir.lastIndexOf('/'));
+                return adjustRelative(parentDir, relative.substring(3));
+            } else if (relative.startsWith("./")) {
+                return adjustRelative(dir, relative.substring(2));
+            }
+
+            return dir + "/" + relative;
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static final String SP_OPEN = "${";
     private static final String SP_CLOSE = "}";
 

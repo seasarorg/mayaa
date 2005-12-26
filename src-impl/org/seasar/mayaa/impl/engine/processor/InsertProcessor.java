@@ -109,13 +109,31 @@ public class InsertProcessor
                         engine.getParameter(SUFFIX_SEPARATOR);
                     String[] pagePath =
                         StringUtil.parsePath(_path, suffixSeparator);
-                    page = engine.getPage(pagePath[0]);
+
+                    String pageName = findPageName(getParentProcessor());
+                    page = engine.getPage(
+                            StringUtil.adjustRelativeName(pageName, pagePath[0]));
                     _page = new SoftReference(page);
                     _suffix = pagePath[1];
                     _extension = pagePath[2];
                 }
             }
         }
+    }
+
+    protected String findPageName(ProcessorTreeWalker proc) {
+        if (proc == null) {
+            return null;
+        }
+
+        ProcessorTreeWalker current = proc;
+        do {
+            if (current instanceof Template) {
+                return ((Template) current).getPage().getPageName();
+            }
+            current = current.getParentProcessor();
+        } while (current != null);
+        return null;
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {

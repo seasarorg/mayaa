@@ -80,7 +80,9 @@ public class PageImpl extends SpecificationImpl
             Engine engine = ProviderUtil.getEngine();
             String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
             String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
-            _superPage = engine.getPage(pagePath[0]);
+
+            _superPage = engine.getPage(
+                    StringUtil.adjustRelativeName(_pageName, pagePath[0]));
             _superSuffix = pagePath[1];
             _superExtension = pagePath[2];
         }

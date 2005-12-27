@@ -25,6 +25,7 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
@@ -55,6 +56,9 @@ public abstract class AbstractServiceCycle
         String sid = systemID;
         if (sid.startsWith("/WEB-INF/")) {
             sid = sid.substring(9);
+        } else if (sid.startsWith("/") == false) {
+            String pageName = EngineUtil.getPageName();
+            sid = StringUtil.adjustRelativeName(pageName, sid);
         }
         ApplicationSourceDescriptor appSource =
             new ApplicationSourceDescriptor();

@@ -34,6 +34,7 @@ import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.RenderNotCompletedException;
 import org.seasar.mayaa.impl.engine.RenderUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -110,7 +111,7 @@ public class InsertProcessor
                     String[] pagePath =
                         StringUtil.parsePath(_path, suffixSeparator);
 
-                    String pageName = findPageName(getParentProcessor());
+                    String pageName = EngineUtil.getPageName(getParentProcessor());
                     page = engine.getPage(
                             StringUtil.adjustRelativeName(pageName, pagePath[0]));
                     _page = new SoftReference(page);
@@ -119,21 +120,6 @@ public class InsertProcessor
                 }
             }
         }
-    }
-
-    protected String findPageName(ProcessorTreeWalker proc) {
-        if (proc == null) {
-            return null;
-        }
-
-        ProcessorTreeWalker current = proc;
-        do {
-            if (current instanceof Template) {
-                return ((Template) current).getPage().getPageName();
-            }
-            current = current.getParentProcessor();
-        } while (current != null);
-        return null;
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {

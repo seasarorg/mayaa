@@ -20,6 +20,8 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -50,9 +52,14 @@ public class ExecProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_src != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
+
             String srcValue = (String)_src.getValue().execute(null);
             String encValue = (String)_encoding.getValue().execute(null);
-            cycle.load(srcValue, encValue);
+
+            String pageName = EngineUtil.getPageName(getParentProcessor());
+            String src = StringUtil.adjustRelativeName(pageName, srcValue);
+
+            cycle.load(src, encValue);
         }
         if(_script != null) {
             _script.getValue().execute(null);

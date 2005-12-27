@@ -52,6 +52,26 @@ public class EngineUtil implements CONST_IMPL {
         return ObjectUtil.booleanValue(value, defaultValue);
     }
 
+    public static String getPageName() {
+        Specification spec = SpecificationUtil.findSpecification();
+        if (spec instanceof Page) {
+            return ((Page) spec).getPageName();
+        }
+        throw new IllegalStateException();
+    }
+
+    public static String getPageName(ProcessorTreeWalker proc) {
+        for (ProcessorTreeWalker current = proc;
+                current != null; current = current.getParentProcessor()) {
+            if (current instanceof Page) {
+                return ((Page) current).getPageName();
+            } else if (current instanceof Template) {
+                return ((Template) current).getPage().getPageName();
+            }
+        }
+        throw new IllegalStateException();
+    }
+
     public static Template getTemplate() {
         Specification spec = SpecificationUtil.findSpecification();
         if(spec instanceof Page) {

@@ -36,9 +36,9 @@ public class EchoProcessor extends ElementProcessor
 
     private static final long serialVersionUID = 3924111635172574833L;
 
-    public void setOriginalNode(SpecificationNode node) {
-        super.setOriginalNode(node);
-        setupElement(node);
+    public void setOriginalNode(SpecificationNode originalNode) {
+        super.setOriginalNode(originalNode);
+        setupElement(originalNode);
     }
 
     protected PropertyConverter getConverterForProcessorProperty() {
@@ -52,10 +52,10 @@ public class EchoProcessor extends ElementProcessor
         return converter;
     }
     
-    protected void setupElement(SpecificationNode node) {
-        super.setName(node);
+    protected void setupElement(SpecificationNode originalNode) {
+        super.setName(originalNode);
         PropertyConverter converter = getConverterForProcessorProperty();
-        for (Iterator it = node.iterateAttribute(); it.hasNext();) {
+        for (Iterator it = originalNode.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
             String value = attribute.getValue();
             Class expectedClass = getExpectedClass();

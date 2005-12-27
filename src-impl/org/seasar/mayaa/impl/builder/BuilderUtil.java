@@ -87,6 +87,7 @@ public class BuilderUtil implements CONST_IMPL {
         return path;
     }
 
+    // TODO echo プロセッサの場合の adjust 方法を考える
     public static SpecificationNode createInjectedNode(QName qName, 
             String uri, SpecificationNode original, boolean mayaa) {
         if(qName == null || original == null) {

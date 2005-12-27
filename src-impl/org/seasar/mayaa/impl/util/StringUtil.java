@@ -128,6 +128,14 @@ public final class StringUtil {
         return ret;
     }
 
+    public static boolean isRelativePath(String path) {
+        if (isEmpty(path)) {
+            throw new IllegalArgumentException();
+        }
+
+        return path.charAt(0) != '/' && path.indexOf(':') == -1;
+    }
+
     public static String adjustRelativeName(String base, String relative) {
         if (isEmpty(base) || isEmpty(relative)) {
             throw new IllegalArgumentException();

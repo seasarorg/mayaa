@@ -24,6 +24,8 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -34,6 +36,55 @@ public class BuilderUtil implements CONST_IMPL {
 
     private BuilderUtil() {
         // no instantiation.
+    }
+
+    // TODO リファクタリング・設定可能にする
+    public static String[][] ADJUST_TARGETS = new String[][] {
+        { "a", "href" },
+        { "link", "href" },
+        { "area", "href" },
+        { "base", "href" },
+        { "img", "src" },
+        { "embed", "src" },
+        { "iframe", "src" },
+        { "script", "src" },
+        { "applet", "code" },
+        { "form", "action" },
+        { "object", "data" }
+    };
+
+    private static boolean isAdjustNode(QName nodeName) {
+        String uri = nodeName.getNamespaceURI();
+
+        if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
+            String local = nodeName.getLocalName().toLowerCase();
+            for (int i = 0; i < ADJUST_TARGETS.length; i++) {
+                if (ADJUST_TARGETS[i][0].equals(local)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isAdjustAttribute(
+            QName nodeName, QName attributeName) {
+        String nodeLocal = nodeName.getLocalName().toLowerCase();
+        String attributeLocal = attributeName.getLocalName().toLowerCase();
+        for (int i = 0; i < ADJUST_TARGETS.length; i++) {
+            if (ADJUST_TARGETS[i][0].equals(nodeLocal)
+                    && ADJUST_TARGETS[i][1].equals(attributeLocal)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String adjustRelativePath(String basePath, String path) {
+        if (StringUtil.isRelativePath(path)) {
+            return StringUtil.adjustRelativeName(basePath, path);
+        }
+        return path;
     }
 
     public static SpecificationNode createInjectedNode(QName qName, 
@@ -48,11 +99,24 @@ public class BuilderUtil implements CONST_IMPL {
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, onTemplate, sequenceID);
         if(StringUtil.hasValue(uri)) {
+            boolean needAdjust = isAdjustNode(original.getQName());
+            String baseName = null;
+            if (needAdjust) {
+                String contextPath = CycleUtil.getRequestScope().getContextPath();
+                String pageName = EngineUtil.getPageName(original.getParentNode());
+                baseName = contextPath + pageName;
+            }
+
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
                 NodeAttribute attr = (NodeAttribute)it.next();
                 String attrURI = attr.getQName().getNamespaceURI();
                 if(uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
-                    node.addAttribute(attr.getQName(), attr.getValue());
+                    String attrValue = attr.getValue();
+                    if (needAdjust &&
+                            isAdjustAttribute(original.getQName(), attr.getQName())) {
+                        attrValue = adjustRelativePath(baseName, attrValue);
+                    }
+                    node.addAttribute(attr.getQName(), attrValue);
                 }
             }
         }

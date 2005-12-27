@@ -59,8 +59,6 @@ public class DefaultInjectionChain
         }
         QName qName = original.getQName(); 
         String uri = qName.getNamespaceURI();
-        // TODO application name からの絶対パスに置き換える
-        // コンテキスト名, ページ名が必要
         SpecificationNode element =  BuilderUtil.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original, false);
         StringBuffer name = new StringBuffer();

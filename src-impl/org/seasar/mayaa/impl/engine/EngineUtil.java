@@ -56,6 +56,8 @@ public class EngineUtil implements CONST_IMPL {
         Specification spec = SpecificationUtil.findSpecification();
         if (spec instanceof Page) {
             return ((Page) spec).getPageName();
+        } else if (spec instanceof Engine) {
+            return spec.getSystemID();
         }
         throw new IllegalStateException();
     }
@@ -63,9 +65,17 @@ public class EngineUtil implements CONST_IMPL {
     public static String getPageName(ProcessorTreeWalker proc) {
         for (ProcessorTreeWalker current = proc;
                 current != null; current = current.getParentProcessor()) {
-            if (current instanceof Page) {
-                return ((Page) current).getPageName();
-            } else if (current instanceof Template) {
+            if (current instanceof Template) {
+                return ((Template) current).getPage().getPageName();
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    public static String getPageName(NodeTreeWalker node) {
+        for (NodeTreeWalker current = node;
+                current != null; current = current.getParentNode()) {
+            if (current instanceof Template) {
                 return ((Template) current).getPage().getPageName();
             }
         }

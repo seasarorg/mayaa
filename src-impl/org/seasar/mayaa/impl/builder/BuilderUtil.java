@@ -47,6 +47,8 @@ public class BuilderUtil implements CONST_IMPL {
         { "img", "src" },
         { "embed", "src" },
         { "iframe", "src" },
+        { "frame", "src" },
+        { "frame", "longdesc" },
         { "script", "src" },
         { "applet", "code" },
         { "form", "action" },

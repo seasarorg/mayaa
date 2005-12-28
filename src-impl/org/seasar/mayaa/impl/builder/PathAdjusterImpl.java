@@ -56,7 +56,7 @@ public class PathAdjusterImpl
 
     public void setParameter(String name, String value) {
         if ("enabled".equals(name)) {
-            _enabled = Boolean.getBoolean(value);
+            _enabled = Boolean.valueOf(value).booleanValue();
         }
         super.setParameter(name, value);
     }

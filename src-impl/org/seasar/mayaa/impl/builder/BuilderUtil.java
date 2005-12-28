@@ -38,55 +38,68 @@ public class BuilderUtil implements CONST_IMPL {
         // no instantiation.
     }
 
+    public static final PathAdjuster _adjuster = new PathAdjuster();
+
     // TODO リファクタリング・設定可能にする
-    public static String[][] ADJUST_TARGETS = new String[][] {
-        { "a", "href" },
-        { "link", "href" },
-        { "area", "href" },
-        { "base", "href" },
-        { "img", "src" },
-        { "embed", "src" },
-        { "iframe", "src" },
-        { "frame", "src" },
-        { "frame", "longdesc" },
-        { "script", "src" },
-        { "applet", "code" },
-        { "form", "action" },
-        { "object", "data" }
-    };
+    public static class PathAdjuster {
 
-    private static boolean isAdjustNode(QName nodeName) {
-        String uri = nodeName.getNamespaceURI();
+        private String[][] _adjustTarget;
 
-        if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
-            String local = nodeName.getLocalName().toLowerCase();
-            for (int i = 0; i < ADJUST_TARGETS.length; i++) {
-                if (ADJUST_TARGETS[i][0].equals(local)) {
+        public PathAdjuster() {
+            this(new String[][] {
+                { "a", "href" },
+                { "link", "href" },
+                { "area", "href" },
+                { "base", "href" },
+                { "img", "src" },
+                { "embed", "src" },
+                { "iframe", "src" },
+                { "frame", "src" },
+                { "frame", "longdesc" },
+                { "script", "src" },
+                { "applet", "code" },
+                { "form", "action" },
+                { "object", "data" }
+            });
+        }
+
+        public PathAdjuster(String[][] adjustTarget) {
+            _adjustTarget = adjustTarget;
+        }
+
+        public boolean isTargetNode(QName nodeName) {
+            String uri = nodeName.getNamespaceURI();
+
+            if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
+                String local = nodeName.getLocalName().toLowerCase();
+                for (int i = 0; i < _adjustTarget.length; i++) {
+                    if (_adjustTarget[i][0].equals(local)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public boolean isTargetAttribute(
+                QName nodeName, QName attributeName) {
+            String nodeLocal = nodeName.getLocalName().toLowerCase();
+            String attributeLocal = attributeName.getLocalName().toLowerCase();
+            for (int i = 0; i < _adjustTarget.length; i++) {
+                if (_adjustTarget[i][0].equals(nodeLocal)
+                        && _adjustTarget[i][1].equals(attributeLocal)) {
                     return true;
                 }
             }
+            return false;
         }
-        return false;
-    }
 
-    private static boolean isAdjustAttribute(
-            QName nodeName, QName attributeName) {
-        String nodeLocal = nodeName.getLocalName().toLowerCase();
-        String attributeLocal = attributeName.getLocalName().toLowerCase();
-        for (int i = 0; i < ADJUST_TARGETS.length; i++) {
-            if (ADJUST_TARGETS[i][0].equals(nodeLocal)
-                    && ADJUST_TARGETS[i][1].equals(attributeLocal)) {
-                return true;
+        public String adjustRelativePath(String basePath, String path) {
+            if (StringUtil.isRelativePath(path)) {
+                return StringUtil.adjustRelativeName(basePath, path);
             }
+            return path;
         }
-        return false;
-    }
-
-    private static String adjustRelativePath(String basePath, String path) {
-        if (StringUtil.isRelativePath(path)) {
-            return StringUtil.adjustRelativeName(basePath, path);
-        }
-        return path;
     }
 
     // TODO echo プロセッサの場合の adjust 方法を考える
@@ -102,12 +115,12 @@ public class BuilderUtil implements CONST_IMPL {
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, onTemplate, sequenceID);
         if(StringUtil.hasValue(uri)) {
-            boolean needAdjust = isAdjustNode(original.getQName());
-            String baseName = null;
+            boolean needAdjust = _adjuster.isTargetNode(original.getQName());
+            String basePath = null;
             if (needAdjust) {
                 String contextPath = CycleUtil.getRequestScope().getContextPath();
-                String pageName = EngineUtil.getPageName(original.getParentNode());
-                baseName = contextPath + pageName;
+                String sourcePath = EngineUtil.getSourcePath(original);
+                basePath = contextPath + sourcePath;
             }
 
             for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
@@ -116,8 +129,10 @@ public class BuilderUtil implements CONST_IMPL {
                 if(uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
                     String attrValue = attr.getValue();
                     if (needAdjust &&
-                            isAdjustAttribute(original.getQName(), attr.getQName())) {
-                        attrValue = adjustRelativePath(baseName, attrValue);
+                            _adjuster.isTargetAttribute(
+                                    original.getQName(), attr.getQName())) {
+                        attrValue =
+                            _adjuster.adjustRelativePath(basePath, attrValue);
                     }
                     node.addAttribute(attr.getQName(), attrValue);
                 }

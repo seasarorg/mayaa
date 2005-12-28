@@ -39,7 +39,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
 
     private boolean _outputWhitespace = true;
 
-    protected XMLReaderPool getXMLReaderPool(	String systemID) {
+    protected XMLReaderPool getXMLReaderPool(String systemID) {
         return XMLReaderPool.getPool();
     }
 

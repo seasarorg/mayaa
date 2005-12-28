@@ -111,9 +111,10 @@ public class InsertProcessor
                     String[] pagePath =
                         StringUtil.parsePath(_path, suffixSeparator);
 
-                    String pageName = EngineUtil.getPageName(getParentProcessor());
+                    String sourcePath =
+                        EngineUtil.getSourcePath(getParentProcessor());
                     page = engine.getPage(
-                            StringUtil.adjustRelativeName(pageName, pagePath[0]));
+                            StringUtil.adjustRelativeName(sourcePath, pagePath[0]));
                     _page = new SoftReference(page);
                     _suffix = pagePath[1];
                     _extension = pagePath[2];
@@ -213,8 +214,8 @@ public class InsertProcessor
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);
         doRender.pushInsertProcessor(this);
-        ProcessStatus ret = RenderUtil.renderTemplateProcessor(
-                topLevelPage, insertRoot);
+        ProcessStatus ret =
+                RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot);
         doRender.popInsertProcessor();
         return ret;
     }

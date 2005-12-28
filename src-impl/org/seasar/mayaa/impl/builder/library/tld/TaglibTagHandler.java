@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.builder.library.tld;
 
 import org.seasar.mayaa.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
 
@@ -57,7 +58,7 @@ public class TaglibTagHandler extends TagHandler {
     protected void start(
     		Attributes attributes, String systemID, int lineNumber) {
         _library = new TLDLibraryDefinition();
-        _library.setSystemID(systemID);
+        _library.setSystemID(StringUtil.removeFileProtocol(systemID));
         _library.setLineNumber(lineNumber);
     }
 

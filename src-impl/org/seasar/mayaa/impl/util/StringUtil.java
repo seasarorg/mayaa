@@ -130,15 +130,20 @@ public final class StringUtil {
 
     public static boolean isRelativePath(String path) {
         if (isEmpty(path)) {
-            throw new IllegalArgumentException();
+            return true;
         }
 
-        return path.charAt(0) != '/' && path.indexOf(':') == -1;
+        return (path.charAt(0) != '/')
+                && (path.indexOf(':') == -1)
+                && (path.startsWith("${") == false);
     }
 
     public static String adjustRelativeName(String base, String relative) {
-        if (isEmpty(base) || isEmpty(relative)) {
+        if (isEmpty(base)) {
             throw new IllegalArgumentException();
+        }
+        if (isEmpty(relative)) {
+            return base.substring(0, base.lastIndexOf('/') + 1);
         }
 
         if (relative.charAt(0) == '/') {
@@ -174,6 +179,13 @@ public final class StringUtil {
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String removeFileProtocol(String systemID) {
+        if (hasValue(systemID) && systemID.startsWith("file://")) {
+            return systemID.substring(7);
+        }
+        return systemID;
     }
 
     private static final String SP_OPEN = "${";

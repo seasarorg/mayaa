@@ -52,34 +52,23 @@ public class EngineUtil implements CONST_IMPL {
         return ObjectUtil.booleanValue(value, defaultValue);
     }
 
-    public static String getPageName() {
+    public static String getSourcePath() {
         Specification spec = SpecificationUtil.findSpecification();
-        if (spec instanceof Page) {
-            return ((Page) spec).getPageName();
-        } else if (spec instanceof Engine) {
-            return spec.getSystemID();
-        }
-        throw new IllegalStateException();
+        return spec.getSystemID();
     }
 
-    public static String getPageName(ProcessorTreeWalker proc) {
+    public static String getSourcePath(ProcessorTreeWalker proc) {
         for (ProcessorTreeWalker current = proc;
                 current != null; current = current.getParentProcessor()) {
             if (current instanceof Template) {
-                return ((Template) current).getPage().getPageName();
+                return ((Template) current).getSystemID();
             }
         }
         throw new IllegalStateException();
     }
 
-    public static String getPageName(NodeTreeWalker node) {
-        for (NodeTreeWalker current = node;
-                current != null; current = current.getParentNode()) {
-            if (current instanceof Template) {
-                return ((Template) current).getPage().getPageName();
-            }
-        }
-        throw new IllegalStateException();
+    public static String getSourcePath(NodeTreeWalker node) {
+        return node.getSystemID();
     }
 
     public static Template getTemplate() {

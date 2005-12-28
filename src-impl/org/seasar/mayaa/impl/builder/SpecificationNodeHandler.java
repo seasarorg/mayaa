@@ -125,7 +125,7 @@ public class SpecificationNodeHandler
     }
     
     protected SpecificationNode addNode(QName qName) {
-        String systemID = _locator.getSystemId();
+        String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         int lineNumber = _locator.getLineNumber();
 		SpecificationNode child = SpecificationUtil.createSpecificationNode(
 				qName, systemID, lineNumber, _onTemplate, _sequenceID);

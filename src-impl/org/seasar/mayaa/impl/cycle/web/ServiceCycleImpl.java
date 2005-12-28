@@ -73,12 +73,14 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         return _response;
     }
 
+	// TODO パス解決するか？
     public void forward(String forwardPath) {
         _request.setForwardPath(forwardPath);
         _response.clearBuffer();
         throw new PageForwarded();
     }
 
+    // TODO パス解決するか？
     public void redirect(String url) {
         if (_response.isFlushed() == false) {
     		_response.redirect(url);

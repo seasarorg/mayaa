@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.provider;
 
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.library.LibraryManager;
@@ -37,7 +38,8 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     private LibraryManager _libraryManager; 
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
-	
+    private PathAdjuster _pathAdjuster;
+
     public void setEngine(Engine engine) {
         if(engine == null) {
             throw new IllegalArgumentException();
@@ -94,7 +96,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     	}
         return _specificationBuilder;
     }
-    
+
     public void setTemplateBuilder(TemplateBuilder templateBuilder) {
         if(templateBuilder == null) {
             throw new IllegalArgumentException();
@@ -107,6 +109,20 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     	    throw new IllegalStateException();
     	}
         return _templateBuilder;
+    }
+
+    public void setPathAdjuster(PathAdjuster pathAdjuster) {
+        if(pathAdjuster == null) {
+            throw new IllegalArgumentException();
+        }
+        _pathAdjuster = pathAdjuster;
+    }
+
+    public PathAdjuster getPathAdjuster() {
+        if(_pathAdjuster == null) {
+            throw new IllegalStateException();
+        }
+        return _pathAdjuster;
     }
 
 }

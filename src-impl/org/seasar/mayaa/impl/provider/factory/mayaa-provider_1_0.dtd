@@ -4,7 +4,8 @@
         "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN">
 
 <!ELEMENT provider (description?, engine?, scriptEnvironment?, 
-		specificationBuilder?, libraryManager?, templateBuilder?, parameter*) >
+		specificationBuilder?, libraryManager?, templateBuilder?,
+		pathAdjuster?, parameter*) >
 <!ATTLIST provider class CDATA #IMPLIED>
 
 <!ELEMENT description (#PCDATA)>
@@ -47,3 +48,6 @@
 
 <!ELEMENT resolver (description?, parameter*)>
 <!ATTLIST resolver class CDATA #REQUIRED>
+
+<!ELEMENT pathAdjuster (description?, parameter*)>
+<!ATTLIST pathAdjuster class CDATA #IMPLIED>

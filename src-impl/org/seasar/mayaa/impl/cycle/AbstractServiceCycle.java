@@ -56,9 +56,9 @@ public abstract class AbstractServiceCycle
         String sid = systemID;
         if (sid.startsWith("/WEB-INF/")) {
             sid = sid.substring(9);
-        } else if (sid.startsWith("/") == false) {
+        } else if (StringUtil.isRelativePath(sid)) {
             String sourcePath = EngineUtil.getSourcePath();
-            sid = StringUtil.adjustRelativeName(sourcePath, sid);
+            sid = StringUtil.adjustRelativePath(sourcePath, sid);
         }
         ApplicationSourceDescriptor appSource =
             new ApplicationSourceDescriptor();

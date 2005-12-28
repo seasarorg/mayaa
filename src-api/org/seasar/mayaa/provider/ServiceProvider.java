@@ -18,6 +18,7 @@ package org.seasar.mayaa.provider;
 import java.io.Serializable;
 
 import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.library.LibraryManager;
@@ -89,5 +90,17 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @return テンプレートビルダ。
      */
     TemplateBuilder getTemplateBuilder();
+
+    /**
+     * HTMLタグ属性の相対パスを絶対パスに置換するオブジェクトを設定する。
+     * @param pathAdjuster パスアジャスタ。
+     */
+    void setPathAdjuster(PathAdjuster pathAdjuster);
+
+    /**
+     * HTMLタグ属性の相対パスを絶対パスに置換するオブジェクトを取得する。
+     * @return パスアジャスタ。
+     */
+    PathAdjuster getPathAdjuster();
     
 }

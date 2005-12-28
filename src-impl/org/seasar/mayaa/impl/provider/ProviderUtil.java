@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.provider;
 
 import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.library.LibraryManager;
@@ -53,6 +54,10 @@ public class ProviderUtil {
 
     public static TemplateBuilder getTemplateBuilder() {
         return getServiceProvider().getTemplateBuilder();
+    }
+    
+    public static PathAdjuster getPathAdjuster() {
+        return getServiceProvider().getPathAdjuster();
     }
     
     public static Engine getEngine() {

@@ -114,7 +114,7 @@ public class InsertProcessor
                     String sourcePath =
                         EngineUtil.getSourcePath(getParentProcessor());
                     page = engine.getPage(
-                            StringUtil.adjustRelativeName(sourcePath, pagePath[0]));
+                            StringUtil.adjustRelativePath(sourcePath, pagePath[0]));
                     _page = new SoftReference(page);
                     _suffix = pagePath[1];
                     _extension = pagePath[2];

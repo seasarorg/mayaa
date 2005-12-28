@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder;
 
 import java.util.Iterator;
 
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
@@ -27,6 +28,7 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -38,71 +40,6 @@ public class BuilderUtil implements CONST_IMPL {
         // no instantiation.
     }
 
-    public static final PathAdjuster _adjuster = new PathAdjuster();
-
-    // TODO リファクタリング・設定可能にする
-    public static class PathAdjuster {
-
-        private String[][] _adjustTarget;
-
-        public PathAdjuster() {
-            this(new String[][] {
-                { "a", "href" },
-                { "link", "href" },
-                { "area", "href" },
-                { "base", "href" },
-                { "img", "src" },
-                { "embed", "src" },
-                { "iframe", "src" },
-                { "frame", "src" },
-                { "frame", "longdesc" },
-                { "script", "src" },
-                { "applet", "code" },
-                { "form", "action" },
-                { "object", "data" }
-            });
-        }
-
-        public PathAdjuster(String[][] adjustTarget) {
-            _adjustTarget = adjustTarget;
-        }
-
-        public boolean isTargetNode(QName nodeName) {
-            String uri = nodeName.getNamespaceURI();
-
-            if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
-                String local = nodeName.getLocalName().toLowerCase();
-                for (int i = 0; i < _adjustTarget.length; i++) {
-                    if (_adjustTarget[i][0].equals(local)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public boolean isTargetAttribute(
-                QName nodeName, QName attributeName) {
-            String nodeLocal = nodeName.getLocalName().toLowerCase();
-            String attributeLocal = attributeName.getLocalName().toLowerCase();
-            for (int i = 0; i < _adjustTarget.length; i++) {
-                if (_adjustTarget[i][0].equals(nodeLocal)
-                        && _adjustTarget[i][1].equals(attributeLocal)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public String adjustRelativePath(String basePath, String path) {
-            if (StringUtil.isRelativePath(path)) {
-                return StringUtil.adjustRelativeName(basePath, path);
-            }
-            return path;
-        }
-    }
-
-    // TODO echo プロセッサの場合の adjust 方法を考える
     public static SpecificationNode createInjectedNode(QName qName, 
             String uri, SpecificationNode original, boolean mayaa) {
         if(qName == null || original == null) {
@@ -115,7 +52,9 @@ public class BuilderUtil implements CONST_IMPL {
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, onTemplate, sequenceID);
         if(StringUtil.hasValue(uri)) {
-            boolean needAdjust = _adjuster.isTargetNode(original.getQName());
+            PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
+
+            boolean needAdjust = adjuster.isTargetNode(original.getQName());
             String basePath = null;
             if (needAdjust) {
                 String contextPath = CycleUtil.getRequestScope().getContextPath();
@@ -129,10 +68,10 @@ public class BuilderUtil implements CONST_IMPL {
                 if(uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
                     String attrValue = attr.getValue();
                     if (needAdjust &&
-                            _adjuster.isTargetAttribute(
+                            adjuster.isTargetAttribute(
                                     original.getQName(), attr.getQName())) {
                         attrValue =
-                            _adjuster.adjustRelativePath(basePath, attrValue);
+                            StringUtil.adjustRelativePath(basePath, attrValue);
                     }
                     node.addAttribute(attr.getQName(), attrValue);
                 }

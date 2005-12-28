@@ -56,10 +56,12 @@ public class ExecProcessor extends TemplateProcessorSupport {
             String srcValue = (String)_src.getValue().execute(null);
             String encValue = (String)_encoding.getValue().execute(null);
 
-            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-            String src = StringUtil.adjustRelativeName(sourcePath, srcValue);
+            if (StringUtil.isRelativePath(srcValue)) {
+                String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+                srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
+            }
 
-            cycle.load(src, encValue);
+            cycle.load(srcValue, encValue);
         }
         if(_script != null) {
             _script.getValue().execute(null);

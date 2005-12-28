@@ -130,52 +130,46 @@ public final class StringUtil {
 
     public static boolean isRelativePath(String path) {
         if (isEmpty(path)) {
-            return true;
+            return false;
         }
-
-        return (path.charAt(0) != '/')
-                && (path.indexOf(':') == -1)
-                && (path.startsWith("${") == false);
+        return path.startsWith("./");
     }
 
-    public static String adjustRelativeName(String base, String relative) {
-        if (isEmpty(base)) {
-            throw new IllegalArgumentException();
-        }
-        if (isEmpty(relative)) {
-            return base.substring(0, base.lastIndexOf('/') + 1);
+    public static String adjustRelativePath(String base, String path) {
+        if (isRelativePath(path) == false) {
+            return path;
         }
 
-        if (relative.charAt(0) == '/') {
-            return relative;
+        if (isEmpty(base)) {
+            throw new IllegalArgumentException();
         }
 
         try {
             String baseDir = base.substring(0, base.lastIndexOf('/'));
-            return adjustRelative(baseDir, relative);
+            return adjustRecursive(baseDir, path);
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected static String adjustRelative(String dir, String relative) {
-        if (isEmpty(relative)) {
+    protected static String adjustRecursive(String dir, String path) {
+        if (isEmpty(path)) {
             throw new IllegalArgumentException();
         }
 
         try {
-            if (relative.startsWith("../")) {
+            if (path.startsWith("../")) {
                 if (isEmpty(dir)) {
-                    return adjustRelative(dir, relative.substring(3));
+                    return adjustRecursive(dir, path.substring(3));
                 }
 
                 String parentDir = dir.substring(0, dir.lastIndexOf('/'));
-                return adjustRelative(parentDir, relative.substring(3));
-            } else if (relative.startsWith("./")) {
-                return adjustRelative(dir, relative.substring(2));
+                return adjustRecursive(parentDir, path.substring(3));
+            } else if (path.startsWith("./")) {
+                return adjustRecursive(dir, path.substring(2));
             }
 
-            return dir + "/" + relative;
+            return dir + "/" + path;
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }

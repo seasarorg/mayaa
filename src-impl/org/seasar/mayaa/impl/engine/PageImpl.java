@@ -82,7 +82,7 @@ public class PageImpl extends SpecificationImpl
             String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
 
             _superPage = engine.getPage(
-                    StringUtil.adjustRelativeName(_pageName, pagePath[0]));
+                    StringUtil.adjustRelativePath(_pageName, pagePath[0]));
             _superSuffix = pagePath[1];
             _superExtension = pagePath[2];
         }

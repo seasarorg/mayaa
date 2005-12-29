@@ -50,6 +50,7 @@ public abstract class CycleWriter extends Writer {
     /**
      * 指定Writerにバッファ内容を書き出す。
      * @param writer 書き出し先のWriter。
+     * @throws IOException
      */
     public abstract void writeOut(Writer writer) throws IOException;
     

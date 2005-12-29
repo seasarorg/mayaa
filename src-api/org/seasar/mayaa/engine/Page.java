@@ -62,6 +62,8 @@ public interface Page
     
     /**
      * テンプレート接尾辞より適切なTemplateオブジェクトをロードして返す。
+     * @param suffix テンプレート接尾辞。
+     * @param extension テンプレート拡張子。
      * @return レンダリングするテンプレート。
      */
     Template getTemplate(String suffix, String extension);

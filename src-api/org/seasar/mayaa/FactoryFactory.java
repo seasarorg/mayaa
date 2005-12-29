@@ -91,6 +91,7 @@ public abstract class FactoryFactory implements Serializable {
     
     /**
      * ファクトリを生成する。
+     * @param interfaceClass ファクトリのinterfaceのClassオブジェクト
      * @param context コンテキストオブジェクト。
      * @return ファクトリ。
      */

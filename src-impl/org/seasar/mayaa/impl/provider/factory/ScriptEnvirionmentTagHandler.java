@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,11 +27,11 @@ import org.xml.sax.Attributes;
  */
 public class ScriptEnvirionmentTagHandler
         extends AbstractParameterAwareTagHandler {
-    
+
     private ProviderTagHandler _parent;
     private ScriptEnvironment _beforeEnv;
     private ScriptEnvironment _currentEnv;
-    
+
     public ScriptEnvirionmentTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("scriptEnvironment");
@@ -44,9 +44,9 @@ public class ScriptEnvirionmentTagHandler
         }
         putHandler(new ScopeTagHandler(this));
     }
-    
+
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         Class environmentClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentEnv = (ScriptEnvironment)MarshallUtil.marshall(
@@ -54,18 +54,18 @@ public class ScriptEnvirionmentTagHandler
                 systemID, lineNumber);
         _parent.getServiceProvider().setScriptEnvironment(_currentEnv);
     }
-    
+
     protected void end(String body) {
         _currentEnv = null;
     }
-    
+
     public ScriptEnvironment getScriptEnvironment() {
         if(_currentEnv == null) {
             throw new IllegalStateException();
         }
         return _currentEnv;
     }
-    
+
     public ParameterAware getParameterAware() {
         return getScriptEnvironment();
     }

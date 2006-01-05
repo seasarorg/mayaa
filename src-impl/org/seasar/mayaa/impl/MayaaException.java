@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -25,18 +25,18 @@ import org.seasar.mayaa.impl.util.AbstractMessagedException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class MayaaException 
+public abstract class MayaaException
         extends AbstractMessagedException {
 
-    private static final Log LOG = 
+    private static final Log LOG =
         LogFactory.getLog(MayaaException.class);
-    
+
     private String _originalSystemID;
     private int _originalLineNumber = -1;
     private String _injectedSystemID;
     private int _injectedLineNumber = -1;
-    
-	public MayaaException() {
+
+    public MayaaException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if(cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();
@@ -51,9 +51,9 @@ public abstract class MayaaException
             }
         }
     }
-    
+
     protected abstract String[] getMessageParams();
-    
+
     protected String[] getParamValues() {
         String[] params = ZERO_PARAM;
         try {
@@ -78,17 +78,17 @@ public abstract class MayaaException
     }
 
     public String getOriginalSystemID() {
-    	return _originalSystemID;
+        return _originalSystemID;
     }
-    
+
     public int getOriginalLineNumber() {
         return _originalLineNumber;
     }
-    
+
     public String getInjectedSystemID() {
-    	return _injectedSystemID;
+        return _injectedSystemID;
     }
-    
+
     public int getInjectedLineNumber() {
         return _injectedLineNumber;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,16 +42,16 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateImpl 
-		extends SpecificationImpl implements Template, CONST_IMPL {
+public class TemplateImpl
+        extends SpecificationImpl implements Template, CONST_IMPL {
 
-	private static final long serialVersionUID = -5368325487192629078L;
+    private static final long serialVersionUID = -5368325487192629078L;
 
     private Page _page;
     private String _suffix ;
     private String _extension;
     private List _childProcessors = new ArrayList();
-    
+
     public TemplateImpl(Page page, String suffix, String extension) {
         if(page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
@@ -60,7 +60,7 @@ public class TemplateImpl
         _suffix = suffix;
         _extension = extension;
     }
-    
+
     public Page getPage() {
         return _page;
     }
@@ -68,9 +68,9 @@ public class TemplateImpl
     public String getSuffix() {
         return _suffix;
     }
-    
+
     public String getExtension() {
-    	return _extension;
+        return _extension;
     }
 
     protected String getMayaaAttribute(Specification spec, QName qname) {
@@ -138,11 +138,11 @@ public class TemplateImpl
 
         RenderUtil.saveToCycle(this);
         prepareCycle(topLevelPage);
-        ProcessStatus ret = 
+        ProcessStatus ret =
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
     }
-    
+
     public void clear() {
         synchronized(this) {
             _childProcessors.clear();
@@ -175,7 +175,7 @@ public class TemplateImpl
     }
 
     // ProcessorTreeWalker implements --------------------------------
-    
+
     public Map getVariables() {
         return null;
     }
@@ -192,7 +192,7 @@ public class TemplateImpl
         return 0;
     }
 
-	public void addChildProcessor(ProcessorTreeWalker child) {
+    public void addChildProcessor(ProcessorTreeWalker child) {
         if(child == null) {
             throw new IllegalArgumentException();
         }

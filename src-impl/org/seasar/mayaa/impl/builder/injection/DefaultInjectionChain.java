@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -25,7 +25,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DefaultInjectionChain 
+public class DefaultInjectionChain
         implements InjectionChain, CONST_IMPL {
 
     private QName[] _specialNames = new QName[] {
@@ -39,7 +39,7 @@ public class DefaultInjectionChain
     protected QName[] getSpecialNames() {
         return _specialNames;
     }
-    
+
     protected boolean isSpecialNode(QName qName) {
         QName[] specialNames =  getSpecialNames();
         for(int i = 0; i < specialNames.length; i++) {
@@ -49,7 +49,7 @@ public class DefaultInjectionChain
         }
         return false;
     }
-    
+
     public SpecificationNode getNode(SpecificationNode original) {
         if(original == null) {
             throw new IllegalArgumentException();
@@ -57,7 +57,7 @@ public class DefaultInjectionChain
         if(isSpecialNode(original.getQName())) {
             return original.copyTo();
         }
-        QName qName = original.getQName(); 
+        QName qName = original.getQName();
         String uri = qName.getNamespaceURI();
         SpecificationNode element =  BuilderUtil.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original, false);

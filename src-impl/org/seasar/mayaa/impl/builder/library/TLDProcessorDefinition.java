@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,7 +42,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     private Class _teiClass;
 
     public void setProcessorClass(Class processorClass) {
-        if(processorClass == null || 
+        if(processorClass == null ||
                 Tag.class.isAssignableFrom(processorClass) == false) {
             throw new IllegalArgumentException();
         }
@@ -57,7 +57,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     public void setExtraInfoClass(Class teiClass) {
-        if(teiClass == null || 
+        if(teiClass == null ||
                 TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
             throw new IllegalArgumentException();
         }
@@ -73,20 +73,20 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         processor.setTagClass(getProcessorClass());
         return processor;
     }
-    
+
     protected void settingPropertySet(
-            SpecificationNode original, SpecificationNode injected, 
+            SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertySet propertySet) {
         Hashtable tagDataSeed = new Hashtable();
 
         for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
-            Object prop = 
+            Object prop =
                 property.createProcessorProperty(this, original, injected);
             if(prop != null) {
                 ProcessorProperty currentProp = (ProcessorProperty) prop;
-    	        JspProcessor jsp = (JspProcessor)processor;
-    	        jsp.addProcessorProperty(currentProp);
+                JspProcessor jsp = (JspProcessor)processor;
+                jsp.addProcessorProperty(currentProp);
 
                 CompiledScript value = currentProp.getValue();
                 tagDataSeed.put(

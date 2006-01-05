@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,13 +27,13 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertySetTagHandler 
+public class PropertySetTagHandler
         extends AbstractParameterAwareTagHandler {
 
     private TagHandler _parent;
     private LibraryTagHandler _libraryTagHandler;
     private PropertySetImpl _propertySet;
-    
+
     public PropertySetTagHandler(String name,
             TagHandler parent, LibraryTagHandler libraryTagHandler) {
         super(name);
@@ -48,7 +48,7 @@ public class PropertySetTagHandler
     protected PropertySetImpl createPropertySet() {
         return new PropertySetImpl();
     }
-    
+
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
@@ -63,10 +63,10 @@ public class PropertySetTagHandler
         _propertySet.setSystemID(systemID);
         _propertySet.setLineNumber(lineNumber);
     }
-    
+
     protected void addToLibrary(LibraryDefinitionImpl library) {
         if(_parent instanceof ProcessorTagHandler) {
-            ProcessorDefinitionImpl processorDef = 
+            ProcessorDefinitionImpl processorDef =
                 ((ProcessorTagHandler)_parent).getProcessorDefinition();
             processorDef.addPropertySetRef(_propertySet.getName(),
                     _propertySet.getSystemID(), _propertySet.getLineNumber());
@@ -82,7 +82,7 @@ public class PropertySetTagHandler
         addToLibrary(library);
         _propertySet = null;
     }
-    
+
     public PropertySetImpl getPropertySet() {
         if(_propertySet == null) {
             throw new IllegalStateException();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,13 +42,13 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class RenderUtil implements CONST_IMPL {
 
-    private static final ProcessStatus SKIP_BODY = 
+    private static final ProcessStatus SKIP_BODY =
             ProcessStatus.SKIP_BODY;
-    private static final ProcessStatus EVAL_BODY_INCLUDE = 
+    private static final ProcessStatus EVAL_BODY_INCLUDE =
             ProcessStatus.EVAL_BODY_INCLUDE;
-    private static final ProcessStatus SKIP_PAGE = 
+    private static final ProcessStatus SKIP_PAGE =
             ProcessStatus.SKIP_PAGE;
-    private static final ProcessStatus EVAL_PAGE = 
+    private static final ProcessStatus EVAL_PAGE =
             ProcessStatus.EVAL_PAGE;
     private static final ProcessStatus EVAL_BODY_AGAIN =
             ProcessStatus.EVAL_BODY_AGAIN;
@@ -60,8 +60,8 @@ public class RenderUtil implements CONST_IMPL {
     }
 
     public static boolean isEvaluation(TemplateProcessor current) {
-        return current instanceof ChildEvaluationProcessor && 
-        		((ChildEvaluationProcessor)current).isChildEvaluation();
+        return current instanceof ChildEvaluationProcessor &&
+                ((ChildEvaluationProcessor)current).isChildEvaluation();
     }
 
     public static ChildEvaluationProcessor getEvaluation(
@@ -71,7 +71,7 @@ public class RenderUtil implements CONST_IMPL {
 
     public static boolean isIteration(TemplateProcessor current) {
         return current instanceof IterationProcessor &&
-        		((IterationProcessor)current).isIteration();
+                ((IterationProcessor)current).isIteration();
     }
 
     public static IterationProcessor getIteration(
@@ -81,12 +81,12 @@ public class RenderUtil implements CONST_IMPL {
 
     public static boolean isDuplicated(TemplateProcessor current) {
         return current instanceof ElementProcessor &&
-        		((ElementProcessor)current).isDuplicated(); 
+                ((ElementProcessor)current).isDuplicated();
     }
 
     public static boolean isTryCatchFinally(TemplateProcessor current) {
         if( current instanceof TryCatchFinallyProcessor ){
-            TryCatchFinallyProcessor tryCatchFinallyProcessor 
+            TryCatchFinallyProcessor tryCatchFinallyProcessor
                                         = (TryCatchFinallyProcessor)current;
             return tryCatchFinallyProcessor.canCatch();
         }
@@ -121,10 +121,10 @@ public class RenderUtil implements CONST_IMPL {
         saveToCycle(current);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
-        try { 
+        try {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
-        	startRet = current.doStartProcess(topLevelPage);
+            startRet = current.doStartProcess(topLevelPage);
             if(startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
@@ -135,16 +135,16 @@ public class RenderUtil implements CONST_IMPL {
                         cycle.getResponse().pushWriter());
                 getEvaluation(current).doInitChildProcess();
             }
-            if(startRet == EVAL_BODY_INCLUDE || 
+            if(startRet == EVAL_BODY_INCLUDE ||
                     startRet == EVAL_BODY_BUFFERED) {
-            	ProcessStatus afterRet;
+                ProcessStatus afterRet;
                 do {
                     for(int i = 0; i < current.getChildProcessorSize(); i++) {
                         ProcessorTreeWalker child = current.getChildProcessor(i);
                         if(child instanceof TemplateProcessor) {
                             TemplateProcessor childProc =
                                 (TemplateProcessor)child;
-                            final ProcessStatus childRet = 
+                            final ProcessStatus childRet =
                                 renderTemplateProcessor(topLevelPage, childProc);
                             if(childRet == SKIP_PAGE) {
                                 return SKIP_PAGE;
@@ -161,12 +161,12 @@ public class RenderUtil implements CONST_IMPL {
                         if(parent instanceof TemplateProcessor) {
                             TemplateProcessor parentProc =
                                 (TemplateProcessor)parent;
-                        	if(afterRet == EVAL_BODY_AGAIN &&
+                            if(afterRet == EVAL_BODY_AGAIN &&
                                     isDuplicated(parentProc)) {
                                 saveToCycle(parentProc);
                                 parentProc.doEndProcess();
                                 parentProc.doStartProcess(null);
-                        	}
+                            }
                         }
                     }
                 } while(afterRet == EVAL_BODY_AGAIN);
@@ -191,7 +191,7 @@ public class RenderUtil implements CONST_IMPL {
         }
         return ret;
     }
-    
+
     // Rendering entry point
     public static ProcessStatus renderProcessorTree(
             Page topLevelPage, ProcessorTreeWalker root) {
@@ -199,7 +199,7 @@ public class RenderUtil implements CONST_IMPL {
             ProcessorTreeWalker child = root.getChildProcessor(i);
             if(child instanceof TemplateProcessor) {
                 TemplateProcessor childProc = (TemplateProcessor)child;
-                final ProcessStatus childRet = 
+                final ProcessStatus childRet =
                     renderTemplateProcessor(topLevelPage, childProc);
                 if(childRet == SKIP_PAGE) {
                     return SKIP_PAGE;
@@ -210,7 +210,7 @@ public class RenderUtil implements CONST_IMPL {
         }
         return EVAL_PAGE;
     }
-    
+
     public static void saveToCycle(Page page) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(page);
@@ -240,9 +240,9 @@ public class RenderUtil implements CONST_IMPL {
         }
         return null;
     }
-    
-    public static ProcessStatus renderPage(boolean fireEvent, 
-            TemplateRenderer renderer, Map variables, 
+
+    public static ProcessStatus renderPage(boolean fireEvent,
+            TemplateRenderer renderer, Map variables,
             Page topLevelPage, String requestedSuffix, String extension) {
         if(renderer == null || topLevelPage == null) {
             throw new IllegalArgumentException();
@@ -259,7 +259,7 @@ public class RenderUtil implements CONST_IMPL {
                 SpecificationUtil.startScope(variables);
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
-            Template template = 
+            Template template =
                 getTemplate(requestedSuffix, page, suffix, extension);
             if(template != null) {
                 // LIFO access

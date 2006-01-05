@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -49,8 +49,8 @@ public class MarshallUtil {
             positionAware.setLineNumber(lineNumber);
         }
     }
-    
-    public static Object marshall(Class instanceClass, Class interfaceClass, 
+
+    public static Object marshall(Class instanceClass, Class interfaceClass,
             Object beforeObject, String systemID, int lineNumber) {
         if(instanceClass == null) {
             if(beforeObject == null) {
@@ -72,7 +72,7 @@ public class MarshallUtil {
         setPosition(obj, systemID, lineNumber);
         return obj;
     }
-    
+
     public static SourceDescriptor getDefaultSource(
             String systemID, Class neighborClass) {
         if(StringUtil.isEmpty(systemID) || neighborClass == null) {
@@ -84,7 +84,7 @@ public class MarshallUtil {
         defaultSource.setNeighborClass(neighborClass);
         return defaultSource;
     }
-    
+
     public static Iterator iterateMetaInfSources(String systemID) {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
@@ -102,14 +102,14 @@ public class MarshallUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     // support class ------------------------------------------------
-    
+
     protected static class URLSourceIterator implements Iterator {
 
         private Iterator _it;
         private String _systemID;
-        
+
         public URLSourceIterator(Iterator it, String systemID) {
             if(it == null || StringUtil.isEmpty(systemID)) {
                 throw new IllegalArgumentException();
@@ -117,7 +117,7 @@ public class MarshallUtil {
             _it = it;
             _systemID = systemID;
         }
-        
+
         public boolean hasNext() {
             return _it.hasNext();
         }
@@ -133,7 +133,7 @@ public class MarshallUtil {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
 }

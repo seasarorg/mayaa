@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -46,12 +46,12 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
-    
+
     private Class _processorClass;
     private List _propertySetRefs;
-    
+
     public void setProcessorClass(Class processorClass) {
-        if(processorClass == null || 
+        if(processorClass == null ||
                 TemplateProcessor.class.isAssignableFrom(
                         processorClass) == false) {
             throw new IllegalArgumentException();
@@ -82,7 +82,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                     new PropertySetRef(name, systemID, lineNumber));
         }
     }
-    
+
     public Iterator iteratePropertySets() {
         if(_propertySetRefs == null) {
             return NullIterator.getInstance();
@@ -101,7 +101,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 injected.getQName().getNamespaceURI(), propertyName);
         return injected.getAttribute(qName);
     }
-    
+
     protected void settingProperty(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertyDefinition property) {
@@ -116,7 +116,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable)processor;
                 PrefixAwareName name =
-                    getPrefixAwareName(injected, propertyName); 
+                    getPrefixAwareName(injected, propertyName);
                 acceptable.addVirtualProperty(name, value);
             } else {
                 if(LOG.isWarnEnabled()) {
@@ -129,7 +129,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     }
 
     protected void settingPropertySet(
-            SpecificationNode original, SpecificationNode injected, 
+            SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertySet propertySet) {
         for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
             PropertyDefinition property = (PropertyDefinition)it.next();
@@ -137,7 +137,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
     }
 
-    protected void settingInformalProperties(SpecificationNode injected, 
+    protected void settingInformalProperties(SpecificationNode injected,
             InformalPropertyAcceptable acceptable) {
         String injectedNS = injected.getQName().getNamespaceURI();
         for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
@@ -147,7 +147,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             }
             LibraryDefinition library = getLibraryDefinition();
             Class propertyClass = acceptable.getPropertyClass();
-            PropertyConverter converter = 
+            PropertyConverter converter =
                 library.getPropertyConverter(propertyClass);
             if(converter == null) {
                 throw new ConverterNotFoundException(
@@ -181,17 +181,17 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
         return processor;
     }
-    
+
     // support class ------------------------------------------------
 
     protected class PropertySetRef {
-        
+
         private String _name;
         private String _systemID;
         private int _lineNumber;
-        
+
         public PropertySetRef(String name, String systemID, int lineNumber) {
-            if(StringUtil.isEmpty(name) || 
+            if(StringUtil.isEmpty(name) ||
                     StringUtil.isEmpty(systemID) || lineNumber < 0) {
                 throw new IllegalArgumentException();
             }
@@ -199,26 +199,26 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             _systemID = systemID;
             _lineNumber = lineNumber;
         }
-        
+
         public String getName() {
             return _name;
         }
-        
+
         public String getSystemID() {
             return _systemID;
         }
-        
+
         public int getLineNumber() {
             return _lineNumber;
         }
-        
+
     }
-    
+
     protected class PropertySetIterator implements Iterator {
 
         private Iterator _it;
         private LibraryDefinition _library;
-        
+
         public PropertySetIterator(Iterator it, LibraryDefinition library) {
             if(it == null || library == null) {
                 throw new IllegalArgumentException();
@@ -226,7 +226,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             _it = it;
             _library = library;
         }
-        
+
         public boolean hasNext() {
             return _it.hasNext();
         }
@@ -235,7 +235,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             PropertySetRef ref = (PropertySetRef)_it.next();
             PropertySet propertySet = _library.getPropertySet(ref.getName());
             if(propertySet == null) {
-                throw new PropertySetNotFoundException(ref.getName(), 
+                throw new PropertySetNotFoundException(ref.getName(),
                         ref.getSystemID(), ref.getLineNumber());
             }
             return propertySet;
@@ -244,7 +244,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
 }

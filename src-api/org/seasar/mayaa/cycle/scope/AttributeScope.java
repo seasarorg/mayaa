@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -30,13 +30,13 @@ public interface AttributeScope extends ParameterAware {
      * @return スコープ識別。
      */
     String getScopeName();
-    
+
     /**
      * このスコープに保存されている名前をイテレートする。
      * @return 名前（String）の入ったイテレータ。
      */
     Iterator iterateAttributeNames();
-    
+
     /**
      * このスコープ中に指定された名前に対応したオブジェクトがあるかをテストする。
      * @param name 指定オブジェクト名。
@@ -52,13 +52,13 @@ public interface AttributeScope extends ParameterAware {
      * @return 指定オブジェクト。
      */
     Object getAttribute(String name);
-    
+
     /**
      * このスコープ中にオブジェクトの書き込みおよび削除ができるかを返す。
      * @return テスト結果。
      */
     boolean isAttributeWritable();
-    
+
     /**
      * このスコープ中に、指定名でオブジェクトを保存する。
      * @param name 指定名。nullおよび空白文字列だと何もしない。
@@ -71,7 +71,7 @@ public interface AttributeScope extends ParameterAware {
      * @param name 指定名。nullおよび空白文字列だと何もしない。
      */
     void removeAttribute(String name);
-    
+
     /**
      * このスコープ中に、指定クラス型のオブジェクトを生成する。
      * すでに同じ名前で違うクラス型のオブジェクトが存在する場合の処理や、
@@ -81,5 +81,5 @@ public interface AttributeScope extends ParameterAware {
      * @return 指定オブジェクト。
      */
     Object newAttribute(String name, Class attributeClass);
-    
+
 }

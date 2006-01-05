@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -24,11 +24,11 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class BuilderTagHandler
-		extends AbstractParameterAwareTagHandler {
-    
+        extends AbstractParameterAwareTagHandler {
+
     private LibraryManagerTagHandler _parent;
     private DefinitionBuilder _builder;
-    
+
     public BuilderTagHandler(LibraryManagerTagHandler parent) {
         super("builder");
         if(parent == null) {
@@ -38,7 +38,7 @@ public class BuilderTagHandler
     }
 
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
                 attributes, "class", DefinitionBuilder.class);
         if(_builder == null) {
@@ -48,11 +48,11 @@ public class BuilderTagHandler
         _builder.setLineNumber(lineNumber);
         _parent.getLibraryManager().addDefinitionBuilder(_builder);
     }
-    
+
     protected void end(String body) {
         _builder = null;
     }
-    
+
     public ParameterAware getParameterAware() {
         if(_builder == null) {
             throw new IllegalStateException();

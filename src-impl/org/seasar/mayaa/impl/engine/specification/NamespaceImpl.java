@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -33,17 +33,17 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class NamespaceImpl implements Namespace {
 
     private static Log LOG = LogFactory.getLog(NamespaceImpl.class);
-    
+
     private Namespace _parentSpace;
     private List _mappings;
-    
+
     public void setParentSpace(Namespace parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parentSpace = parent;
     }
-    
+
     public Namespace getParentSpace() {
         return _parentSpace;
     }
@@ -52,29 +52,29 @@ public class NamespaceImpl implements Namespace {
             String prefix, String namespaceURI) {
         return new PrefixMappingImpl(prefix, namespaceURI);
     }
-    
+
     public void addPrefixMapping(String prefix, String namespaceURI) {
         if(prefix == null || StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-	    synchronized(this) {
-	        if(_mappings == null) {
-	            _mappings = new ArrayList();
-	        }
-            PrefixMapping mapping = 
+        synchronized(this) {
+            if(_mappings == null) {
+                _mappings = new ArrayList();
+            }
+            PrefixMapping mapping =
                 createPrefixMapping(prefix, namespaceURI);
-	        if(_mappings.contains(mapping) == false) {
-	            _mappings.add(mapping);
-	            mapping.setNamespace(this);
-	        } else {
+            if(_mappings.contains(mapping) == false) {
+                _mappings.add(mapping);
+                mapping.setNamespace(this);
+            } else {
                 if(LOG.isWarnEnabled()) {
-                    LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0, 
+                    LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0,
                             mapping.toString()));
                 }
             }
-	    }
+        }
     }
-    
+
     protected PrefixMapping getMapping(
             boolean fromPrefix, String test, boolean all) {
         if(test == null) {
@@ -82,7 +82,7 @@ public class NamespaceImpl implements Namespace {
         }
         for(Iterator it = iteratePrefixMapping(all); it.hasNext(); ) {
             PrefixMapping mapping = (PrefixMapping)it.next();
-            String value = fromPrefix ? 
+            String value = fromPrefix ?
                     mapping.getPrefix() : mapping.getNamespaceURI();
             if(test.equals(value)) {
                 return mapping;
@@ -90,7 +90,7 @@ public class NamespaceImpl implements Namespace {
         }
         return null;
     }
-    
+
     public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
         if(prefix == null) {
             prefix = "";
@@ -124,14 +124,14 @@ public class NamespaceImpl implements Namespace {
             return _mappings.size() > 0;
         }
     }
-    
+
     // support class -------------------------------------------------
-    
+
     protected class AllNamespaceIterator implements Iterator {
-        
+
         private Namespace _current;
         private Iterator _it;
-        
+
         public AllNamespaceIterator(Namespace current) {
             if(current == null) {
                 throw new IllegalArgumentException();
@@ -168,5 +168,5 @@ public class NamespaceImpl implements Namespace {
         }
 
     }
-    
+
 }

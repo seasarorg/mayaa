@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class FactoryTagHandler
     private Class _interfaceClass;
     private UnifiedFactory _beforeFactory;
     private UnifiedFactory _currentFactory;
-    
+
     public FactoryTagHandler(
             Class interfaceClass, UnifiedFactory beforeFactory) {
         super("factory");
@@ -41,9 +41,9 @@ public class FactoryTagHandler
         _interfaceClass = interfaceClass;
         _beforeFactory = beforeFactory;
     }
-    
+
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         Class factoryClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentFactory = (UnifiedFactory)MarshallUtil.marshall(
@@ -66,7 +66,7 @@ public class FactoryTagHandler
         }
         return _currentFactory;
     }
-    
+
     public ParameterAware getParameterAware() {
         return getFactory();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -33,11 +33,11 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLHandler extends DefaultHandler {
 
     private TagHandlerStack _stack;
-    private Log _log ; 
+    private Log _log ;
     private Locator _locator;
     private Map _entities;
     private Class _neighborClass;
-    
+
     protected void setRootHandler(TagHandler rootHandler) {
         if(rootHandler == null) {
             throw new IllegalArgumentException();
@@ -48,18 +48,18 @@ public class XMLHandler extends DefaultHandler {
     protected void setLog(Log log) {
         _log = log;
     }
-    
+
     protected Log getLog() {
         return _log;
     }
-    
+
     protected void setNeighborClass(Class neighborClass) {
         if(neighborClass == null) {
             throw new IllegalArgumentException();
         }
         _neighborClass = neighborClass;
     }
-    
+
     protected Class getNeighborClass() {
         return _neighborClass;
     }
@@ -70,7 +70,7 @@ public class XMLHandler extends DefaultHandler {
         }
         return _entities;
     }
-    
+
     protected String getSystemID() {
         if(_locator != null) {
             return _locator.getSystemId();
@@ -84,7 +84,7 @@ public class XMLHandler extends DefaultHandler {
         }
         return 0;
     }
-    
+
     public void setDocumentLocator(Locator locator) {
         _locator = locator;
     }
@@ -106,7 +106,7 @@ public class XMLHandler extends DefaultHandler {
         if(neighborClass == null) {
             neighborClass = getClass();
         }
-        ClassLoaderSourceDescriptor source = 
+        ClassLoaderSourceDescriptor source =
             new ClassLoaderSourceDescriptor();
         source.setSystemID(path);
         source.setNeighborClass(neighborClass);
@@ -124,20 +124,20 @@ public class XMLHandler extends DefaultHandler {
         }
         return null;
     }
-    
+
     public void startDocument() {
         if(_stack == null) {
             throw new IllegalStateException();
         }
-    } 
+    }
 
-    public void startElement(String namespaceURI, 
+    public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
         _stack.startElement(
                 localName, attributes, getSystemID(), getLineNumber());
     }
 
-    public void endElement(String namespaceURI, 
+    public void endElement(String namespaceURI,
             String localName, String qName) {
         _stack.endElement();
     }
@@ -145,7 +145,7 @@ public class XMLHandler extends DefaultHandler {
     public void characters(char[] ch, int start, int length) {
         _stack.characters(ch, start, length);
     }
-    
+
     public void warning(SAXParseException e) {
         Log log = getLog();
         if(log != null && log.isWarnEnabled()) {
@@ -168,5 +168,5 @@ public class XMLHandler extends DefaultHandler {
         }
         throw new RuntimeException(e);
     }
-    
+
 }

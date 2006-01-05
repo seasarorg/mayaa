@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -32,32 +32,32 @@ import org.xml.sax.ext.LexicalHandler;
  */
 public class XMLReaderPool extends AbstractSoftReferencePool {
 
-	private static final long serialVersionUID = 1736077679163143852L;
+    private static final long serialVersionUID = 1736077679163143852L;
 
-	private static XMLReaderPool _xmlReaderPool;
-    
+    private static XMLReaderPool _xmlReaderPool;
+
     public static XMLReaderPool getPool() {
         if(_xmlReaderPool == null) {
             _xmlReaderPool = new XMLReaderPool();
         }
         return _xmlReaderPool;
     }
-    
+
     protected XMLReaderPool() {
         // singleton.
     }
-    
+
     protected Object createObject() {
         XMLReader xmlReader = new AdditionalSAXParser();
         return xmlReader;
     }
-    
+
     protected boolean validateObject(Object object) {
         return object instanceof XMLReader;
     }
 
     protected void setFeature(
-    		XMLReader xmlReader, String name, boolean value) {
+            XMLReader xmlReader, String name, boolean value) {
         try {
             xmlReader.setFeature(name, value);
         } catch (SAXNotRecognizedException e) {
@@ -66,9 +66,9 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
             // do nothing
         }
     }
-    
+
     protected void setProperty(
-    		XMLReader xmlReader, String name, Object value) {
+            XMLReader xmlReader, String name, Object value) {
         try {
             xmlReader.setProperty(name, value);
         } catch (SAXNotRecognizedException e) {
@@ -77,14 +77,14 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
             // do nothing
         }
     }
-    
-	public XMLReader borrowXMLReader(final ContentHandler handler, 
-	        boolean namespaces, boolean validation, boolean xmlSchema) {
-	    XMLReader xmlReader = (XMLReader)borrowObject();
+
+    public XMLReader borrowXMLReader(final ContentHandler handler,
+            boolean namespaces, boolean validation, boolean xmlSchema) {
+        XMLReader xmlReader = (XMLReader)borrowObject();
         setFeature(xmlReader,
-        	"http://xml.org/sax/features/namespaces", namespaces);
+            "http://xml.org/sax/features/namespaces", namespaces);
         setFeature(xmlReader,
-           	"http://xml.org/sax/features/validation", validation);
+               "http://xml.org/sax/features/validation", validation);
         setFeature(xmlReader,
             "http://apache.org/xml/features/validation/schema", xmlSchema);
 
@@ -99,8 +99,8 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
             xmlReader.setDTDHandler((DTDHandler)handler);
         }
         if(handler instanceof LexicalHandler) {
-			setProperty(xmlReader,
-				"http://xml.org/sax/properties/lexical-handler", handler);
+            setProperty(xmlReader,
+                "http://xml.org/sax/properties/lexical-handler", handler);
         }
         if(handler instanceof AdditionalHandler) {
             setProperty(xmlReader,
@@ -108,10 +108,10 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         }
 
         return xmlReader;
-	}
-	
-	public void returnXMLReader(XMLReader xmlReader) {
-	    returnObject(xmlReader);
-	}
-	
+    }
+
+    public void returnXMLReader(XMLReader xmlReader) {
+        returnObject(xmlReader);
+    }
+
 }

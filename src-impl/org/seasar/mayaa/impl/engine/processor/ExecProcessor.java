@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,17 +28,17 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class ExecProcessor extends TemplateProcessorSupport {
 
-	private static final long serialVersionUID = -1413583265341468324L;
+    private static final long serialVersionUID = -1413583265341468324L;
 
     private ProcessorProperty _script;
     private ProcessorProperty _src;
     private ProcessorProperty _encoding;
-    
+
     // MLD property, expectedClass=java.lang.String
     public void setSrc(ProcessorProperty src) {
         _src = src;
     }
-    
+
     // MLD property, expectedClass=java.lang.String
     public void setEncoding(ProcessorProperty encoding) {
         _encoding = encoding;
@@ -48,7 +48,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
     public void setScript(ProcessorProperty script) {
         _script = script;
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_src != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
@@ -68,5 +68,5 @@ public class ExecProcessor extends TemplateProcessorSupport {
         }
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
-    
+
 }

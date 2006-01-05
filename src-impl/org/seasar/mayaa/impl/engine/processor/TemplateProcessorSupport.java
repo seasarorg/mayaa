@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -31,17 +31,17 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
  */
 public class TemplateProcessorSupport implements TemplateProcessor {
 
-	private static final long serialVersionUID = -3521980479718620027L;
-	private static final String PREFIX_UNIQUE_ID = "_m";
-    
-	private ProcessorTreeWalker _parent;
+    private static final long serialVersionUID = -3521980479718620027L;
+    private static final String PREFIX_UNIQUE_ID = "_m";
+
+    private ProcessorTreeWalker _parent;
     private int _index;
     private List _children = new ArrayList();
     private SpecificationNode _originalNode;
     private SpecificationNode _injectedNode;
     private boolean _evalBodyInclude = true;
     private ProcessorDefinition _definition;
-    
+
     public String getUniqueID() {
         int sequenceID = getOriginalNode().getSequenceID();
         return PREFIX_UNIQUE_ID + sequenceID;
@@ -97,20 +97,20 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         }
         _definition = definition;
     }
-    
+
     public ProcessorDefinition getProcessorDefinition() {
         if(_definition == null) {
             throw new IllegalStateException();
         }
         return _definition;
     }
-    
+
     // ProcessorTreeWalker implements --------------------------------
 
     public Map getVariables() {
         return null;
     }
-    
+
     public void setParentProcessor(ProcessorTreeWalker parent, int index) {
         if(parent == null) {
             throw new IllegalArgumentException();

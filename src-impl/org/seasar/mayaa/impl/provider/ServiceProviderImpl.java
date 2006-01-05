@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -29,13 +29,13 @@ import org.seasar.mayaa.provider.ServiceProvider;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ServiceProviderImpl extends ParameterAwareImpl
-		implements ServiceProvider, CONST_IMPL {
-    
-	private static final long serialVersionUID = -8659297907641816962L;
+        implements ServiceProvider, CONST_IMPL {
 
-	private Engine _engine;
+    private static final long serialVersionUID = -8659297907641816962L;
+
+    private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;
-    private LibraryManager _libraryManager; 
+    private LibraryManager _libraryManager;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
     private PathAdjuster _pathAdjuster;
@@ -46,21 +46,21 @@ public class ServiceProviderImpl extends ParameterAwareImpl
         }
         _engine = engine;
     }
-    
+
     public Engine getEngine() {
-    	if(_engine == null) {
-    	    throw new IllegalStateException();
-    	}
+        if(_engine == null) {
+            throw new IllegalStateException();
+        }
         return _engine;
     }
-    
+
     public void setScriptEnvironment(ScriptEnvironment scriptEnvironment) {
         if(scriptEnvironment == null) {
             throw new IllegalArgumentException();
         }
         _scriptEnvironment = scriptEnvironment;
     }
-    
+
     public ScriptEnvironment getScriptEnvironment() {
         if(_scriptEnvironment == null) {
             throw new IllegalStateException();
@@ -74,26 +74,26 @@ public class ServiceProviderImpl extends ParameterAwareImpl
         }
         _libraryManager = libraryManager;
     }
-    
+
     public LibraryManager getLibraryManager() {
         if(_libraryManager == null) {
             throw new IllegalStateException();
         }
         return _libraryManager;
     }
-    
+
     public void setSpecificationBuilder(
-    		SpecificationBuilder specificationBuilder) {
+            SpecificationBuilder specificationBuilder) {
         if(specificationBuilder == null) {
             throw new IllegalArgumentException();
         }
         _specificationBuilder = specificationBuilder;
     }
-    
+
     public SpecificationBuilder getSpecificationBuilder() {
-    	if(_specificationBuilder == null) {
+        if(_specificationBuilder == null) {
             throw new IllegalStateException();
-    	}
+        }
         return _specificationBuilder;
     }
 
@@ -103,11 +103,11 @@ public class ServiceProviderImpl extends ParameterAwareImpl
         }
         _templateBuilder = templateBuilder;
     }
-    
+
     public TemplateBuilder getTemplateBuilder() {
-    	if(_templateBuilder == null) {
-    	    throw new IllegalStateException();
-    	}
+        if(_templateBuilder == null) {
+            throw new IllegalStateException();
+        }
         return _templateBuilder;
     }
 

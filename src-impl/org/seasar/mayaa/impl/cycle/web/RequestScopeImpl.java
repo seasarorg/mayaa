@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -41,7 +41,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
     private Locale[] _locales;
     private ParamValuesScope _paramValues;
     private HeaderValuesScope _headerValues;
-    
+
     protected void check() {
         if(_httpServletRequest == null) {
             throw new IllegalStateException();
@@ -52,7 +52,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         check();
         return StringUtil.preparePath(_httpServletRequest.getContextPath());
     }
-    
+
     public String getRequestedPath() {
         check();
         String path = _httpServletRequest.getPathInfo();
@@ -62,8 +62,8 @@ public class RequestScopeImpl extends AbstractRequestScope {
         if(StringUtil.isEmpty(path) || path.endsWith("/")) {
             String welcome = EngineUtil.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
-            path = StringUtil.preparePath(path) + 
-                    StringUtil.preparePath(welcome); 
+            path = StringUtil.preparePath(path) +
+                    StringUtil.preparePath(welcome);
         }
         return path;
     }
@@ -75,9 +75,9 @@ public class RequestScopeImpl extends AbstractRequestScope {
             if(locales == null) {
                 _locales = new Locale[0];
             } else {
-                ArrayList list = new ArrayList(); 
+                ArrayList list = new ArrayList();
                 while(locales.hasMoreElements()) {
-                	list.add(locales.nextElement());
+                    list.add(locales.nextElement());
                 }
                 _locales = (Locale[])list.toArray(new Locale[list.size()]);
             }
@@ -88,7 +88,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
     public AttributeScope getParamValues() {
         check();
         if(_paramValues == null) {
-        	_paramValues = new ParamValuesScope(_httpServletRequest);
+            _paramValues = new ParamValuesScope(_httpServletRequest);
         }
         return _paramValues;
     }
@@ -96,17 +96,17 @@ public class RequestScopeImpl extends AbstractRequestScope {
     public AttributeScope getHeaderValues() {
         check();
         if(_headerValues == null) {
-        	_headerValues = new HeaderValuesScope(_httpServletRequest);
+            _headerValues = new HeaderValuesScope(_httpServletRequest);
         }
         return _headerValues;
     }
-    
+
     // AttributeScope implements -------------------------------------
-    
+
     public Iterator iterateAttributeNames() {
         check();
         return EnumerationIterator.getInstance(
-        		_httpServletRequest.getAttributeNames());
+                _httpServletRequest.getAttributeNames());
     }
 
     public boolean hasAttribute(String name) {
@@ -115,20 +115,20 @@ public class RequestScopeImpl extends AbstractRequestScope {
             return false;
         }
         for(Enumeration e = _httpServletRequest.getAttributeNames();
-        		e.hasMoreElements(); ) {
-			if(e.nextElement().equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
+                e.hasMoreElements(); ) {
+            if(e.nextElement().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public Object getAttribute(String name) {
+    public Object getAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
             return null;
         }
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
         return env.convertFromScriptObject(
                 _httpServletRequest.getAttribute(name));
     }
@@ -140,7 +140,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         }
         _httpServletRequest.setAttribute(name, attribute);
     }
-    
+
     public void removeAttribute(String name) {
         check();
         if(StringUtil.isEmpty(name)) {
@@ -150,9 +150,9 @@ public class RequestScopeImpl extends AbstractRequestScope {
     }
 
     // ContextAware implemetns --------------------------------------
-    
+
     public void setUnderlyingContext(Object context) {
-        if(context == null || 
+        if(context == null ||
                 context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
@@ -162,7 +162,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
         _headerValues = null;
         parsePath(getRequestedPath());
     }
-    
+
     public Object getUnderlyingContext() {
         check();
         return _httpServletRequest;

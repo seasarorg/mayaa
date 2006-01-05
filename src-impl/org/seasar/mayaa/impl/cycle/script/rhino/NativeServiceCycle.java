@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -31,10 +31,10 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class NativeServiceCycle extends NativeJavaObject {
 
-	private static final long serialVersionUID = 326309209323166932L;
+    private static final long serialVersionUID = 326309209323166932L;
 
-	private ServiceCycle _cycle;
-    
+    private ServiceCycle _cycle;
+
     public NativeServiceCycle(Scriptable scope, ServiceCycle cycle) {
         super(scope, cycle, Map.class);
         if(cycle == null) {
@@ -42,15 +42,15 @@ public class NativeServiceCycle extends NativeJavaObject {
         }
         _cycle = cycle;
     }
-    
+
     public boolean has(String name, Scriptable start) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if(cycle.hasAttributeScope(name) || 
+        if(cycle.hasAttributeScope(name) ||
                 CycleUtil.findStandardAttributeScope(name) != null) {
             return true;
         }
         return super.has(name, start);
-    }    
+    }
 
     public Object get(String name, Scriptable start) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
@@ -72,8 +72,8 @@ public class NativeServiceCycle extends NativeJavaObject {
             }
         }
     }
-    
-	public Object[] getIds() {
+
+    public Object[] getIds() {
         Set set = new HashSet();
         for(Iterator it = _cycle.iterateAttributeScope(); it.hasNext(); ) {
             AttributeScope attrs = (AttributeScope)it.next();
@@ -95,7 +95,7 @@ public class NativeServiceCycle extends NativeJavaObject {
         }
         return set.toArray(new Object[set.size()]);
     }
-    
+
     public String getClassName() {
         return "serviceCycle";
     }

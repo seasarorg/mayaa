@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,19 +27,19 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public final class XMLUtil {
-    
+
     private XMLUtil() {
         // no instantiation.
     }
 
-    public static void parse(DefaultHandler handler, 
-            InputStream stream, String publicID, String systemID, 
+    public static void parse(DefaultHandler handler,
+            InputStream stream, String publicID, String systemID,
             boolean namespace, boolean validation, boolean xmlSchema) {
         if(stream == null) {
             throw new IllegalArgumentException();
         }
         XMLReaderPool pool = XMLReaderPool.getPool();
-        XMLReader xmlReader = 
+        XMLReader xmlReader =
             pool.borrowXMLReader(handler, namespace, validation, xmlSchema);
         InputSource input = new InputSource(stream);
         input.setPublicId(publicID);
@@ -47,15 +47,15 @@ public final class XMLUtil {
         try {
             xmlReader.parse(input);
         } catch(Throwable t) {
-			if(t instanceof RuntimeException) {
-			    throw (RuntimeException)t;
-			}
-			throw new RuntimeException(t);
+            if(t instanceof RuntimeException) {
+                throw (RuntimeException)t;
+            }
+            throw new RuntimeException(t);
         } finally {
             pool.returnXMLReader(xmlReader);
         }
     }
-    
+
     public static String getStringValue(Attributes attr, String localName, String defaultValue) {
         String value = attr.getValue(localName);
         if(StringUtil.hasValue(value)) {
@@ -63,7 +63,7 @@ public final class XMLUtil {
         }
         return defaultValue;
     }
-    
+
     public static int getIntValue(Attributes attr, String localName, int defaultValue) {
         String value = attr.getValue(localName);
         if(StringUtil.hasValue(value)) {
@@ -71,36 +71,36 @@ public final class XMLUtil {
         }
         return defaultValue;
     }
-    
-	public static boolean getBooleanValue(Attributes attr, 
-	        String localName, boolean defaultValue) {
-	    String value = attr.getValue(localName);
-        return ObjectUtil.booleanValue(value, defaultValue);
-	}
 
-	public static Class getClassValue(Attributes attr, 
+    public static boolean getBooleanValue(Attributes attr,
+            String localName, boolean defaultValue) {
+        String value = attr.getValue(localName);
+        return ObjectUtil.booleanValue(value, defaultValue);
+    }
+
+    public static Class getClassValue(Attributes attr,
             String localName, Class defaultValue) {
         String className = attr.getValue(localName);
         if(StringUtil.hasValue(className)) {
             return ObjectUtil.loadClass(className);
         }
         return defaultValue;
-	}
-	
-	public static Object getObjectValue(Attributes attr, 
-	        String localName, Class expectedClass) {
-		if(attr == null || StringUtil.isEmpty(localName) ||
-				expectedClass == null) {
-			throw new IllegalArgumentException();
-		}
+    }
+
+    public static Object getObjectValue(Attributes attr,
+            String localName, Class expectedClass) {
+        if(attr == null || StringUtil.isEmpty(localName) ||
+                expectedClass == null) {
+            throw new IllegalArgumentException();
+        }
         Class clazz = getClassValue(attr, localName, null);
         if(clazz != null) {
-	        if(expectedClass.isAssignableFrom(clazz)) {
-	            return ObjectUtil.newInstance(clazz);
-	        }
-	        throw new IllegalClassTypeException(expectedClass, clazz);
+            if(expectedClass.isAssignableFrom(clazz)) {
+                return ObjectUtil.newInstance(clazz);
+            }
+            throw new IllegalClassTypeException(expectedClass, clazz);
         }
         return null;
-	}
+    }
 
 }

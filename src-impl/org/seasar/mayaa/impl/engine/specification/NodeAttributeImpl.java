@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,26 +28,26 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class NodeAttributeImpl implements NodeAttribute {
-    
+
     private SpecificationNode _node;
     private QName _qName;
     private String _value;
 
-	public NodeAttributeImpl(QName qName, String value) {
+    public NodeAttributeImpl(QName qName, String value) {
         if(qName == null || value == null) {
             throw new IllegalArgumentException();
         }
         _qName = qName;
         _value = value;
     }
-	
-	public void setNode(SpecificationNode node) {
-	    if(node == null) {
-	        throw new IllegalArgumentException();
-	    }
-	    _node = node;
-	}
-	
+
+    public void setNode(SpecificationNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        _node = node;
+    }
+
     public SpecificationNode getNode() {
         return _node;
     }
@@ -61,11 +61,11 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     // PrefixAwareName implements ----------------------------------------
-    
+
     public QName getQName() {
         return _qName;
     }
-    
+
     public String getPrefix() {
         String namespaceURI = getQName().getNamespaceURI();
         PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
@@ -74,9 +74,9 @@ public class NodeAttributeImpl implements NodeAttribute {
         }
         return "";
     }
-    
+
     // Namespace implemetns ----------------------------------------
-    
+
     public void setParentSpace(Namespace parent) {
         throw new UnsupportedOperationException();
     }
@@ -98,7 +98,7 @@ public class NodeAttributeImpl implements NodeAttribute {
         }
         return null;
     }
-    
+
     public PrefixMapping getMappingFromURI(
             String namespaceURI, boolean all) {
         if(getNode() != null) {
@@ -117,5 +117,5 @@ public class NodeAttributeImpl implements NodeAttribute {
     public boolean addedMapping() {
         return false;
     }
-    
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,17 +28,17 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  */
 public class ParameterAwareImpl implements ParameterAware {
 
-	private Map _parameters;
+    private Map _parameters;
     private String _systemID = "";
     private int _lineNumber;
     private boolean _onTemplate;
 
-	public void setParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         if(value == null) {
-        	throw new IllegalParameterValueException(getClass(), name);
+            throw new IllegalParameterValueException(getClass(), name);
         }
         if(_parameters == null) {
             _parameters = new HashMap();
@@ -46,22 +46,22 @@ public class ParameterAwareImpl implements ParameterAware {
         _parameters.put(name, value);
     }
 
-	public String getParameter(String name) {
-		if(StringUtil.isEmpty(name)) {
-			throw new IllegalArgumentException();
-		}
+    public String getParameter(String name) {
+        if(StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
         if(_parameters == null) {
             return null;
         }
-		return (String)_parameters.get(name);
-	}
+        return (String)_parameters.get(name);
+    }
 
-	public Iterator iterateParameterNames() {
-		if(_parameters == null) {
-			return NullIterator.getInstance();
-		}
-		return _parameters.keySet().iterator();
-	}
+    public Iterator iterateParameterNames() {
+        if(_parameters == null) {
+            return NullIterator.getInstance();
+        }
+        return _parameters.keySet().iterator();
+    }
 
     public void setSystemID(String systemID) {
         _systemID = StringUtil.preparePath(systemID);
@@ -73,7 +73,7 @@ public class ParameterAwareImpl implements ParameterAware {
 
     public void setLineNumber(int lineNumber) {
         if(lineNumber < 0) {
-        	lineNumber = 0;
+            lineNumber = 0;
         }
         _lineNumber = lineNumber;
     }

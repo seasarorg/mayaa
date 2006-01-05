@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -36,7 +36,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractServiceCycle
-		extends ParameterAwareImpl implements ServiceCycle {
+        extends ParameterAwareImpl implements ServiceCycle {
 
     private Object _context;
     private AttributeScope _page;
@@ -101,7 +101,7 @@ public abstract class AbstractServiceCycle
         }
         return false;
     }
-    
+
     public AttributeScope getAttributeScope(String scopeName) {
         if(StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
@@ -119,26 +119,26 @@ public abstract class AbstractServiceCycle
     public void setPageScope(AttributeScope page) {
         _page = page;
     }
-    
+
     public AttributeScope getPageScope() {
         return _page;
     }
 
     public void setOriginalNode(NodeTreeWalker originalNode) {
         _originalNode = originalNode;
-    }    
+    }
 
     public NodeTreeWalker getOriginalNode() {
         return _originalNode;
     }
-    
-	public void setInjectedNode(NodeTreeWalker injectedNode) {
-		_injectedNode = injectedNode;
-	}
-    
+
+    public void setInjectedNode(NodeTreeWalker injectedNode) {
+        _injectedNode = injectedNode;
+    }
+
     public NodeTreeWalker getInjectedNode() {
-		return _injectedNode;
-	}
+        return _injectedNode;
+    }
 
     public void setProcessor(ProcessorTreeWalker processor) {
         _processor = processor;
@@ -157,19 +157,19 @@ public abstract class AbstractServiceCycle
     }
 
     // ContextAware implements -------------------------------------
-    
-	public void setUnderlyingContext(Object context) {
-		if(context == null) {
-			throw new IllegalArgumentException();
-		}
-		_context = context;
-	}
-    
+
+    public void setUnderlyingContext(Object context) {
+        if(context == null) {
+            throw new IllegalArgumentException();
+        }
+        _context = context;
+    }
+
     public Object getUnderlyingContext() {
-    	if(_context == null) {
-    		throw new IllegalStateException();
-    	}
-		return _context;
-	}
+        if(_context == null) {
+            throw new IllegalStateException();
+        }
+        return _context;
+    }
 
 }

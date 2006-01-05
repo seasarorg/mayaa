@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -136,7 +136,7 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Constructor getConstructor(
             Class clazz, Class[] argTypes) {
         if(clazz == null || argTypes == null) {
@@ -148,10 +148,10 @@ public class ObjectUtil {
             return null;
         }
     }
-    
+
     public static Object newInstance(
             Constructor constructor, Object[] argValues) {
-        if(constructor == null || argValues == null || 
+        if(constructor == null || argValues == null ||
                 constructor.getParameterTypes().length != argValues.length) {
             throw new IllegalArgumentException();
         }
@@ -168,7 +168,7 @@ public class ObjectUtil {
 
     public static boolean hasProperty(
             Class beanClass, String propertyName) {
-        PropertyDescriptor[] descriptors = 
+        PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
         for(int i = 0; i < descriptors.length; i++) {
             if(descriptors[i].getName().equals(propertyName)) {
@@ -180,7 +180,7 @@ public class ObjectUtil {
 
     public static Class getPropertyClass(
             Class beanClass, String propertyName) {
-        PropertyDescriptor[] descriptors = 
+        PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
         for(int i = 0; i < descriptors.length; i++) {
             if(descriptors[i].getName().equals(propertyName)) {
@@ -210,7 +210,7 @@ public class ObjectUtil {
         }
         return value;
     }
-    
+
     public static void setProperty(
             Object bean, String propertyName, Object value) {
         try {
@@ -229,7 +229,7 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Object getProperty(Object bean, String propertyName) {
         try {
             return PropertyUtils.getProperty(bean, propertyName);
@@ -242,7 +242,7 @@ public class ObjectUtil {
         }
     }
 
-    public static Object invoke(Object bean, 
+    public static Object invoke(Object bean,
             String methodName, Object[] args, Class[] argClasses) {
         try {
             return MethodUtils.invokeMethod(
@@ -255,7 +255,7 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static boolean booleanValue(
             Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;

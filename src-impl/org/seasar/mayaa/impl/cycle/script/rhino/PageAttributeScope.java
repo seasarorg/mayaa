@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,7 +42,7 @@ public class PageAttributeScope extends ScriptableObject
 
     private static final long serialVersionUID = 7746385735022710670L;
     private static Map _methodMap;
-    
+
     private static void setMethod(String name, Class[] args) {
         try {
             Method method = PageAttributeScope.class.getMethod(name, args);
@@ -51,7 +51,7 @@ public class PageAttributeScope extends ScriptableObject
             throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
-        } 
+        }
     }
 
     static {
@@ -106,7 +106,7 @@ public class PageAttributeScope extends ScriptableObject
         }
         return set.toArray(new Object[set.size()]);
     }
-    
+
     // Wrapper implements -------------------------------------------
 
     public Object unwrap() {
@@ -114,7 +114,7 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     // AttributeScope implements -------------------------------------
-    
+
     public String getScopeName() {
         return "page";
     }
@@ -122,7 +122,7 @@ public class PageAttributeScope extends ScriptableObject
     public Iterator iterateAttributeNames() {
         List list = new ArrayList();
         for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
+                scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
             Object[] ids = scope.getIds();
             for(int i = 0; i < ids.length; i++) {
@@ -136,7 +136,7 @@ public class PageAttributeScope extends ScriptableObject
 
     protected Scriptable findScope(String name) {
         for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
+                scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
             if(scope.has(name, this)) {
                 return scope;
@@ -156,7 +156,7 @@ public class PageAttributeScope extends ScriptableObject
     public Object getAttribute(String name) {
         Scriptable scope = findScope(name);
         if(scope != null) {
-            ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
+            ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
             return env.convertFromScriptObject(scope.get(name, this));
         }
         return null;
@@ -172,7 +172,7 @@ public class PageAttributeScope extends ScriptableObject
 
     public void removeAttribute(String name) {
         for(Scriptable scope = this;
-                scope instanceof PageAttributeScope; 
+                scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
             scope.delete(name);
         }
@@ -180,7 +180,7 @@ public class PageAttributeScope extends ScriptableObject
 
     public Object newAttribute(String name, Class attributeClass) {
         if(hasAttribute(name)) {
-            return getAttribute(name); 
+            return getAttribute(name);
         }
         Object model = ObjectUtil.newInstance(attributeClass);
         setAttribute(name, model);
@@ -188,18 +188,18 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         // do nothing
     }
 
-	public String getParameter(String name) {
-		return null;
-	}
+    public String getParameter(String name) {
+        return null;
+    }
 
-	public Iterator iterateParameterNames() {
-		return NullIterator.getInstance();
-	}
+    public Iterator iterateParameterNames() {
+        return NullIterator.getInstance();
+    }
 
     public void setLineNumber(int lineNumber) {
         // do nothing

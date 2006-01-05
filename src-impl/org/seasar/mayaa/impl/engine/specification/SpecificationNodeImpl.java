@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -35,10 +35,10 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationNodeImpl extends PrefixAwareNameImpl
-		implements SpecificationNode, CONST_IMPL {
+        implements SpecificationNode, CONST_IMPL {
 
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
-    
+
     private int _sequenceID = -1;
     private Map _attributes;
     private NodeTreeWalker _parent;
@@ -47,52 +47,52 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     private int _lineNumber;
     private boolean _onTemplate;
 
-	public SpecificationNodeImpl(QName qName) {
-	    super(qName);
+    public SpecificationNodeImpl(QName qName) {
+        super(qName);
     }
-    
+
     public void setSequenceID(int sequenceID) {
         if(sequenceID < 0) {
             throw new IllegalArgumentException();
         }
         _sequenceID = sequenceID;
     }
-    
+
     public int getSequenceID() {
         if(_sequenceID < 0) {
             throw new IllegalStateException();
         }
         return _sequenceID;
     }
-    
-	public void addAttribute(QName qName, String value) {
-	    if(qName == null || value == null) {
-	        throw new IllegalArgumentException();
-	    }
-	    synchronized(this) {
-	        if(_attributes == null) {
-	            _attributes = new HashMap();
-	        }
-	    }
-	    synchronized(_attributes) {
-	        if(_attributes.containsKey(qName) == false) {
-	        	NodeAttributeImpl attr = new NodeAttributeImpl(qName, value);
-		        _attributes.put(qName, attr);
-		        attr.setNode(this);
-	        }
-	    }
-	}
-	
-	public NodeAttribute getAttribute(QName qName) {
-	    if(qName == null) {
-	        throw new IllegalArgumentException();
-	    }
-	    if(_attributes == null) {
-	        return null;
-	    }
-	    return (NodeAttribute)_attributes.get(qName);
-	}
-	
+
+    public void addAttribute(QName qName, String value) {
+        if(qName == null || value == null) {
+            throw new IllegalArgumentException();
+        }
+        synchronized(this) {
+            if(_attributes == null) {
+                _attributes = new HashMap();
+            }
+        }
+        synchronized(_attributes) {
+            if(_attributes.containsKey(qName) == false) {
+                NodeAttributeImpl attr = new NodeAttributeImpl(qName, value);
+                _attributes.put(qName, attr);
+                attr.setNode(this);
+            }
+        }
+    }
+
+    public NodeAttribute getAttribute(QName qName) {
+        if(qName == null) {
+            throw new IllegalArgumentException();
+        }
+        if(_attributes == null) {
+            return null;
+        }
+        return (NodeAttribute)_attributes.get(qName);
+    }
+
     public Iterator iterateAttribute() {
         if(_attributes == null) {
             return NullIterator.getInstance();
@@ -121,31 +121,31 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         copy.setParentSpace(getParentSpace());
         return copy;
     }
-    
+
     public SpecificationNode copyTo() {
         return copyTo(FILTER_ALL);
     }
 
     public String toString() {
-	    StringBuffer path = new StringBuffer();
-	    if(getParentNode() != null && 
+        StringBuffer path = new StringBuffer();
+        if(getParentNode() != null &&
                 getParentNode() instanceof Specification == false) {
-	        path.append(getParentNode());
-	    }
-	    path.append("/");
-	    path.append(super.toString());
+            path.append(getParentNode());
+        }
+        path.append("/");
+        path.append(super.toString());
         return path.toString();
-	}
-    
+    }
+
     // TreeNodeWalker implemetns ------------------------------------
-    
+
     public void setParentNode(NodeTreeWalker parent) {
         if(parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
     }
-    
+
     public NodeTreeWalker getParentNode() {
         return _parent;
     }
@@ -164,16 +164,16 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
             child.setParentNode(this);
         }
     }
-    
+
     public Iterator iterateChildNode() {
         if(_childNodes == null) {
             return NullIterator.getInstance();
-        }        
+        }
         return _childNodes.iterator();
     }
 
     // PositionAware implements -------------------------------------
-    
+
     public void setSystemID(String systemID) {
         if(systemID == null) {
             throw new IllegalArgumentException();
@@ -202,13 +202,13 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     // support class --------------------------------------------------
-    
+
     protected static class AllCopyToFilter implements CopyToFilter {
-        
+
         public boolean accept(NodeObject test) {
             return true;
         }
-        
+
     }
 
 }

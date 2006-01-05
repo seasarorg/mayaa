@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -36,25 +36,25 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 
     protected PropertyConverter getConverterForProcessorProperty() {
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
-        PropertyConverter converter = 
+        PropertyConverter converter =
             library.getPropertyConverter(ProcessorProperty.class);
         if(converter == null) {
             throw new IllegalStateException();
         }
         return converter;
     }
-    
+
     public Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected) {
-    	if(injected == null) {
-    		throw new IllegalArgumentException();
-    	}
+        if(injected == null) {
+            throw new IllegalArgumentException();
+        }
         Class propertyClass = getPropertyClass(processorDef);
         if(propertyClass == null) {
             // real property not found on the tag.
             String processorName = processorDef.getName();
             if(LOG.isWarnEnabled()) {
-                String msg = StringUtil.getMessage(TLDPropertyDefinition.class, 
+                String msg = StringUtil.getMessage(TLDPropertyDefinition.class,
                         0, processorName, getName());
                 LOG.warn(msg);
             }
@@ -67,7 +67,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 //        }
         if(attribute != null) {
             String value = attribute.getValue();
-            PropertyConverter converter = getConverterForProcessorProperty(); 
+            PropertyConverter converter = getConverterForProcessorProperty();
             return converter.convert(attribute, value, propertyClass);
         } else if(isRequired()) {
             String processorName = processorDef.getName();
@@ -75,5 +75,5 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         return null;
     }
-    
+
 }

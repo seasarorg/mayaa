@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -213,7 +213,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 if (script != null) {
                     return script;
                 }
-    
+
                 script = compile(scriptText, fullScript);
                 Map scriptMap = (Map) _mayaaScriptCache.get(mayaa);
                 if (scriptMap == null) {
@@ -221,7 +221,7 @@ public class SpecificationUtil implements CONST_IMPL {
                     _mayaaScriptCache.put(mayaa, scriptMap);
                 }
                 scriptMap.put(key, script);
-    
+
                 return script;
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -38,12 +38,12 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertyDefinitionImpl extends ParameterAwareImpl 
+public class PropertyDefinitionImpl extends ParameterAwareImpl
         implements PropertyDefinition, CONST_IMPL {
 
     private static final Log LOG =
         LogFactory.getLog(PropertyDefinitionImpl.class);
-    
+
     private PropertySet _propertySet;
     private String _name;
     private boolean _required;
@@ -59,21 +59,21 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         }
         _propertySet = propertySet;
     }
-    
+
     public PropertySet getPropertySet() {
         if(_propertySet == null) {
             throw new IllegalStateException();
         }
         return _propertySet;
     }
-    
+
     public void setName(String name) {
         if(StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         _name = name;
     }
-    
+
     public String getName() {
         if(StringUtil.isEmpty(_name)) {
             throw new IllegalStateException();
@@ -84,7 +84,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     public void setRequired(boolean required) {
         _required = required;
     }
-    
+
     public boolean isRequired() {
         return _required;
     }
@@ -99,41 +99,41 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         }
         return _expectedClass;
     }
-    
+
     public void setDefaultValue(String defaultValue) {
         _defaultValue = defaultValue;
     }
-    
+
     public String getDefaultValue() {
         return _defaultValue;
     }
-    
+
     public void setFinalValue(String finalValue) {
         _finalValue = finalValue;
     }
-    
+
     public String getFinalValue() {
         return _finalValue;
     }
 
     public void setPropertyConverterName(String propertyConverterName) {
-    	_propertyConverterName = propertyConverterName;
+        _propertyConverterName = propertyConverterName;
     }
-    
-    public String getPropertyConverterName() {
-		return _propertyConverterName;
-	}
 
-	public void setPropertyConverter(PropertyConverter propertyConverter) {
+    public String getPropertyConverterName() {
+        return _propertyConverterName;
+    }
+
+    public void setPropertyConverter(PropertyConverter propertyConverter) {
         if(propertyConverter == null) {
             throw new IllegalArgumentException();
         }
         _propertyConverter = propertyConverter;
     }
-    
+
     protected PropertyConverter getPropertyConverter(
             ProcessorDefinition processorDef) {
-    	if(_propertyConverter != null) {
+        if(_propertyConverter != null) {
             return _propertyConverter;
         }
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
@@ -153,7 +153,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         }
         return null;
     }
-    
+
     protected Class getPropertyClass(ProcessorDefinition processorDef) {
         Class processorClass = processorDef.getProcessorClass();
         return ObjectUtil.getPropertyClass(processorClass, getName());
@@ -163,13 +163,13 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
         return SpecificationUtil.createQName(
                 node.getQName().getNamespaceURI(), _name);
     }
-    
+
     public Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected) {
         if(injected == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	QName qName = getQName(injected);
+            throw new IllegalArgumentException();
+        }
+        QName qName = getQName(injected);
         String value = getFinalValue();
         NodeAttribute attribute = injected.getAttribute(qName);
 //        if(attribute == null) {
@@ -188,7 +188,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
                     processorName, qName);
         }
         if(value != null) {
-	        Class propertyClass = getPropertyClass(processorDef);
+            Class propertyClass = getPropertyClass(processorDef);
             if(propertyClass == null) {
                 // real property not found on the processor.
                 Class processotClass = processorDef.getProcessorClass();
@@ -202,20 +202,20 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
                     return null;
                 }
             }
-        	PropertyConverter converter = getPropertyConverter(processorDef);
-        	if(converter == null && propertyClass != null) {
-        		LibraryManager manager = ProviderUtil.getLibraryManager();
-        		converter = manager.getPropertyConverter(propertyClass);
-        	}
-        	if(converter == null) {
-        		return value;
-        	}
-       		return converter.convert(attribute, value, getExpectedClass());
+            PropertyConverter converter = getPropertyConverter(processorDef);
+            if(converter == null && propertyClass != null) {
+                LibraryManager manager = ProviderUtil.getLibraryManager();
+                converter = manager.getPropertyConverter(propertyClass);
+            }
+            if(converter == null) {
+                return value;
+            }
+               return converter.convert(attribute, value, getExpectedClass());
         } else if(_required) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
         }
         return null;
     }
-    
+
 }

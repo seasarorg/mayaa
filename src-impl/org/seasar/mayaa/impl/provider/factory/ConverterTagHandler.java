@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -23,12 +23,12 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ConverterTagHandler 
-		extends AbstractParameterAwareTagHandler {
-    
+public class ConverterTagHandler
+        extends AbstractParameterAwareTagHandler {
+
     private LibraryManagerTagHandler _parent;
     private PropertyConverter _converter;
-    
+
     public ConverterTagHandler(LibraryManagerTagHandler parent) {
         super("converter");
         if(parent == null) {
@@ -38,7 +38,7 @@ public class ConverterTagHandler
     }
 
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         _converter = (PropertyConverter)XMLUtil.getObjectValue(
                 attributes, "class", PropertyConverter.class);
         if(_converter == null) {
@@ -47,14 +47,14 @@ public class ConverterTagHandler
         _converter.setSystemID(systemID);
         _converter.setLineNumber(lineNumber);
         String name = XMLUtil.getStringValue(
-        		attributes, "name", "");
+                attributes, "name", "");
         _parent.getLibraryManager().addPropertyConverter(name, _converter);
     }
-    
+
     protected void end(String body) {
         _converter = null;
     }
-    
+
     public ParameterAware getParameterAware() {
         if(_converter == null) {
             throw new IllegalStateException();

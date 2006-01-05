@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class MLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder, CONST_IMPL {
 
-    private static Log LOG = 
+    private static Log LOG =
         LogFactory.getLog(MLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {

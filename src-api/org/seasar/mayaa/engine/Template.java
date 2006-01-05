@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,15 +27,15 @@ import org.seasar.mayaa.engine.specification.Specification;
  * リクエストに対して、ステートレスである。 シリアライズ可能。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Template 
-		extends Specification, ProcessorTreeWalker, Serializable {
-    
-	/**
-	 * ページへの参照を取得する。
-	 * @return ページ。
-	 */
-	Page getPage();
-	
+public interface Template
+        extends Specification, ProcessorTreeWalker, Serializable {
+
+    /**
+     * ページへの参照を取得する。
+     * @return ページ。
+     */
+    Page getPage();
+
     /**
      * テンプレートの接尾子を返す。hello_ja.htmlであれば、「ja」を返す。
      * hello.htmlでは空白文字列。
@@ -55,5 +55,5 @@ public interface Template
      * @return テンプレートプロセッサのプロセスステートフラグ。
      */
     ProcessStatus doTemplateRender(Page topLevelPage);
-    
+
 }

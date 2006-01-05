@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -26,8 +26,8 @@ import org.seasar.mayaa.source.PageSourceFactory;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceFactoryImpl extends ParameterAwareImpl 
-		implements PageSourceFactory {
+public class PageSourceFactoryImpl extends ParameterAwareImpl
+        implements PageSourceFactory {
 
     private static final long serialVersionUID = 3334813227060846723L;
 
@@ -40,14 +40,14 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         _serviceClass = serviceClass;
     }
-    
+
     public Class getServiceClass() {
         if(_serviceClass == null) {
             throw new IllegalArgumentException();
         }
         return _serviceClass;
     }
-    
+
     public SourceDescriptor getPageSource(String systemID) {
         if(StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
@@ -56,7 +56,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         if(sourceClass == null) {
             throw new IllegalStateException();
         }
-        SourceDescriptor source = 
+        SourceDescriptor source =
             (SourceDescriptor)ObjectUtil.newInstance(sourceClass);
         for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
             String key = (String)it.next();
@@ -68,19 +68,19 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
     }
 
     // ContextAware implements -------------------------------------
-    
-	public void setUnderlyingContext(Object context) {
-		if(context == null) {
-			throw new IllegalArgumentException();
-		}
-		_context = context;
-	}
-    
+
+    public void setUnderlyingContext(Object context) {
+        if(context == null) {
+            throw new IllegalArgumentException();
+        }
+        _context = context;
+    }
+
     public Object getUnderlyingContext() {
-    	if(_context == null) {
-    		throw new IllegalStateException();
-    	}
-		return _context;
-	}
+        if(_context == null) {
+            throw new IllegalStateException();
+        }
+        return _context;
+    }
 
 }

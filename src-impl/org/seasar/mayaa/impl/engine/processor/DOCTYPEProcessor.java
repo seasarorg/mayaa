@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -25,40 +25,40 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DOCTYPEProcessor extends TemplateProcessorSupport {
-    
-	private static final long serialVersionUID = 8518993579074245108L;
 
-	private String _name;
+    private static final long serialVersionUID = 8518993579074245108L;
+
+    private String _name;
     private String _publicID;
     private String _systemID;
 
     public void setName(String name) {
         if(StringUtil.isEmpty(name)) {
-        	throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         }
         _name = name;
     }
-    
+
     public String getName() {
-    	return _name;
+        return _name;
     }
-    
+
     public void setPublicID(String publicID) {
-    	_publicID = publicID;
+        _publicID = publicID;
     }
-    
+
     public String getPublicID() {
-    	return _publicID;
+        return _publicID;
     }
-    
+
     public void setSystemID(String systemID) {
-    	_systemID = systemID;
+        _systemID = systemID;
     }
-    
+
     public String getSystemID() {
-    	return _systemID;
+        return _systemID;
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         StringBuffer docTypeDecl = new StringBuffer(128);
         docTypeDecl.append("<!DOCTYPE ").append(_name);

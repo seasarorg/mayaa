@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -25,13 +25,13 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateProcessor extends ProcessorTreeWalker {
-    
+
     /**
      * テンプレート内でユニークなID値を取得する。
      * @return テンプレート中でユニークなID。
      */
     String getUniqueID();
-    
+
     /**
      * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、
      * このメソッドで出力する。
@@ -53,23 +53,23 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      * @param node テンプレートノード。
      */
     void setOriginalNode(SpecificationNode node);
-    
+
     /**
      * テンプレート上の該当するノード情報の取得。
      * @return テンプレートノード。
      */
     SpecificationNode getOriginalNode();
-    
+
     /**
      * インジェクションされたノード情報の設定。
      * @param node インジェクトされたノード。
      */
     void setInjectedNode(SpecificationNode node);
-    
+
     /**
      * インジェクションされたノード情報の取得。
      * @return インジェクトされたノード。
-     */    
+     */
     SpecificationNode getInjectedNode();
 
     /**
@@ -77,11 +77,11 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
      * @param definition プロセッサ定義。
      */
     void setProcessorDefinition(ProcessorDefinition definition);
-    
+
     /**
      * このプロセッサの定義を取得する。
      * @return プロセッサ定義。
      */
     ProcessorDefinition getProcessorDefinition();
-    
+
 }

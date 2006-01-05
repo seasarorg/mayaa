@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -45,7 +45,7 @@ public class XPathUtil {
         // no instantiation.
     }
 
-    public static boolean matches(SpecificationNode test, 
+    public static boolean matches(SpecificationNode test,
             String xpathExpr, Namespace namespace) {
         if(StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
@@ -71,7 +71,7 @@ public class XPathUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Iterator selectChildNodes(SpecificationNode node,
             String xpathExpr, Namespace namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
@@ -83,7 +83,7 @@ public class XPathUtil {
                     specification, xpathExpr, namespaceable);
         }
         try {
-            XPath xpath = 
+            XPath xpath =
                 SpecificationXPath.createXPath(xpathExpr, namespaceable);
             return xpath.selectNodes(specification).iterator();
         } catch(JaxenException e) {
@@ -92,16 +92,16 @@ public class XPathUtil {
     }
 
     // support class ------------------------------------------------
-    
-    public static class CascadeSelectNodesIterator 
+
+    public static class CascadeSelectNodesIterator
             implements Iterator {
 
         private Specification _specification;
         private String _xpathExpr;
         private Namespace _namespaceable;
         private Iterator _iterator;
-        
-        public CascadeSelectNodesIterator(Specification specification, 
+
+        public CascadeSelectNodesIterator(Specification specification,
                 String xpathExpr, Namespace namespaceable) {
             if(specification == null || StringUtil.isEmpty(xpathExpr)) {
                 throw new IllegalArgumentException();
@@ -110,7 +110,7 @@ public class XPathUtil {
             _xpathExpr = xpathExpr;
             _namespaceable = namespaceable;
         }
-        
+
         public boolean hasNext() {
             while(true) {
                 if(_iterator == null) {
@@ -125,7 +125,7 @@ public class XPathUtil {
                 if(_iterator.hasNext()) {
                     return true;
                 }
-                Specification parent = 
+                Specification parent =
                     EngineUtil.getParentSpecification(_specification);
                 if(parent == null) {
                     return false;
@@ -134,18 +134,18 @@ public class XPathUtil {
                 _iterator = null;
             }
         }
-        
+
         public Object next() {
             if(hasNext()) {
                 return _iterator.next();
             }
             throw new NoSuchElementException();
         }
-        
+
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
 
 }

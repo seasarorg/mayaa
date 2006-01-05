@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ public class InsertProcessor
             throw new IllegalStateException();
         }
         renderPage.checkTimestamp();
-        ProcessStatus ret = RenderUtil.renderPage(fireEvent, this, 
+        ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
         if(ret == null) {
             Response response = CycleUtil.getResponse();
@@ -189,7 +189,7 @@ public class InsertProcessor
         }
         return null;
     }
-    
+
     protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
         if(doRender.isReplace() == false) {

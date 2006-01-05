@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -36,19 +36,19 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ElementProcessor extends AbstractAttributableProcessor
-		implements CONST_IMPL {
+        implements CONST_IMPL {
 
-	private static final long serialVersionUID = 923306412062075314L;
-	private static final String SUFFIX_DUPLICATED = "_d"; 
-    
-	private PrefixAwareName _name;
+    private static final long serialVersionUID = 923306412062075314L;
+    private static final String SUFFIX_DUPLICATED = "_d";
+
+    private PrefixAwareName _name;
     private boolean _duplicated;
     private ThreadLocal _currentNS = new ThreadLocal();
 
     protected void clearCurrentNS() {
         _currentNS.set(null);
     }
-    
+
     protected Namespace getCurrentNS() {
         Namespace currentNS = (Namespace)_currentNS.get();
         if(currentNS == null) {
@@ -58,7 +58,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         return currentNS;
     }
-    
+
     // MLD property
     public void setDuplicated(boolean duplicated) {
         _duplicated = duplicated;
@@ -68,7 +68,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     public boolean isDuplicated() {
         return _duplicated;
     }
-    
+
     // MLD property
     public void setName(PrefixAwareName name) {
         if(name == null) {
@@ -76,7 +76,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         _name = name;
     }
-    
+
     protected PrefixAwareName getName() {
         if(_name == null) {
             throw new IllegalStateException();
@@ -102,7 +102,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         Namespace currentNS = getCurrentNS();
         String namespaceURI = name.getQName().getNamespaceURI();
-        PrefixMapping mapping = 
+        PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
         if(mapping != null) {
             return;
@@ -116,7 +116,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         currentNS.addPrefixMapping(name.getPrefix(), namespaceURI);
     }
-    
+
     protected void resolvePrefixAll() {
         resolvePrefix(getName());
         for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
@@ -135,17 +135,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         Namespace currentNS = getCurrentNS();
         String namespaceURI = name.getQName().getNamespaceURI();
-        PrefixMapping mapping = 
+        PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
         if(mapping != null) {
             return mapping.getPrefix();
         }
         throw new IllegalStateException();
     }
-    
+
     protected void appendPrefixMappingString(
             StringBuffer buffer, Namespace namespace) {
-    	if(namespace == null) {
+        if(namespace == null) {
             throw new IllegalArgumentException();
         }
         for(Iterator it = namespace.iteratePrefixMapping(false);
@@ -161,7 +161,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             buffer.append("=\"").append(uri).append("\"");
         }
     }
-    
+
     protected void appendAttributeString(
             StringBuffer buffer, PrefixAwareName propName, Object value) {
         QName qName = propName.getQName();
@@ -183,27 +183,27 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         buffer.append("\"");
     }
-    
+
     protected boolean isHTML(QName qName) {
         String namespaceURI = qName.getNamespaceURI();
         return URI_HTML.equals(namespaceURI);
     }
-    
+
     protected boolean needsCloseElement(QName qName) {
         if(isHTML(qName)) {
             String localName = qName.getLocalName();
-            HTMLElements.Element element = 
+            HTMLElements.Element element =
                 HTMLElements.getElement(localName);
             return element.isEmpty() == false;
         }
         return getChildProcessorSize() > 0;
     }
-    
+
     protected void write(StringBuffer buffer) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(buffer.toString());
     }
-    
+
     protected PrefixAwareName getIDName() {
         String namespaceURI = getName().getQName().getNamespaceURI();
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
@@ -211,7 +211,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         name.setParentSpace(getName().getParentSpace());
         return name;
     }
-    
+
     protected ProcessStatus writeStartElement() {
         if(getName() == null) {
             throw new IllegalStateException();
@@ -231,16 +231,16 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
-            PrefixAwareName propName = prop.getName();  
-        	QName propQName = propName.getQName();
+            PrefixAwareName propName = prop.getName();
+            QName propQName = propName.getQName();
             String propURI = propQName.getNamespaceURI();
-            String propLocalName = propQName.getLocalName(); 
+            String propLocalName = propQName.getLocalName();
             if(isDuplicated()) {
                 if(uri.equals(propURI) && "id".equals(propLocalName)) {
                     continue;
                 }
-        	}
-        	appendAttributeString(buffer, propName, prop.getValue());
+            }
+            appendAttributeString(buffer, propName, prop.getValue());
         }
         for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
             ProcessorProperty prop = (ProcessorProperty)it.next();
@@ -256,7 +256,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         write(buffer);
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
-    
+
     protected void writeEndElement() {
         if(getName() == null) {
             throw new IllegalStateException();
@@ -272,10 +272,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
             write(buffer);
         }
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         clearCurrentNS();
         return super.doStartProcess(topLevelPage);
     }
-    
+
 }

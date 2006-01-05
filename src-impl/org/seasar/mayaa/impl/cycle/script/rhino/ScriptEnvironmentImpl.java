@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -46,7 +46,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static ThreadLocal _parent = new ThreadLocal();
 
     private WrapFactory _wrap;
-    
+
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position) {
         if(scriptBlock == null) {
@@ -60,7 +60,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     // ScriptEnvironment implements ----------------------------------
-    
+
     protected String getSourceMimeType(SourceDescriptor source) {
         if(source == null) {
             throw new IllegalArgumentException();
@@ -78,7 +78,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         return new SourceCompiledScriptImpl(source, encoding, _wrap);
     }
-    
+
     protected Scriptable getStandardObjects() {
         if(_standardObjects == null) {
             Context cx = Context.enter();
@@ -120,7 +120,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         pageScope.setParentScope(parent);
         if(variables != null) {
             for(Iterator it = variables.keySet().iterator(); it.hasNext(); ) {
-                String name = it.next().toString(); 
+                String name = it.next().toString();
                 Object value = variables.get(name);
                 Object variable = Context.javaToJS(value, pageScope);
                 ScriptableObject.putProperty(pageScope, name, variable);
@@ -146,13 +146,13 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         throw new IllegalStateException();
     }
-    
+
     public Object convertFromScriptObject(Object scriptObject) {
         return JavaAdapter.convertResult(scriptObject, Object.class);
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if("wrapFactory".equals(name)) {
             if(StringUtil.isEmpty(value)) {
@@ -168,5 +168,5 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         super.setParameter(name, value);
     }
-    
+
 }

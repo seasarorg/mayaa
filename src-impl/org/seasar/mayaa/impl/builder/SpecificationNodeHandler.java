@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -45,19 +45,19 @@ import org.xml.sax.ext.LexicalHandler;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationNodeHandler
-        implements EntityResolver, DTDHandler, ContentHandler, 
+        implements EntityResolver, DTDHandler, ContentHandler,
         ErrorHandler, LexicalHandler, AdditionalHandler, CONST_IMPL {
-    
-    private static final Log LOG = 
+
+    private static final Log LOG =
         LogFactory.getLog(SpecificationNodeHandler.class);
 
-    protected static final QName QM_DATA = 
+    protected static final QName QM_DATA =
         SpecificationUtil.createQName("data");
-    protected static final QName QM_PUBLIC_ID = 
+    protected static final QName QM_PUBLIC_ID =
         SpecificationUtil.createQName("publicID");
-    protected static final QName QM_SYSTEM_ID = 
+    protected static final QName QM_SYSTEM_ID =
         SpecificationUtil.createQName("systemID");
-    protected static final QName QM_TARGET = 
+    protected static final QName QM_TARGET =
         SpecificationUtil.createQName("target");
 
     private Specification _specification;
@@ -69,7 +69,7 @@ public class SpecificationNodeHandler
     private boolean _onTemplate;
     private int _inEntity;
     private int _sequenceID;
-    
+
     public SpecificationNodeHandler(Specification specification) {
         if(specification == null) {
             throw new IllegalArgumentException();
@@ -81,7 +81,7 @@ public class SpecificationNodeHandler
     public void setOutputWhitespace(boolean outputWhitespace) {
         _outputWhitespace = outputWhitespace;
     }
-    
+
     public void setDocumentLocator(Locator locator) {
         _locator = locator;
     }
@@ -96,14 +96,14 @@ public class SpecificationNodeHandler
         _namespace = SpecificationUtil.createNamespace();
         _namespace.setParentSpace(parentSpace);
     }
-    
+
     protected void popNamespace() {
         _namespace = _namespace.getParentSpace();
         if(_namespace == null) {
             throw new IllegalStateException();
         }
     }
-    
+
     public void startDocument() {
         _sequenceID = 1;
         _charactersBuffer = new StringBuffer(128);
@@ -115,29 +115,29 @@ public class SpecificationNodeHandler
     public void startPrefixMapping(String prefix, String uri) {
         _namespace.addPrefixMapping(prefix, uri);
     }
-    
+
     public void endPrefixMapping(String prefix) {
-        PrefixMapping mapping = 
+        PrefixMapping mapping =
             _namespace.getMappingFromPrefix(prefix, false);
         if(mapping == null) {
             throw new IllegalStateException();
         }
     }
-    
+
     protected SpecificationNode addNode(QName qName) {
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         int lineNumber = _locator.getLineNumber();
-		SpecificationNode child = SpecificationUtil.createSpecificationNode(
-				qName, systemID, lineNumber, _onTemplate, _sequenceID);
+        SpecificationNode child = SpecificationUtil.createSpecificationNode(
+                qName, systemID, lineNumber, _onTemplate, _sequenceID);
         _sequenceID++;
         child.setParentSpace(_namespace);
         _current.addChildNode(child);
-		return child;
+        return child;
     }
-    
+
     protected void addCharactersNode() {
-    	if(_charactersBuffer.length() > 0) {
-    		SpecificationNode node = addNode(QM_CHARACTERS);
+        if(_charactersBuffer.length() > 0) {
+            SpecificationNode node = addNode(QM_CHARACTERS);
 
             String characters = _charactersBuffer.toString();
             if(_outputWhitespace == false) {
@@ -145,7 +145,7 @@ public class SpecificationNodeHandler
             }
             node.addAttribute(QM_TEXT, characters);
             _charactersBuffer = new StringBuffer(128);
-    	}
+        }
     }
 
     private String removeIgnorableWhitespace(String characters) {
@@ -170,34 +170,34 @@ public class SpecificationNodeHandler
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setOriginalNode(originalNode);
     }
-    
+
     protected boolean checkAttribute(String qName, String value) {
-    	// workaround for XML parser(NekoHTML?)'s bug.
-    	if(StringUtil.isEmpty(qName)) {
-    		throw new IllegalArgumentException();
-    	}
-    	String prefix;
-    	if("xmlns".equals(qName)) {
+        // workaround for XML parser(NekoHTML?)'s bug.
+        if(StringUtil.isEmpty(qName)) {
+            throw new IllegalArgumentException();
+        }
+        String prefix;
+        if("xmlns".equals(qName)) {
             prefix = "";
-    	} else if(qName.startsWith("xmlns:")) {
-    		prefix = qName.substring(6);
-    	} else {
-    		return true;
-    	}
-    	if(_namespace.getMappingFromPrefix(prefix, false) == null) {
-    		startPrefixMapping(prefix, value);
-    	}
+        } else if(qName.startsWith("xmlns:")) {
+            prefix = qName.substring(6);
+        } else {
+            return true;
+        }
+        if(_namespace.getMappingFromPrefix(prefix, false) == null) {
+            startPrefixMapping(prefix, value);
+        }
         if(LOG.isWarnEnabled()) {
-        	LOG.warn(StringUtil.getMessage(SpecificationNodeHandler.class, 
-        			0, prefix, value));
+            LOG.warn(StringUtil.getMessage(SpecificationNodeHandler.class,
+                    0, prefix, value));
         }
         return false;
     }
-    
-    public void startElement(String namespaceURI, 
+
+    public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
-        PrefixAwareName parsedName = 
+        PrefixAwareName parsedName =
             BuilderUtil.parseName(_namespace, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
@@ -209,10 +209,10 @@ public class SpecificationNodeHandler
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
             if(checkAttribute(attrName, attrValue)) {
-                PrefixAwareName parsedAttrName = 
-	                BuilderUtil.parseName(elementNS, attrName);
-	            QName attrQName = parsedAttrName.getQName();
-	            node.addAttribute(attrQName, attrValue);
+                PrefixAwareName parsedAttrName =
+                    BuilderUtil.parseName(elementNS, attrName);
+                QName attrQName = parsedAttrName.getQName();
+                node.addAttribute(attrQName, attrValue);
             }
         }
         _current = node;
@@ -220,7 +220,7 @@ public class SpecificationNodeHandler
         pushNamespace();
     }
 
-    public void endElement(String namespaceURI, 
+    public void endElement(String namespaceURI,
             String localName, String qName) {
         popNamespace();
         addCharactersNode();
@@ -233,15 +233,15 @@ public class SpecificationNodeHandler
     }
 
     public void characters(char[] buffer, int start, int length) {
-    	if(_inEntity == 0) {
+        if(_inEntity == 0) {
             _charactersBuffer.append(buffer, start, length);
-    	}
+        }
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-		_charactersBuffer.append(buffer, start, length);
+        _charactersBuffer.append(buffer, start, length);
     }
-    
+
     public void xmlDecl(String version, String encoding, String standalone) {
         addCharactersNode();
         SpecificationNode node = addNode(QM_PI);
@@ -263,11 +263,11 @@ public class SpecificationNodeHandler
 
     public void processingInstruction(String target, String data) {
         addCharactersNode();
-		SpecificationNode node = addNode(QM_PI);
-		node.addAttribute(QM_TARGET, target);
-		if(StringUtil.hasValue(data)) {
-			node.addAttribute(QM_DATA, data);
-		}
+        SpecificationNode node = addNode(QM_PI);
+        node.addAttribute(QM_TARGET, target);
+        if(StringUtil.hasValue(data)) {
+            node.addAttribute(QM_DATA, data);
+        }
     }
 
     public void skippedEntity(String name) {
@@ -287,7 +287,7 @@ public class SpecificationNodeHandler
     public void endEntity(String name) {
         --_inEntity;
     }
-    
+
     public void comment(char[] buffer, int start, int length) {
         if (_specification.getSystemID().endsWith(".mayaa") == false) {
             addCharactersNode();
@@ -309,14 +309,14 @@ public class SpecificationNodeHandler
     public void startDTD(String name, String publicID, String systemID) {
         addCharactersNode();
         SpecificationNode node = addNode(QM_DOCTYPE);
-		node.addAttribute(QM_NAME, name);
-		if(StringUtil.hasValue(publicID)) {
-			node.addAttribute(QM_PUBLIC_ID, publicID);
-		}
-		if(StringUtil.hasValue(systemID)) {
-			node.addAttribute(QM_SYSTEM_ID, systemID);
-		}
-		_charactersBuffer.append("\r\n");
+        node.addAttribute(QM_NAME, name);
+        if(StringUtil.hasValue(publicID)) {
+            node.addAttribute(QM_PUBLIC_ID, publicID);
+        }
+        if(StringUtil.hasValue(systemID)) {
+            node.addAttribute(QM_SYSTEM_ID, systemID);
+        }
+        _charactersBuffer.append("\r\n");
     }
 
     public void endDTD() {
@@ -326,7 +326,7 @@ public class SpecificationNodeHandler
     public void startCDATA() {
         addCharactersNode();
         SpecificationNode node = addNode(QM_CDATA);
-        _current = node; 
+        _current = node;
     }
 
     public void endCDATA() {
@@ -346,7 +346,7 @@ public class SpecificationNodeHandler
         }
         throw new RuntimeException(e);
     }
-    
+
     public void error(SAXParseException e) {
         if(LOG.isErrorEnabled()) {
             LOG.error(e);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -39,7 +39,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
 
     private HttpServletRequest _httpRequest;
     private HttpSession _httpSession;
-    
+
     protected void check() {
         if(_httpRequest == null) {
             throw new IllegalStateException();
@@ -48,20 +48,20 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
             _httpSession = _httpRequest.getSession(true);
         }
     }
-    
+
     // Session implements -------------------------------------------
-    
+
     public String getSessionID() {
         check();
         return _httpSession.getId();
     }
 
     // AttributeScope implements -------------------------------------
-    
+
     public String getScopeName() {
         return ServiceCycle.SCOPE_SESSION;
     }
-    
+
     public Iterator iterateAttributeNames() {
         check();
         return EnumerationIterator.getInstance(
@@ -74,20 +74,20 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         }
         check();
         for(Enumeration e = _httpSession.getAttributeNames();
-        		e.hasMoreElements(); ) {
-			if(e.nextElement().equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
+                e.hasMoreElements(); ) {
+            if(e.nextElement().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Object getAttribute(String name) {
         if(StringUtil.isEmpty(name)) {
             return null;
         }
         check();
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment(); 
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
         return env.convertFromScriptObject(_httpSession.getAttribute(name));
     }
 
@@ -98,7 +98,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         check();
         _httpSession.setAttribute(name, attribute);
     }
-    
+
     public void removeAttribute(String name) {
         if(StringUtil.isEmpty(name)) {
             return;
@@ -108,10 +108,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     // ContextAware implemetns ----------------------------------------
-    
+
     public void setUnderlyingContext(Object context) {
         // When setting, UnderlyingObject is "HttpServletRequest"
-        if(context == null || 
+        if(context == null ||
                 context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }

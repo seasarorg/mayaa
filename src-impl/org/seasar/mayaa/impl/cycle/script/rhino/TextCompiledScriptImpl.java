@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
 
     private static final long serialVersionUID = 4793923040332838492L;
-    
+
     private String _sourceName;
     int _lineNumber;
     private WrapFactory _wrap;
@@ -44,8 +44,8 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     private String _elScriptText;
     private String _elStyleName;
     private boolean _elStyle;
-    
-    public TextCompiledScriptImpl(String text, WrapFactory wrap, 
+
+    public TextCompiledScriptImpl(String text, WrapFactory wrap,
             PositionAware position) {
         super(text);
         _wrap = wrap;
@@ -76,7 +76,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         return true;
     }
-    
+
     protected void processText(String text) {
         if(text == null) {
             throw new IllegalArgumentException();
@@ -106,7 +106,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         return _rhinoScript.exec(cx, scope);
     }
-    
+
     protected Object getELStyleHost(Context cx, Scriptable scope) {
         if(cx == null || scope == null) {
             throw new IllegalArgumentException();
@@ -120,7 +120,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         return _elRhinoScript.exec(cx, scope);
     }
-    
+
     protected Object functionExecute(
             Context cx, Scriptable scope, Object host, Object[] args) {
         if(cx == null || scope == null || host == null || args == null) {
@@ -133,9 +133,9 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         Class[] argClasses = getMethodArgClasses();
         return ObjectUtil.invoke(host, _elStyleName, args, argClasses);
     }
-    
+
     public Object execute(Object[] args) {
-    	Context cx = RhinoUtil.enter(_wrap);
+        Context cx = RhinoUtil.enter(_wrap);
         Object ret = null;
         try {
             Scriptable scope = RhinoUtil.getScope();

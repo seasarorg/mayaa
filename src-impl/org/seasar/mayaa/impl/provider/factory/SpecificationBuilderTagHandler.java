@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,11 +27,11 @@ import org.xml.sax.Attributes;
  */
 public class SpecificationBuilderTagHandler
         extends AbstractParameterAwareTagHandler {
-    
+
     private ProviderTagHandler _parent;
     private SpecificationBuilder _beforeBuilder;
     private SpecificationBuilder _currentBuilder;
-    
+
     public SpecificationBuilderTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("specificationBuilder");
@@ -43,9 +43,9 @@ public class SpecificationBuilderTagHandler
             _beforeBuilder = beforeProvider.getSpecificationBuilder();
         }
     }
-    
+
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         Class builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentBuilder = (SpecificationBuilder)MarshallUtil.marshall(
@@ -53,11 +53,11 @@ public class SpecificationBuilderTagHandler
                 systemID, lineNumber);
         _parent.getServiceProvider().setSpecificationBuilder(_currentBuilder);
     }
-    
+
     protected void end(String body) {
         _currentBuilder = null;
     }
-    
+
     public ParameterAware getParameterAware() {
         if(_currentBuilder == null) {
             throw new IllegalStateException();

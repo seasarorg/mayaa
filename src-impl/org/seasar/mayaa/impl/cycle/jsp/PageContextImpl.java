@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -53,7 +53,7 @@ public class PageContextImpl extends PageContext {
             PageContext.REQUEST_SCOPE,
             PageContext.SESSION_SCOPE,
             PageContext.APPLICATION_SCOPE
-    }; 
+    };
 
     private ServletConfig _config;
 
@@ -76,7 +76,7 @@ public class PageContextImpl extends PageContext {
         // Can't call.
         throw new IllegalStateException();
     }
-    
+
     public void release() {
         // Can't call.
         throw new IllegalStateException();
@@ -91,7 +91,7 @@ public class PageContextImpl extends PageContext {
     public JspWriter popBody() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-    	return new JspWriterImpl(response.getWriter());
+        return new JspWriterImpl(response.getWriter());
     }
 
     public BodyContent pushBody() {
@@ -102,17 +102,17 @@ public class PageContextImpl extends PageContext {
 
     public void forward(String relativeUrlPath) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	cycle.forward(relativeUrlPath);
+        cycle.forward(relativeUrlPath);
     }
 
-    public void include(String relativeUrlPath) 
+    public void include(String relativeUrlPath)
             throws ServletException, IOException {
         include(relativeUrlPath, false);
     }
-    
+
     protected String getContextRelativePath(
             ServletRequest request, String relativePath) {
-        if (relativePath.startsWith("/") || 
+        if (relativePath.startsWith("/") ||
                 request instanceof HttpServletRequest == false) {
             return relativePath;
         }
@@ -128,7 +128,7 @@ public class PageContextImpl extends PageContext {
         }
         return uri + '/' + relativePath;
     }
-    
+
     public void include(String relativeUrlPath, boolean flush)
             throws ServletException, IOException {
         if(flush) {
@@ -136,9 +136,9 @@ public class PageContextImpl extends PageContext {
             response.getWriter().flush();
         }
         ServletRequest request = getRequest();
-        String contextRelativePath = 
+        String contextRelativePath =
             getContextRelativePath(request, relativeUrlPath);
-        RequestDispatcher dispatcher = 
+        RequestDispatcher dispatcher =
             request.getRequestDispatcher(contextRelativePath);
         dispatcher.include(request, getResponse());
     }
@@ -146,7 +146,7 @@ public class PageContextImpl extends PageContext {
     public void handlePageException(Exception e) {
         handlePageException((Throwable)e);
     }
-    
+
     public void handlePageException(Throwable t) {
         if(t instanceof RuntimeException) {
             throw (RuntimeException)t;
@@ -164,7 +164,7 @@ public class PageContextImpl extends PageContext {
     }
 
     // getting underlying object ---------------------------------------
-    
+
     public ServletContext getServletContext() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ApplicationScope application = cycle.getApplicationScope();
@@ -174,7 +174,7 @@ public class PageContextImpl extends PageContext {
         }
         throw new IllegalStateException();
     }
-    
+
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         SessionScope session = cycle.getSessionScope();
@@ -188,23 +188,23 @@ public class PageContextImpl extends PageContext {
     public ServletRequest getRequest() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         RequestScope request = cycle.getRequestScope();
-    	Object obj = request.getUnderlyingContext();
-    	if(obj instanceof ServletRequest) {
-    		return (ServletRequest)obj;
-    	}
+        Object obj = request.getUnderlyingContext();
+        if(obj instanceof ServletRequest) {
+            return (ServletRequest)obj;
+        }
         throw new IllegalStateException();
     }
-    
+
     public ServletResponse getResponse() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
-    	Object obj = response.getUnderlyingContext();
-    	if(obj instanceof ServletResponse) {
-    		return (ServletResponse)obj;
-    	}
+        Object obj = response.getUnderlyingContext();
+        if(obj instanceof ServletResponse) {
+            return (ServletResponse)obj;
+        }
         throw new IllegalStateException();
     }
-    
+
     public ServletConfig getServletConfig() {
         if(_config == null) {
             _config = new CycleServletConfig();
@@ -216,18 +216,18 @@ public class PageContextImpl extends PageContext {
         throw new UnsupportedOperationException();
     }
 
-    // since 2.0 -------------------------------------------------    
+    // since 2.0 -------------------------------------------------
 
-	public ExpressionEvaluator getExpressionEvaluator() {
+    public ExpressionEvaluator getExpressionEvaluator() {
         return ExpressionEvaluatorImpl.getInstance();
-	}
+    }
 
-	public VariableResolver getVariableResolver() {
+    public VariableResolver getVariableResolver() {
         return VariableResolverImpl.getInstance();
-	}
+    }
 
-	// Attributes --------------------------------------------------
-    
+    // Attributes --------------------------------------------------
+
     public Object findAttribute(String name) {
         for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
             Object ret = CycleUtil.getAttribute(
@@ -299,27 +299,27 @@ public class PageContextImpl extends PageContext {
         }
         return 0;
     }
-    
+
     // support class -------------------------------------------------
-    
+
     private class CycleServletConfig implements ServletConfig {
 
         public String getInitParameter(String name) {
             return getServletContext().getInitParameter(name);
         }
-        
+
         public Enumeration getInitParameterNames() {
             return getServletContext().getInitParameterNames();
         }
-        
+
         public ServletContext getServletContext() {
             return getServletContext();
         }
-        
+
         public String getServletName() {
             return "Mayaa Servlet";
         }
-    
+
     }
-    
+
 }

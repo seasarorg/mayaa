@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -38,10 +38,10 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class EqualsIDInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
-    
-    private static final Log LOG = 
+
+    private static final Log LOG =
         LogFactory.getLog(EqualsIDInjectionResolver.class);
-    
+
     private CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private boolean _reportResolvedID = true;
     private boolean _useHtmlID = true;
@@ -50,32 +50,32 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     protected CopyToFilter getCopyToFilter() {
         return _idFilter;
     }
-    
+
     protected boolean isReportResolvedID() {
         return _reportResolvedID;
     }
-    
+
     protected String getID(SpecificationNode node) {
-	    if(node == null) {
-	        throw new IllegalArgumentException();
-	    }
-    	NodeAttribute attr = node.getAttribute(QM_ID);
-    	if(attr != null) {
-    		return attr.getValue();
-    	}
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        NodeAttribute attr = node.getAttribute(QM_ID);
+        if(attr != null) {
+            return attr.getValue();
+        }
         if (_useXhtmlID) {
-    		attr = node.getAttribute(QX_ID);
-    		if(attr != null) {
-    			return attr.getValue();
-    		}
+            attr = node.getAttribute(QX_ID);
+            if(attr != null) {
+                return attr.getValue();
+            }
         }
         if (_useHtmlID) {
-    		attr = node.getAttribute(QH_ID);
-    		if(attr != null) {
-    			return attr.getValue();
-    		}
+            attr = node.getAttribute(QH_ID);
+            if(attr != null) {
+                return attr.getValue();
+            }
         }
-		return null;
+        return null;
     }
 
     protected SpecificationNode getEqualsIDNode(
@@ -95,7 +95,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         }
         return null;
     }
-    
+
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
         if(original == null || chain == null) {
@@ -115,18 +115,18 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
                 }
                 spec = EngineUtil.getParentSpecification(spec);
             }
-	        if(injected != null) {
-	            if(QM_IGNORE.equals(injected.getQName())) {
-	                return chain.getNode(original);
-	            }
+            if(injected != null) {
+                if(QM_IGNORE.equals(injected.getQName())) {
+                    return chain.getNode(original);
+                }
                 return injected.copyTo(getCopyToFilter());
-	        }
+            }
             if(isReportResolvedID()) {
                 if(LOG.isWarnEnabled()) {
                     String systemID = original.getSystemID();
                     String lineNumber = Integer.toString(original.getLineNumber());
                     String msg = StringUtil.getMessage(
-                            EqualsIDInjectionResolver.class, 0, 
+                            EqualsIDInjectionResolver.class, 0,
                             id, systemID, lineNumber);
                     LOG.warn(msg);
                 }
@@ -136,7 +136,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
@@ -149,11 +149,11 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         }
         super.setParameter(name, value);
     }
-    
+
     // support class ------------------------------------------------
-    
+
     protected class CheckIDCopyToFilter implements CopyToFilter {
-   
+
         public boolean accept(NodeObject test) {
             if(test instanceof NodeAttribute) {
                 NodeAttribute attr = (NodeAttribute)test;
@@ -161,7 +161,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
             }
             return true;
         }
-        
+
     }
-    
+
 }

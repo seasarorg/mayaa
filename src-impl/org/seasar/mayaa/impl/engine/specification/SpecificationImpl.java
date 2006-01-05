@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -37,11 +37,11 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationImpl extends ParameterAwareImpl
-		implements Specification, CONST_IMPL {
-    
-	private static final long serialVersionUID = 174451168836001746L;
+        implements Specification, CONST_IMPL {
 
-	private Date _buildTimestamp;
+    private static final long serialVersionUID = 174451168836001746L;
+
+    private Date _buildTimestamp;
     private SourceDescriptor _source;
     private List _childNodes;
     private boolean _hasSource;
@@ -94,11 +94,11 @@ public class SpecificationImpl extends ParameterAwareImpl
             builder.build(this);
         }
     }
-    
+
     protected void setTimestamp(Date buildTimestamp) {
         _buildTimestamp = buildTimestamp;
     }
-    
+
     public Date getTimestamp() {
         return _buildTimestamp;
     }
@@ -106,14 +106,14 @@ public class SpecificationImpl extends ParameterAwareImpl
     public void setSource(SourceDescriptor source) {
         _source = source;
     }
-    
+
     public SourceDescriptor getSource() {
-		if(_source == null) {
-		    _source = new NullSourceDescriptor();
-		}
-		return _source;
+        if(_source == null) {
+            _source = new NullSourceDescriptor();
+        }
+        return _source;
     }
-    
+
     public void kill() {
         setTimestamp(null);
     }
@@ -125,7 +125,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     // NodeTreeWalker implements ------------------------------------
-    
+
     public void setParentNode(NodeTreeWalker parentNode) {
         throw new IllegalStateException();
     }
@@ -152,7 +152,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     public Iterator iterateChildNode() {
         if(_childNodes == null) {
             return NullIterator.getInstance();
-        }        
+        }
         return _childNodes.iterator();
     }
 
@@ -174,13 +174,13 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     // support class -------------------------------------------------
-    
+
     protected class ChildSpecificationsIterator implements Iterator {
 
         private int _index;
         private Specification _next;
         private List _list;
-        
+
         public ChildSpecificationsIterator(List list) {
             if(list == null) {
                 throw new IllegalArgumentException();
@@ -188,7 +188,7 @@ public class SpecificationImpl extends ParameterAwareImpl
             _list = list;
             _index = list.size();
         }
-        
+
         public boolean hasNext() {
             if(_next != null) {
                 return true;
@@ -220,8 +220,8 @@ public class SpecificationImpl extends ParameterAwareImpl
 
         public void remove() {
             throw new UnsupportedOperationException();
-        }       
-        
+        }
+
     }
-	
+
 }

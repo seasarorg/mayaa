@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -40,7 +40,7 @@ public class RhinoUtil {
         }
         return cx;
     }
-    
+
     public static Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrs = cycle.getPageScope();
@@ -54,7 +54,7 @@ public class RhinoUtil {
             Context cx, Class expectedClass, Object jsRet) {
         Object ret = null;
         if(expectedClass.equals(Boolean.TYPE)) {
-            // workaround to ECMA1.3 
+            // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);
         } else if(expectedClass == Void.class
                 || (jsRet instanceof org.mozilla.javascript.Undefined)) {
@@ -73,5 +73,5 @@ public class RhinoUtil {
         }
         throw new RuntimeException(t);
     }
-    
+
 }

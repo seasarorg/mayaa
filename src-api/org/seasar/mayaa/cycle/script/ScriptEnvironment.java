@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,13 +28,13 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ScriptEnvironment extends ParameterAware {
-    
+
     /**
      * ユーザー定義スコープオブジェクトを追加する。
      * @param attrs ユーザー定義スコープ。
      */
     void addAttributeScope(AttributeScope attrs);
-    
+
     /**
      * ユーザー定義スコープオブジェクトをイテレートする。
      * @return スコープオブジェクト（AttributeScope）のイテレータ。
@@ -46,7 +46,7 @@ public interface ScriptEnvironment extends ParameterAware {
      * @return 開きクオート前置文字列。
      */
     String getBlockSign();
-    
+
     /**
      * 式文字列をコンパイルする。
      * @param script スクリプト。
@@ -62,32 +62,32 @@ public interface ScriptEnvironment extends ParameterAware {
      * @return コンパイル済みスクリプトオブジェクト。
      */
     CompiledScript compile(SourceDescriptor source, String encoding);
-    
+
     /**
      * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
      * カレントServiceCycleのページスコープを初期化する。
      */
     void initScope();
-    
+
     /**
      * テンプレート描画時に、プロセッサのスタートイベントと同期するためのメソッド。
      * カレントServiceCycleのページスコープに、スクリプト変数をプッシュする。
      * @param variables カスタムスコープ変数。
      */
     void startScope(Map variables);
-    
+
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。
      * カレントServiceCycleのページスコープから、スクリプトのスコープオブジェクト
      * をポップする。
      */
     void endScope();
-    
+
     /**
      * スクリプト内部表現オブジェクトから、Javaのオブジェクトに変換する。
      * @param scriptObject スクリプト内部表現オブジェクト。
      * @return Javaのオブジェクト。
      */
     Object convertFromScriptObject(Object scriptObject);
-    
+
 }

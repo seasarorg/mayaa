@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -26,8 +26,8 @@ import org.xml.sax.Attributes;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorTagHandler
-		extends PropertySetTagHandler {
-    
+        extends PropertySetTagHandler {
+
     public ProcessorTagHandler(LibraryTagHandler parent) {
         super("processor", parent, parent);
         putHandler(new PropertyTagHandler(this, parent));
@@ -37,23 +37,23 @@ public class ProcessorTagHandler
     protected PropertySetImpl createPropertySet() {
         return new ProcessorDefinitionImpl();
     }
-    
+
     protected void addToLibrary(LibraryDefinitionImpl library) {
         library.addProcessorDefinition(getProcessorDefinition());
     }
-    
+
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         super.start(attributes, systemID, lineNumber);
         ProcessorDefinitionImpl processorDef = getProcessorDefinition();
-        Class processorClass = 
+        Class processorClass =
             XMLUtil.getClassValue(attributes, "class", null);
         if(processorClass == null) {
             throw new IllegalStateException();
         }
         processorDef.setProcessorClass(processorClass);
     }
-    
+
     public ProcessorDefinitionImpl getProcessorDefinition() {
         PropertySetImpl propertySet = getPropertySet();
         if(propertySet instanceof ProcessorDefinitionImpl) {
@@ -62,8 +62,8 @@ public class ProcessorTagHandler
         throw new IllegalStateException();
     }
 
-	public ParameterAware getParameterAware() {
-		return getProcessorDefinition();
-	}
-    
+    public ParameterAware getParameterAware() {
+        return getProcessorDefinition();
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -29,39 +29,39 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RenderedSetter extends ParameterAwareImpl	
+public class RenderedSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
-	
-    protected static final QName QM_NULL = 
+
+    protected static final QName QM_NULL =
         SpecificationUtil.createQName("null");
-    protected static final QName QM_RENDERED = 
+    protected static final QName QM_RENDERED =
         SpecificationUtil.createQName("rendered");
 
-	protected boolean isRendered(SpecificationNode node) {
-	    if(node == null) {
-	        throw new IllegalArgumentException();
-	    }
+    protected boolean isRendered(SpecificationNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
         NodeAttribute attr = node.getAttribute(QM_RENDERED);
         if(attr != null) {
             return ObjectUtil.booleanValue(attr.getValue(), true);
         }
-    	return true;
-	}
-    
-	public SpecificationNode getNode( 
-	        SpecificationNode original, InjectionChain chain) {
-		if(original == null || chain == null) {
-			throw new IllegalArgumentException();
-		}
-		SpecificationNode injected = chain.getNode(original);
-	    if(injected == null) {
-	    	return null;
-	    }
+        return true;
+    }
+
+    public SpecificationNode getNode(
+            SpecificationNode original, InjectionChain chain) {
+        if(original == null || chain == null) {
+            throw new IllegalArgumentException();
+        }
+        SpecificationNode injected = chain.getNode(original);
+        if(injected == null) {
+            return null;
+        }
         if(isRendered(original) == false || isRendered(injected) == false) {
                 return BuilderUtil.createInjectedNode(
                         QM_NULL, null, original, false);
-        } 
+        }
         return injected;
     }
-	
+
 }

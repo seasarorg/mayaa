@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -44,18 +44,18 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class LibraryManagerImpl extends ParameterAwareImpl
-		implements LibraryManager {
+        implements LibraryManager {
 
     private static Log LOG = LogFactory.getLog(LibraryManagerImpl.class);
-    
-	private List _scanners;
-	private List _builders;
+
+    private List _scanners;
+    private List _builders;
     private List _libraries;
     private Map _converters;
-    
+
     public LibraryManagerImpl() {
-    	_scanners = new ArrayList();
-    	_builders = new ArrayList();
+        _scanners = new ArrayList();
+        _builders = new ArrayList();
         _converters = new HashMap();
     }
 
@@ -68,14 +68,14 @@ public class LibraryManagerImpl extends ParameterAwareImpl
                     name, systemID, lineNumber));
         }
     }
-    
+
     public void addPropertyConverter(
-    		String name, PropertyConverter propertyConverter) {
+            String name, PropertyConverter propertyConverter) {
         if(propertyConverter == null) {
             throw new IllegalArgumentException();
         }
         if(StringUtil.isEmpty(name)) {
-        	name = propertyConverter.getPropetyClass().getName();
+            name = propertyConverter.getPropetyClass().getName();
         }
         if(_converters.containsKey(name)) {
             warnAlreadyRegisted(propertyConverter, name, 1);
@@ -85,13 +85,13 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     public PropertyConverter getPropertyConverter(String converterName) {
-    	if(StringUtil.isEmpty(converterName)) {
-    		throw new IllegalArgumentException();
-    	}
-		return (PropertyConverter)_converters.get(converterName);
-	}
+        if(StringUtil.isEmpty(converterName)) {
+            throw new IllegalArgumentException();
+        }
+        return (PropertyConverter)_converters.get(converterName);
+    }
 
-	public PropertyConverter getPropertyConverter(Class propertyClass) {
+    public PropertyConverter getPropertyConverter(Class propertyClass) {
         if(propertyClass == null) {
             throw new IllegalArgumentException();
         }
@@ -106,69 +106,69 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     public Iterator iteratePropertyConverters() {
-		return _converters.values().iterator();
-	}
-    
+        return _converters.values().iterator();
+    }
+
     public void addSourceScanner(SourceScanner scanner) {
-		if(scanner == null) {
-			throw new IllegalArgumentException();
-		}
-		synchronized (_scanners) {
+        if(scanner == null) {
+            throw new IllegalArgumentException();
+        }
+        synchronized (_scanners) {
             if(_scanners.contains(scanner)) {
                 warnAlreadyRegisted(scanner, scanner.getClass().getName(), 1);
             } else {
                 _scanners.add(scanner);
             }
-		}
-	}
+        }
+    }
 
     public void addDefinitionBuilder(DefinitionBuilder builder) {
-    	if(builder == null) {
-    		throw new IllegalArgumentException();
-    	}
-    	synchronized(_builders) {
+        if(builder == null) {
+            throw new IllegalArgumentException();
+        }
+        synchronized(_builders) {
             if(_builders.contains(builder)) {
                 warnAlreadyRegisted(builder, builder.getClass().getName(), 3);
             } else {
                 _builders.add(builder);
             }
-    	}
+        }
     }
 
-	protected void buildAll() {
+    protected void buildAll() {
         _libraries = new ArrayList();
         Set systemIDs = new HashSet();
-    	for(int i = 0; i < _scanners.size(); i++) {
-	    	SourceScanner scanner = (SourceScanner)_scanners.get(i);
-	    	for(Iterator it = scanner.scan(); it.hasNext(); ) {
-		    	SourceDescriptor source = (SourceDescriptor)it.next();
+        for(int i = 0; i < _scanners.size(); i++) {
+            SourceScanner scanner = (SourceScanner)_scanners.get(i);
+            for(Iterator it = scanner.scan(); it.hasNext(); ) {
+                SourceDescriptor source = (SourceDescriptor)it.next();
                 /* pending.
-		    	if(systemIDs.contains(source.getSystemID())) {
-		    		continue;
-		    	}
+                if(systemIDs.contains(source.getSystemID())) {
+                    continue;
+                }
                 */
                 boolean built = false;
-		    	for(int k = 0; k < _builders.size(); k++) {
-			    	DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
-			    	LibraryDefinition library = builder.build(source);
-			    	if(library != null) {
-			            _libraries.add(library);
-			            systemIDs.add(library.getSystemID());
+                for(int k = 0; k < _builders.size(); k++) {
+                    DefinitionBuilder builder = (DefinitionBuilder)_builders.get(k);
+                    LibraryDefinition library = builder.build(source);
+                    if(library != null) {
+                        _libraries.add(library);
+                        systemIDs.add(library.getSystemID());
                         if(LOG.isInfoEnabled()) {
                             LOG.info(StringUtil.getMessage(
-                            	LibraryManagerImpl.class, 4,
-                            	source.getSystemID(), library.getNamespaceURI()));
+                                LibraryManagerImpl.class, 4,
+                                source.getSystemID(), library.getNamespaceURI()));
                         }
                         built = true;
-			            break;
-			    	}
+                        break;
+                    }
                 }
 
                 if (built == false) {
                     assignTaglibLocation(source);
                 }
-	    	}
-    	}
+            }
+        }
     }
 
     // condition: already loaded "META-INF/taglib.tld"
@@ -205,15 +205,15 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
         return _libraries.iterator();
     }
-    
+
     public Iterator iterateLibraryDefinition(String namespaceURI) {
         if(StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-		return new LibraryDefinitionFilteredIterator(
+        return new LibraryDefinitionFilteredIterator(
                 namespaceURI, iterateLibraryDefinition());
     }
-    
+
     public ProcessorDefinition getProcessorDefinition(QName qName) {
         if(qName == null) {
             throw new IllegalArgumentException();
@@ -222,7 +222,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         String localName = qName.getLocalName();
         for(Iterator it = iterateLibraryDefinition(namespaceURI); it.hasNext(); ) {
             LibraryDefinition library = (LibraryDefinition)it.next();
-            ProcessorDefinition processor = 
+            ProcessorDefinition processor =
                 library.getProcessorDefinition(localName);
             if(processor != null) {
                 return processor;
@@ -232,12 +232,12 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     // support class ------------------------------------------------
-    
+
     private class LibraryDefinitionFilteredIterator
             extends AbstractScanningIterator {
-        
+
         private String _namespaceURI;
-        
+
         public LibraryDefinitionFilteredIterator(
                 String namespaceURI, Iterator iterator) {
             super(iterator);
@@ -246,7 +246,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
             }
             _namespaceURI = namespaceURI;
         }
-        
+
         protected boolean filter(Object test) {
             if(test == null || (test instanceof LibraryDefinition == false)) {
                 return false;
@@ -262,7 +262,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
             }
             return false;
         }
-        
+
     }
-    
+
 }

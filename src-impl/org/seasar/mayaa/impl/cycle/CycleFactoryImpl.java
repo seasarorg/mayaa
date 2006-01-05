@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,8 +27,8 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleFactoryImpl 
-		extends ParameterAwareImpl implements CycleFactory {
+public class CycleFactoryImpl
+        extends ParameterAwareImpl implements CycleFactory {
 
     private static final long serialVersionUID = 6930908159752133949L;
 
@@ -42,14 +42,14 @@ public class CycleFactoryImpl
         }
         _serviceClass = serviceClass;
     }
-    
+
     public Class getServiceClass() {
         if(_serviceClass == null) {
             throw new IllegalArgumentException();
         }
         return _serviceClass;
     }
-    
+
     public void initialize(Object requestContext, Object responseContext) {
         if(requestContext == null || responseContext == null) {
             throw new IllegalArgumentException();
@@ -58,7 +58,7 @@ public class CycleFactoryImpl
         if(serviceCycleClass == null) {
             throw new IllegalStateException();
         }
-        ServiceCycle cycle = 
+        ServiceCycle cycle =
             (ServiceCycle)ObjectUtil.newInstance(serviceCycleClass);
         cycle.setUnderlyingContext(getUnderlyingContext());
         for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
@@ -82,19 +82,19 @@ public class CycleFactoryImpl
     }
 
     // ContextAware implements -------------------------------------
-    
-	public void setUnderlyingContext(Object context) {
-		if(context == null) {
-			throw new IllegalArgumentException();
-		}
+
+    public void setUnderlyingContext(Object context) {
+        if(context == null) {
+            throw new IllegalArgumentException();
+        }
         _context = context;
-	}
-    
+    }
+
     public Object getUnderlyingContext() {
-    	if(_context == null) {
-    		throw new IllegalStateException();
-    	}
+        if(_context == null) {
+            throw new IllegalStateException();
+        }
         return _context;
-	}
+    }
 
 }

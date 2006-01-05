@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -63,11 +63,11 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class JspProcessor extends TemplateProcessorSupport
-        implements ChildEvaluationProcessor, 
+        implements ChildEvaluationProcessor,
         TryCatchFinallyProcessor, CONST_IMPL {
-    
-	private static final long serialVersionUID = -4416320364576454337L;
-	private static PageContext _pageContext = new PageContextImpl();
+
+    private static final long serialVersionUID = -4416320364576454337L;
+    private static PageContext _pageContext = new PageContextImpl();
     private static Map _tagPools = new HashMap();
 
     private Class _tagClass;
@@ -90,8 +90,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     // MLD method
     public void setTagClass(Class tagClass) {
-        if(tagClass == null || 
-    			Tag.class.isAssignableFrom(tagClass) == false) {
+        if(tagClass == null ||
+                Tag.class.isAssignableFrom(tagClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
@@ -110,7 +110,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         _properties.add(property);
     }
-    
+
     protected Iterator iterateProperties() {
         if(_properties == null) {
             return NullIterator.getInstance();
@@ -123,7 +123,7 @@ public class JspProcessor extends TemplateProcessorSupport
             StringBuffer buffer = new StringBuffer();
             for (Iterator it = iterateProperties(); it.hasNext();) {
                 ProcessorProperty property = (ProcessorProperty) it.next();
-                String localName = 
+                String localName =
                     property.getName().getQName().getLocalName();
                 buffer.append("%").append(localName);
             }
@@ -131,16 +131,16 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         return _attributesKey;
     }
-    
+
     protected TagPool getTagPool() {
         synchronized (_tagPools) {
-	        String key = _tagClass.getName() + getAttributesKey();
-	        TagPool pool = (TagPool)_tagPools.get(key);
-	        if(pool == null) {
+            String key = _tagClass.getName() + getAttributesKey();
+            TagPool pool = (TagPool)_tagPools.get(key);
+            if(pool == null) {
                 pool = new TagPool(_tagClass);
                 _tagPools.put(key, pool);
             }
-	        return pool;
+            return pool;
         }
     }
 
@@ -182,7 +182,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         throw new IllegalArgumentException();
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if(_tagClass == null) {
             throw new IllegalStateException();
@@ -191,7 +191,7 @@ public class JspProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag();
         for(Iterator it = iterateProperties(); it.hasNext(); ) {
             ProcessorProperty property = (ProcessorProperty)it.next();
-            String propertyName = 
+            String propertyName =
                 property.getName().getQName().getLocalName();
             Object value = property.getValue().execute(null);
             ObjectUtil.setProperty(customTag, propertyName, value);
@@ -199,7 +199,7 @@ public class JspProcessor extends TemplateProcessorSupport
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspProcessor) {
-            	JspProcessor jspProcessor = (JspProcessor)processor;
+                JspProcessor jspProcessor = (JspProcessor)processor;
                 Tag parentTag = jspProcessor.getLoadedTag();
                 if(parentTag == null) {
                     throw new IllegalStateException(
@@ -230,7 +230,7 @@ public class JspProcessor extends TemplateProcessorSupport
             }
         }
     }
-    
+
     public boolean isChildEvaluation() {
         return getLoadedTag() instanceof BodyTag;
     }
@@ -271,7 +271,7 @@ public class JspProcessor extends TemplateProcessorSupport
         if(tag instanceof IterationTag) {
             IterationTag iterationTag = (IterationTag)tag;
             try {
-            	int ret = iterationTag.doAfterBody();
+                int ret = iterationTag.doAfterBody();
                 return getProcessStatus(ret, false);
             } catch (JspException e) {
                 throw new RuntimeException(e);
@@ -323,16 +323,16 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected class TagPool extends AbstractSoftReferencePool {
 
-		private static final long serialVersionUID =
+        private static final long serialVersionUID =
             -4519484537723904500L;
 
-		private Class _clazz;
+        private Class _clazz;
 
-		public TagPool(Class clazz) {
-        	if(clazz == null || 
-        			Tag.class.isAssignableFrom(clazz) == false) {
-        		throw new IllegalArgumentException();
-        	}
+        public TagPool(Class clazz) {
+            if(clazz == null ||
+                    Tag.class.isAssignableFrom(clazz) == false) {
+                throw new IllegalArgumentException();
+            }
             _clazz = clazz;
         }
 
@@ -343,15 +343,15 @@ public class JspProcessor extends TemplateProcessorSupport
         protected boolean validateObject(Object object) {
             return object instanceof Tag;
         }
-        
+
         public Tag borrowTag() {
-        	return (Tag)borrowObject();
+            return (Tag)borrowObject();
         }
-        
+
         public void returnTag(Tag tag) {
-        	if(tag != null) {
-        		returnObject(tag);
-        	}
+            if(tag != null) {
+                returnObject(tag);
+            }
         }
 
     }

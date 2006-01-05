@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -35,27 +35,27 @@ public class CycleUtil {
         ServiceCycle.SCOPE_SESSION,
         ServiceCycle.SCOPE_APPLICATION
     };
-    
+
     private CycleUtil() {
         // no instanciation.
     }
 
     public static void initialize(
             Object requestContext, Object responseContext) {
-        CycleFactory factory = 
-        	(CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
+        CycleFactory factory =
+            (CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
         factory.initialize(requestContext, responseContext);
     }
 
     public static ServiceCycle getServiceCycle() {
-        CycleFactory factory = 
-        	(CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
+        CycleFactory factory =
+            (CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
         return factory.getServiceCycle();
     }
-    
+
     public static RequestScope getRequestScope() {
-    	ServiceCycle cycle = CycleUtil.getServiceCycle();
-    	return cycle.getRequestScope();
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        return cycle.getRequestScope();
     }
 
     public static Response getResponse() {
@@ -69,7 +69,7 @@ public class CycleUtil {
         }
         for(int i = 0; i < STANDARD_SCOPES.length; i++) {
             ServiceCycle cycle = getServiceCycle();
-            AttributeScope scope = 
+            AttributeScope scope =
                 cycle.getAttributeScope(STANDARD_SCOPES[i]);
             if(scope.hasAttribute(name)) {
                 return scope;
@@ -97,7 +97,7 @@ public class CycleUtil {
 
     public static void removeAttribute(String name, String scopeName) {
         ServiceCycle cycle = getServiceCycle();
-    	AttributeScope scope = cycle.getAttributeScope(scopeName);
+        AttributeScope scope = cycle.getAttributeScope(scopeName);
         if(scope.isAttributeWritable()) {
             scope.removeAttribute(name);
         } else {
@@ -105,5 +105,5 @@ public class CycleUtil {
         }
     }
 
-    
+
 }

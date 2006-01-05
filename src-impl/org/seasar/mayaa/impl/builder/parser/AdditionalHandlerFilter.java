@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -27,9 +27,9 @@ public class AdditionalHandlerFilter extends DefaultFilter {
     private static final String[] _recognizedProps = new String[] {
         AdditionalHandler.ADDITIONAL_HANDLER
     };
-    
+
     private AdditionalHandler _handler;
-    
+
     public String[] getRecognizedProperties() {
         return _recognizedProps;
     }
@@ -43,7 +43,7 @@ public class AdditionalHandlerFilter extends DefaultFilter {
         }
     }
 
-    public void xmlDecl(String version, String encoding, String standalone, 
+    public void xmlDecl(String version, String encoding, String standalone,
             Augmentations augs) throws XNIException {
         if(_handler != null) {
             _handler.xmlDecl(version, encoding, standalone);
@@ -51,5 +51,5 @@ public class AdditionalHandlerFilter extends DefaultFilter {
         }
         super.xmlDecl(version, encoding, standalone, augs);
     }
-    
+
 }

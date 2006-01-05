@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,11 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     private Object _context;
     private Class _serviceClass;
     private ServiceProvider _provider;
-    
+
     protected ServiceProvider marshallServiceProvider(
             SourceDescriptor source, ServiceProvider beforeProvider) {
         if(source.exists()) {
-            ServiceProviderHandler handler = 
+            ServiceProviderHandler handler =
                 new ServiceProviderHandler(beforeProvider);
             InputStream stream = source.getInputStream();
             try {
@@ -81,7 +81,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
         }
         _serviceClass = serviceClass;
     }
-    
+
     public Class getServiceClass() {
         if(_serviceClass == null) {
             throw new IllegalArgumentException();
@@ -97,19 +97,19 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     }
 
     // ContextAware implements -------------------------------------
-    
-	public void setUnderlyingContext(Object context) {
-		if(context == null) {
-			throw new IllegalArgumentException();
-		}
-		_context = context;
-	}
-    
+
+    public void setUnderlyingContext(Object context) {
+        if(context == null) {
+            throw new IllegalArgumentException();
+        }
+        _context = context;
+    }
+
     public Object getUnderlyingContext() {
-    	if(_context == null) {
-    		throw new IllegalStateException();
-    	}
-		return _context;
-	}
+        if(_context == null) {
+            throw new IllegalStateException();
+        }
+        return _context;
+    }
 
 }

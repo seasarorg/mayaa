@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
-		implements SourceScanner {
+        implements SourceScanner {
 
     public static final String ASSIGNED =
         WebXMLTaglibSourceScanner.class + ".ASSIGNED";

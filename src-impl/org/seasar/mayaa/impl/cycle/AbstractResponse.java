@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -38,7 +38,7 @@ public abstract class AbstractResponse implements Response {
         _stack = new Stack();
         _stack.push(new CycleWriterImpl(null));
     }
-    
+
     private String parseCharacterEncoding(String contentType) {
         if (StringUtil.hasValue(contentType)) {
             String lower = contentType.toLowerCase();
@@ -60,7 +60,7 @@ public abstract class AbstractResponse implements Response {
 
     protected abstract void setContentTypeToUnderlyingObject(
             String contentType);
-    
+
     public void setContentType(String contentType) {
         if(StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
@@ -68,18 +68,18 @@ public abstract class AbstractResponse implements Response {
         _encoding = parseCharacterEncoding(contentType);
         setContentTypeToUnderlyingObject(contentType);
     }
-    
+
     public CycleWriter getWriter() {
         return (CycleWriter)_stack.peek();
     }
-    
+
     public void clearBuffer() {
         _stack.clear();
         _stack.push(new CycleWriterImpl(null));
     }
-    
+
     public CycleWriter pushWriter() {
-        CycleWriter writer = new CycleWriterImpl(getWriter()); 
+        CycleWriter writer = new CycleWriterImpl(getWriter());
         _stack.push(writer);
         return writer;
     }
@@ -126,7 +126,7 @@ public abstract class AbstractResponse implements Response {
             throw new RuntimeException(e);
         }
     }
-    
+
     protected String getEncoding() {
         return _encoding;
     }

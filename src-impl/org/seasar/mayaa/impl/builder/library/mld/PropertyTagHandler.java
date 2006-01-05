@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -25,21 +25,21 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertyTagHandler 
-		extends AbstractParameterAwareTagHandler {
+public class PropertyTagHandler
+        extends AbstractParameterAwareTagHandler {
 
     private PropertySetTagHandler _parent;
     private PropertyDefinitionImpl _propertyDefinition;
-    
-    public PropertyTagHandler(PropertySetTagHandler parent, 
-    		LibraryTagHandler libraryTagHandler) {
+
+    public PropertyTagHandler(PropertySetTagHandler parent,
+            LibraryTagHandler libraryTagHandler) {
         super("property");
         _parent = parent;
         putHandler(new ConverterTagHandler(this, libraryTagHandler));
     }
 
     protected void start(
-    		Attributes attributes, String systemID, int lineNumber) {
+            Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
         boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
@@ -61,20 +61,20 @@ public class PropertyTagHandler
         processor.addPropertyDefinitiion(_propertyDefinition);
         _propertyDefinition.setPropertySet(processor);
     }
-    
+
     protected void end(String body) {
-    	_propertyDefinition = null;
-    }
- 
-    public PropertyDefinitionImpl getPropertyDefinition() {
-    	if(_propertyDefinition == null) {
-    		throw new IllegalStateException();
-    	}
-    	return _propertyDefinition;
+        _propertyDefinition = null;
     }
 
-	public ParameterAware getParameterAware() {
-		return getPropertyDefinition();
-	}
-    
+    public PropertyDefinitionImpl getPropertyDefinition() {
+        if(_propertyDefinition == null) {
+            throw new IllegalStateException();
+        }
+        return _propertyDefinition;
+    }
+
+    public ParameterAware getParameterAware() {
+        return getPropertyDefinition();
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -31,19 +31,19 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class MetaValuesSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
-    protected static final QName QH_CONTENT = 
+    protected static final QName QH_CONTENT =
         SpecificationUtil.createQName(URI_HTML, "content");
-    protected static final QName QH_HTTP_EQUIV = 
-        SpecificationUtil.createQName(URI_HTML, "http-equiv");    
-    protected static final QName QH_META = 
+    protected static final QName QH_HTTP_EQUIV =
+        SpecificationUtil.createQName(URI_HTML, "http-equiv");
+    protected static final QName QH_META =
         SpecificationUtil.createQName(URI_HTML, "meta");
-    protected static final QName QX_CONTENT = 
+    protected static final QName QX_CONTENT =
         SpecificationUtil.createQName(URI_XHTML, "content");
-    protected static final QName QX_HTTP_EQUIV = 
-        SpecificationUtil.createQName(URI_XHTML, "http-equiv");    
-    protected static final QName QX_META = 
+    protected static final QName QX_HTTP_EQUIV =
+        SpecificationUtil.createQName(URI_XHTML, "http-equiv");
+    protected static final QName QX_META =
         SpecificationUtil.createQName(URI_XHTML, "meta");
-    
+
     protected void addMayaaAttribute(
             SpecificationNode original, QName qName, String value) {
         if(original == null || qName == null || StringUtil.isEmpty(value)) {
@@ -55,7 +55,7 @@ public class MetaValuesSetter extends ParameterAwareImpl
         }
         mayaa.addAttribute(qName, value);
     }
-    
+
     protected void setContentValue(SpecificationNode original,
             QName httpEquivName, QName contentName) {
         NodeAttribute equiv = original.getAttribute(httpEquivName);
@@ -75,7 +75,7 @@ public class MetaValuesSetter extends ParameterAwareImpl
             }
         }
     }
-    
+
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
         if(original == null || chain == null) {

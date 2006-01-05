@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,10 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ApplicationSourceDescriptor
-		extends ParameterAwareImpl implements SourceDescriptor {
+        extends ParameterAwareImpl implements SourceDescriptor {
 
     private static final long serialVersionUID = -2775274363708858237L;
-    
+
     public static final String WEB_INF = "/WEB-INF";
 
     private String _root = "";
@@ -94,7 +94,7 @@ public class ApplicationSourceDescriptor
 
     public boolean exists() {
         if(_file == null) {
-            String realPath = 
+            String realPath =
                 getApplicationScope().getRealPath(_root + getSystemID());
             if(StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);

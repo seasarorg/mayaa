@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public final class StringUtil {
 
     private static Map _propFiles = new HashMap();
     private static String[] ZERO = new String[0];
-    
+
     private StringUtil() {
         // no instantiation.
     }
@@ -232,34 +232,34 @@ public final class StringUtil {
     public static String getMessage(Class clazz, int index) {
         return getMessage(clazz, index, ZERO);
     }
-    
+
     public static String getMessage(Class clazz, int index, String param0) {
         return getMessage(clazz, index, new String[] { param0 });
     }
 
-    public static String getMessage(Class clazz, int index, 
+    public static String getMessage(Class clazz, int index,
             String param0, String param1) {
         return getMessage(clazz, index, new String[] { param0, param1 });
     }
 
-    public static String getMessage(Class clazz, int index, 
+    public static String getMessage(Class clazz, int index,
             String param0, String param1, String param2) {
         return getMessage(clazz, index,
                 new String[] { param0, param1, param2 });
     }
 
-//    public static String getMessage(Class clazz, int index, 
+//    public static String getMessage(Class clazz, int index,
 //            String param0, String param1, String param2, String param3) {
 //        return getMessage(clazz, index,
 //                new String[] { param0, param1, param2, param3 });
 //    }
-    
+
     protected static String getMessage(
             Class clazz, int index, String[] params) {
         Package key = clazz.getPackage();
         Properties properties = (Properties) _propFiles.get(key);
         if (properties == null) {
-            ClassLoaderSourceDescriptor source = 
+            ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
             source.setSystemID("message.properties");
             source.setNeighborClass(clazz);

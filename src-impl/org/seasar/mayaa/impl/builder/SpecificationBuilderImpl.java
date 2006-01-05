@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     }
 
     // Parameterizable implements ------------------------------------
-    
+
     public void setParameter(String name, String value) {
         if("outputWhitespace".equals(name)) {
             _outputWhitespace = ObjectUtil.booleanValue(value, true);

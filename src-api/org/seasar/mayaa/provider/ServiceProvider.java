@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the Seasar Foundation and the Others.
+ * Copyright 2004-2006 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -30,25 +30,25 @@ import org.seasar.mayaa.engine.Engine;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceProvider extends ParameterAware, Serializable {
-    
+
     /**
      * エンジンを設定する。
      * @param engine エンジン。
      */
     void setEngine(Engine engine);
-    
+
     /**
      * エンジンを取得する。
-     * @return	エンジン
+     * @return エンジン
      */
     Engine getEngine();
-    
+
     /**
      * スクリプト実行環境の設定。
      * @param environment スクリプト実行環境。
      */
     void setScriptEnvironment(ScriptEnvironment environment);
-    
+
     /**
      * スクリプト実行環境の取得。
      * @return スクリプト実行環境。
@@ -60,7 +60,7 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @param libraryManager ライブラリマネージャ。
      */
     void setLibraryManager(LibraryManager libraryManager);
-    
+
     /**
      * ライブラリマネージャを取得する。
      * @return ライブラリマネージャ。
@@ -72,19 +72,19 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @param specificationBuilder 設定XMLビルダ。
      */
     void setSpecificationBuilder(SpecificationBuilder specificationBuilder);
-    
+
     /**
      * 設定XMLのビルダを取得する。
      * @return 設定XMLビルダ。
      */
     SpecificationBuilder getSpecificationBuilder();
-	
+
     /**
      * HTMLテンプレートファイルのビルダを設定する。
      * @param templateBuilder テンプレートビルダ。
      */
     void setTemplateBuilder(TemplateBuilder templateBuilder);
-    
+
     /**
      * HTMLテンプレートファイルのビルダを取得する。
      * @return テンプレートビルダ。
@@ -102,5 +102,5 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @return パスアジャスタ。
      */
     PathAdjuster getPathAdjuster();
-    
+
 }

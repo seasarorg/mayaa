@@ -87,7 +87,7 @@ public abstract class AbstractAttributableProcessor
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
-           info.addProcesstimeProperty(prop);
+        info.addProcesstimeProperty(prop);
     }
 
     public boolean hasProcesstimeProperty(ProcessorProperty prop) {

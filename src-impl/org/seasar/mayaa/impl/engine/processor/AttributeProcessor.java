@@ -15,12 +15,17 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -69,8 +74,25 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
+
+        QName parentQName;
+        if (parent instanceof ElementProcessor) {
+            parentQName = ((ElementProcessor) parent).getName().getQName();
+        } else {
+            parentQName = parent.getOriginalNode().getQName();
+        }
+        QName attributeQName = getName().getQName();
+
+        String basePath = null;
+        PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
+        if (adjuster.isTargetAttribute(parentQName, attributeQName)) {
+            String contextPath = CycleUtil.getRequestScope().getContextPath();
+            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+            basePath = contextPath + sourcePath;
+        }
+
         parent.addProcesstimeProperty(
-                new ProcessorPropertyWrapper(_name, _value));
+                new ProcessorPropertyWrapper(_name, _value, basePath));
         return ProcessStatus.SKIP_BODY;
     }
 
@@ -84,16 +106,17 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         private CompiledScript _script;
 
         public ProcessorPropertyWrapper(
-                PrefixAwareName name, ProcessorProperty property) {
+                PrefixAwareName name, ProcessorProperty property, String basePath) {
             if(name == null || property == null) {
                 throw new IllegalArgumentException();
             }
             _attrName = name;
             _attrValue = property;
+
             if (_attrValue.getValue().isLiteral()) {
-                _script = new EscapedLiteralScript(_attrValue.getValue());
+                _script = new EscapedLiteralScript(_attrValue.getValue(), basePath);
             } else {
-                _script = new EscapableScript(_attrValue.getValue());
+                _script = new EscapableScript(_attrValue.getValue(), basePath);
             }
         }
 
@@ -128,15 +151,23 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         private static final long serialVersionUID = -5393294025521796857L;
 
-        public EscapableScript(CompiledScript script) {
+        protected String _basePath;
+
+        public EscapableScript(CompiledScript script, String basePath) {
             super(script);
+            _basePath = basePath;
         }
 
         public Object execute(Object[] args) {
             Object result = super.execute(args);
             if (_string && StringUtil.hasValue((String) result)) {
+                if (_basePath != null) {
+                    result =
+                        StringUtil.adjustRelativePath(_basePath, (String) result);
+                }
                 result = escape((String) result);
             }
+
             return result;
         }
 
@@ -148,11 +179,15 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         protected String _escapedValue;
 
-        public EscapedLiteralScript(CompiledScript script) {
+        public EscapedLiteralScript(CompiledScript script, String basePath) {
             super(script);
 
             _escapedValue = (String) super.execute(null);
             if (_string && StringUtil.hasValue(_escapedValue)) {
+                if (basePath != null) {
+                    _escapedValue =
+                        StringUtil.adjustRelativePath(basePath, _escapedValue);
+                }
                 _escapedValue = escape(_escapedValue);
             }
         }

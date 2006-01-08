@@ -19,6 +19,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -30,11 +31,19 @@ public class WriteProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -8069702863937020350L;
 
+    private boolean _forHTML;
+    private boolean _forHyperText;
     private ProcessorProperty _value;
     private ProcessorProperty _default;
     private ProcessorProperty _escapeXml;
     private ProcessorProperty _escapeWhitespace;
     private ProcessorProperty _escapeEol;
+
+    public void initialize() {
+        QName originalQName = getOriginalNode().getQName();
+        _forHTML = isHTML(originalQName);
+        _forHyperText = _forHTML || isXHTML(originalQName);
+    }
 
     // MLD property, expectedClass=java.lang.String
     public void setValue(ProcessorProperty value) {
@@ -63,20 +72,14 @@ public class WriteProcessor extends TemplateProcessorSupport {
             if(StringUtil.isEmpty(ret) && _default != null) {
                 ret = (String)_default.getValue().execute(null);
             }
-            if (_escapeXml != null) {
-                if (toBoolean(_escapeXml)) {
-                    ret = StringUtil.escapeXml(ret);
-                }
+            if (toBoolean(_escapeXml)) {
+                ret = StringUtil.escapeXml(ret);
             }
-            if (_escapeEol != null) {
-                if (toBoolean(_escapeEol)) {
-                    ret = StringUtil.escapeEol(ret);
-                }
+            if (_forHyperText && toBoolean(_escapeEol)) {
+                ret = StringUtil.escapeEol(ret, _forHTML);
             }
-            if (_escapeWhitespace != null) {
-                if (toBoolean(_escapeWhitespace)) {
-                    ret = StringUtil.escapeWhitespace(ret);
-                }
+            if (toBoolean(_escapeWhitespace)) {
+                ret = StringUtil.escapeWhitespace(ret);
             }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(ret);
@@ -85,8 +88,8 @@ public class WriteProcessor extends TemplateProcessorSupport {
     }
 
     private boolean toBoolean(ProcessorProperty property) {
-        return ObjectUtil.booleanValue(
-                property.getValue().execute(null), false);
+        return property != null
+            && ObjectUtil.booleanValue(property.getValue().execute(null), false);
     }
 
 }

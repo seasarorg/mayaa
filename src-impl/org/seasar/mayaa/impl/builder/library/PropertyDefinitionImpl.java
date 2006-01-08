@@ -210,7 +210,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
             if(converter == null) {
                 return value;
             }
-               return converter.convert(attribute, value, getExpectedClass());
+            return converter.convert(attribute, value, getExpectedClass());
         } else if(_required) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);

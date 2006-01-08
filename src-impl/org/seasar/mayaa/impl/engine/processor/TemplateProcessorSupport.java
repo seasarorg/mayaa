@@ -24,7 +24,9 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -41,6 +43,9 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private SpecificationNode _injectedNode;
     private boolean _evalBodyInclude = true;
     private ProcessorDefinition _definition;
+
+    public void initialize() {
+    }
 
     public String getUniqueID() {
         int sequenceID = getOriginalNode().getSequenceID();
@@ -103,6 +108,16 @@ public class TemplateProcessorSupport implements TemplateProcessor {
             throw new IllegalStateException();
         }
         return _definition;
+    }
+
+    protected boolean isHTML(QName qName) {
+        String namespaceURI = qName.getNamespaceURI();
+        return CONST_IMPL.URI_HTML.equals(namespaceURI);
+    }
+
+    protected boolean isXHTML(QName qName) {
+        String namespaceURI = qName.getNamespaceURI();
+        return CONST_IMPL.URI_XHTML.equals(namespaceURI);
     }
 
     // ProcessorTreeWalker implements --------------------------------

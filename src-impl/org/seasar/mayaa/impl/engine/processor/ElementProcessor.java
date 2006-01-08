@@ -184,11 +184,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append("\"");
     }
 
-    protected boolean isHTML(QName qName) {
-        String namespaceURI = qName.getNamespaceURI();
-        return URI_HTML.equals(namespaceURI);
-    }
-
     protected boolean needsCloseElement(QName qName) {
         if(isHTML(qName)) {
             String localName = qName.getLocalName();

@@ -27,6 +27,11 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 public interface TemplateProcessor extends ProcessorTreeWalker {
 
     /**
+     * インスタンス生成処理の最後、プロパティをセットした後で呼ばれる。
+     */
+    void initialize();
+
+    /**
      * テンプレート内でユニークなID値を取得する。
      * @return テンプレート中でユニークなID。
      */

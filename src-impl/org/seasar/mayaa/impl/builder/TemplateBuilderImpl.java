@@ -155,6 +155,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 def.createTemplateProcessor(original, injected);
             proc.setOriginalNode(original);
             proc.setInjectedNode(injected);
+            proc.initialize();
             return proc;
         }
         return null;

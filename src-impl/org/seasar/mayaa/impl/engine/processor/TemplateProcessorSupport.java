@@ -45,6 +45,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private ProcessorDefinition _definition;
 
     public void initialize() {
+        // no operation
     }
 
     public String getUniqueID() {

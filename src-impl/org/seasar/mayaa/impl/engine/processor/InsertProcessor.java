@@ -141,6 +141,7 @@ public class InsertProcessor
             throw new IllegalStateException();
         }
         renderPage.checkTimestamp();
+        // TODO ‚±‚ÌˆÊ’u‚ÅBindingScope‚©‚çQÆ‚Å‚«‚é‚æ‚¤‚É‚·‚é
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
         if(ret == null) {

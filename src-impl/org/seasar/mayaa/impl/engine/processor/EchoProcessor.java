@@ -52,7 +52,6 @@ public class EchoProcessor extends ElementProcessor
         return converter;
     }
 
-    // TODO echo プロセッサの場合の adjust 方法を考える (getVariables への影響)
     protected void setupElement(SpecificationNode originalNode) {
         super.setName(originalNode);
         PropertyConverter converter = getConverterForProcessorProperty();

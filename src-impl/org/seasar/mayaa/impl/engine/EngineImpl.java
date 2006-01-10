@@ -185,7 +185,6 @@ public class EngineImpl extends SpecificationImpl
                     saveToCycle();
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(null);
-                    // TODO beforeRender‚Åbinding‚ðŽg‚¦‚é‚æ‚¤‚É‚·‚é
                     SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                     RequestScope request = cycle.getRequestScope();
                     String pageName = request.getPageName();

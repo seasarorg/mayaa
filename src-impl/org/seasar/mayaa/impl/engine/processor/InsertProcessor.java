@@ -141,7 +141,7 @@ public class InsertProcessor
             throw new IllegalStateException();
         }
         renderPage.checkTimestamp();
-        // TODO この位置でBindingScopeから参照できるようにする
+        // TODO この位置でInsertProcessorをBindingScopeから参照できるようにする
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
         if(ret == null) {

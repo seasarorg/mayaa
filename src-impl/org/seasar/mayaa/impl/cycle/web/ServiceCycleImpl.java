@@ -20,7 +20,9 @@ import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.impl.cycle.AbstractServiceCycle;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.PageForwarded;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -73,16 +75,25 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         return _response;
     }
 
-    // TODO パス解決するか？
     public void forward(String forwardPath) {
+        if (StringUtil.isRelativePath(forwardPath)) {
+            String sourcePath = EngineUtil.getSourcePath();
+            forwardPath = StringUtil.adjustRelativePath(sourcePath, forwardPath);
+        }
+
         _request.setForwardPath(forwardPath);
         _response.clearBuffer();
         throw new PageForwarded();
     }
 
-    // TODO パス解決するか？
     public void redirect(String url) {
         if (_response.isFlushed() == false) {
+            if (StringUtil.isRelativePath(url)) {
+                String sourcePath = EngineUtil.getSourcePath();
+                url = StringUtil.adjustRelativePath(
+                        _request.getContextPath() + sourcePath, url);
+            }
+
             _response.redirect(url);
             _response.clearBuffer();
             _response.flush();

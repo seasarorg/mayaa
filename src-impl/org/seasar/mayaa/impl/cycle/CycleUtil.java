@@ -37,7 +37,7 @@ public class CycleUtil {
     };
 
     private CycleUtil() {
-        // no instanciation.
+        // no instantiation.
     }
 
     public static void initialize(

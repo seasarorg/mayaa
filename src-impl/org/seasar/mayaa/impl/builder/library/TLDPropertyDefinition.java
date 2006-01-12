@@ -62,7 +62,12 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         QName qName = getQName(injected);
         NodeAttribute attribute = injected.getAttribute(qName);
+// TODO 自動インジェクションする/しない設定、する場合の除外属性設定
 //        if(attribute == null) {
+//            自動インジェクションしない設定になっていなければセット
+//                qName.getNamespaceURI().equals(設定名前空間:mayaaで指定したuri
+//                processorDef.getName().equals(設定タグ名)
+//                qName.getLocalName().equals(設定属性名)
 //            attribute = original.getAttribute(getQName(original));
 //        }
         if(attribute != null) {

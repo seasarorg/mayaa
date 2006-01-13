@@ -39,6 +39,13 @@ public interface PropertyDefinition extends ParameterAware {
     String getName();
 
     /**
+     * テンプレートプロセッサ実装のプロパティ名。
+     * 設定されていなければname属性の値。
+     * @return プロパティ名。
+     */
+    String getImplName();
+
+    /**
      * MLDにrequired属性で記述された必須フラグ。デフォルトはfalse。
      * @return 必須フラグ。
      */

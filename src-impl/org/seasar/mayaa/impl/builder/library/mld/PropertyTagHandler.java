@@ -41,6 +41,7 @@ public class PropertyTagHandler
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
+        String implName = attributes.getValue("implName");
         boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
         Class expectedClass = XMLUtil.getClassValue(
@@ -50,6 +51,7 @@ public class PropertyTagHandler
         String converterName = attributes.getValue("converterName");
         _propertyDefinition = new PropertyDefinitionImpl();
         _propertyDefinition.setName(name);
+        _propertyDefinition.setImplName(implName);
         _propertyDefinition.setRequired(required);
         _propertyDefinition.setExpectedClass(expectedClass);
         _propertyDefinition.setFinalValue(finalValue);

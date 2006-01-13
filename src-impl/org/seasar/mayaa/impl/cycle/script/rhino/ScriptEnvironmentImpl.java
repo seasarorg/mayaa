@@ -15,11 +15,13 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
+import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrapFactory;
@@ -148,7 +150,23 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public Object convertFromScriptObject(Object scriptObject) {
-        return JavaAdapter.convertResult(scriptObject, Object.class);
+        Object result = JavaAdapter.convertResult(scriptObject, Object.class);
+
+        if (result instanceof NativeArray) {
+            NativeArray jsArray = (NativeArray) result;
+            int length = (int) jsArray.getLength();
+            Class type = Object.class;
+            if (length > 0) {
+                type = jsArray.get(0, null).getClass();
+            }
+            Object[] array = (Object[]) Array.newInstance(type, length);
+            for (int i = 0; i < length; i++) {
+                array[i] = jsArray.get(i, null);
+            }
+            result = array;
+        }
+
+        return result;
     }
 
     // Parameterizable implements ------------------------------------

@@ -46,6 +46,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 
     private PropertySet _propertySet;
     private String _name;
+    private String _implName;
     private boolean _required;
     private Class _expectedClass;
     private String _defaultValue;
@@ -79,6 +80,17 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
             throw new IllegalStateException();
         }
         return _name;
+    }
+
+    public void setImplName(String implName) {
+        _implName = implName;
+    }
+
+    public String getImplName() {
+        if(StringUtil.isEmpty(_implName)) {
+            return getName();
+        }
+        return _implName;
     }
 
     public void setRequired(boolean required) {

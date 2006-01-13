@@ -127,6 +127,13 @@
 		<property name="max" default="256"/>
 	</processor>
 
+	<processor name="forEach"
+			class="org.seasar.mayaa.impl.engine.processor.ForEachProcessor">
+		<property name="items" required="true"/>
+		<property name="var" required="true" expectedClass="java.lang.String"/>
+		<property name="index" implName="indexName" expectedClass="java.lang.String"/>
+	</processor>
+
 	<processor name="if"
 			class="org.seasar.mayaa.impl.engine.processor.IfProcessor">
 		<property name="test" required="true" expectedClass="boolean"/>

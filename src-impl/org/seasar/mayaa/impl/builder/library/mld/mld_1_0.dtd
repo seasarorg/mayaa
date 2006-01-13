@@ -22,6 +22,7 @@
 
 <!ELEMENT property (description?, converter?, parameter*)>
 <!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST property implName CDATA #IMPLIED>
 <!ATTLIST property expectedClass CDATA #IMPLIED>
 <!ATTLIST property required (true | false) "false">
 <!ATTLIST property default CDATA  #IMPLIED>

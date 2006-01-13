@@ -108,21 +108,21 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         Object value =
             property.createProcessorProperty(this, original, injected);
         if(value != null) {
-            String propertyName = property.getName();
+            String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
-            if(ObjectUtil.hasProperty(processorClass, propertyName)) {
-                ObjectUtil.setProperty(processor, propertyName, value);
+            if(ObjectUtil.hasProperty(processorClass, propertyImplName)) {
+                ObjectUtil.setProperty(processor, propertyImplName, value);
             } else if(processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable)processor;
                 PrefixAwareName name =
-                    getPrefixAwareName(injected, propertyName);
+                    getPrefixAwareName(injected, property.getName());
                 acceptable.addVirtualProperty(name, value);
             } else {
                 if(LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(
                             ProcessorDefinitionImpl.class, 2,
-                            processorClass.getName(), propertyName));
+                            processorClass.getName(), propertyImplName));
                 }
             }
         }

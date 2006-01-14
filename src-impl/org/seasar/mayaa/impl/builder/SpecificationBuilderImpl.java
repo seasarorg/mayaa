@@ -37,7 +37,8 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
 
     private static final long serialVersionUID = 7852577574830768959L;
 
-    private boolean _outputWhitespace = true;
+    private boolean _outputTemplateWhitespace = true;
+    private boolean _outputMayaaWhitespace = false;
 
     protected XMLReaderPool getXMLReaderPool(String systemID) {
         return XMLReaderPool.getPool();
@@ -47,7 +48,8 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
             Specification specification) {
         SpecificationNodeHandler handler =
             new SpecificationNodeHandler(specification);
-        handler.setOutputWhitespace(_outputWhitespace);
+        handler.setOutputTemplateWhitespace(_outputTemplateWhitespace);
+        handler.setOutputMayaaWhitespace(_outputMayaaWhitespace);
         return handler;
     }
 
@@ -92,8 +94,10 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("outputWhitespace".equals(name)) {
-            _outputWhitespace = ObjectUtil.booleanValue(value, true);
+        if("outputTemplateWhitespace".equals(name)) {
+            _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
+        } else if ("outputMayaaWhitespace".equals(name)) {
+            _outputMayaaWhitespace = ObjectUtil.booleanValue(value, true);
         }
         super.setParameter(name, value);
     }

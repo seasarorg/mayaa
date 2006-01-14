@@ -68,7 +68,8 @@
 			<parameter name="useHtmlID" value="true"/>
 		</resolver>
 		<resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
-		<parameter name="outputWhitespace" value="true"/>
+		<parameter name="outputTemplateWhitespace" value="true"/>
+		<parameter name="outputMayaaWhitespace" value="false"/>
 	</templateBuilder>
 
 	<pathAdjuster class="org.seasar.mayaa.impl.builder.PathAdjusterImpl">

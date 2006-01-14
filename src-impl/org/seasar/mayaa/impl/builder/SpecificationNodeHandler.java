@@ -65,7 +65,8 @@ public class SpecificationNodeHandler
     private Locator _locator;
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
-    private boolean _outputWhitespace = true;
+    private boolean _outputTemplateWhitespace = true;
+    private boolean _outputMayaaWhitespace = false;
     private boolean _onTemplate;
     private int _inEntity;
     private int _sequenceID;
@@ -78,8 +79,12 @@ public class SpecificationNodeHandler
         _onTemplate = specification instanceof Template;
     }
 
-    public void setOutputWhitespace(boolean outputWhitespace) {
-        _outputWhitespace = outputWhitespace;
+    public void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
+        _outputTemplateWhitespace = outputTemplateWhitespace;
+    }
+
+    public void setOutputMayaaWhitespace(boolean outputMayaaWhitespace) {
+        _outputMayaaWhitespace = outputMayaaWhitespace;
     }
 
     public void setDocumentLocator(Locator locator) {
@@ -140,8 +145,14 @@ public class SpecificationNodeHandler
             SpecificationNode node = addNode(QM_CHARACTERS);
 
             String characters = _charactersBuffer.toString();
-            if(_outputWhitespace == false) {
-                characters = removeIgnorableWhitespace(characters);
+            if (_onTemplate) {
+                if(_outputTemplateWhitespace == false) {
+                    characters = removeIgnorableWhitespace(characters);
+                }
+            } else {
+                if(_outputMayaaWhitespace == false) {
+                    characters = removeIgnorableWhitespace(characters);
+                }
             }
             node.addAttribute(QM_TEXT, characters);
             _charactersBuffer = new StringBuffer(128);
@@ -158,7 +169,7 @@ public class SpecificationNodeHandler
                 buffer.append(token.replaceAll("[ \t]+", " "));
                 buffer.append("\n");
             } else {
-                if (i == 0) {
+                if (i == 0 && _onTemplate) {
                     buffer.append("\n");
                 }
             }
@@ -289,7 +300,7 @@ public class SpecificationNodeHandler
     }
 
     public void comment(char[] buffer, int start, int length) {
-        if (_specification.getSystemID().endsWith(".mayaa") == false) {
+        if (_onTemplate) {
             addCharactersNode();
             String comment = new String(buffer, start, length);
             SpecificationNode node = addNode(QM_COMMENT);

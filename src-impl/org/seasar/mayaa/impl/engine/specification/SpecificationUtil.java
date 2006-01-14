@@ -160,6 +160,21 @@ public class SpecificationUtil implements CONST_IMPL {
         return new QNameImpl(namespaceURI, localName);
     }
 
+    public static QName parseQName(String qName) {
+        if (StringUtil.hasValue(qName) && qName.charAt(0) == '{') {
+            int end = qName.indexOf('}');
+            if (end != -1 && end < qName.length() - 1) {
+                String namespaceURI = qName.substring(1, end).trim();
+                String localName = qName.substring(end + 1).trim();
+                if (StringUtil.hasValue(namespaceURI)
+                        && StringUtil.hasValue(localName)) {
+                    return new QNameImpl(namespaceURI, localName);
+                }
+            }
+        }
+        throw new IllegalArgumentException(qName);
+    }
+
     public static PrefixAwareName createPrefixAwareName(QName qName) {
         return new PrefixAwareNameImpl(qName);
     }

@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.builder.injection;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +26,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -43,9 +46,12 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         LogFactory.getLog(EqualsIDInjectionResolver.class);
 
     private CopyToFilter _idFilter = new CheckIDCopyToFilter();
+    private List _additionalIds = new ArrayList();
     private boolean _reportResolvedID = true;
-    private boolean _useHtmlID = true;
-    private boolean _useXhtmlID = true;
+
+    public EqualsIDInjectionResolver() {
+        _additionalIds.add(QM_ID);
+    }
 
     protected CopyToFilter getCopyToFilter() {
         return _idFilter;
@@ -55,25 +61,23 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         return _reportResolvedID;
     }
 
+    protected NodeAttribute getAttribute(SpecificationNode node) {
+        for (Iterator it = _additionalIds.iterator(); it.hasNext();) {
+            NodeAttribute attr = node.getAttribute((QName) it.next());
+            if (attr != null) {
+                return attr;
+            }
+        }
+        return null;
+    }
+
     protected String getID(SpecificationNode node) {
         if(node == null) {
             throw new IllegalArgumentException();
         }
-        NodeAttribute attr = node.getAttribute(QM_ID);
+        NodeAttribute attr = getAttribute(node);
         if(attr != null) {
             return attr.getValue();
-        }
-        if (_useXhtmlID) {
-            attr = node.getAttribute(QX_ID);
-            if(attr != null) {
-                return attr.getValue();
-            }
-        }
-        if (_useHtmlID) {
-            attr = node.getAttribute(QH_ID);
-            if(attr != null) {
-                return attr.getValue();
-            }
         }
         return null;
     }
@@ -141,11 +145,8 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         if("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
         }
-        if ("useXhtmlID".equals(name)) {
-            _useXhtmlID = ObjectUtil.booleanValue(value, true);
-        }
-        if ("useHtmlID".equals(name)) {
-            _useHtmlID = ObjectUtil.booleanValue(value, true);
+        if ("addAttribute".equals(name)) {
+            _additionalIds.add(SpecificationUtil.parseQName(value));
         }
         super.setParameter(name, value);
     }

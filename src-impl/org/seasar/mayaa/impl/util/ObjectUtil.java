@@ -18,6 +18,8 @@ package org.seasar.mayaa.impl.util;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
@@ -261,6 +263,29 @@ public class ObjectUtil {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);
         return ((Boolean)converter.convert(null, obj)).booleanValue();
+    }
+
+    public static Number numberValue(Object obj, Number defaultValue) {
+        if (obj instanceof Number) {
+            return (Number) obj;
+        } else if (obj instanceof String) {
+            String str = (String) obj;
+            try {
+                if (str.indexOf('.') != -1) {
+                    return new BigDecimal(str);
+                }
+                return new BigInteger(str);
+            } catch (NumberFormatException ignore) {
+                // 
+            }
+        }
+
+        if (defaultValue != null) {
+            return defaultValue;
+        }
+
+        throw new IllegalArgumentException(
+                "argument type mismatch: " + obj.getClass().getName());
     }
 
 }

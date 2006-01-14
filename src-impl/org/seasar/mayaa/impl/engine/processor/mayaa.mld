@@ -145,4 +145,16 @@
 		<property name="childEvaluation" final="true"/>
 	</processor>
 
+	<processor name="formatNumber"
+			class="org.seasar.mayaa.impl.engine.processor.FormatNumberProcessor">
+		<property name="value" required="true" expectedClass="java.lang.Number"/>
+		<property name="pattern" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="formatDate"
+			class="org.seasar.mayaa.impl.engine.processor.FormatDateProcessor">
+		<property name="value" required="true" expectedClass="java.util.Date"/>
+		<property name="pattern" expectedClass="java.lang.String"/>
+	</processor>
+
 </library>

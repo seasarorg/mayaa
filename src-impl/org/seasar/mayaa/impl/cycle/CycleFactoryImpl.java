@@ -60,7 +60,6 @@ public class CycleFactoryImpl
         }
         ServiceCycle cycle =
             (ServiceCycle)ObjectUtil.newInstance(serviceCycleClass);
-        cycle.setUnderlyingContext(getUnderlyingContext());
         for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
             String key = (String)it.next();
             String value = getParameter(key);

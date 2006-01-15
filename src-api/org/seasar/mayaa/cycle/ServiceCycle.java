@@ -18,7 +18,6 @@ package org.seasar.mayaa.cycle;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import org.seasar.mayaa.ContextAware;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
@@ -33,7 +32,7 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle
-        extends ContextAware, ParameterAware, Serializable {
+        extends ParameterAware, Serializable {
 
     /**
      * アプリケーションレベルスコープ。

@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
@@ -40,17 +41,9 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         _request = new RequestScopeImpl();
     }
 
-    public void setApplicationScope(ApplicationScope application) {
-        if(application == null) {
-            throw new IllegalArgumentException();
-        }
-        _application = application;
-    }
-
     public ApplicationScope getApplicationScope() {
         if(_application == null) {
-            _application = new ApplicationScopeImpl();
-            _application.setUnderlyingContext(getUnderlyingContext());
+            _application = FactoryFactory.getApplicationScope();
         }
         return _application;
     }

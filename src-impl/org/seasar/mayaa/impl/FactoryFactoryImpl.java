@@ -102,7 +102,7 @@ public class FactoryFactoryImpl extends FactoryFactory
         return factory;
     }
 
-    protected ApplicationScope getBootstrapApplication(Object context) {
+    protected ApplicationScope getApplicationScope(Object context) {
         ApplicationScope application = new ApplicationScopeImpl();
         application.setUnderlyingContext(context);
         return application;
@@ -116,7 +116,7 @@ public class FactoryFactoryImpl extends FactoryFactory
             appSource.setRoot(root);
         }
         appSource.setSystemID(systemID);
-        appSource.setApplicationScope(getBootstrapApplication(context));
+        appSource.setApplicationScope(getApplicationScope(context));
         return appSource;
     }
 

@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -30,7 +31,7 @@ public abstract class FactoryFactory implements Serializable {
     private static FactoryFactory _instance;
     private static Object _context;
     private static Map _factories = new HashMap();
-
+    
     /**
      * ファクトリの初期化。
      * @param instance ファクトリのインスタンス。
@@ -82,13 +83,22 @@ public abstract class FactoryFactory implements Serializable {
         if(factory == null) {
             factory = _instance.getFactory(interfaceClass, _context);
             if(factory == null) {
-                throw new IllegalStateException();
+                return null;
             }
             _factories.put(interfaceClass, factory);
         }
         return factory;
     }
 
+    /**
+     * アプリケーションスコープの取得。
+     * @return アプリケーションスコープ。
+     */
+    public static ApplicationScope getApplicationScope() {
+    	check();
+    	return _instance.getApplicationScope(_context);
+    }
+    
     /**
      * ファクトリを生成する。
      * @param interfaceClass ファクトリのinterfaceのClassオブジェクト
@@ -108,4 +118,12 @@ public abstract class FactoryFactory implements Serializable {
     protected abstract SourceDescriptor getBootstrapSource(
             String root, String systemID, Object context);
 
+    /**
+     * アプリケーションスコープの取得。
+     * @param context コンテキストオブジェクト。
+     * @return アプリケーションスコープ。
+     */
+    protected abstract ApplicationScope getApplicationScope(
+    		Object context);
+    
 }

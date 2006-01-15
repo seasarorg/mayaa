@@ -38,7 +38,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle {
 
-    private Object _context;
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -154,22 +153,6 @@ public abstract class AbstractServiceCycle
 
     public Throwable getHandledError() {
         return _t;
-    }
-
-    // ContextAware implements -------------------------------------
-
-    public void setUnderlyingContext(Object context) {
-        if(context == null) {
-            throw new IllegalArgumentException();
-        }
-        _context = context;
-    }
-
-    public Object getUnderlyingContext() {
-        if(_context == null) {
-            throw new IllegalStateException();
-        }
-        return _context;
     }
 
 }

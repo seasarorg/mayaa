@@ -21,10 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -55,8 +54,7 @@ public class ApplicationSourceDescriptor
 
     public ApplicationScope getApplicationScope() {
         if(_application == null) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            _application = cycle.getApplicationScope();
+            _application = FactoryFactory.getApplicationScope();
         }
         return _application;
     }

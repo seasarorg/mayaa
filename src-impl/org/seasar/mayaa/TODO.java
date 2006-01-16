@@ -21,20 +21,16 @@ package org.seasar.mayaa;
 interface TODO {
 
     /*
-     * FIXME 起動時にライブラリを初期化するために、ApplicationSourceDescriptor
-     * （->ServiceCycle）に依存するスキャナのソースをFactoryFactoryから取得される
-     * BootstrapSourceに変更する。
-     *
      * TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
      *
      * TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
      *
-     * TODO HTMLの出力をテンプレートに近づける
+     * TODO HTMLの出力をテンプレートに近づける (RC1である程度済み)
      *
      * FIXME Pの下にDIVを置いてコンポーネントを作ろうとすると作れない
      * ブロック要素不可のところにブロック要素があるため？
      *
-     * TODO Marshall時に登録済みのBuilderを上書きできるようにするか
+     * TODO Marshall時に登録済みのlibraryManager/builderを上書きできるようにするか
      *
      *
      *

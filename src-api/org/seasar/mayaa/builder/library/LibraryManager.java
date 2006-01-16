@@ -69,6 +69,11 @@ public interface LibraryManager extends ParameterAware {
     void addDefinitionBuilder(DefinitionBuilder builder);
 
     /**
+     * 必要ならライブラリの初期化処理を行う。
+     */
+    void prepareLibraries();
+
+    /**
      * 全MLD設定（=<code>LibraryDefinition</code>）のイテレータ取得。
      * @return MLD設定のイテレータ。
      */

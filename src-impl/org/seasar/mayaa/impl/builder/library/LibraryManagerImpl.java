@@ -135,6 +135,12 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
     }
 
+    public void prepareLibraries() {
+        if(_libraries == null) {
+            buildAll();
+        }
+    }
+
     protected void buildAll() {
         _libraries = new ArrayList();
         Set systemIDs = new HashSet();
@@ -200,9 +206,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     public Iterator iterateLibraryDefinition() {
-        if(_libraries == null) {
-            buildAll();
-        }
+        prepareLibraries();
         return _libraries.iterator();
     }
 

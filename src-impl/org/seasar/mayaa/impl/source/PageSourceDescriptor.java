@@ -55,12 +55,12 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
     }
 
     public void setParameter(String name, String value) {
-        if("folder".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+        if ("folder".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
-        } else if("absolutePath".equals(name)) {
+        } else if ("absolutePath".equals(name)) {
             String path = StringUtil.preparePath(value);
             if (StringUtil.isEmpty(path)
                     || new File(path).isDirectory() == false) {

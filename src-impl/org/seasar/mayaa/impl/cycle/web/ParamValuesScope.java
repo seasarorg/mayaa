@@ -31,7 +31,7 @@ public class ParamValuesScope
     private HttpServletRequest _request;
 
     public ParamValuesScope(HttpServletRequest request) {
-        if(request == null) {
+        if (request == null) {
             throw new IllegalArgumentException();
         }
         _request = request;
@@ -46,9 +46,9 @@ public class ParamValuesScope
     }
 
     public boolean hasAttribute(String name) {
-        for(Iterator it = iterateAttributeNames(); it.hasNext(); ) {
-            String paramName = (String)it.next();
-            if(paramName.equals(name)) {
+        for (Iterator it = iterateAttributeNames(); it.hasNext();) {
+            String paramName = (String) it.next();
+            if (paramName.equals(name)) {
                 return true;
             }
         }
@@ -56,7 +56,7 @@ public class ParamValuesScope
     }
 
     public Object getAttribute(String name) {
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             return _request.getParameterValues(name);
         }
         return null;

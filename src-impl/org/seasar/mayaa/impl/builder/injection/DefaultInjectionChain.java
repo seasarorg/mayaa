@@ -42,8 +42,8 @@ public class DefaultInjectionChain
 
     protected boolean isSpecialNode(QName qName) {
         QName[] specialNames =  getSpecialNames();
-        for(int i = 0; i < specialNames.length; i++) {
-            if(specialNames[i].equals(qName)) {
+        for (int i = 0; i < specialNames.length; i++) {
+            if (specialNames[i].equals(qName)) {
                 return true;
             }
         }
@@ -51,10 +51,10 @@ public class DefaultInjectionChain
     }
 
     public SpecificationNode getNode(SpecificationNode original) {
-        if(original == null) {
+        if (original == null) {
             throw new IllegalArgumentException();
         }
-        if(isSpecialNode(original.getQName())) {
+        if (isSpecialNode(original.getQName())) {
             return original.copyTo();
         }
         QName qName = original.getQName();
@@ -63,7 +63,7 @@ public class DefaultInjectionChain
                 QM_TEMPLATE_ELEMENT, uri, original, false);
         StringBuffer name = new StringBuffer();
         String prefix = original.getPrefix();
-        if(StringUtil.hasValue(prefix)) {
+        if (StringUtil.hasValue(prefix)) {
             name.append(prefix).append(":");
         }
         name.append(qName.getLocalName());

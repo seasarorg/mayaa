@@ -31,16 +31,16 @@ public class WrapFactoryImpl extends WrapFactory {
 
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
             Object javaObject, Class staticClass) {
-        if(javaObject instanceof Map) {
-            return new NativeMap(scope, (Map)javaObject);
-        } else if(javaObject instanceof List) {
-            return new NativeList(scope, (List)javaObject);
-        } else if(javaObject instanceof AttributeScope &&
-                javaObject instanceof Scriptable == false) {
-            AttributeScope attrs = (AttributeScope)javaObject;
+        if (javaObject instanceof Map) {
+            return new NativeMap(scope, (Map) javaObject);
+        } else if (javaObject instanceof List) {
+            return new NativeList(scope, (List) javaObject);
+        } else if (javaObject instanceof AttributeScope
+                && javaObject instanceof Scriptable == false) {
+            AttributeScope attrs = (AttributeScope) javaObject;
             return new NativeAttributeScope(scope, attrs);
-        } else if(javaObject instanceof ServiceCycle) {
-            ServiceCycle cycle = (ServiceCycle)javaObject;
+        } else if (javaObject instanceof ServiceCycle) {
+            ServiceCycle cycle = (ServiceCycle) javaObject;
             return new NativeServiceCycle(scope, cycle);
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);

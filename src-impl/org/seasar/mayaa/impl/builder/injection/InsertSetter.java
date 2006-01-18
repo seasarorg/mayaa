@@ -40,15 +40,15 @@ public class InsertSetter extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode injected = chain.getNode(original);
         QName qName = injected.getQName();
         String uri = qName.getNamespaceURI();
-        if(uri.startsWith("/")) {
+        if (uri.startsWith("/")) {
             LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-            if(libraryManager.getProcessorDefinition(qName) == null) {
+            if (libraryManager.getProcessorDefinition(qName) == null) {
                 String name = qName.getLocalName();
                 String path =
                     StringUtil.preparePath(uri) + StringUtil.preparePath(name);
@@ -57,7 +57,7 @@ public class InsertSetter extends ParameterAwareImpl
                 node.addAttribute(QM_PATH, path);
                 String compName = SpecificationUtil.getAttributeValue(
                         injected, QM_NAME);
-                if(StringUtil.hasValue(compName)) {
+                if (StringUtil.hasValue(compName)) {
                     node.addAttribute(QM_NAME, compName);
                 }
                 return node;

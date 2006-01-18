@@ -37,34 +37,34 @@ public class ObjectUtil {
     }
 
     protected static String getClassSignature(String className) {
-        if(StringUtil.isEmpty(className)) {
+        if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
-        if(className.endsWith("[]") == false) {
+        if (className.endsWith("[]") == false) {
             return className;
         }
         StringBuffer buffer = new StringBuffer();
-        while(className.endsWith("[]")) {
+        while (className.endsWith("[]")) {
             buffer.append("[");
             className = className.substring(0, className.length() - 2);
         }
-        if("short".equals(className)) {
+        if ("short".equals(className)) {
             buffer.append("S");
-        } else if("int".equals(className)) {
+        } else if ("int".equals(className)) {
             buffer.append("I");
-        } else if("long".equals(className)) {
+        } else if ("long".equals(className)) {
             buffer.append("J");
-        } else if("float".equals(className)) {
+        } else if ("float".equals(className)) {
             buffer.append("F");
-        } else if("double".equals(className)) {
+        } else if ("double".equals(className)) {
             buffer.append("D");
-        } else if("byte".equals(className)) {
+        } else if ("byte".equals(className)) {
             buffer.append("B");
-        } else if("char".equals(className)) {
+        } else if ("char".equals(className)) {
             buffer.append("C");
-        } else if("boolean".equals(className)) {
+        } else if ("boolean".equals(className)) {
             buffer.append("Z");
-        } else if("void".equals(className)) {
+        } else if ("void".equals(className)) {
             throw new IllegalArgumentException();
         } else {
             buffer.append("L").append(className).append(";");
@@ -73,37 +73,37 @@ public class ObjectUtil {
     }
 
     protected static Class loadPrimitiveClass(String className) {
-        if(StringUtil.isEmpty(className)) {
+        if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
-        if("short".equals(className)) {
+        if ("short".equals(className)) {
             return Short.TYPE;
-        } else if("int".equals(className)) {
+        } else if ("int".equals(className)) {
             return Integer.TYPE;
-        } else if("long".equals(className)) {
+        } else if ("long".equals(className)) {
             return Long.TYPE;
-        } else if("float".equals(className)) {
+        } else if ("float".equals(className)) {
             return Float.TYPE;
-        } else if("double".equals(className)) {
+        } else if ("double".equals(className)) {
             return Double.TYPE;
-        } else if("byte".equals(className)) {
+        } else if ("byte".equals(className)) {
             return Byte.TYPE;
-        } else if("char".equals(className)) {
+        } else if ("char".equals(className)) {
             return Character.TYPE;
-        } else if("boolean".equals(className)) {
+        } else if ("boolean".equals(className)) {
             return Boolean.TYPE;
-        } else if("void".equals(className)) {
+        } else if ("void".equals(className)) {
             return Void.TYPE;
         }
         return null;
     }
 
     public static Class loadClass(String className) {
-        if(StringUtil.isEmpty(className)) {
+        if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
         Class primitive = loadPrimitiveClass(className);
-        if(primitive != null) {
+        if (primitive != null) {
             return primitive;
         }
         className = getClassSignature(className);
@@ -116,18 +116,18 @@ public class ObjectUtil {
     }
 
     public static Class loadClass(String className, Class expectedClass) {
-        if(expectedClass == null) {
+        if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
         Class clazz = loadClass(className);
-        if(expectedClass.isAssignableFrom(clazz)) {
+        if (expectedClass.isAssignableFrom(clazz)) {
             return clazz;
         }
         throw new IllegalClassTypeException(expectedClass, clazz);
     }
 
     public static Object newInstance(Class clazz) {
-        if(clazz == null) {
+        if (clazz == null) {
             throw new IllegalArgumentException();
         }
         try {
@@ -139,9 +139,8 @@ public class ObjectUtil {
         }
     }
 
-    public static Constructor getConstructor(
-            Class clazz, Class[] argTypes) {
-        if(clazz == null || argTypes == null) {
+    public static Constructor getConstructor(Class clazz, Class[] argTypes) {
+        if (clazz == null || argTypes == null) {
             throw new IllegalArgumentException();
         }
         try {
@@ -151,10 +150,9 @@ public class ObjectUtil {
         }
     }
 
-    public static Object newInstance(
-            Constructor constructor, Object[] argValues) {
-        if(constructor == null || argValues == null ||
-                constructor.getParameterTypes().length != argValues.length) {
+    public static Object newInstance(Constructor constructor, Object[] argValues) {
+        if (constructor == null || argValues == null
+                || constructor.getParameterTypes().length != argValues.length) {
             throw new IllegalArgumentException();
         }
         try {
@@ -168,32 +166,29 @@ public class ObjectUtil {
         }
     }
 
-    public static boolean hasProperty(
-            Class beanClass, String propertyName) {
+    public static boolean hasProperty(Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
-        for(int i = 0; i < descriptors.length; i++) {
-            if(descriptors[i].getName().equals(propertyName)) {
+        for (int i = 0; i < descriptors.length; i++) {
+            if (descriptors[i].getName().equals(propertyName)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static Class getPropertyClass(
-            Class beanClass, String propertyName) {
+    public static Class getPropertyClass(Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
-        for(int i = 0; i < descriptors.length; i++) {
-            if(descriptors[i].getName().equals(propertyName)) {
+        for (int i = 0; i < descriptors.length; i++) {
+            if (descriptors[i].getName().equals(propertyName)) {
                 return descriptors[i].getPropertyType();
             }
         }
         return null;
     }
 
-    public static Class getPropertyClass(
-            Object bean, String propertyName) {
+    public static Class getPropertyClass(Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
         } catch (IllegalAccessException e) {
@@ -207,19 +202,17 @@ public class ObjectUtil {
 
     public static Object convert(Class expectedClass, Object value) {
         Converter converter = ConvertUtils.lookup(expectedClass);
-        if(converter != null) {
+        if (converter != null) {
             return converter.convert(expectedClass, value);
         }
         return value;
     }
 
-    public static void setProperty(
-            Object bean, String propertyName, Object value) {
+    public static void setProperty(Object bean, String propertyName, Object value) {
         try {
             Class propertyClass = getPropertyClass(bean, propertyName);
-            if(propertyClass == null) {
-                throw new NoSuchPropertyException(
-                        bean.getClass(), propertyName);
+            if (propertyClass == null) {
+                throw new NoSuchPropertyException(bean.getClass(), propertyName);
             }
             value = convert(propertyClass, value);
             PropertyUtils.setProperty(bean, propertyName, value);
@@ -244,11 +237,10 @@ public class ObjectUtil {
         }
     }
 
-    public static Object invoke(Object bean,
-            String methodName, Object[] args, Class[] argClasses) {
+    public static Object invoke(
+            Object bean, String methodName, Object[] args, Class[] argClasses) {
         try {
-            return MethodUtils.invokeMethod(
-                    bean, methodName, args, argClasses);
+            return MethodUtils.invokeMethod(bean, methodName, args, argClasses);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -258,11 +250,10 @@ public class ObjectUtil {
         }
     }
 
-    public static boolean booleanValue(
-            Object obj, boolean defaultValue) {
+    public static boolean booleanValue(Object obj, boolean defaultValue) {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);
-        return ((Boolean)converter.convert(null, obj)).booleanValue();
+        return ((Boolean) converter.convert(null, obj)).booleanValue();
     }
 
     public static Number numberValue(Object obj, Number defaultValue) {

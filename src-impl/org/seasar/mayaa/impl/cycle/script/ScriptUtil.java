@@ -33,11 +33,11 @@ public class ScriptUtil {
     }
 
     public static CompiledScript compile(String text, Class expectedClass) {
-        if(expectedClass == null) {
+        if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
         CompiledScript compiled;
-        if(StringUtil.hasValue(text)) {
+        if (StringUtil.hasValue(text)) {
             ScriptEnvironment environment = ProviderUtil.getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             NodeTreeWalker node = cycle.getInjectedNode();
@@ -50,11 +50,11 @@ public class ScriptUtil {
     }
 
     public static String getBlockSignedText(String text) {
-        if(StringUtil.isEmpty(text)) {
+        if (StringUtil.isEmpty(text)) {
             return text;
         }
         String blockSign = ProviderUtil.getScriptEnvironment().getBlockSign();
-        return text = blockSign + "{" + text.trim() + "\n}";
+        return blockSign + "{" + text.trim() + "\n}";
     }
 
     public static void assertSingleScript(String text) {

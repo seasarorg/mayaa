@@ -31,13 +31,13 @@ public class ConverterTagHandler
         extends AbstractParameterAwareTagHandler {
 
     private TagHandler _parent;
-    LibraryTagHandler _libraryTagHandler;
+    private LibraryTagHandler _libraryTagHandler;
     private PropertyConverter _converter;
 
     public ConverterTagHandler(
             TagHandler parent, LibraryTagHandler libraryTagHandler) {
         super("converter");
-        if(parent == null || libraryTagHandler == null) {
+        if (parent == null || libraryTagHandler == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -46,16 +46,16 @@ public class ConverterTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _converter = (PropertyConverter)XMLUtil.getObjectValue(
+        _converter = (PropertyConverter) XMLUtil.getObjectValue(
                     attributes, "class", PropertyConverter.class);
-        if(_converter == null) {
+        if (_converter == null) {
             throw new IllegalStateException();
         }
         _converter.setSystemID(systemID);
         _converter.setLineNumber(lineNumber);
-        if(_parent instanceof PropertyTagHandler) {
+        if (_parent instanceof PropertyTagHandler) {
             PropertyDefinitionImpl propertyDef =
-                ((PropertyTagHandler)_parent).getPropertyDefinition();
+                ((PropertyTagHandler) _parent).getPropertyDefinition();
             propertyDef.setPropertyConverter(_converter);
         }
         String name = XMLUtil.getStringValue(attributes, "name", "");
@@ -69,7 +69,7 @@ public class ConverterTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_converter == null) {
+        if (_converter == null) {
             throw new IllegalStateException();
         }
         return _converter;

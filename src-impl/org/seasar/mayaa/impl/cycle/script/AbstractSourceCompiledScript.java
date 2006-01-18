@@ -29,7 +29,7 @@ public abstract class AbstractSourceCompiledScript
 
     public AbstractSourceCompiledScript(
             SourceDescriptor source, String encoding) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         _source = source;
@@ -41,7 +41,7 @@ public abstract class AbstractSourceCompiledScript
     }
 
     protected String getEncoding() {
-        if(StringUtil.isEmpty(_encoding)) {
+        if (StringUtil.isEmpty(_encoding)) {
             return System.getProperty("file.encoding", "UTF-8");
         }
         return _encoding;

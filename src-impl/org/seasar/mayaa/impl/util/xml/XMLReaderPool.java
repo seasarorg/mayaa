@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.util.xml;
 
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
-import org.seasar.mayaa.impl.util.xml.AdditionalSAXParser;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -37,7 +36,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
     private static XMLReaderPool _xmlReaderPool;
 
     public static XMLReaderPool getPool() {
-        if(_xmlReaderPool == null) {
+        if (_xmlReaderPool == null) {
             _xmlReaderPool = new XMLReaderPool();
         }
         return _xmlReaderPool;
@@ -56,8 +55,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         return object instanceof XMLReader;
     }
 
-    protected void setFeature(
-            XMLReader xmlReader, String name, boolean value) {
+    protected void setFeature(XMLReader xmlReader, String name, boolean value) {
         try {
             xmlReader.setFeature(name, value);
         } catch (SAXNotRecognizedException e) {
@@ -67,8 +65,7 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         }
     }
 
-    protected void setProperty(
-            XMLReader xmlReader, String name, Object value) {
+    protected void setProperty(XMLReader xmlReader, String name, Object value) {
         try {
             xmlReader.setProperty(name, value);
         } catch (SAXNotRecognizedException e) {
@@ -78,33 +75,31 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         }
     }
 
-    public XMLReader borrowXMLReader(final ContentHandler handler,
-            boolean namespaces, boolean validation, boolean xmlSchema) {
-        XMLReader xmlReader = (XMLReader)borrowObject();
+    public XMLReader borrowXMLReader(
+            final ContentHandler handler, boolean namespaces,
+            boolean validation, boolean xmlSchema) {
+        XMLReader xmlReader = (XMLReader) borrowObject();
+        setFeature(xmlReader, "http://xml.org/sax/features/namespaces", namespaces);
+        setFeature(xmlReader, "http://xml.org/sax/features/validation", validation);
         setFeature(xmlReader,
-            "http://xml.org/sax/features/namespaces", namespaces);
-        setFeature(xmlReader,
-               "http://xml.org/sax/features/validation", validation);
-        setFeature(xmlReader,
-            "http://apache.org/xml/features/validation/schema", xmlSchema);
+                "http://apache.org/xml/features/validation/schema", xmlSchema);
 
         xmlReader.setContentHandler(handler);
-        if(handler instanceof EntityResolver) {
-            xmlReader.setEntityResolver((EntityResolver)handler);
+        if (handler instanceof EntityResolver) {
+            xmlReader.setEntityResolver((EntityResolver) handler);
         }
-        if(handler instanceof ErrorHandler) {
-            xmlReader.setErrorHandler((ErrorHandler)handler);
+        if (handler instanceof ErrorHandler) {
+            xmlReader.setErrorHandler((ErrorHandler) handler);
         }
-        if(handler instanceof DTDHandler) {
-            xmlReader.setDTDHandler((DTDHandler)handler);
+        if (handler instanceof DTDHandler) {
+            xmlReader.setDTDHandler((DTDHandler) handler);
         }
-        if(handler instanceof LexicalHandler) {
+        if (handler instanceof LexicalHandler) {
             setProperty(xmlReader,
-                "http://xml.org/sax/properties/lexical-handler", handler);
+                    "http://xml.org/sax/properties/lexical-handler", handler);
         }
-        if(handler instanceof AdditionalHandler) {
-            setProperty(xmlReader,
-                AdditionalHandler.ADDITIONAL_HANDLER, handler);
+        if (handler instanceof AdditionalHandler) {
+            setProperty(xmlReader, AdditionalHandler.ADDITIONAL_HANDLER, handler);
         }
 
         return xmlReader;

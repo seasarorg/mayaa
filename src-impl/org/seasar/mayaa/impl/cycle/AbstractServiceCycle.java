@@ -49,7 +49,7 @@ public abstract class AbstractServiceCycle
     }
 
     public void load(String systemID, String encoding) {
-        if(StringUtil.isEmpty(systemID)) {
+        if (StringUtil.isEmpty(systemID)) {
             throw new ScriptFileNotFoundException("");
         }
         String sid = systemID;
@@ -66,15 +66,15 @@ public abstract class AbstractServiceCycle
         }
         appSource.setSystemID(sid);
         SourceDescriptor source = null;
-        if(appSource.exists()) {
+        if (appSource.exists()) {
             source = appSource;
         } else {
             source = SourceUtil.getSourceDescriptor(sid);
-            if(source.exists() == false) {
+            if (source.exists() == false) {
                 source = null;
             }
         }
-        if(source == null) {
+        if (source == null) {
             throw new ScriptFileNotFoundException(systemID);
         }
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
@@ -88,13 +88,13 @@ public abstract class AbstractServiceCycle
     }
 
     public boolean hasAttributeScope(String scopeName) {
-        if(StringUtil.isEmpty(scopeName)) {
+        if (StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
-                it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
-            if(scope.getScopeName().equals(scopeName)) {
+        for (Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
+                it.hasNext();) {
+            AttributeScope scope = (AttributeScope) it.next();
+            if (scope.getScopeName().equals(scopeName)) {
                 return true;
             }
         }
@@ -102,13 +102,13 @@ public abstract class AbstractServiceCycle
     }
 
     public AttributeScope getAttributeScope(String scopeName) {
-        if(StringUtil.isEmpty(scopeName)) {
+        if (StringUtil.isEmpty(scopeName)) {
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for(Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
-                it.hasNext(); ) {
-            AttributeScope scope = (AttributeScope)it.next();
-            if(scope.getScopeName().equals(scopeName)) {
+        for (Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
+                it.hasNext();) {
+            AttributeScope scope = (AttributeScope) it.next();
+            if (scope.getScopeName().equals(scopeName)) {
                 return scope;
             }
         }

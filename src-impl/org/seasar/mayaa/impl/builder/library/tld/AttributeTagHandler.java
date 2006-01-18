@@ -31,7 +31,7 @@ public class AttributeTagHandler extends TagHandler {
     protected static final Log LOG =
             LogFactory.getLog(AttributeTagHandler.class);
 
-    TLDPropertyDefinition _property;
+    private TLDPropertyDefinition _property;
     private TagTagHandler _parent;
 
     public AttributeTagHandler(TagTagHandler parent) {
@@ -39,15 +39,15 @@ public class AttributeTagHandler extends TagHandler {
         _parent = parent;
         putHandler(new TagHandler("name") {
             protected void end(String body) {
-                _property.setName(body);
+                getProperty().setName(body);
             }
         });
         putHandler(new TagHandler("required") {
             protected void end(String body) {
                 try {
-                    _property.setRequired(ObjectUtil.booleanValue(body, false));
+                    getProperty().setRequired(ObjectUtil.booleanValue(body, false));
                 } catch (RuntimeException e) {
-                    if(LOG.isErrorEnabled()) {
+                    if (LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);
                     }
                     invalidateParent();
@@ -58,9 +58,9 @@ public class AttributeTagHandler extends TagHandler {
             protected void end(String body) {
                 try {
                     Class expectedClass = ObjectUtil.loadClass(body);
-                    _property.setExpectedClass(expectedClass);
+                    getProperty().setExpectedClass(expectedClass);
                 } catch (RuntimeException e) {
-                    if(LOG.isErrorEnabled()) {
+                    if (LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);
                     }
                     invalidateParent();
@@ -69,21 +69,30 @@ public class AttributeTagHandler extends TagHandler {
         });
     }
 
+    protected TLDPropertyDefinition getProperty() {
+        return _property;
+    }
+
+    protected void setProperty(TLDPropertyDefinition property) {
+        _property = property;
+    }
+
     protected void invalidateParent() {
         _parent.invalidate();
     }
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _property = new TLDPropertyDefinition();
-        _property.setSystemID(systemID);
-        _property.setLineNumber(lineNumber);
+        TLDPropertyDefinition property = new TLDPropertyDefinition();
+        property.setSystemID(systemID);
+        property.setLineNumber(lineNumber);
+        setProperty(property);
     }
 
     protected void end(String body) {
         TLDProcessorDefinition processor = _parent.getProcessorDefinition();
-        _property.setPropertySet(_parent.getProcessorDefinition());
-        processor.addPropertyDefinitiion(_property);
+        getProperty().setPropertySet(_parent.getProcessorDefinition());
+        processor.addPropertyDefinitiion(getProperty());
     }
 
 }

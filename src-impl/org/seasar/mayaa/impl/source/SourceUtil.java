@@ -30,7 +30,7 @@ public class SourceUtil {
     }
 
     public static SourceDescriptor getSourceDescriptor(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
+        if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
         PageSourceFactory factory = (PageSourceFactory)

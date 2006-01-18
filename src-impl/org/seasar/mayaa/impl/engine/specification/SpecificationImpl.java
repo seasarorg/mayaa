@@ -47,8 +47,8 @@ public class SpecificationImpl extends ParameterAwareImpl
     private boolean _hasSource;
 
     protected void clear() {
-        synchronized(this) {
-            if(_childNodes != null) {
+        synchronized (this) {
+            if (_childNodes != null) {
                 _childNodes.clear();
             }
         }
@@ -88,7 +88,7 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     protected void parseSpecification() {
         setTimestamp(new Date());
-        if(getSource().exists()) {
+        if (getSource().exists()) {
             clear();
             SpecificationBuilder builder = ProviderUtil.getSpecificationBuilder();
             builder.build(this);
@@ -108,7 +108,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public SourceDescriptor getSource() {
-        if(_source == null) {
+        if (_source == null) {
             _source = new NullSourceDescriptor();
         }
         return _source;
@@ -119,7 +119,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public void checkTimestamp() {
-        if(isOldSpecification()) {
+        if (isOldSpecification()) {
             parseSpecification();
         }
     }
@@ -135,22 +135,22 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public void addChildNode(NodeTreeWalker childNode) {
-        if(childNode == null) {
+        if (childNode == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(this) {
-            if(_childNodes == null) {
+        synchronized (this) {
+            if (_childNodes == null) {
                 _childNodes = new ArrayList();
             }
         }
-        synchronized(_childNodes) {
+        synchronized (_childNodes) {
             _childNodes.add(childNode);
             childNode.setParentNode(this);
         }
     }
 
     public Iterator iterateChildNode() {
-        if(_childNodes == null) {
+        if (_childNodes == null) {
             return NullIterator.getInstance();
         }
         return _childNodes.iterator();
@@ -159,7 +159,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     // PositionAware implements ------------------------------------
 
     public String getSystemID() {
-        if(getSource() == null) {
+        if (getSource() == null) {
             return null;
         }
         return getSource().getSystemID();
@@ -182,7 +182,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         private List _list;
 
         public ChildSpecificationsIterator(List list) {
-            if(list == null) {
+            if (list == null) {
                 throw new IllegalArgumentException();
             }
             _list = list;
@@ -190,18 +190,18 @@ public class SpecificationImpl extends ParameterAwareImpl
         }
 
         public boolean hasNext() {
-            if(_next != null) {
+            if (_next != null) {
                 return true;
             }
-            while(_next == null) {
+            while (_next == null) {
                 _index--;
-                if(_index < 0) {
+                if (_index < 0) {
                     return false;
                 }
-                synchronized(_list) {
-                    SoftReference ref = (SoftReference)_list.get(_index);
-                    _next = (Specification)ref.get();
-                    if(_next == null) {
+                synchronized (_list) {
+                    SoftReference ref = (SoftReference) _list.get(_index);
+                    _next = (Specification) ref.get();
+                    if (_next == null) {
                         _list.remove(_index);
                     }
                 }
@@ -210,7 +210,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         }
 
         public Object next() {
-            if(_next == null && hasNext() == false) {
+            if (_next == null && hasNext() == false) {
                 throw new NoSuchElementException();
             }
             Specification ret = _next;

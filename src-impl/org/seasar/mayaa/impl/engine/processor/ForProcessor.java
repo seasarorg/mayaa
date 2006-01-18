@@ -29,10 +29,12 @@ public class ForProcessor extends TemplateProcessorSupport
 
     private static final long serialVersionUID = -1762792311844341560L;
 
+    private static final int DEFAULT_MAX = 256;
+
     private ProcessorProperty _init;
     private ProcessorProperty _test;
     private ProcessorProperty _after;
-    private int _max = 256;
+    private int _max = DEFAULT_MAX;
     private ThreadLocal _counter = new ThreadLocal();
 
     // MLD property, expectedClass=void
@@ -42,7 +44,7 @@ public class ForProcessor extends TemplateProcessorSupport
 
     // MLD property, required=true, expectedClass=boolean
     public void setTest(ProcessorProperty test) {
-        if(test == null) {
+        if (test == null) {
             throw new IllegalArgumentException();
         }
         _test = test;
@@ -63,11 +65,11 @@ public class ForProcessor extends TemplateProcessorSupport
     }
 
     protected boolean execTest() {
-        if(_test == null) {
+        if (_test == null) {
             throw new IllegalStateException();
         }
-        int count = ((Integer)_counter.get()).intValue();
-        if(0 <= _max && _max< count) {
+        int count = ((Integer) _counter.get()).intValue();
+        if (0 <= _max && _max < count) {
             throw new TooManyLoopException(_max);
         }
         count++;
@@ -77,14 +79,14 @@ public class ForProcessor extends TemplateProcessorSupport
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         _counter.set(new Integer(0));
-        if(_init != null) {
+        if (_init != null) {
             _init.getValue().execute(null);
         }
         return execTest() ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
 
     public ProcessStatus doAfterChildProcess() {
-        if(_after != null) {
+        if (_after != null) {
             _after.getValue().execute(null);
         }
         return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;

@@ -62,7 +62,7 @@ public abstract class AbstractResponse implements Response {
             String contentType);
 
     public void setContentType(String contentType) {
-        if(StringUtil.isEmpty(contentType)) {
+        if (StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
         _encoding = parseCharacterEncoding(contentType);
@@ -70,7 +70,7 @@ public abstract class AbstractResponse implements Response {
     }
 
     public CycleWriter getWriter() {
-        return (CycleWriter)_stack.peek();
+        return (CycleWriter) _stack.peek();
     }
 
     public void clearBuffer() {
@@ -85,14 +85,14 @@ public abstract class AbstractResponse implements Response {
     }
 
     public CycleWriter popWriter() {
-        if(_stack.size() > 1) {
-            return (CycleWriter)_stack.pop();
+        if (_stack.size() > 1) {
+            return (CycleWriter) _stack.pop();
         }
         throw new IllegalStateException();
     }
 
     public void write(char[] cbuf) {
-        if(cbuf != null) {
+        if (cbuf != null) {
             write(cbuf, 0, cbuf.length);
         }
     }
@@ -114,7 +114,7 @@ public abstract class AbstractResponse implements Response {
     }
 
     public void write(String str) {
-        if(str != null) {
+        if (str != null) {
             write(str, 0, str.length());
         }
     }
@@ -133,8 +133,8 @@ public abstract class AbstractResponse implements Response {
 
     public void flush() {
         try {
-            if(_stack.size() == 1) {
-                CycleWriter writer = (CycleWriter)_stack.peek();
+            if (_stack.size() == 1) {
+                CycleWriter writer = (CycleWriter) _stack.peek();
                 Writer underlyingWriter = new OutputStreamWriter(
                         getOutputStream(), _encoding);
                 writer.writeOut(underlyingWriter);

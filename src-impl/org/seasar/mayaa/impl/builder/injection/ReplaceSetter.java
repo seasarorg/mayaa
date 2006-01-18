@@ -37,11 +37,11 @@ public class ReplaceSetter extends ParameterAwareImpl
         SpecificationUtil.createQName("replace");
 
     protected boolean isReplace(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         NodeAttribute attr = node.getAttribute(QM_REPLACE);
-        if(attr != null) {
+        if (attr != null) {
             return ObjectUtil.booleanValue(attr.getValue(), true);
         }
         return true;
@@ -49,21 +49,21 @@ public class ReplaceSetter extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode injected = chain.getNode(original);
-        if(injected == null) {
+        if (injected == null) {
             return null;
         }
-        if(isReplace(original) == false || isReplace(injected) == false) {
+        if (isReplace(original) == false || isReplace(injected) == false) {
                QName qName = original.getQName();
                String uri = qName.getNamespaceURI();
                SpecificationNode element = BuilderUtil.createInjectedNode(
                        QM_DUPLECATED, uri, original, false);
             StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();
-            if(StringUtil.hasValue(prefix)) {
+            if (StringUtil.hasValue(prefix)) {
                 name.append(prefix).append(":");
             }
             name.append(qName.getLocalName());

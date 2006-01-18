@@ -32,7 +32,7 @@ public class CommentProcessor extends CharactersProcessor {
         cycle.getResponse().write("<!--");
         if (getText() != null) {
             Object value = getText().getValue().execute(null);
-            if(value != null) {
+            if (value != null) {
                 cycle.getResponse().write(value.toString());
             }
         }

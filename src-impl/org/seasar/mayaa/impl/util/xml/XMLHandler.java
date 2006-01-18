@@ -33,13 +33,17 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLHandler extends DefaultHandler {
 
     private TagHandlerStack _stack;
-    private Log _log ;
+
+    private Log _log;
+
     private Locator _locator;
+
     private Map _entities;
+
     private Class _neighborClass;
 
     protected void setRootHandler(TagHandler rootHandler) {
-        if(rootHandler == null) {
+        if (rootHandler == null) {
             throw new IllegalArgumentException();
         }
         _stack = new TagHandlerStack(rootHandler);
@@ -54,7 +58,7 @@ public class XMLHandler extends DefaultHandler {
     }
 
     protected void setNeighborClass(Class neighborClass) {
-        if(neighborClass == null) {
+        if (neighborClass == null) {
             throw new IllegalArgumentException();
         }
         _neighborClass = neighborClass;
@@ -65,21 +69,21 @@ public class XMLHandler extends DefaultHandler {
     }
 
     protected Map getEntityMap() {
-        if(_entities == null) {
+        if (_entities == null) {
             _entities = new HashMap();
         }
         return _entities;
     }
 
     protected String getSystemID() {
-        if(_locator != null) {
+        if (_locator != null) {
             return _locator.getSystemId();
         }
         return null;
     }
 
     protected int getLineNumber() {
-        if(_locator != null) {
+        if (_locator != null) {
             return _locator.getLineNumber();
         }
         return 0;
@@ -92,53 +96,50 @@ public class XMLHandler extends DefaultHandler {
     public InputSource resolveEntity(String publicId, String systemId) {
         String path = systemId;
         Map entities = getEntityMap();
-        if(entities != null && entities.containsKey(publicId)) {
-            path = (String)entities.get(publicId);
-        } else if(entities != null && entities.containsKey(systemId)) {
-            path = (String)entities.get(systemId);
+        if (entities != null && entities.containsKey(publicId)) {
+            path = (String) entities.get(publicId);
+        } else if (entities != null && entities.containsKey(systemId)) {
+            path = (String) entities.get(systemId);
         } else {
             int pos = systemId.lastIndexOf('/');
-            if(pos != -1) {
+            if (pos != -1) {
                 path = systemId.substring(pos);
             }
         }
         Class neighborClass = getNeighborClass();
-        if(neighborClass == null) {
+        if (neighborClass == null) {
             neighborClass = getClass();
         }
-        ClassLoaderSourceDescriptor source =
-            new ClassLoaderSourceDescriptor();
+        ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
         source.setSystemID(path);
         source.setNeighborClass(neighborClass);
-        if(source.exists()) {
+        if (source.exists()) {
             InputSource ret = new InputSource(source.getInputStream());
             ret.setPublicId(publicId);
             ret.setSystemId(path);
             return ret;
         }
         Log log = getLog();
-        if(log != null && log.isWarnEnabled()) {
-            String message = StringUtil.getMessage(XMLHandler.class, 0,
-                    publicId, systemId);
+        if (log != null && log.isWarnEnabled()) {
+            String message = StringUtil.getMessage(
+                    XMLHandler.class, 0, publicId, systemId);
             log.warn(message);
         }
         return null;
     }
 
     public void startDocument() {
-        if(_stack == null) {
+        if (_stack == null) {
             throw new IllegalStateException();
         }
     }
 
-    public void startElement(String namespaceURI,
-            String localName, String qName, Attributes attributes) {
-        _stack.startElement(
-                localName, attributes, getSystemID(), getLineNumber());
+    public void startElement(String namespaceURI, String localName, String qName,
+            Attributes attributes) {
+        _stack.startElement(localName, attributes, getSystemID(), getLineNumber());
     }
 
-    public void endElement(String namespaceURI,
-            String localName, String qName) {
+    public void endElement(String namespaceURI, String localName, String qName) {
         _stack.endElement();
     }
 
@@ -148,14 +149,14 @@ public class XMLHandler extends DefaultHandler {
 
     public void warning(SAXParseException e) {
         Log log = getLog();
-        if(log != null && log.isWarnEnabled()) {
+        if (log != null && log.isWarnEnabled()) {
             log.warn(e.getMessage(), e);
         }
     }
 
     public void error(SAXParseException e) {
         Log log = getLog();
-        if(log != null && log.isErrorEnabled()) {
+        if (log != null && log.isErrorEnabled()) {
             log.error(e.getMessage(), e);
         }
         throw new RuntimeException(e);
@@ -163,7 +164,7 @@ public class XMLHandler extends DefaultHandler {
 
     public void fatalError(SAXParseException e) {
         Log log = getLog();
-        if(log != null && log.isFatalEnabled()) {
+        if (log != null && log.isFatalEnabled()) {
             log.fatal(e.getMessage(), e);
         }
         throw new RuntimeException(e);

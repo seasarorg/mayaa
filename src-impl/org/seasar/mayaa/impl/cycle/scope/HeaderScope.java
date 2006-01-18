@@ -42,10 +42,10 @@ public class HeaderScope extends AbstractReadOnlyAttributeScope {
     }
 
     public Object getAttribute(String name) {
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
             String[] headers = (String[]) values.getAttribute(name);
-            if(headers.length == 0) {
+            if (headers.length == 0) {
                 return "";
             }
             return headers[0];

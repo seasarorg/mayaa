@@ -37,22 +37,22 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class MLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder, CONST_IMPL {
 
-    private static Log LOG =
+    private static final Log LOG =
         LogFactory.getLog(MLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        if(source.exists() && systemID.toLowerCase().endsWith(".mld")) {
+        if (source.exists() && systemID.toLowerCase().endsWith(".mld")) {
             LibraryDefinitionHandler handler = new LibraryDefinitionHandler();
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_MLD10,
                         systemID, true, true, false);
-            } catch(Throwable t) {
-                if(LOG.isErrorEnabled()) {
+            } catch (Throwable t) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error("MLD parse error on " + systemID, t);
                 }
                 return null;
@@ -62,7 +62,7 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
             LibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getParameter(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if(assigned) {
+            if (assigned) {
                 library.addAssignedURI(source.getParameter(SourceAlias.ALIAS));
             }
             return library;

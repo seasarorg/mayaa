@@ -43,13 +43,13 @@ public class CycleUtil {
     public static void initialize(
             Object requestContext, Object responseContext) {
         CycleFactory factory =
-            (CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
+            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
         factory.initialize(requestContext, responseContext);
     }
 
     public static ServiceCycle getServiceCycle() {
         CycleFactory factory =
-            (CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
+            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
         return factory.getServiceCycle();
     }
 
@@ -64,14 +64,14 @@ public class CycleUtil {
     }
 
     public static AttributeScope findStandardAttributeScope(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return null;
         }
-        for(int i = 0; i < STANDARD_SCOPES.length; i++) {
+        for (int i = 0; i < STANDARD_SCOPES.length; i++) {
             ServiceCycle cycle = getServiceCycle();
             AttributeScope scope =
                 cycle.getAttributeScope(STANDARD_SCOPES[i]);
-            if(scope.hasAttribute(name)) {
+            if (scope.hasAttribute(name)) {
                 return scope;
             }
         }
@@ -88,7 +88,7 @@ public class CycleUtil {
             String name, Object value, String scopeName) {
         ServiceCycle cycle = getServiceCycle();
         AttributeScope scope = cycle.getAttributeScope(scopeName);
-        if(scope.isAttributeWritable()) {
+        if (scope.isAttributeWritable()) {
             scope.setAttribute(name, value);
         } else {
             throw new ScopeNotWritableException(scopeName);
@@ -98,7 +98,7 @@ public class CycleUtil {
     public static void removeAttribute(String name, String scopeName) {
         ServiceCycle cycle = getServiceCycle();
         AttributeScope scope = cycle.getAttributeScope(scopeName);
-        if(scope.isAttributeWritable()) {
+        if (scope.isAttributeWritable()) {
             scope.removeAttribute(name);
         } else {
             throw new ScopeNotWritableException(scopeName);

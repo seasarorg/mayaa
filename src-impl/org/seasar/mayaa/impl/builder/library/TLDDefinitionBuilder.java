@@ -36,20 +36,20 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class TLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder {
 
-    private static Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
+    private static final Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        if(source.exists() && systemID.toLowerCase().endsWith(".tld")) {
+        if (source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             TLDLibraryDefinitionHandler handler = new TLDLibraryDefinitionHandler();
             try {
                 XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
-            } catch(Throwable t) {
-                if(LOG.isErrorEnabled()) {
+            } catch (Throwable t) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error("TLD parse error on " + systemID, t);
                 }
                 return null;
@@ -59,7 +59,7 @@ public class TLDDefinitionBuilder extends ParameterAwareImpl
             LibraryDefinition library = handler.getLibraryDefinition();
             boolean assigned = ObjectUtil.booleanValue(source.getParameter(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if(assigned || "/META-INF/taglib.tld".equals(systemID)) {
+            if (assigned || "/META-INF/taglib.tld".equals(systemID)) {
                 library.addAssignedURI(source.getParameter(SourceAlias.ALIAS));
             }
             return library;

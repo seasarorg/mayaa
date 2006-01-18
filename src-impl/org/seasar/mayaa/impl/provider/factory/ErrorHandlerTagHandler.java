@@ -35,11 +35,11 @@ public class ErrorHandlerTagHandler
     public ErrorHandlerTagHandler(
             EngineTagHandler parent, Engine beforeEngine) {
         super("errorHandler");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeEngine != null) {
+        if (beforeEngine != null) {
             _beforeHandler = beforeEngine.getErrorHandler();
         }
     }
@@ -48,7 +48,7 @@ public class ErrorHandlerTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class handlerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentHandler = (ErrorHandler)MarshallUtil.marshall(
+        _currentHandler = (ErrorHandler) MarshallUtil.marshall(
                 handlerClass, ErrorHandler.class, _beforeHandler,
                 systemID, lineNumber);
         _parent.getEngine().setErrorHandler(_currentHandler);
@@ -59,7 +59,7 @@ public class ErrorHandlerTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_currentHandler == null) {
+        if (_currentHandler == null) {
             throw new IllegalStateException();
         }
         return _currentHandler;

@@ -31,14 +31,14 @@ public class IfProcessor extends TemplateProcessorSupport {
 
     // MLD property, expectedClass=boolean
     public void setTest(ProcessorProperty test) {
-        if(test == null) {
+        if (test == null) {
             throw new IllegalArgumentException();
         }
         _test = test;
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_test == null) {
+        if (_test == null) {
             throw new IllegalStateException();
         }
         boolean test = ObjectUtil.booleanValue(_test.getValue().execute(null), false);

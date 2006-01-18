@@ -67,8 +67,8 @@ public class WebAppTagHandler extends TagHandler {
             }
 
             protected void end(String body) {
-                if(StringUtil.isEmpty(_taglibURI) ||
-                        StringUtil.isEmpty(_taglibLocation)) {
+                if (StringUtil.isEmpty(_taglibURI)
+                        || StringUtil.isEmpty(_taglibLocation)) {
                     throw new IllegalTaglibDefinitionException(
                             "/WEB-INF/web.xml", _lineNumber);
                 }

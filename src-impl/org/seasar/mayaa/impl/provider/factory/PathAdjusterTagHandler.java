@@ -35,7 +35,7 @@ public class PathAdjusterTagHandler
     public PathAdjusterTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("pathAdjuster");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         if (beforeProvider != null) {
@@ -47,21 +47,21 @@ public class PathAdjusterTagHandler
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
         Class adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
-        _currentAdjuster = (PathAdjuster)MarshallUtil.marshall(
+        _currentAdjuster = (PathAdjuster) MarshallUtil.marshall(
                 adjusterClass, PathAdjuster.class, _beforeAdjuster,
                 systemID, lineNumber);
         _parent.getServiceProvider().setPathAdjuster(_currentAdjuster);
     }
 
     protected void end(String body) {
-        if(_currentAdjuster == null) {
+        if (_currentAdjuster == null) {
             throw new IllegalStateException();
         }
         _currentAdjuster = null;
     }
 
     public PathAdjuster getPathAdjuster() {
-        if(_currentAdjuster == null) {
+        if (_currentAdjuster == null) {
             throw new IllegalStateException();
         }
         return _currentAdjuster;

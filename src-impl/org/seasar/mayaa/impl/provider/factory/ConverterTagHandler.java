@@ -31,7 +31,7 @@ public class ConverterTagHandler
 
     public ConverterTagHandler(LibraryManagerTagHandler parent) {
         super("converter");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -39,15 +39,14 @@ public class ConverterTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _converter = (PropertyConverter)XMLUtil.getObjectValue(
+        _converter = (PropertyConverter) XMLUtil.getObjectValue(
                 attributes, "class", PropertyConverter.class);
-        if(_converter == null) {
+        if (_converter == null) {
             throw new IllegalStateException();
         }
         _converter.setSystemID(systemID);
         _converter.setLineNumber(lineNumber);
-        String name = XMLUtil.getStringValue(
-                attributes, "name", "");
+        String name = XMLUtil.getStringValue(attributes, "name", "");
         _parent.getLibraryManager().addPropertyConverter(name, _converter);
     }
 
@@ -56,7 +55,7 @@ public class ConverterTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_converter == null) {
+        if (_converter == null) {
             throw new IllegalStateException();
         }
         return _converter;

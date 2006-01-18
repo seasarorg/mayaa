@@ -42,7 +42,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     }
 
     public ApplicationScope getApplicationScope() {
-        if(_application == null) {
+        if (_application == null) {
             _application = FactoryFactory.getApplicationScope();
         }
         return _application;
@@ -53,7 +53,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     }
 
     public SessionScope getSessionScope() {
-        if(_session == null) {
+        if (_session == null) {
             _session = new SessionScopeImpl();
             Object underlying = _request.getUnderlyingContext();
             _session.setUnderlyingContext(underlying);
@@ -62,7 +62,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
     }
 
     public Response getResponse() {
-        if(_response == null) {
+        if (_response == null) {
             _response = new ResponseImpl();
         }
         return _response;

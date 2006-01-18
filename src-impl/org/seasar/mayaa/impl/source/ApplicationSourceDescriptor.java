@@ -46,14 +46,14 @@ public class ApplicationSourceDescriptor
 
     // use while building ServiceProvider.
     public void setApplicationScope(ApplicationScope application) {
-        if(application == null) {
+        if (application == null) {
             throw new IllegalArgumentException();
         }
         _application = application;
     }
 
     public ApplicationScope getApplicationScope() {
-        if(_application == null) {
+        if (_application == null) {
             _application = FactoryFactory.getApplicationScope();
         }
         return _application;
@@ -83,7 +83,7 @@ public class ApplicationSourceDescriptor
 
     public void setSystemID(String systemID) {
         if (_denyWebInf) {
-            if(systemID != null && systemID.indexOf(WEB_INF) != -1) {
+            if (systemID != null && systemID.indexOf(WEB_INF) != -1) {
                 throw new ForbiddenPathException(systemID);
             }
         }
@@ -91,12 +91,12 @@ public class ApplicationSourceDescriptor
     }
 
     public boolean exists() {
-        if(_file == null) {
+        if (_file == null) {
             String realPath =
                 getApplicationScope().getRealPath(_root + getSystemID());
-            if(StringUtil.hasValue(realPath)) {
+            if (StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
-                 if(file.exists()) {
+                 if (file.exists()) {
                      _file = file;
                  }
             }
@@ -105,7 +105,7 @@ public class ApplicationSourceDescriptor
     }
 
     public InputStream getInputStream() {
-        if(exists() && _file.isFile()) {
+        if (exists() && _file.isFile()) {
             try {
                 return new FileInputStream(_file);
             } catch (FileNotFoundException e) {
@@ -116,7 +116,7 @@ public class ApplicationSourceDescriptor
     }
 
     public Date getTimestamp() {
-        if(exists()) {
+        if (exists()) {
             return new Date(_file.lastModified());
         }
         return new Date(0);

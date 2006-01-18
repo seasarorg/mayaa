@@ -39,11 +39,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     private ProcessorProperty _value;
 
     protected AbstractAttributableProcessor findParentAttributable() {
-        for(ProcessorTreeWalker parent = getParentProcessor();
+        for (ProcessorTreeWalker parent = getParentProcessor();
                 parent != null;
                 parent = parent.getParentProcessor()) {
-            if(parent instanceof AbstractAttributableProcessor) {
-                return (AbstractAttributableProcessor)parent;
+            if (parent instanceof AbstractAttributableProcessor) {
+                return (AbstractAttributableProcessor) parent;
             }
         }
         throw new IllegalStateException();
@@ -51,7 +51,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     // MLD property
     public void setName(PrefixAwareName name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         _name = name;
@@ -63,14 +63,14 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     // MLD property
     public void setValue(ProcessorProperty value) {
-        if(value == null) {
+        if (value == null) {
             throw new IllegalArgumentException();
         }
         _value = value;
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_value == null) {
+        if (_value == null) {
             throw new IllegalStateException();
         }
         AbstractAttributableProcessor parent = findParentAttributable();
@@ -107,7 +107,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public ProcessorPropertyWrapper(
                 PrefixAwareName name, ProcessorProperty property, String basePath) {
-            if(name == null || property == null) {
+            if (name == null || property == null) {
                 throw new IllegalArgumentException();
             }
             _attrName = name;
@@ -151,7 +151,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         private static final long serialVersionUID = -5393294025521796857L;
 
-        protected String _basePath;
+        private String _basePath;
 
         public EscapableScript(CompiledScript script, String basePath) {
             super(script);
@@ -160,7 +160,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public Object execute(Object[] args) {
             Object result = super.execute(args);
-            if (_string && StringUtil.hasValue((String) result)) {
+            if (isString() && StringUtil.hasValue((String) result)) {
                 if (_basePath != null) {
                     result =
                         StringUtil.adjustRelativePath(_basePath, (String) result);
@@ -177,13 +177,13 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         private static final long serialVersionUID = -441522603771461865L;
 
-        protected String _escapedValue;
+        private String _escapedValue;
 
         public EscapedLiteralScript(CompiledScript script, String basePath) {
             super(script);
 
             _escapedValue = (String) super.execute(null);
-            if (_string && StringUtil.hasValue(_escapedValue)) {
+            if (isString() && StringUtil.hasValue(_escapedValue)) {
                 if (basePath != null) {
                     _escapedValue =
                         StringUtil.adjustRelativePath(basePath, _escapedValue);
@@ -200,12 +200,16 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     protected abstract class ScriptWrapper implements CompiledScript {
 
-        protected CompiledScript _script;
-        protected boolean _string;
+        private CompiledScript _script;
+        private boolean _string;
 
         public ScriptWrapper(CompiledScript script) {
             _script = script;
             _string = String.class.equals(_script.getExpectedClass());
+        }
+
+        public boolean isString() {
+            return _string;
         }
 
         public void setExpectedClass(Class expectedClass) {

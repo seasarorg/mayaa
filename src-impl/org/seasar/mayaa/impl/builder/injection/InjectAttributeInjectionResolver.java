@@ -37,16 +37,16 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         String injectName =
             SpecificationUtil.getAttributeValue(original, QM_INJECT);
-        if(StringUtil.hasValue(injectName)) {
+        if (StringUtil.hasValue(injectName)) {
             PrefixAwareName prefixAwareName =
                 BuilderUtil.parseName(original, injectName);
             QName qName = prefixAwareName.getQName();
-            if(QM_IGNORE.equals(qName) == false) {
+            if (QM_IGNORE.equals(qName) == false) {
                 String uri = qName.getNamespaceURI();
                 return BuilderUtil.createInjectedNode(
                         qName, uri, original, true);

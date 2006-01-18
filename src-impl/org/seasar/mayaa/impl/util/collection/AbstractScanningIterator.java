@@ -25,10 +25,11 @@ import java.util.Stack;
 public abstract class AbstractScanningIterator implements Iterator {
 
     private Stack _stack;
+
     private Object _next;
 
     public AbstractScanningIterator(Iterator iterator) {
-        if(iterator == null) {
+        if (iterator == null) {
             throw new IllegalArgumentException();
         }
         _stack = new Stack();
@@ -44,20 +45,20 @@ public abstract class AbstractScanningIterator implements Iterator {
     }
 
     public boolean hasNext() {
-        while(true) {
-            if(_next != null) {
+        while (true) {
+            if (_next != null) {
                 return true;
             }
-            Iterator it = (Iterator)_stack.peek();
-            if(it.hasNext()) {
+            Iterator it = (Iterator) _stack.peek();
+            if (it.hasNext()) {
                 Object next = getNextObject(it.next());
-                if(next instanceof Iterator) {
+                if (next instanceof Iterator) {
                     _stack.push(next);
-                } else if(filter(next)) {
+                } else if (filter(next)) {
                     _next = next;
                 }
             } else {
-                if(_stack.size() > 1) {
+                if (_stack.size() > 1) {
                     _stack.pop();
                 } else {
                     return false;
@@ -67,10 +68,10 @@ public abstract class AbstractScanningIterator implements Iterator {
     }
 
     public Object next() {
-        if(_next == null) {
+        if (_next == null) {
             hasNext();
         }
-        if(_next == null) {
+        if (_next == null) {
             throw new NoSuchElementException();
         }
         Object ret = _next;

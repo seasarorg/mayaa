@@ -55,7 +55,7 @@ public class ScriptBlockIterator implements Iterator {
         boolean inBlockComment = false;
         boolean inLineComment = false;
         int depth = 0;
-        for(int i = start; i < _text.length(); i++) {
+        for (int i = start; i < _text.length(); i++) {
             c = _text.charAt(i);
             if (inBlockComment) {
                 if (c != '/' || _text.charAt(i - 1) != '*') {
@@ -81,11 +81,11 @@ public class ScriptBlockIterator implements Iterator {
                 }
             } else if (c == '{') {
                 depth++;
-            } else if(c == '}') {
+            } else if (c == '}') {
                 depth--;
-                if(depth == 0) {
+                if (depth == 0) {
                     return i;
-                } else if(depth < 0) {
+                } else if (depth < 0) {
                     throw new UnbalancedBraceException(_text, i);
                 }
             }
@@ -100,7 +100,7 @@ public class ScriptBlockIterator implements Iterator {
         String blockStart = _blockSign + "{";
         int sign = _text.indexOf(blockStart, _offset);
         if (sign != -1) {
-            if(_offset == sign) {
+            if (_offset == sign) {
                 // script block
                 int close = scanBlockCloseOffset(_offset + _blockSign.length());
                 if (close == -1) {

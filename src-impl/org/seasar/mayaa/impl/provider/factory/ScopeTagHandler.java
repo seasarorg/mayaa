@@ -31,7 +31,7 @@ public class ScopeTagHandler
 
     public ScopeTagHandler(ScriptEnvirionmentTagHandler parent) {
         super("scope");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -39,9 +39,9 @@ public class ScopeTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _scope = (AttributeScope)XMLUtil.getObjectValue(
+        _scope = (AttributeScope) XMLUtil.getObjectValue(
                 attributes, "class", AttributeScope.class);
-        if(_scope == null) {
+        if (_scope == null) {
             throw new IllegalStateException();
         }
         _scope.setSystemID(systemID);
@@ -54,7 +54,7 @@ public class ScopeTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_scope == null) {
+        if (_scope == null) {
             throw new IllegalStateException();
         }
         return _scope;

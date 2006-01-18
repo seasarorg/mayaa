@@ -41,10 +41,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     private HttpSession _httpSession;
 
     protected void check() {
-        if(_httpRequest == null) {
+        if (_httpRequest == null) {
             throw new IllegalStateException();
         }
-        if(_httpSession == null) {
+        if (_httpSession == null) {
             _httpSession = _httpRequest.getSession(true);
         }
     }
@@ -69,13 +69,13 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     public boolean hasAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return false;
         }
         check();
-        for(Enumeration e = _httpSession.getAttributeNames();
-                e.hasMoreElements(); ) {
-            if(e.nextElement().equals(name)) {
+        for (Enumeration e = _httpSession.getAttributeNames();
+                e.hasMoreElements();) {
+            if (e.nextElement().equals(name)) {
                 return true;
             }
         }
@@ -83,7 +83,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     public Object getAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return null;
         }
         check();
@@ -92,7 +92,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     public void setAttribute(String name, Object attribute) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         check();
@@ -100,7 +100,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     public void removeAttribute(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         check();
@@ -111,11 +111,11 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
 
     public void setUnderlyingContext(Object context) {
         // When setting, UnderlyingObject is "HttpServletRequest"
-        if(context == null ||
-                context instanceof HttpServletRequest == false) {
+        if (context == null
+                || context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
-        _httpRequest = (HttpServletRequest)context;
+        _httpRequest = (HttpServletRequest) context;
         _httpSession = null;
     }
 

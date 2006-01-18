@@ -39,7 +39,7 @@ public class EngineUtil implements CONST_IMPL {
             String name, String defaultValue) {
         Engine engine = ProviderUtil.getEngine();
         String value = engine.getParameter(name);
-        if(value != null) {
+        if (value != null) {
             return value;
         }
         return defaultValue;
@@ -73,35 +73,35 @@ public class EngineUtil implements CONST_IMPL {
 
     public static Template getTemplate() {
         Specification spec = SpecificationUtil.findSpecification();
-        if(spec instanceof Page) {
+        if (spec instanceof Page) {
             NodeTreeWalker parent = spec.getParentNode();
-            if(parent != null) {
+            if (parent != null) {
                 spec = SpecificationUtil.findSpecification();
             } else {
                 return null;
             }
         }
-        if(spec instanceof Template) {
-            return (Template)spec;
+        if (spec instanceof Template) {
+            return (Template) spec;
         }
         throw new IllegalStateException();
     }
 
     public static Template getTemplate(ProcessorTreeWalker proc) {
-        for(ProcessorTreeWalker current = proc;
+        for (ProcessorTreeWalker current = proc;
                 current != null; current = current.getParentProcessor()) {
-            if(current instanceof Template) {
-                return (Template)current;
+            if (current instanceof Template) {
+                return (Template) current;
             }
         }
         throw new IllegalStateException();
     }
 
     public static Specification getParentSpecification(Specification spec) {
-        if(spec instanceof Page) {
+        if (spec instanceof Page) {
             return ProviderUtil.getEngine();
-        } else if(spec instanceof Template) {
-            return ((Template)spec).getPage();
+        } else if (spec instanceof Template) {
+            return ((Template) spec).getPage();
         }
         return null;
     }

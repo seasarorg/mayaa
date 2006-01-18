@@ -37,7 +37,7 @@ public abstract class FactoryFactory implements Serializable {
      * @param instance ファクトリのインスタンス。
      */
     public static void setInstance(FactoryFactory instance) {
-        if(instance == null) {
+        if (instance == null) {
             throw new IllegalArgumentException();
         }
         _instance = instance;
@@ -48,14 +48,14 @@ public abstract class FactoryFactory implements Serializable {
      * @param context カレントアプリケーションのコンテキストオブジェクト。
      */
     public static void setContext(Object context) {
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
     }
 
     private static void check() {
-        if(_instance == null || _context == null) {
+        if (_instance == null || _context == null) {
             throw new IllegalStateException();
         }
     }
@@ -79,10 +79,10 @@ public abstract class FactoryFactory implements Serializable {
      */
     public static UnifiedFactory getFactory(Class interfaceClass) {
         check();
-        UnifiedFactory factory = (UnifiedFactory)_factories.get(interfaceClass);
-        if(factory == null) {
+        UnifiedFactory factory = (UnifiedFactory) _factories.get(interfaceClass);
+        if (factory == null) {
             factory = _instance.getFactory(interfaceClass, _context);
-            if(factory == null) {
+            if (factory == null) {
                 return null;
             }
             _factories.put(interfaceClass, factory);

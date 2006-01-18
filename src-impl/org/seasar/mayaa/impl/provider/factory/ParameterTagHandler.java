@@ -29,7 +29,7 @@ public class ParameterTagHandler extends TagHandler {
 
     public ParameterTagHandler(AbstractParameterAwareTagHandler parent) {
         super("parameter");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;

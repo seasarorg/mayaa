@@ -54,7 +54,7 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     }
 
     public void setSystemID(String systemID) {
-        if(systemID != null && systemID.indexOf(META_INF) != -1) {
+        if (systemID != null && systemID.indexOf(META_INF) != -1) {
             throw new ForbiddenPathException(systemID);
         }
         super.setSystemID(StringUtil.preparePath(systemID));
@@ -62,7 +62,7 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
 
     public boolean exists() {
         String path = (_root + getSystemID()).substring(1);
-        if(_neighbor != null) {
+        if (_neighbor != null) {
             _inputStream = _neighbor.getResourceAsStream(path);
         }
         if (_inputStream == null) {
@@ -73,21 +73,21 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     }
 
     public InputStream getInputStream() {
-        if(exists()) {
+        if (exists()) {
             return _inputStream;
         }
         return null;
     }
 
     public void setTimestamp(Date timestamp) {
-        if(timestamp == null) {
+        if (timestamp == null) {
             throw new IllegalArgumentException();
         }
         _timestamp = timestamp;
     }
 
     public Date getTimestamp() {
-        if(_timestamp != null) {
+        if (_timestamp != null) {
             return _timestamp;
         }
         return new Date(0);

@@ -34,18 +34,18 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     private List _descriptors = new ArrayList();
 
     public void addSourceDescriptor(SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(_descriptors) {
+        synchronized (_descriptors) {
             _descriptors.add(source);
         }
     }
 
     private SourceDescriptor findDescriptor() {
-        for(int i = 0; i < _descriptors.size(); i++) {
-            SourceDescriptor descriptor = (SourceDescriptor)_descriptors.get(i);
-            if(descriptor.exists()) {
+        for (int i = 0; i < _descriptors.size(); i++) {
+            SourceDescriptor descriptor = (SourceDescriptor) _descriptors.get(i);
+            if (descriptor.exists()) {
                 return descriptor;
             }
         }
@@ -58,7 +58,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
 
     public InputStream getInputStream() {
         SourceDescriptor descriptor = findDescriptor();
-        if(descriptor != null) {
+        if (descriptor != null) {
             return descriptor.getInputStream();
         }
         return null;
@@ -66,7 +66,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
 
     public Date getTimestamp() {
         SourceDescriptor descriptor = findDescriptor();
-        if(descriptor != null) {
+        if (descriptor != null) {
             return descriptor.getTimestamp();
         }
         return new Date(0);

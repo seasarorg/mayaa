@@ -31,25 +31,25 @@ public class LIFOIterator implements Iterator {
     }
 
     public LIFOIterator(Iterator it) {
-        if(it == null) {
+        if (it == null) {
             throw new IllegalArgumentException();
         }
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             add(it.next());
         }
     }
 
     public LIFOIterator(Enumeration enumeration) {
-        if(enumeration == null) {
+        if (enumeration == null) {
             throw new IllegalArgumentException();
         }
-        while(enumeration.hasMoreElements()) {
+        while (enumeration.hasMoreElements()) {
             add(enumeration.nextElement());
         }
     }
 
     public void add(Object item) {
-        if(item == null) {
+        if (item == null) {
             throw new IllegalArgumentException();
         }
         _stack.push(item);

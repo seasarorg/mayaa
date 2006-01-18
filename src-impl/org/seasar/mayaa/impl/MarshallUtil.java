@@ -40,11 +40,11 @@ public class MarshallUtil {
 
     protected static void setPosition(
             Object obj, String systemID, int lineNumber) {
-        if(obj == null || StringUtil.isEmpty(systemID) || lineNumber < 0) {
+        if (obj == null || StringUtil.isEmpty(systemID) || lineNumber < 0) {
             throw new IllegalArgumentException();
         }
-        if(obj instanceof PositionAware) {
-            PositionAware positionAware = (PositionAware)obj;
+        if (obj instanceof PositionAware) {
+            PositionAware positionAware = (PositionAware) obj;
             positionAware.setSystemID(systemID);
             positionAware.setLineNumber(lineNumber);
         }
@@ -52,16 +52,16 @@ public class MarshallUtil {
 
     public static Object marshall(Class instanceClass, Class interfaceClass,
             Object beforeObject, String systemID, int lineNumber) {
-        if(instanceClass == null) {
-            if(beforeObject == null) {
+        if (instanceClass == null) {
+            if (beforeObject == null) {
                 throw new IllegalArgumentException();
             }
             return beforeObject;
         }
-        if(beforeObject != null) {
+        if (beforeObject != null) {
             Constructor constructor = ObjectUtil.getConstructor(
                     instanceClass, new Class[] { interfaceClass });
-            if(constructor != null) {
+            if (constructor != null) {
                 Object obj = ObjectUtil.newInstance(
                         constructor, new Object[] { beforeObject });
                 setPosition(obj, systemID, lineNumber);
@@ -75,7 +75,7 @@ public class MarshallUtil {
 
     public static SourceDescriptor getDefaultSource(
             String systemID, Class neighborClass) {
-        if(StringUtil.isEmpty(systemID) || neighborClass == null) {
+        if (StringUtil.isEmpty(systemID) || neighborClass == null) {
             throw new IllegalArgumentException();
         }
         ClassLoaderSourceDescriptor defaultSource =
@@ -86,10 +86,10 @@ public class MarshallUtil {
     }
 
     public static Iterator iterateMetaInfSources(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
+        if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        if(systemID.startsWith("META-INF/") == false) {
+        if (systemID.startsWith("META-INF/") == false) {
             systemID = "META-INF" + StringUtil.preparePath(systemID);
         }
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -111,7 +111,7 @@ public class MarshallUtil {
         private String _systemID;
 
         public URLSourceIterator(Iterator it, String systemID) {
-            if(it == null || StringUtil.isEmpty(systemID)) {
+            if (it == null || StringUtil.isEmpty(systemID)) {
                 throw new IllegalArgumentException();
             }
             _it = it;
@@ -123,7 +123,7 @@ public class MarshallUtil {
         }
 
         public Object next() {
-            URL url = (URL)_it.next();
+            URL url = (URL) _it.next();
             URLSourceDescriptor urlSource = new URLSourceDescriptor();
             urlSource.setURL(url);
             urlSource.setSystemID(_systemID);

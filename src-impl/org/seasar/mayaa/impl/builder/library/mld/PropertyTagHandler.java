@@ -69,7 +69,7 @@ public class PropertyTagHandler
     }
 
     public PropertyDefinitionImpl getPropertyDefinition() {
-        if(_propertyDefinition == null) {
+        if (_propertyDefinition == null) {
             throw new IllegalStateException();
         }
         return _propertyDefinition;

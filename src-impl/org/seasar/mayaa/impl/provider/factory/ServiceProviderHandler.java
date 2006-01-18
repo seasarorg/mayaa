@@ -27,7 +27,7 @@ import org.seasar.mayaa.provider.ServiceProvider;
 public class ServiceProviderHandler extends XMLHandler
         implements CONST_IMPL {
 
-    private static Log LOG =
+    private static final Log LOG =
         LogFactory.getLog(ServiceProviderHandler.class);
 
     private ProviderTagHandler _rootHandler;

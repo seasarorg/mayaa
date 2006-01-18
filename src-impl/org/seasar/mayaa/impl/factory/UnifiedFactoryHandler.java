@@ -27,14 +27,14 @@ import org.seasar.mayaa.impl.util.xml.XMLHandler;
 public class UnifiedFactoryHandler extends XMLHandler
         implements CONST_IMPL {
 
-    private static Log LOG =
+    private static final Log LOG =
         LogFactory.getLog(UnifiedFactoryHandler.class);
 
     private FactoryTagHandler _rootHandler;
 
     public UnifiedFactoryHandler(
             Class interfaceClass, UnifiedFactory beforeFactory) {
-        if(interfaceClass == null) {
+        if (interfaceClass == null) {
             throw new IllegalArgumentException();
         }
         _rootHandler = new FactoryTagHandler(

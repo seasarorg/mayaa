@@ -26,17 +26,17 @@ public class IteratorEnumeration implements Enumeration {
     private Iterator _iterator;
 
     public static Enumeration getInstance(Iterator iterator) {
-        if(iterator == null) {
+        if (iterator == null) {
             return NullEnumeration.getInstance();
         }
-        if(iterator instanceof EnumerationIterator) {
-            return ((EnumerationIterator)iterator).getInternalEnumeration();
+        if (iterator instanceof EnumerationIterator) {
+            return ((EnumerationIterator) iterator).getInternalEnumeration();
         }
         return new IteratorEnumeration(iterator);
     }
 
     private IteratorEnumeration(Iterator iterator) {
-        if(iterator == null) {
+        if (iterator == null) {
             throw new IllegalArgumentException();
         }
         _iterator = iterator;

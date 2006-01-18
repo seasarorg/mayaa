@@ -35,11 +35,11 @@ public class TemplateBuilderTagHandler
     public TemplateBuilderTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("templateBuilder");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeProvider != null) {
+        if (beforeProvider != null) {
             _beforeBuilder = beforeProvider.getTemplateBuilder();
         }
         putHandler(new ResolverTagHandler(this));
@@ -49,21 +49,21 @@ public class TemplateBuilderTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentBuilder = (TemplateBuilder)MarshallUtil.marshall(
+        _currentBuilder = (TemplateBuilder) MarshallUtil.marshall(
                 builderClass, TemplateBuilder.class, _beforeBuilder,
                 systemID, lineNumber);
         _parent.getServiceProvider().setTemplateBuilder(_currentBuilder);
     }
 
     protected void end(String body) {
-        if(_currentBuilder == null) {
+        if (_currentBuilder == null) {
             throw new IllegalStateException();
         }
         _currentBuilder = null;
     }
 
     public TemplateBuilder getTemplateBuilder() {
-        if(_currentBuilder == null) {
+        if (_currentBuilder == null) {
             throw new IllegalStateException();
         }
         return _currentBuilder;

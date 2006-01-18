@@ -25,18 +25,18 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DelaySourceDescriptor extends
-        ParameterAwareImpl implements SourceDescriptor {
+public class DelaySourceDescriptor extends ParameterAwareImpl
+        implements SourceDescriptor {
 
     private static final long serialVersionUID = 1596798824321986307L;
 
     private SourceDescriptor _source;
 
     public boolean exists() {
-        if(_source == null) {
+        if (_source == null) {
             _source = SourceUtil.getSourceDescriptor(getSystemID());
-            for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
-                String name = (String)it.next();
+            for (Iterator it = iterateParameterNames(); it.hasNext();) {
+                String name = (String) it.next();
                 String value = getParameter(name);
                 _source.setParameter(name, value);
             }
@@ -45,14 +45,14 @@ public class DelaySourceDescriptor extends
     }
 
     public InputStream getInputStream() {
-        if(exists()) {
+        if (exists()) {
             return _source.getInputStream();
         }
         return null;
     }
 
     public Date getTimestamp() {
-        if(exists()) {
+        if (exists()) {
             return _source.getTimestamp();
         }
         return new Date(0);

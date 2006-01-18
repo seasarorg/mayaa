@@ -68,7 +68,7 @@ public class InsertProcessor
 
     // MLD method
     public void addInformalProperty(PrefixAwareName name, Object attr) {
-        if(_attributes == null) {
+        if (_attributes == null) {
             _attributes = new ArrayList();
         }
         _attributes.add(attr);
@@ -83,7 +83,7 @@ public class InsertProcessor
     }
 
     public List getInformalProperties() {
-        if(_attributes == null) {
+        if (_attributes == null) {
             _attributes = new ArrayList();
         }
         return _attributes;
@@ -91,9 +91,9 @@ public class InsertProcessor
 
     protected Page getPage() {
         Page page = null;
-        if(_page != null) {
-            page = (Page)_page.get();
-            if(page == null) {
+        if (_page != null) {
+            page = (Page) _page.get();
+            if (page == null) {
                 _page = null;
             }
         }
@@ -101,10 +101,10 @@ public class InsertProcessor
     }
 
     protected void preparePage() {
-        if(StringUtil.hasValue(_path)) {
-            synchronized(this) {
+        if (StringUtil.hasValue(_path)) {
+            synchronized (this) {
                 Page page = getPage();
-                if(page == null) {
+                if (page == null) {
                     Engine engine = ProviderUtil.getEngine();
                     String suffixSeparator =
                         engine.getParameter(SUFFIX_SEPARATOR);
@@ -129,7 +129,7 @@ public class InsertProcessor
         String requestedSuffix = _suffix;
         String extension = _extension;
         boolean fireEvent = true;
-        if(renderPage == null) {
+        if (renderPage == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
             RequestScope request = cycle.getRequestScope();
@@ -137,21 +137,21 @@ public class InsertProcessor
             extension = request.getExtension();
             fireEvent = false;
         }
-        if(renderPage == null) {
+        if (renderPage == null) {
             throw new IllegalStateException();
         }
         renderPage.checkTimestamp();
         // TODO Ç±ÇÃà íuÇ≈InsertProcessorÇBindingScopeÇ©ÇÁéQè∆Ç≈Ç´ÇÈÇÊÇ§Ç…Ç∑ÇÈ
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
-        if(ret == null) {
+        if (ret == null) {
             Response response = CycleUtil.getResponse();
-            if(response.getWriter().isDirty() == false) {
+            if (response.getWriter().isDirty() == false) {
                 throw new RenderNotCompletedException(
                         renderPage.getPageName(), extension);
             }
         }
-        if(ret == ProcessStatus.EVAL_PAGE) {
+        if (ret == ProcessStatus.EVAL_PAGE) {
             ret = ProcessStatus.SKIP_BODY;
         }
         return ret;
@@ -162,17 +162,17 @@ public class InsertProcessor
     protected DoRenderProcessor findDoRender(
             ProcessorTreeWalker proc, String name) {
         DoRenderProcessor doRender = null;
-        for(int i = 0; i < proc.getChildProcessorSize(); i++) {
+        for (int i = 0; i < proc.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = proc.getChildProcessor(i);
-            if(child instanceof DoRenderProcessor) {
-                doRender =  (DoRenderProcessor)child;
-                if(StringUtil.isEmpty(name) ||
-                        name.equals(doRender.getName())) {
+            if (child instanceof DoRenderProcessor) {
+                doRender =  (DoRenderProcessor) child;
+                if (StringUtil.isEmpty(name)
+                        || name.equals(doRender.getName())) {
                     break;
                 }
             }
             doRender = findDoRender(child, name);
-            if(doRender != null) {
+            if (doRender != null) {
                 break;
             }
         }
@@ -181,10 +181,10 @@ public class InsertProcessor
 
     protected DoRenderProcessor findDoRender(
             Template[] templates, String name) {
-        for(int i = templates.length -1; 0 <= i; i--) {
+        for (int i = templates.length - 1; 0 <= i; i--) {
             templates[i].checkTimestamp();
             DoRenderProcessor doRender = findDoRender(templates[i], name);
-            if(doRender != null) {
+            if (doRender != null) {
                 return doRender;
             }
         }
@@ -193,24 +193,25 @@ public class InsertProcessor
 
     protected TemplateProcessor getRenderRoot(
             DoRenderProcessor doRender) {
-        if(doRender.isReplace() == false) {
+        if (doRender.isReplace() == false) {
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
-            if(duplecated == null ||
-                    duplecated instanceof TemplateProcessor == false) {
+            if (duplecated == null
+                    || duplecated instanceof TemplateProcessor == false) {
                 throw new IllegalStateException();
             }
-            return (TemplateProcessor)duplecated;
+            return (TemplateProcessor) duplecated;
         }
         return doRender;
     }
 
     public ProcessStatus renderTemplate(
-            Page topLevelPage, Template templates[]) {
-        if(topLevelPage == null || templates == null || templates.length == 0) {
+            Page topLevelPage, Template[] templates) {
+        if (topLevelPage == null || templates == null
+                || templates.length == 0) {
             throw new IllegalArgumentException();
         }
         DoRenderProcessor doRender = findDoRender(templates, _name);
-        if(doRender == null) {
+        if (doRender == null) {
             throw new DoRenderNotFoundException(_name);
         }
         TemplateProcessor insertRoot = getRenderRoot(doRender);

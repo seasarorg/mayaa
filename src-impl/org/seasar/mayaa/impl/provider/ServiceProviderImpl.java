@@ -41,42 +41,42 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     private PathAdjuster _pathAdjuster;
 
     public void setEngine(Engine engine) {
-        if(engine == null) {
+        if (engine == null) {
             throw new IllegalArgumentException();
         }
         _engine = engine;
     }
 
     public Engine getEngine() {
-        if(_engine == null) {
+        if (_engine == null) {
             throw new IllegalStateException();
         }
         return _engine;
     }
 
     public void setScriptEnvironment(ScriptEnvironment scriptEnvironment) {
-        if(scriptEnvironment == null) {
+        if (scriptEnvironment == null) {
             throw new IllegalArgumentException();
         }
         _scriptEnvironment = scriptEnvironment;
     }
 
     public ScriptEnvironment getScriptEnvironment() {
-        if(_scriptEnvironment == null) {
+        if (_scriptEnvironment == null) {
             throw new IllegalStateException();
         }
         return _scriptEnvironment;
     }
 
     public void setLibraryManager(LibraryManager libraryManager) {
-        if(libraryManager == null) {
+        if (libraryManager == null) {
             throw new IllegalArgumentException();
         }
         _libraryManager = libraryManager;
     }
 
     public LibraryManager getLibraryManager() {
-        if(_libraryManager == null) {
+        if (_libraryManager == null) {
             throw new IllegalStateException();
         }
         return _libraryManager;
@@ -84,42 +84,42 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public void setSpecificationBuilder(
             SpecificationBuilder specificationBuilder) {
-        if(specificationBuilder == null) {
+        if (specificationBuilder == null) {
             throw new IllegalArgumentException();
         }
         _specificationBuilder = specificationBuilder;
     }
 
     public SpecificationBuilder getSpecificationBuilder() {
-        if(_specificationBuilder == null) {
+        if (_specificationBuilder == null) {
             throw new IllegalStateException();
         }
         return _specificationBuilder;
     }
 
     public void setTemplateBuilder(TemplateBuilder templateBuilder) {
-        if(templateBuilder == null) {
+        if (templateBuilder == null) {
             throw new IllegalArgumentException();
         }
         _templateBuilder = templateBuilder;
     }
 
     public TemplateBuilder getTemplateBuilder() {
-        if(_templateBuilder == null) {
+        if (_templateBuilder == null) {
             throw new IllegalStateException();
         }
         return _templateBuilder;
     }
 
     public void setPathAdjuster(PathAdjuster pathAdjuster) {
-        if(pathAdjuster == null) {
+        if (pathAdjuster == null) {
             throw new IllegalArgumentException();
         }
         _pathAdjuster = pathAdjuster;
     }
 
     public PathAdjuster getPathAdjuster() {
-        if(_pathAdjuster == null) {
+        if (_pathAdjuster == null) {
             throw new IllegalStateException();
         }
         return _pathAdjuster;

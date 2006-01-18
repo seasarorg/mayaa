@@ -38,7 +38,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
         PropertyConverter converter =
             library.getPropertyConverter(ProcessorProperty.class);
-        if(converter == null) {
+        if (converter == null) {
             throw new IllegalStateException();
         }
         return converter;
@@ -46,14 +46,14 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 
     public Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected) {
-        if(injected == null) {
+        if (injected == null) {
             throw new IllegalArgumentException();
         }
         Class propertyClass = getPropertyClass(processorDef);
-        if(propertyClass == null) {
+        if (propertyClass == null) {
             // real property not found on the tag.
             String processorName = processorDef.getName();
-            if(LOG.isWarnEnabled()) {
+            if (LOG.isWarnEnabled()) {
                 String msg = StringUtil.getMessage(TLDPropertyDefinition.class,
                         0, processorName, getName());
                 LOG.warn(msg);
@@ -70,11 +70,11 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 //                qName.getLocalName().equals(ê›íËëÆê´ñº)
 //            attribute = original.getAttribute(getQName(original));
 //        }
-        if(attribute != null) {
+        if (attribute != null) {
             String value = attribute.getValue();
             PropertyConverter converter = getConverterForProcessorProperty();
             return converter.convert(attribute, value, propertyClass);
-        } else if(isRequired()) {
+        } else if (isRequired()) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
         }

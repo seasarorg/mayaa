@@ -47,7 +47,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
 
     // MLD property, required=true, expectedClass=void
     public void setItems(ProcessorProperty items) {
-        if(items == null) {
+        if (items == null) {
             throw new IllegalArgumentException();
         }
         _items = items;

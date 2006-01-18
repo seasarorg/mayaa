@@ -37,26 +37,26 @@ public abstract class AbstractScriptEnvironment
     private String _blockSign = "$";
 
     public void addAttributeScope(AttributeScope attrs) {
-        if(attrs == null) {
+        if (attrs == null) {
             throw new IllegalArgumentException();
         }
-        if(_attributeScopes == null) {
+        if (_attributeScopes == null) {
             _attributeScopes = new ArrayList();
         }
-        synchronized(_attributeScopes) {
+        synchronized (_attributeScopes) {
             _attributeScopes.add(attrs);
         }
     }
 
     public Iterator iterateAttributeScope() {
-        if(_attributeScopes == null) {
+        if (_attributeScopes == null) {
             return NullIterator.getInstance();
         }
         return _attributeScopes.iterator();
     }
 
     public void setBlockSign(String blockSign) {
-        if(StringUtil.isEmpty(blockSign)) {
+        if (StringUtil.isEmpty(blockSign)) {
             throw new IllegalArgumentException();
         }
         _blockSign = blockSign;
@@ -70,20 +70,20 @@ public abstract class AbstractScriptEnvironment
             ScriptBlock scriptBlock, PositionAware position);
 
     public CompiledScript compile(String script, PositionAware position) {
-        if(StringUtil.isEmpty(script)) {
+        if (StringUtil.isEmpty(script)) {
             return new LiteralScript("");
         }
         List list = new ArrayList();
-        for(Iterator it = new ScriptBlockIterator(
+        for (Iterator it = new ScriptBlockIterator(
                 script, _blockSign, position.isOnTemplate()); it.hasNext();) {
-            ScriptBlock block = (ScriptBlock)it.next();
+            ScriptBlock block = (ScriptBlock) it.next();
             list.add(compile(block, position));
         }
-        if(list.size() == 1) {
-            return (CompiledScript)list.get(0);
+        if (list.size() == 1) {
+            return (CompiledScript) list.get(0);
         }
         CompiledScript[] compiled =
-            (CompiledScript[])list.toArray(new CompiledScript[list.size()]);
+            (CompiledScript[]) list.toArray(new CompiledScript[list.size()]);
         return new ComplexScript(compiled);
     }
 

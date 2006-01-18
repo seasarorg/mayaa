@@ -26,11 +26,13 @@ import org.xml.sax.Attributes;
 public class TagHandlerStack {
 
     private String _rootName;
+
     private TagHandler _rootHandler;
+
     private Stack _stack;
 
     public TagHandlerStack(TagHandler rootHandler) {
-        if(rootHandler == null) {
+        if (rootHandler == null) {
             throw new IllegalArgumentException();
         }
         _stack = new Stack();
@@ -40,18 +42,18 @@ public class TagHandlerStack {
 
     public void startElement(String name, Attributes attributes,
             String systemID, int lineNumber) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_stack.size() == 0) {
-            if(_rootName.equalsIgnoreCase(name)) {
+        if (_stack.size() == 0) {
+            if (_rootName.equalsIgnoreCase(name)) {
                 _rootHandler.start(attributes, systemID, lineNumber);
                 _stack.push(_rootHandler);
             } else {
                 throw new IllegalStateException();
             }
         } else {
-            TagHandler top = (TagHandler)_stack.peek();
+            TagHandler top = (TagHandler) _stack.peek();
             TagHandler handler = top.startElement(
                     name, attributes, systemID, lineNumber);
             _stack.push(handler);
@@ -61,7 +63,7 @@ public class TagHandlerStack {
     public void endElement() {
         if (_stack.size() > 0) {
             TagHandler top = (TagHandler) _stack.pop();
-            if(top.isValid()) {
+            if (top.isValid()) {
                 top.endElement();
             }
         } else {
@@ -70,7 +72,7 @@ public class TagHandlerStack {
     }
 
     public void characters(char[] buffer, int offset, int length) {
-        TagHandler top = (TagHandler)_stack.peek();
+        TagHandler top = (TagHandler) _stack.peek();
         top.characters(new String(buffer, offset, length).trim());
     }
 

@@ -31,7 +31,7 @@ public class ScannerTagHandler
 
     public ScannerTagHandler(LibraryManagerTagHandler parent) {
         super("scanner");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -39,9 +39,9 @@ public class ScannerTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _scanner = (SourceScanner)XMLUtil.getObjectValue(
+        _scanner = (SourceScanner) XMLUtil.getObjectValue(
                 attributes, "class", SourceScanner.class);
-        if(_scanner == null) {
+        if (_scanner == null) {
             throw new IllegalStateException();
         }
         _scanner.setSystemID(systemID);
@@ -54,7 +54,7 @@ public class ScannerTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_scanner == null) {
+        if (_scanner == null) {
             throw new IllegalStateException();
         }
         return _scanner;

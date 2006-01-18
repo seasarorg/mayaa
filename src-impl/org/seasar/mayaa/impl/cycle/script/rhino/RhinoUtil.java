@@ -35,7 +35,7 @@ public class RhinoUtil {
 
     public static Context enter(WrapFactory wrap) {
         Context cx = Context.enter();
-        if(wrap != null) {
+        if (wrap != null) {
             cx.setWrapFactory(wrap);
         }
         return cx;
@@ -44,8 +44,8 @@ public class RhinoUtil {
     public static Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrs = cycle.getPageScope();
-        if(attrs instanceof Scriptable) {
-            return (Scriptable)attrs;
+        if (attrs instanceof Scriptable) {
+            return (Scriptable) attrs;
         }
         throw new IllegalStateException();
     }
@@ -53,10 +53,10 @@ public class RhinoUtil {
     public static Object convertResult(
             Context cx, Class expectedClass, Object jsRet) {
         Object ret = null;
-        if(expectedClass.equals(Boolean.TYPE)) {
+        if (expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);
-        } else if(expectedClass == Void.class
+        } else if (expectedClass == Void.class
                 || (jsRet instanceof org.mozilla.javascript.Undefined)) {
             ret = null;
         } else {
@@ -68,8 +68,8 @@ public class RhinoUtil {
 
     public static  void removeWrappedException(WrappedException e) {
         Throwable t = e.getWrappedException();
-        if(t instanceof RuntimeException) {
-            throw (RuntimeException)t;
+        if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
         }
         throw new RuntimeException(t);
     }

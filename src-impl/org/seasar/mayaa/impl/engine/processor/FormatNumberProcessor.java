@@ -55,7 +55,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_value != null) {
+        if (_value != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(format(_value));
         }
@@ -84,8 +84,8 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     protected NumberFormatPool getFormatPool() {
         synchronized (_formatPools) {
-            NumberFormatPool pool = (NumberFormatPool)_formatPools.get(_pattern);
-            if(pool == null) {
+            NumberFormatPool pool = (NumberFormatPool) _formatPools.get(_pattern);
+            if (pool == null) {
                 pool = new NumberFormatPool(_pattern);
                 _formatPools.put(_pattern, pool);
             }

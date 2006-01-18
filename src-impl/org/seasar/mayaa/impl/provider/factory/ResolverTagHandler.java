@@ -31,7 +31,7 @@ public class ResolverTagHandler
 
     public ResolverTagHandler(TemplateBuilderTagHandler parent) {
         super("resolver");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -39,9 +39,9 @@ public class ResolverTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _resolver = (InjectionResolver)XMLUtil.getObjectValue(
+        _resolver = (InjectionResolver) XMLUtil.getObjectValue(
                 attributes, "class", InjectionResolver.class);
-        if(_resolver == null) {
+        if (_resolver == null) {
             throw new IllegalStateException();
         }
         _resolver.setSystemID(systemID);
@@ -54,7 +54,7 @@ public class ResolverTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_resolver == null) {
+        if (_resolver == null) {
             throw new IllegalStateException();
         }
         return _resolver;

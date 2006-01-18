@@ -35,14 +35,14 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class FactoryFactoryImpl extends FactoryFactory
-        implements CONST_IMPL{
+        implements CONST_IMPL {
 
     private static final long serialVersionUID = -1393736148065197812L;
-    private static Log LOG = LogFactory.getLog(FactoryFactoryImpl.class);
+    private static final Log LOG = LogFactory.getLog(FactoryFactoryImpl.class);
 
     protected boolean checkInterface(Class clazz) {
-        if(clazz != null && clazz.isInterface() &&
-                UnifiedFactory.class.isAssignableFrom(clazz)) {
+        if (clazz != null && clazz.isInterface()
+                && UnifiedFactory.class.isAssignableFrom(clazz)) {
             return true;
         }
         return false;
@@ -51,20 +51,20 @@ public class FactoryFactoryImpl extends FactoryFactory
     protected UnifiedFactory marshallFactory(
             Class interfaceClass, Object context,
             SourceDescriptor source, UnifiedFactory beforeFactory) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
         UnifiedFactory factory;
-        if(source.exists()) {
+        if (source.exists()) {
             UnifiedFactoryHandler handler =
                 new UnifiedFactoryHandler(interfaceClass, beforeFactory);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_FACTORY10,
                         systemID, true, true, false);
-            } catch(Throwable t) {
-                if(LOG.isErrorEnabled()) {
+            } catch (Throwable t) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error("Factory parse error on " + systemID, t);
                 }
                 factory = beforeFactory;
@@ -75,7 +75,7 @@ public class FactoryFactoryImpl extends FactoryFactory
         } else {
             factory = beforeFactory;
         }
-        if(factory != null) {
+        if (factory != null) {
             factory.setUnderlyingContext(context);
         }
         return factory;
@@ -83,7 +83,7 @@ public class FactoryFactoryImpl extends FactoryFactory
 
     protected UnifiedFactory getFactory(
             Class interfaceClass, Object context) {
-        if(checkInterface(interfaceClass) == false || context == null) {
+        if (checkInterface(interfaceClass) == false || context == null) {
             throw new IllegalArgumentException();
         }
         String systemID = interfaceClass.getName();
@@ -92,8 +92,8 @@ public class FactoryFactoryImpl extends FactoryFactory
         UnifiedFactory factory = marshallFactory(
                 interfaceClass, context, source, null);
         Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
-        while(it.hasNext()) {
-            source = (SourceDescriptor)it.next();
+        while (it.hasNext()) {
+            source = (SourceDescriptor) it.next();
             factory = marshallFactory(interfaceClass, context, source, factory);
         }
         source = getBootstrapSource(
@@ -112,7 +112,7 @@ public class FactoryFactoryImpl extends FactoryFactory
             String root, String systemID, Object context) {
         ApplicationSourceDescriptor appSource =
             new ApplicationSourceDescriptor();
-        if(StringUtil.hasValue(root)) {
+        if (StringUtil.hasValue(root)) {
             appSource.setRoot(root);
         }
         appSource.setSystemID(systemID);

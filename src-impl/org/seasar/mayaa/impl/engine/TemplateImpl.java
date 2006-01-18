@@ -48,12 +48,12 @@ public class TemplateImpl
     private static final long serialVersionUID = -5368325487192629078L;
 
     private Page _page;
-    private String _suffix ;
+    private String _suffix;
     private String _extension;
     private List _childProcessors = new ArrayList();
 
     public TemplateImpl(Page page, String suffix, String extension) {
-        if(page == null || suffix == null || extension == null) {
+        if (page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
         }
         _page = page;
@@ -106,7 +106,7 @@ public class TemplateImpl
 
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
-        if(ret == null) {
+        if (ret == null) {
             ret = "text/html; charset=UTF-8";
         }
         return ret;
@@ -126,7 +126,7 @@ public class TemplateImpl
         Response response = cycle.getResponse();
         String contentType = getContentType(topLevelPage);
         response.setContentType(contentType);
-        if(isNoCache(topLevelPage)) {
+        if (isNoCache(topLevelPage)) {
             response.addHeader("Pragma", "no-cache");
             response.addHeader("Cache-Control", "no-cache");
             response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
@@ -144,7 +144,7 @@ public class TemplateImpl
     }
 
     public void clear() {
-        synchronized(this) {
+        synchronized (this) {
             _childProcessors.clear();
             super.clear();
         }
@@ -159,16 +159,16 @@ public class TemplateImpl
 
     public void checkTimestamp() {
         Date templateTime = getTimestamp();
-        if(templateTime != null) {
+        if (templateTime != null) {
             Page page = getPage();
             Date pageTime = page.getTimestamp();
             Date engineTime = ProviderUtil.getEngine().getTimestamp();
-            if(pageTime.after(templateTime) || engineTime.after(templateTime)) {
+            if (pageTime.after(templateTime) || engineTime.after(templateTime)) {
                 setTimestamp(null);
             }
         }
-        synchronized(this) {
-            if(isSourceNotExists() || isOldSpecification()) {
+        synchronized (this) {
+            if (isSourceNotExists() || isOldSpecification()) {
                 parseSpecification();
             }
         }
@@ -193,10 +193,10 @@ public class TemplateImpl
     }
 
     public void addChildProcessor(ProcessorTreeWalker child) {
-        if(child == null) {
+        if (child == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(_childProcessors) {
+        synchronized (_childProcessors) {
             _childProcessors.add(child);
             child.setParentProcessor(this, _childProcessors.size() - 1);
         }
@@ -207,7 +207,7 @@ public class TemplateImpl
     }
 
     public ProcessorTreeWalker getChildProcessor(int index) {
-        return (ProcessorTreeWalker)_childProcessors.get(index);
+        return (ProcessorTreeWalker) _childProcessors.get(index);
     }
 
     // PositionAware implements ------------------------------------

@@ -29,17 +29,19 @@ public class ProcessingInstructionProcessor
 
     private static final long serialVersionUID = 6717263251948534639L;
 
+    private static final int DEFAULT_BUFFER_SIZE = 128;
+
     private String _target;
     private String _data;
 
     public void setTarget(String target) {
-        if(StringUtil.isEmpty(target)) {
+        if (StringUtil.isEmpty(target)) {
             throw new IllegalArgumentException();
         }
         _target = target;
     }
 
-    public String getTarget(){
+    public String getTarget() {
         return _target;
     }
 
@@ -52,9 +54,9 @@ public class ProcessingInstructionProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        StringBuffer processingInstruction = new StringBuffer(128);
+        StringBuffer processingInstruction = new StringBuffer(DEFAULT_BUFFER_SIZE);
         processingInstruction.append("<?").append(_target);
-        if(StringUtil.hasValue(_data)) {
+        if (StringUtil.hasValue(_data)) {
             processingInstruction.append(" ").append(_data);
         }
         processingInstruction.append("?>\r\n");

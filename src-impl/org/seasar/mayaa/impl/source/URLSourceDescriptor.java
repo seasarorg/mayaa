@@ -35,7 +35,7 @@ public class URLSourceDescriptor extends ParameterAwareImpl
     private Date _timestamp;
 
     public void setURL(URL url) {
-        if(url == null) {
+        if (url == null) {
             throw new IllegalArgumentException();
         }
         _url = url;
@@ -54,14 +54,14 @@ public class URLSourceDescriptor extends ParameterAwareImpl
     }
 
     public void setTimestamp(Date timestamp) {
-        if(timestamp == null) {
+        if (timestamp == null) {
             throw new IllegalArgumentException();
         }
         _timestamp = timestamp;
     }
 
     public Date getTimestamp() {
-        if(_timestamp != null) {
+        if (_timestamp != null) {
             return _timestamp;
         }
         return new Date(0);

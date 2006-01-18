@@ -75,14 +75,14 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public boolean has(String name, Scriptable start) {
-        if(_methodMap.containsKey(name)) {
+        if (_methodMap.containsKey(name)) {
             return true;
         }
         return super.has(name, start);
     }
 
     public Object get(String name, Scriptable start) {
-        if(_methodMap.containsKey(name)) {
+        if (_methodMap.containsKey(name)) {
             return _methodMap.get(name);
         }
         Object ret = super.get(name, start);
@@ -98,9 +98,9 @@ public class PageAttributeScope extends ScriptableObject
     public Object[] getIds() {
         Set set = new HashSet(_methodMap.keySet());
         Object[] ids = super.getIds();
-        for(int i = 0; i < ids.length; i++) {
+        for (int i = 0; i < ids.length; i++) {
             Object name = ids[i];
-            if(set.contains(name) == false) {
+            if (set.contains(name) == false) {
                 set.add(name);
             }
         }
@@ -121,12 +121,13 @@ public class PageAttributeScope extends ScriptableObject
 
     public Iterator iterateAttributeNames() {
         List list = new ArrayList();
-        for(Scriptable scope = this;
+        for (Scriptable scope = this;
                 scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
             Object[] ids = scope.getIds();
-            for(int i = 0; i < ids.length; i++) {
-                if(ids[i] instanceof String && list.contains(ids[i]) == false) {
+            for (int i = 0; i < ids.length; i++) {
+                if (ids[i] instanceof String
+                        && list.contains(ids[i]) == false) {
                     list.add(ids[i]);
                 }
             }
@@ -135,10 +136,10 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     protected Scriptable findScope(String name) {
-        for(Scriptable scope = this;
+        for (Scriptable scope = this;
                 scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
-            if(scope.has(name, this)) {
+            if (scope.has(name, this)) {
                 return scope;
             }
         }
@@ -147,7 +148,7 @@ public class PageAttributeScope extends ScriptableObject
 
     public boolean hasAttribute(String name) {
         Scriptable scope = findScope(name);
-        if(scope != null) {
+        if (scope != null) {
             return true;
         }
         return false;
@@ -155,7 +156,7 @@ public class PageAttributeScope extends ScriptableObject
 
     public Object getAttribute(String name) {
         Scriptable scope = findScope(name);
-        if(scope != null) {
+        if (scope != null) {
             ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
             return env.convertFromScriptObject(scope.get(name, this));
         }
@@ -171,7 +172,7 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public void removeAttribute(String name) {
-        for(Scriptable scope = this;
+        for (Scriptable scope = this;
                 scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
             scope.delete(name);
@@ -179,7 +180,7 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public Object newAttribute(String name, Class attributeClass) {
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             return getAttribute(name);
         }
         Object model = ObjectUtil.newInstance(attributeClass);

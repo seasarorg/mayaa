@@ -31,12 +31,12 @@ public class SpecificationXPath extends BaseXPath {
             String xpathExpr, Namespace namespace) {
         try {
             XPath xpath = new SpecificationXPath(xpathExpr);
-            if(namespace != null) {
+            if (namespace != null) {
                 xpath.setNamespaceContext(
                         new NamespaceContextImpl(namespace));
             }
             return xpath;
-        } catch(JaxenException e) {
+        } catch (JaxenException e) {
             throw new RuntimeException(e);
         }
     }

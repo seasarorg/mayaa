@@ -28,10 +28,10 @@ public class DoBaseProcessor extends DoBodyProcessor {
     private static final long serialVersionUID = 6825307534213593235L;
 
     protected InsertProcessor getInsertProcessor() {
-        for(ProcessorTreeWalker current = this;
+        for (ProcessorTreeWalker current = this;
                 current != null; current = current.getParentProcessor()) {
-            if(current instanceof DoRenderProcessor) {
-                DoRenderProcessor doRender = (DoRenderProcessor)current;
+            if (current instanceof DoRenderProcessor) {
+                DoRenderProcessor doRender = (DoRenderProcessor) current;
                 return doRender.peekInsertProcessor();
             }
         }
@@ -40,7 +40,7 @@ public class DoBaseProcessor extends DoBodyProcessor {
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         InsertProcessor insert = getInsertProcessor();
-        if(insert != null) {
+        if (insert != null) {
             return RenderUtil.renderProcessorTree(topLevelPage, insert);
         }
         // direct access to component page.

@@ -36,11 +36,11 @@ public class EngineTagHandler
     public EngineTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("engine");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeProvider != null) {
+        if (beforeProvider != null) {
             _beforeEngine = beforeProvider.getEngine();
         }
         putHandler(new ErrorHandlerTagHandler(this, _beforeEngine));
@@ -50,7 +50,7 @@ public class EngineTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class engineClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentEngine = (EngineImpl)MarshallUtil.marshall(
+        _currentEngine = (EngineImpl) MarshallUtil.marshall(
                 engineClass, Engine.class, _beforeEngine,
                 systemID, lineNumber);
         _parent.getServiceProvider().setEngine(_currentEngine);
@@ -61,7 +61,7 @@ public class EngineTagHandler
     }
 
     public Engine getEngine() {
-        if(_currentEngine == null) {
+        if (_currentEngine == null) {
             throw new IllegalStateException();
         }
         return _currentEngine;

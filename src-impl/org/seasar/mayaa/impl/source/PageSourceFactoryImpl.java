@@ -35,31 +35,31 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
     private Class _serviceClass;
 
     public void setServiceClass(Class serviceClass) {
-        if(serviceClass == null) {
+        if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
         _serviceClass = serviceClass;
     }
 
     public Class getServiceClass() {
-        if(_serviceClass == null) {
+        if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
         return _serviceClass;
     }
 
     public SourceDescriptor getPageSource(String systemID) {
-        if(StringUtil.isEmpty(systemID)) {
+        if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
         Class sourceClass = getServiceClass();
-        if(sourceClass == null) {
+        if (sourceClass == null) {
             throw new IllegalStateException();
         }
         SourceDescriptor source =
-            (SourceDescriptor)ObjectUtil.newInstance(sourceClass);
-        for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
-            String key = (String)it.next();
+            (SourceDescriptor) ObjectUtil.newInstance(sourceClass);
+        for (Iterator it = iterateParameterNames(); it.hasNext();) {
+            String key = (String) it.next();
             String value = getParameter(key);
             source.setParameter(key, value);
         }
@@ -70,14 +70,14 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
     // ContextAware implements -------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
     }
 
     public Object getUnderlyingContext() {
-        if(_context == null) {
+        if (_context == null) {
             throw new IllegalStateException();
         }
         return _context;

@@ -23,10 +23,10 @@ import java.util.NoSuchElementException;
  */
 public class NullIterator implements Iterator {
 
-    private static final NullIterator _nullIterator = new NullIterator();
+    private static final NullIterator NULL_ITERATOR = new NullIterator();
 
     public static final Iterator getInstance() {
-        return _nullIterator;
+        return NULL_ITERATOR;
     }
 
     private NullIterator() {

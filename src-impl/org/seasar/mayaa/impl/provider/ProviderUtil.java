@@ -30,13 +30,13 @@ import org.seasar.mayaa.provider.ServiceProvider;
  */
 public class ProviderUtil {
 
-    public ProviderUtil() {
+    private ProviderUtil() {
         // no instantiate.
     }
 
     private static ServiceProvider getServiceProvider() {
         ProviderFactory factory =
-            (ProviderFactory)FactoryFactory.getFactory(ProviderFactory.class);
+            (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
         return factory.getServiceProvider();
     }
 

@@ -68,7 +68,7 @@ public interface Response extends Serializable, ContextAware  {
      * バッファへの書き出し。
      * @param cbuf 書き出し値。
      */
-    void write(char cbuf[]);
+    void write(char[] cbuf);
 
     /**
      * バッファへの書き出し。
@@ -76,7 +76,7 @@ public interface Response extends Serializable, ContextAware  {
      * @param off cbufの書き出しオフセット。
      * @param len cbufの書き出し長。
      */
-    void write(char cbuf[], int off, int len);
+    void write(char[] cbuf, int off, int len);
 
     /**
      * バッファへの書き出し。

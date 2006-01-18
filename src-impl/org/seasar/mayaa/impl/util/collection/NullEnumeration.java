@@ -23,10 +23,10 @@ import java.util.NoSuchElementException;
  */
 public class NullEnumeration implements Enumeration {
 
-    private static final NullEnumeration _nullEnumeration = new NullEnumeration();
+    private static final NullEnumeration NULL_ENUMERATION = new NullEnumeration();
 
     public static final NullEnumeration getInstance() {
-        return _nullEnumeration;
+        return NULL_ENUMERATION;
     }
 
     private NullEnumeration() {

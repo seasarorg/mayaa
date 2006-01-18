@@ -49,19 +49,19 @@ public class TemplateErrorHandler extends ParameterAwareImpl
     }
 
     protected String getPageName(Class throwableClass) {
-        if(throwableClass == null) {
+        if (throwableClass == null) {
             throw new IllegalArgumentException();
         }
         String name = throwableClass.getName();
-        return StringUtil.preparePath(getFolder()) +
-                StringUtil.preparePath(name);
+        return StringUtil.preparePath(getFolder())
+                + StringUtil.preparePath(name);
     }
 
     public void doErrorHandle(Throwable t, boolean pageFlush) {
-        if(t == null) {
+        if (t == null) {
             throw new IllegalArgumentException();
         }
-        for(Class throwableClass = t.getClass();
+        for (Class throwableClass = t.getClass();
                 throwableClass != null;
                 throwableClass = throwableClass.getSuperclass()) {
             String pageName = getPageName(throwableClass);
@@ -69,18 +69,18 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 Engine engine = ProviderUtil.getEngine();
                 Page page = engine.getPage(pageName);
                 page.doPageRender("", getExtension());
-                if(LOG.isErrorEnabled()) {
+                if (LOG.isErrorEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 1, t.getMessage());
                     LOG.error(msg, t);
                 }
-                if(pageFlush) {
+                if (pageFlush) {
                     Response response = CycleUtil.getResponse();
                     response.flush();
                 }
                 break;
-            } catch(PageNotFoundException ignore) {
-                if(LOG.isInfoEnabled()) {
+            } catch (PageNotFoundException ignore) {
+                if (LOG.isInfoEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 2, pageName);
                     LOG.info(msg);
@@ -92,13 +92,13 @@ public class TemplateErrorHandler extends ParameterAwareImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("folder".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+        if ("folder".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
-        } else if("extension".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+        } else if ("extension".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _extension = value;

@@ -43,27 +43,26 @@ public class SpecificationNavigator extends DefaultNavigator
         implements NamedAccessNavigator, CONST_IMPL {
 
     private static final long serialVersionUID = -8845415744894196361L;
-    private static final Navigator _instance = new SpecificationNavigator();
+
+    private static final Navigator INSTANCE = new SpecificationNavigator();
 
     public static Navigator getInstance() {
-        return _instance;
+        return INSTANCE;
     }
 
     protected SpecificationNavigator() {
         // singleton
     }
 
-    protected String getNamespaceURI(
-            Namespace namespace, String prefix) {
-        if(namespace == null) {
+    protected String getNamespaceURI(Namespace namespace, String prefix) {
+        if (namespace == null) {
             throw new IllegalArgumentException();
         }
-        if(prefix == null) {
+        if (prefix == null) {
             prefix = "";
         }
-        PrefixMapping mapping =
-            namespace.getMappingFromPrefix(prefix, true);
-        if(mapping != null) {
+        PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+        if (mapping != null) {
             return mapping.getNamespaceURI();
         }
         return null;
@@ -71,81 +70,80 @@ public class SpecificationNavigator extends DefaultNavigator
 
     public Iterator getParentAxisIterator(Object obj) {
         Object parent = null;
-        if(obj instanceof PrefixMapping) {
-            parent =((PrefixMapping)obj).getNamespace();
-        } else if(obj instanceof NodeAttribute) {
-            parent = ((NodeAttribute)obj).getNode();
-        } else if(obj instanceof NodeTreeWalker) {
-            parent = ((NodeTreeWalker)obj).getParentNode();
+        if (obj instanceof PrefixMapping) {
+            parent = ((PrefixMapping) obj).getNamespace();
+        } else if (obj instanceof NodeAttribute) {
+            parent = ((NodeAttribute) obj).getNode();
+        } else if (obj instanceof NodeTreeWalker) {
+            parent = ((NodeTreeWalker) obj).getParentNode();
         }
-        if(parent != null) {
+        if (parent != null) {
             return new SingleObjectIterator(parent);
         }
         return NullIterator.getInstance();
     }
 
     public Iterator getNamespaceAxisIterator(Object obj) {
-        if(obj instanceof Namespace) {
-            Namespace namespace = (Namespace)obj;
+        if (obj instanceof Namespace) {
+            Namespace namespace = (Namespace) obj;
             return namespace.iteratePrefixMapping(true);
         }
         return NullIterator.getInstance();
     }
 
     public Iterator getAttributeAxisIterator(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return node.iterateAttribute();
         }
         return NullIterator.getInstance();
     }
 
-    public Iterator getAttributeAxisIterator(Object obj,
-            String localName, String namespacePrefix, String namespaceURI) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
-            if(StringUtil.isEmpty(namespaceURI)) {
+    public Iterator getAttributeAxisIterator(
+            Object obj, String localName, String namespacePrefix,
+            String namespaceURI) {
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
+            if (StringUtil.isEmpty(namespaceURI)) {
                 namespaceURI = getNamespaceURI(node, namespacePrefix);
             }
-            QName qName =
-                SpecificationUtil.createQName(namespaceURI, localName);
+            QName qName = SpecificationUtil.createQName(namespaceURI, localName);
             return new QNameFilteredIterator(qName, node.iterateAttribute());
         }
         return NullIterator.getInstance();
     }
 
     public Iterator getChildAxisIterator(Object obj) {
-        if(obj instanceof NodeTreeWalker) {
-            NodeTreeWalker node = (NodeTreeWalker)obj;
+        if (obj instanceof NodeTreeWalker) {
+            NodeTreeWalker node = (NodeTreeWalker) obj;
             return node.iterateChildNode();
         }
         return NullIterator.getInstance();
     }
 
-    public Iterator getChildAxisIterator(Object obj,
-            String localName, String namespacePrefix, String namespaceURI) {
-        if(obj instanceof NodeTreeWalker) {
-            NodeTreeWalker node = (NodeTreeWalker)obj;
-            if(StringUtil.isEmpty(namespaceURI)) {
-                if(node instanceof Namespace) {
-                    namespaceURI = getNamespaceURI(
-                            (Namespace)node, namespacePrefix);
+    public Iterator getChildAxisIterator(
+            Object obj, String localName, String namespacePrefix,
+            String namespaceURI) {
+        if (obj instanceof NodeTreeWalker) {
+            NodeTreeWalker node = (NodeTreeWalker) obj;
+            if (StringUtil.isEmpty(namespaceURI)) {
+                if (node instanceof Namespace) {
+                    namespaceURI = getNamespaceURI((Namespace) node, namespacePrefix);
                 } else {
                     namespaceURI = URI_MAYA;
                 }
             }
-            QName qName =
-                SpecificationUtil.createQName(namespaceURI, localName);
+            QName qName = SpecificationUtil.createQName(namespaceURI, localName);
             return new QNameFilteredIterator(qName, node.iterateChildNode());
         }
         return NullIterator.getInstance();
     }
 
     public Object getDocumentNode(Object obj) {
-        if(obj instanceof NodeTreeWalker) {
-            for(NodeTreeWalker current = (NodeTreeWalker)obj;
+        if (obj instanceof NodeTreeWalker) {
+            for (NodeTreeWalker current = (NodeTreeWalker) obj;
                     current != null; current = current.getParentNode()) {
-                if(current instanceof Specification) {
+                if (current instanceof Specification) {
                     return current;
                 }
             }
@@ -155,38 +153,38 @@ public class SpecificationNavigator extends DefaultNavigator
 
     public String translateNamespacePrefixToUri(String prefix, Object obj) {
         Namespace namaspace = null;
-        if(obj instanceof PrefixMapping) {
-            namaspace = ((PrefixMapping)obj).getNamespace();
-        } else if(obj instanceof Namespace) {
-            namaspace = (Namespace)obj;
+        if (obj instanceof PrefixMapping) {
+            namaspace = ((PrefixMapping) obj).getNamespace();
+        } else if (obj instanceof Namespace) {
+            namaspace = (Namespace) obj;
         }
-        if(namaspace != null) {
+        if (namaspace != null) {
             return getNamespaceURI(namaspace, prefix);
         }
         return null;
     }
 
     public String getAttributeName(Object obj) {
-        if(obj instanceof NodeAttribute) {
-            NodeAttribute attr = (NodeAttribute)obj;
+        if (obj instanceof NodeAttribute) {
+            NodeAttribute attr = (NodeAttribute) obj;
             return attr.getQName().getLocalName();
         }
         return null;
     }
 
     public String getAttributeNamespaceUri(Object obj) {
-        if(obj instanceof NodeAttribute) {
-            NodeAttribute attr = (NodeAttribute)obj;
+        if (obj instanceof NodeAttribute) {
+            NodeAttribute attr = (NodeAttribute) obj;
             return attr.getQName().getNamespaceURI();
         }
         return null;
     }
 
     public String getAttributeQName(Object obj) {
-        if(obj instanceof NodeAttribute) {
-            NodeAttribute attr = (NodeAttribute)obj;
+        if (obj instanceof NodeAttribute) {
+            NodeAttribute attr = (NodeAttribute) obj;
             String prefix = attr.getPrefix();
-            if(StringUtil.hasValue(prefix)) {
+            if (StringUtil.hasValue(prefix)) {
                 return prefix + ":" + getAttributeName(obj);
             }
             return getAttributeName(obj);
@@ -195,42 +193,42 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public String getAttributeStringValue(Object obj) {
-        if(obj instanceof NodeAttribute) {
-            NodeAttribute attr = (NodeAttribute)obj;
+        if (obj instanceof NodeAttribute) {
+            NodeAttribute attr = (NodeAttribute) obj;
             return attr.getValue();
         }
         return null;
     }
 
     public String getCommentStringValue(Object obj) {
-        if(isComment(obj)) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (isComment(obj)) {
+            SpecificationNode node = (SpecificationNode) obj;
             return SpecificationUtil.getAttributeValue(node, QM_TEXT);
         }
         return null;
     }
 
     public String getElementName(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return node.getQName().getLocalName();
         }
         return null;
     }
 
     public String getElementNamespaceUri(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return node.getQName().getNamespaceURI();
         }
         return null;
     }
 
     public String getElementQName(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             String prefix = node.getPrefix();
-            if(StringUtil.hasValue(prefix)) {
+            if (StringUtil.hasValue(prefix)) {
                 return prefix + ":" + getElementName(obj);
             }
             return getElementName(obj);
@@ -239,14 +237,14 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public String getElementStringValue(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             StringBuffer buffer = new StringBuffer();
-            for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
-                SpecificationNode child = (SpecificationNode)it.next();
-                if(isText(child)) {
+            for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+                SpecificationNode child = (SpecificationNode) it.next();
+                if (isText(child)) {
                     String value = getTextStringValue(child);
-                    if(value != null) {
+                    if (value != null) {
                         buffer.append(value.trim());
                     }
                 }
@@ -257,28 +255,28 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public String getNamespacePrefix(Object obj) {
-        if(obj instanceof PrefixMapping) {
-            PrefixMapping mapping = (PrefixMapping)obj;
+        if (obj instanceof PrefixMapping) {
+            PrefixMapping mapping = (PrefixMapping) obj;
             return mapping.getPrefix();
         }
         return null;
     }
 
     public String getNamespaceStringValue(Object obj) {
-        if(obj instanceof PrefixMapping) {
-            PrefixMapping mapping = (PrefixMapping)obj;
+        if (obj instanceof PrefixMapping) {
+            PrefixMapping mapping = (PrefixMapping) obj;
             return mapping.getNamespaceURI();
         }
         return null;
     }
 
     public String getTextStringValue(Object obj) {
-        if(obj instanceof String) {
-            return (String)obj;
-        } else if(isText(obj)) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof String) {
+            return (String) obj;
+        } else if (isText(obj)) {
+            SpecificationNode node = (SpecificationNode) obj;
             String text = SpecificationUtil.getAttributeValue(node, QM_TEXT);
-            if(text != null) {
+            if (text != null) {
                 return text;
             }
         }
@@ -290,8 +288,8 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public boolean isComment(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return QM_COMMENT.equals(node.getQName());
         }
         return false;
@@ -302,10 +300,9 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public boolean isElement(Object obj) {
-        return obj instanceof SpecificationNode &&
-            isProcessingInstruction(obj) == false &&
-            isText(obj) == false &&
-            isDocType(obj) == false;
+        return obj instanceof SpecificationNode
+                && isProcessingInstruction(obj) == false
+                && isText(obj) == false && isDocType(obj) == false;
     }
 
     public boolean isNamespace(Object obj) {
@@ -313,20 +310,20 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public boolean isProcessingInstruction(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return QM_PI.equals(node.getQName());
         }
         return false;
     }
 
     public boolean isText(Object obj) {
-        if(obj instanceof String) {
+        if (obj instanceof String) {
             return true;
-        } else if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
-            return QM_CHARACTERS.equals(node.getQName()) ||
-                QM_CDATA.equals(node.getQName());
+        } else if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
+            return QM_CHARACTERS.equals(node.getQName())
+                    || QM_CDATA.equals(node.getQName());
         }
         return false;
     }
@@ -336,8 +333,8 @@ public class SpecificationNavigator extends DefaultNavigator
     }
 
     public boolean isDocType(Object obj) {
-        if(obj instanceof SpecificationNode) {
-            SpecificationNode node = (SpecificationNode)obj;
+        if (obj instanceof SpecificationNode) {
+            SpecificationNode node = (SpecificationNode) obj;
             return QM_DOCTYPE.equals(node.getQName());
         }
         return false;
@@ -345,28 +342,26 @@ public class SpecificationNavigator extends DefaultNavigator
 
     // support class ------------------------------------------------
 
-    protected class QNameFilteredIterator
-        extends AbstractScanningIterator {
+    protected class QNameFilteredIterator extends AbstractScanningIterator {
 
         private QName _qName;
 
         public QNameFilteredIterator(QName qName, Iterator iterator) {
             super(iterator);
-            if(qName == null) {
+            if (qName == null) {
                 throw new IllegalArgumentException();
             }
             _qName = qName;
         }
 
         protected boolean filter(Object test) {
-            if(test == null || (test instanceof PrefixAwareName == false)) {
+            if (test == null || (test instanceof PrefixAwareName == false)) {
                 return false;
             }
-            PrefixAwareName prefixAwareName = (PrefixAwareName)test;
+            PrefixAwareName prefixAwareName = (PrefixAwareName) test;
             return _qName.equals(prefixAwareName.getQName());
         }
 
     }
-
 
 }

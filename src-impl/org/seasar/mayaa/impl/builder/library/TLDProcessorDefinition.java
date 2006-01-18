@@ -42,23 +42,23 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     private Class _teiClass;
 
     public void setProcessorClass(Class processorClass) {
-        if(processorClass == null ||
-                Tag.class.isAssignableFrom(processorClass) == false) {
+        if (processorClass == null
+                || Tag.class.isAssignableFrom(processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = processorClass;
     }
 
     public Class getProcessorClass() {
-        if(_tagClass == null) {
+        if (_tagClass == null) {
             throw new IllegalStateException();
         }
         return _tagClass;
     }
 
     public void setExtraInfoClass(Class teiClass) {
-        if(teiClass == null ||
-                TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
+        if (teiClass == null
+                || TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
             throw new IllegalArgumentException();
         }
         _teiClass = teiClass;
@@ -79,25 +79,33 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
             TemplateProcessor processor, PropertySet propertySet) {
         Hashtable tagDataSeed = new Hashtable();
 
-        for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
-            PropertyDefinition property = (PropertyDefinition)it.next();
+        for (Iterator it = propertySet.iteratePropertyDefinition();
+                it.hasNext();) {
+            PropertyDefinition property = (PropertyDefinition) it.next();
             Object prop =
                 property.createProcessorProperty(this, original, injected);
-            if(prop != null) {
+            if (prop != null) {
                 ProcessorProperty currentProp = (ProcessorProperty) prop;
-                JspProcessor jsp = (JspProcessor)processor;
+                JspProcessor jsp = (JspProcessor) processor;
                 jsp.addProcessorProperty(currentProp);
 
                 CompiledScript value = currentProp.getValue();
                 tagDataSeed.put(
                         currentProp.getName().getQName().getLocalName(),
-                        value.isLiteral() ? value.execute(null) : value);
+                        prepareScript(value));
             }
         }
 
         if (getExtraInfoClass() != null) {
             settingExtraInfo((JspProcessor) processor, tagDataSeed);
         }
+    }
+
+    private Object prepareScript(CompiledScript script) {
+        if (script.isLiteral()) {
+            return script.execute(null);
+        }
+        return script;
     }
 
     protected void settingExtraInfo(

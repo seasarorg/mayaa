@@ -43,10 +43,10 @@ public class ParamScope extends AbstractReadOnlyAttributeScope {
 
     //TODO キーはあって値が無い場合の対応を検討（AttributeScope全般）。
     public Object getAttribute(String name) {
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             AttributeScope values = CycleUtil.getRequestScope().getParamValues();
-            String[] params = (String[])values.getAttribute(name);
-            if(params.length == 0) {
+            String[] params = (String[]) values.getAttribute(name);
+            if (params.length == 0) {
                 return "";
             }
             return params[0];

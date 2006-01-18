@@ -51,20 +51,20 @@ public class SpecificationUtil implements CONST_IMPL {
     public static String getAttributeValue(
             SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);
-        if(nameAttr != null) {
+        if (nameAttr != null) {
             return nameAttr.getValue();
         }
         return null;
     }
 
     public static Specification findSpecification(NodeTreeWalker current) {
-        while(current instanceof Specification == false) {
+        while (current instanceof Specification == false) {
             current = current.getParentNode();
-            if(current == null) {
+            if (current == null) {
                 return null;
             }
         }
-        return (Specification)current;
+        return (Specification) current;
     }
 
     public static Specification findSpecification() {
@@ -75,9 +75,9 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static SpecificationNode getMayaaNode(NodeTreeWalker current) {
         Specification specification = findSpecification(current);
-        for(Iterator it = specification.iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode node = (SpecificationNode)it.next();
-            if(node.getQName().equals(QM_MAYA)) {
+        for (Iterator it = specification.iterateChildNode(); it.hasNext();) {
+            SpecificationNode node = (SpecificationNode) it.next();
+            if (node.getQName().equals(QM_MAYA)) {
                 return node;
             }
         }
@@ -87,9 +87,9 @@ public class SpecificationUtil implements CONST_IMPL {
     public static String getMayaaAttributeValue(
             NodeTreeWalker current, QName qName) {
         SpecificationNode mayaa = getMayaaNode(current);
-        if(mayaa != null) {
+        if (mayaa != null) {
             String value = getAttributeValue(mayaa, qName);
-            if(value != null) {
+            if (value != null) {
                 return value;
             }
         }
@@ -98,12 +98,12 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static String getNodeBodyText(SpecificationNode node) {
         StringBuffer buffer = new StringBuffer();
-        for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode child = (SpecificationNode)it.next();
+        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
             QName qName = child.getQName();
-            if(QM_CDATA.equals(qName)) {
+            if (QM_CDATA.equals(qName)) {
                 buffer.append(getNodeBodyText(child));
-            } else if(QM_CHARACTERS.equals(qName)) {
+            } else if (QM_CHARACTERS.equals(qName)) {
                 buffer.append(SpecificationUtil.getAttributeValue(
                         child, QM_TEXT));
             } else {
@@ -127,19 +127,19 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static void execEvent(Specification spec, QName eventName) {
-        if(eventName == null) {
+        if (eventName == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode mayaa = getMayaaNode(spec);
-        if(mayaa != null) {
-            for(Iterator it = mayaa.iterateChildNode(); it.hasNext(); ) {
-                SpecificationNode child = (SpecificationNode)it.next();
-                if(eventName.equals(child.getQName())) {
+        if (mayaa != null) {
+            for (Iterator it = mayaa.iterateChildNode(); it.hasNext();) {
+                SpecificationNode child = (SpecificationNode) it.next();
+                if (eventName.equals(child.getQName())) {
                     _eventScripts.execEventScript(mayaa, child);
                 }
             }
             NodeAttribute attr = mayaa.getAttribute(eventName);
-            if(attr != null) {
+            if (attr != null) {
                 _eventScripts.execEventAttributeScript(mayaa, attr.getValue());
             }
         }
@@ -201,7 +201,7 @@ public class SpecificationUtil implements CONST_IMPL {
         private WeakHashMap _mayaaScriptCache = new WeakHashMap();
 
         protected CompiledScript compile(String text, boolean fullScript) {
-            if(StringUtil.hasValue(text)) {
+            if (StringUtil.hasValue(text)) {
                 if (fullScript) {
                     ScriptUtil.assertSingleScript(text);
                 }

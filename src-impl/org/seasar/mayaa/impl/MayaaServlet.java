@@ -38,7 +38,7 @@ public class MayaaServlet extends HttpServlet {
     private static boolean _inithialized;
 
     public void init() {
-        if(_inithialized == false) {
+        if (_inithialized == false) {
             FactoryFactory.setInstance(new FactoryFactoryImpl());
             FactoryFactory.setContext(getServletContext());
             _inithialized = true;

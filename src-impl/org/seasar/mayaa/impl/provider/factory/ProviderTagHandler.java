@@ -45,13 +45,13 @@ public class ProviderTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class providerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentProvider = (ServiceProvider)MarshallUtil.marshall(
+        _currentProvider = (ServiceProvider) MarshallUtil.marshall(
                 providerClass, ServiceProvider.class, _beforeProvider,
                 systemID, lineNumber);
     }
 
     public ServiceProvider getServiceProvider() {
-        if(_currentProvider == null) {
+        if (_currentProvider == null) {
             throw new IllegalStateException();
         }
         return _currentProvider;

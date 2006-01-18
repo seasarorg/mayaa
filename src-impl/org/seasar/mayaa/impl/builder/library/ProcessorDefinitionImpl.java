@@ -51,8 +51,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     private List _propertySetRefs;
 
     public void setProcessorClass(Class processorClass) {
-        if(processorClass == null ||
-                TemplateProcessor.class.isAssignableFrom(
+        if (processorClass == null
+                || TemplateProcessor.class.isAssignableFrom(
                         processorClass) == false) {
             throw new IllegalArgumentException();
         }
@@ -65,14 +65,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     public void addPropertySetRef(
             String name, String systemID, int lineNumber) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_propertySetRefs == null) {
+        if (_propertySetRefs == null) {
             _propertySetRefs = new ArrayList();
         }
-        if(_propertySetRefs.contains(name)) {
-            if(LOG.isWarnEnabled()) {
+        if (_propertySetRefs.contains(name)) {
+            if (LOG.isWarnEnabled()) {
                 String line = Integer.toString(lineNumber);
                 LOG.warn(StringUtil.getMessage(
                         ProcessorDefinitionImpl.class, 1, name, systemID, line));
@@ -84,7 +84,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     }
 
     public Iterator iteratePropertySets() {
-        if(_propertySetRefs == null) {
+        if (_propertySetRefs == null) {
             return NullIterator.getInstance();
         }
         Iterator it = _propertySetRefs.iterator();
@@ -92,7 +92,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     }
 
     protected TemplateProcessor newInstance() {
-        return (TemplateProcessor)ObjectUtil.newInstance(_processorClass);
+        return (TemplateProcessor) ObjectUtil.newInstance(_processorClass);
     }
 
     protected PrefixAwareName getPrefixAwareName(
@@ -107,19 +107,19 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             TemplateProcessor processor, PropertyDefinition property) {
         Object value =
             property.createProcessorProperty(this, original, injected);
-        if(value != null) {
+        if (value != null) {
             String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
-            if(ObjectUtil.hasProperty(processorClass, propertyImplName)) {
+            if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
                 ObjectUtil.setProperty(processor, propertyImplName, value);
-            } else if(processor instanceof VirtualPropertyAcceptable) {
+            } else if (processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
-                    (VirtualPropertyAcceptable)processor;
+                    (VirtualPropertyAcceptable) processor;
                 PrefixAwareName name =
                     getPrefixAwareName(injected, property.getName());
                 acceptable.addVirtualProperty(name, value);
             } else {
-                if(LOG.isWarnEnabled()) {
+                if (LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(
                             ProcessorDefinitionImpl.class, 2,
                             processorClass.getName(), propertyImplName));
@@ -131,8 +131,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingPropertySet(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertySet propertySet) {
-        for(Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext(); ) {
-            PropertyDefinition property = (PropertyDefinition)it.next();
+        for (Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext();) {
+            PropertyDefinition property = (PropertyDefinition) it.next();
             settingProperty(original, injected, processor, property);
         }
     }
@@ -140,23 +140,23 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingInformalProperties(SpecificationNode injected,
             InformalPropertyAcceptable acceptable) {
         String injectedNS = injected.getQName().getNamespaceURI();
-        for(Iterator it = injected.iterateAttribute(); it.hasNext(); ) {
-            NodeAttribute attr = (NodeAttribute)it.next();
-            if(contain(injectedNS, attr)) {
+        for (Iterator it = injected.iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = (NodeAttribute) it.next();
+            if (contain(injectedNS, attr)) {
                 continue;
             }
             LibraryDefinition library = getLibraryDefinition();
             Class propertyClass = acceptable.getPropertyClass();
             PropertyConverter converter =
                 library.getPropertyConverter(propertyClass);
-            if(converter == null) {
+            if (converter == null) {
                 throw new ConverterNotFoundException(
                         propertyClass.getName(), getSystemID(), getLineNumber());
             }
             Class expectedClass = acceptable.getExpectedClass();
             String value = attr.getValue();
             Object property = converter.convert(attr, value, expectedClass);
-            if(property == null) {
+            if (property == null) {
                 throw new ConverterOperationException(converter, value);
             }
             acceptable.addInformalProperty(attr, property);
@@ -165,19 +165,19 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     public TemplateProcessor createTemplateProcessor(
             SpecificationNode original, SpecificationNode injected) {
-        if(injected == null) {
+        if (injected == null) {
             throw new IllegalArgumentException();
         }
         TemplateProcessor processor = newInstance();
         processor.setProcessorDefinition(this);
         settingPropertySet(original, injected, processor, this);
-        for(Iterator it = iteratePropertySets(); it.hasNext(); ) {
-            PropertySet propertySet = (PropertySet)it.next();
+        for (Iterator it = iteratePropertySets(); it.hasNext();) {
+            PropertySet propertySet = (PropertySet) it.next();
             settingPropertySet(original, injected, processor, propertySet);
         }
-        if(processor instanceof InformalPropertyAcceptable) {
+        if (processor instanceof InformalPropertyAcceptable) {
             settingInformalProperties(
-                    injected, (InformalPropertyAcceptable)processor);
+                    injected, (InformalPropertyAcceptable) processor);
         }
         return processor;
     }
@@ -191,8 +191,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         private int _lineNumber;
 
         public PropertySetRef(String name, String systemID, int lineNumber) {
-            if(StringUtil.isEmpty(name) ||
-                    StringUtil.isEmpty(systemID) || lineNumber < 0) {
+            if (StringUtil.isEmpty(name)
+                    || StringUtil.isEmpty(systemID) || lineNumber < 0) {
                 throw new IllegalArgumentException();
             }
             _name = name;
@@ -220,7 +220,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         private LibraryDefinition _library;
 
         public PropertySetIterator(Iterator it, LibraryDefinition library) {
-            if(it == null || library == null) {
+            if (it == null || library == null) {
                 throw new IllegalArgumentException();
             }
             _it = it;
@@ -232,9 +232,9 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
 
         public Object next() {
-            PropertySetRef ref = (PropertySetRef)_it.next();
+            PropertySetRef ref = (PropertySetRef) _it.next();
             PropertySet propertySet = _library.getPropertySet(ref.getName());
-            if(propertySet == null) {
+            if (propertySet == null) {
                 throw new PropertySetNotFoundException(ref.getName(),
                         ref.getSystemID(), ref.getLineNumber());
             }

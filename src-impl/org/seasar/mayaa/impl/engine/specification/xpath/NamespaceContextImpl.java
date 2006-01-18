@@ -27,7 +27,7 @@ public class NamespaceContextImpl implements NamespaceContext {
     private Namespace _namespace;
 
     public NamespaceContextImpl(Namespace namespaceable) {
-        if(namespaceable == null) {
+        if (namespaceable == null) {
             throw new IllegalArgumentException();
         }
         _namespace = namespaceable;
@@ -35,7 +35,7 @@ public class NamespaceContextImpl implements NamespaceContext {
 
     public String translateNamespacePrefixToUri(String prefix) {
         PrefixMapping mapping = _namespace.getMappingFromPrefix(prefix, true);
-        if(mapping != null) {
+        if (mapping != null) {
             return mapping.getNamespaceURI();
         }
         return null;

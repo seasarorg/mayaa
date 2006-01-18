@@ -54,27 +54,27 @@ public class PageImpl extends SpecificationImpl
     private List _templates;
 
     public PageImpl(String pageName) {
-        if(StringUtil.isEmpty(pageName)) {
+        if (StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
         _pageName = pageName;
     }
 
     protected void clear() {
-        synchronized(this) {
+        synchronized (this) {
             _superPage = null;
             super.clear();
         }
     }
 
     protected void prepareSuper() {
-        synchronized(this) {
-            if(_superPage != null) {
+        synchronized (this) {
+            if (_superPage != null) {
                 return;
             }
             String extendsPath =
                 SpecificationUtil.getMayaaAttributeValue(this, QM_EXTENDS);
-            if(StringUtil.isEmpty(extendsPath)) {
+            if (StringUtil.isEmpty(extendsPath)) {
                 return;
             }
             Engine engine = ProviderUtil.getEngine();
@@ -89,7 +89,7 @@ public class PageImpl extends SpecificationImpl
     }
 
     public void checkTimestamps() {
-        if(isOldSpecification()) {
+        if (isOldSpecification()) {
             parseSpecification();
         }
     }
@@ -119,11 +119,11 @@ public class PageImpl extends SpecificationImpl
     public CompiledScript getSuffixScript() {
         String value = SpecificationUtil.getMayaaAttributeValue(
                 this, QM_TEMPLATE_SUFFIX);
-        if(StringUtil.isEmpty(value)) {
+        if (StringUtil.isEmpty(value)) {
             value = SpecificationUtil.getMayaaAttributeValue(
                     ProviderUtil.getEngine(), QM_TEMPLATE_SUFFIX);
         }
-        if(StringUtil.isEmpty(value)) {
+        if (StringUtil.isEmpty(value)) {
             value = "";
         }
         return ScriptUtil.compile(value, String.class);
@@ -131,18 +131,18 @@ public class PageImpl extends SpecificationImpl
 
     protected Template findTemplateFromCache(
             String suffix, String extension) {
-        if(_templates != null) {
-            for(Iterator it = new ChildSpecificationsIterator(_templates);
-                    it.hasNext(); ) {
+        if (_templates != null) {
+            for (Iterator it = new ChildSpecificationsIterator(_templates);
+                    it.hasNext();) {
                 Object obj = it.next();
-                if(obj instanceof Template == false) {
+                if (obj instanceof Template == false) {
                     throw new IllegalStateException();
                 }
-                Template template = (Template)obj;
+                Template template = (Template) obj;
                 String templateSuffix = template.getSuffix();
                 String templateExtension = template.getExtension();
-                if(templateSuffix.equals(suffix) &&
-                        templateExtension.equals(extension)) {
+                if (templateSuffix.equals(suffix)
+                        && templateExtension.equals(extension)) {
                     return template;
                 }
             }
@@ -152,17 +152,17 @@ public class PageImpl extends SpecificationImpl
 
     protected Template createNewTemplate(String suffix, String extension) {
         StringBuffer name = new StringBuffer(_pageName);
-        if(StringUtil.hasValue(suffix)) {
+        if (StringUtil.hasValue(suffix)) {
             String separator = EngineUtil.getEngineSetting(
                     SUFFIX_SEPARATOR, "$");
             name.append(separator).append(suffix);
         }
-        if(StringUtil.hasValue(extension)) {
+        if (StringUtil.hasValue(extension)) {
             name.append(".").append(extension);
         }
         SourceDescriptor source =
             SourceUtil.getSourceDescriptor(name.toString());
-        if(source.exists()) {
+        if (source.exists()) {
             Template template = new TemplateImpl(this, suffix, extension);
             template.setSource(source);
             return template;
@@ -172,19 +172,19 @@ public class PageImpl extends SpecificationImpl
 
     protected Template getTemplateFromFixedSuffix(
             String suffix, String extension) {
-        if(suffix == null || extension == null) {
+        if (suffix == null || extension == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(this) {
+        synchronized (this) {
             Template template = findTemplateFromCache(suffix, extension);
-            if(template != null) {
+            if (template != null) {
                 if (template.getSource().exists()) {
                     return template;
                 }
                 return null;
             }
             template = createNewTemplate(suffix, extension);
-            if(template == null) {
+            if (template == null) {
                 return null;
             }
 
@@ -197,17 +197,17 @@ public class PageImpl extends SpecificationImpl
     }
 
     public Template getTemplate(String suffix, String extension) {
-        if(suffix == null) {
+        if (suffix == null) {
             suffix = "";
         }
-        if(extension == null) {
+        if (extension == null) {
             extension = "";
         }
         Template template = getTemplateFromFixedSuffix(suffix, extension);
-        if(template == null && StringUtil.hasValue(suffix)) {
+        if (template == null && StringUtil.hasValue(suffix)) {
             template = getTemplateFromFixedSuffix("", extension);
         }
-        if(template == null) {
+        if (template == null) {
             throw new PageNotFoundException(_pageName, extension);
         }
         return template;
@@ -223,7 +223,8 @@ public class PageImpl extends SpecificationImpl
 
     public ProcessStatus renderTemplate(
             Page topLevelPage, Template[] templates) {
-        if(topLevelPage == null || templates == null || templates.length == 0) {
+        if (topLevelPage == null || templates == null
+                || templates.length == 0) {
             throw new IllegalArgumentException();
         }
         return templates[0].doTemplateRender(topLevelPage);

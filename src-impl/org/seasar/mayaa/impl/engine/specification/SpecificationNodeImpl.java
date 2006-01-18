@@ -52,30 +52,30 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public void setSequenceID(int sequenceID) {
-        if(sequenceID < 0) {
+        if (sequenceID < 0) {
             throw new IllegalArgumentException();
         }
         _sequenceID = sequenceID;
     }
 
     public int getSequenceID() {
-        if(_sequenceID < 0) {
+        if (_sequenceID < 0) {
             throw new IllegalStateException();
         }
         return _sequenceID;
     }
 
     public void addAttribute(QName qName, String value) {
-        if(qName == null || value == null) {
+        if (qName == null || value == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(this) {
-            if(_attributes == null) {
+        synchronized (this) {
+            if (_attributes == null) {
                 _attributes = new HashMap();
             }
         }
-        synchronized(_attributes) {
-            if(_attributes.containsKey(qName) == false) {
+        synchronized (_attributes) {
+            if (_attributes.containsKey(qName) == false) {
                 NodeAttributeImpl attr = new NodeAttributeImpl(qName, value);
                 _attributes.put(qName, attr);
                 attr.setNode(this);
@@ -84,17 +84,17 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public NodeAttribute getAttribute(QName qName) {
-        if(qName == null) {
+        if (qName == null) {
             throw new IllegalArgumentException();
         }
-        if(_attributes == null) {
+        if (_attributes == null) {
             return null;
         }
-        return (NodeAttribute)_attributes.get(qName);
+        return (NodeAttribute) _attributes.get(qName);
     }
 
     public Iterator iterateAttribute() {
-        if(_attributes == null) {
+        if (_attributes == null) {
             return NullIterator.getInstance();
         }
         return _attributes.values().iterator();
@@ -106,15 +106,15 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         copy.setSystemID(getSystemID());
         copy.setLineNumber(getLineNumber());
         copy.setOnTemplate(isOnTemplate());
-        for(Iterator it = iterateAttribute(); it.hasNext(); ) {
-            NodeAttribute attr = (NodeAttribute)it.next();
-            if(filter.accept(attr)) {
+        for (Iterator it = iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = (NodeAttribute) it.next();
+            if (filter.accept(attr)) {
                 copy.addAttribute(attr.getQName(), attr.getValue());
             }
         }
-        for(Iterator it = iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode node = (SpecificationNode)it.next();
-            if(filter.accept(node)) {
+        for (Iterator it = iterateChildNode(); it.hasNext();) {
+            SpecificationNode node = (SpecificationNode) it.next();
+            if (filter.accept(node)) {
                 copy.addChildNode(node.copyTo(filter));
             }
         }
@@ -128,8 +128,8 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     public String toString() {
         StringBuffer path = new StringBuffer();
-        if(getParentNode() != null &&
-                getParentNode() instanceof Specification == false) {
+        if (getParentNode() != null
+                && getParentNode() instanceof Specification == false) {
             path.append(getParentNode());
         }
         path.append("/");
@@ -140,7 +140,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     // TreeNodeWalker implemetns ------------------------------------
 
     public void setParentNode(NodeTreeWalker parent) {
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -151,22 +151,22 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public void addChildNode(NodeTreeWalker child) {
-        if(child == null) {
+        if (child == null) {
             throw new IllegalArgumentException();
         }
-        synchronized(this) {
-            if(_childNodes == null) {
+        synchronized (this) {
+            if (_childNodes == null) {
                 _childNodes = new ArrayList();
             }
         }
-        synchronized(_childNodes) {
+        synchronized (_childNodes) {
             _childNodes.add(child);
             child.setParentNode(this);
         }
     }
 
     public Iterator iterateChildNode() {
-        if(_childNodes == null) {
+        if (_childNodes == null) {
             return NullIterator.getInstance();
         }
         return _childNodes.iterator();
@@ -175,7 +175,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     // PositionAware implements -------------------------------------
 
     public void setSystemID(String systemID) {
-        if(systemID == null) {
+        if (systemID == null) {
             throw new IllegalArgumentException();
         }
         _systemID = systemID;

@@ -72,11 +72,11 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     }
 
     protected String getID(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         NodeAttribute attr = getAttribute(node);
-        if(attr != null) {
+        if (attr != null) {
             return attr.getValue();
         }
         return null;
@@ -84,16 +84,16 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
 
     protected SpecificationNode getEqualsIDNode(
             SpecificationNode node, String id) {
-        if(node == null || StringUtil.isEmpty(id)) {
+        if (node == null || StringUtil.isEmpty(id)) {
             throw new IllegalArgumentException();
         }
-        for(Iterator it = node.iterateChildNode(); it.hasNext(); ) {
-            SpecificationNode child = (SpecificationNode)it.next();
-            if(id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
+        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
+            if (id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
                 return child;
             }
             SpecificationNode ret = getEqualsIDNode(child, id);
-            if(ret != null) {
+            if (ret != null) {
                 return ret;
             }
         }
@@ -102,31 +102,31 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         String id = getID(original);
-        if(StringUtil.hasValue(id)) {
+        if (StringUtil.hasValue(id)) {
             Specification spec = SpecificationUtil.findSpecification(original);
             SpecificationNode injected = null;
-            while(spec != null) {
+            while (spec != null) {
                 SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
-                if(mayaa != null) {
+                if (mayaa != null) {
                     injected = getEqualsIDNode(mayaa, id);
-                    if(injected != null) {
+                    if (injected != null) {
                         break;
                     }
                 }
                 spec = EngineUtil.getParentSpecification(spec);
             }
-            if(injected != null) {
-                if(QM_IGNORE.equals(injected.getQName())) {
+            if (injected != null) {
+                if (QM_IGNORE.equals(injected.getQName())) {
                     return chain.getNode(original);
                 }
                 return injected.copyTo(getCopyToFilter());
             }
-            if(isReportResolvedID()) {
-                if(LOG.isWarnEnabled()) {
+            if (isReportResolvedID()) {
+                if (LOG.isWarnEnabled()) {
                     String systemID = original.getSystemID();
                     String lineNumber = Integer.toString(original.getLineNumber());
                     String msg = StringUtil.getMessage(
@@ -142,7 +142,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("reportUnresolvedID".equals(name)) {
+        if ("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
         }
         if ("addAttribute".equals(name)) {
@@ -156,8 +156,8 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     protected class CheckIDCopyToFilter implements CopyToFilter {
 
         public boolean accept(NodeObject test) {
-            if(test instanceof NodeAttribute) {
-                NodeAttribute attr = (NodeAttribute)test;
+            if (test instanceof NodeAttribute) {
+                NodeAttribute attr = (NodeAttribute) test;
                 return attr.getQName().equals(QM_ID) == false;
             }
             return true;

@@ -31,13 +31,13 @@ public abstract class AbstractWritableAttributeScope
     }
 
     public Object newAttribute(String name, Class attributeClass) {
-        if(attributeClass == null) {
+        if (attributeClass == null) {
             throw new IllegalArgumentException();
         }
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             name = attributeClass.getName();
         }
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             return getAttribute(name);
         }
         Object model = ObjectUtil.newInstance(attributeClass);

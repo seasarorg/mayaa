@@ -28,12 +28,14 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 8518993579074245108L;
 
+    private static final int DEFAULT_BUFFER_SIZE = 128;
+
     private String _name;
     private String _publicID;
     private String _systemID;
 
     public void setName(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         _name = name;
@@ -60,12 +62,12 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        StringBuffer docTypeDecl = new StringBuffer(128);
+        StringBuffer docTypeDecl = new StringBuffer(DEFAULT_BUFFER_SIZE);
         docTypeDecl.append("<!DOCTYPE ").append(_name);
-        if(StringUtil.hasValue(_publicID)) {
+        if (StringUtil.hasValue(_publicID)) {
             docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
         }
-        if(StringUtil.hasValue(_systemID)) {
+        if (StringUtil.hasValue(_systemID)) {
             docTypeDecl.append(" \"").append(_systemID).append("\"");
         }
         docTypeDecl.append(">");

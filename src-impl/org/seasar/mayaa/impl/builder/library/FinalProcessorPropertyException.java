@@ -23,18 +23,21 @@ import org.seasar.mayaa.impl.MayaaException;
  */
 public class FinalProcessorPropertyException extends MayaaException {
 
-    private static final long serialVersionUID = -330877631840274409L;
+    private static final long serialVersionUID = -470586483587964359L;
 
-    String _namespaceURI;
-    String _processorName;
-    String _propertyName;
+    private final String _namespaceURI;
+    private final String _processorName;
+    private final String _propertyName;
 
     public FinalProcessorPropertyException(
             String processorName, QName qName) {
         _processorName = processorName;
-        if(qName != null) {
+        if (qName != null) {
             _namespaceURI = qName.getNamespaceURI();
             _propertyName = qName.getLocalName();
+        } else {
+            _namespaceURI = null;
+            _propertyName = null;
         }
     }
 

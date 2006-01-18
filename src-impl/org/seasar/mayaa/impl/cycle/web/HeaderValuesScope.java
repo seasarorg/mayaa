@@ -34,7 +34,7 @@ public class HeaderValuesScope
     private HttpServletRequest _request;
 
     public HeaderValuesScope(HttpServletRequest request) {
-        if(request == null) {
+        if (request == null) {
             throw new IllegalArgumentException();
         }
         _request = request;
@@ -49,9 +49,9 @@ public class HeaderValuesScope
     }
 
     public boolean hasAttribute(String name) {
-        for(Iterator it = iterateAttributeNames(); it.hasNext(); ) {
-            String headerName = (String)it.next();
-            if(headerName.equals(name)) {
+        for (Iterator it = iterateAttributeNames(); it.hasNext();) {
+            String headerName = (String) it.next();
+            if (headerName.equals(name)) {
                 return true;
             }
         }
@@ -59,7 +59,7 @@ public class HeaderValuesScope
     }
 
     public Object getAttribute(String name) {
-        if(hasAttribute(name)) {
+        if (hasAttribute(name)) {
             Enumeration headers = _request.getHeaders(name);
             List headerList = new ArrayList();
             while (headers.hasMoreElements()) {

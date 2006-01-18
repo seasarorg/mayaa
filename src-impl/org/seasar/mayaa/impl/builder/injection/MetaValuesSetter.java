@@ -46,11 +46,11 @@ public class MetaValuesSetter extends ParameterAwareImpl
 
     protected void addMayaaAttribute(
             SpecificationNode original, QName qName, String value) {
-        if(original == null || qName == null || StringUtil.isEmpty(value)) {
+        if (original == null || qName == null || StringUtil.isEmpty(value)) {
             throw new IllegalArgumentException();
         }
         SpecificationNode mayaa = SpecificationUtil.getMayaaNode(original);
-        if(mayaa == null) {
+        if (mayaa == null) {
             throw new IllegalStateException();
         }
         mayaa.addAttribute(qName, value);
@@ -59,16 +59,16 @@ public class MetaValuesSetter extends ParameterAwareImpl
     protected void setContentValue(SpecificationNode original,
             QName httpEquivName, QName contentName) {
         NodeAttribute equiv = original.getAttribute(httpEquivName);
-        if(equiv != null) {
+        if (equiv != null) {
             String equivValue = equiv.getValue();
             NodeAttribute content = original.getAttribute(contentName);
             String contentValue = content.getValue();
-            if(StringUtil.hasValue(contentValue)) {
-                if("Content-Type".equalsIgnoreCase(equivValue)) {
+            if (StringUtil.hasValue(contentValue)) {
+                if ("Content-Type".equalsIgnoreCase(equivValue)) {
                     addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
-                } else if("Pragma".equalsIgnoreCase(equivValue) ||
-                        "Cache-Control".equalsIgnoreCase(equivValue)) {
-                    if("no-cache".equalsIgnoreCase(contentValue)) {
+                } else if ("Pragma".equalsIgnoreCase(equivValue)
+                        || "Cache-Control".equalsIgnoreCase(equivValue)) {
+                    if ("no-cache".equalsIgnoreCase(contentValue)) {
                         addMayaaAttribute(original, QM_NO_CACHE, "true");
                     }
                 }
@@ -78,13 +78,13 @@ public class MetaValuesSetter extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         QName originalName = original.getQName();
-        if(QH_META.equals(originalName)) {
+        if (QH_META.equals(originalName)) {
             setContentValue(original, QH_HTTP_EQUIV, QH_CONTENT);
-        } else if(QX_META.equals(originalName)) {
+        } else if (QX_META.equals(originalName)) {
             setContentValue(original, QX_HTTP_EQUIV, QX_CONTENT);
         }
         return chain.getNode(original);

@@ -20,7 +20,6 @@ import javax.servlet.jsp.tagext.Tag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.builder.library.TLDProcessorDefinition;
-import org.seasar.mayaa.impl.builder.library.TLDPropertyDefinition;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.xml.TagHandler;
 
@@ -32,7 +31,6 @@ public class TeiTagHandler extends TagHandler {
     protected static final Log LOG =
             LogFactory.getLog(TeiTagHandler.class);
 
-    TLDPropertyDefinition _property;
     private TagTagHandler _parent;
     private Class _teiClass;
 
@@ -72,7 +70,7 @@ public class TeiTagHandler extends TagHandler {
                 Class clazz = ObjectUtil.loadClass(body, Tag.class);
                 setTeiClass(clazz);
             } catch (RuntimeException e) {
-                if(LOG.isErrorEnabled()) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());
                 }
                 _handler.invalidate();

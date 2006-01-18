@@ -48,7 +48,7 @@ public abstract class AbstractRequestScope
     }
 
     public void setForwardPath(String relativeUrlPath) {
-        if(StringUtil.isEmpty(relativeUrlPath)) {
+        if (StringUtil.isEmpty(relativeUrlPath)) {
             throw new IllegalArgumentException();
         }
         parsePath(relativeUrlPath);
@@ -59,28 +59,28 @@ public abstract class AbstractRequestScope
     }
 
     public String getPageName() {
-        if(_pageName == null) {
+        if (_pageName == null) {
             parsePath(getRequestedPath());
         }
         return _pageName;
     }
 
     public String getRequestedSuffix() {
-        if(_requestedSuffix == null) {
+        if (_requestedSuffix == null) {
             parsePath(getRequestedPath());
         }
         return _requestedSuffix;
     }
 
     public String getExtension() {
-        if(_extension == null) {
+        if (_extension == null) {
             parsePath(getRequestedPath());
         }
         return _extension;
     }
 
     public String getMimeType() {
-        if(_mimeType == null) {
+        if (_mimeType == null) {
             parsePath(getRequestedPath());
         }
         return _mimeType;

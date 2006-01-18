@@ -29,10 +29,10 @@ public class PrefixMappingImpl implements PrefixMapping {
     private String _namespaceURI;
 
     public PrefixMappingImpl(String prefix, String namespaceURI) {
-        if(StringUtil.isEmpty(namespaceURI)) {
+        if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-        if(prefix == null) {
+        if (prefix == null) {
             prefix = "";
         }
         _prefix = prefix;
@@ -40,14 +40,14 @@ public class PrefixMappingImpl implements PrefixMapping {
     }
 
     public void setNamespace(Namespace namespace) {
-        if(namespace == null) {
+        if (namespace == null) {
             throw new IllegalArgumentException();
         }
         _namespace = namespace;
     }
 
     public Namespace getNamespace() {
-        if(_namespace == null) {
+        if (_namespace == null) {
             throw new IllegalStateException();
         }
         return _namespace;
@@ -64,7 +64,7 @@ public class PrefixMappingImpl implements PrefixMapping {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("xmlns");
-        if(StringUtil.hasValue(getPrefix())) {
+        if (StringUtil.hasValue(getPrefix())) {
             buffer.append(":").append(getPrefix());
         }
         buffer.append("=").append(getNamespaceURI());
@@ -72,12 +72,12 @@ public class PrefixMappingImpl implements PrefixMapping {
     }
 
     public boolean equals(Object test) {
-        if(test == null || (test instanceof PrefixMapping) == false) {
+        if (test == null || (test instanceof PrefixMapping) == false) {
             return false;
         }
-        PrefixMappingImpl ns = (PrefixMappingImpl)test;
-        return getPrefix().equals(ns.getPrefix()) &&
-                getNamespaceURI().equals(ns.getNamespaceURI());
+        PrefixMappingImpl ns = (PrefixMappingImpl) test;
+        return getPrefix().equals(ns.getPrefix())
+                && getNamespaceURI().equals(ns.getNamespaceURI());
     }
 
     public int hashCode() {

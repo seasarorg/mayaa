@@ -46,7 +46,7 @@ public class EchoProcessor extends ElementProcessor
         LibraryDefinition libraryDef = processorDef.getLibraryDefinition();
         PropertyConverter converter =
             libraryDef.getPropertyConverter(ProcessorProperty.class);
-        if(converter == null) {
+        if (converter == null) {
             throw new IllegalStateException();
         }
         return converter;
@@ -77,9 +77,9 @@ public class EchoProcessor extends ElementProcessor
     // ProcessorTreeWalker implements --------------------------------
     public Map getVariables() {
         Iterator it = iterateInformalProperties();
-        if(it.hasNext()) {
+        if (it.hasNext()) {
             Map attributeMap = new HashMap();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(
                         prop.getName().getQName().getLocalName(),

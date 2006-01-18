@@ -47,18 +47,18 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         Namespace namespace = SpecificationUtil.createNamespace();
         namespace.addPrefixMapping("m", URI_MAYA);
         String xpathExpr = "/m:mayaa//*[string-length(@m:xpath) > 0]";
-        for(Iterator it = XPathUtil.selectChildNodes(
-                original, xpathExpr, namespace, true); it.hasNext(); ) {
-            SpecificationNode injected = (SpecificationNode)it.next();
+        for (Iterator it = XPathUtil.selectChildNodes(
+                original, xpathExpr, namespace, true); it.hasNext();) {
+            SpecificationNode injected = (SpecificationNode) it.next();
             String mayaaPath = SpecificationUtil.getAttributeValue(
                     injected, QM_XPATH);
-            if(XPathUtil.matches(original, mayaaPath, injected)) {
+            if (XPathUtil.matches(original, mayaaPath, injected)) {
                 return injected.copyTo(getCopyToFilter());
             }
         }
@@ -70,8 +70,8 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
     protected class CheckXPathCopyToFilter implements CopyToFilter {
 
         public boolean accept(NodeObject test) {
-            if(test instanceof NodeAttribute) {
-                NodeAttribute attr = (NodeAttribute)test;
+            if (test instanceof NodeAttribute) {
+                NodeAttribute attr = (NodeAttribute) test;
                 return attr.getQName().equals(QM_XPATH) == false;
             }
             return true;

@@ -35,24 +35,24 @@ public class JspWriterImpl extends JspWriter {
 
     public JspWriterImpl(CycleWriter writer) {
         super(DEFAULT_BUFFER, false);
-        if(writer == null) {
+        if (writer == null) {
             throw new IllegalArgumentException();
         }
         _writer = writer;
     }
 
-    public void write(char cbuf[], int off, int len) throws IOException {
-        if(_closed) {
+    public void write(char[] cbuf, int off, int len) throws IOException {
+        if (_closed) {
             throw new IOException();
         }
-        if(len == 0) {
+        if (len == 0) {
             return;
         }
         _writer.write(cbuf, off, len);
     }
 
     public final void clear() throws IOException {
-        if(_closed || _flushed) {
+        if (_closed || _flushed) {
             throw new IOException();
         }
         // lazy implementation
@@ -69,7 +69,7 @@ public class JspWriterImpl extends JspWriter {
     }
 
     public void flush() throws IOException {
-        if(_closed) {
+        if (_closed) {
             throw new IOException();
         }
         // lazy implementation
@@ -94,7 +94,7 @@ public class JspWriterImpl extends JspWriter {
         write(Character.toString(c));
     }
 
-    public void print(char c[]) throws IOException {
+    public void print(char[] c) throws IOException {
         write(c);
     }
 
@@ -137,7 +137,7 @@ public class JspWriterImpl extends JspWriter {
         newLine();
     }
 
-    public void println(char c[]) throws IOException {
+    public void println(char[] c) throws IOException {
         print(c);
         newLine();
     }

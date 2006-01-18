@@ -45,8 +45,8 @@ public abstract class AbstractAttributableProcessor
     }
 
     protected ProcesstimeInfo getProcesstimeInfo() {
-        ProcesstimeInfo info = (ProcesstimeInfo)_processtimeInfo.get();
-        if(info == null) {
+        ProcesstimeInfo info = (ProcesstimeInfo) _processtimeInfo.get();
+        if (info == null) {
             info = new ProcesstimeInfo();
             _processtimeInfo.set(info);
         }
@@ -60,7 +60,7 @@ public abstract class AbstractAttributableProcessor
 
     // MLD method
     public void addInformalProperty(PrefixAwareName name, Object attr) {
-        if(_attributes == null) {
+        if (_attributes == null) {
             _attributes = new ArrayList();
         }
         _attributes.add(attr);
@@ -75,7 +75,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     public Iterator iterateInformalProperties() {
-        if(_attributes == null) {
+        if (_attributes == null) {
             return NullIterator.getInstance();
         }
         return _attributes.iterator();
@@ -83,7 +83,7 @@ public abstract class AbstractAttributableProcessor
 
     // processtime method
     public void addProcesstimeProperty(ProcessorProperty prop) {
-        if(prop == null) {
+        if (prop == null) {
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
@@ -91,7 +91,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     public boolean hasProcesstimeProperty(ProcessorProperty prop) {
-        if(prop == null) {
+        if (prop == null) {
             throw new IllegalArgumentException();
         }
         ProcesstimeInfo info = getProcesstimeInfo();
@@ -109,7 +109,7 @@ public abstract class AbstractAttributableProcessor
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         clearProcesstimeInfo();
-        if(_childEvaluation) {
+        if (_childEvaluation) {
             return ProcessStatus.EVAL_BODY_BUFFERED;
         }
         return writeStartElement();
@@ -141,10 +141,10 @@ public abstract class AbstractAttributableProcessor
 
     public ProcessStatus doEndProcess() {
         ProcesstimeInfo info = getProcesstimeInfo();
-        if(_childEvaluation) {
+        if (_childEvaluation) {
             writeStartElement();
             CycleWriter body = info.getBody();
-            if(body != null) {
+            if (body != null) {
                 try {
                     body.flush();
                 } catch (IOException e) {
@@ -164,7 +164,7 @@ public abstract class AbstractAttributableProcessor
         private List _processtimeProperties;
 
         public void setBody(CycleWriter body) {
-            if(body == null) {
+            if (body == null) {
                 throw new IllegalArgumentException();
             }
             _body = body;
@@ -175,29 +175,29 @@ public abstract class AbstractAttributableProcessor
         }
 
         public boolean hasProcesstimeProperty(ProcessorProperty property) {
-            if(property == null) {
+            if (property == null) {
                 throw new IllegalArgumentException();
             }
-            if(_processtimeProperties == null) {
+            if (_processtimeProperties == null) {
                 return false;
             }
             return _processtimeProperties.contains(property);
         }
 
         public void addProcesstimeProperty(ProcessorProperty property) {
-            if(property == null) {
+            if (property == null) {
                 throw new IllegalArgumentException();
             }
-            if(_processtimeProperties == null) {
+            if (_processtimeProperties == null) {
                 _processtimeProperties = new ArrayList();
             }
-            if(_processtimeProperties.contains(property) == false) {
+            if (_processtimeProperties.contains(property) == false) {
                 _processtimeProperties.add(property);
             }
         }
 
         public Iterator iterateProcesstimeProperties() {
-            if(_processtimeProperties == null) {
+            if (_processtimeProperties == null) {
                 return NullIterator.getInstance();
             }
             return _processtimeProperties.iterator();

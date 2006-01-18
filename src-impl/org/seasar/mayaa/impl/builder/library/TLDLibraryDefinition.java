@@ -25,10 +25,11 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TLDLibraryDefinition extends LibraryDefinitionImpl {
 
-    private static String VERSION_JSP ;
+    private static final String VERSION_JSP;
+
     static {
         JspFactory factory = JspFactory.getDefaultFactory();
-        if(factory != null) {
+        if (factory != null) {
             VERSION_JSP = factory.getEngineInfo().getSpecificationVersion();
         } else {
             VERSION_JSP = "1.1";
@@ -38,7 +39,7 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
     private String _requiredVersion;
 
     public void setRequiredVersion(String requiredVersion) {
-        if(StringUtil.isEmpty(requiredVersion)) {
+        if (StringUtil.isEmpty(requiredVersion)) {
             throw new IllegalArgumentException();
         }
         _requiredVersion = requiredVersion;
@@ -49,8 +50,8 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
     }
 
     public ProcessorDefinition getProcessorDefinition(String name) {
-        if(_requiredVersion != null &&
-                VERSION_JSP.compareTo(_requiredVersion) < 0) {
+        if (_requiredVersion != null
+                && VERSION_JSP.compareTo(_requiredVersion) < 0) {
             return null;
         }
         return super.getProcessorDefinition(name);

@@ -34,30 +34,30 @@ public class ParameterAwareImpl implements ParameterAware {
     private boolean _onTemplate;
 
     public void setParameter(String name, String value) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(value == null) {
+        if (value == null) {
             throw new IllegalParameterValueException(getClass(), name);
         }
-        if(_parameters == null) {
+        if (_parameters == null) {
             _parameters = new HashMap();
         }
         _parameters.put(name, value);
     }
 
     public String getParameter(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
-        if(_parameters == null) {
+        if (_parameters == null) {
             return null;
         }
-        return (String)_parameters.get(name);
+        return (String) _parameters.get(name);
     }
 
     public Iterator iterateParameterNames() {
-        if(_parameters == null) {
+        if (_parameters == null) {
             return NullIterator.getInstance();
         }
         return _parameters.keySet().iterator();
@@ -72,7 +72,7 @@ public class ParameterAwareImpl implements ParameterAware {
     }
 
     public void setLineNumber(int lineNumber) {
-        if(lineNumber < 0) {
+        if (lineNumber < 0) {
             lineNumber = 0;
         }
         _lineNumber = lineNumber;

@@ -66,7 +66,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
     }
 
     protected String[] getExtensionArray() {
-        return (String[])_extensions.toArray(new String[_extensions.size()]);
+        return (String[]) _extensions.toArray(new String[_extensions.size()]);
     }
 
     public Iterator scan() {
@@ -97,14 +97,14 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     protected FileFilter createExtensionFilter() {
         return new FileFilter() {
-            String[] extensions = getExtensionArray();
+            private final String[] _acceptableExtensions = getExtensionArray();
             public boolean accept(File pathName) {
                 if (pathName.isDirectory()) {
                     return true;
                 }
 
-                for (int i = 0; i < extensions.length; i++) {
-                    if (pathName.getName().endsWith(extensions[i])) {
+                for (int i = 0; i < _acceptableExtensions.length; i++) {
+                    if (pathName.getName().endsWith(_acceptableExtensions[i])) {
                         return true;
                     }
                 }

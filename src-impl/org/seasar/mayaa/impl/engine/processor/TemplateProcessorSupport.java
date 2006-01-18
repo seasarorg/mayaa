@@ -59,7 +59,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_evalBodyInclude) {
+        if (_evalBodyInclude) {
             return ProcessStatus.EVAL_BODY_INCLUDE;
         }
         return ProcessStatus.SKIP_BODY;
@@ -70,42 +70,42 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public void setOriginalNode(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         _originalNode = node;
     }
 
     public SpecificationNode getOriginalNode() {
-        if(_originalNode == null) {
+        if (_originalNode == null) {
             throw new IllegalArgumentException();
         }
         return _originalNode;
     }
 
     public void setInjectedNode(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         _injectedNode = node;
     }
 
     public SpecificationNode getInjectedNode() {
-        if(_injectedNode == null) {
+        if (_injectedNode == null) {
             throw new IllegalStateException();
         }
         return _injectedNode;
     }
 
     public void setProcessorDefinition(ProcessorDefinition definition) {
-        if(definition == null) {
+        if (definition == null) {
             throw new IllegalArgumentException();
         }
         _definition = definition;
     }
 
     public ProcessorDefinition getProcessorDefinition() {
-        if(_definition == null) {
+        if (_definition == null) {
             throw new IllegalStateException();
         }
         return _definition;
@@ -128,7 +128,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public void setParentProcessor(ProcessorTreeWalker parent, int index) {
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -144,7 +144,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public void addChildProcessor(ProcessorTreeWalker child) {
-        if(child == null) {
+        if (child == null) {
             throw new IllegalArgumentException();
         }
         _children.add(child);
@@ -152,13 +152,13 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     }
 
     public int getChildProcessorSize() {
-        synchronized(_children) {
+        synchronized (_children) {
             return _children.size();
         }
     }
 
     public ProcessorTreeWalker getChildProcessor(int index) {
-        return (ProcessorTreeWalker)_children.get(index);
+        return (ProcessorTreeWalker) _children.get(index);
     }
 
 }

@@ -47,11 +47,11 @@ public class XPathUtil {
 
     public static boolean matches(SpecificationNode test,
             String xpathExpr, Namespace namespace) {
-        if(StringUtil.isEmpty(xpathExpr)) {
+        if (StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }
         NamespaceContext nsContext;
-        if(namespace == null) {
+        if (namespace == null) {
             nsContext = new SimpleNamespaceContext();
         } else {
             nsContext = new NamespaceContextImpl(namespace);
@@ -65,9 +65,9 @@ public class XPathUtil {
         try {
             Pattern pattern = PatternParser.parse(xpathExpr);
             return pattern.matches(test, context);
-        } catch(JaxenException e) {
+        } catch (JaxenException e) {
             throw new RuntimeException(e);
-        } catch(SAXPathException e) {
+        } catch (SAXPathException e) {
             throw new RuntimeException(e);
         }
     }
@@ -75,10 +75,10 @@ public class XPathUtil {
     public static Iterator selectChildNodes(SpecificationNode node,
             String xpathExpr, Namespace namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
-        if(StringUtil.isEmpty(xpathExpr)) {
+        if (StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }
-        if(cascade) {
+        if (cascade) {
             return new CascadeSelectNodesIterator(
                     specification, xpathExpr, namespaceable);
         }
@@ -86,7 +86,7 @@ public class XPathUtil {
             XPath xpath =
                 SpecificationXPath.createXPath(xpathExpr, namespaceable);
             return xpath.selectNodes(specification).iterator();
-        } catch(JaxenException e) {
+        } catch (JaxenException e) {
             throw new RuntimeException(e);
         }
     }
@@ -103,7 +103,7 @@ public class XPathUtil {
 
         public CascadeSelectNodesIterator(Specification specification,
                 String xpathExpr, Namespace namespaceable) {
-            if(specification == null || StringUtil.isEmpty(xpathExpr)) {
+            if (specification == null || StringUtil.isEmpty(xpathExpr)) {
                 throw new IllegalArgumentException();
             }
             _specification = specification;
@@ -112,8 +112,8 @@ public class XPathUtil {
         }
 
         public boolean hasNext() {
-            while(true) {
-                if(_iterator == null) {
+            while (true) {
+                if (_iterator == null) {
                     XPath xpath = SpecificationXPath.createXPath(
                             _xpathExpr, _namespaceable);
                     try {
@@ -122,12 +122,12 @@ public class XPathUtil {
                         throw new RuntimeException(e);
                     }
                 }
-                if(_iterator.hasNext()) {
+                if (_iterator.hasNext()) {
                     return true;
                 }
                 Specification parent =
                     EngineUtil.getParentSpecification(_specification);
-                if(parent == null) {
+                if (parent == null) {
                     return false;
                 }
                 _specification = parent;
@@ -136,7 +136,7 @@ public class XPathUtil {
         }
 
         public Object next() {
-            if(hasNext()) {
+            if (hasNext()) {
                 return _iterator.next();
             }
             throw new NoSuchElementException();

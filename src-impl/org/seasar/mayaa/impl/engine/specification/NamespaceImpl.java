@@ -32,13 +32,13 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  */
 public class NamespaceImpl implements Namespace {
 
-    private static Log LOG = LogFactory.getLog(NamespaceImpl.class);
+    private static final Log LOG = LogFactory.getLog(NamespaceImpl.class);
 
     private Namespace _parentSpace;
     private List _mappings;
 
     public void setParentSpace(Namespace parent) {
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parentSpace = parent;
@@ -54,20 +54,20 @@ public class NamespaceImpl implements Namespace {
     }
 
     public void addPrefixMapping(String prefix, String namespaceURI) {
-        if(prefix == null || StringUtil.isEmpty(namespaceURI)) {
+        if (prefix == null || StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
-        synchronized(this) {
-            if(_mappings == null) {
+        synchronized (this) {
+            if (_mappings == null) {
                 _mappings = new ArrayList();
             }
             PrefixMapping mapping =
                 createPrefixMapping(prefix, namespaceURI);
-            if(_mappings.contains(mapping) == false) {
+            if (_mappings.contains(mapping) == false) {
                 _mappings.add(mapping);
                 mapping.setNamespace(this);
             } else {
-                if(LOG.isWarnEnabled()) {
+                if (LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0,
                             mapping.toString()));
                 }
@@ -77,14 +77,14 @@ public class NamespaceImpl implements Namespace {
 
     protected PrefixMapping getMapping(
             boolean fromPrefix, String test, boolean all) {
-        if(test == null) {
+        if (test == null) {
             throw new IllegalArgumentException();
         }
-        for(Iterator it = iteratePrefixMapping(all); it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping)it.next();
-            String value = fromPrefix ?
-                    mapping.getPrefix() : mapping.getNamespaceURI();
-            if(test.equals(value)) {
+        for (Iterator it = iteratePrefixMapping(all); it.hasNext();) {
+            PrefixMapping mapping = (PrefixMapping) it.next();
+            String value = fromPrefix
+                    ? mapping.getPrefix() : mapping.getNamespaceURI();
+            if (test.equals(value)) {
                 return mapping;
             }
         }
@@ -92,7 +92,7 @@ public class NamespaceImpl implements Namespace {
     }
 
     public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
-        if(prefix == null) {
+        if (prefix == null) {
             prefix = "";
         }
         return getMapping(true, prefix, all);
@@ -100,27 +100,27 @@ public class NamespaceImpl implements Namespace {
 
     public PrefixMapping getMappingFromURI(
             String namespaceURI, boolean all) {
-        if(StringUtil.isEmpty(namespaceURI)) {
+        if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
         return getMapping(false, namespaceURI, all);
     }
 
     public Iterator iteratePrefixMapping(boolean all) {
-        if(all && getParentSpace() != null) {
+        if (all && getParentSpace() != null) {
             return new AllNamespaceIterator(this);
         }
-        if(_mappings != null) {
+        if (_mappings != null) {
             return _mappings.iterator();
         }
         return NullIterator.getInstance();
     }
 
     public boolean addedMapping() {
-        if(_mappings == null) {
+        if (_mappings == null) {
             return false;
         }
-        synchronized(_mappings) {
+        synchronized (_mappings) {
             return _mappings.size() > 0;
         }
     }
@@ -133,7 +133,7 @@ public class NamespaceImpl implements Namespace {
         private Iterator _it;
 
         public AllNamespaceIterator(Namespace current) {
-            if(current == null) {
+            if (current == null) {
                 throw new IllegalArgumentException();
             }
             _current = current;
@@ -141,13 +141,13 @@ public class NamespaceImpl implements Namespace {
         }
 
         public boolean hasNext() {
-            while(_it != null) {
+            while (_it != null) {
                 boolean ret = _it.hasNext();
-                if(ret) {
+                if (ret) {
                     return true;
                 }
                 _current = _current.getParentSpace();
-                if(_current != null) {
+                if (_current != null) {
                     _it = _current.iteratePrefixMapping(false);
                 } else {
                     _it = null;
@@ -157,7 +157,7 @@ public class NamespaceImpl implements Namespace {
         }
 
         public Object next() {
-            if(hasNext()) {
+            if (hasNext()) {
                 return _it.next();
             }
             throw new NoSuchElementException();

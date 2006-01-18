@@ -33,22 +33,23 @@ public final class XMLUtil {
     }
 
     public static void parse(DefaultHandler handler,
-            InputStream stream, String publicID, String systemID,
-            boolean namespace, boolean validation, boolean xmlSchema) {
-        if(stream == null) {
+            InputStream stream, String publicID,
+            String systemID, boolean namespace,
+            boolean validation, boolean xmlSchema) {
+        if (stream == null) {
             throw new IllegalArgumentException();
         }
         XMLReaderPool pool = XMLReaderPool.getPool();
-        XMLReader xmlReader =
-            pool.borrowXMLReader(handler, namespace, validation, xmlSchema);
+        XMLReader xmlReader = pool.borrowXMLReader(
+                handler, namespace, validation, xmlSchema);
         InputSource input = new InputSource(stream);
         input.setPublicId(publicID);
         input.setSystemId(systemID);
         try {
             xmlReader.parse(input);
-        } catch(Throwable t) {
-            if(t instanceof RuntimeException) {
-                throw (RuntimeException)t;
+        } catch (Throwable t) {
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
             }
             throw new RuntimeException(t);
         } finally {
@@ -56,46 +57,48 @@ public final class XMLUtil {
         }
     }
 
-    public static String getStringValue(Attributes attr, String localName, String defaultValue) {
+    public static String getStringValue(
+            Attributes attr, String localName, String defaultValue) {
         String value = attr.getValue(localName);
-        if(StringUtil.hasValue(value)) {
+        if (StringUtil.hasValue(value)) {
             return value;
         }
         return defaultValue;
     }
 
-    public static int getIntValue(Attributes attr, String localName, int defaultValue) {
+    public static int getIntValue(
+            Attributes attr, String localName, int defaultValue) {
         String value = attr.getValue(localName);
-        if(StringUtil.hasValue(value)) {
+        if (StringUtil.hasValue(value)) {
             return Integer.parseInt(value);
         }
         return defaultValue;
     }
 
-    public static boolean getBooleanValue(Attributes attr,
-            String localName, boolean defaultValue) {
+    public static boolean getBooleanValue(
+            Attributes attr, String localName, boolean defaultValue) {
         String value = attr.getValue(localName);
         return ObjectUtil.booleanValue(value, defaultValue);
     }
 
-    public static Class getClassValue(Attributes attr,
-            String localName, Class defaultValue) {
+    public static Class getClassValue(
+            Attributes attr, String localName, Class defaultValue) {
         String className = attr.getValue(localName);
-        if(StringUtil.hasValue(className)) {
+        if (StringUtil.hasValue(className)) {
             return ObjectUtil.loadClass(className);
         }
         return defaultValue;
     }
 
-    public static Object getObjectValue(Attributes attr,
-            String localName, Class expectedClass) {
-        if(attr == null || StringUtil.isEmpty(localName) ||
-                expectedClass == null) {
+    public static Object getObjectValue(
+            Attributes attr, String localName, Class expectedClass) {
+        if (attr == null || StringUtil.isEmpty(localName)
+                || expectedClass == null) {
             throw new IllegalArgumentException();
         }
         Class clazz = getClassValue(attr, localName, null);
-        if(clazz != null) {
-            if(expectedClass.isAssignableFrom(clazz)) {
+        if (clazz != null) {
+            if (expectedClass.isAssignableFrom(clazz)) {
                 return ObjectUtil.newInstance(clazz);
             }
             throw new IllegalClassTypeException(expectedClass, clazz);

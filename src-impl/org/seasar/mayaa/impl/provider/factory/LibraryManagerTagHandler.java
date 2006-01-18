@@ -35,11 +35,11 @@ public class LibraryManagerTagHandler
     public LibraryManagerTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("libraryManager");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeProvider != null) {
+        if (beforeProvider != null) {
             _beforeManager = beforeProvider.getLibraryManager();
         }
         putHandler(new ConverterTagHandler(this));
@@ -51,7 +51,7 @@ public class LibraryManagerTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class managerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentManager = (LibraryManager)MarshallUtil.marshall(
+        _currentManager = (LibraryManager) MarshallUtil.marshall(
                 managerClass, LibraryManager.class, _beforeManager,
                 systemID, lineNumber);
         _parent.getServiceProvider().setLibraryManager(_currentManager);
@@ -62,7 +62,7 @@ public class LibraryManagerTagHandler
     }
 
     public LibraryManager getLibraryManager() {
-        if(_currentManager == null) {
+        if (_currentManager == null) {
             throw new IllegalStateException();
         }
         return _currentManager;

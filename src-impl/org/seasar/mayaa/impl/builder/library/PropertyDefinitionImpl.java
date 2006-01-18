@@ -55,28 +55,28 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     private PropertyConverter _propertyConverter;
 
     public void setPropertySet(PropertySet propertySet) {
-        if(propertySet == null) {
+        if (propertySet == null) {
             throw new IllegalArgumentException();
         }
         _propertySet = propertySet;
     }
 
     public PropertySet getPropertySet() {
-        if(_propertySet == null) {
+        if (_propertySet == null) {
             throw new IllegalStateException();
         }
         return _propertySet;
     }
 
     public void setName(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         _name = name;
     }
 
     public String getName() {
-        if(StringUtil.isEmpty(_name)) {
+        if (StringUtil.isEmpty(_name)) {
             throw new IllegalStateException();
         }
         return _name;
@@ -87,7 +87,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     }
 
     public String getImplName() {
-        if(StringUtil.isEmpty(_implName)) {
+        if (StringUtil.isEmpty(_implName)) {
             return getName();
         }
         return _implName;
@@ -106,7 +106,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     }
 
     public Class getExpectedClass() {
-        if(_expectedClass == null) {
+        if (_expectedClass == null) {
             return Object.class;
         }
         return _expectedClass;
@@ -137,7 +137,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
     }
 
     public void setPropertyConverter(PropertyConverter propertyConverter) {
-        if(propertyConverter == null) {
+        if (propertyConverter == null) {
             throw new IllegalArgumentException();
         }
         _propertyConverter = propertyConverter;
@@ -145,22 +145,22 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 
     protected PropertyConverter getPropertyConverter(
             ProcessorDefinition processorDef) {
-        if(_propertyConverter != null) {
+        if (_propertyConverter != null) {
             return _propertyConverter;
         }
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
         String converterName = getPropertyConverterName();
-        if(StringUtil.hasValue(converterName)) {
+        if (StringUtil.hasValue(converterName)) {
             PropertyConverter converter =
                 library.getPropertyConverter(converterName);
-            if(converter == null) {
+            if (converter == null) {
                 throw new ConverterNotFoundException(
                         converterName, getSystemID(), getLineNumber());
             }
             return converter;
         }
         Class propertyClass = getPropertyClass(processorDef);
-        if(propertyClass != null) {
+        if (propertyClass != null) {
             return library.getPropertyConverter(propertyClass);
         }
         return null;
@@ -178,7 +178,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 
     public Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected) {
-        if(injected == null) {
+        if (injected == null) {
             throw new IllegalArgumentException();
         }
         QName qName = getQName(injected);
@@ -187,26 +187,26 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 //        if(attribute == null) {
 //            attribute = original.getAttribute(getQName(original));
 //        }
-        if(value == null) {
+        if (value == null) {
             value = getDefaultValue();
-            if(attribute != null) {
+            if (attribute != null) {
                 value = attribute.getValue();
             } else if (value != null) {
                 attribute = new NodeAttributeImpl(qName, value);
             }
-        } else if(attribute != null) {
+        } else if (attribute != null) {
             String processorName = processorDef.getName();
             throw new FinalProcessorPropertyException(
                     processorName, qName);
         }
-        if(value != null) {
+        if (value != null) {
             Class propertyClass = getPropertyClass(processorDef);
-            if(propertyClass == null) {
+            if (propertyClass == null) {
                 // real property not found on the processor.
                 Class processotClass = processorDef.getProcessorClass();
-                if(VirtualPropertyAcceptable.class.isAssignableFrom(
+                if (VirtualPropertyAcceptable.class.isAssignableFrom(
                         processotClass) == false) {
-                    if(LOG.isWarnEnabled()) {
+                    if (LOG.isWarnEnabled()) {
                         LOG.warn(StringUtil.getMessage(
                                 PropertyDefinitionImpl.class, 0,
                                 processorDef.getName(), getName()));
@@ -215,15 +215,15 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
                 }
             }
             PropertyConverter converter = getPropertyConverter(processorDef);
-            if(converter == null && propertyClass != null) {
+            if (converter == null && propertyClass != null) {
                 LibraryManager manager = ProviderUtil.getLibraryManager();
                 converter = manager.getPropertyConverter(propertyClass);
             }
-            if(converter == null) {
+            if (converter == null) {
                 return value;
             }
             return converter.convert(attribute, value, getExpectedClass());
-        } else if(_required) {
+        } else if (_required) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
         }

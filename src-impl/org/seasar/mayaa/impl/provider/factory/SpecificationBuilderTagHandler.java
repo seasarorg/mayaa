@@ -35,11 +35,11 @@ public class SpecificationBuilderTagHandler
     public SpecificationBuilderTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("specificationBuilder");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeProvider != null) {
+        if (beforeProvider != null) {
             _beforeBuilder = beforeProvider.getSpecificationBuilder();
         }
     }
@@ -48,7 +48,7 @@ public class SpecificationBuilderTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentBuilder = (SpecificationBuilder)MarshallUtil.marshall(
+        _currentBuilder = (SpecificationBuilder) MarshallUtil.marshall(
                 builderClass, SpecificationBuilder.class, _beforeBuilder,
                 systemID, lineNumber);
         _parent.getServiceProvider().setSpecificationBuilder(_currentBuilder);
@@ -59,7 +59,7 @@ public class SpecificationBuilderTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_currentBuilder == null) {
+        if (_currentBuilder == null) {
             throw new IllegalStateException();
         }
         return _currentBuilder;

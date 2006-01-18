@@ -31,7 +31,7 @@ public class BuilderTagHandler
 
     public BuilderTagHandler(LibraryManagerTagHandler parent) {
         super("builder");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -39,9 +39,9 @@ public class BuilderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        _builder = (DefinitionBuilder)XMLUtil.getObjectValue(
+        _builder = (DefinitionBuilder) XMLUtil.getObjectValue(
                 attributes, "class", DefinitionBuilder.class);
-        if(_builder == null) {
+        if (_builder == null) {
             throw new IllegalStateException();
         }
         _builder.setSystemID(systemID);
@@ -54,7 +54,7 @@ public class BuilderTagHandler
     }
 
     public ParameterAware getParameterAware() {
-        if(_builder == null) {
+        if (_builder == null) {
             throw new IllegalStateException();
         }
         return _builder;

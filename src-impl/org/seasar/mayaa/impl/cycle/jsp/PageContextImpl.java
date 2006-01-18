@@ -58,13 +58,13 @@ public class PageContextImpl extends PageContext {
     private ServletConfig _config;
 
     private String getScopeFromInt(int scope) {
-        if(scope == PageContext.APPLICATION_SCOPE) {
+        if (scope == PageContext.APPLICATION_SCOPE) {
             return ServiceCycle.SCOPE_APPLICATION;
-        } else if(scope == PageContext.SESSION_SCOPE) {
+        } else if (scope == PageContext.SESSION_SCOPE) {
             return ServiceCycle.SCOPE_SESSION;
-        } else if(scope == PageContext.REQUEST_SCOPE) {
+        } else if (scope == PageContext.REQUEST_SCOPE) {
             return ServiceCycle.SCOPE_REQUEST;
-        } else if(scope == PageContext.PAGE_SCOPE) {
+        } else if (scope == PageContext.PAGE_SCOPE) {
             return ServiceCycle.SCOPE_PAGE;
         }
         throw new IllegalArgumentException();
@@ -112,13 +112,13 @@ public class PageContextImpl extends PageContext {
 
     protected String getContextRelativePath(
             ServletRequest request, String relativePath) {
-        if (relativePath.startsWith("/") ||
-                request instanceof HttpServletRequest == false) {
+        if (relativePath.startsWith("/")
+                || request instanceof HttpServletRequest == false) {
             return relativePath;
         }
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String uri = httpRequest.getServletPath();
-        if(StringUtil.hasValue(uri)) {
+        if (StringUtil.hasValue(uri)) {
             int pos = uri.lastIndexOf('/');
             if (pos >= 0) {
                 uri = uri.substring(0, pos);
@@ -131,7 +131,7 @@ public class PageContextImpl extends PageContext {
 
     public void include(String relativeUrlPath, boolean flush)
             throws ServletException, IOException {
-        if(flush) {
+        if (flush) {
             Response response = CycleUtil.getResponse();
             response.getWriter().flush();
         }
@@ -144,12 +144,12 @@ public class PageContextImpl extends PageContext {
     }
 
     public void handlePageException(Exception e) {
-        handlePageException((Throwable)e);
+        handlePageException((Throwable) e);
     }
 
     public void handlePageException(Throwable t) {
-        if(t instanceof RuntimeException) {
-            throw (RuntimeException)t;
+        if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
         }
         throw new RuntimeException(t);
     }
@@ -157,8 +157,8 @@ public class PageContextImpl extends PageContext {
     public Exception getException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Throwable t = cycle.getHandledError();
-        if(t instanceof Exception) {
-            return (Exception)t;
+        if (t instanceof Exception) {
+            return (Exception) t;
         }
         return null;
     }
@@ -169,8 +169,8 @@ public class PageContextImpl extends PageContext {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ApplicationScope application = cycle.getApplicationScope();
         Object obj = application.getUnderlyingContext();
-        if(obj instanceof ServletContext) {
-            return (ServletContext)obj;
+        if (obj instanceof ServletContext) {
+            return (ServletContext) obj;
         }
         throw new IllegalStateException();
     }
@@ -179,8 +179,8 @@ public class PageContextImpl extends PageContext {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         SessionScope session = cycle.getSessionScope();
         Object obj = session.getUnderlyingContext();
-        if(obj instanceof HttpSession) {
-            return (HttpSession)obj;
+        if (obj instanceof HttpSession) {
+            return (HttpSession) obj;
         }
         throw new IllegalStateException();
     }
@@ -189,8 +189,8 @@ public class PageContextImpl extends PageContext {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         RequestScope request = cycle.getRequestScope();
         Object obj = request.getUnderlyingContext();
-        if(obj instanceof ServletRequest) {
-            return (ServletRequest)obj;
+        if (obj instanceof ServletRequest) {
+            return (ServletRequest) obj;
         }
         throw new IllegalStateException();
     }
@@ -199,14 +199,14 @@ public class PageContextImpl extends PageContext {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         Object obj = response.getUnderlyingContext();
-        if(obj instanceof ServletResponse) {
-            return (ServletResponse)obj;
+        if (obj instanceof ServletResponse) {
+            return (ServletResponse) obj;
         }
         throw new IllegalStateException();
     }
 
     public ServletConfig getServletConfig() {
-        if(_config == null) {
+        if (_config == null) {
             _config = new CycleServletConfig();
         }
         return _config;
@@ -229,10 +229,10 @@ public class PageContextImpl extends PageContext {
     // Attributes --------------------------------------------------
 
     public Object findAttribute(String name) {
-        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
             Object ret = CycleUtil.getAttribute(
                     name, CycleUtil.STANDARD_SCOPES[i]);
-            if(ret != null) {
+            if (ret != null) {
                 return ret;
             }
         }
@@ -240,7 +240,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public Object getAttribute(String name, int scope) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
@@ -252,7 +252,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public void removeAttribute(String name, int scope) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
@@ -260,17 +260,17 @@ public class PageContextImpl extends PageContext {
     }
 
     public void removeAttribute(String name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
-        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
             CycleUtil.removeAttribute(
                     name, CycleUtil.STANDARD_SCOPES[i]);
         }
     }
 
     public void setAttribute(String name, Object value, int scope) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         String scopeName = getScopeFromInt(scope);
@@ -290,10 +290,10 @@ public class PageContextImpl extends PageContext {
     }
 
     public int getAttributesScope(String name) {
-        for(int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
+        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
             Object ret = CycleUtil.getAttribute(
                     name, CycleUtil.STANDARD_SCOPES[i]);
-            if(ret != null) {
+            if (ret != null) {
                 return JSP_SCOPES[i];
             }
         }

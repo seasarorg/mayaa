@@ -12,6 +12,10 @@ import java.util.NoSuchElementException;
  */
 public class IteratorUtil {
 
+    private IteratorUtil() {
+        // no instantiation.
+    }
+
     public static final Iterator NULL_ITERATOR = new Iterator() {
         public void remove() {
             throw new UnsupportedOperationException();

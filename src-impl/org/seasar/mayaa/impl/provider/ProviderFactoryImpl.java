@@ -44,7 +44,7 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
 
     protected ServiceProvider marshallServiceProvider(
             SourceDescriptor source, ServiceProvider beforeProvider) {
-        if(source.exists()) {
+        if (source.exists()) {
             ServiceProviderHandler handler =
                 new ServiceProviderHandler(beforeProvider);
             InputStream stream = source.getInputStream();
@@ -65,8 +65,8 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
                 systemID, ServiceProviderHandler.class);
         ServiceProvider provider = marshallServiceProvider(source, null);
         Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
-        while(it.hasNext()) {
-            source = (SourceDescriptor)it.next();
+        while (it.hasNext()) {
+            source = (SourceDescriptor) it.next();
             provider = marshallServiceProvider(source, provider);
         }
         source = FactoryFactory.getBootstrapSource(
@@ -76,21 +76,21 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     }
 
     public void setServiceClass(Class serviceClass) {
-        if(serviceClass == null) {
+        if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
         _serviceClass = serviceClass;
     }
 
     public Class getServiceClass() {
-        if(_serviceClass == null) {
+        if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
         return _serviceClass;
     }
 
     public ServiceProvider getServiceProvider() {
-        if(_provider == null) {
+        if (_provider == null) {
             _provider = getServiceProvider(_context);
         }
         return _provider;
@@ -99,14 +99,14 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     // ContextAware implements -------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
     }
 
     public Object getUnderlyingContext() {
-        if(_context == null) {
+        if (_context == null) {
             throw new IllegalStateException();
         }
         return _context;

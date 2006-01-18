@@ -87,8 +87,8 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         String jarName = getJarName(source.getSystemID());
-        if (StringUtil.hasValue(jarName) &&
-                containIgnores(jarName) == false) {
+        if (StringUtil.hasValue(jarName)
+                && containIgnores(jarName) == false) {
 
             String jarPath = _folderScanner.getFolder() + source.getSystemID();
             Date timestamp = source.getTimestamp();

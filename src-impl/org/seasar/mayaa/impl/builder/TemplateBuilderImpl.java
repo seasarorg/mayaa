@@ -70,7 +70,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private InjectionChain _chain = new DefaultInjectionChain();
 
     public void addInjectionResolver(InjectionResolver resolver) {
-        if(resolver == null) {
+        if (resolver == null) {
             throw new IllegalArgumentException();
         }
         synchronized (_resolvers) {
@@ -89,7 +89,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     protected XMLReaderPool getXMLReaderPool(String systemID) {
         ApplicationScope application = CycleUtil.getServiceCycle().getApplicationScope();
         String mimeType = application.getMimeType(systemID);
-        if(isHTML(mimeType)) {
+        if (isHTML(mimeType)) {
             return _htmlReaderPool;
         }
         return super.getXMLReaderPool(systemID);
@@ -100,10 +100,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected void afterBuild(Specification specification) {
-        if((specification instanceof Template) == false) {
+        if ((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
-        doInjection((Template)specification);
+        doInjection((Template) specification);
     }
 
     protected void saveToCycle(NodeTreeWalker originalNode,
@@ -115,20 +115,20 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected TemplateProcessor findConnectPoint(
             TemplateProcessor processor) {
-        if(processor instanceof ElementProcessor &&
-                ((ElementProcessor)processor).isDuplicated()) {
+        if (processor instanceof ElementProcessor
+                && ((ElementProcessor) processor).isDuplicated()) {
             // "processor"'s m:replace is true, ripping duplicated element.
             return findConnectPoint(
-                    (TemplateProcessor)processor.getChildProcessor(0));
+                    (TemplateProcessor) processor.getChildProcessor(0));
         }
-        for(int i = 0; i < processor.getChildProcessorSize(); i++) {
+        for (int i = 0; i < processor.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = processor.getChildProcessor(i);
-            if(child instanceof CharactersProcessor) {
-                CharactersProcessor charsProc = (CharactersProcessor)child;
+            if (child instanceof CharactersProcessor) {
+                CharactersProcessor charsProc = (CharactersProcessor) child;
                 CompiledScript script = charsProc.getText().getValue();
-                if(script.isLiteral()) {
+                if (script.isLiteral()) {
                     String value = script.getScriptText();
-                    if(StringUtil.hasValue(value.trim())) {
+                    if (StringUtil.hasValue(value.trim())) {
                         // "processor" has child which is not empty.
                         return null;
                     }
@@ -136,7 +136,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                     // "processor" has child which is scriptlet.
                     return null;
                 }
-            } else if(child instanceof AttributeProcessor == false) {
+            } else if (child instanceof AttributeProcessor == false) {
                 // "processor" has child which is implicit m:characters or
                 // nested child node, but is NOT m:attribute
                 return null;
@@ -150,7 +150,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         QName name = injected.getQName();
         LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         ProcessorDefinition def = libraryManager.getProcessorDefinition(name);
-        if(def != null) {
+        if (def != null) {
             TemplateProcessor proc =
                 def.createTemplateProcessor(original, injected);
             proc.setOriginalNode(original);
@@ -167,42 +167,42 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected TemplateProcessor resolveInjectedNode(Template template,
             Stack stack, SpecificationNode original, SpecificationNode injected) {
-        if(injected == null) {
+        if (injected == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(original, injected);
         TemplateProcessor processor = createProcessor(original, injected);
-        if(processor == null) {
+        if (processor == null) {
             PrefixMapping mapping = original.getMappingFromPrefix("", true);
-            if(mapping == null) {
+            if (mapping == null) {
                 throw new IllegalStateException();
             }
             String defaultURI = mapping.getNamespaceURI();
-            if(defaultURI.equals(injected.getQName().getNamespaceURI())) {
+            if (defaultURI.equals(injected.getQName().getNamespaceURI())) {
                 InjectionChain chain = getDefaultInjectionChain();
                 SpecificationNode retry = chain.getNode(injected);
                 processor = createProcessor(original, retry);
             }
-            if(processor == null) {
+            if (processor == null) {
                 throw new ProcessorNotInjectedException(injected.toString());
             }
         }
-        ProcessorTreeWalker parent = (ProcessorTreeWalker)stack.peek();
+        ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
         parent.addChildProcessor(processor);
         Iterator it = injected.iterateChildNode();
-        if(it.hasNext() == false) {
+        if (it.hasNext() == false) {
             return processor;
         }
         // "injected" node has children, nested node definition on .mayaa
         stack.push(processor);
         TemplateProcessor connectionPoint = null;
-        while(it.hasNext()) {
-            SpecificationNode childNode = (SpecificationNode)it.next();
+        while (it.hasNext()) {
+            SpecificationNode childNode = (SpecificationNode) it.next();
             saveToCycle(original, childNode);
             TemplateProcessor childProcessor = resolveInjectedNode(
                     template, stack, original, childNode);
-            if(childProcessor instanceof DoBodyProcessor) {
-                if(connectionPoint != null) {
+            if (childProcessor instanceof DoBodyProcessor) {
+                if (connectionPoint != null) {
                     throw new TooManyDoBodyException();
                 }
                 connectionPoint = childProcessor;
@@ -210,7 +210,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         stack.pop();
         saveToCycle(original, injected);
-        if(connectionPoint != null) {
+        if (connectionPoint != null) {
             return connectionPoint;
         }
         return findConnectPoint(processor);
@@ -218,10 +218,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected SpecificationNode resolveOriginalNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
-        if(_resolvers.size() > 0) {
+        if (_resolvers.size() > 0) {
             InjectionChainImpl first = new InjectionChainImpl(chain);
             return first.getNode(original);
         }
@@ -230,27 +230,27 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected void walkParsedTree(
             Template template, Stack stack, NodeTreeWalker original) {
-        if(original == null) {
+        if (original == null) {
             throw new IllegalArgumentException();
         }
         Iterator it;
         it = original.iterateChildNode();
-        while(it.hasNext()) {
-            SpecificationNode child = (SpecificationNode)it.next();
+        while (it.hasNext()) {
+            SpecificationNode child = (SpecificationNode) it.next();
             saveToCycle(child, child);
-            if(QM_MAYA.equals(child.getQName())) {
+            if (QM_MAYA.equals(child.getQName())) {
                 continue;
             }
             InjectionChain chain = getDefaultInjectionChain();
             SpecificationNode injected = resolveOriginalNode(child, chain);
-            if(injected == null) {
+            if (injected == null) {
                 throw new TemplateNodeNotResolvedException(
                         original.toString());
             }
             saveToCycle(child, injected);
             ProcessorTreeWalker processor = resolveInjectedNode(
                     template, stack, child, injected);
-            if(processor != null) {
+            if (processor != null) {
                 stack.push(processor);
                 walkParsedTree(template, stack, child);
                 stack.pop();
@@ -259,7 +259,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected void doInjection(Template template) {
-        if(template == null) {
+        if (template == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(template, template);
@@ -269,7 +269,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 QM_MAYA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
         walkParsedTree(template, stack, template);
-        if(template.equals(stack.peek()) == false) {
+        if (template.equals(stack.peek()) == false) {
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
@@ -293,7 +293,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 boolean namespaces, boolean validation, boolean xmlSchema) {
             XMLReader htmlReader = super.borrowXMLReader(
                     handler, namespaces, validation, xmlSchema);
-            if(handler instanceof AdditionalHandler) {
+            if (handler instanceof AdditionalHandler) {
                 try {
                     htmlReader.setProperty(
                             AdditionalHandler.ADDITIONAL_HANDLER, handler);
@@ -316,15 +316,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
 
         public SpecificationNode getNode(SpecificationNode original) {
-            if(original == null) {
+            if (original == null) {
                 throw new IllegalArgumentException();
             }
-            if(_index < getInjectionResolvers().size()) {
+            if (_index < getInjectionResolvers().size()) {
                 InjectionResolver resolver =
-                    (InjectionResolver)getInjectionResolvers().get(_index);
+                    (InjectionResolver) getInjectionResolvers().get(_index);
                 _index++;
                 InjectionChain chain;
-                if(_index == getInjectionResolvers().size()) {
+                if (_index == getInjectionResolvers().size()) {
                     chain = _external;
                 } else {
                     chain = this;

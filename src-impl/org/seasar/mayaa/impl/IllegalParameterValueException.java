@@ -42,7 +42,7 @@ public class IllegalParameterValueException extends MayaaException {
 
     protected String[] getMessageParams() {
         String className = "";
-        if(_parameterized != null) {
+        if (_parameterized != null) {
             className = _parameterized.getName();
         }
         return new String[] { className, _parameterName };

@@ -37,7 +37,7 @@ public class PropertySetTagHandler
     public PropertySetTagHandler(String name,
             TagHandler parent, LibraryTagHandler libraryTagHandler) {
         super(name);
-        if(parent == null || libraryTagHandler == null) {
+        if (parent == null || libraryTagHandler == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
@@ -52,11 +52,11 @@ public class PropertySetTagHandler
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
         String name = attributes.getValue("name");
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalStateException();
         }
         _propertySet = createPropertySet();
-        if(_propertySet == null) {
+        if (_propertySet == null) {
             throw new IllegalStateException();
         }
         _propertySet.setName(name);
@@ -65,13 +65,13 @@ public class PropertySetTagHandler
     }
 
     protected void addToLibrary(LibraryDefinitionImpl library) {
-        if(_parent instanceof ProcessorTagHandler) {
+        if (_parent instanceof ProcessorTagHandler) {
             ProcessorDefinitionImpl processorDef =
-                ((ProcessorTagHandler)_parent).getProcessorDefinition();
+                ((ProcessorTagHandler) _parent).getProcessorDefinition();
             processorDef.addPropertySetRef(_propertySet.getName(),
                     _propertySet.getSystemID(), _propertySet.getLineNumber());
         }
-        if(_propertySet.iteratePropertyDefinition().hasNext()) {
+        if (_propertySet.iteratePropertyDefinition().hasNext()) {
             library.addPropertySet(_propertySet);
         }
     }
@@ -84,7 +84,7 @@ public class PropertySetTagHandler
     }
 
     public PropertySetImpl getPropertySet() {
-        if(_propertySet == null) {
+        if (_propertySet == null) {
             throw new IllegalStateException();
         }
         return _propertySet;

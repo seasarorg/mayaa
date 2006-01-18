@@ -29,7 +29,7 @@ public abstract class AbstractCompiledScript
     private Class[] _methodArgClasses;
 
     public void setExpectedClass(Class expectedClass) {
-        if(expectedClass == null) {
+        if (expectedClass == null) {
             expectedClass = Object.class;
         }
         _expectedClass = expectedClass;
@@ -40,7 +40,7 @@ public abstract class AbstractCompiledScript
     }
 
     public void setMethodArgClasses(Class[] methodArgClasses) {
-        if(methodArgClasses == null) {
+        if (methodArgClasses == null) {
             methodArgClasses = ZERO_ARGS_TYPE;
         }
         _methodArgClasses = methodArgClasses;

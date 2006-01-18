@@ -25,15 +25,18 @@ public class NoRequiredPropertyException extends MayaaException {
 
     private static final long serialVersionUID = -8388715165180536210L;
 
-    String _namespaceURI;
-    String _processorName;
-    String _propertyName;
+    private final String _namespaceURI;
+    private final String _processorName;
+    private final String _propertyName;
 
     public NoRequiredPropertyException(String processorName, QName qName) {
         _processorName = processorName;
-        if(qName != null) {
+        if (qName != null) {
             _namespaceURI = qName.getNamespaceURI();
             _propertyName = qName.getLocalName();
+        } else {
+            _namespaceURI = null;
+            _propertyName = null;
         }
     }
 

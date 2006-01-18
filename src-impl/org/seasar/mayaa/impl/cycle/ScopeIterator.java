@@ -31,7 +31,7 @@ public class ScopeIterator implements Iterator {
     private String _current;
 
     public ScopeIterator(ServiceCycle cycle, Iterator it) {
-        if(cycle == null || it == null) {
+        if (cycle == null || it == null) {
             throw new IllegalArgumentException();
         }
         _cycle = cycle;
@@ -44,26 +44,26 @@ public class ScopeIterator implements Iterator {
 
     public Object next() {
         AttributeScope scope = null;
-        if(_current == null) {
+        if (_current == null) {
             AttributeScope page = _cycle.getPageScope();
-            if(page != null) {
+            if (page != null) {
                 scope = page;
                 _current = ServiceCycle.SCOPE_PAGE;
-            } else if(_it.hasNext()) {
-                scope = (AttributeScope)_it.next();
+            } else if (_it.hasNext()) {
+                scope = (AttributeScope) _it.next();
                 _current = scope.getScopeName();
             }
-        } else if(ServiceCycle.SCOPE_REQUEST.equals(_current)) {
+        } else if (ServiceCycle.SCOPE_REQUEST.equals(_current)) {
             scope = _cycle.getSessionScope();
             _current = ServiceCycle.SCOPE_SESSION;
-        } else if(ServiceCycle.SCOPE_SESSION.equals(_current)) {
+        } else if (ServiceCycle.SCOPE_SESSION.equals(_current)) {
             scope = _cycle.getApplicationScope();
             _current = ServiceCycle.SCOPE_APPLICATION;
-        } else if(ServiceCycle.SCOPE_APPLICATION.equals(_current)) {
+        } else if (ServiceCycle.SCOPE_APPLICATION.equals(_current)) {
             throw new NoSuchElementException();
         } else {
-            if(_it.hasNext()) {
-                scope = (AttributeScope)_it.next();
+            if (_it.hasNext()) {
+                scope = (AttributeScope) _it.next();
                 _current = scope.getScopeName();
             } else {
                 scope = _cycle.getRequestScope();

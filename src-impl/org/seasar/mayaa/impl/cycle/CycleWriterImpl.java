@@ -52,7 +52,7 @@ public class CycleWriterImpl extends CycleWriter {
     }
 
     public void writeOut(Writer writer) throws IOException {
-        if(writer == null) {
+        if (writer == null) {
             return;
         }
         // don't flush.

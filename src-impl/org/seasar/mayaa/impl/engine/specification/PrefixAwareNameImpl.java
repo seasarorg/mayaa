@@ -31,7 +31,7 @@ public class PrefixAwareNameImpl extends NamespaceImpl
     private QName _qName;
 
     public PrefixAwareNameImpl(QName qName) {
-        if(qName == null) {
+        if (qName == null) {
             throw new IllegalArgumentException();
         }
         _qName = qName;
@@ -43,9 +43,9 @@ public class PrefixAwareNameImpl extends NamespaceImpl
 
     public String getPrefix() {
         String namespaceURI = getQName().getNamespaceURI();
-        for(Iterator it = iteratePrefixMapping(true); it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping)it.next();
-            if(namespaceURI.equals(mapping.getNamespaceURI())) {
+        for (Iterator it = iteratePrefixMapping(true); it.hasNext();) {
+            PrefixMapping mapping = (PrefixMapping) it.next();
+            if (namespaceURI.equals(mapping.getNamespaceURI())) {
                 return mapping.getPrefix();
             }
         }
@@ -55,7 +55,7 @@ public class PrefixAwareNameImpl extends NamespaceImpl
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         String prefix = getPrefix();
-        if(StringUtil.hasValue(prefix)) {
+        if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
         buffer.append(getQName().getLocalName());
@@ -64,6 +64,10 @@ public class PrefixAwareNameImpl extends NamespaceImpl
 
     public boolean equals(Object test) {
         return getQName().equals(test);
+    }
+
+    public int hashCode() {
+        return getQName().hashCode();
     }
 
 }

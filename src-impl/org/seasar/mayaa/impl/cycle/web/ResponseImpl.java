@@ -33,7 +33,7 @@ public class ResponseImpl extends AbstractResponse {
     private HttpServletResponse _httpServletResponse;
 
     protected void check() {
-        if(_httpServletResponse == null) {
+        if (_httpServletResponse == null) {
             throw new IllegalStateException();
         }
     }
@@ -43,7 +43,7 @@ public class ResponseImpl extends AbstractResponse {
             check();
             try {
                 _httpServletResponse.sendRedirect(url);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -52,7 +52,7 @@ public class ResponseImpl extends AbstractResponse {
     protected void setContentTypeToUnderlyingObject(
             String contentType) {
         check();
-        if(StringUtil.isEmpty(contentType)) {
+        if (StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
         _httpServletResponse.setContentType(contentType);
@@ -62,7 +62,7 @@ public class ResponseImpl extends AbstractResponse {
 
     public void addHeader(String name, String value) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletResponse.addHeader(name, value);
@@ -70,7 +70,7 @@ public class ResponseImpl extends AbstractResponse {
 
     public void setHeader(String name, String value) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletResponse.setHeader(name, value);
@@ -92,7 +92,7 @@ public class ResponseImpl extends AbstractResponse {
 
     public String encodeURL(String url) {
         check();
-        if(StringUtil.isEmpty(url)) {
+        if (StringUtil.isEmpty(url)) {
             throw new IllegalArgumentException();
         }
         return _httpServletResponse.encodeURL(url);
@@ -101,11 +101,11 @@ public class ResponseImpl extends AbstractResponse {
     // ContextAware implemetns --------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null ||
-                context instanceof HttpServletResponse == false) {
+        if (context == null
+                || context instanceof HttpServletResponse == false) {
             throw new IllegalArgumentException();
         }
-        _httpServletResponse = (HttpServletResponse)context;
+        _httpServletResponse = (HttpServletResponse) context;
         clearBuffer();
     }
 

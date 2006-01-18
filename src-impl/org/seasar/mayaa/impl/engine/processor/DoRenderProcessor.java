@@ -39,8 +39,8 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     protected Stack getInsertProcessorStack() {
         RequestScope request = CycleUtil.getRequestScope();
-        Stack stack = (Stack)request.getAttribute(getStackKey());
-        if(stack == null) {
+        Stack stack = (Stack) request.getAttribute(getStackKey());
+        if (stack == null) {
             stack = new Stack();
             request.setAttribute(getStackKey(), stack);
         }
@@ -58,7 +58,7 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     // MLD property, default=""
     public void setName(String name) {
-        if(name == null) {
+        if (name == null) {
             _name = name;
         }
         _name = name;
@@ -75,8 +75,8 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     public InsertProcessor peekInsertProcessor() {
            Stack stack = getInsertProcessorStack();
-        if(stack.size() > 0) {
-               InsertProcessor proc = (InsertProcessor)stack.peek();
+        if (stack.size() > 0) {
+               InsertProcessor proc = (InsertProcessor) stack.peek();
             return proc;
         }
         return null;

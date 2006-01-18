@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.Response;
@@ -66,23 +68,23 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public ErrorHandler getErrorHandler() {
-        if(_errorHandler == null) {
+        if (_errorHandler == null) {
             throw new IllegalStateException();
         }
         return _errorHandler;
     }
 
     protected Page findPageFromCache(String pageName) {
-        if(_pages != null) {
+        if (_pages != null) {
             synchronized (_pages) {
-                for(Iterator it = new ChildSpecificationsIterator(_pages);
-                        it.hasNext(); ) {
+                for (Iterator it = new ChildSpecificationsIterator(_pages);
+                        it.hasNext();) {
                     Object child = it.next();
-                    if(child instanceof Page) {
-                        Page page = (Page)child;
+                    if (child instanceof Page) {
+                        Page page = (Page) child;
                         synchronized (page) {
                             String name = page.getPageName();
-                            if(pageName.equals(name)) {
+                            if (pageName.equals(name)) {
                                 page.checkTimestamp();
                                 return page;
                             }
@@ -103,11 +105,11 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public Page getPage(String pageName) {
-        synchronized(this) {
+        synchronized (this) {
             Page page = findPageFromCache(pageName);
-            if(page == null) {
+            if (page == null) {
                 page = createNewPage(pageName);
-                if(_pages == null) {
+                if (_pages == null) {
                     _pages = new ArrayList();
                 }
                 page.checkTimestamp();
@@ -129,7 +131,7 @@ public class EngineImpl extends SpecificationImpl
     private boolean validPath(String path) {
         if (_templatePathPatterns != null) {
             for (Iterator it = _templatePathPatterns.iterator();
-                    it.hasNext(); ) {
+                    it.hasNext();) {
                 PathPattern pattern = (PathPattern) it.next();
                 if (pattern.matches(path)) {
                     return pattern.isTemplate();
@@ -140,14 +142,14 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
-        Throwable throwable = t ;
-        while(throwable.getClass().equals(RuntimeException.class)) {
-            if( throwable.getCause() == null ) {
+        Throwable throwable = t;
+        while (throwable.getClass().equals(RuntimeException.class)) {
+            if (throwable.getCause() == null) {
                 break;
             }
             throwable = throwable.getCause();
         }
-        return throwable ;
+        return throwable;
     }
 
     public void handleError(Throwable t, boolean pageFlush) {
@@ -157,14 +159,14 @@ public class EngineImpl extends SpecificationImpl
             cycle.setHandledError(t);
             getErrorHandler().doErrorHandle(t, pageFlush);
             cycle.setHandledError(null);
-        } catch(Throwable internal) {
-            if(LOG.isFatalEnabled()) {
+        } catch (Throwable internal) {
+            if (LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
                         EngineImpl.class, 0, internal.getMessage());
                 LOG.fatal(fatalMsg, internal);
             }
-            if(t instanceof RuntimeException) {
-                throw (RuntimeException)t;
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
             }
             throw new RuntimeException(t);
         }
@@ -180,7 +182,7 @@ public class EngineImpl extends SpecificationImpl
         checkTimestamp();
         try {
             boolean service = true;
-            while(service) {
+            while (service) {
                 try {
                     saveToCycle();
                     SpecificationUtil.initScope();
@@ -197,21 +199,21 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     SpecificationUtil.endScope();
                     Response response = CycleUtil.getResponse();
-                    if(ret == null) {
-                        if(response.getWriter().isDirty() == false) {
+                    if (ret == null) {
+                        if (response.getWriter().isDirty() == false) {
                             throw new RenderNotCompletedException(
                                     pageName, extension);
                         }
                     }
-                    if(pageFlush) {
+                    if (pageFlush) {
                         response.flush();
                     }
                     service = false;
-                } catch(PageForwarded f) {
+                } catch (PageForwarded f) {
                     // do nothing.
                 }
             }
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             cycle.getResponse().clearBuffer();
             SpecificationUtil.initScope();
             handleError(t, pageFlush);
@@ -219,33 +221,33 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected void doResourceService(ServiceCycle cycle) {
-        if(cycle == null) {
+        if (cycle == null) {
             throw new IllegalArgumentException();
         }
         String path = cycle.getRequestScope().getRequestedPath();
         PageSourceDescriptor source = new PageSourceDescriptor();
         source.setSystemID(path);
         InputStream stream = source.getInputStream();
-        if(stream != null) {
+        if (stream != null) {
             OutputStream out = cycle.getResponse().getOutputStream();
             try {
-                for(int i = stream.read(); i != -1; i = stream.read()) {
+                for (int i = stream.read(); i != -1; i = stream.read()) {
                     out.write(i);
                 }
                 out.flush();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
                 IOUtil.close(stream);
             }
         } else {
-            cycle.getResponse().setStatus(404);
+            cycle.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     public void doService(boolean pageFlush) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if(isPageRequested()) {
+        if (isPageRequested()) {
             doPageService(cycle, pageFlush);
         } else {
             doResourceService(cycle);
@@ -255,12 +257,12 @@ public class EngineImpl extends SpecificationImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if(DEFAULT_SPECIFICATION.equals(name)) {
+        if (DEFAULT_SPECIFICATION.equals(name)) {
             SourceDescriptor source = new DelaySourceDescriptor();
             source.setSystemID(value);
             setSource(source);
             _defaultSpecification = value;
-        } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList();
@@ -269,7 +271,7 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), true);
                 _templatePathPatterns.add(0, pathPattern);
             }
-        } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList();
@@ -283,14 +285,14 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public String getParameter(String name) {
-        if(DEFAULT_SPECIFICATION.equals(name)) {
+        if (DEFAULT_SPECIFICATION.equals(name)) {
             return _defaultSpecification;
-        } else if(TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
             return patternToString(_templatePathPatterns, true);
-        } else if(NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
@@ -301,7 +303,7 @@ public class EngineImpl extends SpecificationImpl
 
     private String patternToString(List patterns, boolean result) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator it = patterns.iterator(); it.hasNext(); ) {
+        for (Iterator it = patterns.iterator(); it.hasNext();) {
             PathPattern pathPattern = (PathPattern) it.next();
             if (pathPattern.isTemplate() == result) {
                 sb.append(pathPattern.getPattern());

@@ -67,10 +67,10 @@ public class WriteProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_value != null) {
-            String ret = (String)_value.getValue().execute(null);
-            if(StringUtil.isEmpty(ret) && _default != null) {
-                ret = (String)_default.getValue().execute(null);
+        if (_value != null) {
+            String ret = (String) _value.getValue().execute(null);
+            if (StringUtil.isEmpty(ret) && _default != null) {
+                ret = (String) _default.getValue().execute(null);
             }
             if (toBoolean(_escapeXml)) {
                 ret = StringUtil.escapeXml(ret);

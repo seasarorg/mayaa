@@ -29,17 +29,17 @@ public class ComplexScript implements CompiledScript {
     private CompiledScript[] _compiled;
 
     public ComplexScript(CompiledScript[] compiled) {
-        if(compiled == null) {
+        if (compiled == null) {
             throw new IllegalArgumentException();
         }
         _compiled = compiled;
-        for(int i = 0; i < compiled.length; i++) {
+        for (int i = 0; i < compiled.length; i++) {
             compiled[i].setExpectedClass(String.class);
         }
     }
 
     public void setExpectedClass(Class expectedClass) {
-        if(expectedClass == null) {
+        if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
         _expectedClass = expectedClass;
@@ -51,10 +51,10 @@ public class ComplexScript implements CompiledScript {
 
     public Object execute(Object[] args) {
         StringBuffer buffer = new StringBuffer();
-        for(int i = 0; i < _compiled.length; i++) {
+        for (int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].execute(null));
         }
-        if(_expectedClass == Void.class) {
+        if (_expectedClass == Void.class) {
             return null;
         }
         return ObjectUtil.convert(_expectedClass, buffer.toString());
@@ -70,7 +70,7 @@ public class ComplexScript implements CompiledScript {
 
     public String getScriptText() {
         StringBuffer buffer = new StringBuffer();
-        for(int i = 0; i < _compiled.length; i++) {
+        for (int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].getScriptText());
         }
         return buffer.toString();

@@ -42,7 +42,7 @@ public class BuilderUtil implements CONST_IMPL {
 
     public static SpecificationNode createInjectedNode(QName qName,
             String uri, SpecificationNode original, boolean mayaa) {
-        if(qName == null || original == null) {
+        if (qName == null || original == null) {
             throw new IllegalArgumentException();
         }
         String systemID = original.getSystemID();
@@ -51,7 +51,7 @@ public class BuilderUtil implements CONST_IMPL {
         int sequenceID = original.getSequenceID();
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, onTemplate, sequenceID);
-        if(StringUtil.hasValue(uri)) {
+        if (StringUtil.hasValue(uri)) {
             PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
 
             boolean needAdjust = adjuster.isTargetNode(original.getQName());
@@ -62,13 +62,13 @@ public class BuilderUtil implements CONST_IMPL {
                 basePath = contextPath + sourcePath;
             }
 
-            for(Iterator it = original.iterateAttribute(); it.hasNext(); ) {
-                NodeAttribute attr = (NodeAttribute)it.next();
+            for (Iterator it = original.iterateAttribute(); it.hasNext();) {
+                NodeAttribute attr = (NodeAttribute) it.next();
                 String attrURI = attr.getQName().getNamespaceURI();
-                if(uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
+                if (uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
                     String attrValue = attr.getValue();
-                    if (needAdjust &&
-                            adjuster.isTargetAttribute(
+                    if (needAdjust
+                            && adjuster.isTargetAttribute(
                                     original.getQName(), attr.getQName())) {
                         attrValue =
                             StringUtil.adjustRelativePath(basePath, attrValue);
@@ -87,20 +87,20 @@ public class BuilderUtil implements CONST_IMPL {
         String prefix = null;
         String localName = null;
         String namespaceURI = null;
-        if(parsed.length == 2) {
+        if (parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
             PrefixMapping mapping =
                 namespace.getMappingFromPrefix(prefix, true);
-            if(mapping == null) {
+            if (mapping == null) {
                 throw new PrefixMappingNotFoundException(prefix);
             }
             namespaceURI = mapping.getNamespaceURI();
-        } else if(parsed.length == 1) {
+        } else if (parsed.length == 1) {
             localName = parsed[0];
             PrefixMapping mapping =
                 namespace.getMappingFromPrefix("", true);
-            if(mapping != null) {
+            if (mapping != null) {
                 namespaceURI = mapping.getNamespaceURI();
             } else {
                 throw new PrefixMappingNotFoundException("");

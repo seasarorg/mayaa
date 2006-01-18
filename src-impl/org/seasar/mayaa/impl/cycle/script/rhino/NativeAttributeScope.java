@@ -35,21 +35,21 @@ public class NativeAttributeScope extends NativeJavaObject {
 
     public NativeAttributeScope(Scriptable scope, AttributeScope attrs) {
         super(scope, attrs, Map.class);
-        if(attrs == null) {
+        if (attrs == null) {
             throw new IllegalArgumentException();
         }
         _attrs = attrs;
     }
 
     public boolean has(String name, Scriptable start) {
-        if(_attrs.hasAttribute(name)) {
+        if (_attrs.hasAttribute(name)) {
             return true;
         }
         return super.has(name, start);
     }
 
     public Object get(String name, Scriptable start) {
-        if(_attrs.hasAttribute(name)) {
+        if (_attrs.hasAttribute(name)) {
             return _attrs.getAttribute(name);
         }
         return super.get(name, start);
@@ -60,20 +60,20 @@ public class NativeAttributeScope extends NativeJavaObject {
     }
 
     public void delete(String name) {
-        if(_attrs.hasAttribute(name)) {
+        if (_attrs.hasAttribute(name)) {
             _attrs.removeAttribute(name);
         }
     }
 
     public Object[] getIds() {
         Set set = new HashSet();
-        for(Iterator it = _attrs.iterateAttributeNames(); it.hasNext(); ) {
+        for (Iterator it = _attrs.iterateAttributeNames(); it.hasNext();) {
             set.add(it.next());
         }
         Object[] ids = super.getIds();
-        for(int i = 0; i < ids.length; i++) {
+        for (int i = 0; i < ids.length; i++) {
             Object name = ids[i];
-            if(set.contains(name) == false) {
+            if (set.contains(name) == false) {
                 set.add(name);
             }
         }

@@ -80,7 +80,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
             SourceAlias alias = (SourceAlias) _it.next();
             String systemID = alias.getSystemID();
             if (systemID.startsWith("/WEB-INF/")) {
-                systemID = systemID.substring(9);
+                systemID = systemID.substring("/WEB-INF/".length());
             }
             ApplicationSourceDescriptor source =
                 new ApplicationSourceDescriptor();

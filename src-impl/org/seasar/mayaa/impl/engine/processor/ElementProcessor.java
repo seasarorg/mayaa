@@ -50,8 +50,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected Namespace getCurrentNS() {
-        Namespace currentNS = (Namespace)_currentNS.get();
-        if(currentNS == null) {
+        Namespace currentNS = (Namespace) _currentNS.get();
+        if (currentNS == null) {
             currentNS = SpecificationUtil.createNamespace();
             currentNS.setParentSpace(getOriginalNode().getParentSpace());
             _currentNS.set(currentNS);
@@ -71,14 +71,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     // MLD property
     public void setName(PrefixAwareName name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         _name = name;
     }
 
     protected PrefixAwareName getName() {
-        if(_name == null) {
+        if (_name == null) {
             throw new IllegalStateException();
         }
         return _name;
@@ -86,7 +86,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     public String getUniqueID() {
         String uniqueID = super.getUniqueID();
-        if(isDuplicated()) {
+        if (isDuplicated()) {
             uniqueID = uniqueID + SUFFIX_DUPLICATED;
         }
         return uniqueID;
@@ -97,19 +97,19 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected void resolvePrefix(PrefixAwareName name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         Namespace currentNS = getCurrentNS();
         String namespaceURI = name.getQName().getNamespaceURI();
         PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
-        if(mapping != null) {
+        if (mapping != null) {
             return;
         }
         Namespace namespace = getInjectedNode().getParentSpace();
         mapping = namespace.getMappingFromURI(namespaceURI, true);
-        if(mapping != null) {
+        if (mapping != null) {
             currentNS.addPrefixMapping(
                     mapping.getPrefix(), mapping.getNamespaceURI());
             return;
@@ -119,25 +119,25 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     protected void resolvePrefixAll() {
         resolvePrefix(getName());
-        for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
-            ProcessorProperty prop = (ProcessorProperty)it.next();
+        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
             resolvePrefix(prop.getName());
         }
-        for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
-            ProcessorProperty prop = (ProcessorProperty)it.next();
+        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
             resolvePrefix(prop.getName());
         }
     }
 
     protected String getResolvedPrefix(PrefixAwareName name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         Namespace currentNS = getCurrentNS();
         String namespaceURI = name.getQName().getNamespaceURI();
         PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
-        if(mapping != null) {
+        if (mapping != null) {
             return mapping.getPrefix();
         }
         throw new IllegalStateException();
@@ -145,15 +145,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     protected void appendPrefixMappingString(
             StringBuffer buffer, Namespace namespace) {
-        if(namespace == null) {
+        if (namespace == null) {
             throw new IllegalArgumentException();
         }
-        for(Iterator it = namespace.iteratePrefixMapping(false);
-                it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping)it.next();
+        for (Iterator it = namespace.iteratePrefixMapping(false);
+                it.hasNext();) {
+            PrefixMapping mapping = (PrefixMapping) it.next();
             String pre = mapping.getPrefix();
             String uri = mapping.getNamespaceURI();
-            if(StringUtil.hasValue(pre)) {
+            if (StringUtil.hasValue(pre)) {
                 buffer.append(" xmlns:").append(pre);
             } else {
                 buffer.append(" xmlns");
@@ -165,18 +165,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void appendAttributeString(
             StringBuffer buffer, PrefixAwareName propName, Object value) {
         QName qName = propName.getQName();
-        if(URI_MAYA.equals(qName.getNamespaceURI())) {
+        if (URI_MAYA.equals(qName.getNamespaceURI())) {
             return;
         }
         buffer.append(" ");
         String attrPrefix = getResolvedPrefix(propName);
-        if(StringUtil.hasValue(attrPrefix)) {
+        if (StringUtil.hasValue(attrPrefix)) {
             buffer.append(attrPrefix).append(":");
         }
         buffer.append(qName.getLocalName());
         buffer.append("=\"");
-        if(value instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript)value;
+        if (value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript) value;
             buffer.append(script.execute(null));
         } else {
             buffer.append(value.toString());
@@ -185,7 +185,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected boolean needsCloseElement(QName qName) {
-        if(isHTML(qName)) {
+        if (isHTML(qName)) {
             String localName = qName.getLocalName();
             HTMLElements.Element element =
                 HTMLElements.getElement(localName);
@@ -208,42 +208,42 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected ProcessStatus writeStartElement() {
-        if(getName() == null) {
+        if (getName() == null) {
             throw new IllegalStateException();
         }
         resolvePrefixAll();
         StringBuffer buffer = new StringBuffer("<");
         String prefix = getResolvedPrefix(getName());
-        if(StringUtil.hasValue(prefix)) {
+        if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
         QName qName = getName().getQName();
         String uri = qName.getNamespaceURI();
         buffer.append(qName.getLocalName());
-        if(isHTML(qName) == false) {
+        if (isHTML(qName) == false) {
             appendPrefixMappingString(buffer, getCurrentNS());
             appendPrefixMappingString(buffer, getName().getParentSpace());
         }
-        for(Iterator it = iterateProcesstimeProperties(); it.hasNext(); ) {
-            ProcessorProperty prop = (ProcessorProperty)it.next();
+        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
             PrefixAwareName propName = prop.getName();
             QName propQName = propName.getQName();
             String propURI = propQName.getNamespaceURI();
             String propLocalName = propQName.getLocalName();
-            if(isDuplicated()) {
-                if(uri.equals(propURI) && "id".equals(propLocalName)) {
+            if (isDuplicated()) {
+                if (uri.equals(propURI) && "id".equals(propLocalName)) {
                     continue;
                 }
             }
             appendAttributeString(buffer, propName, prop.getValue());
         }
-        for(Iterator it = iterateInformalProperties(); it.hasNext(); ) {
-            ProcessorProperty prop = (ProcessorProperty)it.next();
-            if(hasProcesstimeProperty(prop) == false) {
+        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
+            if (hasProcesstimeProperty(prop) == false) {
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
-        if(isHTML(qName) || getChildProcessorSize() > 0) {
+        if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
         } else {
             buffer.append("/>");
@@ -253,14 +253,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected void writeEndElement() {
-        if(getName() == null) {
+        if (getName() == null) {
             throw new IllegalStateException();
         }
         QName qName = getName().getQName();
-        if(needsCloseElement(qName)) {
+        if (needsCloseElement(qName)) {
             StringBuffer buffer = new StringBuffer("</");
             String prefix = getResolvedPrefix(getName());
-            if(StringUtil.hasValue(prefix)) {
+            if (StringUtil.hasValue(prefix)) {
                 buffer.append(prefix).append(":");
             }
             buffer.append(qName.getLocalName()).append(">");

@@ -26,10 +26,12 @@ import org.seasar.mayaa.impl.CONST_IMPL;
  */
 public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
 
-    public static final String _NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
-    public static final String _NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
-    public static final String LEXICAL_HANDLER = "http://xml.org/sax/properties/lexical-handler";
-    public static final String FILTERS = "http://cyberneko.org/html/properties/filters";
+    public static final String HTML_NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
+    public static final String HTML_NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
+    public static final String LEXICAL_HANDLER
+            = "http://xml.org/sax/properties/lexical-handler";
+    public static final String FILTERS
+            = "http://cyberneko.org/html/properties/filters";
 
     protected void unread(int n) {
         fCurrentEntity.offset -= n;
@@ -61,7 +63,7 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
                 outputCharacters(str, content);
                 return -1;
             }
-            if (!Character.isLetterOrDigit((char)c) && c != '#') {
+            if (!Character.isLetterOrDigit((char) c) && c != '#') {
                 if (fReportErrors) {
                     fErrorReporter.reportWarning("HTML1004", null);
                 }
@@ -69,7 +71,7 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
                 outputCharacters(str, content);
                 return -1;
             }
-            str.append((char)c);
+            str.append((char) c);
         }
         outputCharacters(str, content);
         return -1;

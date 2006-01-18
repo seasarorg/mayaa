@@ -35,11 +35,11 @@ public class ScriptEnvirionmentTagHandler
     public ScriptEnvirionmentTagHandler(
             ProviderTagHandler parent, ServiceProvider beforeProvider) {
         super("scriptEnvironment");
-        if(parent == null) {
+        if (parent == null) {
             throw new IllegalArgumentException();
         }
         _parent = parent;
-        if(beforeProvider != null) {
+        if (beforeProvider != null) {
             _beforeEnv = beforeProvider.getScriptEnvironment();
         }
         putHandler(new ScopeTagHandler(this));
@@ -49,7 +49,7 @@ public class ScriptEnvirionmentTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class environmentClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentEnv = (ScriptEnvironment)MarshallUtil.marshall(
+        _currentEnv = (ScriptEnvironment) MarshallUtil.marshall(
                 environmentClass, ScriptEnvironment.class, _beforeEnv,
                 systemID, lineNumber);
         _parent.getServiceProvider().setScriptEnvironment(_currentEnv);
@@ -60,7 +60,7 @@ public class ScriptEnvirionmentTagHandler
     }
 
     public ScriptEnvironment getScriptEnvironment() {
-        if(_currentEnv == null) {
+        if (_currentEnv == null) {
             throw new IllegalStateException();
         }
         return _currentEnv;

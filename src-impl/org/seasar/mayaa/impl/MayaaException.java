@@ -38,14 +38,14 @@ public abstract class MayaaException
 
     public MayaaException() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        if(cycle != null) {
+        if (cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();
-            if(original != null) {
+            if (original != null) {
                 _originalSystemID = original.getSystemID();
                 _originalLineNumber = original.getLineNumber();
             }
             NodeTreeWalker injected = cycle.getInjectedNode();
-            if(injected != null) {
+            if (injected != null) {
                 _injectedSystemID = injected.getSystemID();
                 _injectedLineNumber = injected.getLineNumber();
             }
@@ -54,26 +54,27 @@ public abstract class MayaaException
 
     protected abstract String[] getMessageParams();
 
+    private static final int RESERVED_PARAM_COUNT = 4;
+
     protected String[] getParamValues() {
         String[] params = ZERO_PARAM;
         try {
             params = getMessageParams();
-            if(params == null) {
+            if (params == null) {
                 params = ZERO_PARAM;
             }
-        } catch(Throwable t) {
-            if(LOG.isErrorEnabled()) {
+        } catch (Throwable t) {
+            if (LOG.isErrorEnabled()) {
                 LOG.error(t.getMessage(), t);
             }
         }
         int paramLength = params.length;
-        int magicNumber = 4;
-        String[] newParams = new String[paramLength + magicNumber];
+        String[] newParams = new String[paramLength + RESERVED_PARAM_COUNT];
         newParams[0] = _originalSystemID;
         newParams[1] = Integer.toString(_originalLineNumber);
         newParams[2] = _injectedSystemID;
         newParams[3] = Integer.toString(_injectedLineNumber);
-        System.arraycopy(params, 0, newParams, magicNumber, paramLength);
+        System.arraycopy(params, 0, newParams, RESERVED_PARAM_COUNT, paramLength);
         return newParams;
     }
 

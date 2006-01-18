@@ -35,7 +35,7 @@ public class FactoryTagHandler
     public FactoryTagHandler(
             Class interfaceClass, UnifiedFactory beforeFactory) {
         super("factory");
-        if(interfaceClass == null) {
+        if (interfaceClass == null) {
             throw new IllegalArgumentException();
         }
         _interfaceClass = interfaceClass;
@@ -46,22 +46,22 @@ public class FactoryTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class factoryClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentFactory = (UnifiedFactory)MarshallUtil.marshall(
+        _currentFactory = (UnifiedFactory) MarshallUtil.marshall(
                 factoryClass, _interfaceClass, _beforeFactory,
                 systemID, lineNumber);
         Class serviceClass = XMLUtil.getClassValue(
                 attributes, "serviceClass", null);
-        if(serviceClass != null) {
+        if (serviceClass != null) {
             _currentFactory.setServiceClass(serviceClass);
         } else {
-            if(_currentFactory.getServiceClass() == null) {
+            if (_currentFactory.getServiceClass() == null) {
                 throw new IllegalStateException();
             }
         }
     }
 
     public UnifiedFactory getFactory() {
-        if(_currentFactory == null) {
+        if (_currentFactory == null) {
             throw new IllegalStateException();
         }
         return _currentFactory;

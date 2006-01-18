@@ -39,19 +39,19 @@ public abstract class AbstractMessagedException
         String[] params = ZERO_PARAM;
         try {
             params = getParamValues();
-            if(params == null) {
+            if (params == null) {
                 params = ZERO_PARAM;
             }
-        } catch(Throwable t) {
-            if(LOG.isErrorEnabled()) {
+        } catch (Throwable t) {
+            if (LOG.isErrorEnabled()) {
                 LOG.error(t.getMessage(), t);
             }
         }
         String message = StringUtil.getMessage(
                 getClass(), getMessageID(), params);
-        if(StringUtil.isEmpty(message)) {
+        if (StringUtil.isEmpty(message)) {
             Throwable cause = getCause();
-            if(cause != null) {
+            if (cause != null) {
                 return cause.getMessage();
             }
         }

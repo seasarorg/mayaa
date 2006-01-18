@@ -50,11 +50,11 @@ public class ExecProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_src != null) {
+        if (_src != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
 
-            String srcValue = (String)_src.getValue().execute(null);
-            String encValue = (String)_encoding.getValue().execute(null);
+            String srcValue = (String) _src.getValue().execute(null);
+            String encValue = (String) _encoding.getValue().execute(null);
 
             if (StringUtil.isRelativePath(srcValue)) {
                 String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
@@ -63,7 +63,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
 
             cycle.load(srcValue, encValue);
         }
-        if(_script != null) {
+        if (_script != null) {
             _script.getValue().execute(null);
         }
         return ProcessStatus.EVAL_BODY_INCLUDE;

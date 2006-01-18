@@ -29,7 +29,7 @@ public class TagHandler {
 
     protected static final AttributesImpl NULL_ATTR =
         new AttributesImpl();
-    private static TagHandler NULL_HANDLER = new TagHandler("_null_");
+    private static final TagHandler NULL_HANDLER = new TagHandler("_null_");
 
     private Map _children = new HashMap();
     private boolean _valid = true;
@@ -37,7 +37,7 @@ public class TagHandler {
     private String _name;
 
     public TagHandler(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         _name = name;
@@ -48,7 +48,7 @@ public class TagHandler {
     }
 
     protected void putHandler(TagHandler child) {
-        if(child == null) {
+        if (child == null) {
             throw new IllegalArgumentException();
         }
         _children.put(child.getName(), child);
@@ -74,9 +74,9 @@ public class TagHandler {
     // HandlerStackÇÊÇËåƒÇ—èoÇ≥ÇÍÇÈÅB
     public TagHandler startElement(String name, Attributes attributes,
             String systemID, int lineNumber) {
-        if(_valid) {
-            TagHandler child = (TagHandler)_children.get(name);
-            if(child != null) {
+        if (_valid) {
+            TagHandler child = (TagHandler) _children.get(name);
+            if (child != null) {
                 child._valid = true;
                 child._buffer.setLength(0);
                 child.start(attributes, systemID, lineNumber);

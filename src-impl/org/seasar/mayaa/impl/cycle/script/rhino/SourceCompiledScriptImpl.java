@@ -48,11 +48,11 @@ public class SourceCompiledScriptImpl
 
     protected void compileFromSource(
             Context cx, SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
-        if(_rhinoScript == null) {
-            if(source.exists() == false) {
+        if (_rhinoScript == null) {
+            if (source.exists() == false) {
                 throw new RuntimeException(
                         new FileNotFoundException(source.getSystemID()));
             }
@@ -76,7 +76,7 @@ public class SourceCompiledScriptImpl
             compileFromSource(cx, getSource());
             Object jsRet = _rhinoScript.exec(cx, RhinoUtil.getScope());
             ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
-        } catch(WrappedException e) {
+        } catch (WrappedException e) {
             RhinoUtil.removeWrappedException(e);
         } finally {
             Context.exit();

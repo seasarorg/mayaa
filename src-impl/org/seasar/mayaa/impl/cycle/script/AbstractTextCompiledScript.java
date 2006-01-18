@@ -30,7 +30,7 @@ public abstract class AbstractTextCompiledScript
     private Class[] _methodArgClasses;
 
     public AbstractTextCompiledScript(String text) {
-        if(text == null) {
+        if (text == null) {
             throw new IllegalArgumentException();
         }
         _text = text;
@@ -41,7 +41,7 @@ public abstract class AbstractTextCompiledScript
     }
 
     public void setExpectedClass(Class expectedClass) {
-        if(expectedClass == null) {
+        if (expectedClass == null) {
             expectedClass = Object.class;
         }
         _expectedClass = expectedClass;
@@ -52,7 +52,7 @@ public abstract class AbstractTextCompiledScript
     }
 
     public void setMethodArgClasses(Class[] methodArgClasses) {
-        if(methodArgClasses == null) {
+        if (methodArgClasses == null) {
             methodArgClasses = ZERO_ARGS_TYPE;
         }
         _methodArgClasses = methodArgClasses;

@@ -80,7 +80,7 @@ public class TagTagHandler extends TagHandler {
     }
 
     public TLDProcessorDefinition getProcessorDefinition() {
-        if(_processor == null) {
+        if (_processor == null) {
             throw new IllegalStateException();
         }
         return _processor;
@@ -100,7 +100,7 @@ public class TagTagHandler extends TagHandler {
                 Class clazz = ObjectUtil.loadClass(body, Tag.class);
                 setProcessorClass(clazz);
             } catch (RuntimeException e) {
-                if(LOG.isErrorEnabled()) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());
                 }
                 _handler.invalidate();
@@ -123,7 +123,7 @@ public class TagTagHandler extends TagHandler {
                 Class clazz = ObjectUtil.loadClass(body, TagExtraInfo.class);
                 setTeiClass(clazz);
             } catch (RuntimeException e) {
-                if(LOG.isErrorEnabled()) {
+                if (LOG.isErrorEnabled()) {
                     LOG.error(e.getMessage());
                 }
                 _handler.invalidate();

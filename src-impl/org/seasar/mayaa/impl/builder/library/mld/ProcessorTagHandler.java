@@ -48,7 +48,7 @@ public class ProcessorTagHandler
         ProcessorDefinitionImpl processorDef = getProcessorDefinition();
         Class processorClass =
             XMLUtil.getClassValue(attributes, "class", null);
-        if(processorClass == null) {
+        if (processorClass == null) {
             throw new IllegalStateException();
         }
         processorDef.setProcessorClass(processorClass);
@@ -56,8 +56,8 @@ public class ProcessorTagHandler
 
     public ProcessorDefinitionImpl getProcessorDefinition() {
         PropertySetImpl propertySet = getPropertySet();
-        if(propertySet instanceof ProcessorDefinitionImpl) {
-            return (ProcessorDefinitionImpl)propertySet;
+        if (propertySet instanceof ProcessorDefinitionImpl) {
+            return (ProcessorDefinitionImpl) propertySet;
         }
         throw new IllegalStateException();
     }

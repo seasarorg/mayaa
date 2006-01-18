@@ -50,11 +50,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position) {
-        if(scriptBlock == null) {
+        if (scriptBlock == null) {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
-        if(scriptBlock.isLiteral()) {
+        if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
         return new TextCompiledScriptImpl(text, _wrap, position);
@@ -63,7 +63,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     // ScriptEnvironment implements ----------------------------------
 
     protected String getSourceMimeType(SourceDescriptor source) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
@@ -74,14 +74,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public CompiledScript compile(
             SourceDescriptor source, String encoding) {
-        if(source == null) {
+        if (source == null) {
             throw new IllegalArgumentException();
         }
         return new SourceCompiledScriptImpl(source, encoding, _wrap);
     }
 
     protected Scriptable getStandardObjects() {
-        if(_standardObjects == null) {
+        if (_standardObjects == null) {
             Context cx = Context.enter();
             _standardObjects = cx.initStandardObjects(null, true);
             Context.exit();
@@ -99,11 +99,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
-        if(scope == null) {
-            parent = (Scriptable)_parent.get();
-            if(parent == null) {
+        if (scope == null) {
+            parent = (Scriptable) _parent.get();
+            if (parent == null) {
                 Context cx = Context.enter();
-                if(_wrap != null) {
+                if (_wrap != null) {
                     cx.setWrapFactory(_wrap);
                 }
                 Scriptable standard = getStandardObjects();
@@ -112,15 +112,15 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 Context.exit();
                 _parent.set(parent);
             }
-        } else if(scope instanceof PageAttributeScope) {
-            parent = (PageAttributeScope)scope;
+        } else if (scope instanceof PageAttributeScope) {
+            parent = (PageAttributeScope) scope;
         } else {
             throw new IllegalStateException();
         }
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
-        if(variables != null) {
-            for(Iterator it = variables.keySet().iterator(); it.hasNext(); ) {
+        if (variables != null) {
+            for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
                 String name = it.next().toString();
                 Object value = variables.get(name);
                 Object variable = Context.javaToJS(value, pageScope);
@@ -133,14 +133,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
-        if(scope instanceof PageAttributeScope) {
-            PageAttributeScope pageScope = (PageAttributeScope)scope;
+        if (scope instanceof PageAttributeScope) {
+            PageAttributeScope pageScope = (PageAttributeScope) scope;
             Scriptable current = pageScope.getParentScope();
-            if(current instanceof PageAttributeScope) {
-                PageAttributeScope parentScope = (PageAttributeScope)current;
+            if (current instanceof PageAttributeScope) {
+                PageAttributeScope parentScope = (PageAttributeScope) current;
                 cycle.setPageScope(parentScope);
                 return;
-            } else if(current != null) {
+            } else if (current != null) {
                 cycle.setPageScope(null);
                 return;
             }
@@ -167,14 +167,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("wrapFactory".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+        if ("wrapFactory".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
-            _wrap = (WrapFactory)ObjectUtil.newInstance(clazz);
-        } else if("blockSign".equals(name)) {
-            if(StringUtil.isEmpty(value)) {
+            _wrap = (WrapFactory) ObjectUtil.newInstance(clazz);
+        } else if ("blockSign".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);

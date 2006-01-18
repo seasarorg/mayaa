@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 public final class StringUtil {
 
     private static Map _propFiles = new HashMap();
-    private static String[] ZERO = new String[0];
+    private static final String[] ZERO = new String[0];
 
     private StringUtil() {
         // no instantiation.

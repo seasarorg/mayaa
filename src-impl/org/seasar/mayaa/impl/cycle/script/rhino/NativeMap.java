@@ -33,21 +33,21 @@ public class NativeMap extends NativeJavaObject {
 
     public NativeMap(Scriptable scope, Map map) {
         super(scope, map, Map.class);
-        if(map == null) {
+        if (map == null) {
             throw new IllegalArgumentException();
         }
         _map = map;
     }
 
     public boolean has(String name, Scriptable start) {
-        if(_map.containsKey(name)) {
+        if (_map.containsKey(name)) {
             return true;
         }
         return super.has(name, start);
     }
 
     public Object get(String name, Scriptable start) {
-        if(_map.containsKey(name)) {
+        if (_map.containsKey(name)) {
             return _map.get(name);
         }
         return super.get(name, start);
@@ -60,9 +60,9 @@ public class NativeMap extends NativeJavaObject {
     public Object[] getIds() {
         Set set = new HashSet(_map.keySet());
         Object[] ids = super.getIds();
-        for(int i = 0; i < ids.length; i++) {
+        for (int i = 0; i < ids.length; i++) {
             Object name = ids[i];
-            if(set.contains(name) == false) {
+            if (set.contains(name) == false) {
                 set.add(name);
             }
         }

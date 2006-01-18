@@ -60,53 +60,53 @@ public class RenderUtil implements CONST_IMPL {
     }
 
     public static boolean isEvaluation(TemplateProcessor current) {
-        return current instanceof ChildEvaluationProcessor &&
-                ((ChildEvaluationProcessor)current).isChildEvaluation();
+        return current instanceof ChildEvaluationProcessor
+                && ((ChildEvaluationProcessor) current).isChildEvaluation();
     }
 
     public static ChildEvaluationProcessor getEvaluation(
             TemplateProcessor current) {
-        return (ChildEvaluationProcessor)current;
+        return (ChildEvaluationProcessor) current;
     }
 
     public static boolean isIteration(TemplateProcessor current) {
-        return current instanceof IterationProcessor &&
-                ((IterationProcessor)current).isIteration();
+        return current instanceof IterationProcessor
+                && ((IterationProcessor) current).isIteration();
     }
 
     public static IterationProcessor getIteration(
             TemplateProcessor current) {
-        return (IterationProcessor)current;
+        return (IterationProcessor) current;
     }
 
     public static boolean isDuplicated(TemplateProcessor current) {
-        return current instanceof ElementProcessor &&
-                ((ElementProcessor)current).isDuplicated();
+        return current instanceof ElementProcessor
+                && ((ElementProcessor) current).isDuplicated();
     }
 
     public static boolean isTryCatchFinally(TemplateProcessor current) {
-        if( current instanceof TryCatchFinallyProcessor ){
+        if (current instanceof TryCatchFinallyProcessor) {
             TryCatchFinallyProcessor tryCatchFinallyProcessor
-                                        = (TryCatchFinallyProcessor)current;
+                                        = (TryCatchFinallyProcessor) current;
             return tryCatchFinallyProcessor.canCatch();
         }
-        return false ;
+        return false;
     }
 
     public static TryCatchFinallyProcessor getTryCatchFinally(
             TemplateProcessor current) {
-        return (TryCatchFinallyProcessor)current;
+        return (TryCatchFinallyProcessor) current;
     }
 
     public static void saveToCycle(ProcessorTreeWalker current) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setProcessor(current);
-        if(current instanceof TemplateProcessor) {
-            TemplateProcessor proc = (TemplateProcessor)current;
+        if (current instanceof TemplateProcessor) {
+            TemplateProcessor proc = (TemplateProcessor) current;
             cycle.setOriginalNode(proc.getOriginalNode());
             cycle.setInjectedNode(proc.getInjectedNode());
-        } else if(current instanceof Template) {
-            Template temp = (Template)current;
+        } else if (current instanceof Template) {
+            Template temp = (Template) current;
             cycle.setOriginalNode(temp);
             cycle.setInjectedNode(temp);
         }
@@ -115,7 +115,7 @@ public class RenderUtil implements CONST_IMPL {
     // main rendering method
     public static ProcessStatus renderTemplateProcessor(
             Page topLevelPage, TemplateProcessor current) {
-        if(current == null) {
+        if (current == null) {
             throw new IllegalArgumentException();
         }
         saveToCycle(current);
@@ -125,28 +125,28 @@ public class RenderUtil implements CONST_IMPL {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
             startRet = current.doStartProcess(topLevelPage);
-            if(startRet == SKIP_PAGE) {
+            if (startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
             boolean buffered = false;
-            if(startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
+            if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
                 getEvaluation(current).setBodyContent(
                         cycle.getResponse().pushWriter());
                 getEvaluation(current).doInitChildProcess();
             }
-            if(startRet == EVAL_BODY_INCLUDE ||
-                    startRet == EVAL_BODY_BUFFERED) {
+            if (startRet == EVAL_BODY_INCLUDE
+                    || startRet == EVAL_BODY_BUFFERED) {
                 ProcessStatus afterRet;
                 do {
-                    for(int i = 0; i < current.getChildProcessorSize(); i++) {
+                    for (int i = 0; i < current.getChildProcessorSize(); i++) {
                         ProcessorTreeWalker child = current.getChildProcessor(i);
-                        if(child instanceof TemplateProcessor) {
+                        if (child instanceof TemplateProcessor) {
                             TemplateProcessor childProc =
-                                (TemplateProcessor)child;
+                                (TemplateProcessor) child;
                             final ProcessStatus childRet =
                                 renderTemplateProcessor(topLevelPage, childProc);
-                            if(childRet == SKIP_PAGE) {
+                            if (childRet == SKIP_PAGE) {
                                 return SKIP_PAGE;
                             }
                         } else {
@@ -155,14 +155,14 @@ public class RenderUtil implements CONST_IMPL {
                     }
                     afterRet = SKIP_BODY;
                     saveToCycle(current);
-                    if(isIteration(current)) {
+                    if (isIteration(current)) {
                         afterRet = getIteration(current).doAfterChildProcess();
                         ProcessorTreeWalker parent = current.getParentProcessor();
-                        if(parent instanceof TemplateProcessor) {
+                        if (parent instanceof TemplateProcessor) {
                             TemplateProcessor parentProc =
-                                (TemplateProcessor)parent;
-                            if(afterRet == EVAL_BODY_AGAIN &&
-                                    isDuplicated(parentProc)) {
+                                (TemplateProcessor) parent;
+                            if (afterRet == EVAL_BODY_AGAIN
+                                    && isDuplicated(parentProc)) {
                                 saveToCycle(parentProc);
                                 parentProc.doEndProcess();
                                 parentProc.doStartProcess(null);
@@ -171,21 +171,21 @@ public class RenderUtil implements CONST_IMPL {
                     }
                 } while(afterRet == EVAL_BODY_AGAIN);
             }
-            if(buffered) {
+            if (buffered) {
                 cycle.getResponse().popWriter();
             }
             saveToCycle(current);
             ret = current.doEndProcess();
             SpecificationUtil.endScope();
         } catch (RuntimeException e) {
-            if(isTryCatchFinally(current)) {
+            if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);
                 SpecificationUtil.endScope();
             } else {
                 throw e;
             }
         } finally {
-            if(isTryCatchFinally(current)) {
+            if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }
         }
@@ -195,13 +195,13 @@ public class RenderUtil implements CONST_IMPL {
     // Rendering entry point
     public static ProcessStatus renderProcessorTree(
             Page topLevelPage, ProcessorTreeWalker root) {
-        for(int i = 0; i < root.getChildProcessorSize(); i++) {
+        for (int i = 0; i < root.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = root.getChildProcessor(i);
-            if(child instanceof TemplateProcessor) {
-                TemplateProcessor childProc = (TemplateProcessor)child;
+            if (child instanceof TemplateProcessor) {
+                TemplateProcessor childProc = (TemplateProcessor) child;
                 final ProcessStatus childRet =
                     renderTemplateProcessor(topLevelPage, childProc);
-                if(childRet == SKIP_PAGE) {
+                if (childRet == SKIP_PAGE) {
                     return SKIP_PAGE;
                 }
             } else {
@@ -220,18 +220,18 @@ public class RenderUtil implements CONST_IMPL {
     protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
         boolean mayaa = "mayaa".equals(extension);
-        if(mayaa) {
+        if (mayaa) {
             SourceDescriptor source = page.getSource();
-            if(source.exists() == false) {
+            if (source.exists() == false) {
                 String pageName = page.getPageName();
                 throw new PageNotFoundException(pageName, extension);
             }
         }
-        if(mayaa == false) {
-            if(StringUtil.isEmpty(suffix)) {
-                if(StringUtil.isEmpty(requestedSuffix)) {
+        if (mayaa == false) {
+            if (StringUtil.isEmpty(suffix)) {
+                if (StringUtil.isEmpty(requestedSuffix)) {
                     CompiledScript script = page.getSuffixScript();
-                    suffix = (String)script.execute(null);
+                    suffix = (String) script.execute(null);
                 } else {
                     suffix = requestedSuffix;
                 }
@@ -244,7 +244,7 @@ public class RenderUtil implements CONST_IMPL {
     public static ProcessStatus renderPage(boolean fireEvent,
             TemplateRenderer renderer, Map variables,
             Page topLevelPage, String requestedSuffix, String extension) {
-        if(renderer == null || topLevelPage == null) {
+        if (renderer == null || topLevelPage == null) {
             throw new IllegalArgumentException();
         }
         Page page = topLevelPage;
@@ -253,7 +253,7 @@ public class RenderUtil implements CONST_IMPL {
         List pageStack = fireEvent ? new LinkedList() : null;
         List templateStack = new LinkedList();
         do {
-            if(fireEvent) {
+            if (fireEvent) {
                 // stack for afterRender event.
                 pageStack.add(0, page);
                 SpecificationUtil.startScope(variables);
@@ -261,7 +261,7 @@ public class RenderUtil implements CONST_IMPL {
             }
             Template template =
                 getTemplate(requestedSuffix, page, suffix, extension);
-            if(template != null) {
+            if (template != null) {
                 // LIFO access
                 templateStack.add(0, template);
             }
@@ -272,15 +272,15 @@ public class RenderUtil implements CONST_IMPL {
         } while(page != null);
         ProcessStatus ret = null;
         int templateSize = templateStack.size();
-        if(templateSize > 0) {
+        if (templateSize > 0) {
             Template[] templates = (Template[])
                     templateStack.toArray(new Template[templateSize]);
             ret = renderer.renderTemplate(topLevelPage, templates);
             saveToCycle(page);
         }
-        if(fireEvent) {
-            for(int i = 0; i < pageStack.size(); i++) {
-                page = (Page)pageStack.get(i);
+        if (fireEvent) {
+            for (int i = 0; i < pageStack.size(); i++) {
+                page = (Page) pageStack.get(i);
                 saveToCycle(page);
                 SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
                 SpecificationUtil.endScope();

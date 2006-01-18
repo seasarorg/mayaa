@@ -32,7 +32,7 @@ public class QNameImpl implements QName, CONST_IMPL {
     }
 
     public QNameImpl(String namespaceURI, String localName) {
-        if(StringUtil.isEmpty(namespaceURI) || StringUtil.isEmpty(localName)) {
+        if (StringUtil.isEmpty(namespaceURI) || StringUtil.isEmpty(localName)) {
             throw new IllegalArgumentException();
         }
         _namespaceURI = namespaceURI;
@@ -52,10 +52,10 @@ public class QNameImpl implements QName, CONST_IMPL {
     }
 
     public boolean equals(Object test) {
-        if(test instanceof QName) {
-            QName qName = (QName)test;
-            return getNamespaceURI().equals(qName.getNamespaceURI()) &&
-                getLocalName().equalsIgnoreCase(qName.getLocalName());
+        if (test instanceof QName) {
+            QName qName = (QName) test;
+            return getNamespaceURI().equals(qName.getNamespaceURI())
+                && getLocalName().equalsIgnoreCase(qName.getLocalName());
         }
         return false;
     }

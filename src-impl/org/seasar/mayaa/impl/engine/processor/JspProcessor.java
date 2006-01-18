@@ -77,21 +77,25 @@ public class JspProcessor extends TemplateProcessorSupport
     private PageContextWrapper _wrappedContext =
         new PageContextWrapper(_pageContext);
 
-    protected TLDScriptingVariableInfo _variableInfo =
+    private TLDScriptingVariableInfo _variableInfo =
         new TLDScriptingVariableInfo();
 
     public void setTLDScriptingVariableInfo(
             TLDScriptingVariableInfo variableInfo) {
-        if(variableInfo == null) {
+        if (variableInfo == null) {
             throw new IllegalArgumentException();
         }
         _variableInfo = variableInfo;
     }
 
+    public TLDScriptingVariableInfo getTLDScriptingVariableInfo() {
+        return _variableInfo;
+    }
+
     // MLD method
     public void setTagClass(Class tagClass) {
-        if(tagClass == null ||
-                Tag.class.isAssignableFrom(tagClass) == false) {
+        if (tagClass == null
+                || Tag.class.isAssignableFrom(tagClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
@@ -99,20 +103,20 @@ public class JspProcessor extends TemplateProcessorSupport
 
     // MLD method
     public void addProcessorProperty(ProcessorProperty property) {
-        if(property == null) {
+        if (property == null) {
             throw new IllegalArgumentException();
         }
-        if(_attributesKey != null) {
+        if (_attributesKey != null) {
             throw new IllegalStateException();
         }
-        if(_properties == null) {
+        if (_properties == null) {
             _properties = new ArrayList();
         }
         _properties.add(property);
     }
 
     protected Iterator iterateProperties() {
-        if(_properties == null) {
+        if (_properties == null) {
             return NullIterator.getInstance();
         }
         return _properties.iterator();
@@ -135,8 +139,8 @@ public class JspProcessor extends TemplateProcessorSupport
     protected TagPool getTagPool() {
         synchronized (_tagPools) {
             String key = _tagClass.getName() + getAttributesKey();
-            TagPool pool = (TagPool)_tagPools.get(key);
-            if(pool == null) {
+            TagPool pool = (TagPool) _tagPools.get(key);
+            if (pool == null) {
                 pool = new TagPool(_tagClass);
                 _tagPools.put(key, pool);
             }
@@ -149,8 +153,8 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     protected Tag getLoadedTag() {
-        Tag tag = (Tag)_loadedTag.get();
-        if(tag == null) {
+        Tag tag = (Tag) _loadedTag.get();
+        if (tag == null) {
             tag = getTagPool().borrowTag();
             tag.setPageContext(_wrappedContext);
             _loadedTag.set(tag);
@@ -159,7 +163,7 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     protected void releaseLoadedTag() {
-        Tag tag = (Tag)_loadedTag.get();
+        Tag tag = (Tag) _loadedTag.get();
         _loadedTag.set(null);
         tag.release();
         getTagPool().returnTag(tag);
@@ -167,30 +171,30 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected ProcessStatus getProcessStatus(
             int status, boolean doStart) {
-        if(status == Tag.EVAL_BODY_INCLUDE) {
+        if (status == Tag.EVAL_BODY_INCLUDE) {
             return ProcessStatus.EVAL_BODY_INCLUDE;
-        } else if(status == Tag.SKIP_BODY) {
+        } else if (status == Tag.SKIP_BODY) {
             return ProcessStatus.SKIP_BODY;
-        } else if(status == Tag.EVAL_PAGE) {
+        } else if (status == Tag.EVAL_PAGE) {
             return ProcessStatus.EVAL_PAGE;
-        } else if(status == Tag.SKIP_PAGE) {
+        } else if (status == Tag.SKIP_PAGE) {
             return ProcessStatus.SKIP_PAGE;
-        } else if(!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
+        } else if (!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
             return ProcessStatus.EVAL_BODY_AGAIN;
-        } else if(doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
+        } else if (doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
             return ProcessStatus.EVAL_BODY_BUFFERED;
         }
         throw new IllegalArgumentException();
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if(_tagClass == null) {
+        if (_tagClass == null) {
             throw new IllegalStateException();
         }
         clearLoadedTag();
         Tag customTag = getLoadedTag();
-        for(Iterator it = iterateProperties(); it.hasNext(); ) {
-            ProcessorProperty property = (ProcessorProperty)it.next();
+        for (Iterator it = iterateProperties(); it.hasNext();) {
+            ProcessorProperty property = (ProcessorProperty) it.next();
             String propertyName =
                 property.getName().getQName().getLocalName();
             Object value = property.getValue().execute(null);
@@ -199,9 +203,9 @@ public class JspProcessor extends TemplateProcessorSupport
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspProcessor) {
-                JspProcessor jspProcessor = (JspProcessor)processor;
+                JspProcessor jspProcessor = (JspProcessor) processor;
                 Tag parentTag = jspProcessor.getLoadedTag();
-                if(parentTag == null) {
+                if (parentTag == null) {
                     throw new IllegalStateException(
                             "the parent processor has no custom tag.");
                 }
@@ -236,12 +240,12 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     public void setBodyContent(CycleWriter body) {
-        if(body == null) {
+        if (body == null) {
             throw new IllegalArgumentException();
         }
         Tag tag = getLoadedTag();
-        if(tag instanceof BodyTag) {
-            BodyTag bodyTag = (BodyTag)tag;
+        if (tag instanceof BodyTag) {
+            BodyTag bodyTag = (BodyTag) tag;
             bodyTag.setBodyContent(new BodyContentImpl(body));
         } else {
             throw new IllegalStateException();
@@ -250,8 +254,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     public void doInitChildProcess() {
         Tag tag = getLoadedTag();
-        if(tag instanceof BodyTag) {
-            BodyTag bodyTag = (BodyTag)tag;
+        if (tag instanceof BodyTag) {
+            BodyTag bodyTag = (BodyTag) tag;
             try {
                 bodyTag.doInitBody();
             } catch (JspException e) {
@@ -268,8 +272,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     public ProcessStatus doAfterChildProcess() {
         Tag tag = getLoadedTag();
-        if(tag instanceof IterationTag) {
-            IterationTag iterationTag = (IterationTag)tag;
+        if (tag instanceof IterationTag) {
+            IterationTag iterationTag = (IterationTag) tag;
             try {
                 int ret = iterationTag.doAfterBody();
                 return getProcessStatus(ret, false);
@@ -283,7 +287,7 @@ public class JspProcessor extends TemplateProcessorSupport
     public boolean canCatch() {
         try {
             return getLoadedTag() instanceof TryCatchFinally;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -293,8 +297,8 @@ public class JspProcessor extends TemplateProcessorSupport
             throw new IllegalArgumentException();
         }
         Tag tag = getLoadedTag();
-        if(tag instanceof TryCatchFinally) {
-            TryCatchFinally tryCatch = (TryCatchFinally)tag;
+        if (tag instanceof TryCatchFinally) {
+            TryCatchFinally tryCatch = (TryCatchFinally) tag;
             try {
                 tryCatch.doCatch(t);
             } catch (RuntimeException e) {
@@ -309,8 +313,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     public void doFinallyProcess() {
         Tag tag = getLoadedTag();
-        if(tag instanceof TryCatchFinally) {
-            TryCatchFinally tryCatch = (TryCatchFinally)tag;
+        if (tag instanceof TryCatchFinally) {
+            TryCatchFinally tryCatch = (TryCatchFinally) tag;
             try {
                 tryCatch.doFinally();
             } finally {
@@ -329,8 +333,8 @@ public class JspProcessor extends TemplateProcessorSupport
         private Class _clazz;
 
         public TagPool(Class clazz) {
-            if(clazz == null ||
-                    Tag.class.isAssignableFrom(clazz) == false) {
+            if (clazz == null
+                    || Tag.class.isAssignableFrom(clazz) == false) {
                 throw new IllegalArgumentException();
             }
             _clazz = clazz;
@@ -345,11 +349,11 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public Tag borrowTag() {
-            return (Tag)borrowObject();
+            return (Tag) borrowObject();
         }
 
         public void returnTag(Tag tag) {
-            if(tag != null) {
+            if (tag != null) {
                 returnObject(tag);
             }
         }
@@ -358,16 +362,18 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected class PageContextWrapper extends PageContext {
 
-        PageContext _context;
+        private PageContext _context;
 
         public PageContextWrapper(PageContext context) {
             _context = context;
         }
 
         public boolean useTop(String name, int scope) {
+            TLDScriptingVariableInfo variableInfo =
+                getTLDScriptingVariableInfo();
             return scope == PageContext.PAGE_SCOPE
-                    && (_variableInfo.hasNestedVariable() == false
-                    || _variableInfo.isNestedVariable(name) == false);
+                    && (variableInfo.hasNestedVariable() == false
+                            || variableInfo.isNestedVariable(name) == false);
         }
 
         protected PageAttributeScope findTopPageAttributeScope() {
@@ -381,7 +387,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void removeAttributeFromPageTop(String name) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException();
             }
             PageAttributeScope pageScope = findTopPageAttributeScope();
@@ -389,7 +395,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void setAttributeOnPageTop(String name, Object value) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException();
             }
             PageAttributeScope pageScope = findTopPageAttributeScope();
@@ -397,7 +403,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void removeAttribute(String name, int scope) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException();
             }
 
@@ -409,7 +415,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void setAttribute(String name, Object value, int scope) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException();
             }
 
@@ -423,7 +429,7 @@ public class JspProcessor extends TemplateProcessorSupport
         public void initialize(Servlet servlet, ServletRequest request,
                 ServletResponse response, String errorPageURL,
                 boolean needsSession, int bufferSize, boolean autoFlush)
-                throws IOException, IllegalStateException, IllegalArgumentException {
+                throws IOException {
             _context.initialize(servlet, request, response, errorPageURL,
                     needsSession, bufferSize, autoFlush);
         }

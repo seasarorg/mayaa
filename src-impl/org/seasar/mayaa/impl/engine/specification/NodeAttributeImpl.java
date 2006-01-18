@@ -34,7 +34,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     private String _value;
 
     public NodeAttributeImpl(QName qName, String value) {
-        if(qName == null || value == null) {
+        if (qName == null || value == null) {
             throw new IllegalArgumentException();
         }
         _qName = qName;
@@ -42,7 +42,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public void setNode(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         _node = node;
@@ -69,7 +69,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     public String getPrefix() {
         String namespaceURI = getQName().getNamespaceURI();
         PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
-        if(mapping != null) {
+        if (mapping != null) {
             return mapping.getPrefix();
         }
         return "";
@@ -82,7 +82,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public Namespace getParentSpace() {
-        if(getNode() != null) {
+        if (getNode() != null) {
             return getNode().getParentSpace();
         }
         return null;
@@ -93,7 +93,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public PrefixMapping getMappingFromPrefix(String prefix, boolean all) {
-        if(getNode() != null) {
+        if (getNode() != null) {
             return getNode().getMappingFromPrefix(prefix, all);
         }
         return null;
@@ -101,14 +101,14 @@ public class NodeAttributeImpl implements NodeAttribute {
 
     public PrefixMapping getMappingFromURI(
             String namespaceURI, boolean all) {
-        if(getNode() != null) {
+        if (getNode() != null) {
             return getNode().getMappingFromURI(namespaceURI, all);
         }
         return null;
     }
 
     public Iterator iteratePrefixMapping(boolean all) {
-        if(getNode() != null) {
+        if (getNode() != null) {
             return getNode().iteratePrefixMapping(all);
         }
         return NullIterator.getInstance();

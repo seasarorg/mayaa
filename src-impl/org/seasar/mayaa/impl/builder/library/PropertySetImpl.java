@@ -47,7 +47,7 @@ public class PropertySetImpl extends ParameterAwareImpl
     private int _lineNumber;
 
     public void setLineNumber(int lineNumber) {
-        if(lineNumber < 0) {
+        if (lineNumber < 0) {
             throw new IllegalArgumentException();
         }
         _lineNumber = lineNumber;
@@ -58,46 +58,46 @@ public class PropertySetImpl extends ParameterAwareImpl
     }
 
     public void setLibraryDefinition(LibraryDefinition library) {
-        if(library == null) {
+        if (library == null) {
             throw new IllegalArgumentException();
         }
         _library = library;
     }
 
     public LibraryDefinition getLibraryDefinition() {
-        if(_library == null) {
+        if (_library == null) {
             throw new IllegalStateException();
         }
         return _library;
     }
 
     public void setName(String name) {
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
         _name = name;
     }
 
     public String getName() {
-        if(StringUtil.isEmpty(_name)) {
+        if (StringUtil.isEmpty(_name)) {
             throw new IllegalStateException();
         }
         return _name;
     }
 
     public void addPropertyDefinitiion(PropertyDefinition property) {
-        if(property == null) {
+        if (property == null) {
             throw new IllegalArgumentException();
         }
-        if(_properties == null) {
+        if (_properties == null) {
             _propertyNames = new HashSet();
             _properties = new ArrayList();
         }
         String propName = property.getName();
-        if(_propertyNames.add(propName)) {
+        if (_propertyNames.add(propName)) {
             _properties.add(property);
         } else {
-            if(LOG.isWarnEnabled()) {
+            if (LOG.isWarnEnabled()) {
                 String msg = StringUtil.getMessage(PropertySetImpl.class,
                         0, getName(), propName);
                 LOG.warn(msg);
@@ -106,20 +106,20 @@ public class PropertySetImpl extends ParameterAwareImpl
     }
 
     protected boolean contain(String namespaceURI, NodeAttribute attr) {
-        if(StringUtil.isEmpty(namespaceURI) || attr == null) {
+        if (StringUtil.isEmpty(namespaceURI) || attr == null) {
             throw new IllegalArgumentException();
         }
-        if(_propertyNames == null) {
+        if (_propertyNames == null) {
             return false;
         }
         String attrNS = attr.getQName().getNamespaceURI();
         String attrName = attr.getQName().getLocalName();
-        return _propertyNames.contains(attrName) &&
-                namespaceURI.equals(attrNS);
+        return _propertyNames.contains(attrName)
+                && namespaceURI.equals(attrNS);
     }
 
     public Iterator iteratePropertyDefinition() {
-        if(_properties == null) {
+        if (_properties == null) {
             return NullIterator.getInstance();
         }
         return _properties.iterator();

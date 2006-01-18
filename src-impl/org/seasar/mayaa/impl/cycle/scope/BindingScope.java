@@ -32,10 +32,10 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     protected InsertProcessor getInsertProcessor() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        for(ProcessorTreeWalker current = cycle.getProcessor();
+        for (ProcessorTreeWalker current = cycle.getProcessor();
                 current != null; current = current.getParentProcessor()) {
             if (current instanceof DoRenderProcessor) {
-                DoRenderProcessor doRender = (DoRenderProcessor)current;
+                DoRenderProcessor doRender = (DoRenderProcessor) current;
                 return doRender.peekInsertProcessor();
             }
         }
@@ -50,7 +50,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     public Iterator iterateAttributeNames() {
         InsertProcessor processor = getInsertProcessor();
-        if(processor != null) {
+        if (processor != null) {
             return new BindingIterator(
                     processor.getInformalProperties().iterator());
         }
@@ -61,11 +61,11 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     public boolean hasAttribute(String name) {
         InsertProcessor processor = getInsertProcessor();
-        if(processor != null) {
-            for(Iterator it = processor.getInformalProperties().iterator();
-                    it.hasNext(); ) {
-                ProcessorProperty prop = (ProcessorProperty)it.next();
-                if(prop.getName().getQName().getLocalName().equals(name)) {
+        if (processor != null) {
+            for (Iterator it = processor.getInformalProperties().iterator();
+                    it.hasNext();) {
+                ProcessorProperty prop = (ProcessorProperty) it.next();
+                if (prop.getName().getQName().getLocalName().equals(name)) {
                     return true;
                 }
             }
@@ -78,11 +78,11 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     public Object getAttribute(String name) {
         InsertProcessor processor = getInsertProcessor();
-        if(processor != null) {
-            for(Iterator it = processor.getInformalProperties().iterator();
-                    it.hasNext(); ) {
-                ProcessorProperty prop = (ProcessorProperty)it.next();
-                if(prop.getName().getQName().getLocalName().equals(name)) {
+        if (processor != null) {
+            for (Iterator it = processor.getInformalProperties().iterator();
+                    it.hasNext();) {
+                ProcessorProperty prop = (ProcessorProperty) it.next();
+                if (prop.getName().getQName().getLocalName().equals(name)) {
                     return prop.getValue().execute(null);
                 }
             }
@@ -100,7 +100,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         private Iterator _it;
 
         private BindingIterator(Iterator it) {
-            if(it == null) {
+            if (it == null) {
                 throw new IllegalArgumentException();
             }
             _it = it;
@@ -111,7 +111,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         }
 
         public Object next() {
-            ProcessorProperty prop = (ProcessorProperty)_it.next();
+            ProcessorProperty prop = (ProcessorProperty) _it.next();
             return prop.getName().getQName().getLocalName();
         }
 

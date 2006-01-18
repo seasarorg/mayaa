@@ -33,9 +33,9 @@ public class VariableResolverImpl implements VariableResolver {
     }
 
     public Object resolveVariable(String pName) {
-        if(StringUtil.hasValue(pName)) {
+        if (StringUtil.hasValue(pName)) {
             AttributeScope scope = CycleUtil.findStandardAttributeScope(pName);
-            if(scope != null) {
+            if (scope != null) {
                 return scope.getAttribute(pName);
             }
         }

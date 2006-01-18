@@ -37,7 +37,7 @@ public class BodyContentImpl extends BodyContent {
 
     public BodyContentImpl(CycleWriter writer) {
         super(null);
-        if(writer == null) {
+        if (writer == null) {
             throw new IllegalArgumentException();
         }
         _writer = writer;
@@ -83,7 +83,7 @@ public class BodyContentImpl extends BodyContent {
     }
 
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if(len == 0) {
+        if (len == 0) {
             return;
         }
         _writer.write(cbuf, off, len);
@@ -105,7 +105,7 @@ public class BodyContentImpl extends BodyContent {
         write(Character.toString(c));
     }
 
-    public void print(char c[]) throws IOException {
+    public void print(char[] c) throws IOException {
         write(c);
     }
 
@@ -147,7 +147,7 @@ public class BodyContentImpl extends BodyContent {
         newLine();
     }
 
-    public void println(char c[]) throws IOException {
+    public void println(char[] c) throws IOException {
         print(c);
         newLine();
     }

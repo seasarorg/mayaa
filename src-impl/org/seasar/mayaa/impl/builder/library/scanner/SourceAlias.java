@@ -24,14 +24,14 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class SourceAlias {
 
-    public static String ALIAS = SourceAlias.class + ".ALIAS";
+    public static final String ALIAS = SourceAlias.class + ".ALIAS";
 
     private String _alias;
     private String _systemID;
     private Date _timestamp;
 
     public SourceAlias(String alias, String systemID, Date timestamp) {
-        if(StringUtil.isEmpty(alias) || StringUtil.isEmpty(systemID)) {
+        if (StringUtil.isEmpty(alias) || StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
         _alias = alias;

@@ -38,11 +38,11 @@ public class RenderedSetter extends ParameterAwareImpl
         SpecificationUtil.createQName("rendered");
 
     protected boolean isRendered(SpecificationNode node) {
-        if(node == null) {
+        if (node == null) {
             throw new IllegalArgumentException();
         }
         NodeAttribute attr = node.getAttribute(QM_RENDERED);
-        if(attr != null) {
+        if (attr != null) {
             return ObjectUtil.booleanValue(attr.getValue(), true);
         }
         return true;
@@ -50,14 +50,14 @@ public class RenderedSetter extends ParameterAwareImpl
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
-        if(original == null || chain == null) {
+        if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
         SpecificationNode injected = chain.getNode(original);
-        if(injected == null) {
+        if (injected == null) {
             return null;
         }
-        if(isRendered(original) == false || isRendered(injected) == false) {
+        if (isRendered(original) == false || isRendered(injected) == false) {
                 return BuilderUtil.createInjectedNode(
                         QM_NULL, null, original, false);
         }

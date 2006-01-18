@@ -31,7 +31,7 @@ public class NativeList extends NativeJavaObject {
 
     public NativeList(Scriptable scope, List list) {
         super(scope, list, List.class);
-        if(list == null) {
+        if (list == null) {
             throw new IllegalArgumentException();
         }
         _list = list;
@@ -42,17 +42,17 @@ public class NativeList extends NativeJavaObject {
     }
 
     public Object get(int index, Scriptable start) {
-        if(0 <= index && index < _list.size()) {
+        if (0 <= index && index < _list.size()) {
             return _list.get(index);
         }
         return Undefined.instance;
     }
 
     public void put(int index, Scriptable start, Object value) {
-        if(index == _list.size()) {
+        if (index == _list.size()) {
             _list.add(value);
-        } else if(0 < index) {
-            for(int i = _list.size(); i <= index; i++) {
+        } else if (0 < index) {
+            for (int i = _list.size(); i <= index; i++) {
                 _list.add(Undefined.instance);
             }
             _list.set(index, value);
@@ -63,10 +63,10 @@ public class NativeList extends NativeJavaObject {
         int listSize = _list.size();
         Object[] ids = super.getIds();
         Object[] ret = new Object[listSize + ids.length];
-        for(int i = 0; i < listSize; i++) {
+        for (int i = 0; i < listSize; i++) {
             ret[i] = new Integer(i);
         }
-        for(int i = 0; i < ids.length; i++) {
+        for (int i = 0; i < ids.length; i++) {
             ret[i + listSize] = ids[i];
         }
         return ret;

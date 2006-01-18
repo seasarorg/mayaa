@@ -32,7 +32,7 @@ public class LibraryTagHandler
     public LibraryTagHandler() {
         super("library");
         putHandler(new ConverterTagHandler(this, this));
-        putHandler( new ProcessorTagHandler(this));
+        putHandler(new ProcessorTagHandler(this));
         putHandler(new PropertySetTagHandler("propertySet", this, this));
     }
 
@@ -46,7 +46,7 @@ public class LibraryTagHandler
     }
 
     public LibraryDefinitionImpl getLibraryDefinition() {
-        if(_libraryDefinition == null) {
+        if (_libraryDefinition == null) {
             throw new IllegalStateException();
         }
         return _libraryDefinition;

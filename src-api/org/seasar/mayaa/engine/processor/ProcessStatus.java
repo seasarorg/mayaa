@@ -30,7 +30,7 @@ public class ProcessStatus implements Serializable {
      * @param status ステータス文字列。
      */
     public ProcessStatus(String status) {
-        if(status == null) {
+        if (status == null) {
             throw new IllegalArgumentException();
         }
         _status = status;
@@ -45,11 +45,16 @@ public class ProcessStatus implements Serializable {
     }
 
     public boolean equals(Object test) {
-        if(test instanceof ProcessStatus) {
-            ProcessStatus testStatus = (ProcessStatus)test;
+        if (test instanceof ProcessStatus) {
+            ProcessStatus testStatus = (ProcessStatus) test;
             return testStatus.getStatus().equals(getStatus());
         }
         return false;
+    }
+
+    public int hashCode() {
+        return ("org.seasar.mayaa.engine.processor.ProcessStatus:"
+                + _status).hashCode();
     }
 
     // values ------------------------------------------------------

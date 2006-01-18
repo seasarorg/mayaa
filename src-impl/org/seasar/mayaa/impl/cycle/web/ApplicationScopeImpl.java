@@ -38,14 +38,14 @@ public class ApplicationScopeImpl
     private ServletContext _servletContext;
 
     protected void check() {
-        if(_servletContext == null) {
+        if (_servletContext == null) {
             throw new IllegalStateException();
         }
     }
 
     public String getMimeType(String fileName) {
         check();
-        if(StringUtil.isEmpty(fileName)) {
+        if (StringUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException();
         }
         return _servletContext.getMimeType(fileName);
@@ -53,7 +53,7 @@ public class ApplicationScopeImpl
 
     public String getRealPath(String contextRelatedPath) {
         check();
-        if(StringUtil.isEmpty(contextRelatedPath)) {
+        if (StringUtil.isEmpty(contextRelatedPath)) {
             throw new IllegalArgumentException();
         }
         return _servletContext.getRealPath(contextRelatedPath);
@@ -73,12 +73,12 @@ public class ApplicationScopeImpl
 
     public boolean hasAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return false;
         }
-        for(Enumeration e = _servletContext.getAttributeNames();
-                e.hasMoreElements(); ) {
-            if(e.nextElement().equals(name)) {
+        for (Enumeration e = _servletContext.getAttributeNames();
+                e.hasMoreElements();) {
+            if (e.nextElement().equals(name)) {
                 return true;
             }
         }
@@ -87,7 +87,7 @@ public class ApplicationScopeImpl
 
     public Object getAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return null;
         }
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
@@ -97,7 +97,7 @@ public class ApplicationScopeImpl
 
     public void setAttribute(String name, Object attribute) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _servletContext.setAttribute(name, attribute);
@@ -105,7 +105,7 @@ public class ApplicationScopeImpl
 
     public void removeAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _servletContext.removeAttribute(name);
@@ -114,10 +114,10 @@ public class ApplicationScopeImpl
     // ContextAware implemetns --------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null || context instanceof ServletContext == false) {
+        if (context == null || context instanceof ServletContext == false) {
             throw new IllegalArgumentException();
         }
-        _servletContext = (ServletContext)context;
+        _servletContext = (ServletContext) context;
     }
 
     public Object getUnderlyingContext() {

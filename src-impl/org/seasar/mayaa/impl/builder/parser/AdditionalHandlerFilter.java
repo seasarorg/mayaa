@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.builder.parser;
 
 import org.apache.xerces.xni.Augmentations;
-import org.apache.xerces.xni.XNIException;
 import org.cyberneko.html.filters.DefaultFilter;
 
 /**
@@ -24,28 +23,28 @@ import org.cyberneko.html.filters.DefaultFilter;
  */
 public class AdditionalHandlerFilter extends DefaultFilter {
 
-    private static final String[] _recognizedProps = new String[] {
+    private static final String[] RECOGNIZED_PROPS = new String[] {
         AdditionalHandler.ADDITIONAL_HANDLER
     };
 
     private AdditionalHandler _handler;
 
     public String[] getRecognizedProperties() {
-        return _recognizedProps;
+        return RECOGNIZED_PROPS;
     }
 
     public void setProperty(String propertyId, Object value) {
-        if(AdditionalHandler.ADDITIONAL_HANDLER.equals(propertyId)) {
-            if(value instanceof AdditionalHandler == false) {
+        if (AdditionalHandler.ADDITIONAL_HANDLER.equals(propertyId)) {
+            if (value instanceof AdditionalHandler == false) {
                 throw new IllegalArgumentException();
             }
-            _handler = (AdditionalHandler)value;
+            _handler = (AdditionalHandler) value;
         }
     }
 
-    public void xmlDecl(String version, String encoding, String standalone,
-            Augmentations augs) throws XNIException {
-        if(_handler != null) {
+    public void xmlDecl(String version,
+            String encoding, String standalone, Augmentations augs) {
+        if (_handler != null) {
             _handler.xmlDecl(version, encoding, standalone);
             return;
         }

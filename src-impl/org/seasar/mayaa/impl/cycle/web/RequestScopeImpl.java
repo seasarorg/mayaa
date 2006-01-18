@@ -43,7 +43,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
     private HeaderValuesScope _headerValues;
 
     protected void check() {
-        if(_httpServletRequest == null) {
+        if (_httpServletRequest == null) {
             throw new IllegalStateException();
         }
     }
@@ -56,30 +56,30 @@ public class RequestScopeImpl extends AbstractRequestScope {
     public String getRequestedPath() {
         check();
         String path = _httpServletRequest.getPathInfo();
-        if(path == null) {
+        if (path == null) {
             path = _httpServletRequest.getServletPath();
         }
-        if(StringUtil.isEmpty(path) || path.endsWith("/")) {
+        if (StringUtil.isEmpty(path) || path.endsWith("/")) {
             String welcome = EngineUtil.getEngineSetting(
                     WELCOME_FILE_NAME, "/index.html");
-            path = StringUtil.preparePath(path) +
-                    StringUtil.preparePath(welcome);
+            path = StringUtil.preparePath(path)
+                    + StringUtil.preparePath(welcome);
         }
         return path;
     }
 
     public Locale[] getLocales() {
         check();
-        if(_locales == null) {
+        if (_locales == null) {
             Enumeration locales = _httpServletRequest.getLocales();
-            if(locales == null) {
+            if (locales == null) {
                 _locales = new Locale[0];
             } else {
                 ArrayList list = new ArrayList();
-                while(locales.hasMoreElements()) {
+                while (locales.hasMoreElements()) {
                     list.add(locales.nextElement());
                 }
-                _locales = (Locale[])list.toArray(new Locale[list.size()]);
+                _locales = (Locale[]) list.toArray(new Locale[list.size()]);
             }
         }
         return _locales;
@@ -87,7 +87,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public AttributeScope getParamValues() {
         check();
-        if(_paramValues == null) {
+        if (_paramValues == null) {
             _paramValues = new ParamValuesScope(_httpServletRequest);
         }
         return _paramValues;
@@ -95,7 +95,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public AttributeScope getHeaderValues() {
         check();
-        if(_headerValues == null) {
+        if (_headerValues == null) {
             _headerValues = new HeaderValuesScope(_httpServletRequest);
         }
         return _headerValues;
@@ -111,12 +111,12 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public boolean hasAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return false;
         }
-        for(Enumeration e = _httpServletRequest.getAttributeNames();
-                e.hasMoreElements(); ) {
-            if(e.nextElement().equals(name)) {
+        for (Enumeration e = _httpServletRequest.getAttributeNames();
+                e.hasMoreElements();) {
+            if (e.nextElement().equals(name)) {
                 return true;
             }
         }
@@ -125,7 +125,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public Object getAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return null;
         }
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
@@ -135,7 +135,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public void setAttribute(String name, Object attribute) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletRequest.setAttribute(name, attribute);
@@ -143,7 +143,7 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public void removeAttribute(String name) {
         check();
-        if(StringUtil.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return;
         }
         _httpServletRequest.removeAttribute(name);
@@ -152,11 +152,11 @@ public class RequestScopeImpl extends AbstractRequestScope {
     // ContextAware implemetns --------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null ||
-                context instanceof HttpServletRequest == false) {
+        if (context == null
+                || context instanceof HttpServletRequest == false) {
             throw new IllegalArgumentException();
         }
-        _httpServletRequest = (HttpServletRequest)context;
+        _httpServletRequest = (HttpServletRequest) context;
         _locales = null;
         _paramValues = null;
         _headerValues = null;

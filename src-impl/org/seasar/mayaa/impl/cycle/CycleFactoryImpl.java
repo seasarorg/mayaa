@@ -37,31 +37,31 @@ public class CycleFactoryImpl
     private ThreadLocal _currentCycle = new ThreadLocal();
 
     public void setServiceClass(Class serviceClass) {
-        if(serviceClass == null) {
+        if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
         _serviceClass = serviceClass;
     }
 
     public Class getServiceClass() {
-        if(_serviceClass == null) {
+        if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
         return _serviceClass;
     }
 
     public void initialize(Object requestContext, Object responseContext) {
-        if(requestContext == null || responseContext == null) {
+        if (requestContext == null || responseContext == null) {
             throw new IllegalArgumentException();
         }
         Class serviceCycleClass = getServiceClass();
-        if(serviceCycleClass == null) {
+        if (serviceCycleClass == null) {
             throw new IllegalStateException();
         }
         ServiceCycle cycle =
-            (ServiceCycle)ObjectUtil.newInstance(serviceCycleClass);
-        for(Iterator it = iterateParameterNames(); it.hasNext(); ) {
-            String key = (String)it.next();
+            (ServiceCycle) ObjectUtil.newInstance(serviceCycleClass);
+        for (Iterator it = iterateParameterNames(); it.hasNext();) {
+            String key = (String) it.next();
             String value = getParameter(key);
             cycle.setParameter(key, value);
         }
@@ -73,8 +73,8 @@ public class CycleFactoryImpl
     }
 
     public ServiceCycle getServiceCycle() {
-        ServiceCycle cycle = (ServiceCycle)_currentCycle.get();
-        if(cycle == null) {
+        ServiceCycle cycle = (ServiceCycle) _currentCycle.get();
+        if (cycle == null) {
             throw new CycleNotInitializedException();
         }
         return cycle;
@@ -83,14 +83,14 @@ public class CycleFactoryImpl
     // ContextAware implements -------------------------------------
 
     public void setUnderlyingContext(Object context) {
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException();
         }
         _context = context;
     }
 
     public Object getUnderlyingContext() {
-        if(_context == null) {
+        if (_context == null) {
             throw new IllegalStateException();
         }
         return _context;

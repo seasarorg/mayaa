@@ -62,11 +62,11 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     }
 
     public void build(Specification specification) {
-        if(specification == null) {
+        if (specification == null) {
             throw new IllegalArgumentException();
         }
         SourceDescriptor source = specification.getSource();
-        if(source.exists()) {
+        if (source.exists()) {
             ContentHandler handler = createContentHandler(specification);
             XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
             XMLReader xmlReader =
@@ -78,10 +78,10 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
             try {
                 xmlReader.parse(input);
                 afterBuild(specification);
-            } catch(Throwable t) {
+            } catch (Throwable t) {
                 specification.kill();
-                if(t instanceof RuntimeException) {
-                    throw (RuntimeException)t;
+                if (t instanceof RuntimeException) {
+                    throw (RuntimeException) t;
                 }
                 throw new RuntimeException(t);
             } finally {
@@ -94,7 +94,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if("outputTemplateWhitespace".equals(name)) {
+        if ("outputTemplateWhitespace".equals(name)) {
             _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
         } else if ("outputMayaaWhitespace".equals(name)) {
             _outputMayaaWhitespace = ObjectUtil.booleanValue(value, true);

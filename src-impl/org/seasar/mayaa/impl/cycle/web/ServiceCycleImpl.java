@@ -87,8 +87,20 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
                         _request.getContextPath() + sourcePath, url);
             }
 
-            _response.redirect(url);
             _response.clearBuffer();
+            _response.redirect(url);
+            _response.flush();
+        }
+    }
+
+    public void error(int errorCode) {
+        error(errorCode, null);
+    }
+
+    public void error(int errorCode, String message) {
+        if (_response.isFlushed() == false) {
+            _response.clearBuffer();
+            _response.error(errorCode, message);
             _response.flush();
         }
     }

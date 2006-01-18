@@ -67,6 +67,19 @@ public interface ServiceCycle
     void redirect(String url);
 
     /**
+     * エラーレスポンスを返す。
+     * @param errorCode エラーコード。
+     */
+    void error(int errorCode);
+
+    /**
+     * メッセージありのエラーレスポンスを返す。
+     * @param errorCode エラーコード。
+     * @param message エラーメッセージ。
+     */
+    void error(int errorCode, String message);
+
+    /**
      * カレントのページスコープにてスクリプトを読み込み、実行する。
      * ソースエンコーディングはUTF-8とする。
      * @param systemID スクリプトソースのSystemID。

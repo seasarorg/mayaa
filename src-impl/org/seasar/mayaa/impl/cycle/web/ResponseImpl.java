@@ -49,6 +49,17 @@ public class ResponseImpl extends AbstractResponse {
         }
     }
 
+    public void error(int errorCode, String message) {
+        if (isFlushed() == false) {
+            check();
+            try {
+                _httpServletResponse.sendError(errorCode, message);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     protected void setContentTypeToUnderlyingObject(
             String contentType) {
         check();

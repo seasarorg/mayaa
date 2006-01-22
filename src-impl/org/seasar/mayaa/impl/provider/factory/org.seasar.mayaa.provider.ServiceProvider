@@ -24,7 +24,8 @@
 	</scriptEnvironment>
 	
 	<specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
-		<parameter name="outputWhitespace" value="true"/>
+		<parameter name="outputTemplateWhitespace" value="true"/>
+		<parameter name="outputMayaaWhitespace" value="false"/>
 	</specificationBuilder>
 
 	<libraryManager class="org.seasar.mayaa.impl.builder.library.LibraryManagerImpl">

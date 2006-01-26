@@ -120,12 +120,17 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
         if (variables != null) {
+            Context cx = Context.enter();
+            if (_wrap != null) {
+                cx.setWrapFactory(_wrap);
+            }
             for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
                 String name = it.next().toString();
                 Object value = variables.get(name);
                 Object variable = Context.javaToJS(value, pageScope);
                 ScriptableObject.putProperty(pageScope, name, variable);
             }
+            Context.exit();
         }
         cycle.setPageScope(pageScope);
     }

@@ -23,6 +23,7 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.IterationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.IteratorUtil;
 
@@ -75,8 +76,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
         map.put(_var, iterator.next());
 
         inclementIndex();
-
-        ProviderUtil.getScriptEnvironment().startScope(map);
+        SpecificationUtil.startScope(map);
         return true;
     }
 
@@ -97,7 +97,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
     }
 
     public ProcessStatus doAfterChildProcess() {
-        ProviderUtil.getScriptEnvironment().endScope();
+        SpecificationUtil.endScope();
         return next() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
     }
 

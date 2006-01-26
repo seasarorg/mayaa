@@ -67,7 +67,7 @@ public class BuilderUtil implements CONST_IMPL {
                 String attrURI = attr.getQName().getNamespaceURI();
                 if (uri.equals(attrURI)
                         || (mayaa && URI_MAYA.equals(attrURI))
-                        || URI_XML.equals(attrURI)) {
+                        || uri.equals(URI_XHTML) && URI_XML.equals(attrURI)) {
                     String attrValue = attr.getValue();
                     if (needAdjust
                             && adjuster.isTargetAttribute(

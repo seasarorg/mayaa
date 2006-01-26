@@ -19,11 +19,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.IterationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
-import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.IteratorUtil;
 
@@ -72,11 +73,9 @@ public class ForEachProcessor extends TemplateProcessorSupport
         if (iterator.hasNext() == false) {
             return false;
         }
-        Map map = (Map) _map.get();
-        map.put(_var, iterator.next());
 
         inclementIndex();
-        SpecificationUtil.startScope(map);
+        CycleUtil.setAttribute(_var, iterator.next(), ServiceCycle.SCOPE_PAGE);
         return true;
     }
 
@@ -97,15 +96,16 @@ public class ForEachProcessor extends TemplateProcessorSupport
     }
 
     public ProcessStatus doAfterChildProcess() {
-        SpecificationUtil.endScope();
         return next() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
     }
 
     protected void inclementIndex() {
         if (_indexName != null) {
             Map map = (Map) _map.get();
-            int next = (((Integer) map.get(_indexName)).intValue() + 1);
-            map.put(_indexName, new Integer(next));
+            Integer next =
+                new Integer(((Integer) map.get(_indexName)).intValue() + 1);
+            map.put(_indexName, next);
+            CycleUtil.setAttribute(_indexName, next, ServiceCycle.SCOPE_PAGE);
         }
     }
 

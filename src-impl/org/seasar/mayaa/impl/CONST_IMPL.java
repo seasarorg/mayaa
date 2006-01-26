@@ -32,6 +32,7 @@ public interface CONST_IMPL {
     String URI_MAYA = "http://mayaa.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";
     String URI_XHTML = "http://www.w3.org/1999/xhtml";
+    String URI_XML = "http://www.w3.org/XML/1998/namespace";
 
     String PUBLIC_FACTORY10 =
         "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";

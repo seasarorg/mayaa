@@ -65,7 +65,9 @@ public class BuilderUtil implements CONST_IMPL {
             for (Iterator it = original.iterateAttribute(); it.hasNext();) {
                 NodeAttribute attr = (NodeAttribute) it.next();
                 String attrURI = attr.getQName().getNamespaceURI();
-                if (uri.equals(attrURI) || (mayaa && URI_MAYA.equals(attrURI))) {
+                if (uri.equals(attrURI)
+                        || (mayaa && URI_MAYA.equals(attrURI))
+                        || URI_XML.equals(attrURI)) {
                     String attrValue = attr.getValue();
                     if (needAdjust
                             && adjuster.isTargetAttribute(

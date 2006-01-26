@@ -233,8 +233,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if (original == null) {
             throw new IllegalArgumentException();
         }
-        Iterator it;
-        it = original.iterateChildNode();
+        Iterator it = original.iterateChildNode();
         while (it.hasNext()) {
             SpecificationNode child = (SpecificationNode) it.next();
             saveToCycle(child, child);

@@ -94,6 +94,7 @@ public class SpecificationNodeHandler
     protected void initNamespace() {
         _namespace = SpecificationUtil.createNamespace();
         _namespace.addPrefixMapping("", URI_HTML);
+        _namespace.addPrefixMapping("xml", URI_XML);
     }
 
     protected void pushNamespace() {

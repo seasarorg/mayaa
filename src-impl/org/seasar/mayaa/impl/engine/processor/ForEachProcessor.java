@@ -15,9 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
@@ -40,7 +38,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
     private ProcessorProperty _items;
     private String _indexName;
     private ThreadLocal _iterator = new ThreadLocal();
-    private ThreadLocal _map = new ThreadLocal();
+    private ThreadLocal _index = new ThreadLocal();
 
     // MLD property, required
     public void setVar(String var) {
@@ -65,7 +63,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
     }
 
     public void initialize() {
-        _map.set(new HashMap());
     }
 
     protected boolean next() {
@@ -101,19 +98,16 @@ public class ForEachProcessor extends TemplateProcessorSupport
 
     protected void inclementIndex() {
         if (_indexName != null) {
-            Map map = (Map) _map.get();
             Integer next =
-                new Integer(((Integer) map.get(_indexName)).intValue() + 1);
-            map.put(_indexName, next);
+                new Integer(((Integer) _index.get()).intValue() + 1);
+            _index.set(next);
             CycleUtil.setAttribute(_indexName, next, ServiceCycle.SCOPE_PAGE);
         }
     }
 
     protected void clear() {
-        Map map = (Map) _map.get();
-        map.clear();
         if (_indexName != null) {
-            map.put(_indexName, new Integer(-1));
+            _index.set(new Integer(-1));
         }
     }
 

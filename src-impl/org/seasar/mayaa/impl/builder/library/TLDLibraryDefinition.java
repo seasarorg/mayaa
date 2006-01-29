@@ -32,7 +32,7 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
         if (factory != null) {
             VERSION_JSP = factory.getEngineInfo().getSpecificationVersion();
         } else {
-            VERSION_JSP = "1.1";
+            VERSION_JSP = "2.0";
         }
     }
 
@@ -50,6 +50,7 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
     }
 
     public ProcessorDefinition getProcessorDefinition(String name) {
+        // TODO compare as number
         if (_requiredVersion != null
                 && VERSION_JSP.compareTo(_requiredVersion) < 0) {
             return null;

@@ -62,9 +62,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
         return true;
     }
 
-    public void initialize() {
-    }
-
     protected boolean next() {
         Iterator iterator = (Iterator) _iterator.get();
         if (iterator.hasNext() == false) {

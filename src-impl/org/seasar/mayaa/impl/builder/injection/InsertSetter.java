@@ -25,7 +25,9 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -45,13 +47,24 @@ public class InsertSetter extends ParameterAwareImpl
         }
         SpecificationNode injected = chain.getNode(original);
         QName qName = injected.getQName();
-        String uri = qName.getNamespaceURI();
-        if (uri.startsWith("/")) {
-            LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-            if (libraryManager.getProcessorDefinition(qName) == null) {
-                String name = qName.getLocalName();
-                String path =
-                    StringUtil.preparePath(uri) + StringUtil.preparePath(name);
+
+        if (qName.getNamespaceURI().startsWith("/")) {
+            return convertToInsert(injected, qName);
+        }
+        return injected;
+    }
+
+    private SpecificationNode convertToInsert(
+            SpecificationNode injected, QName qName) {
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        if (libraryManager.getProcessorDefinition(qName) == null) {
+            String uri = qName.getNamespaceURI();
+            String name = qName.getLocalName();
+            String path =
+                StringUtil.preparePath(uri) + StringUtil.preparePath(name);
+            // TODO 存在チェック (テンプレートがあるかどうかはsuffixのチェックが必要)
+            SourceDescriptor source = SourceUtil.getSourceDescriptor(uri);
+            if (source.exists()) {
                 SpecificationNode node = BuilderUtil.createInjectedNode(
                         QM_INSERT, uri, injected, false);
                 node.addAttribute(QM_PATH, path);

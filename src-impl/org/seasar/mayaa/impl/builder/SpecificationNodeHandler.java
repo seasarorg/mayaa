@@ -201,8 +201,9 @@ public class SpecificationNodeHandler
         if (_namespace.getMappingFromPrefix(prefix, false) == null) {
             startPrefixMapping(prefix, value);
         }
-        if (LOG.isWarnEnabled()) {
-            LOG.warn(StringUtil.getMessage(SpecificationNodeHandler.class,
+        // TODO Java5 (Tomcat5.5?) Ç≈ïpî≠Ç∑ÇÈÇΩÇﬂDEBUGÇ…ïœçXÅBí≤ç∏Ç∑ÇÈÇ±Ç∆ÅB
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(StringUtil.getMessage(SpecificationNodeHandler.class,
                     0, prefix, value));
         }
         return false;

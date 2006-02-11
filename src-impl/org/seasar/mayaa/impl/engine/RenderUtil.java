@@ -112,6 +112,12 @@ public class RenderUtil implements CONST_IMPL {
         }
     }
 
+    private static void pushWriter(TemplateProcessor current, ServiceCycle cycle) {
+        ChildEvaluationProcessor processor = getEvaluation(current);
+        processor.setBodyContent(cycle.getResponse().pushWriter());
+        processor.doInitChildProcess();
+    }
+
     // main rendering method
     public static ProcessStatus renderTemplateProcessor(
             Page topLevelPage, TemplateProcessor current) {
@@ -131,9 +137,7 @@ public class RenderUtil implements CONST_IMPL {
             boolean buffered = false;
             if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
-                getEvaluation(current).setBodyContent(
-                        cycle.getResponse().pushWriter());
-                getEvaluation(current).doInitChildProcess();
+                pushWriter(current, cycle);
             }
             if (startRet == EVAL_BODY_INCLUDE
                     || startRet == EVAL_BODY_BUFFERED) {
@@ -156,6 +160,10 @@ public class RenderUtil implements CONST_IMPL {
                     afterRet = SKIP_BODY;
                     saveToCycle(current);
                     if (isIteration(current)) {
+                        if (buffered) {
+                            buffered = false;
+                            cycle.getResponse().popWriter();
+                        }
                         afterRet = getIteration(current).doAfterChildProcess();
                         ProcessorTreeWalker parent = current.getParentProcessor();
                         if (parent instanceof TemplateProcessor) {
@@ -166,10 +174,15 @@ public class RenderUtil implements CONST_IMPL {
                                 saveToCycle(parentProc);
                                 parentProc.doEndProcess();
                                 parentProc.doStartProcess(null);
+
+                                if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
+                                    buffered = true;
+                                    pushWriter(current, cycle);
+                                }
                             }
                         }
                     }
-                } while(afterRet == EVAL_BODY_AGAIN);
+                } while (afterRet == EVAL_BODY_AGAIN);
             }
             if (buffered) {
                 cycle.getResponse().popWriter();

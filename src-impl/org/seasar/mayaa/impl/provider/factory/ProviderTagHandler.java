@@ -39,6 +39,7 @@ public class ProviderTagHandler
         putHandler(new LibraryManagerTagHandler(this, beforeProvider));
         putHandler(new TemplateBuilderTagHandler(this, beforeProvider));
         putHandler(new PathAdjusterTagHandler(this, beforeProvider));
+        putHandler(new TemplateAttributeReaderTagHandler(this, beforeProvider));
     }
 
     protected void start(

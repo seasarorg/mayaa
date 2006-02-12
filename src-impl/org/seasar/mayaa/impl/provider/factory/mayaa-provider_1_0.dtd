@@ -5,7 +5,7 @@
 
 <!ELEMENT provider (description?, engine?, scriptEnvironment?, 
 		specificationBuilder?, libraryManager?, templateBuilder?,
-		pathAdjuster?, parameter*) >
+		pathAdjuster?, templateAttributeReader?, parameter*) >
 <!ATTLIST provider class CDATA #IMPLIED>
 
 <!ELEMENT description (#PCDATA)>
@@ -51,3 +51,16 @@
 
 <!ELEMENT pathAdjuster (description?, parameter*)>
 <!ATTLIST pathAdjuster class CDATA #IMPLIED>
+
+<!ELEMENT ignoreAttribute (description?)>
+<!ATTLIST ignoreAttribute qName CDATA #REQUIRED>
+<!ATTLIST ignoreAttribute attribute CDATA #REQUIRED>
+
+<!ELEMENT aliasAttribute (description?)>
+<!ATTLIST aliasAttribute qName CDATA #REQUIRED>
+<!ATTLIST aliasAttribute attribute CDATA #REQUIRED>
+<!ATTLIST aliasAttribute templateAttribute CDATA #REQUIRED>
+
+<!ELEMENT templateAttributeReader (description?,
+		ignoreAttribute*, aliasAttribute*, parameter*)>
+<!ATTLIST templateAttributeReader class CDATA #IMPLIED>

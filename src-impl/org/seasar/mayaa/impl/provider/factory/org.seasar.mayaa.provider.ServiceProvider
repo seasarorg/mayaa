@@ -77,4 +77,9 @@
 		<parameter name="enabled" value="true"/>
 	</pathAdjuster>
 
+	<templateAttributeReader
+			class="org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl">
+		<parameter name="enabled" value="false"/>
+	</templateAttributeReader>
+
 </provider>

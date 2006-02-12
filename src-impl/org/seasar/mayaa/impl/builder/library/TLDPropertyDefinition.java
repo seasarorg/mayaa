@@ -19,11 +19,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
+import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.engine.specification.NodeAttributeImpl;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -44,6 +47,16 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         return converter;
     }
 
+    protected NodeAttribute getTemplateAttribute(
+            SpecificationNode original, SpecificationNode injected) {
+        TemplateAttributeReader reader = ProviderUtil.getTemplateAttributeReader();
+        String value = reader.getValue(injected.getQName(), getName(), original);
+        if (value != null) {
+            return new NodeAttributeImpl(getQName(injected), value);
+        }
+        return null;
+    }
+
     public Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {
@@ -62,14 +75,9 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         QName qName = getQName(injected);
         NodeAttribute attribute = injected.getAttribute(qName);
-// TODO 自動インジェクションする/しない設定、する場合の除外属性設定
-//        if(attribute == null) {
-//            自動インジェクションしない設定になっていなければセット
-//                qName.getNamespaceURI().equals(設定名前空間:mayaaで指定したuri
-//                processorDef.getName().equals(設定タグ名)
-//                qName.getLocalName().equals(設定属性名)
-//            attribute = original.getAttribute(getQName(original));
-//        }
+        if (attribute == null) {
+            attribute = getTemplateAttribute(original, injected);
+        }
         if (attribute != null) {
             String value = attribute.getValue();
             PropertyConverter converter = getConverterForProcessorProperty();

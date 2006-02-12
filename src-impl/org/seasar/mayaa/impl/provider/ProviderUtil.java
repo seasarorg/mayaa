@@ -20,6 +20,7 @@ import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.provider.ProviderFactory;
@@ -62,6 +63,10 @@ public class ProviderUtil {
 
     public static Engine getEngine() {
         return getServiceProvider().getEngine();
+    }
+
+    public static TemplateAttributeReader getTemplateAttributeReader() {
+        return getServiceProvider().getTemplateAttributeReader();
     }
 
 }

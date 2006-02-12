@@ -22,6 +22,7 @@ import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
 
@@ -102,5 +103,17 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @return パスアジャスタ。
      */
     PathAdjuster getPathAdjuster();
+
+    /**
+     * テンプレートの属性を取得するオブジェクトを設定する。
+     * @param templateAttributeReader テンプレートの属性を取得するオブジェクト。
+     */
+    void setTemplateAttributeReader(TemplateAttributeReader templateAttributeReader);
+
+    /**
+     * テンプレートの属性を取得するオブジェクトを取得する。
+     * @return テンプレートの属性を取得するオブジェクト。
+     */
+    TemplateAttributeReader getTemplateAttributeReader();
 
 }

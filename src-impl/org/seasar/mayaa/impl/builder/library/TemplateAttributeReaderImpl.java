@@ -31,8 +31,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class TemplateAttributeReaderImpl extends ParameterAwareImpl
-        implements TemplateAttributeReader {
+public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements TemplateAttributeReader {
 
     private Set _ignoreAttributes;
     private Map _aliasAttributes;
@@ -53,10 +52,10 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl
         }
     }
 
-    public void addAliasAttribute(
-            String qName, String attribute, String templateAttribute) {
+    public void addAliasAttribute(String qName, String attribute, String templateAttribute) {
         if (StringUtil.isEmpty(qName) || StringUtil.isEmpty(attribute)
                 || StringUtil.isEmpty(templateAttribute)) {
+            throw new IllegalArgumentException();
         }
         synchronized (_aliasAttributes) {
             _aliasAttributes.put(toKey(qName, attribute), templateAttribute);
@@ -70,17 +69,15 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl
         super.setParameter(name, value);
     }
 
-    public String getValue(
-            QName qName, String attributeName, SpecificationNode original) {
+    public String getValue(QName qName, String attributeName, SpecificationNode original) {
         if (_enabled) {
             String key = qNameToKey(qName, attributeName);
             if (_ignoreAttributes.contains(key) == false) {
-                String templateAttribute = (String)_aliasAttributes.get(key);
+                String templateAttribute = (String) _aliasAttributes.get(key);
                 if (templateAttribute == null) {
                     templateAttribute = attributeName;
                 }
-                NodeAttribute attribute = original.getAttribute(
-                        getQName(original, templateAttribute));
+                NodeAttribute attribute = original.getAttribute(getQName(original, templateAttribute));
                 if (attribute != null) {
                     return attribute.getValue();
                 }

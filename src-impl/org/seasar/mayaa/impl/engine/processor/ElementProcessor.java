@@ -194,17 +194,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return getChildProcessorSize() > 0;
     }
 
-    protected void write(StringBuffer buffer) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write(buffer.toString());
-    }
-
     protected PrefixAwareName getIDName() {
         String namespaceURI = getName().getQName().getNamespaceURI();
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
                 SpecificationUtil.createQName(namespaceURI, "id"));
         name.setParentSpace(getName().getParentSpace());
         return name;
+    }
+
+    protected void write(String value) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        cycle.getResponse().write(value);
     }
 
     protected ProcessStatus writeStartElement() {
@@ -231,6 +231,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             String propURI = propQName.getNamespaceURI();
             String propLocalName = propQName.getLocalName();
             if (isDuplicated()) {
+                // TODO Feb 24, 2006 8:40:30 AM id ‚ðÁ‚·‚©H
                 if (uri.equals(propURI) && "id".equals(propLocalName)) {
                     continue;
                 }
@@ -248,8 +249,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
         } else {
             buffer.append("/>");
         }
-        write(buffer);
+        write(buffer.toString());
         return ProcessStatus.EVAL_BODY_INCLUDE;
+    }
+
+    protected void writeBody(String body) {
+        write(body);
     }
 
     protected void writeEndElement() {
@@ -264,7 +269,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 buffer.append(prefix).append(":");
             }
             buffer.append(qName.getLocalName()).append(">");
-            write(buffer);
+            write(buffer.toString());
         }
     }
 

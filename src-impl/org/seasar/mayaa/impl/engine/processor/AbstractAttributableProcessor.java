@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -105,6 +104,8 @@ public abstract class AbstractAttributableProcessor
 
     protected abstract ProcessStatus writeStartElement();
 
+    protected abstract void writeBody(String body);
+
     protected abstract void writeEndElement();
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
@@ -145,11 +146,7 @@ public abstract class AbstractAttributableProcessor
             writeStartElement();
             CycleWriter body = info.getBody();
             if (body != null) {
-                try {
-                    body.flush();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                writeBody(body.getString());
             }
         }
         writeEndElement();

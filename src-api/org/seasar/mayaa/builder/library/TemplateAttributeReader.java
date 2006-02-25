@@ -54,6 +54,6 @@ public interface TemplateAttributeReader extends ParameterAware {
      * @param templateAttributeName テンプレート上の属性名
      */
     void addAliasAttribute(
-            String qName, String attributeName, String templateAttribute);
+            String qName, String attributeName, String templateAttributeName);
 
 }

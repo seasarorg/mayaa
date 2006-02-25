@@ -127,6 +127,7 @@ public class RenderUtil implements CONST_IMPL {
         saveToCycle(current);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
+        boolean buffered = false;
         try {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
@@ -134,7 +135,6 @@ public class RenderUtil implements CONST_IMPL {
             if (startRet == SKIP_PAGE) {
                 return SKIP_PAGE;
             }
-            boolean buffered = false;
             if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
                 pushWriter(current, cycle);
@@ -184,10 +184,11 @@ public class RenderUtil implements CONST_IMPL {
                     }
                 } while (afterRet == EVAL_BODY_AGAIN);
             }
+            saveToCycle(current);
             if (buffered) {
                 cycle.getResponse().popWriter();
+                getIteration(current).doAfterChildProcess();
             }
-            saveToCycle(current);
             ret = current.doEndProcess();
             SpecificationUtil.endScope();
         } catch (RuntimeException e) {
@@ -201,6 +202,9 @@ public class RenderUtil implements CONST_IMPL {
             if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }
+        }
+        if (buffered) {
+            getEvaluation(current).setBodyContent(cycle.getResponse().getWriter());
         }
         return ret;
     }

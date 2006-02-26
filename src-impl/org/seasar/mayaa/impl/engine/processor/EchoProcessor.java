@@ -69,8 +69,8 @@ public class EchoProcessor extends ElementProcessor
         // doNothing
     }
 
-    // MLD method of ElementProcessor
-    public void addInformalProperty(ProcessorProperty attr) {
+    // MLD method of AbstractAttributableProcessor
+    public void addInformalProperty(PrefixAwareName name, Object attr) {
         // doNothing
     }
 

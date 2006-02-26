@@ -19,8 +19,8 @@ Mayaa 1.0.1 リリースノート： 2006年02月26日
  システムの動作は、以下の環境で確認されています。その他の環境については、適宜
 フィードバックをお願いいたします。
 
-    JavaVM： J2SDK 1.4.2_09 （5.0未確認）
-    コンテナ： Tomcat4.1.31 / Tomcat5.0.28 / Jetty4.2.23 / Jetty5.1.10
+    JavaVM： J2SDK 1.4.2_09, 1.5.0_06 (Windows)
+    コンテナ： Tomcat4.1.31 / Tomcat5.0.30 / Jetty4.2.23 / Jetty5.1.10
 
 
 
@@ -41,7 +41,7 @@ WEBコンテナの起動後、WEBブラウザより以下のURL（参考）にアクセスください。
 
 MayaaのWEBサイト：
 
-    http://mayaa.sandbox.seasar.org/
+    http://mayaa.seasar.org/
 
 
 サポート & フィードバック方法：

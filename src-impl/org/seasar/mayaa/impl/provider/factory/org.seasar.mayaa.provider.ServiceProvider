@@ -80,6 +80,15 @@
 	<templateAttributeReader
 			class="org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl">
 		<parameter name="enabled" value="false"/>
+		<!-- example
+        <ignoreAttribute
+                qName="{http://struts.apache.org/tags-html}errors"
+                attribute="id"/>
+        <aliasAttribute
+                qName="{http://struts.apache.org/tags-html}*"
+                attribute="styleId"
+                templateAttribute="id" />
+        -->
 	</templateAttributeReader>
 
 </provider>

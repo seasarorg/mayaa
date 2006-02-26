@@ -15,8 +15,9 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,8 +39,8 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
     private boolean _enabled;
 
     public TemplateAttributeReaderImpl() {
-        _ignoreAttributes = new HashSet();
-        _aliasAttributes = new HashMap();
+        _ignoreAttributes = new LinkedHashSet();
+        _aliasAttributes = new LinkedHashMap();
         _enabled = false;
     }
 
@@ -52,7 +53,8 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
         }
     }
 
-    public void addAliasAttribute(String qName, String attribute, String templateAttribute) {
+    public void addAliasAttribute(
+            String qName, String attribute, String templateAttribute) {
         if (StringUtil.isEmpty(qName) || StringUtil.isEmpty(attribute)
                 || StringUtil.isEmpty(templateAttribute)) {
             throw new IllegalArgumentException();
@@ -69,15 +71,14 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
         super.setParameter(name, value);
     }
 
-    public String getValue(QName qName, String attributeName, SpecificationNode original) {
+    public String getValue(
+            QName qName, String attributeName, SpecificationNode original) {
         if (_enabled) {
-            String key = qNameToKey(qName, attributeName);
-            if (_ignoreAttributes.contains(key) == false) {
-                String templateAttribute = (String) _aliasAttributes.get(key);
-                if (templateAttribute == null) {
-                    templateAttribute = attributeName;
-                }
-                NodeAttribute attribute = original.getAttribute(getQName(original, templateAttribute));
+            AttributeKey key = qNameToKey(qName, attributeName);
+            if (isTarget(key)) {
+                String templateAttribute = getTemplateAttribute(key, attributeName);
+                NodeAttribute attribute =
+                    original.getAttribute(getQName(original, templateAttribute));
                 if (attribute != null) {
                     return attribute.getValue();
                 }
@@ -86,22 +87,64 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
         return null;
     }
 
+    private boolean isTarget(AttributeKey key) {
+        for (Iterator it = _ignoreAttributes.iterator(); it.hasNext(); ) {
+            AttributeKey ignoreKey = (AttributeKey) it.next();
+            if (ignoreKey.match(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getTemplateAttribute(AttributeKey key, String attributeName) {
+        for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
+            AttributeKey aliasKey = (AttributeKey) it.next();
+            if (aliasKey.match(key)) {
+                return (String) _aliasAttributes.get(aliasKey);
+            }
+        }
+        return attributeName;
+    }
+
     private QName getQName(SpecificationNode original, String attribute) {
         return new QNameImpl(original.getQName().getNamespaceURI(), attribute);
     }
 
-    private String toKey(String qName, String attribute) {
+    private AttributeKey toKey(String qName, String attribute) {
         if (StringUtil.isEmpty(qName) || StringUtil.isEmpty(attribute)) {
             throw new IllegalArgumentException();
         }
-        return qName + "/" + attribute;
+        return new AttributeKey(qName, attribute);
     }
 
-    private String qNameToKey(QName qName, String attribute) {
+    private AttributeKey qNameToKey(QName qName, String attribute) {
         if (qName == null || StringUtil.isEmpty(attribute)) {
             throw new IllegalArgumentException();
         }
-        return qName.toString() + "/" + attribute;
+        return new AttributeKey(qName.toString(), attribute);
+    }
+
+    private class AttributeKey {
+        private String _tagName;
+        private String _attributeName;
+
+        protected AttributeKey(String tagName, String attributeName) {
+            _tagName = tagName;
+            _attributeName = attributeName;
+        }
+
+        protected boolean match(AttributeKey other) {
+            return matchWildCard(_tagName, other._tagName)
+                && matchWildCard(_attributeName, other._attributeName);
+        }
+
+        private boolean matchWildCard(String pattern, String test) {
+            if (pattern.charAt(pattern.length() - 1) == '*') {
+                return test.startsWith(pattern.substring(0, pattern.length() - 1));
+            }
+            return test.equals(pattern);
+        }
     }
 
 }

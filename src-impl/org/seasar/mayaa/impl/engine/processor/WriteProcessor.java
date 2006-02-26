@@ -71,15 +71,16 @@ public class WriteProcessor extends TemplateProcessorSupport {
             String ret = (String) _value.getValue().execute(null);
             if (StringUtil.isEmpty(ret) && _default != null) {
                 ret = (String) _default.getValue().execute(null);
-            }
-            if (toBoolean(_escapeXml)) {
-                ret = StringUtil.escapeXml(ret);
-            }
-            if (_forHyperText && toBoolean(_escapeEol)) {
-                ret = StringUtil.escapeEol(ret, _forHTML);
-            }
-            if (toBoolean(_escapeWhitespace)) {
-                ret = StringUtil.escapeWhitespace(ret);
+            } else {
+                if (toBoolean(_escapeXml)) {
+                    ret = StringUtil.escapeXml(ret);
+                }
+                if (_forHyperText && toBoolean(_escapeEol)) {
+                    ret = StringUtil.escapeEol(ret, _forHTML);
+                }
+                if (toBoolean(_escapeWhitespace)) {
+                    ret = StringUtil.escapeWhitespace(ret);
+                }
             }
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(ret);

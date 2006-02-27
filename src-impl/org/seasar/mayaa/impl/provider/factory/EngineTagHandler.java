@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.MarshallUtil;
-import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -50,7 +49,7 @@ public class EngineTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         Class engineClass = XMLUtil.getClassValue(
                 attributes, "class", null);
-        _currentEngine = (EngineImpl) MarshallUtil.marshall(
+        _currentEngine = (Engine) MarshallUtil.marshall(
                 engineClass, Engine.class, _beforeEngine,
                 systemID, lineNumber);
         _parent.getServiceProvider().setEngine(_currentEngine);

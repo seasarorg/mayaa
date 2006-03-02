@@ -108,6 +108,10 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
     }
 
     private QName getQName(SpecificationNode original, String attribute) {
+        if(attribute.startsWith("{")){
+            String[] split = attribute.split("[\\{\\}]");
+            return new QNameImpl(split[1], split[2]);
+        }
         return new QNameImpl(original.getQName().getNamespaceURI(), attribute);
     }
 

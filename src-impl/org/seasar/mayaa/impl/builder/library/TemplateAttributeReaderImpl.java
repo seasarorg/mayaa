@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -45,7 +46,7 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
     }
 
     public void addIgnoreAttribute(String qName, String attribute) {
-        if (StringUtil.isEmpty(qName) || StringUtil.isEmpty(attribute)) {
+        if (isQName(qName) == false || StringUtil.isEmpty(attribute)) {
             throw new IllegalArgumentException();
         }
         synchronized (_ignoreAttributes) {
@@ -55,8 +56,8 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
 
     public void addAliasAttribute(
             String qName, String attribute, String templateAttribute) {
-        if (StringUtil.isEmpty(qName) || StringUtil.isEmpty(attribute)
-                || StringUtil.isEmpty(templateAttribute)) {
+        if (isQName(qName) == false || StringUtil.isEmpty(attribute)
+                || isQNameOrLocalName(templateAttribute) == false) {
             throw new IllegalArgumentException();
         }
         synchronized (_aliasAttributes) {
@@ -108,7 +109,7 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
     }
 
     private QName getQName(SpecificationNode original, String attribute) {
-        if(attribute.startsWith("{")){
+        if(attribute.startsWith("{")) {
             String[] split = attribute.split("[\\{\\}]");
             return new QNameImpl(split[1], split[2]);
         }
@@ -127,6 +128,19 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
             throw new IllegalArgumentException();
         }
         return new AttributeKey(qName.toString(), attribute);
+    }
+
+    private static final Pattern QNAME_PATTERN =
+        Pattern.compile("^\\{[^\\{\\}]+\\}[^\\{\\}]+$");
+
+    private boolean isQName(String test) {
+        return StringUtil.hasValue(test) && QNAME_PATTERN.matcher(test).matches();
+    }
+
+    private boolean isQNameOrLocalName(String test) {
+        return StringUtil.hasValue(test)
+                && (QNAME_PATTERN.matcher(test).matches()
+                        || (test.indexOf('{') == -1 && test.indexOf('}') == -1));
     }
 
     private class AttributeKey {

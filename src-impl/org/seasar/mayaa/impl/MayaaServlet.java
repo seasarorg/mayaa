@@ -35,13 +35,13 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class MayaaServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5816552218525836552L;
-    private static boolean _inithialized;
+    private static boolean _initialized;
 
     public void init() {
-        if (_inithialized == false) {
+        if (_initialized == false) {
             FactoryFactory.setInstance(new FactoryFactoryImpl());
             FactoryFactory.setContext(getServletContext());
-            _inithialized = true;
+            _initialized = true;
         }
         ProviderUtil.getLibraryManager().prepareLibraries();
     }

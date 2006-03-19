@@ -17,7 +17,9 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -55,6 +57,8 @@ public class InsertProcessor
     private String _suffix;
     private String _extension;
     private List _attributes;
+    private boolean _rendering;
+    private Map _renderingParams;
 
     // MLD property, required
     public void setPath(String path) {
@@ -123,6 +127,13 @@ public class InsertProcessor
         }
     }
 
+    public Map getRenderingParameters() {
+        if (_rendering) {
+            return _renderingParams;
+        }
+        return null;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         preparePage();
         Page renderPage = getPage();
@@ -141,7 +152,19 @@ public class InsertProcessor
             throw new IllegalStateException();
         }
         renderPage.checkTimestamp();
-        // TODO Ç±ÇÃà íuÇ≈InsertProcessorÇBindingScopeÇ©ÇÁéQè∆Ç≈Ç´ÇÈÇÊÇ§Ç…Ç∑ÇÈ
+
+        _renderingParams = new LinkedHashMap();
+        for (int i = 0; i < getInformalProperties().size(); i++) {
+            Object object = getInformalProperties().get(i);
+            if (object instanceof ProcessorProperty) {
+                ProcessorProperty prop = (ProcessorProperty)object;
+                _renderingParams.put(
+                        prop.getName().getQName().getLocalName(),
+                        prop.getValue().execute(null));
+            }
+        }
+
+        _rendering = true;
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
         if (ret == null) {
@@ -155,6 +178,11 @@ public class InsertProcessor
             ret = ProcessStatus.SKIP_BODY;
         }
         return ret;
+    }
+
+    public ProcessStatus doEndProcess() {
+        _rendering = false;
+        return super.doEndProcess();
     }
 
     // TemplateRenderer implements ----------------------------------
@@ -191,13 +219,12 @@ public class InsertProcessor
         return null;
     }
 
-    protected TemplateProcessor getRenderRoot(
-            DoRenderProcessor doRender) {
+    protected TemplateProcessor getRenderRoot(DoRenderProcessor doRender) {
         if (doRender.isReplace() == false) {
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
             if (duplecated == null
                     || duplecated instanceof TemplateProcessor == false) {
-                throw new IllegalStateException();
+                return doRender;
             }
             return (TemplateProcessor) duplecated;
         }

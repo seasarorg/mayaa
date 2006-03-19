@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.cycle.scope;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
@@ -59,17 +60,22 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         return param.iterateAttributeNames();
     }
 
+    protected ProcessorProperty getTargetAttribute(
+            InsertProcessor processor, String name) {
+        for (Iterator it = processor.getInformalProperties().iterator();
+                it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
+            if (prop.getName().getQName().getLocalName().equals(name)) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
     public boolean hasAttribute(String name) {
         InsertProcessor processor = getInsertProcessor();
         if (processor != null) {
-            for (Iterator it = processor.getInformalProperties().iterator();
-                    it.hasNext();) {
-                ProcessorProperty prop = (ProcessorProperty) it.next();
-                if (prop.getName().getQName().getLocalName().equals(name)) {
-                    return true;
-                }
-            }
-            return false;
+            return getTargetAttribute(processor, name) != null;
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope param = cycle.getAttributeScope("param");
@@ -81,8 +87,12 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         if (processor != null) {
             for (Iterator it = processor.getInformalProperties().iterator();
                     it.hasNext();) {
-                ProcessorProperty prop = (ProcessorProperty) it.next();
-                if (prop.getName().getQName().getLocalName().equals(name)) {
+                ProcessorProperty prop = getTargetAttribute(processor, name);
+                if (prop != null) {
+                    Map binding = processor.getRenderingParameters();
+                    if (binding != null) {
+                        return binding.get(name);
+                    }
                     return prop.getValue().execute(null);
                 }
             }

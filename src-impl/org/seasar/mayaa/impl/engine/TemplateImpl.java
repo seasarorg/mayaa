@@ -52,9 +52,13 @@ public class TemplateImpl
     private String _extension;
     private List _childProcessors = new ArrayList();
 
-    public TemplateImpl(Page page, String suffix, String extension) {
+    public void initialize(Page page, String suffix, String extension) {
         if (page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
+        }
+        if (_page != null) {
+            /* only once */
+            throw new IllegalStateException();
         }
         _page = page;
         _suffix = suffix;
@@ -150,11 +154,28 @@ public class TemplateImpl
         }
     }
 
+    protected void replaceProcessors(List processors) {
+        synchronized (this) {
+            _childProcessors.clear();
+            for (int i = 0; i < processors.size(); i++) {
+                Object item = processors.get(i);
+                if (item instanceof ProcessorTreeWalker) {
+                    addChildProcessor((ProcessorTreeWalker)processors.get(i));
+                }
+            }
+        }
+    }
+
     protected void parseSpecification() {
         setTimestamp(new Date());
         clear();
         TemplateBuilder builder = ProviderUtil.getTemplateBuilder();
-        builder.build(this);
+        CycleUtil.beginDraftWriting();
+        try {
+            builder.build(this);
+        } finally {
+            CycleUtil.endDraftWriting();
+        }
     }
 
     public void checkTimestamp() {
@@ -199,6 +220,12 @@ public class TemplateImpl
         synchronized (_childProcessors) {
             _childProcessors.add(child);
             child.setParentProcessor(this, _childProcessors.size() - 1);
+        }
+    }
+
+    public void clearChildProcessors() {
+        synchronized (this) {
+            _childProcessors.clear();
         }
     }
 

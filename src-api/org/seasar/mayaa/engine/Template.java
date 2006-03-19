@@ -31,6 +31,14 @@ public interface Template
         extends Specification, ProcessorTreeWalker, Serializable {
 
     /**
+     * テンプレートを初期化する。
+     * @param page ページ。
+     * @param suffix テンプレートの接尾子。
+     * @param extension ページの拡張子。
+     */
+    void initialize(Page page, String suffix, String extension);
+
+    /**
      * ページへの参照を取得する。
      * @return ページ。
      */

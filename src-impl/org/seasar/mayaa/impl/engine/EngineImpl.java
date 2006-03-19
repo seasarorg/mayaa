@@ -34,6 +34,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -44,6 +45,7 @@ import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
 import org.seasar.mayaa.impl.source.PageSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -55,13 +57,16 @@ public class EngineImpl extends SpecificationImpl
 
     private static final long serialVersionUID = 1428444571422324206L;
     private static final Log LOG = LogFactory.getLog(EngineImpl.class);
-    private static final String DEFAULT_SPECIFICATION =
-        "defaultSpecification";
+    private static final String DEFAULT_SPECIFICATION = "defaultSpecification";
+    private static final String PAGE_CLASS = "pageClass";
+    private static final String TEMPLATE_CLASS = "templateClass";
 
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
     private List _templatePathPatterns;
+    private Class _pageClass = PageImpl.class;
+    private Class _templateClass = TemplateImpl.class;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -97,7 +102,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected Page createNewPage(String pageName) {
-        Page page = new PageImpl(pageName);
+        Page page = createPageInstance(pageName);
         String path = pageName + ".mayaa";
         SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
         page.setSource(source);
@@ -254,6 +259,19 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
+    public Page createPageInstance(String pageName) {
+        Page page = (Page) ObjectUtil.newInstance(getPageClass());
+        page.initialize(pageName);
+        return page;
+    }
+
+    public Template createTemplateInstance(
+            Page page, String suffix, String extension) {
+        Template template = (Template) ObjectUtil.newInstance(getTemplateClass());
+        template.initialize(page, suffix, extension);
+        return template;
+    }
+
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
@@ -280,6 +298,20 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), false);
                 _templatePathPatterns.add(0, pathPattern);
             }
+        } else if (PAGE_CLASS.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Class pageClass = ObjectUtil.loadClass(value);
+                if (Page.class.isAssignableFrom(pageClass)) {
+                    _pageClass = pageClass;
+                }
+            }
+        } else if (TEMPLATE_CLASS.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Class templateClass = ObjectUtil.loadClass(value);
+                if (Template.class.isAssignableFrom(templateClass)) {
+                    _templateClass = templateClass;
+                }
+            }
         }
         super.setParameter(name, value);
     }
@@ -297,6 +329,10 @@ public class EngineImpl extends SpecificationImpl
                 return null;
             }
             return patternToString(_templatePathPatterns, false);
+        } else if (PAGE_CLASS.equals(name)) {
+            return _pageClass.getName();
+        } else if (TEMPLATE_CLASS.equals(name)) {
+            return _templateClass.getName();
         }
         return super.getParameter(name);
     }
@@ -311,6 +347,14 @@ public class EngineImpl extends SpecificationImpl
             }
         }
         return sb.toString();
+    }
+
+    private Class getPageClass() {
+        return _pageClass;
+    }
+
+    private Class getTemplateClass() {
+        return _templateClass;
     }
 
     //---- support class

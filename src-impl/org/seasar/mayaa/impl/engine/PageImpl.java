@@ -53,7 +53,7 @@ public class PageImpl extends SpecificationImpl
     private String _pageName;
     private List _templates;
 
-    public PageImpl(String pageName) {
+    public void initialize(String pageName) {
         if (StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
@@ -163,7 +163,9 @@ public class PageImpl extends SpecificationImpl
         SourceDescriptor source =
             SourceUtil.getSourceDescriptor(name.toString());
         if (source.exists()) {
-            Template template = new TemplateImpl(this, suffix, extension);
+            Engine engine = ProviderUtil.getEngine();
+            Template template =
+                engine.createTemplateInstance(this, suffix, extension);
             template.setSource(source);
             return template;
         }

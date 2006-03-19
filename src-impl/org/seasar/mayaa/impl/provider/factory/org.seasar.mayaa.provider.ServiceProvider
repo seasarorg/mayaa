@@ -9,20 +9,22 @@
 			<parameter name="folder" value="/"/>
 			<parameter name="extension" value="html"/>
 		</errorHandler>
+		<parameter name="pageClass" value="org.seasar.mayaa.impl.engine.PageImpl"/>
+		<parameter name="templateClass" value="org.seasar.mayaa.impl.engine.TemplateImpl"/>
 		<parameter name="defaultSpecification" value="/default.mayaa"/>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 		<parameter name="requestCharacterEncoding" value="UTF-8"/>
 	</engine>
-	
+
 	<scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
 		<scope class="org.seasar.mayaa.impl.cycle.scope.ParamScope"/>
 		<scope class="org.seasar.mayaa.impl.cycle.scope.HeaderScope"/>
 		<scope class="org.seasar.mayaa.impl.cycle.scope.BindingScope"/>
 		<parameter name="wrapFactory" value="org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl"/>
 	</scriptEnvironment>
-	
+
 	<specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
 		<parameter name="outputTemplateWhitespace" value="true"/>
 		<parameter name="outputMayaaWhitespace" value="false"/>
@@ -56,7 +58,7 @@
 		<builder class="org.seasar.mayaa.impl.builder.library.MLDDefinitionBuilder"/>
 		<builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder"/>
 	</libraryManager>
-	
+
 	<templateBuilder class="org.seasar.mayaa.impl.builder.TemplateBuilderImpl">
 		<resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
 		<resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>

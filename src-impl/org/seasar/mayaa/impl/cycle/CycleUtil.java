@@ -105,5 +105,24 @@ public class CycleUtil {
         }
     }
 
+    private static final String DRAFT_WRITING =
+            "org.seasar.mayaa.cycle.DRAFT_WRITING"; 
+
+    public static boolean isDraftWriting() {
+        ServiceCycle cycle = getServiceCycle();
+        return Boolean.TRUE.equals(
+                cycle.getAttributeScope(ServiceCycle.SCOPE_REQUEST)
+                        .getAttribute(DRAFT_WRITING));
+    }
+
+    public static void beginDraftWriting() {
+        getServiceCycle().getAttributeScope(ServiceCycle.SCOPE_REQUEST)
+                .setAttribute(DRAFT_WRITING, Boolean.TRUE);
+    }
+
+    public static void endDraftWriting() {
+        getServiceCycle().getAttributeScope(ServiceCycle.SCOPE_REQUEST)
+                .setAttribute(DRAFT_WRITING, Boolean.FALSE);
+    }
 
 }

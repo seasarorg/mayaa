@@ -58,4 +58,20 @@ public interface Engine extends ParameterAware, Specification {
      */
     void handleError(Throwable t, boolean pageFlush);
 
+    /**
+     * ページのインスタンスを生成して返す。
+     * @param pageName ページ名
+     * @return ページ
+     */
+    Page createPageInstance(String pageName);
+
+    /**
+     * テンプレートのインスタンスを生成して返す。
+     * @param page ページ
+     * @param suffix テンプレートの接尾子。
+     * @param extension ページの拡張子。
+     * @return テンプレート
+     */
+    Template createTemplateInstance(Page page, String suffix, String extension);
+
 }

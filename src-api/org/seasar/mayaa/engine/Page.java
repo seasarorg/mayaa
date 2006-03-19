@@ -30,6 +30,12 @@ public interface Page
         extends Serializable, Specification, TemplateRenderer {
 
     /**
+     * インスタンスをを初期化する。
+     * @param pageName ページ名。
+     */
+    void initialize(String pageName);
+
+    /**
      * 継承元ページの取得。
      * @return 継承元ページもしくはnull。
      */

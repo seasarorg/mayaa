@@ -26,6 +26,7 @@ import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.scope.AbstractWritableAttributeScope;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.IteratorUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
 
@@ -40,19 +41,22 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     private HttpServletRequest _httpRequest;
     private HttpSession _httpSession;
 
-    protected void check() {
+    protected void check(boolean create) {
         if (_httpRequest == null) {
             throw new IllegalStateException();
         }
         if (_httpSession == null) {
-            _httpSession = _httpRequest.getSession(true);
+            _httpSession = _httpRequest.getSession(create);
         }
     }
 
     // Session implements -------------------------------------------
 
     public String getSessionID() {
-        check();
+        check(false);
+        if (_httpSession == null) {
+            return null;
+        }
         return _httpSession.getId();
     }
 
@@ -63,7 +67,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
     }
 
     public Iterator iterateAttributeNames() {
-        check();
+        check(false);
+        if (_httpSession == null) {
+            return IteratorUtil.NULL_ITERATOR;
+        }
         return EnumerationIterator.getInstance(
                 _httpSession.getAttributeNames());
     }
@@ -72,7 +79,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (StringUtil.isEmpty(name)) {
             return false;
         }
-        check();
+        check(false);
+        if (_httpSession == null) {
+            return false;
+        }
         for (Enumeration e = _httpSession.getAttributeNames();
                 e.hasMoreElements();) {
             if (e.nextElement().equals(name)) {
@@ -86,7 +96,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (StringUtil.isEmpty(name)) {
             return null;
         }
-        check();
+        check(false);
+        if (_httpSession == null) {
+            return null;
+        }
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
         return env.convertFromScriptObject(_httpSession.getAttribute(name));
     }
@@ -95,7 +108,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (StringUtil.isEmpty(name)) {
             return;
         }
-        check();
+        check(true);
         _httpSession.setAttribute(name, attribute);
     }
 
@@ -103,8 +116,10 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (StringUtil.isEmpty(name)) {
             return;
         }
-        check();
-        _httpSession.removeAttribute(name);
+        check(false);
+        if (_httpSession != null) {
+            _httpSession.removeAttribute(name);
+        }
     }
 
     // ContextAware implemetns ----------------------------------------
@@ -121,7 +136,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
 
     public Object getUnderlyingContext() {
         // When getting, UnderlyingObject is "HttpSession"
-        check();
+        check(true);
         return _httpSession;
     }
 

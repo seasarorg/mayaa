@@ -57,7 +57,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public String toString() {
-        return getQName().toString();
+        return getQName().toString() + "=\"" + getValue() + "\"";
     }
 
     // PrefixAwareName implements ----------------------------------------

@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.builder.injection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.QName;
@@ -32,6 +34,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class InjectAttributeInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final Log LOG =
+        LogFactory.getLog(InjectAttributeInjectionResolver.class);
+
     protected static final QName QM_INJECT =
         SpecificationUtil.createQName("inject");
 
@@ -48,6 +53,10 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
             QName qName = prefixAwareName.getQName();
             if (QM_IGNORE.equals(qName) == false) {
                 String uri = qName.getNamespaceURI();
+                if (URI_HTML.equals(uri)
+                        || URI_XHTML.equals(uri) || URI_XML.equals(uri)) {
+                    LOG.error("inject=\""+ injectName +"\" is not processor");
+                }
                 return BuilderUtil.createInjectedNode(
                         qName, uri, original, true);
             }

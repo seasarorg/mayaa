@@ -130,7 +130,7 @@ public class SpecificationNavigator extends DefaultNavigator
                 if (node instanceof Namespace) {
                     namespaceURI = getNamespaceURI((Namespace) node, namespacePrefix);
                 } else {
-                    namespaceURI = URI_MAYA;
+                    namespaceURI = URI_MAYAA;
                 }
             }
             QName qName = SpecificationUtil.createQName(namespaceURI, localName);

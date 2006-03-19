@@ -29,7 +29,7 @@ public interface CONST_IMPL {
     String TEMPLATE_PATH_PATTERN = "templatePathPattern";
     String NOT_TEMPLATE_PATH_PATTERN = "notTemplatePathPattern";
 
-    String URI_MAYA = "http://mayaa.seasar.org";
+    String URI_MAYAA = "http://mayaa.seasar.org";
     String URI_HTML = "http://www.w3.org/TR/html4";
     String URI_XHTML = "http://www.w3.org/1999/xhtml";
     String URI_XML = "http://www.w3.org/XML/1998/namespace";
@@ -49,7 +49,7 @@ public interface CONST_IMPL {
     QName QM_COMMENT = new QNameImpl("comment");
     QName QM_DOCTYPE = new QNameImpl("doctype");
     QName QM_DUPLECATED = new QNameImpl("duplecatedElement");
-    QName QM_MAYA = new QNameImpl("mayaa");
+    QName QM_MAYAA = new QNameImpl("mayaa");
     QName QM_PI = new QNameImpl("processingInstruction");
     QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
 

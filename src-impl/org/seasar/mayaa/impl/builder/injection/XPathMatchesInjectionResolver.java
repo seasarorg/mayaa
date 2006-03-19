@@ -51,7 +51,7 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         Namespace namespace = SpecificationUtil.createNamespace();
-        namespace.addPrefixMapping("m", URI_MAYA);
+        namespace.addPrefixMapping("m", URI_MAYAA);
         String xpathExpr = "/m:mayaa//*[string-length(@m:xpath) > 0]";
         for (Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespace, true); it.hasNext();) {

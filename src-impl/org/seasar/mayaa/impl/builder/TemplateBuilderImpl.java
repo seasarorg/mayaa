@@ -96,7 +96,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected String getPublicID() {
-        return URI_MAYA + "/template";
+        return URI_MAYAA + "/template";
     }
 
     protected void afterBuild(Specification specification) {
@@ -237,7 +237,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         while (it.hasNext()) {
             SpecificationNode child = (SpecificationNode) it.next();
             saveToCycle(child, child);
-            if (QM_MAYA.equals(child.getQName())) {
+            if (QM_MAYAA.equals(child.getQName())) {
                 continue;
             }
             InjectionChain chain = getDefaultInjectionChain();
@@ -265,7 +265,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         Stack stack = new Stack();
         stack.push(template);
         SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
-                QM_MAYA, template.getSystemID(), 0, true, 0);
+                QM_MAYAA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
         walkParsedTree(template, stack, template);
         if (template.equals(stack.peek()) == false) {

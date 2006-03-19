@@ -172,6 +172,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
             PrefixMapping mapping = (PrefixMapping) it.next();
             String pre = mapping.getPrefix();
             String uri = mapping.getNamespaceURI();
+            if (uri.startsWith(URI_MAYAA)) {
+                continue;
+            }
             if (StringUtil.hasValue(pre)) {
                 buffer.append(" xmlns:").append(pre);
             } else {
@@ -184,7 +187,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void appendAttributeString(
             StringBuffer buffer, PrefixAwareName propName, Object value) {
         QName qName = propName.getQName();
-        if (URI_MAYA.equals(qName.getNamespaceURI())) {
+        if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
         }
         buffer.append(" ");

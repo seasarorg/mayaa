@@ -77,7 +77,7 @@ public class SpecificationUtil implements CONST_IMPL {
         Specification specification = findSpecification(current);
         for (Iterator it = specification.iterateChildNode(); it.hasNext();) {
             SpecificationNode node = (SpecificationNode) it.next();
-            if (node.getQName().equals(QM_MAYA)) {
+            if (node.getQName().equals(QM_MAYAA)) {
                 return node;
             }
         }
@@ -152,7 +152,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static QName createQName(String localName) {
-        return createQName(URI_MAYA, localName);
+        return createQName(URI_MAYAA, localName);
     }
 
     public static QName createQName(

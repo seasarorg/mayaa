@@ -54,7 +54,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     }
 
     protected String getPublicID() {
-        return URI_MAYA + "/specification";
+        return URI_MAYAA + "/specification";
     }
 
     protected void afterBuild(Specification specification) {

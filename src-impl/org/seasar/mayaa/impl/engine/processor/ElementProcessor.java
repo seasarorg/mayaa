@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -40,6 +42,23 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     private static final long serialVersionUID = 923306412062075314L;
     private static final String SUFFIX_DUPLICATED = "_d";
+    private static final Set XHTML_EMPTY_ELEMENTS;
+    static {
+        XHTML_EMPTY_ELEMENTS = new HashSet();
+        XHTML_EMPTY_ELEMENTS.add("base");
+        XHTML_EMPTY_ELEMENTS.add("meta");
+        XHTML_EMPTY_ELEMENTS.add("link");
+        XHTML_EMPTY_ELEMENTS.add("hr");
+        XHTML_EMPTY_ELEMENTS.add("br");
+        XHTML_EMPTY_ELEMENTS.add("param");
+        XHTML_EMPTY_ELEMENTS.add("img");
+        XHTML_EMPTY_ELEMENTS.add("area");
+        XHTML_EMPTY_ELEMENTS.add("input");
+        XHTML_EMPTY_ELEMENTS.add("col");
+        // transitional
+        XHTML_EMPTY_ELEMENTS.add("basefont");
+        XHTML_EMPTY_ELEMENTS.add("isindex");
+    }
 
     private PrefixAwareName _name;
     private boolean _duplicated;
@@ -184,16 +203,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append("\"");
     }
 
-    protected boolean needsCloseElement(QName qName) {
-        if (isHTML(qName)) {
-            String localName = qName.getLocalName();
-            HTMLElements.Element element =
-                HTMLElements.getElement(localName);
-            return element.isEmpty() == false;
-        }
-        return getChildProcessorSize() > 0;
-    }
-
     protected PrefixAwareName getIDName() {
         String namespaceURI = getName().getQName().getNamespaceURI();
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
@@ -246,11 +255,28 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
+        } else if (isXHTML(qName)) {
+            if (XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+                buffer.append("/>");
+            } else {
+                buffer.append(">");
+            }
         } else {
             buffer.append("/>");
         }
         write(buffer.toString());
         return ProcessStatus.EVAL_BODY_INCLUDE;
+    }
+
+    protected boolean needsCloseElement(QName qName) {
+        if (isHTML(qName)) {
+            HTMLElements.Element element =
+                HTMLElements.getElement(qName.getLocalName());
+            return element.isEmpty() == false;
+        } else if (isXHTML(qName) && getChildProcessorSize() == 0) {
+            return XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName()) == false;
+        }
+        return getChildProcessorSize() > 0;
     }
 
     protected void writeBody(String body) {

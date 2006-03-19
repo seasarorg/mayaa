@@ -85,16 +85,13 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
     public Object getAttribute(String name) {
         InsertProcessor processor = getInsertProcessor();
         if (processor != null) {
-            for (Iterator it = processor.getInformalProperties().iterator();
-                    it.hasNext();) {
-                ProcessorProperty prop = getTargetAttribute(processor, name);
-                if (prop != null) {
-                    Map binding = processor.getRenderingParameters();
-                    if (binding != null) {
-                        return binding.get(name);
-                    }
-                    return prop.getValue().execute(null);
+            ProcessorProperty prop = getTargetAttribute(processor, name);
+            if (prop != null) {
+                Map binding = processor.getRenderingParameters();
+                if (binding != null) {
+                    return binding.get(name);
                 }
+                return prop.getValue().execute(null);
             }
             return null;
         }

@@ -57,6 +57,7 @@ public class RhinoUtil {
             // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);
         } else if (expectedClass == Void.class
+                || (expectedClass == void.class)
                 || (jsRet instanceof org.mozilla.javascript.Undefined)) {
             ret = null;
         } else {

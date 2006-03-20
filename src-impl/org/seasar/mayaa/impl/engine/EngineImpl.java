@@ -189,20 +189,26 @@ public class EngineImpl extends SpecificationImpl
             boolean service = true;
             while (service) {
                 try {
+                    String pageName = null;
+                    String extension = null;
+                    ProcessStatus ret = null;
+
                     saveToCycle();
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(null);
-                    SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-                    RequestScope request = cycle.getRequestScope();
-                    String pageName = request.getPageName();
-                    String requestedSuffix = request.getRequestedSuffix();
-                    String extension = request.getExtension();
-                    Page page = getPage(pageName);
-                    ProcessStatus ret =
-                            page.doPageRender(requestedSuffix, extension);
-                    saveToCycle();
-                    SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
-                    SpecificationUtil.endScope();
+                    try {
+	                    SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
+	                    RequestScope request = cycle.getRequestScope();
+	                    pageName = request.getPageName();
+	                    String requestedSuffix = request.getRequestedSuffix();
+	                    extension = request.getExtension();
+	                    Page page = getPage(pageName);
+	                    ret = page.doPageRender(requestedSuffix, extension);
+	                    saveToCycle();
+	                    SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
+                    } finally {
+                    	SpecificationUtil.endScope();
+                    }
                     Response response = CycleUtil.getResponse();
                     if (ret == null) {
                         if (response.getWriter().isDirty() == false) {

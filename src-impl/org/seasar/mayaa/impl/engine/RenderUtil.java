@@ -190,15 +190,14 @@ public class RenderUtil implements CONST_IMPL {
                 getIteration(current).doAfterChildProcess();
             }
             ret = current.doEndProcess();
-            SpecificationUtil.endScope();
         } catch (RuntimeException e) {
             if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doCatchProcess(e);
-                SpecificationUtil.endScope();
             } else {
                 throw e;
             }
         } finally {
+            SpecificationUtil.endScope();
             if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }

@@ -339,7 +339,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     public ProcessorTreeWalker[] divide() {
         resolvePrefixAll();
-
         List list = new ArrayList();
         StringBuffer buffer = new StringBuffer();
         writePart1(buffer);
@@ -349,8 +348,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
             list.add(part1);
         }
 
+        // TODO Mar 21, 2006 9:13:02 PM suga part2 Ç™Ç»Ç¢
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
+System.out.println("Å£" + prop);
             buffer = new StringBuffer();
             internalWritePart2(buffer, prop);
             CharactersProcessor part2 =

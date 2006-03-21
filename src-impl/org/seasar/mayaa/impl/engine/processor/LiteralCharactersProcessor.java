@@ -36,7 +36,7 @@ public class LiteralCharactersProcessor extends TemplateProcessorSupport {
         try {
             setProcessorDefinition(copy.getProcessorDefinition());
         } catch(IllegalStateException ignore) {
-            /*NO-OP*/
+            // doNothing
         }
         setText(text);
     }

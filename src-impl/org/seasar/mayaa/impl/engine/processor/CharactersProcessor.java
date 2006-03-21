@@ -29,7 +29,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     private static final long serialVersionUID = 2054159396651833214L;
 
     public CharactersProcessor() {
-        /*NO-OP*/
+        // doNothing
     }
 
     public CharactersProcessor(CharactersProcessor copy, String text) {
@@ -47,7 +47,7 @@ public class CharactersProcessor extends TemplateProcessorSupport {
         try {
             setProcessorDefinition(copy.getProcessorDefinition());
         } catch(IllegalStateException e) {
-            /*NO-OP*/
+            // doNothing
         }
         ProcessorProperty propCopy = new ProcessorPropertyImpl(
                 prop.getName(), text, prop.getValue().getExpectedClass());

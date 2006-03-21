@@ -228,7 +228,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         List expands = new ArrayList();
         Iterator it = collecter.iterator();
         while (it.hasNext()) {
-            ProcessorTreeWalker processor = (ProcessorTreeWalker)it.next();
+            ProcessorTreeWalker processor = (ProcessorTreeWalker) it.next();
             if (processor == null) {
                 throw new IllegalStateException("processor is null");
             }
@@ -249,7 +249,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
         List packs = new ArrayList();
         for (int i = 0; i < expands.size(); i++) {
-            ProcessorTreeWalker node = (ProcessorTreeWalker)expands.get(i);
+            ProcessorTreeWalker node = (ProcessorTreeWalker) expands.get(i);
             node = convertCharactersProcessor(node);
 
             if (packs.size() > 0 && node instanceof LiteralCharactersProcessor) {
@@ -298,6 +298,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return chain.getNode(original);
     }
 
+    // FIXME m:attribute Ç™ìÆçÏÇµÇ»Ç¢
     protected void walkParsedTree(
             Template template, Stack stack, NodeTreeWalker original) {
         if (original == null) {

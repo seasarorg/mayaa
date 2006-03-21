@@ -52,7 +52,7 @@ public class InsertProcessor
     private static final long serialVersionUID = -1240398725406503403L;
 
     private String _path;
-    private String _name;
+    private String _name = "";
     private SoftReference _page;
     private String _suffix;
     private String _extension;
@@ -67,7 +67,9 @@ public class InsertProcessor
 
     // MLD property
     public void setName(String name) {
-        _name = name;
+        if (name != null) {
+            _name = name;
+        }
     }
 
     // MLD method
@@ -193,7 +195,7 @@ public class InsertProcessor
         for (int i = 0; i < proc.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = proc.getChildProcessor(i);
             if (child instanceof DoRenderProcessor) {
-                doRender =  (DoRenderProcessor) child;
+                doRender = (DoRenderProcessor) child;
                 if (StringUtil.isEmpty(name)
                         || name.equals(doRender.getName())) {
                     break;

@@ -60,10 +60,9 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     // MLD property, default=""
     public void setName(String name) {
-        if (name == null) {
+        if (name != null) {
             _name = name;
         }
-        _name = name;
     }
 
     public String getName() {

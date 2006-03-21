@@ -69,4 +69,9 @@ public interface ProcessorTreeWalker extends Serializable {
      */
     ProcessorTreeWalker getChildProcessor(int index);
 
+    /**
+     * qProcessorTreeWalker‚ğ‘S‚Äíœ‚·‚éB
+     */
+    void clearChildProcessors();
+
 }

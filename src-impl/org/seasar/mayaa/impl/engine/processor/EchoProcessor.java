@@ -23,6 +23,7 @@ import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -88,6 +89,10 @@ public class EchoProcessor extends ElementProcessor
             return attributeMap;
         }
         return null;
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        return new ProcessorTreeWalker[] { this };
     }
 
 }

@@ -73,6 +73,7 @@
 		<resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
 		<parameter name="outputTemplateWhitespace" value="true"/>
 		<parameter name="outputMayaaWhitespace" value="false"/>
+		<parameter name="optimize" value="true"/>
 	</templateBuilder>
 
 	<pathAdjuster class="org.seasar.mayaa.impl.builder.PathAdjusterImpl">

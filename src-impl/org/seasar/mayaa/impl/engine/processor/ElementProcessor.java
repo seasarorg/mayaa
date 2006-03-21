@@ -15,8 +15,10 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.cyberneko.html.HTMLElements;
@@ -25,10 +27,11 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -199,11 +202,24 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append("=\"");
         if (value instanceof CompiledScript) {
             CompiledScript script = (CompiledScript) value;
-            buffer.append(script.execute(null));
+            if (CycleUtil.isDraftWriting()) {
+                buffer.append(script.getScriptText());
+            } else {
+                buffer.append(script.execute(null));
+            }
         } else {
             buffer.append(value.toString());
         }
         buffer.append("\"");
+    }
+
+    protected boolean needsCloseElement(QName qName) {
+        if (isHTML(qName)) {
+            HTMLElements.Element element =
+                HTMLElements.getElement(qName.getLocalName());
+            return element.isEmpty() == false;
+        }
+        return getChildProcessorSize() > 0;
     }
 
     protected PrefixAwareName getIDName() {
@@ -219,67 +235,88 @@ public class ElementProcessor extends AbstractAttributableProcessor
         cycle.getResponse().write(value);
     }
 
-    protected ProcessStatus writeStartElement() {
-        if (getName() == null) {
-            throw new IllegalStateException();
-        }
-        resolvePrefixAll();
-        StringBuffer buffer = new StringBuffer("<");
+    protected void writeElementName(StringBuffer buffer) {
         String prefix = getResolvedPrefix(getName());
         if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
         QName qName = getName().getQName();
-        String uri = qName.getNamespaceURI();
         buffer.append(qName.getLocalName());
-        if (isHTML(qName) == false) {
+    }
+
+    protected void writePart1(StringBuffer buffer) {   // 静的 <xxx
+        buffer.append("<");
+        writeElementName(buffer);
+        if (isHTML(getName().getQName()) == false) {
             appendPrefixMappingString(buffer, getCurrentNS());
             appendPrefixMappingString(buffer, getName().getParentSpace());
         }
+    }
+
+    protected void writePart2(StringBuffer buffer) {   // 動的 attribute
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            PrefixAwareName propName = prop.getName();
-            QName propQName = propName.getQName();
-            String propURI = propQName.getNamespaceURI();
-            String propLocalName = propQName.getLocalName();
-            if (isDuplicated()) {
-                // TODO Feb 24, 2006 8:40:30 AM id を消すか？
-                if (uri.equals(propURI) && "id".equals(propLocalName)) {
-                    continue;
-                }
-            }
-            appendAttributeString(buffer, propName, prop.getValue());
+            internalWritePart2(buffer, prop);
         }
+    }
+
+    protected void internalWritePart2(StringBuffer buffer, ProcessorProperty prop) {
+        PrefixAwareName propName = prop.getName();
+        QName propQName = propName.getQName();
+        String propURI = propQName.getNamespaceURI();
+        String propLocalName = propQName.getLocalName();
+        if (isDuplicated()) {
+            // TODO Feb 24, 2006 8:40:30 AM id を消すか？
+            if (getName().getQName().getNamespaceURI().equals(propURI)
+                    && "id".equals(propLocalName)) {
+                return;
+            }
+        }
+        appendAttributeString(buffer, propName, prop.getValue());
+    }
+
+    protected void writePart3(StringBuffer buffer) {   // 静的 attributeと、>
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false) {
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
+        QName qName = getName().getQName();
         if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
-        } else if (isXHTML(qName)) {
-            if (XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+        } else {
+            if (isXHTML(qName)
+                    && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
                 buffer.append("/>");
             } else {
+                buffer.append("></");
+                writeElementName(buffer);
                 buffer.append(">");
             }
-        } else {
-            buffer.append("/>");
         }
-        write(buffer.toString());
-        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
-    protected boolean needsCloseElement(QName qName) {
-        if (isHTML(qName)) {
-            HTMLElements.Element element =
-                HTMLElements.getElement(qName.getLocalName());
-            return element.isEmpty() == false;
-        } else if (isXHTML(qName) && getChildProcessorSize() == 0) {
-            return XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName()) == false;
+    protected void writePart4(StringBuffer buffer) {   // 静的 </xxx>
+        QName qName = getName().getQName();
+        if (needsCloseElement(qName)) {
+            buffer.append("</");
+            writeElementName(buffer);
+            buffer.append(">");
         }
-        return getChildProcessorSize() > 0;
+    }
+
+    protected ProcessStatus writeStartElement() {
+        if (getName() == null) {
+            throw new IllegalStateException();
+        }
+        resolvePrefixAll();
+        StringBuffer buffer = new StringBuffer();
+        writePart1(buffer);
+        writePart2(buffer);
+        writePart3(buffer);
+        write(buffer.toString());
+        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     protected void writeBody(String body) {
@@ -290,21 +327,57 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        QName qName = getName().getQName();
-        if (needsCloseElement(qName)) {
-            StringBuffer buffer = new StringBuffer("</");
-            String prefix = getResolvedPrefix(getName());
-            if (StringUtil.hasValue(prefix)) {
-                buffer.append(prefix).append(":");
-            }
-            buffer.append(qName.getLocalName()).append(">");
-            write(buffer.toString());
-        }
+        StringBuffer buffer = new StringBuffer();
+        writePart4(buffer);
+        write(buffer.toString());
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         clearCurrentNS();
         return super.doStartProcess(topLevelPage);
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        resolvePrefixAll();
+
+        List list = new ArrayList();
+        StringBuffer buffer = new StringBuffer();
+        writePart1(buffer);
+        if (buffer.toString().length() > 0) {
+            LiteralCharactersProcessor part1 =
+                    new LiteralCharactersProcessor(this, buffer.toString());
+            list.add(part1);
+        }
+
+        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
+            buffer = new StringBuffer();
+            internalWritePart2(buffer, prop);
+            CharactersProcessor part2 =
+                    new CharactersProcessor(this, prop, buffer.toString());
+            list.add(part2);
+        }
+
+        buffer = new StringBuffer();
+        writePart3(buffer);
+        if (buffer.toString().length() > 0) {
+            LiteralCharactersProcessor part3 =
+                    new LiteralCharactersProcessor(this, buffer.toString());
+            list.add(part3);
+        }
+        int size = getChildProcessorSize();
+        for (int i = 0; i < size; i++) {
+            list.add(getChildProcessor(i));
+        }
+        buffer = new StringBuffer();
+        writePart4(buffer);
+        if (buffer.toString().length() > 0) {
+            LiteralCharactersProcessor part4 =
+                    new LiteralCharactersProcessor(this, buffer.toString());
+            list.add(part4);
+        }
+
+        return (ProcessorTreeWalker[]) list.toArray(new ProcessorTreeWalker[0]);
     }
 
 }

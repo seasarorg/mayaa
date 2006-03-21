@@ -197,17 +197,17 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(null);
                     try {
-	                    SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-	                    RequestScope request = cycle.getRequestScope();
-	                    pageName = request.getPageName();
-	                    String requestedSuffix = request.getRequestedSuffix();
-	                    extension = request.getExtension();
-	                    Page page = getPage(pageName);
-	                    ret = page.doPageRender(requestedSuffix, extension);
-	                    saveToCycle();
-	                    SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
+                        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
+                        RequestScope request = cycle.getRequestScope();
+                        pageName = request.getPageName();
+                        String requestedSuffix = request.getRequestedSuffix();
+                        extension = request.getExtension();
+                        Page page = getPage(pageName);
+                        ret = page.doPageRender(requestedSuffix, extension);
+                        saveToCycle();
+                        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     } finally {
-                    	SpecificationUtil.endScope();
+                        SpecificationUtil.endScope();
                     }
                     Response response = CycleUtil.getResponse();
                     if (ret == null) {

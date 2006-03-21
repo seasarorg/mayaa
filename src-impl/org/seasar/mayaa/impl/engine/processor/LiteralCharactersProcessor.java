@@ -18,26 +18,15 @@ package org.seasar.mayaa.impl.engine.processor;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
-import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
- * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Taro Kato (Gluegent, Inc.)
  */
-public class CharactersProcessor extends TemplateProcessorSupport {
+public class LiteralCharactersProcessor extends TemplateProcessorSupport {
+    private static final long serialVersionUID = -9037177269127933225L;
 
-    private static final long serialVersionUID = 2054159396651833214L;
-
-    public CharactersProcessor() {
-        /*NO-OP*/
-    }
-
-    public CharactersProcessor(CharactersProcessor copy, String text) {
-        this(copy, copy.getText(), text);
-    }
-
-    public CharactersProcessor(
-            TemplateProcessorSupport copy, ProcessorProperty prop, String text) {
+    public LiteralCharactersProcessor(TemplateProcessorSupport copy, String text) {
         setOriginalNode(copy.getOriginalNode());
         setInjectedNode(copy.getInjectedNode());
         setEvalBodyInclude(copy.isEvalBodyInclude());
@@ -46,29 +35,26 @@ public class CharactersProcessor extends TemplateProcessorSupport {
         }
         try {
             setProcessorDefinition(copy.getProcessorDefinition());
-        } catch(IllegalStateException e) {
+        } catch(IllegalStateException ignore) {
             /*NO-OP*/
         }
-        ProcessorProperty propCopy = new ProcessorPropertyImpl(
-                prop.getName(), text, prop.getValue().getExpectedClass());
-        setText(propCopy);
+        setText(text);
     }
 
-    private ProcessorProperty _text;
+    private String _text;
 
-    public void setText(ProcessorProperty text) {
-        _text = text;
-    }
-
-    public ProcessorProperty getText() {
+    public String getText() {
         return _text;
     }
 
+    public void setText(String value) {
+        _text = value;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        Object value = getText().getValue().execute(null);
-        if (value != null) {
+        if (getText() != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.getResponse().write(value.toString());
+            cycle.getResponse().write(getText());
         }
         return ProcessStatus.SKIP_BODY;
     }

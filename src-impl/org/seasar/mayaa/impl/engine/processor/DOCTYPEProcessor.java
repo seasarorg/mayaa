@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -61,8 +62,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
         return _systemID;
     }
 
-    public ProcessStatus doStartProcess(Page topLevelPage) {
-        StringBuffer docTypeDecl = new StringBuffer(DEFAULT_BUFFER_SIZE);
+    private void writeData(StringBuffer docTypeDecl) {
         docTypeDecl.append("<!DOCTYPE ").append(_name);
         if (StringUtil.hasValue(_publicID)) {
             docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
@@ -71,9 +71,21 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
             docTypeDecl.append(" \"").append(_systemID).append("\"");
         }
         docTypeDecl.append(">");
+    }
+
+    public ProcessStatus doStartProcess(Page topLevelPage) {
+        StringBuffer docTypeDecl = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        writeData(docTypeDecl);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(docTypeDecl.toString());
         return ProcessStatus.SKIP_BODY;
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        StringBuffer sb = new StringBuffer();
+        writeData(sb);
+        return new ProcessorTreeWalker[] {
+                    new LiteralCharactersProcessor(this, sb.toString()) };
     }
 
 }

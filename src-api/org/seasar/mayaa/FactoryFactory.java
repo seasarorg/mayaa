@@ -31,7 +31,7 @@ public abstract class FactoryFactory implements Serializable {
     private static FactoryFactory _instance;
     private static Object _context;
     private static Map _factories = new HashMap();
-    
+
     /**
      * ファクトリの初期化。
      * @param instance ファクトリのインスタンス。
@@ -95,10 +95,10 @@ public abstract class FactoryFactory implements Serializable {
      * @return アプリケーションスコープ。
      */
     public static ApplicationScope getApplicationScope() {
-    	check();
-    	return _instance.getApplicationScope(_context);
+        check();
+        return _instance.getApplicationScope(_context);
     }
-    
+
     /**
      * ファクトリを生成する。
      * @param interfaceClass ファクトリのinterfaceのClassオブジェクト
@@ -123,7 +123,6 @@ public abstract class FactoryFactory implements Serializable {
      * @param context コンテキストオブジェクト。
      * @return アプリケーションスコープ。
      */
-    protected abstract ApplicationScope getApplicationScope(
-    		Object context);
-    
+    protected abstract ApplicationScope getApplicationScope(Object context);
+
 }

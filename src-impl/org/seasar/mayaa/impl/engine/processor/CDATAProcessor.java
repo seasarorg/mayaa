@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
@@ -26,17 +27,36 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 public class CDATAProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -4267623139201513906L;
+    private static final String CDATAIN = "<![CDATA[";
+    private static final String CDATAOUT = "]]>";
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("<![CDATA[");
+        cycle.getResponse().write(CDATAIN);
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doEndProcess() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("]]>");
+        cycle.getResponse().write(CDATAOUT);
         return ProcessStatus.EVAL_PAGE;
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        ProcessorTreeWalker[] results =
+                new ProcessorTreeWalker[2 + getChildProcessorSize()];
+
+        results[0] = new LiteralCharactersProcessor(this, CDATAIN);
+
+        for (int i = 0; i < getChildProcessorSize(); i++) {
+            results[i + 1] = getChildProcessor(i);
+            results[i + 1].setParentProcessor(getParentProcessor(), getIndex());
+        }
+
+        results[results.length - 1] =
+                new LiteralCharactersProcessor(this, CDATAOUT);
+
+        return results;
     }
 
 }

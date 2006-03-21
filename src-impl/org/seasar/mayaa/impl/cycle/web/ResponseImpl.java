@@ -17,6 +17,8 @@ package org.seasar.mayaa.impl.cycle.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,6 +33,8 @@ public class ResponseImpl extends AbstractResponse {
     private static final long serialVersionUID = -4653384671998376182L;
 
     private HttpServletResponse _httpServletResponse;
+    private ResponseHeaderCache _headers = new ResponseHeaderCache();
+    private int _status;
 
     protected void check() {
         if (_httpServletResponse == null) {
@@ -77,6 +81,7 @@ public class ResponseImpl extends AbstractResponse {
             return;
         }
         _httpServletResponse.addHeader(name, value);
+        _headers.addHeader(name, value);
     }
 
     public void setHeader(String name, String value) {
@@ -85,11 +90,13 @@ public class ResponseImpl extends AbstractResponse {
             return;
         }
         _httpServletResponse.setHeader(name, value);
+        _headers.setHeader(name, value);
     }
 
     public void setStatus(int code) {
         check();
         _httpServletResponse.setStatus(code);
+        _status = code;
     }
 
     public OutputStream getOutputStream() {
@@ -123,6 +130,30 @@ public class ResponseImpl extends AbstractResponse {
     public Object getUnderlyingContext() {
         check();
         return _httpServletResponse;
+    }
+
+    public List getHeaders(String name) {
+        return _headers.getHeaders(name);
+    }
+
+    public boolean containsHeader(String name) {
+        return _headers.containsHeader(name);
+    }
+
+    public Set getHeaderNames() {
+        return _headers.getHeaderNames();
+    }
+
+    public int getStatus() {
+        return _status;
+    }
+
+    public String getContentType() {
+        return _httpServletResponse.getContentType();
+    }
+
+    public String getCharacterEncoding() {
+        return _httpServletResponse.getCharacterEncoding(); 
     }
 
 }

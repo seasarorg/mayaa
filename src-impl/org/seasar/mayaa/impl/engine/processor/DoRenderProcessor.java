@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.util.Stack;
 
 import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
@@ -25,11 +26,12 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class DoRenderProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 4309532215454978747L;
+    private static final long serialVersionUID = -4276639032963176260L;
 
     private static final String INSERT_PROCESSOR_STACK =
         DoRenderProcessor.class.getName();
 
+    private ProcessorTreeWalker _duplecatedParentProcessor;
     private boolean _replace = true;
     private String _name = "";
 
@@ -85,6 +87,17 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     public void popInsertProcessor() {
         Stack stack = getInsertProcessorStack();
         stack.pop();
+    }
+
+    public void initialize() {
+        super.initialize();
+        if (isReplace() == false) {
+            _duplecatedParentProcessor = getParentProcessor();
+        }
+    }
+
+    public ProcessorTreeWalker getDuplecatedParentProcessor() {
+        return _duplecatedParentProcessor;
     }
 
 }

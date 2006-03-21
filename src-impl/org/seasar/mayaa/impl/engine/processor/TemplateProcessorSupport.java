@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.processor.OptimizableProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
@@ -31,7 +32,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateProcessorSupport implements TemplateProcessor {
+public class TemplateProcessorSupport
+        implements TemplateProcessor, OptimizableProcessor {
 
     private static final long serialVersionUID = -3521980479718620027L;
     private static final String PREFIX_UNIQUE_ID = "_m";
@@ -43,6 +45,7 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     private SpecificationNode _injectedNode;
     private boolean _evalBodyInclude = true;
     private ProcessorDefinition _definition;
+
 
     public void initialize() {
         // no operation
@@ -56,6 +59,10 @@ public class TemplateProcessorSupport implements TemplateProcessor {
     // MLD property
     public void setEvalBodyInclude(boolean evalBodyInclude) {
         _evalBodyInclude = evalBodyInclude;
+    }
+
+    public boolean isEvalBodyInclude() {
+        return _evalBodyInclude;
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
@@ -159,6 +166,14 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public ProcessorTreeWalker getChildProcessor(int index) {
         return (ProcessorTreeWalker) _children.get(index);
+    }
+
+    public void clearChildProcessors() {
+        _children.clear();
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        return new ProcessorTreeWalker[] { this };
     }
 
 }

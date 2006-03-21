@@ -30,6 +30,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.processor.OptimizableProcessor;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
@@ -43,12 +44,15 @@ import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.builder.parser.TemplateParser;
 import org.seasar.mayaa.impl.builder.parser.TemplateScanner;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
 import org.seasar.mayaa.impl.engine.processor.DoBodyProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
+import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.ContentHandler;
@@ -68,6 +72,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
     private InjectionChain _chain = new DefaultInjectionChain();
+    private boolean _optimize = true;
 
     public void addInjectionResolver(InjectionResolver resolver) {
         if (resolver == null) {
@@ -155,7 +160,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 def.createTemplateProcessor(original, injected);
             proc.setOriginalNode(original);
             proc.setInjectedNode(injected);
-            proc.initialize();
             return proc;
         }
         return null;
@@ -165,8 +169,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return _chain;
     }
 
-    protected TemplateProcessor resolveInjectedNode(Template template,
-            Stack stack, SpecificationNode original, SpecificationNode injected) {
+    protected TemplateProcessor resolveInjectedNode(
+            Template template, Stack stack, SpecificationNode original,
+            SpecificationNode injected, ProcessorTray processorTray) {
         if (injected == null) {
             throw new IllegalArgumentException();
         }
@@ -189,6 +194,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
         parent.addChildProcessor(processor);
+        processor.initialize();
+        processorTray.object = processor;
         Iterator it = injected.iterateChildNode();
         if (it.hasNext() == false) {
             return processor;
@@ -199,8 +206,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         while (it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode) it.next();
             saveToCycle(original, childNode);
+            ProcessorTray childProcessorTray = new ProcessorTray();
             TemplateProcessor childProcessor = resolveInjectedNode(
-                    template, stack, original, childNode);
+                    template, stack, original, childNode, childProcessorTray);
             if (childProcessor instanceof DoBodyProcessor) {
                 if (connectionPoint != null) {
                     throw new TooManyDoBodyException();
@@ -214,6 +222,68 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             return connectionPoint;
         }
         return findConnectPoint(processor);
+    }
+
+    protected void optimizeProcessors(ProcessorTreeWalker parent, List collecter) {
+        List expands = new ArrayList();
+        Iterator it = collecter.iterator();
+        while (it.hasNext()) {
+            ProcessorTreeWalker processor = (ProcessorTreeWalker)it.next();
+            if (processor == null) {
+                throw new IllegalStateException("processor is null");
+            }
+            if (processor instanceof OptimizableProcessor) {
+                ProcessorTreeWalker[] processors =
+                    ((OptimizableProcessor) processor).divide();
+                if (processors != null) {
+                    for (int i = 0; i < processors.length; i++) {
+                        expands.add(processors[i]);
+                    }
+                } else {
+                    expands.add(processor);
+                }
+            } else {
+                expands.add(processor);
+            }
+        }
+
+        List packs = new ArrayList();
+        for (int i = 0; i < expands.size(); i++) {
+            ProcessorTreeWalker node = (ProcessorTreeWalker)expands.get(i);
+            node = convertCharactersProcessor(node);
+
+            if (packs.size() > 0 && node instanceof LiteralCharactersProcessor) {
+                Object last = packs.get(packs.size()-1);
+                if (last instanceof LiteralCharactersProcessor) {
+                    LiteralCharactersProcessor rawLast =
+                        (LiteralCharactersProcessor)last;
+                    rawLast.setText(rawLast.getText()
+                            + ((LiteralCharactersProcessor)node).getText());
+                } else {
+                    packs.add(node);
+                }
+            } else {
+                packs.add(node);
+            }
+        }
+        for (int i = 0; i < packs.size(); i++) {
+            ProcessorTreeWalker child = (ProcessorTreeWalker)packs.get(i);
+            child.setParentProcessor(parent, parent.getChildProcessorSize());
+            parent.addChildProcessor(child);
+        }
+
+    }
+
+    protected ProcessorTreeWalker convertCharactersProcessor(
+            ProcessorTreeWalker processor) {
+        if (processor instanceof CharactersProcessor) {
+            CharactersProcessor cnode = (CharactersProcessor)processor;
+            if (cnode.getText().getValue() instanceof LiteralScript) {
+                processor = new LiteralCharactersProcessor(
+                        cnode, cnode.getText().getValue().getScriptText());
+            }
+        }
+        return processor;
     }
 
     protected SpecificationNode resolveOriginalNode(
@@ -233,6 +303,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if (original == null) {
             throw new IllegalArgumentException();
         }
+        List childProcessors = null;
         Iterator it = original.iterateChildNode();
         while (it.hasNext()) {
             SpecificationNode child = (SpecificationNode) it.next();
@@ -243,16 +314,44 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             InjectionChain chain = getDefaultInjectionChain();
             SpecificationNode injected = resolveOriginalNode(child, chain);
             if (injected == null) {
-                throw new TemplateNodeNotResolvedException(
-                        original.toString());
+                throw new TemplateNodeNotResolvedException(original.toString());
             }
             saveToCycle(child, injected);
+            ProcessorTray processorTray = new ProcessorTray();
             ProcessorTreeWalker processor = resolveInjectedNode(
-                    template, stack, child, injected);
+                    template, stack, child, injected, processorTray);
             if (processor != null) {
                 stack.push(processor);
                 walkParsedTree(template, stack, child);
                 stack.pop();
+            }
+            if (_optimize) {
+                if (childProcessors == null) {
+                    childProcessors = new ArrayList();
+                }
+                if (processorTray.object instanceof OptimizableProcessor) {
+                    ProcessorTreeWalker[] parts =
+                        ((OptimizableProcessor) processorTray.object).divide();
+                    for (int i = 0; i < parts.length; i++) {
+                        if (parts[i] == null) {
+                            throw new IllegalStateException(
+                                    "divice part is null " + processor.toString());
+                        }
+                        childProcessors.add(parts[i]);
+                    }
+                } else {
+                    childProcessors.add(processorTray.object);
+                }
+            }
+        }
+        if (_optimize) {
+            if (childProcessors != null && childProcessors.size() > 0) {
+                ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
+                if (parent == null) {
+                    parent = template;
+                }
+                parent.clearChildProcessors();
+                optimizeProcessors(parent, childProcessors);
             }
         }
     }
@@ -272,6 +371,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
+    }
+
+    // Parameterizable implements ------------------------------------
+
+    public void setParameter(String name, String value) {
+        if ("optimize".equals(name)) {
+            _optimize = ObjectUtil.booleanValue(value, true);
+        }
+        super.setParameter(name, value);
     }
 
     // support class --------------------------------------------------
@@ -333,6 +441,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IndexOutOfBoundsException();
         }
 
+    }
+
+    private class ProcessorTray {
+        TemplateProcessor object;
     }
 
 }

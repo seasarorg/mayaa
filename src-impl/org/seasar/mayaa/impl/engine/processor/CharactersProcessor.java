@@ -15,11 +15,16 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -35,6 +40,9 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     public CharactersProcessor(CharactersProcessor copy, String text) {
         this(copy, copy.getText(), text);
     }
+
+    private static final QName CHARACTERS =
+        SpecificationUtil.createQName("characters");
 
     public CharactersProcessor(
             TemplateProcessorSupport copy, ProcessorProperty prop, String text) {
@@ -52,6 +60,8 @@ public class CharactersProcessor extends TemplateProcessorSupport {
         ProcessorProperty propCopy = new ProcessorPropertyImpl(
                 prop.getName(), text, prop.getValue().getExpectedClass());
         setText(propCopy);
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        setProcessorDefinition(libraryManager.getProcessorDefinition(CHARACTERS));
     }
 
     private ProcessorProperty _text;
@@ -71,6 +81,16 @@ public class CharactersProcessor extends TemplateProcessorSupport {
             cycle.getResponse().write(value.toString());
         }
         return ProcessStatus.SKIP_BODY;
+    }
+
+    public ProcessorTreeWalker[] divide() {
+        if (getText().getValue().isLiteral()) {
+            return new ProcessorTreeWalker[] {
+                new LiteralCharactersProcessor(
+                        this, getText().getValue().getScriptText())
+            };
+        }
+        return super.divide();
     }
 
 }

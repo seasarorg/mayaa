@@ -33,6 +33,12 @@
 		<property name="text" expectedClass="java.lang.String"/>
 	</processor>
 
+	<processor name="literals"
+			class="org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor">
+		<description>raw text on the template</description>
+		<property name="text" expectedClass="java.lang.String"/>
+	</processor>
+
 	<processor name="cdata"
 			class="org.seasar.mayaa.impl.engine.processor.CDATAProcessor">
 		<description>an CDATA on the template</description>

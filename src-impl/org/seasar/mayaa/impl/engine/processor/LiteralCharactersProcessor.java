@@ -15,16 +15,23 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class LiteralCharactersProcessor extends TemplateProcessorSupport {
     private static final long serialVersionUID = -9037177269127933225L;
+
+    private static final QName LITERALS =
+        SpecificationUtil.createQName("literals");
 
     public LiteralCharactersProcessor(TemplateProcessorSupport copy, String text) {
         setOriginalNode(copy.getOriginalNode());
@@ -39,6 +46,8 @@ public class LiteralCharactersProcessor extends TemplateProcessorSupport {
             // doNothing
         }
         setText(text);
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        setProcessorDefinition(libraryManager.getProcessorDefinition(LITERALS));
     }
 
     private String _text;

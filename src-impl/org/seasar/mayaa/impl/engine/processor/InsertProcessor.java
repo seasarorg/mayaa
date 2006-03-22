@@ -223,7 +223,7 @@ public class InsertProcessor
 
     protected TemplateProcessor getRenderRoot(DoRenderProcessor doRender) {
         if (doRender.isReplace() == false) {
-            ProcessorTreeWalker duplecated = doRender.getDuplecatedParentProcessor();
+            ProcessorTreeWalker duplecated = doRender.getParentProcessor();
             if (duplecated == null
                     || duplecated instanceof TemplateProcessor == false) {
                 throw new IllegalStateException();

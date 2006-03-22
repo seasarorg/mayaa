@@ -256,9 +256,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 Object last = packs.get(packs.size()-1);
                 if (last instanceof LiteralCharactersProcessor) {
                     LiteralCharactersProcessor rawLast =
-                        (LiteralCharactersProcessor)last;
+                        (LiteralCharactersProcessor) last;
                     rawLast.setText(rawLast.getText()
-                            + ((LiteralCharactersProcessor)node).getText());
+                            + ((LiteralCharactersProcessor) node).getText());
                 } else {
                     packs.add(node);
                 }

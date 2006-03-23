@@ -169,9 +169,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return _chain;
     }
 
-    protected TemplateProcessor resolveInjectedNode(
-            Template template, Stack stack, SpecificationNode original,
-            SpecificationNode injected, ProcessorTray processorTray) {
+    protected TemplateProcessor resolveInjectedNode(Template template,
+            Stack stack, SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {
             throw new IllegalArgumentException();
         }
@@ -195,7 +194,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
         parent.addChildProcessor(processor);
         processor.initialize();
-        processorTray.object = processor;
         Iterator it = injected.iterateChildNode();
         if (it.hasNext() == false) {
             return processor;
@@ -206,9 +204,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         while (it.hasNext()) {
             SpecificationNode childNode = (SpecificationNode) it.next();
             saveToCycle(original, childNode);
-            ProcessorTray childProcessorTray = new ProcessorTray();
             TemplateProcessor childProcessor = resolveInjectedNode(
-                    template, stack, original, childNode, childProcessorTray);
+                    template, stack, original, childNode);
             if (childProcessor instanceof DoBodyProcessor) {
                 if (connectionPoint != null) {
                     throw new TooManyDoBodyException();
@@ -235,12 +232,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             if (processor instanceof OptimizableProcessor) {
                 ProcessorTreeWalker[] processors =
                     ((OptimizableProcessor) processor).divide();
-                if (processors != null) {
-                    for (int i = 0; i < processors.length; i++) {
-                        expands.add(processors[i]);
-                    }
-                } else {
-                    expands.add(processor);
+                for (int i = 0; i < processors.length; i++) {
+                    expands.add(processors[i]);
                 }
             } else {
                 expands.add(processor);
@@ -298,13 +291,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return chain.getNode(original);
     }
 
-    // FIXME m:attribute ‚ª“®ì‚µ‚È‚¢
     protected void walkParsedTree(
             Template template, Stack stack, NodeTreeWalker original) {
         if (original == null) {
             throw new IllegalArgumentException();
         }
-        List childProcessors = null;
         Iterator it = original.iterateChildNode();
         while (it.hasNext()) {
             SpecificationNode child = (SpecificationNode) it.next();
@@ -318,38 +309,34 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 throw new TemplateNodeNotResolvedException(original.toString());
             }
             saveToCycle(child, injected);
-            ProcessorTray processorTray = new ProcessorTray();
             ProcessorTreeWalker processor = resolveInjectedNode(
-                    template, stack, child, injected, processorTray);
+                    template, stack, child, injected);
             if (processor != null) {
                 stack.push(processor);
                 walkParsedTree(template, stack, child);
                 stack.pop();
             }
-            if (_optimize) {
-                if (childProcessors == null) {
-                    childProcessors = new ArrayList();
-                }
-                if (processorTray.object instanceof OptimizableProcessor) {
-                    ProcessorTreeWalker[] parts =
-                        ((OptimizableProcessor) processorTray.object).divide();
-                    for (int i = 0; i < parts.length; i++) {
-                        if (parts[i] == null) {
-                            throw new IllegalStateException(
-                                    "divice part is null " + processor.toString());
-                        }
-                        childProcessors.add(parts[i]);
-                    }
-                } else {
-                    childProcessors.add(processorTray.object);
-                }
-            }
         }
         if (_optimize) {
-            if (childProcessors != null && childProcessors.size() > 0) {
-                ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
-                if (parent == null) {
-                    parent = template;
+            ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
+            int count = parent.getChildProcessorSize();
+            if (count > 0) {
+                List childProcessors = new ArrayList();
+                for (int i = 0; i < count; i++) {
+                    ProcessorTreeWalker child = parent.getChildProcessor(i);
+                    if (child instanceof OptimizableProcessor) {
+                        ProcessorTreeWalker[] parts =
+                            ((OptimizableProcessor) child).divide();
+                        for (int j = 0; j < parts.length; j++) {
+                            if (parts[j] == null) {
+                                throw new IllegalStateException(
+                                        "divice part is null " + child.toString());
+                            }
+                            childProcessors.add(parts[j]);
+                        }
+                    } else {
+                        childProcessors.add(child);
+                    }
                 }
                 parent.clearChildProcessors();
                 optimizeProcessors(parent, childProcessors);
@@ -367,6 +354,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
                 QM_MAYAA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
+
         walkParsedTree(template, stack, template);
         if (template.equals(stack.peek()) == false) {
             throw new IllegalStateException();
@@ -442,10 +430,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IndexOutOfBoundsException();
         }
 
-    }
-
-    private class ProcessorTray {
-        TemplateProcessor object;
     }
 
 }

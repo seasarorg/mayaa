@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
@@ -84,10 +85,10 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessorTreeWalker[] divide() {
-        if (getText().getValue().isLiteral()) {
+        CompiledScript script = getText().getValue();
+        if (script.isLiteral()) {
             return new ProcessorTreeWalker[] {
-                new LiteralCharactersProcessor(
-                        this, getText().getValue().getScriptText())
+                    new LiteralCharactersProcessor(this, script.getScriptText())
             };
         }
         return super.divide();

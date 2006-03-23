@@ -15,16 +15,16 @@
  */
 package org.seasar.mayaa.impl.cycle;
 
-import org.seasar.mayaa.impl.MayaaException;
+import org.seasar.mayaa.impl.util.AbstractMessagedException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CycleNotInitializedException extends MayaaException {
+public class CycleNotInitializedException extends AbstractMessagedException {
 
     private static final long serialVersionUID = 3337314180596603715L;
 
-    protected String[] getMessageParams() {
+    protected String[] getParamValues() {
         return ZERO_PARAM;
     }
 

@@ -25,6 +25,7 @@ import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.processor.OptimizableProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
@@ -372,7 +373,16 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         int size = getChildProcessorSize();
         for (int i = 0; i < size; i++) {
-            list.add(getChildProcessor(i));
+            Object child = getChildProcessor(i);
+            if (child instanceof OptimizableProcessor) {
+                ProcessorTreeWalker[] parts =
+                    ((OptimizableProcessor) child).divide();
+                for (int j = 0; j < parts.length; j++) {
+                    list.add(parts[j]);
+                }
+            } else {
+                list.add(getChildProcessor(i));
+            }
         }
         buffer = new StringBuffer();
         writePart4(buffer);

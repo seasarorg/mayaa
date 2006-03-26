@@ -41,26 +41,26 @@ public interface CONST_IMPL {
     String PUBLIC_PROVIDER10 =
         "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN";
 
-    QName QH_ID = new QNameImpl(URI_HTML, "id");
-    QName QX_ID = new QNameImpl(URI_XHTML, "id");
+    QName QH_ID = QNameImpl.getInstance(URI_HTML, "id");
+    QName QX_ID = QNameImpl.getInstance(URI_XHTML, "id");
 
-    QName QM_CDATA = new QNameImpl("cdata");
-    QName QM_CHARACTERS = new QNameImpl("characters");
-    QName QM_COMMENT = new QNameImpl("comment");
-    QName QM_DOCTYPE = new QNameImpl("doctype");
-    QName QM_DUPLECATED = new QNameImpl("duplecatedElement");
-    QName QM_MAYAA = new QNameImpl("mayaa");
-    QName QM_PI = new QNameImpl("processingInstruction");
-    QName QM_TEMPLATE_ELEMENT = new QNameImpl("templateElement");
+    QName QM_CDATA = QNameImpl.getInstance("cdata");
+    QName QM_CHARACTERS = QNameImpl.getInstance("characters");
+    QName QM_COMMENT = QNameImpl.getInstance("comment");
+    QName QM_DOCTYPE = QNameImpl.getInstance("doctype");
+    QName QM_DUPLECATED = QNameImpl.getInstance("duplecatedElement");
+    QName QM_MAYAA = QNameImpl.getInstance("mayaa");
+    QName QM_PI = QNameImpl.getInstance("processingInstruction");
+    QName QM_TEMPLATE_ELEMENT = QNameImpl.getInstance("templateElement");
 
-    QName QM_AFTER_RENDER = new QNameImpl("afterRender");
-    QName QM_BEFORE_RENDER = new QNameImpl("beforeRender");
-    QName QM_CONTENT_TYPE = new QNameImpl("contentType");
-    QName QM_ID = new QNameImpl("id");
-    QName QM_IGNORE = new QNameImpl("ignore");
-    QName QM_NAME = new QNameImpl("name");
-    QName QM_NO_CACHE = new QNameImpl("noCache");
-    QName QM_TEMPLATE_SUFFIX = new QNameImpl("templateSuffix");
-    QName QM_TEXT = new QNameImpl("text");
+    QName QM_AFTER_RENDER = QNameImpl.getInstance("afterRender");
+    QName QM_BEFORE_RENDER = QNameImpl.getInstance("beforeRender");
+    QName QM_CONTENT_TYPE = QNameImpl.getInstance("contentType");
+    QName QM_ID = QNameImpl.getInstance("id");
+    QName QM_IGNORE = QNameImpl.getInstance("ignore");
+    QName QM_NAME = QNameImpl.getInstance("name");
+    QName QM_NO_CACHE = QNameImpl.getInstance("noCache");
+    QName QM_TEMPLATE_SUFFIX = QNameImpl.getInstance("templateSuffix");
+    QName QM_TEXT = QNameImpl.getInstance("text");
 
 }

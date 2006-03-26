@@ -323,20 +323,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             if (count > 0) {
                 List childProcessors = new ArrayList();
                 for (int i = 0; i < count; i++) {
-                    ProcessorTreeWalker child = parent.getChildProcessor(i);
-                    if (child instanceof OptimizableProcessor) {
-                        ProcessorTreeWalker[] parts =
-                            ((OptimizableProcessor) child).divide();
-                        for (int j = 0; j < parts.length; j++) {
-                            if (parts[j] == null) {
-                                throw new IllegalStateException(
-                                        "divice part is null " + child.toString());
-                            }
-                            childProcessors.add(parts[j]);
-                        }
-                    } else {
-                        childProcessors.add(child);
-                    }
+                    childProcessors.add(parent.getChildProcessor(i));
                 }
                 parent.clearChildProcessors();
                 optimizeProcessors(parent, childProcessors);

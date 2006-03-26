@@ -15,14 +15,34 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.util.Map;
+
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.SoftHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Taro Kato (Gluegent, Inc.)
  */
 public class QNameImpl implements QName, CONST_IMPL {
+    private static Map _cache = new SoftHashMap();
+
+    public static QName getInstance(String localName) {
+        return getInstance(URI_MAYAA, localName);
+    }
+
+    public static synchronized QName getInstance(
+            String namespaceURI, String localName) {
+        String key = forQNameString(namespaceURI, localName);
+        QName result = (QName)_cache.get(key);
+        if (result == null) {
+            result = new QNameImpl(namespaceURI, localName);
+            _cache.put(key, result);
+        }
+        return result;
+    }
 
     private String _namespaceURI;
     private String _localName;
@@ -47,8 +67,12 @@ public class QNameImpl implements QName, CONST_IMPL {
         return _localName;
     }
 
+    private static String forQNameString(String namespaceURI, String localName) {
+        return "{" + namespaceURI + "}" + localName;
+    }
+
     public String toString() {
-        return "{" + getNamespaceURI() + "}" + getLocalName();
+        return forQNameString(getNamespaceURI(), getLocalName());
     }
 
     public boolean equals(Object test) {

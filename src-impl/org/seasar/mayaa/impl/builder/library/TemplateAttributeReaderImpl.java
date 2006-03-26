@@ -33,7 +33,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements TemplateAttributeReader {
+public class TemplateAttributeReaderImpl
+        extends ParameterAwareImpl
+        implements TemplateAttributeReader {
 
     private Set _ignoreAttributes;
     private Map _aliasAttributes;
@@ -111,9 +113,10 @@ public class TemplateAttributeReaderImpl extends ParameterAwareImpl implements T
     private QName getQName(SpecificationNode original, String attribute) {
         if(attribute.startsWith("{")) {
             String[] split = attribute.split("[\\{\\}]");
-            return new QNameImpl(split[1], split[2]);
+            return QNameImpl.getInstance(split[1], split[2]);
         }
-        return new QNameImpl(original.getQName().getNamespaceURI(), attribute);
+        return QNameImpl.getInstance(
+                original.getQName().getNamespaceURI(), attribute);
     }
 
     private AttributeKey toKey(String qName, String attribute) {

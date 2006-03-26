@@ -157,7 +157,7 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static QName createQName(
             String namespaceURI, String localName) {
-        return new QNameImpl(namespaceURI, localName);
+        return QNameImpl.getInstance(namespaceURI, localName);
     }
 
     public static QName parseQName(String qName) {
@@ -168,7 +168,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 String localName = qName.substring(end + 1).trim();
                 if (StringUtil.hasValue(namespaceURI)
                         && StringUtil.hasValue(localName)) {
-                    return new QNameImpl(namespaceURI, localName);
+                    return QNameImpl.getInstance(namespaceURI, localName);
                 }
             }
         }

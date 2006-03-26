@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine;
 
+import java.util.Map;
+
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.specification.Specification;
@@ -47,9 +49,10 @@ public interface Engine extends ParameterAware, Specification {
 
     /**
      * サービスメソッド。
+     * @param pageScopeValues PAGEスコープのトップに含めるもの。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
-    void doService(boolean pageFlush);
+    void doService(Map pageScopeValues, boolean pageFlush);
 
     /**
      * エラーハンドルページの表示。

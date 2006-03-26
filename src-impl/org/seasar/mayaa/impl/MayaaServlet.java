@@ -64,7 +64,7 @@ public class MayaaServlet extends HttpServlet {
         setupCharacterEncoding(request,
                 engine.getParameter("requestCharacterEncoding"));
 
-        engine.doService(true);
+        engine.doService(null, true);
     }
 
     protected void setupCharacterEncoding(

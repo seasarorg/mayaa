@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -183,7 +184,8 @@ public class EngineImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
-    protected void doPageService(ServiceCycle cycle, boolean pageFlush) {
+    protected void doPageService(
+            ServiceCycle cycle, Map pageScopeValues, boolean pageFlush) {
         checkTimestamp();
         try {
             boolean service = true;
@@ -195,7 +197,7 @@ public class EngineImpl extends SpecificationImpl
 
                     saveToCycle();
                     SpecificationUtil.initScope();
-                    SpecificationUtil.startScope(null);
+                    SpecificationUtil.startScope(pageScopeValues);
                     try {
                         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                         RequestScope request = cycle.getRequestScope();
@@ -256,10 +258,10 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    public void doService(boolean pageFlush) {
+    public void doService(Map pageScopeValues, boolean pageFlush) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (isPageRequested()) {
-            doPageService(cycle, pageFlush);
+            doPageService(cycle, pageScopeValues, pageFlush);
         } else {
             doResourceService(cycle);
         }

@@ -49,6 +49,13 @@ public interface Engine extends ParameterAware, Specification {
 
     /**
      * サービスメソッド。
+     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
+     * @deprecated
+     */
+    void doService(boolean pageFlush);
+
+    /**
+     * サービスメソッド。
      * @param pageScopeValues PAGEスコープのトップに含めるもの。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */

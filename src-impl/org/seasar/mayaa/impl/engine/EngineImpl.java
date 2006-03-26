@@ -258,6 +258,11 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
+    // TODO API‚Ì•ÏX‚É‡‚í‚¹‚Ä‚¢‚¸‚êíœ
+    public void doService(boolean pageFlush) {
+        doService(null, pageFlush);
+    }
+
     public void doService(Map pageScopeValues, boolean pageFlush) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (isPageRequested()) {

@@ -75,8 +75,7 @@ public class MayaaServlet extends HttpServlet {
             } catch (UnsupportedEncodingException e) {
                 String message =
                     StringUtil.getMessage(MayaaServlet.class, 0, encoding);
-                Log log = LogFactory.getLog(MayaaServlet.class);
-                log.warn(message, e);
+                LOG.warn(message, e);
             }
         }
     }

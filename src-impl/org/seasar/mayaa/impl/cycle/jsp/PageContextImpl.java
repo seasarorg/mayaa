@@ -40,6 +40,7 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.StandardScope;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 
@@ -48,27 +49,7 @@ import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
  */
 public class PageContextImpl extends PageContext {
 
-    private static final int[] JSP_SCOPES = {
-            PageContext.PAGE_SCOPE,
-            PageContext.REQUEST_SCOPE,
-            PageContext.SESSION_SCOPE,
-            PageContext.APPLICATION_SCOPE
-    };
-
     private ServletConfig _config;
-
-    private String getScopeFromInt(int scope) {
-        if (scope == PageContext.APPLICATION_SCOPE) {
-            return ServiceCycle.SCOPE_APPLICATION;
-        } else if (scope == PageContext.SESSION_SCOPE) {
-            return ServiceCycle.SCOPE_SESSION;
-        } else if (scope == PageContext.REQUEST_SCOPE) {
-            return ServiceCycle.SCOPE_REQUEST;
-        } else if (scope == PageContext.PAGE_SCOPE) {
-            return ServiceCycle.SCOPE_PAGE;
-        }
-        throw new IllegalArgumentException();
-    }
 
     public void initialize(Servlet servlet, ServletRequest request,
             ServletResponse response, String errorPageURL,
@@ -228,13 +209,36 @@ public class PageContextImpl extends PageContext {
 
     // Attributes --------------------------------------------------
 
+    private int toJspScope(String name) {
+        if (ServiceCycle.SCOPE_PAGE.equals(name)) {
+            return PageContext.PAGE_SCOPE;
+        } else if (ServiceCycle.SCOPE_REQUEST.equals(name)) {
+            return PageContext.REQUEST_SCOPE;
+        } else if (ServiceCycle.SCOPE_SESSION.equals(name)) {
+            return PageContext.SESSION_SCOPE;
+        } else if (ServiceCycle.SCOPE_APPLICATION.equals(name)) {
+            return PageContext.APPLICATION_SCOPE;
+        }
+        return 0;
+    }
+
+    private String toServiceScope(int scope) {
+        if (scope == PageContext.APPLICATION_SCOPE) {
+            return ServiceCycle.SCOPE_APPLICATION;
+        } else if (scope == PageContext.SESSION_SCOPE) {
+            return ServiceCycle.SCOPE_SESSION;
+        } else if (scope == PageContext.REQUEST_SCOPE) {
+            return ServiceCycle.SCOPE_REQUEST;
+        } else if (scope == PageContext.PAGE_SCOPE) {
+            return ServiceCycle.SCOPE_PAGE;
+        }
+        throw new IllegalArgumentException();
+    }
+
     public Object findAttribute(String name) {
-        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(
-                    name, CycleUtil.STANDARD_SCOPES[i]);
-            if (ret != null) {
-                return ret;
-            }
+        AttributeScope scope = CycleUtil.findStandardAttributeScope(name);
+        if (scope != null) {
+            return scope.getAttribute(name);
         }
         return null;
     }
@@ -243,7 +247,7 @@ public class PageContextImpl extends PageContext {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = getScopeFromInt(scope);
+        String scopeName = toServiceScope(scope);
         return CycleUtil.getAttribute(name, scopeName);
     }
 
@@ -255,7 +259,7 @@ public class PageContextImpl extends PageContext {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = getScopeFromInt(scope);
+        String scopeName = toServiceScope(scope);
         CycleUtil.removeAttribute(name, scopeName);
     }
 
@@ -263,9 +267,9 @@ public class PageContextImpl extends PageContext {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
-            CycleUtil.removeAttribute(
-                    name, CycleUtil.STANDARD_SCOPES[i]);
+        StandardScope standardScope = CycleUtil.getStandardScope();
+        for (int i = 0; i < standardScope.size(); i++) {
+            CycleUtil.removeAttribute(name, standardScope.get(i));
         }
     }
 
@@ -273,7 +277,7 @@ public class PageContextImpl extends PageContext {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = getScopeFromInt(scope);
+        String scopeName = toServiceScope(scope);
         CycleUtil.setAttribute(name, value, scopeName);
     }
 
@@ -282,7 +286,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public Enumeration getAttributeNamesInScope(int scope) {
-        String scopeName = getScopeFromInt(scope);
+        String scopeName = toServiceScope(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
         return IteratorEnumeration.getInstance(
@@ -290,11 +294,15 @@ public class PageContextImpl extends PageContext {
     }
 
     public int getAttributesScope(String name) {
-        for (int i = 0; i < CycleUtil.STANDARD_SCOPES.length; i++) {
-            Object ret = CycleUtil.getAttribute(
-                    name, CycleUtil.STANDARD_SCOPES[i]);
+        StandardScope standardScope = CycleUtil.getStandardScope();
+        int size = standardScope.size();
+        for (int i = 0; i < size; i++) {
+            Object ret = CycleUtil.getAttribute(name, standardScope.get(i));
             if (ret != null) {
-                return JSP_SCOPES[i];
+                int scope = toJspScope(name);
+                if (scope > 0) {
+                    return scope;
+                }
             }
         }
         return 0;

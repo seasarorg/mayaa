@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @see http://www.roseindia.net/javatutorials/implementing_softreference_based_hashmap.shtml
+ * see http://www.roseindia.net/javatutorials/implementing_softreference_based_hashmap.shtml
  * @author Heinz
  * @author Taro Kato (Gluegent, Inc.)
  */
@@ -87,6 +87,9 @@ public class SoftHashMap extends AbstractMap {
          * didn't know that! I thought it was only the inner class who could access the outer class's private
          * information. An outer class can also access private members of an inner class inside its inner
          * class.
+         * @param k
+         * @param key
+         * @param q
          */
         private SoftValue(Object k, Object key, ReferenceQueue q) {
             super(k, q);
@@ -107,6 +110,9 @@ public class SoftHashMap extends AbstractMap {
 
     /**
      * Here we put the key, value pair into the HashMap using a SoftValue object.
+     * @param key
+     * @param value
+     * @return Object
      */
     public Object put(Object key, Object value) {
         processQueue(); // throw out garbage collected values first
@@ -133,4 +139,5 @@ public class SoftHashMap extends AbstractMap {
         // no, no, you may NOT do that!!! GRRR
         throw new UnsupportedOperationException();
     }
+
 }

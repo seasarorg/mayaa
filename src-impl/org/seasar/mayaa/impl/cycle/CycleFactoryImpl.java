@@ -20,9 +20,14 @@ import java.util.Iterator;
 import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -32,6 +37,7 @@ public class CycleFactoryImpl
 
     private static final long serialVersionUID = 6930908159752133949L;
 
+    protected StandardScope _standardScope = new StandardScope();
     private Object _context;
     private Class _serviceClass;
     private ThreadLocal _currentCycle = new ThreadLocal();
@@ -80,6 +86,10 @@ public class CycleFactoryImpl
         return cycle;
     }
 
+    public StandardScope getStandardScope() {
+        return _standardScope;
+    }
+
     // ContextAware implements -------------------------------------
 
     public void setUnderlyingContext(Object context) {
@@ -94,6 +104,33 @@ public class CycleFactoryImpl
             throw new IllegalStateException();
         }
         return _context;
+    }
+
+    private boolean isValidScopeName(String scopeName) {
+        if (StringUtil.hasValue(scopeName)) {
+            ScriptEnvironment scriptEnvironment =
+                ProviderUtil.getScriptEnvironment();
+            for (Iterator it = scriptEnvironment.iterateAttributeScope();
+                    it.hasNext(); ) {
+                AttributeScope scope = (AttributeScope) it.next();
+                if (scopeName.equals(scope.getScopeName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void setParameter(String name, String value) {
+        if ("addedStandardScope".equals(name)) {
+            if (isValidScopeName(value) == false) {
+                throw new ScopeNotFoundException(value);
+            }
+
+            CycleUtil.addStandardScope(value);
+        }
+        super.setParameter(name, value);
     }
 
 }

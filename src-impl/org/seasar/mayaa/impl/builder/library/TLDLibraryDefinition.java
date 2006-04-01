@@ -50,7 +50,6 @@ public class TLDLibraryDefinition extends LibraryDefinitionImpl {
     }
 
     public ProcessorDefinition getProcessorDefinition(String name) {
-        // TODO compare as number
         if (_requiredVersion != null
                 && VERSION_JSP.compareTo(_requiredVersion) < 0) {
             return null;

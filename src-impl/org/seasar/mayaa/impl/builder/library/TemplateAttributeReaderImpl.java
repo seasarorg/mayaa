@@ -79,9 +79,19 @@ public class TemplateAttributeReaderImpl
         if (_enabled) {
             AttributeKey key = qNameToKey(qName, attributeName);
             if (isTarget(key)) {
-                String templateAttribute = getTemplateAttribute(key, attributeName);
+
+                for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
+                    AttributeKey aliasKey = (AttributeKey) it.next();
+                    if (aliasKey.match(key)) {
+                        NodeAttribute attribute =
+                            original.getAttribute(getQName(original, (String) _aliasAttributes.get(aliasKey)));
+                        if (attribute != null) {
+                            return attribute.getValue();
+                        }
+                    }
+                }
                 NodeAttribute attribute =
-                    original.getAttribute(getQName(original, templateAttribute));
+                    original.getAttribute(getQName(original, attributeName));
                 if (attribute != null) {
                     return attribute.getValue();
                 }
@@ -98,16 +108,6 @@ public class TemplateAttributeReaderImpl
             }
         }
         return true;
-    }
-
-    private String getTemplateAttribute(AttributeKey key, String attributeName) {
-        for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
-            AttributeKey aliasKey = (AttributeKey) it.next();
-            if (aliasKey.match(key)) {
-                return (String) _aliasAttributes.get(aliasKey);
-            }
-        }
-        return attributeName;
     }
 
     private QName getQName(SpecificationNode original, String attribute) {

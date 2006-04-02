@@ -36,10 +36,13 @@ public class QNameImpl implements QName, CONST_IMPL {
     public static synchronized QName getInstance(
             String namespaceURI, String localName) {
         String key = forQNameString(namespaceURI, localName);
-        QName result = (QName)_cache.get(key);
-        if (result == null) {
-            result = new QNameImpl(namespaceURI, localName);
-            _cache.put(key, result);
+        QName result;
+        synchronized (_cache) {
+            result = (QName)_cache.get(key);
+            if (result == null) {
+                result = new QNameImpl(namespaceURI, localName);
+                _cache.put(key, result);
+            }
         }
         return result;
     }

@@ -16,7 +16,9 @@
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.EvaluatorException;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
@@ -37,6 +39,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
 
     private final String _sourceName;
     private final int _lineNumber;
+    private final int _offsetLine;
     private final WrapFactory _wrap;
     private Script _rhinoScript;
     // for el style --------------
@@ -46,11 +49,12 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     private boolean _elStyle;
 
     public TextCompiledScriptImpl(
-            String text, WrapFactory wrap, PositionAware position) {
+            String text, WrapFactory wrap, PositionAware position, int offsetLine) {
         super(text);
         _wrap = wrap;
         _sourceName = position.getSystemID();
         _lineNumber = position.getLineNumber();
+        _offsetLine = offsetLine;
         processText(text);
     }
 
@@ -95,16 +99,73 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         _elStyleName = name;
         _elStyle = (name != null);
     }
+    
+    private static class OffsetLineRhinoException extends EvaluatorException {
+
+        private static final long serialVersionUID = 2330731436282320920L;
+        
+        private int _offsetLine;
+        
+        public OffsetLineRhinoException(String detail, String sourceName,
+                int lineNumber, int offsetLine) {
+            super(detail, sourceName, lineNumber);
+            _offsetLine = offsetLine;
+        }
+        
+        public OffsetLineRhinoException(String detail, String sourceName,
+                int lineNumber, String lineSource, int columnNumber, int offsetLine) {
+            super(detail, sourceName, lineNumber, lineSource, columnNumber);
+            _offsetLine = offsetLine;
+        }
+        
+        public int getOffsetLine() {
+            return _offsetLine;
+        }
+        
+        public String details() {
+            String message = super.details();
+            String[] lines = message.split("\n");
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < lines.length; i++) {
+                if (i == _offsetLine) {
+                    String line = lines[i];
+                    for (int j = 0; j < line.length(); j++) {
+                        if (line.charAt(j) != '\t' && line.charAt(j) != ' ') {
+                            line =
+                                line.substring(0, j) +
+                                "<span style=\"color: red; text-decoration: underline\">" +
+                                line.substring(j) +
+                                "</span>";
+                            break;
+                        }
+                    }
+                    lines[i] = line;
+                }
+                sb.append(lines[i]);
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+        
+    }
 
     protected Object normalExecute(Context cx, Scriptable scope) {
         if (cx == null || scope == null) {
             throw new IllegalArgumentException();
         }
-        if (_rhinoScript == null) {
-            _rhinoScript = cx.compileString(
-                    getText(), _sourceName, _lineNumber, null);
+        try {
+            if (_rhinoScript == null) {
+                _rhinoScript = cx.compileString(
+                        getText(), _sourceName, _lineNumber + _offsetLine, null);
+            }
+            return _rhinoScript.exec(cx, scope);
+        } catch(RhinoException e) {
+            int offset = e.lineNumber() - _lineNumber - 1;
+            throw new OffsetLineRhinoException(
+                    e.details() + " in script=" + getText(),
+                    _sourceName, e.lineNumber(), e.lineSource(),
+                    e.columnNumber(), offset);
         }
-        return _rhinoScript.exec(cx, scope);
     }
 
     protected Object getELStyleHost(Context cx, Scriptable scope) {
@@ -116,7 +177,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         if (_elRhinoScript == null) {
             _elRhinoScript = cx.compileString(
-                    _elScriptText, _sourceName, _lineNumber, null);
+                    _elScriptText, _sourceName, _lineNumber + _offsetLine, null);
         }
         return _elRhinoScript.exec(cx, scope);
     }

@@ -49,7 +49,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private WrapFactory _wrap;
 
     protected CompiledScript compile(
-            ScriptBlock scriptBlock, PositionAware position) {
+            ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
         if (scriptBlock == null) {
             throw new IllegalArgumentException();
         }
@@ -57,7 +57,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new TextCompiledScriptImpl(text, _wrap, position);
+        return new TextCompiledScriptImpl(text, _wrap, position, offsetLine);
     }
 
     // ScriptEnvironment implements ----------------------------------

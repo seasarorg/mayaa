@@ -65,6 +65,7 @@ public class SpecificationNodeHandler
     private Locator _locator;
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
+    private int _charactersStartLineNumber;
     private boolean _outputTemplateWhitespace = true;
     private boolean _outputMayaaWhitespace = false;
     private boolean _onTemplate;
@@ -112,9 +113,30 @@ public class SpecificationNodeHandler
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 
+    
+    protected void initCharactersBuffer() {
+        _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        _charactersStartLineNumber = _locator.getLineNumber();
+    }
+    
+    protected void appendCharactersBuffer(String str) {
+        if (_charactersStartLineNumber == -1) {
+            _charactersStartLineNumber = _locator.getLineNumber();
+        }
+        _charactersBuffer.append(str);
+    }
+    
+    protected void appendCharactersBuffer(char str[], int offset, int len) {
+        if (_charactersStartLineNumber == -1) {
+            _charactersStartLineNumber = _locator.getLineNumber();
+        }
+        _charactersBuffer.append(str, offset, len);
+    }
+    
     public void startDocument() {
         _sequenceID = 1;
-        _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        initCharactersBuffer();
+        _charactersStartLineNumber = -1;
         _current = _specification;
         initNamespace();
         pushNamespace();
@@ -133,8 +155,12 @@ public class SpecificationNodeHandler
     }
 
     protected SpecificationNode addNode(QName qName) {
-        String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         int lineNumber = _locator.getLineNumber();
+        return addNode(qName, lineNumber);
+    }
+    
+    protected SpecificationNode addNode(QName qName, int lineNumber) {
+        String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, _onTemplate, _sequenceID);
         _sequenceID++;
@@ -145,7 +171,7 @@ public class SpecificationNodeHandler
 
     protected void addCharactersNode() {
         if (_charactersBuffer.length() > 0) {
-            SpecificationNode node = addNode(QM_CHARACTERS);
+            SpecificationNode node = addNode(QM_CHARACTERS, _charactersStartLineNumber);
 
             String characters = _charactersBuffer.toString();
             if (_onTemplate) {
@@ -158,7 +184,7 @@ public class SpecificationNodeHandler
                 }
             }
             node.addAttribute(QM_TEXT, characters);
-            _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+            initCharactersBuffer();
         }
     }
 
@@ -249,12 +275,12 @@ public class SpecificationNodeHandler
 
     public void characters(char[] buffer, int start, int length) {
         if (_inEntity == 0) {
-            _charactersBuffer.append(buffer, start, length);
+            appendCharactersBuffer(buffer, start, length);
         }
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-        _charactersBuffer.append(buffer, start, length);
+        appendCharactersBuffer(buffer, start, length);
     }
 
     public void xmlDecl(String version, String encoding, String standalone) {
@@ -295,7 +321,7 @@ public class SpecificationNodeHandler
 
     public void startEntity(String name) {
         String entityRef = "&" + name + ";";
-        _charactersBuffer.append(entityRef);
+        appendCharactersBuffer(entityRef);
         ++_inEntity;
     }
 
@@ -331,7 +357,7 @@ public class SpecificationNodeHandler
         if (StringUtil.hasValue(systemID)) {
             node.addAttribute(QM_SYSTEM_ID, systemID);
         }
-        _charactersBuffer.append("\r\n");
+        appendCharactersBuffer("\r\n");
     }
 
     public void endDTD() {

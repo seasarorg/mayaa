@@ -73,7 +73,7 @@ public class BuilderUtil implements CONST_IMPL {
                             && adjuster.isTargetAttribute(
                                     original.getQName(), attr.getQName())) {
                         attrValue =
-                            StringUtil.adjustRelativePath(basePath, attrValue);
+                            adjuster.adjustRelativePath(basePath, attrValue);
                     }
                     node.addAttribute(attr.getQName(), attrValue);
                 }

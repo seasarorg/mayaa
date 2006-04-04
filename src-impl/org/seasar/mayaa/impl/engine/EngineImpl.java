@@ -43,7 +43,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
-import org.seasar.mayaa.impl.source.PageSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -131,10 +130,10 @@ public class EngineImpl extends SpecificationImpl
             return true;
         }
 
-        return validPath(request.getRequestedPath());
+        return validPath(request.getRequestedPath(), request.getMimeType());
     }
 
-    private boolean validPath(String path) {
+    private boolean validPath(String path, String mimeType) {
         if (_templatePathPatterns != null) {
             for (Iterator it = _templatePathPatterns.iterator();
                     it.hasNext();) {
@@ -144,7 +143,7 @@ public class EngineImpl extends SpecificationImpl
                 }
             }
         }
-        return true;
+        return mimeType.indexOf("html") != -1 || mimeType.indexOf("xml") != -1;
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -238,7 +237,8 @@ public class EngineImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         String path = cycle.getRequestScope().getRequestedPath();
-        PageSourceDescriptor source = new PageSourceDescriptor();
+        SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
+
         source.setSystemID(path);
         InputStream stream = source.getInputStream();
         if (stream != null) {

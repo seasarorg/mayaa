@@ -16,7 +16,7 @@
 package org.seasar.mayaa.impl.util;
 
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ import java.util.Set;
  * @author Heinz
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class SoftHashMap extends AbstractMap {
+public class WeakValueHashMap extends AbstractMap {
     /** The internal HashMap that will hold the SoftReference. */
     private final Map hash = new HashMap();
     /** The number of "hard" references to hold internally. */
@@ -38,18 +38,18 @@ public class SoftHashMap extends AbstractMap {
     /** Reference queue for cleared SoftReference objects. */
     private final ReferenceQueue queue = new ReferenceQueue();
 
-    public SoftHashMap() {
+    public WeakValueHashMap() {
         this(100);
     }
 
-    public SoftHashMap(int hardSize) {
+    public WeakValueHashMap(int hardSize) {
         HARD_SIZE = hardSize;
     }
 
     public Object get(Object key) {
         Object result = null;
         // We get the SoftReference represented by that key
-        SoftValue soft_ref = (SoftValue) hash.get(key);
+        WeakValue soft_ref = (WeakValue) hash.get(key);
         if (soft_ref != null) {
             // From the SoftReference we get the value, which can be
             // null if it was not in the map, or it was removed in
@@ -79,7 +79,7 @@ public class SoftHashMap extends AbstractMap {
      * We define our own subclass of SoftReference which contains not only the value but also the key to make
      * it easier to find the entry in the HashMap after it's been garbage collected.
      */
-    private static class SoftValue extends SoftReference {
+    private static class WeakValue extends WeakReference {
         final Object key; // always make data member final
 
         /**
@@ -91,7 +91,7 @@ public class SoftHashMap extends AbstractMap {
          * @param key
          * @param q
          */
-        private SoftValue(Object k, Object key, ReferenceQueue q) {
+        private WeakValue(Object k, Object key, ReferenceQueue q) {
             super(k, q);
             this.key = key;
         }
@@ -102,9 +102,9 @@ public class SoftHashMap extends AbstractMap {
      * by looking them up using the SoftValue.key data member.
      */
     private void processQueue() {
-        SoftValue sv;
-        while ((sv = (SoftValue) queue.poll()) != null) {
-            hash.remove(sv.key); // we can access private data!
+        WeakValue wv;
+        while ((wv = (WeakValue) queue.poll()) != null) {
+            hash.remove(wv.key); // we can access private data!
         }
     }
 
@@ -116,7 +116,7 @@ public class SoftHashMap extends AbstractMap {
      */
     public Object put(Object key, Object value) {
         processQueue(); // throw out garbage collected values first
-        return hash.put(key, new SoftValue(value, key, queue));
+        return hash.put(key, new WeakValue(value, key, queue));
     }
 
     public Object remove(Object key) {
@@ -139,5 +139,4 @@ public class SoftHashMap extends AbstractMap {
         // no, no, you may NOT do that!!! GRRR
         throw new UnsupportedOperationException();
     }
-
 }

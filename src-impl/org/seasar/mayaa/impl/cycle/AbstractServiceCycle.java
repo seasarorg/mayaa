@@ -29,7 +29,7 @@ import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
-import org.seasar.mayaa.impl.util.SoftHashMap;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -39,7 +39,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle {
 
-    private static final SoftHashMap _scriptCache = new SoftHashMap();
+    private static final WeakValueHashMap _scriptCache = new WeakValueHashMap();
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;

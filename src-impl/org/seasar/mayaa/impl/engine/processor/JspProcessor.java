@@ -48,6 +48,7 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.library.TLDScriptingVariableInfo;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -63,8 +64,10 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class JspProcessor extends TemplateProcessorSupport
-        implements ChildEvaluationProcessor,
-        TryCatchFinallyProcessor, CONST_IMPL {
+        implements
+            ChildEvaluationProcessor,
+            TryCatchFinallyProcessor,
+            CONST_IMPL {
 
     private static final long serialVersionUID = -4416320364576454337L;
     private static PageContext _pageContext = new PageContextImpl();
@@ -94,8 +97,7 @@ public class JspProcessor extends TemplateProcessorSupport
 
     // MLD method
     public void setTagClass(Class tagClass) {
-        if (tagClass == null
-                || Tag.class.isAssignableFrom(tagClass) == false) {
+        if (tagClass == null || Tag.class.isAssignableFrom(tagClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
@@ -169,8 +171,7 @@ public class JspProcessor extends TemplateProcessorSupport
         getTagPool().returnTag(tag);
     }
 
-    protected ProcessStatus getProcessStatus(
-            int status, boolean doStart) {
+    protected ProcessStatus getProcessStatus(int status, boolean doStart) {
         if (status == Tag.EVAL_BODY_INCLUDE) {
             return ProcessStatus.EVAL_BODY_INCLUDE;
         } else if (status == Tag.SKIP_BODY) {
@@ -195,8 +196,7 @@ public class JspProcessor extends TemplateProcessorSupport
         Tag customTag = getLoadedTag();
         for (Iterator it = iterateProperties(); it.hasNext();) {
             ProcessorProperty property = (ProcessorProperty) it.next();
-            String propertyName =
-                property.getName().getQName().getLocalName();
+            String propertyName = property.getName().getQName().getLocalName();
             Object value = property.getValue().execute(null);
             ObjectUtil.setProperty(customTag, propertyName, value);
         }
@@ -217,8 +217,19 @@ public class JspProcessor extends TemplateProcessorSupport
             final int result = customTag.doStartTag();
             return getProcessStatus(result, true);
         } catch (JspException e) {
-            throw new RuntimeException(e);
+            throw createJspRuntimeException(
+                    getOriginalNode(), getInjectedNode(), e);
         }
+    }
+
+    private RuntimeException createJspRuntimeException(
+            SpecificationNode originalNode, SpecificationNode injectedNode,
+            Throwable cause) {
+        return new RuntimeException(
+                new JspRuntimeException(
+                        originalNode.getSystemID(), originalNode.getLineNumber(),
+                        injectedNode.getSystemID(), injectedNode.getLineNumber(),
+                        cause));
     }
 
     public ProcessStatus doEndProcess() {
@@ -227,7 +238,8 @@ public class JspProcessor extends TemplateProcessorSupport
             int ret = customTag.doEndTag();
             return getProcessStatus(ret, true);
         } catch (JspException e) {
-            throw new RuntimeException(e);
+            throw createJspRuntimeException(
+                    getOriginalNode(), getInjectedNode(), e);
         } finally {
             if (!canCatch()) {
                 releaseLoadedTag();
@@ -259,7 +271,8 @@ public class JspProcessor extends TemplateProcessorSupport
             try {
                 bodyTag.doInitBody();
             } catch (JspException e) {
-                throw new RuntimeException(e);
+                throw createJspRuntimeException(
+                        getOriginalNode(), getInjectedNode(), e);
             }
         } else {
             throw new IllegalStateException();
@@ -278,7 +291,8 @@ public class JspProcessor extends TemplateProcessorSupport
                 int ret = iterationTag.doAfterBody();
                 return getProcessStatus(ret, false);
             } catch (JspException e) {
-                throw new RuntimeException(e);
+                throw createJspRuntimeException(
+                        getOriginalNode(), getInjectedNode(), e);
             }
         }
         throw new IllegalStateException();
@@ -327,14 +341,12 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected class TagPool extends AbstractSoftReferencePool {
 
-        private static final long serialVersionUID =
-            -4519484537723904500L;
+        private static final long serialVersionUID = -4519484537723904500L;
 
         private Class _clazz;
 
         public TagPool(Class clazz) {
-            if (clazz == null
-                    || Tag.class.isAssignableFrom(clazz) == false) {
+            if (clazz == null || Tag.class.isAssignableFrom(clazz) == false) {
                 throw new IllegalArgumentException();
             }
             _clazz = clazz;

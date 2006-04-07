@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.SoftHashMap;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -27,7 +27,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class QNameImpl implements QName, CONST_IMPL {
-    private static Map _cache = new SoftHashMap();
+    private static Map _cache = new WeakValueHashMap();
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);

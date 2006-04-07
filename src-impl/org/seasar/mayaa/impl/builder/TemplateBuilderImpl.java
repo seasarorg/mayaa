@@ -331,6 +331,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
+    // Parameterizable implements ------------------------------------
+
+    public void setParameter(String name, String value) {
+        if ("optimize".equals(name)) {
+            _optimize = ObjectUtil.booleanValue(value, true);
+        }
+        super.setParameter(name, value);
+    }
+
     protected void doInjection(Template template) {
         if (template == null) {
             throw new IllegalArgumentException();
@@ -347,15 +356,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
-    }
-
-    // Parameterizable implements ------------------------------------
-
-    public void setParameter(String name, String value) {
-        if ("optimize".equals(name)) {
-            _optimize = ObjectUtil.booleanValue(value, true);
-        }
-        super.setParameter(name, value);
     }
 
     // support class --------------------------------------------------

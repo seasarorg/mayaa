@@ -19,12 +19,16 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.NodeAttributeImpl;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CommentProcessor extends CharactersProcessor {
+public class CommentProcessor extends CharactersProcessor implements CONST_IMPL {
 
     private static final long serialVersionUID = -5176372123366627130L;
     private static final String COMMENTIN = "<!--";
@@ -69,6 +73,10 @@ public class CommentProcessor extends CharactersProcessor {
         ProcessorTreeWalker[] results =
                 new ProcessorTreeWalker[2 + getChildProcessorSize()];
 
+        if (getText() == null) {
+            initText();
+        }
+
         StringBuffer sb = new StringBuffer();
         writePart1(sb);
         results[0] = new CharactersProcessor(this, sb.toString());
@@ -82,6 +90,13 @@ public class CommentProcessor extends CharactersProcessor {
                 new LiteralCharactersProcessor(this, COMMENTOUT);
 
         return results;
+    }
+
+    private void initText() {
+        String processorDefName = getProcessorDefinition().getName();
+        QName qName = QNameImpl.getInstance(URI_MAYAA, processorDefName);
+        setText(new ProcessorPropertyImpl(
+                new NodeAttributeImpl(qName, "text"), "", String.class));
     }
 
 }

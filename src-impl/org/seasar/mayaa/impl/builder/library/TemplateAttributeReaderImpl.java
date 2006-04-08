@@ -79,7 +79,6 @@ public class TemplateAttributeReaderImpl
         if (_enabled) {
             AttributeKey key = qNameToKey(qName, attributeName);
             if (isTarget(key)) {
-
                 for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
                     AttributeKey aliasKey = (AttributeKey) it.next();
                     if (aliasKey.match(key)) {

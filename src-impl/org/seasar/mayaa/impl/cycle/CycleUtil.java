@@ -117,20 +117,16 @@ public class CycleUtil {
             "org.seasar.mayaa.cycle.DRAFT_WRITING";
 
     public static boolean isDraftWriting() {
-        ServiceCycle cycle = getServiceCycle();
         return Boolean.TRUE.equals(
-                cycle.getAttributeScope(ServiceCycle.SCOPE_REQUEST)
-                        .getAttribute(DRAFT_WRITING));
+                getAttribute(DRAFT_WRITING, ServiceCycle.SCOPE_REQUEST));
     }
 
     public static void beginDraftWriting() {
-        getServiceCycle().getAttributeScope(ServiceCycle.SCOPE_REQUEST)
-                .setAttribute(DRAFT_WRITING, Boolean.TRUE);
+        setAttribute(DRAFT_WRITING, Boolean.TRUE, ServiceCycle.SCOPE_REQUEST);
     }
 
     public static void endDraftWriting() {
-        getServiceCycle().getAttributeScope(ServiceCycle.SCOPE_REQUEST)
-                .setAttribute(DRAFT_WRITING, Boolean.FALSE);
+        setAttribute(DRAFT_WRITING, Boolean.FALSE, ServiceCycle.SCOPE_REQUEST);
     }
 
 }

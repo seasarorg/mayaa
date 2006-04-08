@@ -113,26 +113,26 @@ public class SpecificationNodeHandler
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 
-    
+
     protected void initCharactersBuffer() {
         _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
         _charactersStartLineNumber = _locator.getLineNumber();
     }
-    
+
     protected void appendCharactersBuffer(String str) {
         if (_charactersStartLineNumber == -1) {
             _charactersStartLineNumber = _locator.getLineNumber();
         }
         _charactersBuffer.append(str);
     }
-    
+
     protected void appendCharactersBuffer(char str[], int offset, int len) {
         if (_charactersStartLineNumber == -1) {
             _charactersStartLineNumber = _locator.getLineNumber();
         }
         _charactersBuffer.append(str, offset, len);
     }
-    
+
     public void startDocument() {
         _sequenceID = 1;
         initCharactersBuffer();
@@ -158,7 +158,7 @@ public class SpecificationNodeHandler
         int lineNumber = _locator.getLineNumber();
         return addNode(qName, lineNumber);
     }
-    
+
     protected SpecificationNode addNode(QName qName, int lineNumber) {
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = SpecificationUtil.createSpecificationNode(
@@ -171,7 +171,8 @@ public class SpecificationNodeHandler
 
     protected void addCharactersNode() {
         if (_charactersBuffer.length() > 0) {
-            SpecificationNode node = addNode(QM_CHARACTERS, _charactersStartLineNumber);
+            SpecificationNode node =
+                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
 
             String characters = _charactersBuffer.toString();
             if (_onTemplate) {

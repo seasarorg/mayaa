@@ -27,6 +27,7 @@ import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
+import org.seasar.mayaa.impl.engine.PageForwarded;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -99,73 +100,16 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         _elStyleName = name;
         _elStyle = (name != null);
     }
-    
-    private static class OffsetLineRhinoException extends EvaluatorException {
-
-        private static final long serialVersionUID = 2330731436282320920L;
-        
-        private int _offsetLine;
-        
-        public OffsetLineRhinoException(String detail, String sourceName,
-                int lineNumber, int offsetLine) {
-            super(detail, sourceName, lineNumber);
-            _offsetLine = offsetLine;
-        }
-        
-        public OffsetLineRhinoException(String detail, String sourceName,
-                int lineNumber, String lineSource, int columnNumber, int offsetLine) {
-            super(detail, sourceName, lineNumber, lineSource, columnNumber);
-            _offsetLine = offsetLine;
-        }
-        
-        public int getOffsetLine() {
-            return _offsetLine;
-        }
-        
-        public String details() {
-            String message = super.details();
-            String[] lines = message.split("\n");
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < lines.length; i++) {
-                if (i == _offsetLine) {
-                    String line = lines[i];
-                    for (int j = 0; j < line.length(); j++) {
-                        if (line.charAt(j) != '\t' && line.charAt(j) != ' ') {
-                            line =
-                                line.substring(0, j) +
-                                "<span style=\"color: red; text-decoration: underline\">" +
-                                line.substring(j) +
-                                "</span>";
-                            break;
-                        }
-                    }
-                    lines[i] = line;
-                }
-                sb.append(lines[i]);
-                sb.append("\n");
-            }
-            return sb.toString();
-        }
-        
-    }
 
     protected Object normalExecute(Context cx, Scriptable scope) {
         if (cx == null || scope == null) {
             throw new IllegalArgumentException();
         }
-        try {
-            if (_rhinoScript == null) {
-                _rhinoScript = cx.compileString(
-                        getText(), _sourceName, _lineNumber + _offsetLine, null);
-            }
-            return _rhinoScript.exec(cx, scope);
-        } catch(RhinoException e) {
-            int offset = e.lineNumber() - _lineNumber - 1;
-            throw new OffsetLineRhinoException(
-                    e.details() + " in script=" + getText(),
-                    _sourceName, e.lineNumber(), e.lineSource(),
-                    e.columnNumber(), offset);
+        if (_rhinoScript == null) {
+            _rhinoScript = cx.compileString(
+                    getText(), _sourceName, _lineNumber + _offsetLine, null);
         }
+        return _rhinoScript.exec(cx, scope);
     }
 
     protected Object getELStyleHost(Context cx, Scriptable scope) {
@@ -208,8 +152,18 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                 jsRet = normalExecute(cx, scope);
             }
             ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
-        } catch (WrappedException e) {
-            RhinoUtil.removeWrappedException(e);
+        } catch (RhinoException e) {
+            if (e instanceof WrappedException) {
+                WrappedException we = (WrappedException) e;
+                if (we.getWrappedException() instanceof PageForwarded) {
+                    RhinoUtil.removeWrappedException(we);
+                }
+            }
+            int offsetLine = e.lineNumber() - _lineNumber + 1;// one "\n" is added
+            throw new OffsetLineRhinoException(
+                    e.details() + " in script=\n" + getText(),
+                    _sourceName, e.lineNumber(), e.lineSource(),
+                    e.columnNumber(), offsetLine, e.getCause());
         } finally {
             Context.exit();
         }
@@ -246,6 +200,54 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         } finally {
             Context.exit();
         }
+    }
+
+    private static class OffsetLineRhinoException extends EvaluatorException {
+
+        private static final long serialVersionUID = 2330731436282320920L;
+
+        private int _offsetLine;
+
+        public OffsetLineRhinoException(String detail, String sourceName,
+                int lineNumber, String lineSource,
+                int columnNumber, int offsetLine, Throwable cause) {
+            super(detail, sourceName, lineNumber, lineSource, columnNumber);
+            if (cause != null) {
+                initCause(cause);
+            }
+            _offsetLine = offsetLine;
+        }
+
+        public int getOffsetLine() {
+            return _offsetLine;
+        }
+
+        public String details() {
+            String message = super.details();
+            String[] lines = message.split("\n");
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < lines.length; i++) {
+                if (i == _offsetLine) {
+                    lines[i] = decorate(lines[i]);
+                }
+                sb.append(lines[i]);
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+
+        private String decorate(String line) {
+            for (int j = 0; j < line.length(); j++) {
+                if (line.charAt(j) != '\t' && line.charAt(j) != ' ') {
+                    return line.substring(0, j) +
+                        "<span style=\"color: red; text-decoration: underline\">" +
+                        line.substring(j) +
+                        "</span>";
+                }
+            }
+            return line;
+        }
+
     }
 
 }

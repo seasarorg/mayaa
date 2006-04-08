@@ -113,7 +113,6 @@ public class SpecificationNodeHandler
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 
-
     protected void initCharactersBuffer() {
         _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
         _charactersStartLineNumber = _locator.getLineNumber();

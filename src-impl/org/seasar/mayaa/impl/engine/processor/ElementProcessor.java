@@ -345,6 +345,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
             return new ProcessorTreeWalker[] { this };
         }
 
+        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
+            if (prop.getValue().isLiteral() == false) {
+                return new ProcessorTreeWalker[] { this };
+            }
+        }
+
         List list = new ArrayList();
         StringBuffer buffer = new StringBuffer();
         writePart1(buffer);
@@ -382,7 +389,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             list.add(part4);
         }
 
-        return (ProcessorTreeWalker[]) list.toArray(new ProcessorTreeWalker[0]);
+        return (ProcessorTreeWalker[]) list.toArray(new ProcessorTreeWalker[list.size()]);
     }
 
 }

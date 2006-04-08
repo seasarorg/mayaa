@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -74,7 +75,7 @@ public class CommentProcessor extends CharactersProcessor implements CONST_IMPL 
                 new ProcessorTreeWalker[2 + getChildProcessorSize()];
 
         if (getText() == null) {
-            initText();
+            setText(createVoidText());
         }
 
         StringBuffer sb = new StringBuffer();
@@ -92,11 +93,13 @@ public class CommentProcessor extends CharactersProcessor implements CONST_IMPL 
         return results;
     }
 
-    private void initText() {
+    private ProcessorProperty createVoidText() {
+        String processorDefNameSpace =
+            getProcessorDefinition().getLibraryDefinition().getNamespaceURI();
         String processorDefName = getProcessorDefinition().getName();
-        QName qName = QNameImpl.getInstance(URI_MAYAA, processorDefName);
-        setText(new ProcessorPropertyImpl(
-                new NodeAttributeImpl(qName, "text"), "", String.class));
+        QName qName = QNameImpl.getInstance(processorDefNameSpace, processorDefName);
+        return new ProcessorPropertyImpl(
+                new NodeAttributeImpl(qName, "text"), "", String.class);
     }
 
 }

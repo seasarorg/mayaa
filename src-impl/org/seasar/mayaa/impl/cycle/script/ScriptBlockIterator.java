@@ -54,6 +54,9 @@ public class ScriptBlockIterator implements Iterator {
 
         boolean inBlockComment = false;
         boolean inLineComment = false;
+        boolean inString = false;
+        char stringBeginQuote = '\0';
+        boolean inEscapeSequence = false;
         int depth = 0;
         for (int i = start; i < _text.length(); i++) {
             c = _text.charAt(i);
@@ -67,27 +70,38 @@ public class ScriptBlockIterator implements Iterator {
                     continue;
                 }
                 inLineComment = false;
+            } else if (inEscapeSequence) {
+                inEscapeSequence = false;
+                continue;
+            } else if (inString && stringBeginQuote == c) {
+                inString = false;
+                continue;
             }
 
-            if (c == '/') {
+            if (c == '/' && inString == false) {
                 if (i > 0 && _text.charAt(i - 1) == '/') {
                     inLineComment = true;
                     continue;
                 }
-            } else if (c == '*') {
+            } else if (c == '*' && inString == false) {
                 if (i > 0 && _text.charAt(i - 1) == '/') {
                     inBlockComment = true;
                     continue;
                 }
-            } else if (c == '{') {
+            } else if (c == '{' && inString == false) {
                 depth++;
-            } else if (c == '}') {
+            } else if (c == '}' && inString == false) {
                 depth--;
                 if (depth == 0) {
                     return i;
                 } else if (depth < 0) {
                     throw new UnbalancedBraceException(_text, i);
                 }
+            } else if (c == '\'' || c == '"' && inString == false) {
+                inString = true;
+                stringBeginQuote = c;
+            } else if (inString && c == '\\') {
+                inEscapeSequence = true;
             }
         }
         return -1;

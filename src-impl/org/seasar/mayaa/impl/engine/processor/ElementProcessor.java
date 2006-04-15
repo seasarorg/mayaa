@@ -61,6 +61,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
         // transitional
         XHTML_EMPTY_ELEMENTS.add("basefont");
         XHTML_EMPTY_ELEMENTS.add("isindex");
+        // nonstandard
+        XHTML_EMPTY_ELEMENTS.add("frame");
+        XHTML_EMPTY_ELEMENTS.add("wbr");
+        XHTML_EMPTY_ELEMENTS.add("bgsound");
+        XHTML_EMPTY_ELEMENTS.add("nextid");
+        XHTML_EMPTY_ELEMENTS.add("sound");
+        XHTML_EMPTY_ELEMENTS.add("spacer");
     }
 
     private PrefixAwareName _name;

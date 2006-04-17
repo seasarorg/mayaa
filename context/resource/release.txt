@@ -64,6 +64,7 @@ MayaaのWEBサイト：
  しました。ServiceProviderファイルでEqualsIDInjectionResolverのパラメータ
  reportDuplicatedIDにfalseを設定すればログを出さないようにできます。
 
+-jaxenを1.1-beta-8から1.1-beta-9にバージョンアップしました。
 
 -------------------------------------------------------------------
 変更点 1.1.0-beta1 -> 1.1.0-beta2 (2006/04/08)

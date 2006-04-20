@@ -17,8 +17,6 @@ package org.seasar.mayaa.impl.source;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -28,7 +26,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PageSourceDescriptor extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -6821253020265849514L;
-    private static final Log LOG = LogFactory.getLog(PageSourceDescriptor.class);
 
     private String _folder = "/WEB-INF/page";
     private String _absolutePath;
@@ -64,18 +61,12 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("source folder: "+ value);
-            }
             _folder = value;
         } else if ("absolutePath".equals(name)) {
             String path = StringUtil.preparePath(value);
             if (StringUtil.isEmpty(path)
                     || new File(path).isDirectory() == false) {
                 throw new IllegalParameterValueException(getClass(), name);
-            }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("absolute source path: "+ path);
             }
             _absolutePath = path;
         }

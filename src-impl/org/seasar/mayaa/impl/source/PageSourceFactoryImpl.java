@@ -17,6 +17,8 @@ package org.seasar.mayaa.impl.source;
 
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -30,6 +32,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         implements PageSourceFactory {
 
     private static final long serialVersionUID = 3334813227060846723L;
+    private static final Log LOG = LogFactory.getLog(PageSourceFactoryImpl.class);
 
     private Object _context;
     private Class _serviceClass;
@@ -81,6 +84,15 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
             throw new IllegalStateException();
         }
         return _context;
+    }
+
+    // ParameterAware implements -------------------------------------
+
+    public void setParameter(String name, String value) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info(name + ": "+ value);
+        }
+        super.setParameter(name, value);
     }
 
 }

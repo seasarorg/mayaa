@@ -94,8 +94,7 @@ public class MarshallUtil {
         }
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            Enumeration resources =
-                loader.getResources(systemID);
+            Enumeration resources = loader.getResources(systemID);
             return new URLSourceIterator(
                     new LIFOIterator(resources), systemID);
         } catch (IOException e) {

@@ -16,9 +16,9 @@
 package org.seasar.mayaa.impl.source;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -28,13 +28,10 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PageSourceDescriptor extends CompositeSourceDescriptor {
 
     private static final long serialVersionUID = -6821253020265849514L;
+    private static final Log LOG = LogFactory.getLog(PageSourceDescriptor.class);
 
-    private List _folder = new ArrayList();
-    private List _absolutePath = new ArrayList();
-
-    public PageSourceDescriptor() {
-        _folder.add("/WEB-INF/page");
-    }
+    private String _folder = "/WEB-INF/page";
+    private String _absolutePath;
 
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
@@ -42,16 +39,16 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
         app1.setSystemID(systemID);
         addSourceDescriptor(app1);
 
-        for (int i = 0; i < _absolutePath.size(); i++) {
+        if (_absolutePath != null) {
             FileSourceDescriptor file = new FileSourceDescriptor();
-            file.setRoot((String) _absolutePath.get(i));
+            file.setRoot(_absolutePath);
             file.setSystemID(systemID);
             addSourceDescriptor(file);
         }
 
-        for (int i = 0; i < _folder.size(); i++) {
+        if (_folder != null) {
             ApplicationSourceDescriptor app2 = new ApplicationSourceDescriptor();
-            app2.setRoot((String) _folder.get(i));
+            app2.setRoot(_folder);
             app2.setSystemID(systemID);
             addSourceDescriptor(app2);
         }
@@ -67,14 +64,20 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
-            _folder.add(value);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("source folder: "+ value);
+            }
+            _folder = value;
         } else if ("absolutePath".equals(name)) {
             String path = StringUtil.preparePath(value);
             if (StringUtil.isEmpty(path)
                     || new File(path).isDirectory() == false) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
-            _absolutePath.add(path);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("absolute source path: "+ path);
+            }
+            _absolutePath = path;
         }
         super.setParameter(name, value);
     }

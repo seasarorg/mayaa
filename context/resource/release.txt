@@ -66,10 +66,6 @@ MayaaのWEBサイト：
 
 -jaxenを1.1-beta-8から1.1-beta-9にバージョンアップしました。
 
--PageSourceFactoryのfolder,absolutePathを複数指定可能にしました。
- 検索順はアプリケーション位置、absolutePathの追加順、folderの追加順、クラスパス
- です。
-
 -CycleFactoryをstaticに初期化するよう変更しました。
 
 -------------------------------------------------------------------

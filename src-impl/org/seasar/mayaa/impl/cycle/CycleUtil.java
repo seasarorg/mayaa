@@ -37,13 +37,13 @@ public class CycleUtil {
         // no instantiation.
     }
 
+    static {
+        _factory =
+            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+    }
+
     public static void initialize(
             Object requestContext, Object responseContext) {
-        if (_factory == null) {
-            CycleFactory factory =
-                (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
-            _factory = factory;
-        }
         _factory.initialize(requestContext, responseContext);
     }
 

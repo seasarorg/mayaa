@@ -13,27 +13,22 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.mayaa;
+package org.seasar.mayaa.cycle.script;
+
+import org.seasar.mayaa.ParameterAware;
 
 /**
- * @author Masataka Kurihara (Gluegent, Inc.)
+ * スクリプトをコンパイルする前に処理する。
+ * @author Koji Suga (Gluegent, Inc.)
  */
-interface TODO {
+public interface ScriptPreProcessor extends ParameterAware {
 
-    /*
-     * TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
+    /**
+     * スクリプトにコンパイル前処理を行う。
      *
-     * TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
-     *
-     * TODO HTMLの出力をテンプレートに近づける (RC1である程度済み)
-     *
-     * FIXME Pの下にDIVを置いてコンポーネントを作ろうとすると作れない
-     * ブロック要素不可のところにブロック要素があるため？
-     *
-     * TODO Marshall時に登録済みのlibraryManager/builderを上書きできるようにするか
-     *
-     * TODO 外部スクリプトのエラーをソースと一緒に表示する
-     *
+     * @param text スクリプト
+     * @return 処理後のスクリプト
      */
+    String process(String text);
 
 }

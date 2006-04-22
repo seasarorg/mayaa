@@ -144,6 +144,7 @@ public final class StringUtil {
             throw new IllegalArgumentException();
         }
 
+System.out.println("Å°"+ base + ", " + path);
         try {
             String baseDir = base.substring(0, base.lastIndexOf('/'));
             return adjustRecursive(baseDir, path);
@@ -153,8 +154,9 @@ public final class StringUtil {
     }
 
     protected static String adjustRecursive(String dir, String path) {
+System.out.println(dir + ", " + path);
         if (isEmpty(path)) {
-            throw new IllegalArgumentException();
+            return dir + '/';
         }
 
         try {
@@ -169,7 +171,7 @@ public final class StringUtil {
                 return adjustRecursive(dir, path.substring(2));
             }
 
-            return dir + "/" + path;
+            return dir + '/' + path;
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }

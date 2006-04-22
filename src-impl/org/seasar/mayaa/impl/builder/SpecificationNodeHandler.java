@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
-import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
@@ -66,9 +65,7 @@ public class SpecificationNodeHandler
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
     private int _charactersStartLineNumber;
-    private boolean _outputTemplateWhitespace = true;
     private boolean _outputMayaaWhitespace = false;
-    private boolean _onTemplate;
     private int _inEntity;
     private int _sequenceID;
 
@@ -77,11 +74,6 @@ public class SpecificationNodeHandler
             throw new IllegalArgumentException();
         }
         _specification = specification;
-        _onTemplate = specification instanceof Template;
-    }
-
-    public void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
-        _outputTemplateWhitespace = outputTemplateWhitespace;
     }
 
     public void setOutputMayaaWhitespace(boolean outputMayaaWhitespace) {
@@ -158,14 +150,24 @@ public class SpecificationNodeHandler
         return addNode(qName, lineNumber);
     }
 
+    protected SpecificationNode createChildNode(
+            QName qName, String systemID, int lineNumber, int sequenceID) {
+        return SpecificationUtil.createSpecificationNode(
+                qName, systemID, lineNumber, false, sequenceID);
+    }
+
     protected SpecificationNode addNode(QName qName, int lineNumber) {
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
-        SpecificationNode child = SpecificationUtil.createSpecificationNode(
-                qName, systemID, lineNumber, _onTemplate, _sequenceID);
-        _sequenceID++;
+        SpecificationNode child = createChildNode(
+                qName, systemID, lineNumber, _sequenceID);
+        _sequenceID += 1;
         child.setParentSpace(_namespace);
         _current.addChildNode(child);
         return child;
+    }
+
+    protected boolean isRemoveWhitespace() {
+        return _outputMayaaWhitespace == false;
     }
 
     protected void addCharactersNode() {
@@ -174,14 +176,8 @@ public class SpecificationNodeHandler
                     addNode(QM_CHARACTERS, _charactersStartLineNumber);
 
             String characters = _charactersBuffer.toString();
-            if (_onTemplate) {
-                if (_outputTemplateWhitespace == false) {
-                    characters = removeIgnorableWhitespace(characters);
-                }
-            } else {
-                if (_outputMayaaWhitespace == false) {
-                    characters = removeIgnorableWhitespace(characters);
-                }
+            if (isRemoveWhitespace()) {
+                characters = removeIgnorableWhitespace(characters);
             }
             node.addAttribute(QM_TEXT, characters);
             initCharactersBuffer();
@@ -197,10 +193,6 @@ public class SpecificationNodeHandler
                 token = token.replaceAll("[ \t]+$", "");
                 buffer.append(token.replaceAll("[ \t]+", " "));
                 buffer.append("\n");
-            } else {
-                if (i == 0 && _onTemplate) {
-                    buffer.append("\n");
-                }
             }
         }
         return buffer.toString();
@@ -319,9 +311,12 @@ public class SpecificationNodeHandler
         return null;
     }
 
+    protected void processEntity(String name) {
+        appendCharactersBuffer(StringUtil.resolveEntity('&' + name + ';'));
+    }
+
     public void startEntity(String name) {
-        String entityRef = "&" + name + ";";
-        appendCharactersBuffer(entityRef);
+        processEntity(name);
         ++_inEntity;
     }
 
@@ -330,12 +325,7 @@ public class SpecificationNodeHandler
     }
 
     public void comment(char[] buffer, int start, int length) {
-        if (_onTemplate) {
-            addCharactersNode();
-            String comment = new String(buffer, start, length);
-            SpecificationNode node = addNode(QM_COMMENT);
-            node.addAttribute(QM_TEXT, comment);
-        }
+        // do nothing.
     }
 
     public void notationDecl(String name, String publicId, String systemId) {

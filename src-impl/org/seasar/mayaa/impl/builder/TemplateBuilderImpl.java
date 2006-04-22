@@ -72,6 +72,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
     private InjectionChain _chain = new DefaultInjectionChain();
+    private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
 
     public void addInjectionResolver(InjectionResolver resolver) {
@@ -98,6 +99,14 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             return _htmlReaderPool;
         }
         return super.getXMLReaderPool(systemID);
+    }
+
+    protected ContentHandler createContentHandler(
+            Specification specification) {
+        TemplateNodeHandler handler =
+            new TemplateNodeHandler(specification);
+        handler.setOutputTemplateWhitespace(_outputTemplateWhitespace);
+        return handler;
     }
 
     protected String getPublicID() {
@@ -334,7 +343,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if ("optimize".equals(name)) {
+        if ("outputTemplateWhitespace".equals(name)) {
+            _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
+        } else if ("optimize".equals(name)) {
             _optimize = ObjectUtil.booleanValue(value, true);
         }
         super.setParameter(name, value);

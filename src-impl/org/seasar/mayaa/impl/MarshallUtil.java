@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
@@ -113,7 +114,12 @@ public class MarshallUtil {
             if (it == null || StringUtil.isEmpty(systemID)) {
                 throw new IllegalArgumentException();
             }
-            _it = it;
+            LinkedHashSet urlSet = new LinkedHashSet();
+            while (it.hasNext()) {
+                URL next = (URL) it.next();
+                urlSet.add(next);
+            }
+            _it = urlSet.iterator();
             _systemID = systemID;
         }
 

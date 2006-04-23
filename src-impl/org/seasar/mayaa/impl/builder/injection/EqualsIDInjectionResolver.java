@@ -119,7 +119,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
                         injected = (SpecificationNode) injectNodes.get(0);
                         if (isReportDuplicatedID() && injectNodes.size() > 1) {
                             if (LOG.isWarnEnabled()) {
-                                logWarnning(id, original, 1);
+                                logWarnning(id, original, 2);
                             }
                         }
                         break;
@@ -135,7 +135,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
             }
             if (isReportResolvedID()) {
                 if (LOG.isWarnEnabled()) {
-                    logWarnning(id, original, 2);
+                    logWarnning(id, original, 1);
                 }
             }
         }

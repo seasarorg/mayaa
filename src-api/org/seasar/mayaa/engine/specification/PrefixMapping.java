@@ -18,19 +18,7 @@ package org.seasar.mayaa.engine.specification;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PrefixMapping extends NodeObject {
-
-    /**
-     * 宣言されている名前空間の設定。
-     * @param namespace 宣言名前空間。
-     */
-    void setNamespace(Namespace namespace);
-
-    /**
-     * 宣言されている名前空間の取得。
-     * @return 宣言名前空間。
-     */
-    Namespace getNamespace();
+public interface PrefixMapping {
 
     /**
      * プレフィックス文字列の取得。

@@ -70,9 +70,7 @@ public class SpecificationNavigator extends DefaultNavigator
 
     public Iterator getParentAxisIterator(Object obj) {
         Object parent = null;
-        if (obj instanceof PrefixMapping) {
-            parent = ((PrefixMapping) obj).getNamespace();
-        } else if (obj instanceof NodeAttribute) {
+        if (obj instanceof NodeAttribute) {
             parent = ((NodeAttribute) obj).getNode();
         } else if (obj instanceof NodeTreeWalker) {
             parent = ((NodeTreeWalker) obj).getParentNode();
@@ -153,9 +151,7 @@ public class SpecificationNavigator extends DefaultNavigator
 
     public String translateNamespacePrefixToUri(String prefix, Object obj) {
         Namespace namaspace = null;
-        if (obj instanceof PrefixMapping) {
-            namaspace = ((PrefixMapping) obj).getNamespace();
-        } else if (obj instanceof Namespace) {
+        if (obj instanceof Namespace) {
             namaspace = (Namespace) obj;
         }
         if (namaspace != null) {

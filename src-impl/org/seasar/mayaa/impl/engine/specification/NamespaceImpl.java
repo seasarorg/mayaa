@@ -50,7 +50,7 @@ public class NamespaceImpl implements Namespace {
 
     protected PrefixMapping createPrefixMapping(
             String prefix, String namespaceURI) {
-        return new PrefixMappingImpl(prefix, namespaceURI);
+        return PrefixMappingImpl.getInstance(prefix, namespaceURI);
     }
 
     public void addPrefixMapping(String prefix, String namespaceURI) {
@@ -65,7 +65,6 @@ public class NamespaceImpl implements Namespace {
                 createPrefixMapping(prefix, namespaceURI);
             if (_mappings.contains(mapping) == false) {
                 _mappings.add(mapping);
-                mapping.setNamespace(this);
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0,

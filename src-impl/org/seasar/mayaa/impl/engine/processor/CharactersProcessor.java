@@ -76,7 +76,13 @@ public class CharactersProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        Object value = getText().getValue().execute(null);
+        Object value = null;
+        SpecificationUtil.endScope();
+        try {
+            value = getText().getValue().execute(null);
+        } finally {
+            SpecificationUtil.startScope(this.getVariables());
+        }
         if (value != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());

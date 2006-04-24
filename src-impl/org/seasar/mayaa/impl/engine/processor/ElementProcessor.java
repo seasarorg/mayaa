@@ -396,6 +396,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
             list.add(part4);
         }
 
+        clearChildProcessors();
+        clearProcesstimeInfo();
         return (ProcessorTreeWalker[]) list.toArray(new ProcessorTreeWalker[list.size()]);
     }
 

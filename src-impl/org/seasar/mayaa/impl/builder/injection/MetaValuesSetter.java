@@ -56,22 +56,30 @@ public class MetaValuesSetter extends ParameterAwareImpl
         mayaa.addAttribute(qName, value);
     }
 
+    protected void setEquiv(SpecificationNode original,
+            String equivValue , String contentValue) {
+        if (original == null) {
+            throw new IllegalArgumentException();
+        }
+        if (StringUtil.hasValue(contentValue)) {
+            if ("Content-Type".equalsIgnoreCase(equivValue)) {
+                addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
+            } else if ("Pragma".equalsIgnoreCase(equivValue)
+                    || "Cache-Control".equalsIgnoreCase(equivValue)) {
+                if ("no-cache".equalsIgnoreCase(contentValue)) {
+                    addMayaaAttribute(original, QM_NO_CACHE, "true");
+                }
+            }
+        }
+    }
+
     protected void setContentValue(SpecificationNode original,
             QName httpEquivName, QName contentName) {
         NodeAttribute equiv = original.getAttribute(httpEquivName);
         if (equiv != null) {
-            String equivValue = equiv.getValue();
             NodeAttribute content = original.getAttribute(contentName);
-            String contentValue = content.getValue();
-            if (StringUtil.hasValue(contentValue)) {
-                if ("Content-Type".equalsIgnoreCase(equivValue)) {
-                    addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
-                } else if ("Pragma".equalsIgnoreCase(equivValue)
-                        || "Cache-Control".equalsIgnoreCase(equivValue)) {
-                    if ("no-cache".equalsIgnoreCase(contentValue)) {
-                        addMayaaAttribute(original, QM_NO_CACHE, "true");
-                    }
-                }
+            if (content != null) {
+                setEquiv(original, equiv.getValue(), content.getValue());
             }
         }
     }

@@ -53,10 +53,15 @@ public class MayaaServlet extends HttpServlet {
 
     public void doGet(
             HttpServletRequest request, HttpServletResponse response) {
-        doPost(request, response);
+        doService(request, response);
     }
 
     public void doPost(
+            HttpServletRequest request, HttpServletResponse response) {
+        doService(request, response);
+    }
+
+    protected void doService(
             HttpServletRequest request, HttpServletResponse response) {
         CycleUtil.initialize(request, response);
         Engine engine = ProviderUtil.getEngine();

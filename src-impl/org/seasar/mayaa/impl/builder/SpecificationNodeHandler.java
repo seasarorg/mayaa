@@ -219,11 +219,12 @@ public class SpecificationNodeHandler
         if (_namespace.getMappingFromPrefix(prefix, false) == null) {
             startPrefixMapping(prefix, value);
         }
-        // TODO Java5 (Tomcat5.5?) Ç≈ïpî≠Ç∑ÇÈÇΩÇﬂDEBUGÇ…ïœçXÅBí≤ç∏Ç∑ÇÈÇ±Ç∆ÅB
+        /* MEMO namespace declaration is not attribute
         if (LOG.isDebugEnabled()) {
             LOG.debug(StringUtil.getMessage(SpecificationNodeHandler.class,
                     0, prefix, value));
         }
+        */
         return false;
     }
 

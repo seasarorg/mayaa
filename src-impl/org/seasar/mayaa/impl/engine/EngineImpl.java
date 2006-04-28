@@ -143,7 +143,8 @@ public class EngineImpl extends SpecificationImpl
                 }
             }
         }
-        return mimeType.indexOf("html") != -1 || mimeType.indexOf("xml") != -1;
+        return mimeType != null
+            && (mimeType.indexOf("html") != -1 || mimeType.indexOf("xml") != -1);
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {

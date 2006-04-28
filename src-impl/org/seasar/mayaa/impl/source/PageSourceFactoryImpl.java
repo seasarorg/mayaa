@@ -67,10 +67,12 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         SourceDescriptor source =
             (SourceDescriptor) ObjectUtil.newInstance(sourceClass);
-        for (int i = 0; i < _parameterNames.size(); i++) {
-            String key = (String) _parameterNames.get(i);
-            String value = (String) _parameterValues.get(i);
-            source.setParameter(key, value);
+        if (_parameterNames != null) {
+            for (int i = 0; i < _parameterNames.size(); i++) {
+                String key = (String) _parameterNames.get(i);
+                String value = (String) _parameterValues.get(i);
+                source.setParameter(key, value);
+            }
         }
         source.setSystemID(systemID);
         return source;

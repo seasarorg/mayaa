@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.EvaluatorException;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
@@ -200,54 +199,6 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         } finally {
             Context.exit();
         }
-    }
-
-    private static class OffsetLineRhinoException extends EvaluatorException {
-
-        private static final long serialVersionUID = 2330731436282320920L;
-
-        private int _offsetLine;
-
-        public OffsetLineRhinoException(String detail, String sourceName,
-                int lineNumber, String lineSource,
-                int columnNumber, int offsetLine, Throwable cause) {
-            super(detail, sourceName, lineNumber, lineSource, columnNumber);
-            if (cause != null) {
-                initCause(cause);
-            }
-            _offsetLine = offsetLine;
-        }
-
-        public int getOffsetLine() {
-            return _offsetLine;
-        }
-
-        public String details() {
-            String message = super.details();
-            String[] lines = message.split("\n");
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < lines.length; i++) {
-                if (i == _offsetLine) {
-                    lines[i] = decorate(lines[i]);
-                }
-                sb.append(lines[i]);
-                sb.append("\n");
-            }
-            return sb.toString();
-        }
-
-        private String decorate(String line) {
-            for (int j = 0; j < line.length(); j++) {
-                if (line.charAt(j) != '\t' && line.charAt(j) != ' ') {
-                    return line.substring(0, j) +
-                        "<span style=\"color: red; text-decoration: underline\">" +
-                        line.substring(j) +
-                        "</span>";
-                }
-            }
-            return line;
-        }
-
     }
 
 }

@@ -28,9 +28,9 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
  * StrutsなどMayaa以外と組み合わせる上で必ず必要となる。
- * Mayaaへforwardされる可能性のあるリクエストは全て
- * このフィルタを介さないとならない。
- * よって、*.do などにも設定する必要がある。
+ * Mayaaへforwardするサーブレットには全て
+ * このフィルタを適用する必要がある。
+ * （より厳密にはforwardされるmayaaプロセスからcycleを参照している場合の意味）
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class MayaaApplicationFilter implements Filter {

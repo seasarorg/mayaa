@@ -25,6 +25,7 @@ import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.PageNotFoundException;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -68,7 +69,12 @@ public class TemplateErrorHandler extends ParameterAwareImpl
             try {
                 Engine engine = ProviderUtil.getEngine();
                 Page page = engine.getPage(pageName);
+                SpecificationUtil.startScope(null);
+                try {
                 page.doPageRender("", getExtension());
+                } finally {
+                    SpecificationUtil.endScope();
+                }
                 if (LOG.isErrorEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 1, t.getMessage());

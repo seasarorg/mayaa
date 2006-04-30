@@ -63,7 +63,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         Class sourceClass = getServiceClass();
         if (sourceClass == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("serviceClass is null");
         }
         SourceDescriptor source =
             (SourceDescriptor) ObjectUtil.newInstance(sourceClass);
@@ -89,7 +89,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
 
     public Object getUnderlyingContext() {
         if (_context == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("context is null");
         }
         return _context;
     }

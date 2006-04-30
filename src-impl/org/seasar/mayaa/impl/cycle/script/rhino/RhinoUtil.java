@@ -47,7 +47,7 @@ public class RhinoUtil {
         if (attrs instanceof Scriptable) {
             return (Scriptable) attrs;
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("script scope does not get");
     }
 
     public static Object convertResult(

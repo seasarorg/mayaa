@@ -43,7 +43,7 @@ public class OffsetLineRhinoException extends EvaluatorException {
     public String details() {
         return super.details();
     }
-    
+
     public String emphasizeDetails() {
         String message = super.details();
         String[] lines = message.split("\n");

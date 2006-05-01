@@ -29,29 +29,37 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class CycleUtil {
 
-    private static CycleFactory _factory;
+    private static CycleUtil _singleton = new CycleUtil();
+    private CycleFactory _factory;
 
     private static StandardScope _standardScope = new StandardScope();
 
     private CycleUtil() {
-        // no instantiation.
+        // singleton.
     }
 
-    static {
-        _factory =
-            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+    public static CycleFactory getFactory() {
+        if (_singleton._factory == null) {
+            synchronized (_singleton) {
+                if (_singleton._factory == null) {
+                    _singleton._factory =
+                        (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+                }
+            }
+        }
+        return _singleton._factory;
     }
 
     public static void initialize(
             Object requestContext, Object responseContext) {
-        _factory.initialize(requestContext, responseContext);
+        getFactory().initialize(requestContext, responseContext);
     }
 
     public static ServiceCycle getServiceCycle() {
-        if (_factory == null) {
+        if (getFactory() == null) {
             throw new CycleNotInitializedException();
         }
-        return _factory.getServiceCycle();
+        return getFactory().getServiceCycle();
     }
 
     public static StandardScope getStandardScope() {

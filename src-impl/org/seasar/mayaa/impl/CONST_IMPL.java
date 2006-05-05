@@ -55,12 +55,6 @@ public interface CONST_IMPL {
 
     QName QM_AFTER_RENDER = QNameImpl.getInstance("afterRender");
     QName QM_BEFORE_RENDER = QNameImpl.getInstance("beforeRender");
-    QName QM_AFTER_RENDER_PAGE = QNameImpl.getInstance("afterRenderPage");
-    QName QM_BEFORE_RENDER_PAGE = QNameImpl.getInstance("beforeRenderPage");
-    QName QM_AFTER_RENDER_COMPONENT = QNameImpl.getInstance("afterRenderComponent");
-    QName QM_BEFORE_RENDER_COMPONENT = QNameImpl.getInstance("beforeRenderComponent");
-    QName QM_AFTER_RENDER_PROCESSOR = QNameImpl.getInstance("afterRenderProcessor");
-    QName QM_BEFORE_RENDER_PROCESSOR = QNameImpl.getInstance("beforeRenderProcessor");
 
     QName QM_CONTENT_TYPE = QNameImpl.getInstance("contentType");
     QName QM_ID = QNameImpl.getInstance("id");
@@ -68,6 +62,7 @@ public interface CONST_IMPL {
     QName QM_NAME = QNameImpl.getInstance("name");
     QName QM_NO_CACHE = QNameImpl.getInstance("noCache");
     QName QM_TEMPLATE_SUFFIX = QNameImpl.getInstance("templateSuffix");
+    QName QM_EXTENDS = QNameImpl.getInstance("extends");
     QName QM_TEXT = QNameImpl.getInstance("text");
 
 }

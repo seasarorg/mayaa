@@ -254,6 +254,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writePart1(StringBuffer buffer) {   // 静的 <xxx
         buffer.append("<");
         writeElementName(buffer);
+        // TODO HTMLでも明示的に宣言されたnamespaceは出力する
         if (isHTML(getName().getQName()) == false) {
             appendPrefixMappingString(buffer, getCurrentNS());
             appendPrefixMappingString(buffer, getName().getParentSpace());
@@ -269,10 +270,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     protected void internalWritePart2(StringBuffer buffer, ProcessorProperty prop) {
         PrefixAwareName propName = prop.getName();
+        if (isDuplicated()) {
         QName propQName = propName.getQName();
         String propURI = propQName.getNamespaceURI();
         String propLocalName = propQName.getLocalName();
-        if (isDuplicated()) {
             // TODO Feb 24, 2006 8:40:30 AM id を消すか？
             if (getName().getQName().getNamespaceURI().equals(propURI)
                     && "id".equals(propLocalName)) {
@@ -398,7 +399,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
         clearChildProcessors();
         clearProcesstimeInfo();
-        return (ProcessorTreeWalker[]) list.toArray(new ProcessorTreeWalker[list.size()]);
+        return (ProcessorTreeWalker[]) list.toArray(
+                new ProcessorTreeWalker[list.size()]);
     }
 
 }

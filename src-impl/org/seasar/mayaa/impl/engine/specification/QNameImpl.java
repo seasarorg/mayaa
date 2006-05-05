@@ -50,7 +50,7 @@ public class QNameImpl implements QName, CONST_IMPL {
     private String _namespaceURI;
     private String _localName;
 
-    private QNameImpl(String namespaceURI, String localName) {
+    protected QNameImpl(String namespaceURI, String localName) {
         if (StringUtil.isEmpty(namespaceURI) || StringUtil.isEmpty(localName)) {
             throw new IllegalArgumentException();
         }

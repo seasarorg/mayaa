@@ -154,7 +154,7 @@ public class RenderUtil implements CONST_IMPL {
                                 return SKIP_PAGE;
                             }
                         } else {
-                            throw new IllegalStateException();
+                            throw new IllegalStateException("child processor type error");
                         }
                     }
                     afterRet = SKIP_BODY;
@@ -221,7 +221,7 @@ public class RenderUtil implements CONST_IMPL {
                     return SKIP_PAGE;
                 }
             } else {
-                throw new IllegalStateException();
+                throw new IllegalStateException("child processor is not a templateProcessor");
             }
         }
         return EVAL_PAGE;
@@ -235,15 +235,13 @@ public class RenderUtil implements CONST_IMPL {
 
     protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
-        boolean mayaa = "mayaa".equals(extension);
-        if (mayaa) {
+        if ("mayaa".equals(extension)) {
             SourceDescriptor source = page.getSource();
             if (source.exists() == false) {
                 String pageName = page.getPageName();
                 throw new PageNotFoundException(pageName, extension);
             }
-        }
-        if (mayaa == false) {
+        } else {
             if (StringUtil.isEmpty(suffix)) {
                 if (StringUtil.isEmpty(requestedSuffix)) {
                     CompiledScript script = page.getSuffixScript();

@@ -99,7 +99,7 @@ public class SpecificationNodeHandler
     protected void popNamespace() {
         _namespace = _namespace.getParentSpace();
         if (_namespace == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(getClass().getName());
         }
     }
 

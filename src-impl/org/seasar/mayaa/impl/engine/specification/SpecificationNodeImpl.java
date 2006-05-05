@@ -53,14 +53,14 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     public void setSequenceID(int sequenceID) {
         if (sequenceID < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("sequenceID");
         }
         _sequenceID = sequenceID;
     }
 
     public int getSequenceID() {
         if (_sequenceID < 0) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("illegal sequenceID");
         }
         return _sequenceID;
     }
@@ -133,7 +133,9 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
             path.append(getParentNode());
         }
         path.append("/");
-        path.append(super.toString());
+        path.append(
+                PrefixAwareNameImpl.forPrefixAwareNameString(
+                        getQName(), getPrefix()));
         return path.toString();
     }
 

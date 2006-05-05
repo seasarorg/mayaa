@@ -51,7 +51,7 @@ public class MetaValuesSetter extends ParameterAwareImpl
         }
         SpecificationNode mayaa = SpecificationUtil.getMayaaNode(original);
         if (mayaa == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("mayaaNode not found in current specification");
         }
         mayaa.addAttribute(qName, value);
     }

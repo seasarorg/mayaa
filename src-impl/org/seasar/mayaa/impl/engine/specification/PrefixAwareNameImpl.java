@@ -53,13 +53,7 @@ public class PrefixAwareNameImpl extends NamespaceImpl
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        String prefix = getPrefix();
-        if (StringUtil.hasValue(prefix)) {
-            buffer.append(prefix).append(":");
-        }
-        buffer.append(getQName().getLocalName());
-        return buffer.toString();
+        return forPrefixAwareNameString(getQName(), getPrefix());
     }
 
     public boolean equals(Object test) {
@@ -68,6 +62,15 @@ public class PrefixAwareNameImpl extends NamespaceImpl
 
     public int hashCode() {
         return getQName().hashCode();
+    }
+
+    public static String forPrefixAwareNameString(QName qName, String prefix) {
+        StringBuffer buffer = new StringBuffer();
+        if (StringUtil.hasValue(prefix)) {
+            buffer.append(prefix).append(":");
+        }
+        buffer.append(qName.toString());
+        return buffer.toString();
     }
 
 }

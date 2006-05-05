@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
@@ -64,7 +66,7 @@ import org.xml.sax.XMLReader;
  */
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder, CONST_IMPL {
-
+    private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
     private static final long serialVersionUID = -1031702086020145692L;
 
     private List _resolvers = new ArrayList();
@@ -117,7 +119,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if ((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
+        LOG.info("built node tree from template. " + specification.getSystemID());
         doInjection((Template) specification);
+        LOG.info("built processor tree from node tree. " + specification.getSystemID());
     }
 
     protected void saveToCycle(NodeTreeWalker originalNode,

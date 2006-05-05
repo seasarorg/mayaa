@@ -26,7 +26,6 @@ import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
@@ -43,9 +42,6 @@ public class PageImpl extends SpecificationImpl
         implements Page, Serializable, CONST_IMPL {
 
     private static final long serialVersionUID = -5345416943673041700L;
-
-    protected static final QName QM_EXTENDS =
-        SpecificationUtil.createQName("extends");
 
     private Page _superPage;
     private String _superSuffix;
@@ -68,10 +64,14 @@ public class PageImpl extends SpecificationImpl
     }
 
     protected void prepareSuper() {
+        if (_superPage != null) {
+            return;
+        }
         synchronized (this) {
             if (_superPage != null) {
                 return;
             }
+            // TODO mayaaˆÈŠO‚©‚ç‚àŽæ“¾‚Å‚«‚é‚æ‚¤‚É‚·‚é
             String extendsPath =
                 SpecificationUtil.getMayaaAttributeValue(this, QM_EXTENDS);
             if (StringUtil.isEmpty(extendsPath)) {

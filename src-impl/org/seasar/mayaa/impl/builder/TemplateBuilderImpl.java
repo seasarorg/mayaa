@@ -119,9 +119,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if ((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
-        LOG.info("built node tree from template. " + specification.getSystemID());
+        LOG.debug("built node tree from template. " + specification.getSystemID());
         doInjection((Template) specification);
-        LOG.info("built processor tree from node tree. " + specification.getSystemID());
+        LOG.debug("built processor tree from node tree. " + specification.getSystemID());
     }
 
     protected void saveToCycle(NodeTreeWalker originalNode,

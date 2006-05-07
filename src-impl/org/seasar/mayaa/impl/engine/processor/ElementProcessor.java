@@ -271,9 +271,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void internalWritePart2(StringBuffer buffer, ProcessorProperty prop) {
         PrefixAwareName propName = prop.getName();
         if (isDuplicated()) {
-        QName propQName = propName.getQName();
-        String propURI = propQName.getNamespaceURI();
-        String propLocalName = propQName.getLocalName();
+            QName propQName = propName.getQName();
+            String propURI = propQName.getNamespaceURI();
+            String propLocalName = propQName.getLocalName();
             // TODO Feb 24, 2006 8:40:30 AM id Çè¡Ç∑Ç©ÅH
             if (getName().getQName().getNamespaceURI().equals(propURI)
                     && "id".equals(propLocalName)) {

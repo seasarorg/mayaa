@@ -155,6 +155,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public EscapableScript(CompiledScript script, String basePath) {
             super(script);
+            // if basePath is null, not need adjust
             _basePath = basePath;
         }
 
@@ -185,6 +186,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             if (isString()) {
                 _escapedValue = (String) super.execute(null);
                 if (StringUtil.hasValue(_escapedValue)) {
+                // if basePath is null, not need adjust
                     if (basePath != null) {
                         _escapedValue =
                             StringUtil.adjustRelativePath(

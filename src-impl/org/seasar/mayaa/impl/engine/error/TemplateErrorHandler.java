@@ -71,7 +71,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 Page page = engine.getPage(pageName);
                 SpecificationUtil.startScope(null);
                 try {
-                page.doPageRender("", getExtension());
+                    page.doPageRender("", getExtension());
                 } finally {
                     SpecificationUtil.endScope();
                 }

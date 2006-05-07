@@ -15,12 +15,10 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import org.seasar.mayaa.impl.MayaaException;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NoSuchPropertyException extends MayaaException {
+public class NoSuchPropertyException extends AbstractMessagedException {
 
     private static final long serialVersionUID = -803104025776369368L;
 
@@ -40,7 +38,7 @@ public class NoSuchPropertyException extends MayaaException {
         return _propertyName;
     }
 
-    protected String[] getMessageParams() {
+    protected String[] getParamValues() {
         return new String[] {
                 _beanClass.getName(),
                 _propertyName

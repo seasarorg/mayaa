@@ -26,10 +26,12 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 public class CommentProcessor extends CharactersProcessor {
 
     private static final long serialVersionUID = -5176372123366627130L;
+    private static final String COMMENTIN = "<!--";
+    private static final String COMMENTOUT = "-->";
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("<!--");
+        cycle.getResponse().write(COMMENTIN);
         if (getText() != null) {
             Object value = getText().getValue().execute(null);
             if (value != null) {
@@ -41,7 +43,7 @@ public class CommentProcessor extends CharactersProcessor {
 
     public ProcessStatus doEndProcess() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("-->");
+        cycle.getResponse().write(COMMENTOUT);
         return ProcessStatus.EVAL_PAGE;
     }
 

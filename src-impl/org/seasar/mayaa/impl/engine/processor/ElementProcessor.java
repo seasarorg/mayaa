@@ -26,9 +26,9 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -58,6 +58,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
         // transitional
         XHTML_EMPTY_ELEMENTS.add("basefont");
         XHTML_EMPTY_ELEMENTS.add("isindex");
+        // nonstandard
+        XHTML_EMPTY_ELEMENTS.add("frame");
+        XHTML_EMPTY_ELEMENTS.add("wbr");
+        XHTML_EMPTY_ELEMENTS.add("bgsound");
+        XHTML_EMPTY_ELEMENTS.add("nextid");
+        XHTML_EMPTY_ELEMENTS.add("sound");
+        XHTML_EMPTY_ELEMENTS.add("spacer");
     }
 
     private PrefixAwareName _name;
@@ -206,6 +213,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append("\"");
     }
 
+    protected boolean needsCloseElement(QName qName) {
+        if (isHTML(qName)) {
+            HTMLElements.Element element =
+                HTMLElements.getElement(qName.getLocalName());
+            return element.isEmpty() == false;
+        }
+        return getChildProcessorSize() > 0;
+    }
+
     protected PrefixAwareName getIDName() {
         String namespaceURI = getName().getQName().getNamespaceURI();
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
@@ -239,10 +255,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             PrefixAwareName propName = prop.getName();
-            QName propQName = propName.getQName();
-            String propURI = propQName.getNamespaceURI();
-            String propLocalName = propQName.getLocalName();
             if (isDuplicated()) {
+                QName propQName = propName.getQName();
+                String propURI = propQName.getNamespaceURI();
+                String propLocalName = propQName.getLocalName();
                 // TODO Feb 24, 2006 8:40:30 AM id ‚ðÁ‚·‚©H
                 if (uri.equals(propURI) && "id".equals(propLocalName)) {
                     continue;
@@ -258,28 +274,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
-        } else if (isXHTML(qName)) {
-            if (XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+        } else {
+            if (isXHTML(qName)
+                    && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
                 buffer.append("/>");
             } else {
+                buffer.append("></");
+                buffer.append(qName.getLocalName());
                 buffer.append(">");
             }
-        } else {
-            buffer.append("/>");
         }
         write(buffer.toString());
         return ProcessStatus.EVAL_BODY_INCLUDE;
-    }
-
-    protected boolean needsCloseElement(QName qName) {
-        if (isHTML(qName)) {
-            HTMLElements.Element element =
-                HTMLElements.getElement(qName.getLocalName());
-            return element.isEmpty() == false;
-        } else if (isXHTML(qName) && getChildProcessorSize() == 0) {
-            return XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName()) == false;
-        }
-        return getChildProcessorSize() > 0;
     }
 
     protected void writeBody(String body) {

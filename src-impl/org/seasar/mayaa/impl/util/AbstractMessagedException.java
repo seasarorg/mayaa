@@ -29,6 +29,14 @@ public abstract class AbstractMessagedException
 
     protected static final String[] ZERO_PARAM = new String[0];
 
+    public AbstractMessagedException() {
+        //NoOperation
+    }
+
+    public AbstractMessagedException(Throwable cause) {
+        super(cause);
+    }
+
     protected int getMessageID() {
         return 0;
     }

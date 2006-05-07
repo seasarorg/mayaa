@@ -16,8 +16,8 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,14 +53,14 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
 
     public void setSequenceID(int sequenceID) {
         if (sequenceID < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("sequenceID");
         }
         _sequenceID = sequenceID;
     }
 
     public int getSequenceID() {
         if (_sequenceID < 0) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("illegal sequenceID");
         }
         return _sequenceID;
     }
@@ -71,7 +71,7 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         }
         synchronized (this) {
             if (_attributes == null) {
-                _attributes = new HashMap();
+                _attributes = new LinkedHashMap();
             }
         }
         synchronized (_attributes) {

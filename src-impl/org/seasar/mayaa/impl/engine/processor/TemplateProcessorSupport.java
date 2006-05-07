@@ -58,6 +58,10 @@ public class TemplateProcessorSupport implements TemplateProcessor {
         _evalBodyInclude = evalBodyInclude;
     }
 
+    public boolean isEvalBodyInclude() {
+        return _evalBodyInclude;
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if (_evalBodyInclude) {
             return ProcessStatus.EVAL_BODY_INCLUDE;
@@ -159,6 +163,10 @@ public class TemplateProcessorSupport implements TemplateProcessor {
 
     public ProcessorTreeWalker getChildProcessor(int index) {
         return (ProcessorTreeWalker) _children.get(index);
+    }
+
+    public void clearChildProcessors() {
+        _children.clear();
     }
 
 }

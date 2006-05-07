@@ -212,4 +212,44 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         return (ProcessorDefinition) _processors.get(name);
     }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("LibraryDefinition: ");
+        sb.append("systemID = ");
+        sb.append(_systemID);
+        sb.append(", namespaceUrl = ");
+        sb.append(_namespaceURI);
+        sb.append(", assignedURI = (");
+        for (Iterator it = _assignedURI.iterator(); it.hasNext();) {
+            sb.append(it.next());
+            sb.append(", ");
+        }
+        sb.append("), ");
+        if (_processors != null) {
+            sb.append("processors = (");
+            for (Iterator it = _processors.keySet().iterator(); it.hasNext();) {
+                String key = (String) it.next();
+                ProcessorDefinition def = getProcessorDefinition(key);
+                sb.append(def.getName());
+                sb.append(" - ");
+                sb.append(def.getProcessorClass());
+                sb.append(", ");
+            }
+            sb.append("), ");
+        }
+        if (_propertySets != null) {
+            sb.append("propertySets = (");
+            for (Iterator it = _propertySets.keySet().iterator(); it.hasNext();) {
+                String key = (String) it.next();
+                PropertySet prop = getPropertySet(key);
+                sb.append(prop.getName());
+                sb.append(" = ");
+                sb.append(prop.getParameter(prop.getName()));
+                sb.append(", ");
+            }
+            sb.append("), ");
+        }
+        return sb.toString();
+    }
+
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Date;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
@@ -35,15 +36,17 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class SourceCompiledScriptImpl
         extends AbstractSourceCompiledScript {
 
-    private static final long serialVersionUID = 4793923040332838492L;
+    private static final long serialVersionUID = 970613841877330176L;
 
     private WrapFactory _wrap;
     private Script _rhinoScript;
+    private Date _compiledTimestamp;
 
     public SourceCompiledScriptImpl(
             SourceDescriptor source, String encoding, WrapFactory wrap) {
         super(source, encoding);
         _wrap = wrap;
+        _compiledTimestamp = new Date();
     }
 
     protected void compileFromSource(
@@ -51,16 +54,20 @@ public class SourceCompiledScriptImpl
         if (source == null) {
             throw new IllegalArgumentException();
         }
-        if (_rhinoScript == null) {
+
+        if (_rhinoScript == null
+                || (source.getTimestamp().after(_compiledTimestamp))) {
             if (source.exists() == false) {
                 throw new RuntimeException(
                         new FileNotFoundException(source.getSystemID()));
             }
+
             InputStream stream = source.getInputStream();
             try {
                 Reader reader = new InputStreamReader(stream, getEncoding());
                 _rhinoScript = cx.compileReader(
                         reader, source.getSystemID(), 1, null);
+                _compiledTimestamp = source.getTimestamp();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {

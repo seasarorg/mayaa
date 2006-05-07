@@ -15,11 +15,17 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.source.PageSourceFactory;
 
@@ -30,9 +36,12 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         implements PageSourceFactory {
 
     private static final long serialVersionUID = 3334813227060846723L;
+    private static final Log LOG = LogFactory.getLog(PageSourceFactoryImpl.class);
 
     private Object _context;
     private Class _serviceClass;
+    private List _parameterNames;
+    private List _parameterValues;
 
     public void setServiceClass(Class serviceClass) {
         if (serviceClass == null) {
@@ -54,14 +63,16 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         Class sourceClass = getServiceClass();
         if (sourceClass == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("serviceClass is null");
         }
         SourceDescriptor source =
             (SourceDescriptor) ObjectUtil.newInstance(sourceClass);
-        for (Iterator it = iterateParameterNames(); it.hasNext();) {
-            String key = (String) it.next();
-            String value = getParameter(key);
+        if (_parameterNames != null) {
+            for (int i = 0; i < _parameterNames.size(); i++) {
+                String key = (String) _parameterNames.get(i);
+                String value = (String) _parameterValues.get(i);
             source.setParameter(key, value);
+        }
         }
         source.setSystemID(systemID);
         return source;
@@ -78,9 +89,54 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
 
     public Object getUnderlyingContext() {
         if (_context == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("context is null");
         }
         return _context;
+    }
+
+    // ParameterAware implements -------------------------------------
+
+    public void setParameter(String name, String value) {
+        if (StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if (value == null) {
+            throw new IllegalParameterValueException(getClass(), name);
+        }
+        if (LOG.isInfoEnabled()) {
+            LOG.info(name + ": "+ value);
+        }
+        if (_parameterNames == null) {
+            _parameterNames = new ArrayList();
+        }
+        if (_parameterValues == null) {
+            _parameterValues = new ArrayList();
+        }
+        _parameterNames.add(name);
+        _parameterValues.add(value);
+    }
+
+    // first value only
+    public String getParameter(String name) {
+        if (StringUtil.isEmpty(name)) {
+            throw new IllegalArgumentException();
+        }
+        if (_parameterNames == null) {
+            return null;
+        }
+        for (int i = 0; i < _parameterNames.size(); i++) {
+            if (name.equals(_parameterNames.get(i))) {
+                return (String) _parameterValues.get(i);
+            }
+        }
+        return null;
+    }
+
+    public Iterator iterateParameterNames() {
+        if (_parameterNames == null) {
+            return NullIterator.getInstance();
+        }
+        return _parameterNames.iterator();
     }
 
 }

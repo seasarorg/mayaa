@@ -22,9 +22,12 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -54,6 +57,11 @@ public class EngineUtil implements CONST_IMPL {
 
     public static String getSourcePath() {
         Specification spec = SpecificationUtil.findSpecification();
+        if (spec == null) {
+            String path = CycleUtil.getServiceCycle().getRequestScope().getRequestedPath();
+            SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
+            return source.getSystemID();
+        }
         return spec.getSystemID();
     }
 
@@ -64,7 +72,7 @@ public class EngineUtil implements CONST_IMPL {
                 return ((Template) current).getSystemID();
             }
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("unknown sourcePath from processor");
     }
 
     public static String getSourcePath(NodeTreeWalker node) {
@@ -84,7 +92,7 @@ public class EngineUtil implements CONST_IMPL {
         if (spec instanceof Template) {
             return (Template) spec;
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("template not found");
     }
 
     public static Template getTemplate(ProcessorTreeWalker proc) {
@@ -94,7 +102,7 @@ public class EngineUtil implements CONST_IMPL {
                 return (Template) current;
             }
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("template not found from current processor");
     }
 
     public static Specification getParentSpecification(Specification spec) {

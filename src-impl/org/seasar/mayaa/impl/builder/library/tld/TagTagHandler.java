@@ -22,6 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.builder.library.TLDLibraryDefinition;
 import org.seasar.mayaa.impl.builder.library.TLDProcessorDefinition;
+import org.seasar.mayaa.impl.engine.processor.JspProcessor;
+import org.seasar.mayaa.impl.util.IllegalClassTypeException;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -97,11 +99,16 @@ public class TagTagHandler extends TagHandler {
 
         protected void end(String body) {
             try {
-                Class clazz = ObjectUtil.loadClass(body, Tag.class);
-                setProcessorClass(clazz);
+                Class tagClass = ObjectUtil.loadClass(body);
+                if (JspProcessor.isSupportClass(tagClass)) {
+                    setProcessorClass(tagClass);
+                } else {
+                    /* Tag / SimpleTag */
+                    throw new IllegalClassTypeException(Tag.class, tagClass);
+                }
             } catch (RuntimeException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error(e.getMessage());
+                    LOG.error(e.getMessage(), e);
                 }
                 _handler.invalidate();
             }

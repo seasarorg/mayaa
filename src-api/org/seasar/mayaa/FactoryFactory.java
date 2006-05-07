@@ -123,7 +123,6 @@ public abstract class FactoryFactory implements Serializable {
      * @param context コンテキストオブジェクト。
      * @return アプリケーションスコープ。
      */
-    protected abstract ApplicationScope getApplicationScope(
-    		Object context);
+    protected abstract ApplicationScope getApplicationScope(Object context);
     
 }

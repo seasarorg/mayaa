@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -41,9 +43,9 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
-import org.seasar.mayaa.impl.source.PageSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -55,13 +57,16 @@ public class EngineImpl extends SpecificationImpl
 
     private static final long serialVersionUID = 1428444571422324206L;
     private static final Log LOG = LogFactory.getLog(EngineImpl.class);
-    private static final String DEFAULT_SPECIFICATION =
-        "defaultSpecification";
+    private static final String DEFAULT_SPECIFICATION = "defaultSpecification";
+    private static final String PAGE_CLASS = "pageClass";
+    private static final String TEMPLATE_CLASS = "templateClass";
 
     private ErrorHandler _errorHandler;
     private List _pages;
     private String _defaultSpecification = "";
     private List _templatePathPatterns;
+    private Class _pageClass = PageImpl.class;
+    private Class _templateClass = TemplateImpl.class;
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -97,7 +102,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected Page createNewPage(String pageName) {
-        Page page = new PageImpl(pageName);
+        Page page = createPageInstance(pageName);
         String path = pageName + ".mayaa";
         SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
         page.setSource(source);
@@ -125,10 +130,10 @@ public class EngineImpl extends SpecificationImpl
             return true;
         }
 
-        return validPath(request.getRequestedPath());
+        return validPath(request.getRequestedPath(), request.getMimeType());
     }
 
-    private boolean validPath(String path) {
+    private boolean validPath(String path, String mimeType) {
         if (_templatePathPatterns != null) {
             for (Iterator it = _templatePathPatterns.iterator();
                     it.hasNext();) {
@@ -138,7 +143,8 @@ public class EngineImpl extends SpecificationImpl
                 }
             }
         }
-        return true;
+        return mimeType != null
+            && (mimeType.indexOf("html") != -1 || mimeType.indexOf("xml") != -1);
     }
 
     protected Throwable removeWrapperRuntimeException(Throwable t) {
@@ -178,26 +184,33 @@ public class EngineImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
-    protected void doPageService(ServiceCycle cycle, boolean pageFlush) {
+    protected void doPageService(
+            ServiceCycle cycle, Map pageScopeValues, boolean pageFlush) {
         checkTimestamp();
         try {
             boolean service = true;
             while (service) {
                 try {
+                    String pageName = null;
+                    String extension = null;
+                    ProcessStatus ret = null;
+
                     saveToCycle();
                     SpecificationUtil.initScope();
-                    SpecificationUtil.startScope(null);
-                    SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
-                    RequestScope request = cycle.getRequestScope();
-                    String pageName = request.getPageName();
-                    String requestedSuffix = request.getRequestedSuffix();
-                    String extension = request.getExtension();
-                    Page page = getPage(pageName);
-                    ProcessStatus ret =
-                            page.doPageRender(requestedSuffix, extension);
-                    saveToCycle();
-                    SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
-                    SpecificationUtil.endScope();
+                    SpecificationUtil.startScope(pageScopeValues);
+                    try {
+                        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
+                        RequestScope request = cycle.getRequestScope();
+                        pageName = request.getPageName();
+                        String requestedSuffix = request.getRequestedSuffix();
+                        extension = request.getExtension();
+                        Page page = getPage(pageName);
+                        ret = page.doPageRender(requestedSuffix, extension);
+                        saveToCycle();
+                        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
+                    } finally {
+                        SpecificationUtil.endScope();
+                    }
                     Response response = CycleUtil.getResponse();
                     if (ret == null) {
                         if (response.getWriter().isDirty() == false) {
@@ -225,7 +238,8 @@ public class EngineImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         String path = cycle.getRequestScope().getRequestedPath();
-        PageSourceDescriptor source = new PageSourceDescriptor();
+        SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
+
         source.setSystemID(path);
         InputStream stream = source.getInputStream();
         if (stream != null) {
@@ -245,13 +259,31 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
+    // TODO APIÇÃïœçXÇ…çáÇÌÇπÇƒÇ¢Ç∏ÇÍçÌèú
     public void doService(boolean pageFlush) {
+        doService(null, pageFlush);
+    }
+
+    public void doService(Map pageScopeValues, boolean pageFlush) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (isPageRequested()) {
-            doPageService(cycle, pageFlush);
+            doPageService(cycle, pageScopeValues, pageFlush);
         } else {
             doResourceService(cycle);
         }
+    }
+
+    public Page createPageInstance(String pageName) {
+        Page page = (Page) ObjectUtil.newInstance(getPageClass());
+        page.initialize(pageName);
+        return page;
+    }
+
+    public Template createTemplateInstance(
+            Page page, String suffix, String extension) {
+        Template template = (Template) ObjectUtil.newInstance(getTemplateClass());
+        template.initialize(page, suffix, extension);
+        return template;
     }
 
     // Parameterizable implements ------------------------------------
@@ -280,6 +312,20 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), false);
                 _templatePathPatterns.add(0, pathPattern);
             }
+        } else if (PAGE_CLASS.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Class pageClass = ObjectUtil.loadClass(value);
+                if (Page.class.isAssignableFrom(pageClass)) {
+                    _pageClass = pageClass;
+                }
+            }
+        } else if (TEMPLATE_CLASS.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Class templateClass = ObjectUtil.loadClass(value);
+                if (Template.class.isAssignableFrom(templateClass)) {
+                    _templateClass = templateClass;
+                }
+            }
         }
         super.setParameter(name, value);
     }
@@ -297,6 +343,10 @@ public class EngineImpl extends SpecificationImpl
                 return null;
             }
             return patternToString(_templatePathPatterns, false);
+        } else if (PAGE_CLASS.equals(name)) {
+            return _pageClass.getName();
+        } else if (TEMPLATE_CLASS.equals(name)) {
+            return _templateClass.getName();
         }
         return super.getParameter(name);
     }
@@ -311,6 +361,14 @@ public class EngineImpl extends SpecificationImpl
             }
         }
         return sb.toString();
+    }
+
+    private Class getPageClass() {
+        return _pageClass;
+    }
+
+    private Class getTemplateClass() {
+        return _templateClass;
     }
 
     //---- support class

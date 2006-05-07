@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
@@ -25,6 +26,7 @@ import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
+import org.seasar.mayaa.impl.engine.PageForwarded;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -37,6 +39,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
 
     private final String _sourceName;
     private final int _lineNumber;
+    private final int _offsetLine;
     private final WrapFactory _wrap;
     private Script _rhinoScript;
     // for el style --------------
@@ -46,11 +49,12 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     private boolean _elStyle;
 
     public TextCompiledScriptImpl(
-            String text, WrapFactory wrap, PositionAware position) {
+            String text, WrapFactory wrap, PositionAware position, int offsetLine) {
         super(text);
         _wrap = wrap;
         _sourceName = position.getSystemID();
         _lineNumber = position.getLineNumber();
+        _offsetLine = offsetLine;
         processText(text);
     }
 
@@ -102,7 +106,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         if (_rhinoScript == null) {
             _rhinoScript = cx.compileString(
-                    getText(), _sourceName, _lineNumber, null);
+                    getText(), _sourceName, _lineNumber + _offsetLine, null);
         }
         return _rhinoScript.exec(cx, scope);
     }
@@ -116,7 +120,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         }
         if (_elRhinoScript == null) {
             _elRhinoScript = cx.compileString(
-                    _elScriptText, _sourceName, _lineNumber, null);
+                    _elScriptText, _sourceName, _lineNumber + _offsetLine, null);
         }
         return _elRhinoScript.exec(cx, scope);
     }
@@ -147,8 +151,18 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                 jsRet = normalExecute(cx, scope);
             }
             ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
-        } catch (WrappedException e) {
-            RhinoUtil.removeWrappedException(e);
+        } catch (RhinoException e) {
+            if (e instanceof WrappedException) {
+                WrappedException we = (WrappedException) e;
+                if (we.getWrappedException() instanceof PageForwarded) {
+                    RhinoUtil.removeWrappedException(we);
+                }
+            }
+            int offsetLine = e.lineNumber() - _lineNumber + 1;// one "\n" is added
+            throw new OffsetLineRhinoException(
+                    e.details() + " in script=\n" + getText(),
+                    _sourceName, e.lineNumber(), e.lineSource(),
+                    e.columnNumber(), offsetLine, e.getCause());
         } finally {
             Context.exit();
         }

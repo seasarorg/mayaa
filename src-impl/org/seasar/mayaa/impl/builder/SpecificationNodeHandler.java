@@ -18,12 +18,11 @@ package org.seasar.mayaa.impl.builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
-import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Namespace;
-import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -65,9 +64,8 @@ public class SpecificationNodeHandler
     private Locator _locator;
     private Namespace _namespace;
     private StringBuffer _charactersBuffer;
-    private boolean _outputTemplateWhitespace = true;
+    private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
-    private boolean _onTemplate;
     private int _inEntity;
     private int _sequenceID;
 
@@ -76,11 +74,6 @@ public class SpecificationNodeHandler
             throw new IllegalArgumentException();
         }
         _specification = specification;
-        _onTemplate = specification instanceof Template;
-    }
-
-    public void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
-        _outputTemplateWhitespace = outputTemplateWhitespace;
     }
 
     public void setOutputMayaaWhitespace(boolean outputMayaaWhitespace) {
@@ -106,15 +99,35 @@ public class SpecificationNodeHandler
     protected void popNamespace() {
         _namespace = _namespace.getParentSpace();
         if (_namespace == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(getClass().getName());
         }
     }
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 
+    protected void initCharactersBuffer() {
+        _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        _charactersStartLineNumber = _locator.getLineNumber();
+    }
+
+    protected void appendCharactersBuffer(String str) {
+        if (_charactersStartLineNumber == -1) {
+            _charactersStartLineNumber = _locator.getLineNumber();
+        }
+        _charactersBuffer.append(str);
+    }
+
+    protected void appendCharactersBuffer(char str[], int offset, int len) {
+        if (_charactersStartLineNumber == -1) {
+            _charactersStartLineNumber = _locator.getLineNumber();
+        }
+        _charactersBuffer.append(str, offset, len);
+    }
+
     public void startDocument() {
         _sequenceID = 1;
-        _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        initCharactersBuffer();
+        _charactersStartLineNumber = -1;
         _current = _specification;
         initNamespace();
         pushNamespace();
@@ -133,32 +146,41 @@ public class SpecificationNodeHandler
     }
 
     protected SpecificationNode addNode(QName qName) {
-        String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         int lineNumber = _locator.getLineNumber();
-        SpecificationNode child = SpecificationUtil.createSpecificationNode(
-                qName, systemID, lineNumber, _onTemplate, _sequenceID);
-        _sequenceID++;
+        return addNode(qName, lineNumber);
+    }
+
+    protected SpecificationNode createChildNode(
+            QName qName, String systemID, int lineNumber, int sequenceID) {
+        return SpecificationUtil.createSpecificationNode(
+                qName, systemID, lineNumber, false, sequenceID);
+    }
+
+    protected SpecificationNode addNode(QName qName, int lineNumber) {
+        String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
+        SpecificationNode child = createChildNode(
+                qName, systemID, lineNumber, _sequenceID);
+        _sequenceID += 1;
         child.setParentSpace(_namespace);
         _current.addChildNode(child);
         return child;
     }
 
+    protected boolean isRemoveWhitespace() {
+        return _outputMayaaWhitespace == false;
+    }
+
     protected void addCharactersNode() {
         if (_charactersBuffer.length() > 0) {
-            SpecificationNode node = addNode(QM_CHARACTERS);
+            SpecificationNode node =
+                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
 
             String characters = _charactersBuffer.toString();
-            if (_onTemplate) {
-                if (_outputTemplateWhitespace == false) {
-                    characters = removeIgnorableWhitespace(characters);
-                }
-            } else {
-                if (_outputMayaaWhitespace == false) {
-                    characters = removeIgnorableWhitespace(characters);
-                }
+            if (isRemoveWhitespace()) {
+                characters = removeIgnorableWhitespace(characters);
             }
             node.addAttribute(QM_TEXT, characters);
-            _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+            initCharactersBuffer();
         }
     }
 
@@ -171,10 +193,6 @@ public class SpecificationNodeHandler
                 token = token.replaceAll("[ \t]+$", "");
                 buffer.append(token.replaceAll("[ \t]+", " "));
                 buffer.append("\n");
-            } else {
-                if (i == 0 && _onTemplate) {
-                    buffer.append("\n");
-                }
             }
         }
         return buffer.toString();
@@ -201,11 +219,12 @@ public class SpecificationNodeHandler
         if (_namespace.getMappingFromPrefix(prefix, false) == null) {
             startPrefixMapping(prefix, value);
         }
-        // TODO Java5 (Tomcat5.5?) Ç≈ïpî≠Ç∑ÇÈÇΩÇﬂDEBUGÇ…ïœçXÅBí≤ç∏Ç∑ÇÈÇ±Ç∆ÅB
+        /* MEMO namespace declaration is not attribute
         if (LOG.isDebugEnabled()) {
             LOG.debug(StringUtil.getMessage(SpecificationNodeHandler.class,
                     0, prefix, value));
         }
+        */
         return false;
     }
 
@@ -249,12 +268,12 @@ public class SpecificationNodeHandler
 
     public void characters(char[] buffer, int start, int length) {
         if (_inEntity == 0) {
-            _charactersBuffer.append(buffer, start, length);
+            appendCharactersBuffer(buffer, start, length);
         }
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-        _charactersBuffer.append(buffer, start, length);
+        appendCharactersBuffer(buffer, start, length);
     }
 
     public void xmlDecl(String version, String encoding, String standalone) {
@@ -293,9 +312,12 @@ public class SpecificationNodeHandler
         return null;
     }
 
+    protected void processEntity(String name) {
+        appendCharactersBuffer(StringUtil.resolveEntity('&' + name + ';'));
+    }
+
     public void startEntity(String name) {
-        String entityRef = "&" + name + ";";
-        _charactersBuffer.append(entityRef);
+        processEntity(name);
         ++_inEntity;
     }
 
@@ -304,12 +326,7 @@ public class SpecificationNodeHandler
     }
 
     public void comment(char[] buffer, int start, int length) {
-        if (_onTemplate) {
-            addCharactersNode();
-            String comment = new String(buffer, start, length);
-            SpecificationNode node = addNode(QM_COMMENT);
-            node.addAttribute(QM_TEXT, comment);
-        }
+        // do nothing.
     }
 
     public void notationDecl(String name, String publicId, String systemId) {
@@ -331,7 +348,7 @@ public class SpecificationNodeHandler
         if (StringUtil.hasValue(systemID)) {
             node.addAttribute(QM_SYSTEM_ID, systemID);
         }
-        _charactersBuffer.append("\r\n");
+        appendCharactersBuffer("\r\n");
     }
 
     public void endDTD() {

@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,13 +51,12 @@ public class InsertProcessor
     private static final long serialVersionUID = -1240398725406503403L;
 
     private String _path;
-    private String _name;
+    private String _name = "";
     private SoftReference _page;
     private String _suffix;
     private String _extension;
     private List _attributes;
-    private boolean _rendering;
-    private Map _renderingParams;
+    private InsertRenderingParams _renderingParams = new InsertRenderingParams();
 
     // MLD property, required
     public void setPath(String path) {
@@ -67,7 +65,9 @@ public class InsertProcessor
 
     // MLD property
     public void setName(String name) {
-        _name = name;
+        if (name != null) {
+            _name = name;
+        }
     }
 
     // MLD method
@@ -128,8 +128,8 @@ public class InsertProcessor
     }
 
     public Map getRenderingParameters() {
-        if (_rendering) {
-            return _renderingParams;
+        if (_renderingParams.isRendering()) {
+            return _renderingParams.getParams();
         }
         return null;
     }
@@ -153,18 +153,19 @@ public class InsertProcessor
         }
         renderPage.checkTimestamp();
 
-        _renderingParams = new LinkedHashMap();
+        Map params = _renderingParams.getParams();
+        params.clear();
         for (int i = 0; i < getInformalProperties().size(); i++) {
             Object object = getInformalProperties().get(i);
             if (object instanceof ProcessorProperty) {
                 ProcessorProperty prop = (ProcessorProperty)object;
-                _renderingParams.put(
+                params.put(
                         prop.getName().getQName().getLocalName(),
                         prop.getValue().execute(null));
             }
         }
 
-        _rendering = true;
+        _renderingParams.setRendering(true);
         ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
                 getVariables(), renderPage, requestedSuffix, extension);
         if (ret == null) {
@@ -181,7 +182,7 @@ public class InsertProcessor
     }
 
     public ProcessStatus doEndProcess() {
-        _rendering = false;
+        _renderingParams.setRendering(false);
         return super.doEndProcess();
     }
 
@@ -224,7 +225,7 @@ public class InsertProcessor
             ProcessorTreeWalker duplecated = doRender.getParentProcessor();
             if (duplecated == null
                     || duplecated instanceof TemplateProcessor == false) {
-                return doRender;
+                throw new IllegalStateException();
             }
             return (TemplateProcessor) duplecated;
         }

@@ -20,9 +20,9 @@ import java.util.Iterator;
 import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -73,7 +73,7 @@ public class BuilderUtil implements CONST_IMPL {
                             && adjuster.isTargetAttribute(
                                     original.getQName(), attr.getQName())) {
                         attrValue =
-                            StringUtil.adjustRelativePath(basePath, attrValue);
+                            adjuster.adjustRelativePath(basePath, attrValue);
                     }
                     node.addAttribute(attr.getQName(), attrValue);
                 }

@@ -62,5 +62,6 @@ public interface CONST_IMPL {
     QName QM_NO_CACHE = new QNameImpl("noCache");
     QName QM_TEMPLATE_SUFFIX = new QNameImpl("templateSuffix");
     QName QM_TEXT = new QNameImpl("text");
+    QName QM_EXTENDS = new QNameImpl("extends");
 
 }

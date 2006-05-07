@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine;
 
+import java.util.Map;
+
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.specification.Specification;
@@ -48,8 +50,16 @@ public interface Engine extends ParameterAware, Specification {
     /**
      * サービスメソッド。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
+     * @deprecated
      */
     void doService(boolean pageFlush);
+
+    /**
+     * サービスメソッド。
+     * @param pageScopeValues PAGEスコープのトップに含めるもの。
+     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
+     */
+    void doService(Map pageScopeValues, boolean pageFlush);
 
     /**
      * エラーハンドルページの表示。
@@ -57,5 +67,21 @@ public interface Engine extends ParameterAware, Specification {
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
     void handleError(Throwable t, boolean pageFlush);
+
+    /**
+     * ページのインスタンスを生成して返す。
+     * @param pageName ページ名
+     * @return ページ
+     */
+    Page createPageInstance(String pageName);
+
+    /**
+     * テンプレートのインスタンスを生成して返す。
+     * @param page ページ
+     * @param suffix テンプレートの接尾子。
+     * @param extension ページの拡張子。
+     * @return テンプレート
+     */
+    Template createTemplateInstance(Page page, String suffix, String extension);
 
 }

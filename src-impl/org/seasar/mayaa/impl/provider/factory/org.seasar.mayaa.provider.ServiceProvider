@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE provider
 	PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
     "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
@@ -9,6 +9,8 @@
 			<parameter name="folder" value="/"/>
 			<parameter name="extension" value="html"/>
 		</errorHandler>
+		<parameter name="pageClass" value="org.seasar.mayaa.impl.engine.PageImpl"/>
+		<parameter name="templateClass" value="org.seasar.mayaa.impl.engine.TemplateImpl"/>
 		<parameter name="defaultSpecification" value="/default.mayaa"/>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
@@ -65,6 +67,7 @@
 		<resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
 		<resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
 			<parameter name="reportUnresolvedID" value="true"/>
+			<parameter name="reportDuplicatedID" value="true"/>
 			<parameter name="addAttribute" value="{http://www.w3.org/TR/html4}id"/>
 			<parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
 		</resolver>

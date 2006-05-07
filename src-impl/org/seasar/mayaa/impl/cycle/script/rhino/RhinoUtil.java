@@ -47,7 +47,7 @@ public class RhinoUtil {
         if (attrs instanceof Scriptable) {
             return (Scriptable) attrs;
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("script scope does not get");
     }
 
     public static Object convertResult(
@@ -57,7 +57,7 @@ public class RhinoUtil {
             // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);
         } else if (expectedClass == Void.class
-                || (expectedClass == void.class)
+                || expectedClass == void.class
                 || (jsRet instanceof org.mozilla.javascript.Undefined)) {
             ret = null;
         } else {

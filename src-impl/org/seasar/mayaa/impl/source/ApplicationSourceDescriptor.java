@@ -24,6 +24,7 @@ import java.util.Date;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -105,11 +106,15 @@ public class ApplicationSourceDescriptor
     }
 
     public InputStream getInputStream() {
-        if (exists() && _file.isFile()) {
+        if (exists()) {
+            if (_file.isFile()) {
             try {
                 return new FileInputStream(_file);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
+                }
+            } else if (_file.isDirectory()) {
+                CycleUtil.getServiceCycle().redirect(_file.getName() + "/");
             }
         }
         return null;

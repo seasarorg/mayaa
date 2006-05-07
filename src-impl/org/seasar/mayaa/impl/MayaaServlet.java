@@ -34,24 +34,34 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class MayaaServlet extends HttpServlet {
 
+    private static final Log LOG = LogFactory.getLog(MayaaServlet.class);
     private static final long serialVersionUID = -5816552218525836552L;
     private static boolean _initialized;
 
     public void init() {
         if (_initialized == false) {
+            LOG.info("init start");
             FactoryFactory.setInstance(new FactoryFactoryImpl());
             FactoryFactory.setContext(getServletContext());
             _initialized = true;
         }
+        LOG.info("prepareLibraries start");
         ProviderUtil.getLibraryManager().prepareLibraries();
+        LOG.info("prepareLibraries end");
+        LOG.info("init end");
     }
 
     public void doGet(
             HttpServletRequest request, HttpServletResponse response) {
-        doPost(request, response);
+        doService(request, response);
     }
 
     public void doPost(
+            HttpServletRequest request, HttpServletResponse response) {
+        doService(request, response);
+    }
+
+    protected void doService(
             HttpServletRequest request, HttpServletResponse response) {
         CycleUtil.initialize(request, response);
         Engine engine = ProviderUtil.getEngine();
@@ -59,7 +69,7 @@ public class MayaaServlet extends HttpServlet {
         setupCharacterEncoding(request,
                 engine.getParameter("requestCharacterEncoding"));
 
-        engine.doService(true);
+        engine.doService(null, true);
     }
 
     protected void setupCharacterEncoding(
@@ -70,8 +80,7 @@ public class MayaaServlet extends HttpServlet {
             } catch (UnsupportedEncodingException e) {
                 String message =
                     StringUtil.getMessage(MayaaServlet.class, 0, encoding);
-                Log log = LogFactory.getLog(MayaaServlet.class);
-                log.warn(message, e);
+                LOG.warn(message, e);
             }
         }
     }

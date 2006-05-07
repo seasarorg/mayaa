@@ -30,7 +30,7 @@ public interface CycleFactory extends UnifiedFactory {
     void initialize(Object requestContext, Object responseContext);
 
     /**
-     * サービスサイクルの取得
+     * サービスサイクルを取得する。
      * @return カレントスレッドでのサービスサイクル。
      */
     ServiceCycle getServiceCycle();

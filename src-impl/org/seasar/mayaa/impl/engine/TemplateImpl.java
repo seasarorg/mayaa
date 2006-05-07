@@ -52,9 +52,13 @@ public class TemplateImpl
     private String _extension;
     private List _childProcessors = new ArrayList();
 
-    public TemplateImpl(Page page, String suffix, String extension) {
+    public void initialize(Page page, String suffix, String extension) {
         if (page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
+        }
+        if (_page != null) {
+            /* only once */
+            throw new IllegalStateException();
         }
         _page = page;
         _suffix = suffix;

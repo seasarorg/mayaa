@@ -155,6 +155,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public EscapableScript(CompiledScript script, String basePath) {
             super(script);
+            // if basePath is null, not need adjust
             _basePath = basePath;
         }
 
@@ -177,18 +178,22 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         private static final long serialVersionUID = -441522603771461865L;
 
-        private String _escapedValue;
+        private String _escapedValue = "";
 
         public EscapedLiteralScript(CompiledScript script, String basePath) {
             super(script);
 
-            _escapedValue = (String) super.execute(null);
-            if (isString() && StringUtil.hasValue(_escapedValue)) {
-                if (basePath != null) {
-                    _escapedValue =
-                        StringUtil.adjustRelativePath(basePath, _escapedValue);
+            if (isString()) {
+                _escapedValue = (String) super.execute(null);
+                if (StringUtil.hasValue(_escapedValue)) {
+                    // if basePath is null, not need adjust
+                    if (basePath != null) {
+                        _escapedValue =
+                                StringUtil.adjustRelativePath(
+                                        basePath, _escapedValue);
+                    }
+                    _escapedValue = escape(_escapedValue);
                 }
-                _escapedValue = escape(_escapedValue);
             }
         }
 

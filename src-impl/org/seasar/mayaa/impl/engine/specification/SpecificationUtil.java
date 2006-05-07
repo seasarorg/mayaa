@@ -25,8 +25,8 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -70,7 +70,11 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Specification findSpecification() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         NodeTreeWalker current = cycle.getOriginalNode();
-        return findSpecification(current);
+        // リソースアクセス中にredirectしても対応できるようにする。
+        if (current != null) {
+            return findSpecification(current);
+        }
+        return null;
     }
 
     public static SpecificationNode getMayaaNode(NodeTreeWalker current) {

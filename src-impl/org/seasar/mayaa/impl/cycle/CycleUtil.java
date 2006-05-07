@@ -29,28 +29,45 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class CycleUtil {
 
-    public static final String[] STANDARD_SCOPES = new String[] {
-        ServiceCycle.SCOPE_PAGE,
-        ServiceCycle.SCOPE_REQUEST,
-        ServiceCycle.SCOPE_SESSION,
-        ServiceCycle.SCOPE_APPLICATION
-    };
+    private static CycleUtil _singleton = new CycleUtil();
+    private CycleFactory _factory;
+
+    private static StandardScope _standardScope = new StandardScope();
 
     private CycleUtil() {
-        // no instantiation.
+        // singleton.
+    }
+
+    public static CycleFactory getFactory() {
+        if (_singleton._factory == null) {
+            synchronized (_singleton) {
+                if (_singleton._factory == null) {
+                    _singleton._factory =
+                        (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+                }
+            }
+        }
+        return _singleton._factory;
     }
 
     public static void initialize(
             Object requestContext, Object responseContext) {
-        CycleFactory factory =
-            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
-        factory.initialize(requestContext, responseContext);
+        getFactory().initialize(requestContext, responseContext);
     }
 
     public static ServiceCycle getServiceCycle() {
-        CycleFactory factory =
-            (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
-        return factory.getServiceCycle();
+        if (getFactory() == null) {
+            throw new CycleNotInitializedException();
+        }
+        return getFactory().getServiceCycle();
+    }
+
+    public static StandardScope getStandardScope() {
+        return _standardScope;
+    }
+
+    public static void addStandardScope(String newScopeName) {
+        _standardScope.addScope(newScopeName);
     }
 
     public static RequestScope getRequestScope() {
@@ -67,11 +84,10 @@ public class CycleUtil {
         if (StringUtil.isEmpty(name)) {
             return null;
         }
-        for (int i = 0; i < STANDARD_SCOPES.length; i++) {
             ServiceCycle cycle = getServiceCycle();
-            AttributeScope scope =
-                cycle.getAttributeScope(STANDARD_SCOPES[i]);
-            if (scope.hasAttribute(name)) {
+        for (int i = 0; i < _standardScope.size(); i++) {
+            AttributeScope scope = cycle.getAttributeScope(_standardScope.get(i));
+            if (scope != null && scope.hasAttribute(name)) {
                 return scope;
             }
         }

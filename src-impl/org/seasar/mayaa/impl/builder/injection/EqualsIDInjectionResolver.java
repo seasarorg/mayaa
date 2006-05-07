@@ -48,6 +48,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     private CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private List _additionalIds = new ArrayList();
     private boolean _reportResolvedID = true;
+    private boolean _reportDuplicatedID = true;
 
     public EqualsIDInjectionResolver() {
         _additionalIds.add(QM_ID);
@@ -59,6 +60,10 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
 
     protected boolean isReportResolvedID() {
         return _reportResolvedID;
+    }
+
+    protected boolean isReportDuplicatedID() {
+        return _reportDuplicatedID;
     }
 
     protected NodeAttribute getAttribute(SpecificationNode node) {
@@ -82,22 +87,18 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         return null;
     }
 
-    protected SpecificationNode getEqualsIDNode(
-            SpecificationNode node, String id) {
+    protected void getEqualsIDNodes(
+            SpecificationNode node, String id, List specificationNodes) {
         if (node == null || StringUtil.isEmpty(id)) {
             throw new IllegalArgumentException();
         }
         for (Iterator it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             if (id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
-                return child;
+                specificationNodes.add(child);
             }
-            SpecificationNode ret = getEqualsIDNode(child, id);
-            if (ret != null) {
-                return ret;
-            }
+            getEqualsIDNodes(child, id, specificationNodes);
         }
-        return null;
     }
 
     public SpecificationNode getNode(
@@ -112,8 +113,13 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
             while (spec != null) {
                 SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
                 if (mayaa != null) {
-                    injected = getEqualsIDNode(mayaa, id);
-                    if (injected != null) {
+                    List injectNodes = new ArrayList();
+                    getEqualsIDNodes(mayaa, id, injectNodes);
+                    if (injectNodes.size() > 0) {
+                        injected = (SpecificationNode) injectNodes.get(0);
+                        if (isReportDuplicatedID() && injectNodes.size() > 1) {
+                            logWarnning(id, original, 2);
+                        }
                         break;
                     }
                 }
@@ -126,17 +132,21 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
                 return injected.copyTo(getCopyToFilter());
             }
             if (isReportResolvedID()) {
-                if (LOG.isWarnEnabled()) {
-                    String systemID = original.getSystemID();
-                    String lineNumber = Integer.toString(original.getLineNumber());
-                    String msg = StringUtil.getMessage(
-                            EqualsIDInjectionResolver.class, 0,
-                            id, systemID, lineNumber);
-                    LOG.warn(msg);
-                }
+                logWarnning(id, original, 1);
             }
         }
         return chain.getNode(original);
+    }
+
+    protected void logWarnning(String id, SpecificationNode node, int number) {
+        if (LOG.isWarnEnabled()) {
+            String systemID = node.getSystemID();
+            String lineNumber = Integer.toString(node.getLineNumber());
+            String msg = StringUtil.getMessage(
+            EqualsIDInjectionResolver.class, number,
+                    id, systemID, lineNumber);
+            LOG.warn(msg);
+        }
     }
 
     // Parameterizable implements ------------------------------------
@@ -144,6 +154,9 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     public void setParameter(String name, String value) {
         if ("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
+        }
+        if ("reportDuplicatedID".equals(name)) {
+            _reportDuplicatedID = ObjectUtil.booleanValue(value, true);
         }
         if ("addAttribute".equals(name)) {
             _additionalIds.add(SpecificationUtil.parseQName(value));

@@ -25,7 +25,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class DoRenderProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 4309532215454978747L;
+    private static final long serialVersionUID = -4276639032963176260L;
 
     private static final String INSERT_PROCESSOR_STACK =
         DoRenderProcessor.class.getName();
@@ -58,10 +58,9 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     // MLD property, default=""
     public void setName(String name) {
-        if (name == null) {
+        if (name != null) {
             _name = name;
         }
-        _name = name;
     }
 
     public String getName() {

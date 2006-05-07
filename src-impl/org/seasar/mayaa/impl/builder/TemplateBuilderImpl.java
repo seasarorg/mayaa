@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
@@ -49,6 +51,7 @@ import org.seasar.mayaa.impl.engine.processor.DoBodyProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.ContentHandler;
@@ -60,7 +63,7 @@ import org.xml.sax.XMLReader;
  */
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder, CONST_IMPL {
-
+    private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
     private static final long serialVersionUID = -1031702086020145692L;
 
     private List _resolvers = new ArrayList();
@@ -68,6 +71,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
     private InjectionChain _chain = new DefaultInjectionChain();
+    private boolean _outputTemplateWhitespace = true;
 
     public void addInjectionResolver(InjectionResolver resolver) {
         if (resolver == null) {
@@ -95,6 +99,14 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return super.getXMLReaderPool(systemID);
     }
 
+    protected ContentHandler createContentHandler(
+            Specification specification) {
+        TemplateNodeHandler handler =
+            new TemplateNodeHandler(specification);
+        handler.setOutputTemplateWhitespace(_outputTemplateWhitespace);
+        return handler;
+    }
+
     protected String getPublicID() {
         return URI_MAYAA + "/template";
     }
@@ -103,7 +115,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if ((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
+        LOG.info("built node tree from template. " + specification.getSystemID());
         doInjection((Template) specification);
+        LOG.info("built processor tree from node tree. " + specification.getSystemID());
     }
 
     protected void saveToCycle(NodeTreeWalker originalNode,
@@ -155,7 +169,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 def.createTemplateProcessor(original, injected);
             proc.setOriginalNode(original);
             proc.setInjectedNode(injected);
-            proc.initialize();
             return proc;
         }
         return null;
@@ -189,6 +202,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
         parent.addChildProcessor(processor);
+        processor.initialize();
         Iterator it = injected.iterateChildNode();
         if (it.hasNext() == false) {
             return processor;
@@ -243,8 +257,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             InjectionChain chain = getDefaultInjectionChain();
             SpecificationNode injected = resolveOriginalNode(child, chain);
             if (injected == null) {
-                throw new TemplateNodeNotResolvedException(
-                        original.toString());
+                throw new TemplateNodeNotResolvedException(original.toString());
             }
             saveToCycle(child, injected);
             ProcessorTreeWalker processor = resolveInjectedNode(
@@ -257,6 +270,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
+    // Parameterizable implements ------------------------------------
+
+    public void setParameter(String name, String value) {
+        if ("outputTemplateWhitespace".equals(name)) {
+            _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
+        }
+        super.setParameter(name, value);
+    }
+
     protected void doInjection(Template template) {
         if (template == null) {
             throw new IllegalArgumentException();
@@ -267,6 +289,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
                 QM_MAYAA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
+
         walkParsedTree(template, stack, template);
         if (template.equals(stack.peek()) == false) {
             throw new IllegalStateException();

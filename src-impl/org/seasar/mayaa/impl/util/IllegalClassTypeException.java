@@ -15,12 +15,10 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import org.seasar.mayaa.impl.MayaaException;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IllegalClassTypeException extends MayaaException {
+public class IllegalClassTypeException extends AbstractMessagedException {
 
     private static final long serialVersionUID = -5744177696584258746L;
     private Class _expectedClass;
@@ -39,8 +37,11 @@ public class IllegalClassTypeException extends MayaaException {
         return _value;
     }
 
-    protected String[] getMessageParams() {
-        return new String[] { _expectedClass.getName(), _value.getName() };
+    protected String[] getParamValues() {
+        return new String[] {
+                _expectedClass.getName(),
+                _value.getName()
+                };
     }
 
 }

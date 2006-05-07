@@ -26,16 +26,18 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 public class CDATAProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = -4267623139201513906L;
+    private static final String CDATAIN = "<![CDATA[";
+    private static final String CDATAOUT = "]]>";
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("<![CDATA[");
+        cycle.getResponse().write(CDATAIN);
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doEndProcess() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write("]]>");
+        cycle.getResponse().write(CDATAOUT);
         return ProcessStatus.EVAL_PAGE;
     }
 

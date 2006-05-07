@@ -37,6 +37,11 @@ public abstract class MayaaException
     private int _injectedLineNumber = -1;
 
     public MayaaException() {
+        this(null);
+    }
+
+    public MayaaException(Throwable cause) {
+        super(cause);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();

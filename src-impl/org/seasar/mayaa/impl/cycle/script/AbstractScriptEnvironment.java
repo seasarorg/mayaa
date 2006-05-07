@@ -67,17 +67,19 @@ public abstract class AbstractScriptEnvironment
     }
 
     protected abstract CompiledScript compile(
-            ScriptBlock scriptBlock, PositionAware position);
+            ScriptBlock scriptBlock, PositionAware position, int offsetLine);
 
     public CompiledScript compile(String script, PositionAware position) {
         if (StringUtil.isEmpty(script)) {
             return new LiteralScript("");
         }
+        int offsetLine = 0;
         List list = new ArrayList();
         for (Iterator it = new ScriptBlockIterator(
                 script, _blockSign, position.isOnTemplate()); it.hasNext();) {
             ScriptBlock block = (ScriptBlock) it.next();
-            list.add(compile(block, position));
+            list.add(compile(block, position, offsetLine));
+            offsetLine += lineCount(block.getBlockString());
         }
         if (list.size() == 1) {
             return (CompiledScript) list.get(0);
@@ -85,6 +87,11 @@ public abstract class AbstractScriptEnvironment
         CompiledScript[] compiled =
             (CompiledScript[]) list.toArray(new CompiledScript[list.size()]);
         return new ComplexScript(compiled);
+    }
+
+    private int lineCount(String str) {
+        String[] lines = str.split(System.getProperty("line.separator"));
+        return lines.length;
     }
 
 }

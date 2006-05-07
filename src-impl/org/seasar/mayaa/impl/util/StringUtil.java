@@ -38,6 +38,14 @@ public final class StringUtil {
         // no instantiation.
     }
 
+    public static String valueOf(Object value) {
+        String result = null;
+        if (value != null) {
+            result = value.toString();
+        }
+        return result;
+    }
+
     public static boolean isEmpty(String test) {
         return test == null || test.length() == 0;
     }
@@ -154,7 +162,7 @@ public final class StringUtil {
 
     protected static String adjustRecursive(String dir, String path) {
         if (isEmpty(path)) {
-            throw new IllegalArgumentException();
+            return dir + '/';
         }
 
         try {
@@ -169,7 +177,7 @@ public final class StringUtil {
                 return adjustRecursive(dir, path.substring(2));
             }
 
-            return dir + "/" + path;
+            return dir + '/' + path;
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }

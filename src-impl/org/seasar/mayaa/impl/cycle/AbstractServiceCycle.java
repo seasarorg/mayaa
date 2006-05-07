@@ -29,6 +29,7 @@ import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -38,6 +39,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle {
 
+    private static final WeakValueHashMap _scriptCache = new WeakValueHashMap();
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -50,7 +52,7 @@ public abstract class AbstractServiceCycle
 
     public void load(String systemID, String encoding) {
         if (StringUtil.isEmpty(systemID)) {
-            throw new ScriptFileNotFoundException("");
+            throw new ScriptFileNotFoundException(systemID);
         }
         String sid = systemID;
         if (sid.startsWith("/WEB-INF/")) {
@@ -59,27 +61,41 @@ public abstract class AbstractServiceCycle
             String sourcePath = EngineUtil.getSourcePath();
             sid = StringUtil.adjustRelativePath(sourcePath, sid);
         }
+
+        CompiledScript script = getScript(sid, encoding);
+        if (script == null) {
+            throw new ScriptFileNotFoundException(systemID);
+        }
+
+        script.execute(null);
+    }
+
+    protected CompiledScript getScript(String systemID, String encoding) {
+        CompiledScript script = (CompiledScript) _scriptCache.get(systemID);
+        if (script != null) {
+            return script;
+        }
+
         ApplicationSourceDescriptor appSource =
             new ApplicationSourceDescriptor();
-        if (sid.startsWith("/") == false) {
+        if (systemID.startsWith("/") == false) {
             appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         }
-        appSource.setSystemID(sid);
-        SourceDescriptor source = null;
+        appSource.setSystemID(systemID);
+        SourceDescriptor source;
         if (appSource.exists()) {
             source = appSource;
         } else {
-            source = SourceUtil.getSourceDescriptor(sid);
+            source = SourceUtil.getSourceDescriptor(systemID);
             if (source.exists() == false) {
-                source = null;
+                return null;
             }
         }
-        if (source == null) {
-            throw new ScriptFileNotFoundException(systemID);
-        }
+
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        CompiledScript script = env.compile(source, encoding);
-        script.execute(null);
+        script = env.compile(source, encoding);
+        _scriptCache.put(systemID, script);
+        return script;
     }
 
     public Iterator iterateAttributeScope() {

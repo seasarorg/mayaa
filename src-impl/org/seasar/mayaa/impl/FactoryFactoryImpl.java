@@ -57,6 +57,9 @@ public class FactoryFactoryImpl extends FactoryFactory
         String systemID = source.getSystemID();
         UnifiedFactory factory;
         if (source.exists()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("marshall factory: " + source.getSystemID());
+            }
             UnifiedFactoryHandler handler =
                 new UnifiedFactoryHandler(interfaceClass, beforeFactory);
             InputStream stream = source.getInputStream();

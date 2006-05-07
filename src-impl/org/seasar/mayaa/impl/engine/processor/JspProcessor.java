@@ -38,6 +38,8 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.JspTag;
+import javax.servlet.jsp.tagext.SimpleTag;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
@@ -83,6 +85,12 @@ public class JspProcessor extends TemplateProcessorSupport
     private TLDScriptingVariableInfo _variableInfo =
         new TLDScriptingVariableInfo();
 
+    public static boolean isSupportClass(Class test) {
+        return test != null &&
+                (Tag.class.isAssignableFrom(test)
+                || SimpleTag.class.isAssignableFrom(test));
+    }
+
     public void setTLDScriptingVariableInfo(
             TLDScriptingVariableInfo variableInfo) {
         if (variableInfo == null) {
@@ -97,7 +105,7 @@ public class JspProcessor extends TemplateProcessorSupport
 
     // MLD method
     public void setTagClass(Class tagClass) {
-        if (tagClass == null || Tag.class.isAssignableFrom(tagClass) == false) {
+        if (isSupportClass(tagClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = tagClass;
@@ -198,7 +206,7 @@ public class JspProcessor extends TemplateProcessorSupport
             ProcessorProperty property = (ProcessorProperty) it.next();
             String propertyName = property.getName().getQName().getLocalName();
             Object value = property.getValue().execute(null);
-            ObjectUtil.setProperty(customTag, propertyName, value);
+            setPropertyTo(customTag, propertyName, value);
         }
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
@@ -219,6 +227,15 @@ public class JspProcessor extends TemplateProcessorSupport
         } catch (JspException e) {
             throw createJspRuntimeException(
                     getOriginalNode(), getInjectedNode(), e);
+        }
+    }
+
+    private void setPropertyTo(Tag customTag, String name, Object value) {
+        if (customTag instanceof SimpleTagWrapper) {
+            ObjectUtil.setProperty(
+                    ((SimpleTagWrapper) customTag).getSimpleTag(), name, value);
+        } else {
+            ObjectUtil.setProperty(customTag, name, value);
         }
     }
 
@@ -346,14 +363,17 @@ public class JspProcessor extends TemplateProcessorSupport
         private Class _clazz;
 
         public TagPool(Class clazz) {
-            if (clazz == null || Tag.class.isAssignableFrom(clazz) == false) {
+            if (isSupportClass(clazz) == false) {
                 throw new IllegalArgumentException();
             }
             _clazz = clazz;
         }
 
         protected Object createObject() {
-            return ObjectUtil.newInstance(_clazz);
+            if (Tag.class.isAssignableFrom(_clazz)) {
+                return ObjectUtil.newInstance(_clazz);
+            }
+            return new SimpleTagWrapper((SimpleTag) ObjectUtil.newInstance(_clazz));
         }
 
         protected boolean validateObject(Object object) {
@@ -545,6 +565,69 @@ public class JspProcessor extends TemplateProcessorSupport
 
         public ErrorData getErrorData() {
             return _context.getErrorData();
+        }
+
+    }
+
+    public class SimpleTagWrapper implements Tag {
+
+        private SimpleTag _simpleTag;
+
+        private Tag _parent;
+
+        private boolean _parentDetermined;
+
+        public SimpleTagWrapper(SimpleTag simpleTag) {
+            if (simpleTag == null) {
+                throw new IllegalArgumentException("simpleTag is null");
+            }
+            this._simpleTag = simpleTag;
+        }
+
+        public JspTag getSimpleTag() {
+            return _simpleTag;
+        }
+
+        public Tag getParent() {
+            if (!_parentDetermined) {
+                JspTag simpleTagParent = _simpleTag.getParent();
+                if (simpleTagParent != null) {
+                    if (simpleTagParent instanceof Tag) {
+                        _parent = (Tag) simpleTagParent;
+                    } else {
+                        _parent = new SimpleTagWrapper((SimpleTag) simpleTagParent);
+                    }
+                }
+                _parentDetermined = true;
+            }
+
+            return _parent;
+        }
+
+        public void setPageContext(PageContext context) {
+            _simpleTag.setJspContext(context);
+        }
+
+        public void setParent(Tag parentTag) {
+            /* no-op */
+        }
+
+        public int doStartTag() throws JspException {
+            try {
+                _simpleTag.doTag();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return Tag.SKIP_BODY;
+        }
+
+        public int doEndTag() throws JspException {
+            /* no-op */
+            return Tag.EVAL_PAGE;
+        }
+
+        public void release() {
+            /* no-op */
         }
 
     }

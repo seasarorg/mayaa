@@ -43,7 +43,8 @@ public class NoSuchPropertyException extends MayaaException {
     protected String[] getMessageParams() {
         return new String[] {
                 _beanClass.getName(),
-                _propertyName };
+                _propertyName
+                };
     }
 
 }

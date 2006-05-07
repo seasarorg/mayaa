@@ -39,7 +39,7 @@ public abstract class MayaaException
     public MayaaException() {
         this(null);
     }
-    
+
     public MayaaException(Throwable cause) {
         super(cause);
         ServiceCycle cycle = CycleUtil.getServiceCycle();

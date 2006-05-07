@@ -19,7 +19,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
@@ -42,8 +41,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     private Class _teiClass;
 
     public void setProcessorClass(Class processorClass) {
-        if (processorClass == null
-                || Tag.class.isAssignableFrom(processorClass) == false) {
+        if (JspProcessor.isSupportClass(processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = processorClass;

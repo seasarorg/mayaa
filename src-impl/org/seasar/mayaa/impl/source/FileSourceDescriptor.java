@@ -76,10 +76,10 @@ public class FileSourceDescriptor
     public InputStream getInputStream() {
         if (exists()) {
             if (_file.isFile()) {
-            try {
-                return new FileInputStream(_file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+                try {
+                    return new FileInputStream(_file);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             } else if (_file.isDirectory()) {
                 CycleUtil.getServiceCycle().redirect(_file.getName() + "/");

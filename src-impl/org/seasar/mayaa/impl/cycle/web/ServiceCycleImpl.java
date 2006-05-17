@@ -23,6 +23,7 @@ import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.impl.cycle.AbstractServiceCycle;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.PageForwarded;
+import org.seasar.mayaa.impl.engine.RenderingTerminated;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -90,6 +91,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
             _response.clearBuffer();
             _response.redirect(url);
             _response.flush();
+            throw new RenderingTerminated();
         }
     }
 
@@ -102,6 +104,7 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
             _response.clearBuffer();
             _response.error(errorCode, message);
             _response.flush();
+            throw new RenderingTerminated();
         }
     }
 

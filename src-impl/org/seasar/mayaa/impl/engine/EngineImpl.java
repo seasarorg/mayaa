@@ -222,6 +222,8 @@ public class EngineImpl extends SpecificationImpl
                         response.flush();
                     }
                     service = false;
+                } catch (RenderingTerminated t) {
+                    service = false;
                 } catch (PageForwarded f) {
                     // do nothing.
                 }

@@ -16,10 +16,10 @@
 package org.seasar.mayaa.impl.engine;
 
 /**
- * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent, Inc.)
  */
-public class PageForwarded extends RenderingBrake {
+public class RenderingTerminated extends RenderingBrake {
 
-    private static final long serialVersionUID = 5015273400314981777L;
+    private static final long serialVersionUID = 5015273400314981778L;
 
 }

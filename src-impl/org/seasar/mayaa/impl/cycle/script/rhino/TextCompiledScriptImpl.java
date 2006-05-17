@@ -26,7 +26,7 @@ import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
-import org.seasar.mayaa.impl.engine.PageForwarded;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -154,7 +154,8 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         } catch (RhinoException e) {
             if (e instanceof WrappedException) {
                 WrappedException we = (WrappedException) e;
-                if (we.getWrappedException() instanceof PageForwarded) {
+                Throwable wrapped = we.getWrappedException();
+                if (wrapped instanceof RenderingBrake) {
                     RhinoUtil.removeWrappedException(we);
                 }
             }

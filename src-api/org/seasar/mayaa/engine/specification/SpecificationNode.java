@@ -22,7 +22,7 @@ import java.util.Iterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationNode
-        extends NodeTreeWalker, PrefixAwareName {
+        extends NodeTreeWalker, Namespace, PrefixAwareName {
 
     /**
      * ビルド時に、スペック内でユニークに採番される値を設定する。
@@ -42,6 +42,14 @@ public interface SpecificationNode
      * @param value 属性値。
      */
     void addAttribute(QName qName, String value);
+
+    /**
+     * ノード属性の追加。
+     * @param qName 属性名。
+     * @param originalName 属性名(qNameにする前のオリジナル)
+     * @param value 属性値。
+     */
+    void addAttribute(QName qName, String originalName, String value);
 
     /**
      * 属性の取得。

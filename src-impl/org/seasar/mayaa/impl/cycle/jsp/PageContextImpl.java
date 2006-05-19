@@ -297,9 +297,10 @@ public class PageContextImpl extends PageContext {
         StandardScope standardScope = CycleUtil.getStandardScope();
         int size = standardScope.size();
         for (int i = 0; i < size; i++) {
-            Object ret = CycleUtil.getAttribute(name, standardScope.get(i));
+            String scopeName = standardScope.get(i);
+            Object ret = CycleUtil.getAttribute(name, scopeName);
             if (ret != null) {
-                int scope = toJspScope(name);
+                int scope = toJspScope(scopeName);
                 if (scope > 0) {
                     return scope;
                 }

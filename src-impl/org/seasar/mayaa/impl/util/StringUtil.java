@@ -368,4 +368,53 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    public static String escapeIndent(String text) {
+        if (text == null) {
+            return "";
+        }
+        char[] chars = text.toCharArray();
+        StringBuffer sb = new StringBuffer(chars.length + 50);
+        boolean doReplace = true;
+        final String space = "&nbsp;";
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (doReplace) {
+                if (c == ' ') {
+                    sb.append(space);
+                } else if (c == '\t') {
+                    for (int j = 0; j < 4; j++) {
+                        sb.append(space);
+                    }
+                } else if (c != '\n') {
+                    doReplace = false;
+                } else {
+                    sb.append(c);
+                }
+            } 
+            if (doReplace == false) {
+                sb.append(c);
+                if (c == '\n') {
+                    doReplace = true;
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String parsePrefix(String qName) {
+        if (qName == null) {
+            throw new IllegalArgumentException();
+        }
+        int position = qName.indexOf(':');
+        if (position >= 0) {
+            return qName.substring(0, position);
+        }
+        return "";
+    }
+
+    public static boolean equals(String s1, String s2) {
+        return s1 == null && s2 == null
+            || (s1 != null && s2 != null && s1.equals(s2));
+    }
+
 }

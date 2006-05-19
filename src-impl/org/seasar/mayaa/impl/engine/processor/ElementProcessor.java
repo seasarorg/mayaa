@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -73,6 +74,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     private PrefixAwareName _name;
     private boolean _duplicated;
     private ThreadLocal _currentNS = new ThreadLocal();
+    private static ThreadLocal _renderedNS = new ThreadLocal();
 
     protected void clearCurrentNS() {
         _currentNS.set(null);
@@ -83,9 +85,52 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (currentNS == null) {
             currentNS = SpecificationUtil.createNamespace();
             currentNS.setParentSpace(getOriginalNode().getParentSpace());
+            for (Iterator it = getOriginalNode().iteratePrefixMapping(false); it.hasNext();) {
+                PrefixMapping prefixMapping = (PrefixMapping) it.next();
+                currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
+            }
+            currentNS.setDefaultNamespaceURI(getOriginalNode().getDefaultNamespaceURI());
             _currentNS.set(currentNS);
         }
         return currentNS;
+    }
+
+    private static final String RENDERD_PREFIX_MAPPINGS = "--rendered prefix mappings mark--";
+
+    protected Stack getRenderedNS() {
+        Stack renderedNS = (Stack)_renderedNS.get();
+        if (renderedNS != null) {
+            Boolean mark = (Boolean) CycleUtil.getServiceCycle().getPageScope().getAttribute(RENDERD_PREFIX_MAPPINGS);
+            if (mark == null) {
+                CycleUtil.getServiceCycle().getPageScope().setAttribute(RENDERD_PREFIX_MAPPINGS, Boolean.TRUE);
+                renderedNS = new Stack();
+                _renderedNS.set(renderedNS);
+            }
+        } else {
+            CycleUtil.getServiceCycle().getPageScope().setAttribute(RENDERD_PREFIX_MAPPINGS, Boolean.TRUE);
+            renderedNS = new Stack();
+            _renderedNS.set(renderedNS);
+        }
+        _renderedNS.set(renderedNS);
+        return renderedNS;
+    }
+
+    protected void addRendered(PrefixMapping mapping) {
+        ((List) getRenderedNS().peek()).add(mapping);
+    }
+
+    protected String alreadyRenderedPrefix(String namespaceURI) {
+        Iterator iteratorRendered = getRenderedNS().iterator();
+        while (iteratorRendered.hasNext()) {
+            Iterator mappings = ((List) iteratorRendered.next()).iterator();
+            while (mappings.hasNext()) {
+                PrefixMapping mapping = (PrefixMapping) mappings.next();
+                if (mapping.getNamespaceURI().equals(namespaceURI)) {
+                    return mapping.getPrefix();
+                }
+            }
+        }
+        return null;
     }
 
     // MLD property
@@ -162,6 +207,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (name == null) {
             throw new IllegalArgumentException();
         }
+        if (URI_MAYAA.equals(name.getQName().getNamespaceURI())) {
+            return "";
+        }
+        String prefix = alreadyRenderedPrefix(
+                name.getQName().getNamespaceURI());
+        if (prefix != null) {
+            return prefix;
+        }
         Namespace currentNS = getCurrentNS();
         String namespaceURI = name.getQName().getNamespaceURI();
         PrefixMapping mapping =
@@ -172,25 +225,34 @@ public class ElementProcessor extends AbstractAttributableProcessor
         throw new IllegalStateException();
     }
 
-    protected void appendPrefixMappingString(
+    protected boolean appendPrefixMappingString(
+            StringBuffer buffer, PrefixMapping mapping) {
+        String pre = mapping.getPrefix();
+        String uri = mapping.getNamespaceURI();
+        if (uri.startsWith(URI_MAYAA)) {
+            return false;
+        }
+        if (uri.startsWith(URI_XML) && pre.equals("xml")) {
+            return false;
+        }
+        if (StringUtil.hasValue(pre)) {
+            buffer.append(" xmlns:").append(pre);
+        } else {
+            buffer.append(" xmlns");
+        }
+        buffer.append("=\"").append(uri).append('"');
+        addRendered(mapping);
+        return true;
+    }
+
+    protected void appendPrefixMappingStrings(
             StringBuffer buffer, Namespace namespace) {
         if (namespace == null) {
             throw new IllegalArgumentException();
         }
         for (Iterator it = namespace.iteratePrefixMapping(false);
                 it.hasNext();) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
-            String pre = mapping.getPrefix();
-            String uri = mapping.getNamespaceURI();
-            if (uri.startsWith(URI_MAYAA)) {
-                continue;
-            }
-            if (StringUtil.hasValue(pre)) {
-                buffer.append(" xmlns:").append(pre);
-            } else {
-                buffer.append(" xmlns");
-            }
-            buffer.append("=\"").append(uri).append("\"");
+            appendPrefixMappingString(buffer, (PrefixMapping) it.next());
         }
     }
 
@@ -200,11 +262,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
         }
-        buffer.append(" ");
-        String attrPrefix = getResolvedPrefix(propName);
+        String attrPrefix = propName.getPrefix();
         if (StringUtil.hasValue(attrPrefix)) {
-            buffer.append(attrPrefix).append(":");
+            attrPrefix = getResolvedPrefix(propName);
+            if (StringUtil.hasValue(attrPrefix)) {
+                attrPrefix = attrPrefix + ":";
+            }
         }
+        buffer.append(" ");
+        buffer.append(attrPrefix);
         buffer.append(qName.getLocalName());
         buffer.append("=\"");
         if (value instanceof CompiledScript) {
@@ -229,42 +295,38 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return getChildProcessorSize() > 0;
     }
 
-    protected PrefixAwareName getIDName() {
-        String namespaceURI = getName().getQName().getNamespaceURI();
-        PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
-                SpecificationUtil.createQName(namespaceURI, "id"));
-        name.setParentSpace(getName().getParentSpace());
-        return name;
-    }
-
     protected void write(String value) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(value);
     }
 
     protected void writeElementName(StringBuffer buffer) {
-        String prefix = getResolvedPrefix(getName());
+        QName qName = getName().getQName();
+        String prefix;
+        prefix = getResolvedPrefix(getName());
         if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }
-        QName qName = getName().getQName();
         buffer.append(qName.getLocalName());
     }
 
     protected void writePart1(StringBuffer buffer) {   // 静的 <xxx
         buffer.append("<");
         writeElementName(buffer);
-        // TODO HTMLでも明示的に宣言されたnamespaceは出力する
-        if (isHTML(getName().getQName()) == false) {
-            appendPrefixMappingString(buffer, getCurrentNS());
-            appendPrefixMappingString(buffer, getName().getParentSpace());
-        }
+        appendPrefixMappingStrings(buffer, getCurrentNS());
     }
 
     protected void writePart2(StringBuffer buffer) {   // 動的 attribute
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             internalWritePart2(buffer, prop);
+        }
+        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+            ProcessorProperty prop = (ProcessorProperty) it.next();
+            if (hasProcesstimeProperty(prop) == false
+                    && prop.getValue().isLiteral() == false) {
+                internalWritePart2(buffer, prop);
+            }
         }
     }
 
@@ -286,7 +348,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writePart3(StringBuffer buffer) {   // 静的 attributeと、>
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (hasProcesstimeProperty(prop) == false) {
+            if (hasProcesstimeProperty(prop) == false
+                    && prop.getValue().isLiteral()) {
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
@@ -318,7 +381,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        resolvePrefixAll();
         StringBuffer buffer = new StringBuffer();
         writePart1(buffer);
         writePart2(buffer);
@@ -341,66 +403,88 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        clearCurrentNS();
+        renderInit();
         return super.doStartProcess(topLevelPage);
     }
 
-    public ProcessorTreeWalker[] divide() {
+    public ProcessStatus doEndProcess() {
+        renderExit();
+        return super.doEndProcess();
+    }
+
+    protected void renderInit() {
+        clearCurrentNS();
+        getRenderedNS().push(new ArrayList());
         resolvePrefixAll();
+    }
 
-        if (getProcessorDefinition().getName().equals(
-                QM_TEMPLATE_ELEMENT.getLocalName()) == false) {
-            return new ProcessorTreeWalker[] { this };
-        }
+    protected void renderExit() {
+        getRenderedNS().pop();
+    }
 
-        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (prop.getValue().isLiteral() == false) {
+    public ProcessorTreeWalker[] divide() {
+        renderInit();
+        try {
+            if (getProcessorDefinition().getName().equals(
+                    QM_TEMPLATE_ELEMENT.getLocalName()) == false) {
                 return new ProcessorTreeWalker[] { this };
             }
-        }
 
-        List list = new ArrayList();
-        StringBuffer buffer = new StringBuffer();
-        writePart1(buffer);
-        if (buffer.toString().length() > 0) {
-            LiteralCharactersProcessor part1 =
-                    new LiteralCharactersProcessor(this, buffer.toString());
-            list.add(part1);
-        }
+            List list = new ArrayList();
+            StringBuffer buffer = new StringBuffer();
+            writePart1(buffer);
+            if (buffer.toString().length() > 0) {
+                LiteralCharactersProcessor part1 =
+                        new LiteralCharactersProcessor(this, buffer.toString());
+                list.add(part1);
+            }
+    
+            for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
+                ProcessorProperty prop = (ProcessorProperty) it.next();
+                buffer = new StringBuffer();
+                internalWritePart2(buffer, prop);
+                CharactersProcessor part2 =
+                        new CharactersProcessor(this, prop, buffer.toString());
+                list.add(part2);
+            }
+            for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+                ProcessorProperty prop = (ProcessorProperty) it.next();
+                if (hasProcesstimeProperty(prop) == false
+                        && prop.getValue().isLiteral() == false) {
+                    buffer = new StringBuffer();
+                    internalWritePart2(buffer, prop);
+                    CharactersProcessor part2 =
+                            new CharactersProcessor(this, prop, buffer.toString());
+                    list.add(part2);
+                }
+            }
 
-        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
             buffer = new StringBuffer();
-            internalWritePart2(buffer, prop);
-            CharactersProcessor part2 =
-                    new CharactersProcessor(this, prop, buffer.toString());
-            list.add(part2);
-        }
+            writePart3(buffer);
+            if (buffer.toString().length() > 0) {
+                LiteralCharactersProcessor part3 =
+                        new LiteralCharactersProcessor(this, buffer.toString());
+                list.add(part3);
+            }
+            int size = getChildProcessorSize();
+            for (int i = 0; i < size; i++) {
+                list.add(getChildProcessor(i));
+            }
+            buffer = new StringBuffer();
+            writePart4(buffer);
+            if (buffer.toString().length() > 0) {
+                LiteralCharactersProcessor part4 =
+                        new LiteralCharactersProcessor(this, buffer.toString());
+                list.add(part4);
+            }
 
-        buffer = new StringBuffer();
-        writePart3(buffer);
-        if (buffer.toString().length() > 0) {
-            LiteralCharactersProcessor part3 =
-                    new LiteralCharactersProcessor(this, buffer.toString());
-            list.add(part3);
+            clearChildProcessors();
+            clearProcesstimeInfo();
+            return (ProcessorTreeWalker[]) list.toArray(
+                    new ProcessorTreeWalker[list.size()]);
+        } finally {
+            renderExit();
         }
-        int size = getChildProcessorSize();
-        for (int i = 0; i < size; i++) {
-            list.add(getChildProcessor(i));
-        }
-        buffer = new StringBuffer();
-        writePart4(buffer);
-        if (buffer.toString().length() > 0) {
-            LiteralCharactersProcessor part4 =
-                    new LiteralCharactersProcessor(this, buffer.toString());
-            list.add(part4);
-        }
-
-        clearChildProcessors();
-        clearProcesstimeInfo();
-        return (ProcessorTreeWalker[]) list.toArray(
-                new ProcessorTreeWalker[list.size()]);
     }
 
 }

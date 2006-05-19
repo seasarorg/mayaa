@@ -15,26 +15,41 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.util.Iterator;
+import java.util.Map;
 
-import org.seasar.mayaa.engine.specification.PrefixMapping;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixAwareNameImpl extends NamespaceImpl
-        implements PrefixAwareName {
+public class PrefixAwareNameImpl implements PrefixAwareName {
+    private static Map _cache = new WeakValueHashMap();
+
+    public static PrefixAwareName getInstance(QName qName, String prefix) {
+        String key = forPrefixAwareNameString(qName, prefix);
+        PrefixAwareName result;
+        synchronized (_cache) {
+            result = (PrefixAwareName)_cache.get(key);
+            if (result == null) {
+                result = new PrefixAwareNameImpl(qName, prefix);
+                _cache.put(key, result);
+            }
+        }
+        return result;
+    }
 
     private QName _qName;
+    private String _prefix;
 
-    public PrefixAwareNameImpl(QName qName) {
-        if (qName == null) {
+    private PrefixAwareNameImpl(QName qName, String prefix) {
+        if (qName == null || prefix == null) {
             throw new IllegalArgumentException();
         }
         _qName = qName;
+        _prefix = prefix;
     }
 
     public QName getQName() {
@@ -42,14 +57,7 @@ public class PrefixAwareNameImpl extends NamespaceImpl
     }
 
     public String getPrefix() {
-        String namespaceURI = getQName().getNamespaceURI();
-        for (Iterator it = iteratePrefixMapping(true); it.hasNext();) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
-            if (namespaceURI.equals(mapping.getNamespaceURI())) {
-                return mapping.getPrefix();
-            }
-        }
-        return "";
+        return _prefix;
     }
 
     public String toString() {

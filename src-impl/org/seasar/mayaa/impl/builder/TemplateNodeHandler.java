@@ -40,6 +40,12 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         _outputTemplateWhitespace = outputTemplateWhitespace;
     }
 
+    protected void initNamespace() {
+        super.initNamespace();
+        getCurrentInternalNamespacePrefixMap().remove("");
+        getCurrentInternalNamespacePrefixMap().remove("xml");
+    }
+
     protected SpecificationNode createChildNode(
             QName qName, String systemID, int lineNumber, int sequenceID) {
         return SpecificationUtil.createSpecificationNode(
@@ -58,7 +64,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
                 String token = line[i].replaceAll("^[ \t]+", "");
                 token = token.replaceAll("[ \t]+$", "");
                 buffer.append(token.replaceAll("[ \t]+", " "));
-                buffer.append("\n");
+                if (i < line.length - 1) {
+                    buffer.append("\n");
+                }
             } else if (i == 0) {
                 buffer.append("\n");
             }

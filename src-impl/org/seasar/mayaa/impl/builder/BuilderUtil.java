@@ -64,22 +64,31 @@ public class BuilderUtil implements CONST_IMPL {
 
             for (Iterator it = original.iterateAttribute(); it.hasNext();) {
                 NodeAttribute attr = (NodeAttribute) it.next();
-                String attrURI = attr.getQName().getNamespaceURI();
-                if (uri.equals(attrURI)
-                        || (mayaa && URI_MAYAA.equals(attrURI))
-                        || uri.equals(URI_XHTML) && URI_XML.equals(attrURI)) {
-                    String attrValue = attr.getValue();
-                    if (needAdjust
-                            && adjuster.isTargetAttribute(
-                                    original.getQName(), attr.getQName())) {
-                        attrValue =
-                            adjuster.adjustRelativePath(basePath, attrValue);
-                    }
-                    node.addAttribute(attr.getQName(), attrValue);
+                String attrValue = attr.getValue();
+                if (needAdjust
+                        && adjuster.isTargetAttribute(
+                                original.getQName(), attr.getQName())) {
+                    attrValue =
+                        adjuster.adjustRelativePath(basePath, attrValue);
                 }
+                String originalName = null;
+                if (StringUtil.isEmpty(attr.getPrefix()) == false
+                        && attr.getQName().getLocalName().indexOf(':') < 0) {
+                    originalName =
+                        attr.getPrefix() + ":"
+                        + attr.getQName().getLocalName();
+                }
+                node.addAttribute(attr.getQName(), originalName, attrValue);
+            }
+
+            for (Iterator it = original.iteratePrefixMapping(false); it.hasNext();) {
+                PrefixMapping prefixMapping = (PrefixMapping) it.next();
+                node.addPrefixMapping(
+                        prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }
         }
         node.setParentSpace(original.getParentSpace());
+        node.setDefaultNamespaceURI(original.getDefaultNamespaceURI());
         return node;
     }
 
@@ -89,30 +98,45 @@ public class BuilderUtil implements CONST_IMPL {
         String prefix = null;
         String localName = null;
         String namespaceURI = null;
+        PrefixMapping mapping = null;
         if (parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            PrefixMapping mapping =
-                namespace.getMappingFromPrefix(prefix, true);
+            mapping = namespace.getMappingFromPrefix(prefix, true);
             if (mapping == null) {
-                throw new PrefixMappingNotFoundException(prefix);
+                if ("xml".equals(prefix)) {
+                    mapping = SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
+                } else {
+                    throw new PrefixMappingNotFoundException(prefix);
+                }
             }
             namespaceURI = mapping.getNamespaceURI();
         } else if (parsed.length == 1) {
             localName = parsed[0];
-            PrefixMapping mapping =
-                namespace.getMappingFromPrefix("", true);
-            if (mapping != null) {
-                namespaceURI = mapping.getNamespaceURI();
-            } else {
-                throw new PrefixMappingNotFoundException("");
+            namespaceURI = namespace.getDefaultNamespaceURI();
+
+            if (namespaceURI == null) {
+                mapping = namespace.getMappingFromPrefix("", true);
+                if (mapping != null) {
+                    namespaceURI = mapping.getNamespaceURI();
+                } else {
+                    // デフォルトネームスペースは html とする
+                    //throw new PrefixMappingNotFoundException("");
+                    namespaceURI = URI_HTML;
+                    mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+                }
             }
         } else {
             throw new IllegalNameException(qName);
         }
+        if (mapping != null) {
+            prefix = mapping.getPrefix();
+        } else {
+            prefix = "";
+        }
         PrefixAwareName ret = SpecificationUtil.createPrefixAwareName(
-                SpecificationUtil.createQName(namespaceURI, localName));
-        ret.setParentSpace(namespace);
+                SpecificationUtil.createQName(namespaceURI, localName),
+                prefix);
         return ret;
     }
 

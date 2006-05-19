@@ -409,13 +409,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         protected PageAttributeScope findTopPageAttributeScope() {
-            PageAttributeScope pageScope =
-                (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
-            PageAttributeScope top = pageScope;
-            while (top.getParentScope() instanceof PageAttributeScope) {
-                top = (PageAttributeScope) top.getParentScope();
-            }
-            return top;
+            return (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
         }
 
         public void removeAttributeFromPageTop(String name) {

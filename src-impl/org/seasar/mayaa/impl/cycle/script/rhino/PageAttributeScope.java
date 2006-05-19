@@ -28,6 +28,7 @@ import org.mozilla.javascript.NativeJavaMethod;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
+import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -85,14 +86,7 @@ public class PageAttributeScope extends ScriptableObject
         if (_methodMap.containsKey(name)) {
             return _methodMap.get(name);
         }
-        Object ret = super.get(name, start);
-        if (ret == org.mozilla.javascript.UniqueTag.NOT_FOUND) {
-            Object attribute = getAttribute(name);
-            if (attribute != null) {
-                ret = attribute;
-            }
-        }
-        return ret;
+        return super.get(name, start);
     }
 
     public Object[] getIds() {
@@ -116,7 +110,7 @@ public class PageAttributeScope extends ScriptableObject
     // AttributeScope implements -------------------------------------
 
     public String getScopeName() {
-        return "page";
+        return ServiceCycle.SCOPE_PAGE;
     }
 
     public Iterator iterateAttributeNames() {

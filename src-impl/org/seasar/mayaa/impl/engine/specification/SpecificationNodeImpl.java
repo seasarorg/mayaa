@@ -25,16 +25,18 @@ import org.seasar.mayaa.engine.specification.CopyToFilter;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationNodeImpl extends PrefixAwareNameImpl
+public class SpecificationNodeImpl extends NamespaceImpl
         implements SpecificationNode, CONST_IMPL {
 
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
@@ -46,10 +48,27 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     private String _systemID;
     private int _lineNumber;
     private boolean _onTemplate;
+    private QName _qName;
 
     public SpecificationNodeImpl(QName qName) {
-        super(qName);
+        _qName = qName;
     }
+
+    public QName getQName() {
+        return _qName;
+    }
+
+    public String getPrefix() {
+        String namespaceURI = getQName().getNamespaceURI();
+        for (Iterator it = iteratePrefixMapping(true); it.hasNext();) {
+            PrefixMapping mapping = (PrefixMapping) it.next();
+            if (namespaceURI.equals(mapping.getNamespaceURI())) {
+                return mapping.getPrefix();
+            }
+        }
+        return "";
+    }
+
 
     public void setSequenceID(int sequenceID) {
         if (sequenceID < 0) {
@@ -66,6 +85,10 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public void addAttribute(QName qName, String value) {
+        addAttribute(qName, null, value);
+    }
+    
+    public void addAttribute(QName qName, String originalName, String value) {
         if (qName == null || value == null) {
             throw new IllegalArgumentException();
         }
@@ -76,7 +99,12 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
         }
         synchronized (_attributes) {
             if (_attributes.containsKey(qName) == false) {
-                NodeAttributeImpl attr = new NodeAttributeImpl(qName, value);
+                String prefix = null;
+                if (originalName != null) {
+                    prefix = StringUtil.parsePrefix(originalName); 
+                }
+                NodeAttributeImpl attr = new NodeAttributeImpl(
+                        qName, value, prefix);
                 _attributes.put(qName, attr);
                 attr.setNode(this);
             }
@@ -101,11 +129,8 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
     }
 
     public SpecificationNode copyTo(CopyToFilter filter) {
-        SpecificationNodeImpl copy = new SpecificationNodeImpl(getQName());
-        copy.setSequenceID(getSequenceID());
-        copy.setSystemID(getSystemID());
-        copy.setLineNumber(getLineNumber());
-        copy.setOnTemplate(isOnTemplate());
+        SpecificationNode copy = SpecificationUtil.createSpecificationNode(
+                getQName(), getSystemID(), getLineNumber(), isOnTemplate(), getSequenceID());
         for (Iterator it = iterateAttribute(); it.hasNext();) {
             NodeAttribute attr = (NodeAttribute) it.next();
             if (filter.accept(attr)) {
@@ -118,7 +143,13 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
                 copy.addChildNode(node.copyTo(filter));
             }
         }
+        for (Iterator it = iteratePrefixMapping(false); it.hasNext();) {
+            PrefixMapping prefixMapping = (PrefixMapping)it.next();
+            copy.addPrefixMapping(
+                    prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
+        }
         copy.setParentSpace(getParentSpace());
+        copy.setDefaultNamespaceURI(getDefaultNamespaceURI());
         return copy;
     }
 
@@ -133,9 +164,8 @@ public class SpecificationNodeImpl extends PrefixAwareNameImpl
             path.append(getParentNode());
         }
         path.append("/");
-        path.append(
-                PrefixAwareNameImpl.forPrefixAwareNameString(
-                        getQName(), getPrefix()));
+        path.append(PrefixAwareNameImpl.forPrefixAwareNameString(
+                getQName(), getPrefix()));
         return path.toString();
     }
 

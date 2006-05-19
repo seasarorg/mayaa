@@ -83,8 +83,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     protected Scriptable getStandardObjects() {
         if (_standardObjects == null) {
             Context cx = Context.enter();
-            _standardObjects = cx.initStandardObjects(null, true);
-            Context.exit();
+            try {
+                _standardObjects = cx.initStandardObjects(null, true);
+            } finally {
+                Context.exit();
+            }
         }
         return _standardObjects;
     }
@@ -102,14 +105,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scope == null) {
             parent = (Scriptable) _parent.get();
             if (parent == null) {
-                Context cx = Context.enter();
-                if (_wrap != null) {
-                    cx.setWrapFactory(_wrap);
+                Context cx = RhinoUtil.enter(_wrap);
+                try {
+                    Scriptable standard = getStandardObjects();
+                    parent = cx.getWrapFactory().wrapAsJavaObject(
+                            cx, standard, cycle, ServiceCycle.class);
+                } finally {
+                    Context.exit();
                 }
-                Scriptable standard = getStandardObjects();
-                parent = cx.getWrapFactory().wrapAsJavaObject(
-                        cx, standard, cycle, ServiceCycle.class);
-                Context.exit();
                 _parent.set(parent);
             }
         } else if (scope instanceof PageAttributeScope) {
@@ -120,37 +123,30 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
         if (variables != null) {
-            Context cx = Context.enter();
-            if (_wrap != null) {
-                cx.setWrapFactory(_wrap);
+            RhinoUtil.enter(_wrap);
+            try {
+                for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
+                    String name = it.next().toString();
+                    Object value = variables.get(name);
+                    Object variable = Context.javaToJS(value, pageScope);
+                    ScriptableObject.putProperty(pageScope, name, variable);
+                }
+            } finally {
+                Context.exit();
             }
-            for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
-                String name = it.next().toString();
-                Object value = variables.get(name);
-                Object variable = Context.javaToJS(value, pageScope);
-                ScriptableObject.putProperty(pageScope, name, variable);
-            }
-            Context.exit();
         }
-        cycle.setPageScope(pageScope);
+        // only first page scope
+        if (cycle.getPageScope() == null) {
+            cycle.setPageScope(pageScope);
+        }
     }
 
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
-        if (scope instanceof PageAttributeScope) {
-            PageAttributeScope pageScope = (PageAttributeScope) scope;
-            Scriptable current = pageScope.getParentScope();
-            if (current instanceof PageAttributeScope) {
-                PageAttributeScope parentScope = (PageAttributeScope) current;
-                cycle.setPageScope(parentScope);
-                return;
-            } else if (current != null) {
-                cycle.setPageScope(null);
-                return;
-            }
+        if (scope instanceof PageAttributeScope == false) {
+            throw new IllegalStateException();
         }
-        throw new IllegalStateException();
     }
 
     public Object convertFromScriptObject(Object scriptObject) {

@@ -29,8 +29,8 @@ import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**

@@ -15,13 +15,16 @@
  */
 package org.seasar.mayaa.impl.builder;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
-import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -68,6 +71,7 @@ public class SpecificationNodeHandler
     private boolean _outputMayaaWhitespace = false;
     private int _inEntity;
     private int _sequenceID;
+    private Map _internalNamespacePrefixMap; 
 
     public SpecificationNodeHandler(Specification specification) {
         if (specification == null) {
@@ -86,14 +90,12 @@ public class SpecificationNodeHandler
 
     protected void initNamespace() {
         _namespace = SpecificationUtil.createNamespace();
-        _namespace.addPrefixMapping("", URI_HTML);
-        _namespace.addPrefixMapping("xml", URI_XML);
+        getCurrentInternalNamespacePrefixMap().put("", URI_HTML);
+        getCurrentInternalNamespacePrefixMap().put("xml", URI_XML);
     }
 
-    protected void pushNamespace() {
-        Namespace parentSpace = _namespace;
-        _namespace = SpecificationUtil.createNamespace();
-        _namespace.setParentSpace(parentSpace);
+    protected void pushNamespace(Namespace newNamespace) {
+        _namespace = newNamespace;
     }
 
     protected void popNamespace() {
@@ -129,20 +131,25 @@ public class SpecificationNodeHandler
         initCharactersBuffer();
         _charactersStartLineNumber = -1;
         _current = _specification;
+        _internalNamespacePrefixMap = new HashMap();
         initNamespace();
-        pushNamespace();
+    }
+
+    protected Map getCurrentInternalNamespacePrefixMap() {
+        Map result = (Map)_internalNamespacePrefixMap.get(_current);
+        if (result == null) {
+            result = new HashMap();
+            _internalNamespacePrefixMap.put(_current, result);
+        }
+        return result;
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        _namespace.addPrefixMapping(prefix, uri);
+        getCurrentInternalNamespacePrefixMap().put(prefix, uri);
     }
 
     public void endPrefixMapping(String prefix) {
-        PrefixMapping mapping =
-            _namespace.getMappingFromPrefix(prefix, false);
-        if (mapping == null) {
-            throw new IllegalStateException();
-        }
+        getCurrentInternalNamespacePrefixMap().remove(prefix);
     }
 
     protected SpecificationNode addNode(QName qName) {
@@ -172,14 +179,15 @@ public class SpecificationNodeHandler
 
     protected void addCharactersNode() {
         if (_charactersBuffer.length() > 0) {
-            SpecificationNode node =
-                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
-
             String characters = _charactersBuffer.toString();
             if (isRemoveWhitespace()) {
                 characters = removeIgnorableWhitespace(characters);
             }
-            node.addAttribute(QM_TEXT, characters);
+            if (characters.length() > 0) {
+                SpecificationNode node =
+                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
+                node.addAttribute(QM_TEXT, characters);
+            }
             initCharactersBuffer();
         }
     }
@@ -192,7 +200,11 @@ public class SpecificationNodeHandler
                 String token = line[i].replaceAll("^[ \t]+", "");
                 token = token.replaceAll("[ \t]+$", "");
                 buffer.append(token.replaceAll("[ \t]+", " "));
-                buffer.append("\n");
+                if (i < line.length - 1
+                        && ((i + 1 < line.length - 1)
+                                || (line[i + 1].trim().length() > 0))) {
+                    buffer.append("\n");
+                }
             }
         }
         return buffer.toString();
@@ -208,37 +220,36 @@ public class SpecificationNodeHandler
         if (StringUtil.isEmpty(qName)) {
             throw new IllegalArgumentException();
         }
-        String prefix;
-        if ("xmlns".equals(qName)) {
-            prefix = "";
-        } else if (qName.startsWith("xmlns:")) {
-            prefix = qName.substring("xmlns:".length());
-        } else {
-            return true;
-        }
-        if (_namespace.getMappingFromPrefix(prefix, false) == null) {
-            startPrefixMapping(prefix, value);
-        }
-        /* MEMO namespace declaration is not attribute
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(StringUtil.getMessage(SpecificationNodeHandler.class,
-                    0, prefix, value));
-        }
-        */
-        return false;
+        return ("xmlns".equals(qName) == false
+                && qName.startsWith("xmlns:") == false);
     }
 
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
+        
+        Namespace elementNS = SpecificationUtil.createNamespace();
+        Iterator it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry)it.next();
+            elementNS.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
+        }
+        elementNS.setParentSpace(_namespace);
+
         PrefixAwareName parsedName =
-            BuilderUtil.parseName(_namespace, qName);
+            BuilderUtil.parseName(elementNS, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
+        elementNS.setDefaultNamespaceURI(nodeURI);
+
         SpecificationNode node = addNode(nodeQName);
-        Namespace elementNS = SpecificationUtil.createNamespace();
-        elementNS.setParentSpace(_namespace);
-        elementNS.addPrefixMapping("", nodeURI);
+        it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry)it.next();
+            node.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
+        }
+        node.setDefaultNamespaceURI(nodeURI);
+
         for (int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
@@ -246,12 +257,12 @@ public class SpecificationNodeHandler
                 PrefixAwareName parsedAttrName =
                     BuilderUtil.parseName(elementNS, attrName);
                 QName attrQName = parsedAttrName.getQName();
-                node.addAttribute(attrQName, attrValue);
+                node.addAttribute(attrQName, attrName, attrValue);
             }
         }
         _current = node;
         saveToCycle(_current);
-        pushNamespace();
+        pushNamespace(elementNS);
     }
 
     public void endElement(String namespaceURI,
@@ -264,6 +275,8 @@ public class SpecificationNodeHandler
 
     public void endDocument() {
         saveToCycle(_specification);
+        _internalNamespacePrefixMap.clear();
+        _internalNamespacePrefixMap = null;
     }
 
     public void characters(char[] buffer, int start, int length) {
@@ -273,7 +286,8 @@ public class SpecificationNodeHandler
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-        appendCharactersBuffer(buffer, start, length);
+//これは要素内のスペースなので保存する必要は無い        
+//        appendCharactersBuffer(buffer, start, length);
     }
 
     public void xmlDecl(String version, String encoding, String standalone) {

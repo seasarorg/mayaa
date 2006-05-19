@@ -60,9 +60,13 @@ public class FileSourceDescriptor
         super.setSystemID(StringUtil.preparePath(systemID));
     }
 
+    protected String getRealPath() {
+        return _root + getSystemID();
+    }
+    
     public boolean exists() {
         if (_file == null) {
-            String realPath = _root + getSystemID();
+            String realPath = getRealPath(); 
             if (StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if (file.exists()) {
@@ -82,7 +86,8 @@ public class FileSourceDescriptor
                     throw new RuntimeException(e);
                 }
             } else if (_file.isDirectory()) {
-                CycleUtil.getServiceCycle().redirect(_file.getName() + "/");
+                CycleUtil.getServiceCycle().redirect(
+                        _file.getName() + "/");
             }
         }
         return null;

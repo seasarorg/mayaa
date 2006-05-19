@@ -26,6 +26,7 @@ import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -43,6 +44,12 @@ public class SpecificationUtil implements CONST_IMPL {
 
     private static EventScriptEnvironment _eventScripts =
         new EventScriptEnvironment();
+
+    public static final PrefixMapping XML_DEFAULT_PREFIX_MAPPING =
+        PrefixMappingImpl.getInstance("xml", CONST_IMPL.URI_XML);
+
+    public static final PrefixMapping HTML_DEFAULT_PREFIX_MAPPING =
+        PrefixMappingImpl.getInstance("", CONST_IMPL.URI_HTML);
 
     private SpecificationUtil() {
         // no instantiation.
@@ -164,6 +171,11 @@ public class SpecificationUtil implements CONST_IMPL {
         return QNameImpl.getInstance(namespaceURI, localName);
     }
 
+    public static PrefixMapping createPrefixMapping(
+            String prefix, String namespaceURI) {
+        return PrefixMappingImpl.getInstance(prefix, namespaceURI);
+    }
+
     public static QName parseQName(String qName) {
         if (StringUtil.hasValue(qName) && qName.charAt(0) == '{') {
             int end = qName.indexOf('}');
@@ -180,7 +192,11 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     public static PrefixAwareName createPrefixAwareName(QName qName) {
-        return new PrefixAwareNameImpl(qName);
+        return createPrefixAwareName(qName, "");
+    }
+
+    public static PrefixAwareName createPrefixAwareName(QName qName, String prefix) {
+        return PrefixAwareNameImpl.getInstance(qName, prefix);
     }
 
     public static SpecificationNode createSpecificationNode(

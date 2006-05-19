@@ -48,6 +48,24 @@ public interface Namespace extends NodeObject {
     boolean addedMapping();
 
     /**
+     * 現在のスコープでPrefixが無指定の場合に選択される
+     * デフォルト名前空間URIを設定する。
+     * 予め addPrefixMappingで追加されていなければならない。
+     * nullを指定すると prefixMappingで prefixを "" として
+     * 登録したものがデフォルトになる。 
+     * @param namespaceURI 名前空間URI。
+     */
+    void setDefaultNamespaceURI(String namespaceURI);
+
+    /**
+     * 現在のスコープでPrefixが無指定の場合に選択される
+     * デフォルト名前空間を返す。
+     * 
+     * @return デフォルト名前空間。デフォルト名前空間がない場合にはnull
+     */
+    String getDefaultNamespaceURI();
+
+    /**
      * 名前空間モデルの取得。
      * @param prefix 取得したい名前空間のプレフィックス。
      * @param all 親スコープも検索する。

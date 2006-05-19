@@ -31,12 +31,20 @@ public class TemplateParser extends AbstractSAXParser {
 
     private static class TemplateParserConfiguration extends HTMLConfiguration {
 
+        /** Ignore outside content. copy from org.cyberneko.html.HTMLTagBalancer */
+        protected static final String IGNORE_OUTSIDE_CONTENT =
+            "http://cyberneko.org/html/features/balance-tags/ignore-outside-content";
+
         public TemplateParserConfiguration(HTMLScanner scanner) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
+            /* 元のテンプレート内容を忠実に再現させるオプション。
+            ただし、</html>の後ろは無視される。false(デフォルト)の場合は、
+            </body>と</html>の後につづくものをnekoがむりやり前に持ってくる */
+            setFeature(IGNORE_OUTSIDE_CONTENT, true);
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);
         }

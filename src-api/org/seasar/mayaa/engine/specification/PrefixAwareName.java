@@ -19,7 +19,7 @@ package org.seasar.mayaa.engine.specification;
  * QNameを取得できるオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PrefixAwareName extends Namespace {
+public interface PrefixAwareName {
 
     /**
      * 名前空間URIおよびローカル名の組み合わせの取得。

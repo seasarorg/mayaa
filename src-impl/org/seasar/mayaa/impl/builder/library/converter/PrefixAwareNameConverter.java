@@ -36,7 +36,7 @@ public class PrefixAwareNameConverter
         if (attribute == null || value == null) {
             throw new IllegalArgumentException();
         }
-        return BuilderUtil.parseName(attribute.getParentSpace(), value);
+        return BuilderUtil.parseName(attribute.getNode(), value);
     }
 
 }

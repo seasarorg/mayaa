@@ -33,6 +33,7 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -42,7 +43,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorDefinitionImpl extends PropertySetImpl
-        implements ProcessorDefinition {
+        implements ProcessorDefinition, CONST_IMPL {
 
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
@@ -111,6 +112,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
             if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
+                if (value instanceof PrefixAwareName) {
+                    value = settingDefaultNamespace(
+                            original, (PrefixAwareName) value);
+                }
                 ObjectUtil.setProperty(processor, propertyImplName, value);
             } else if (processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
@@ -126,6 +131,20 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 }
             }
         }
+    }
+
+    protected PrefixAwareName settingDefaultNamespace(
+            SpecificationNode original, PrefixAwareName value) {
+        QName valueName = value.getQName();
+        if (URI_MAYAA.equals(valueName.getNamespaceURI())) {
+            if (StringUtil.isEmpty(value.getPrefix())) {
+                QName qName = SpecificationUtil.createQName(
+                        original.getDefaultNamespaceURI(),
+                        valueName.getLocalName());
+                value = SpecificationUtil.createPrefixAwareName(qName, "");
+            }
+        }
+        return value;
     }
 
     protected void settingPropertySet(

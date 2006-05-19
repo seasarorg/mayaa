@@ -25,6 +25,7 @@ import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -76,12 +77,20 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         AbstractAttributableProcessor parent = findParentAttributable();
 
         QName parentQName;
-        if (parent instanceof ElementProcessor) {
+        if (parent.getClass() == ElementProcessor.class) {
             parentQName = ((ElementProcessor) parent).getName().getQName();
         } else {
             parentQName = parent.getOriginalNode().getQName();
         }
         QName attributeQName = getName().getQName();
+        // 自動的にmayaaネームスペースを引き継いだだけであれば、親要素と同じにする。
+        if (getName().getPrefix().equals("")
+                && parentQName.equals(getName().getQName()) == false) {
+            attributeQName = SpecificationUtil.createQName(
+                    parentQName.getNamespaceURI(),
+                    attributeQName.getLocalName());
+            setName(SpecificationUtil.createPrefixAwareName(attributeQName, ""));
+        }
 
         String basePath = null;
         PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
@@ -155,7 +164,6 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public EscapableScript(CompiledScript script, String basePath) {
             super(script);
-            // if basePath is null, not need adjust
             _basePath = basePath;
         }
 
@@ -164,9 +172,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             if (isString() && StringUtil.hasValue((String) result)) {
                 if (_basePath != null) {
                     result =
-                        StringUtil.adjustRelativePath(_basePath, (String) result);
+                        StringUtil.adjustRelativePath(_basePath, result.toString());
                 }
-                result = escape((String) result);
+                result = escape(result.toString());
             }
 
             return result;
@@ -184,9 +192,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             super(script);
 
             if (isString()) {
-                _escapedValue = (String) super.execute(null);
-                if (StringUtil.hasValue(_escapedValue)) {
-                // if basePath is null, not need adjust
+                Object obj = super.execute(null);
+                if (StringUtil.hasValue((String) obj)) {
+                    _escapedValue = obj.toString();
                     if (basePath != null) {
                         _escapedValue =
                             StringUtil.adjustRelativePath(

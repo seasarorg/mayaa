@@ -284,11 +284,7 @@ public final class StringUtil {
                 }
             }
         }
-        String className = clazz.getName();
-        int pos = className.lastIndexOf('.');
-        if (pos != -1) {
-            className = className.substring(pos + 1);
-        }
+        String className = ObjectUtil.getSimpleClassName(clazz);
         StringBuffer propertyName = new StringBuffer(className);
         if (index > 0) {
             propertyName.append(".").append(index);
@@ -365,39 +361,6 @@ public final class StringUtil {
             }
         }
 
-        return sb.toString();
-    }
-
-    public static String escapeIndent(String text) {
-        if (text == null) {
-            return "";
-        }
-        char[] chars = text.toCharArray();
-        StringBuffer sb = new StringBuffer(chars.length + 50);
-        boolean doReplace = true;
-        final String space = "&nbsp;";
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            if (doReplace) {
-                if (c == ' ') {
-                    sb.append(space);
-                } else if (c == '\t') {
-                    for (int j = 0; j < 4; j++) {
-                        sb.append(space);
-                    }
-                } else if (c != '\n') {
-                    doReplace = false;
-                } else {
-                    sb.append(c);
-                }
-            } 
-            if (doReplace == false) {
-                sb.append(c);
-                if (c == '\n') {
-                    doReplace = true;
-                }
-            }
-        }
         return sb.toString();
     }
 

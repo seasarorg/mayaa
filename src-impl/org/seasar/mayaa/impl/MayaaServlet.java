@@ -45,6 +45,7 @@ public class MayaaServlet extends HttpServlet {
             FactoryFactory.setContext(getServletContext());
             _initialized = true;
         }
+        this.getServletContext().getInitParameter("");
         LOG.info("prepareLibraries start");
         ProviderUtil.getLibraryManager().prepareLibraries();
         LOG.info("prepareLibraries end");

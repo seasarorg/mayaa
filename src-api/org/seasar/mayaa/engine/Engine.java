@@ -48,6 +48,12 @@ public interface Engine extends ParameterAware, Specification {
     Page getPage(String pageName);
 
     /**
+     * レンダリング可能なページを示すリクエストかどうかを判定する。
+     * @return mayaaがレンダリング対象とする場合はtrue
+     */
+    boolean isPageRequested();
+
+    /**
      * サービスメソッド。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      * @deprecated

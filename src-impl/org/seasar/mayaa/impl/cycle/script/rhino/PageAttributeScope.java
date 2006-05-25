@@ -41,6 +41,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class PageAttributeScope extends ScriptableObject
         implements AttributeScope, Wrapper {
 
+    public static final String KEY_CURRENT = "__current__";
     private static final long serialVersionUID = 7746385735022710670L;
     private static Map _methodMap;
 
@@ -161,7 +162,19 @@ public class PageAttributeScope extends ScriptableObject
         return true;
     }
 
+    public void put(String name, Scriptable start, Object value) {
+        if (KEY_CURRENT.equals(name) == false) {
+            super.put(name, start, value);
+        }
+    }
+
     public void setAttribute(String name, Object attribute) {
+        if (KEY_CURRENT.equals(name)) {
+            if (attribute instanceof PageAttributeScope) {
+                super.put(name, this, attribute);
+            }
+            return;
+        }
         put(name, this, attribute);
     }
 
@@ -218,6 +231,10 @@ public class PageAttributeScope extends ScriptableObject
 
     public boolean isOnTemplate() {
         return false;
+    }
+
+    public Object getDefaultValue(Class typeHint) {
+        return toString();
     }
 
 }

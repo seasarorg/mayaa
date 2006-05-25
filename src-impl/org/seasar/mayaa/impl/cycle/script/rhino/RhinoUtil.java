@@ -44,6 +44,10 @@ public class RhinoUtil {
     public static Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrs = cycle.getPageScope();
+        if (attrs instanceof PageAttributeScope) {
+            attrs = (AttributeScope)attrs.getAttribute(
+                    PageAttributeScope.KEY_CURRENT);
+        }
         if (attrs instanceof Scriptable) {
             return (Scriptable) attrs;
         }

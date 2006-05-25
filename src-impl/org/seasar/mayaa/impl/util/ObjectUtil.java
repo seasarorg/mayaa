@@ -279,4 +279,13 @@ public class ObjectUtil {
                 "argument type mismatch: " + obj.getClass().getName());
     }
 
+    public static String getSimpleClassName(Class clazz) {
+        String className = clazz.getName();
+        int pos = className.lastIndexOf('.');
+        if (pos != -1) {
+            className = className.substring(pos + 1);
+        }
+        return className;
+    }
+
 }

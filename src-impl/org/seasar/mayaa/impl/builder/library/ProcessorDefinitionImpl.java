@@ -112,6 +112,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
             if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
+                // prefix‚ª•t‚¢‚Ä‚¢‚È‚¢ŒÀ‚èoriginal‚ðˆø‚«Œp‚ª‚¹‚é
                 if (value instanceof PrefixAwareName) {
                     value = settingDefaultNamespace(
                             original, (PrefixAwareName) value);

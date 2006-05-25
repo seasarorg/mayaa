@@ -72,6 +72,7 @@ public class SpecificationNodeHandler
     private int _inEntity;
     private int _sequenceID;
     private Map _internalNamespacePrefixMap; 
+    private boolean _inCData;
 
     public SpecificationNodeHandler(Specification specification) {
         if (specification == null) {
@@ -168,13 +169,14 @@ public class SpecificationNodeHandler
         SpecificationNode child = createChildNode(
                 qName, systemID, lineNumber, _sequenceID);
         _sequenceID += 1;
-        child.setParentSpace(_namespace);
+        child.setParentSpace(SpecificationUtil.toFinalNamespace(_namespace));
         _current.addChildNode(child);
         return child;
     }
 
     protected boolean isRemoveWhitespace() {
-        return _outputMayaaWhitespace == false;
+        return _outputMayaaWhitespace == false
+                    && _inCData == false;
     }
 
     protected void addCharactersNode() {
@@ -234,13 +236,15 @@ public class SpecificationNodeHandler
             Map.Entry entry = (Map.Entry)it.next();
             elementNS.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
         }
-        elementNS.setParentSpace(_namespace);
+        elementNS.setParentSpace(SpecificationUtil.toFinalNamespace(_namespace));
 
         PrefixAwareName parsedName =
             BuilderUtil.parseName(elementNS, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         elementNS.setDefaultNamespaceURI(nodeURI);
+
+        elementNS = SpecificationUtil.toFinalNamespace(elementNS);
 
         SpecificationNode node = addNode(nodeQName);
         it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
@@ -373,11 +377,13 @@ public class SpecificationNodeHandler
         addCharactersNode();
         SpecificationNode node = addNode(QM_CDATA);
         _current = node;
+        _inCData = true;
     }
 
     public void endCDATA() {
         addCharactersNode();
         _current = _current.getParentNode();
+        _inCData = false;
     }
 
     public void warning(SAXParseException e) {

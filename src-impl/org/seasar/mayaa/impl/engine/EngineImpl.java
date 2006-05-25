@@ -124,7 +124,7 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    protected boolean isPageRequested() {
+    public boolean isPageRequested() {
         RequestScope request = CycleUtil.getRequestScope();
         if ("mayaa".equals(request.getExtension())) {
             return true;

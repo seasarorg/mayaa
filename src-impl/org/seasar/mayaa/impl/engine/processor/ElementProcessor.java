@@ -90,6 +90,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }
             currentNS.setDefaultNamespaceURI(getOriginalNode().getDefaultNamespaceURI());
+            currentNS = SpecificationUtil.toFinalNamespace(currentNS);
             _currentNS.set(currentNS);
         }
         return currentNS;
@@ -98,20 +99,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
     private static final String RENDERD_PREFIX_MAPPINGS = "--rendered prefix mappings mark--";
 
     protected Stack getRenderedNS() {
-        Stack renderedNS = (Stack)_renderedNS.get();
-        if (renderedNS != null) {
-            Boolean mark = (Boolean) CycleUtil.getServiceCycle().getPageScope().getAttribute(RENDERD_PREFIX_MAPPINGS);
-            if (mark == null) {
-                CycleUtil.getServiceCycle().getPageScope().setAttribute(RENDERD_PREFIX_MAPPINGS, Boolean.TRUE);
-                renderedNS = new Stack();
-                _renderedNS.set(renderedNS);
-            }
-        } else {
+        Stack renderedNS;
+        Boolean mark = (Boolean) CycleUtil.getServiceCycle().getPageScope().getAttribute(RENDERD_PREFIX_MAPPINGS);
+        if (mark == null) {
             CycleUtil.getServiceCycle().getPageScope().setAttribute(RENDERD_PREFIX_MAPPINGS, Boolean.TRUE);
             renderedNS = new Stack();
             _renderedNS.set(renderedNS);
+        } else {
+            renderedNS = (Stack)_renderedNS.get();
         }
-        _renderedNS.set(renderedNS);
         return renderedNS;
     }
 
@@ -313,7 +309,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writePart1(StringBuffer buffer) {   // 静的 <xxx
         buffer.append("<");
         writeElementName(buffer);
-        appendPrefixMappingStrings(buffer, getCurrentNS());
     }
 
     protected void writePart2(StringBuffer buffer) {   // 動的 attribute
@@ -383,6 +378,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
         StringBuffer buffer = new StringBuffer();
         writePart1(buffer);
+        appendPrefixMappingStrings(buffer, getCurrentNS());
         writePart2(buffer);
         writePart3(buffer);
         write(buffer.toString());
@@ -429,6 +425,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     QM_TEMPLATE_ELEMENT.getLocalName()) == false) {
                 return new ProcessorTreeWalker[] { this };
             }
+            StringBuffer xmlnsDefs = new StringBuffer();
+            appendPrefixMappingStrings(xmlnsDefs, getCurrentNS());
+            if (xmlnsDefs.length() > 0) {
+                // ネームスペース宣言がコンポーネントに引き継がれなくなるので動的なものとする。
+                return new ProcessorTreeWalker[] { this };
+            }
 
             List list = new ArrayList();
             StringBuffer buffer = new StringBuffer();
@@ -458,7 +460,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     list.add(part2);
                 }
             }
-
+    
             buffer = new StringBuffer();
             writePart3(buffer);
             if (buffer.toString().length() > 0) {

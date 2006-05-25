@@ -116,7 +116,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 _parent.set(parent);
             }
         } else if (scope instanceof PageAttributeScope) {
-            parent = (PageAttributeScope) scope;
+            PageAttributeScope pageTop = (PageAttributeScope) scope; 
+            parent = (PageAttributeScope)pageTop.getAttribute(
+                    PageAttributeScope.KEY_CURRENT);
         } else {
             throw new IllegalStateException();
         }
@@ -139,14 +141,30 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (cycle.getPageScope() == null) {
             cycle.setPageScope(pageScope);
         }
+        cycle.getPageScope().setAttribute(
+                PageAttributeScope.KEY_CURRENT, pageScope);
     }
 
     public void endScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
-        if (scope instanceof PageAttributeScope == false) {
-            throw new IllegalStateException();
+        if (scope instanceof PageAttributeScope) {
+            PageAttributeScope pageScope = (PageAttributeScope) scope;
+            pageScope = (PageAttributeScope) pageScope.getAttribute(
+                        PageAttributeScope.KEY_CURRENT);
+            Scriptable current = pageScope.getParentScope();
+            if (current instanceof PageAttributeScope) {
+                PageAttributeScope parentScope =
+                    (PageAttributeScope) current;
+                cycle.getPageScope().setAttribute(
+                        PageAttributeScope.KEY_CURRENT, parentScope);
+                return;
+            } else if (current != null) {
+                cycle.setPageScope(null);
+                return;
+            } 
         }
+        throw new IllegalStateException();
     }
 
     public Object convertFromScriptObject(Object scriptObject) {

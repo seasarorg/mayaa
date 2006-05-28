@@ -36,6 +36,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     private static final long serialVersionUID = 7899970766673369995L;
 
     private ProcessorProperty _value;
+    private ProcessorProperty _default;
     private String _pattern;
     private static Map _formatPools = new HashMap();
 
@@ -48,6 +49,10 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     // MLD property, expectedClass=java.lang.String
     public void setValue(ProcessorProperty value) {
         _value = value;
+    }
+
+    public void setDefault(ProcessorProperty defaultValue) {
+        _default = defaultValue;
     }
 
     public void setPattern(String pattern) {
@@ -78,6 +83,8 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
             throw new IllegalArgumentException(
                     "argument type mismatch: " + result.getClass().getName());
+        } else if (_default != null) {
+            return (String) _default.getValue().execute(null);
         }
         return "";
     }

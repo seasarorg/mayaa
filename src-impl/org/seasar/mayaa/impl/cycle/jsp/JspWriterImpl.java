@@ -115,11 +115,11 @@ public class JspWriterImpl extends JspWriter {
     }
 
     public void print(Object o) throws IOException {
-        write(String.valueOf(o));
+        write((o == null) ? "null" : o.toString());
     }
 
     public void print(String s) throws IOException {
-        write(s);
+        write((s == null) ? "null" : s);
     }
 
     // ----------------------------------------------------------

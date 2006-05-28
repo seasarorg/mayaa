@@ -285,8 +285,4 @@ public class SpecificationUtil implements CONST_IMPL {
 
     }
 
-    public static Namespace toFinalNamespace(Namespace original) {
-        return FinalNamespace.getFinalInstance(original);
-    }
-
 }

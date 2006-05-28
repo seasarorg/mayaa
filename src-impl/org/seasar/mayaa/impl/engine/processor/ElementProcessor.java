@@ -90,7 +90,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }
             currentNS.setDefaultNamespaceURI(getOriginalNode().getDefaultNamespaceURI());
-            currentNS = SpecificationUtil.toFinalNamespace(currentNS);
             _currentNS.set(currentNS);
         }
         return currentNS;

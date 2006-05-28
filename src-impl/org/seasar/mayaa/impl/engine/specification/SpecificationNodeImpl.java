@@ -148,7 +148,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
             copy.addPrefixMapping(
                     prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
         }
-        copy.setParentSpace(SpecificationUtil.toFinalNamespace(getParentSpace()));
+        copy.setParentSpace(getParentSpace());
         copy.setDefaultNamespaceURI(getDefaultNamespaceURI());
         return copy;
     }

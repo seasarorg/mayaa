@@ -87,7 +87,7 @@ public class BuilderUtil implements CONST_IMPL {
                         prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }
         }
-        node.setParentSpace(SpecificationUtil.toFinalNamespace(original.getParentSpace()));
+        node.setParentSpace(original.getParentSpace());
         node.setDefaultNamespaceURI(original.getDefaultNamespaceURI());
         return node;
     }

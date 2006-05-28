@@ -169,7 +169,7 @@ public class SpecificationNodeHandler
         SpecificationNode child = createChildNode(
                 qName, systemID, lineNumber, _sequenceID);
         _sequenceID += 1;
-        child.setParentSpace(SpecificationUtil.toFinalNamespace(_namespace));
+        child.setParentSpace(_namespace);
         _current.addChildNode(child);
         return child;
     }
@@ -236,15 +236,13 @@ public class SpecificationNodeHandler
             Map.Entry entry = (Map.Entry)it.next();
             elementNS.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
         }
-        elementNS.setParentSpace(SpecificationUtil.toFinalNamespace(_namespace));
+        elementNS.setParentSpace(_namespace);
 
         PrefixAwareName parsedName =
             BuilderUtil.parseName(elementNS, qName);
         QName nodeQName = parsedName.getQName();
         String nodeURI = nodeQName.getNamespaceURI();
         elementNS.setDefaultNamespaceURI(nodeURI);
-
-        elementNS = SpecificationUtil.toFinalNamespace(elementNS);
 
         SpecificationNode node = addNode(nodeQName);
         it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();

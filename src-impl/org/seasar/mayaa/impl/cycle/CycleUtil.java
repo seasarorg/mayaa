@@ -22,6 +22,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotWritableException;
+import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -87,8 +88,14 @@ public class CycleUtil {
         ServiceCycle cycle = getServiceCycle();
         for (int i = 0; i < _standardScope.size(); i++) {
             AttributeScope scope = cycle.getAttributeScope(_standardScope.get(i));
-            if (scope != null && scope.hasAttribute(name)) {
-                return scope;
+            if (scope != null) {
+                if (scope instanceof PageAttributeScope) {
+                    scope = (AttributeScope)
+                            scope.getAttribute(PageAttributeScope.KEY_CURRENT);
+                }
+                if (scope.hasAttribute(name)) {
+                    return scope;
+                }
             }
         }
         return null;

@@ -202,12 +202,18 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         clearLoadedTag();
         Tag customTag = getLoadedTag();
+
+        Object targetTag = customTag;
+        if (customTag instanceof SimpleTagWrapper) {
+            targetTag = ((SimpleTagWrapper) customTag).getSimpleTag();
+        }
         for (Iterator it = iterateProperties(); it.hasNext();) {
             ProcessorProperty property = (ProcessorProperty) it.next();
-            String propertyName = property.getName().getQName().getLocalName();
-            Object value = property.getValue().execute(null);
-            setPropertyTo(customTag, propertyName, value);
+            ObjectUtil.setProperty(targetTag,
+                    property.getName().getQName().getLocalName(),
+                    property.getValue().execute(null));
         }
+
         ProcessorTreeWalker processor = this;
         while ((processor = processor.getParentProcessor()) != null) {
             if (processor instanceof JspProcessor) {
@@ -227,15 +233,6 @@ public class JspProcessor extends TemplateProcessorSupport
         } catch (JspException e) {
             throw createJspRuntimeException(
                     getOriginalNode(), getInjectedNode(), e);
-        }
-    }
-
-    private void setPropertyTo(Tag customTag, String name, Object value) {
-        if (customTag instanceof SimpleTagWrapper) {
-            ObjectUtil.setProperty(
-                    ((SimpleTagWrapper) customTag).getSimpleTag(), name, value);
-        } else {
-            ObjectUtil.setProperty(customTag, name, value);
         }
     }
 
@@ -402,30 +399,31 @@ public class JspProcessor extends TemplateProcessorSupport
 
         public boolean useTop(String name, int scope) {
             TLDScriptingVariableInfo variableInfo =
-                getTLDScriptingVariableInfo();
+                    getTLDScriptingVariableInfo();
             return scope == PageContext.PAGE_SCOPE
                     && (variableInfo.hasNestedVariable() == false
                             || variableInfo.isNestedVariable(name) == false);
+        }
+
+        public boolean useCurrent(String name, int scope) {
+            TLDScriptingVariableInfo variableInfo =
+                    getTLDScriptingVariableInfo();
+            return scope == PageContext.PAGE_SCOPE
+                    && variableInfo.isNestedVariable(name);
         }
 
         protected PageAttributeScope findTopPageAttributeScope() {
             return (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
         }
 
-        public void removeAttributeFromPageTop(String name) {
-            if (name == null) {
-                throw new IllegalArgumentException();
+        protected PageAttributeScope getCurrentScope() {
+            PageAttributeScope scope =
+                (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
+            if (scope != null) {
+                return (PageAttributeScope)
+                        scope.getAttribute(PageAttributeScope.KEY_CURRENT);
             }
-            PageAttributeScope pageScope = findTopPageAttributeScope();
-            pageScope.removeAttribute(name);
-        }
-
-        public void setAttributeOnPageTop(String name, Object value) {
-            if (name == null) {
-                throw new IllegalArgumentException();
-            }
-            PageAttributeScope pageScope = findTopPageAttributeScope();
-            pageScope.setAttribute(name, value);
+            return scope;
         }
 
         public void removeAttribute(String name, int scope) {
@@ -433,11 +431,15 @@ public class JspProcessor extends TemplateProcessorSupport
                 throw new IllegalArgumentException();
             }
 
-            if (useTop(name, scope)) {
-                removeAttributeFromPageTop(name);
+            if (useCurrent(name, scope)) {
+                getCurrentScope().removeAttribute(name);
             } else {
                 _context.removeAttribute(name, scope);
             }
+        }
+
+        public void removeAttribute(String name) {
+            getCurrentScope().removeAttribute(name);
         }
 
         public void setAttribute(String name, Object value, int scope) {
@@ -445,11 +447,34 @@ public class JspProcessor extends TemplateProcessorSupport
                 throw new IllegalArgumentException();
             }
 
-            if (useTop(name, scope)) {
-                setAttributeOnPageTop(name, value);
+            if (useCurrent(name, scope)) {
+                getCurrentScope().setAttribute(name, value);
             } else {
                 _context.setAttribute(name, value, scope);
             }
+        }
+
+        public void setAttribute(String name, Object value) {
+            getCurrentScope().setAttribute(name, value);
+        }
+
+        public Object getAttribute(String name, int scope) {
+            if (name == null) {
+                throw new IllegalArgumentException();
+            }
+
+            if (useCurrent(name, scope)) {
+                return getCurrentScope().getAttribute(name);
+            }
+            return _context.getAttribute(name, scope);
+        }
+
+        public Object getAttribute(String name) {
+            return getCurrentScope().getAttribute(name);
+        }
+
+        public Object findAttribute(String name) {
+            return _context.findAttribute(name);
         }
 
         public void initialize(Servlet servlet, ServletRequest request,
@@ -515,26 +540,6 @@ public class JspProcessor extends TemplateProcessorSupport
         public void handlePageException(Throwable t)
                 throws ServletException, IOException {
             _context.handlePageException(t);
-        }
-
-        public void setAttribute(String name, Object value) {
-            _context.setAttribute(name, value);
-        }
-
-        public Object getAttribute(String name) {
-            return _context.getAttribute(name);
-        }
-
-        public Object getAttribute(String name, int scope) {
-            return _context.getAttribute(name, scope);
-        }
-
-        public Object findAttribute(String name) {
-            return _context.findAttribute(name);
-        }
-
-        public void removeAttribute(String name) {
-            _context.removeAttribute(name);
         }
 
         public int getAttributesScope(String name) {

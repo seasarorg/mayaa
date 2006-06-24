@@ -35,18 +35,18 @@ public class PathAdjusterImpl
     public PathAdjusterImpl() {
         this(new String[][] {
             { "a", "href" },
-            { "link", "href" },
-            { "area", "href" },
-            { "base", "href" },
             { "img", "src" },
-            { "embed", "src" },
+            { "link", "href" },
+            { "script", "src" },
+            { "form", "action" },
+            { "area", "href" },
             { "iframe", "src" },
             { "frame", "src" },
             { "frame", "longdesc" },
-            { "script", "src" },
+            { "embed", "src" },
             { "applet", "code" },
-            { "form", "action" },
-            { "object", "data" }
+            { "object", "data" },
+            { "base", "href" }
         });
     }
 
@@ -83,12 +83,15 @@ public class PathAdjusterImpl
             return false;
         }
 
-        String nodeLocal = nodeName.getLocalName().toLowerCase();
-        String attributeLocal = attributeName.getLocalName().toLowerCase();
-        for (int i = 0; i < _adjustTarget.length; i++) {
-            if (_adjustTarget[i][0].equals(nodeLocal)
-                    && _adjustTarget[i][1].equals(attributeLocal)) {
-                return true;
+        String uri = attributeName.getNamespaceURI();
+        if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
+            String nodeLocal = nodeName.getLocalName().toLowerCase();
+            String attributeLocal = attributeName.getLocalName().toLowerCase();
+            for (int i = 0; i < _adjustTarget.length; i++) {
+                if (_adjustTarget[i][0].equals(nodeLocal)
+                        && _adjustTarget[i][1].equals(attributeLocal)) {
+                    return true;
+                }
             }
         }
         return false;

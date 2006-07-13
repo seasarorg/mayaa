@@ -160,11 +160,14 @@ public class EngineImpl extends SpecificationImpl
 
     public void handleError(Throwable t, boolean pageFlush) {
         t = removeWrapperRuntimeException(t);
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
         try {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.setHandledError(t);
             getErrorHandler().doErrorHandle(t, pageFlush);
-            cycle.setHandledError(null);
+        } catch (RenderingTerminated ignore) {
+            // do nothing.
+        } catch (PageForwarded ignore) {
+            // do nothing.
         } catch (Throwable internal) {
             if (LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
@@ -175,6 +178,8 @@ public class EngineImpl extends SpecificationImpl
                 throw (RuntimeException) t;
             }
             throw new RuntimeException(t);
+        } finally {
+            cycle.setHandledError(null);
         }
     }
 

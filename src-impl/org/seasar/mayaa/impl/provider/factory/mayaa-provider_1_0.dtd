@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!NOTATION mayaa.conf_1_0 PUBLIC
+        "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN">
+
+<!ELEMENT provider (description?, engine?, scriptEnvironment?, 
+		specificationBuilder?, libraryManager?, templateBuilder?,
+		pathAdjuster?, templateAttributeReader?, parameter*) >
+<!ATTLIST provider class CDATA #IMPLIED>
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>
+
+<!ELEMENT engine (description?, errorHandler?, parameter*)>
+<!ATTLIST engine class CDATA #IMPLIED>
+
+<!ELEMENT errorHandler (description?, parameter*)>
+<!ATTLIST errorHandler class CDATA #IMPLIED>
+
+<!ELEMENT scriptEnvironment (description?, scope*, parameter*)>
+<!ATTLIST scriptEnvironment class CDATA #IMPLIED>
+
+<!ELEMENT scope (description?, parameter*)>
+<!ATTLIST scope class CDATA #REQUIRED>
+
+<!ELEMENT specificationBuilder (description?, parameter*)>
+<!ATTLIST specificationBuilder class CDATA #IMPLIED>
+
+<!ELEMENT libraryManager (description?, 
+		converter*, scanner*, builder*, parameter*)>
+<!ATTLIST libraryManager class CDATA #IMPLIED>
+
+<!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter name CDATA #IMPLIED>
+<!ATTLIST converter class CDATA #REQUIRED>
+
+<!ELEMENT scanner (description?, parameter*)>
+<!ATTLIST scanner class CDATA #REQUIRED>
+
+<!ELEMENT builder (description?, parameter*)>
+<!ATTLIST builder class CDATA #REQUIRED>
+
+<!ELEMENT templateBuilder (description?, resolver*, parameter*)>
+<!ATTLIST templateBuilder class CDATA #IMPLIED>
+
+<!ELEMENT resolver (description?, parameter*)>
+<!ATTLIST resolver class CDATA #REQUIRED>
+
+<!ELEMENT pathAdjuster (description?, parameter*)>
+<!ATTLIST pathAdjuster class CDATA #IMPLIED>
+
+<!ELEMENT ignoreAttribute (description?)>
+<!ATTLIST ignoreAttribute qName CDATA #REQUIRED>
+<!ATTLIST ignoreAttribute attribute CDATA #REQUIRED>
+
+<!ELEMENT aliasAttribute (description?)>
+<!ATTLIST aliasAttribute qName CDATA #REQUIRED>
+<!ATTLIST aliasAttribute attribute CDATA #REQUIRED>
+<!ATTLIST aliasAttribute templateAttribute CDATA #REQUIRED>
+
+<!ELEMENT templateAttributeReader (description?,
+		ignoreAttribute*, aliasAttribute*, parameter*)>
+<!ATTLIST templateAttributeReader class CDATA #IMPLIED>

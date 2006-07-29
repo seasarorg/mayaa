@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!NOTATION mld_1_0 PUBLIC
+        "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN">
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>
+
+<!ELEMENT library (description?, 
+		converter*, propertySet*, processor*, parameter*)>
+<!ATTLIST library uri CDATA #REQUIRED>
+
+<!ELEMENT propertySet (description?, property*)>
+<!ATTLIST propertySet name CDATA #REQUIRED>
+
+<!ELEMENT processor (description?, property*, propertySet*, parameter*)>
+<!ATTLIST processor name CDATA #REQUIRED>
+<!ATTLIST processor class CDATA #REQUIRED>
+
+<!ELEMENT property (description?, converter?, parameter*)>
+<!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST property implName CDATA #IMPLIED>
+<!ATTLIST property expectedClass CDATA #IMPLIED>
+<!ATTLIST property required (true | false) "false">
+<!ATTLIST property default CDATA  #IMPLIED>
+<!ATTLIST property final CDATA  #IMPLIED>
+<!ATTLIST property converterName CDATA  #IMPLIED>
+
+<!ELEMENT converter (description?, parameter*)>
+<!ATTLIST converter name CDATA #IMPLIED>
+<!ATTLIST converter class CDATA #REQUIRED>

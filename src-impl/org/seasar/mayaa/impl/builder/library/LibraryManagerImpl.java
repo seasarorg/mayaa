@@ -33,9 +33,11 @@ import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -46,6 +48,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class LibraryManagerImpl extends ParameterAwareImpl
         implements LibraryManager {
 
+    private static final long serialVersionUID = -2346419518053103604L;
     private static final Log LOG = LogFactory.getLog(LibraryManagerImpl.class);
 
     private List _scanners;
@@ -143,28 +146,27 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 
     protected void buildAll() {
         _libraries = new ArrayList();
-        Set systemIDs = new HashSet();
+        Set builtLibraries = new HashSet();
         for (int i = 0; i < _scanners.size(); i++) {
             SourceScanner scanner = (SourceScanner) _scanners.get(i);
             for (Iterator it = scanner.scan(); it.hasNext();) {
                 SourceDescriptor source = (SourceDescriptor) it.next();
-                /* pending.
-                if(systemIDs.contains(source.getSystemID())) {
-                    continue;
-                }
-                */
                 boolean built = false;
                 for (int k = 0; k < _builders.size(); k++) {
                     DefinitionBuilder builder =
                         (DefinitionBuilder) _builders.get(k);
                     LibraryDefinition library = builder.build(source);
                     if (library != null) {
-                        _libraries.add(library);
-                        systemIDs.add(library.getSystemID());
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info(StringUtil.getMessage(
-                                LibraryManagerImpl.class, 4,
-                                source.getSystemID(), library.getNamespaceURI()));
+                        if (builtLibraries.contains(
+                                library.getNamespaceURI()) == false) {
+                            _libraries.add(library);
+                            builtLibraries.add(library.getNamespaceURI());
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info(StringUtil.getMessage(
+                                    LibraryManagerImpl.class, 4,
+                                    source.getSystemID(),
+                                    String.valueOf(library.getNamespaceURI())));
+                            }
                         }
                         built = true;
                         break;
@@ -190,15 +192,16 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         for (int j = 0; j < _libraries.size(); j++) {
             LibraryDefinition library = (LibraryDefinition) _libraries.get(j);
             for (Iterator it = library.iterateAssignedURI(); it.hasNext();) {
-                String uri = (String) it.next();
-                if (realPath.equals(uri)) {
-                    library.addAssignedURI(
+                URI uri = (URI) it.next();
+                if (realPath.equals(String.valueOf(uri))) {
+                    URI assignedURI = SpecificationUtil.createURI(
                             source.getParameter(SourceAlias.ALIAS));
+                    library.addAssignedURI(assignedURI);
                     if (LOG.isInfoEnabled()) {
                         LOG.info(StringUtil.getMessage(
                             LibraryManagerImpl.class, 4,
                             library.getNamespaceURI() + " (alias)",
-                            source.getParameter(SourceAlias.ALIAS)));
+                            String.valueOf(assignedURI)));
                     }
                     return;
                 }
@@ -211,7 +214,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         return _libraries.iterator();
     }
 
-    public Iterator iterateLibraryDefinition(String namespaceURI) {
+    public Iterator iterateLibraryDefinition(URI namespaceURI) {
         if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
@@ -223,7 +226,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         if (qName == null) {
             throw new IllegalArgumentException();
         }
-        String namespaceURI = qName.getNamespaceURI();
+        URI namespaceURI = qName.getNamespaceURI();
         String localName = qName.getLocalName();
         for (Iterator it = iterateLibraryDefinition(namespaceURI);
                 it.hasNext();)  {
@@ -242,10 +245,10 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     private class LibraryDefinitionFilteredIterator
             extends AbstractScanningIterator {
 
-        private String _namespaceURI;
+        private URI _namespaceURI;
 
         public LibraryDefinitionFilteredIterator(
-                String namespaceURI, Iterator iterator) {
+                URI namespaceURI, Iterator iterator) {
             super(iterator);
             if (StringUtil.isEmpty(namespaceURI)) {
                 throw new IllegalArgumentException();

@@ -25,6 +25,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TLDLibraryDefinition extends LibraryDefinitionImpl {
 
+    private static final long serialVersionUID = -884212661730904120L;
     private static final String VERSION_JSP;
 
     static {

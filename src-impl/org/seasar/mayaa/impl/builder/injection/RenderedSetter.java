@@ -32,6 +32,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class RenderedSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = 1350199548908128291L;
     protected static final QName QM_NULL =
         SpecificationUtil.createQName("null");
     protected static final QName QM_RENDERED =

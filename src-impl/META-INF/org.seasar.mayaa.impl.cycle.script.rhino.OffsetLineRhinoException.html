@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 		<title>${ handledError.getClass().getName() }</title>
 	</head>
-	<body m:inject="m:exec"
+	<body m:replace="false" m:inject="m:exec"
 			m:script="${ var msg = handledError.emphasizeDetails(); if(!msg) { msg = handledError.message; if(msg == null) { msg = handledError.getClass().getName(); } } }">
 		<h1 style="white-space: pre;"><span m:inject="m:write" m:value="${ msg }" m:escapeXml="false">エラーメッセージ</span></h1>
 		<h3>properties:</h3>

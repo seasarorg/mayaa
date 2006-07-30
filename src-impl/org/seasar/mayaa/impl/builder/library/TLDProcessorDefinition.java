@@ -37,6 +37,8 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
+    private static final long serialVersionUID = -646585734601397162L;
+
     private Class _tagClass;
     private Class _teiClass;
 

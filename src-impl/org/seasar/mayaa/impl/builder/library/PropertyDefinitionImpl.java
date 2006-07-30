@@ -41,6 +41,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PropertyDefinitionImpl extends ParameterAwareImpl
         implements PropertyDefinition, CONST_IMPL {
 
+    private static final long serialVersionUID = -9121229054380668801L;
     private static final Log LOG =
         LogFactory.getLog(PropertyDefinitionImpl.class);
 
@@ -168,7 +169,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 
     protected Class getPropertyClass(ProcessorDefinition processorDef) {
         Class processorClass = processorDef.getProcessorClass();
-        return ObjectUtil.getPropertyClass(processorClass, getName());
+        return ObjectUtil.getPropertyClass(processorClass, getImplName());
     }
 
     protected QName getQName(SpecificationNode node) {

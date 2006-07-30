@@ -18,11 +18,16 @@ package org.seasar.mayaa.engine.processor;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFinder;
+import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolverFinder;
+
 /**
  * プロセッサツリーを操作する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorTreeWalker extends Serializable {
+public interface ProcessorTreeWalker
+        extends ProcessorReferenceResolverFinder,
+                 NodeReferenceResolverFinder, Serializable {
 
     /**
      * プロセッサ実行スコープに、登録スクリプト変数を提供する。
@@ -33,9 +38,8 @@ public interface ProcessorTreeWalker extends Serializable {
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。
      * @param parent 親ProcessorTreeWalker
-     * @param index 親ProcessorTreeWalker内での子としてのインデックス値。
      */
-    void setParentProcessor(ProcessorTreeWalker parent, int index);
+    void setParentProcessor(ProcessorTreeWalker parent);
 
     /**
      * 子ProcessorTreeWalkerを追加する。このメソッドは、
@@ -45,10 +49,18 @@ public interface ProcessorTreeWalker extends Serializable {
     void addChildProcessor(ProcessorTreeWalker child);
 
     /**
-     * 親ProcessorTreeWalker内での子としてのインデックス値
-     * @return インデックス値
+     * 子ProcessorTreeWalkerを指定した位置に挿入して追加する。
+     * @param index インデックス値
+     * @param child 子ProcessorTreeWalker
      */
-    int getIndex();
+    void insertProcessor(int index, ProcessorTreeWalker child);
+    
+    /**
+     * 子ProcessorTreeWalkerを削除する。
+     * @param child 子ProcessorTreeWalker
+     * @return 削除した場合はtrue。存在しなかった場合はfalseを返す。
+     */
+    boolean removeProcessor(ProcessorTreeWalker child);
 
     /**
      * 親ProcessorTreeWalkerを取得する。

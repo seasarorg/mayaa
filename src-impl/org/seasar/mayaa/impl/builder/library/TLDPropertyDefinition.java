@@ -34,6 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 
+    private static final long serialVersionUID = -2999228650173085084L;
     private static final Log LOG =
         LogFactory.getLog(TLDPropertyDefinition.class);
 

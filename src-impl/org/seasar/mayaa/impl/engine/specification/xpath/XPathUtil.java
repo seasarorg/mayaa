@@ -18,6 +18,8 @@ package org.seasar.mayaa.impl.engine.specification.xpath;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jaxen.Context;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
@@ -35,11 +37,13 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class XPathUtil {
+    private static final Log LOG = LogFactory.getLog(XPathUtil.class);
 
     private XPathUtil() {
         // no instantiation.
@@ -75,6 +79,10 @@ public class XPathUtil {
     public static Iterator selectChildNodes(SpecificationNode node,
             String xpathExpr, Namespace namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
+        if (specification == null) {
+            LOG.warn("node top is not specification." + node.toString());
+            return NullIterator.getInstance();
+        }
         if (StringUtil.isEmpty(xpathExpr)) {
             throw new IllegalArgumentException();
         }

@@ -31,6 +31,7 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
@@ -42,11 +43,11 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
-
+    private static final long serialVersionUID = -4067264733660357274L;
     private static Scriptable _standardObjects;
-    private static ThreadLocal _parent = new ThreadLocal();
 
-    private WrapFactory _wrap;
+    // singleton
+    private static transient WrapFactory _wrap;
 
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
@@ -57,7 +58,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new TextCompiledScriptImpl(text, _wrap, position, offsetLine);
+        return new TextCompiledScriptImpl(text, position, offsetLine);
     }
 
     // ScriptEnvironment implements ----------------------------------
@@ -77,10 +78,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (source == null) {
             throw new IllegalArgumentException();
         }
-        return new SourceCompiledScriptImpl(source, encoding, _wrap);
+        return new SourceCompiledScriptImpl(source, encoding);
     }
 
-    protected Scriptable getStandardObjects() {
+    protected static Scriptable getStandardObjects() {
         if (_standardObjects == null) {
             Context cx = Context.enter();
             try {
@@ -91,11 +92,33 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         return _standardObjects;
     }
+    
+    private static final String PARENT_SCRIPTABLE_KEY =
+        ScriptEnvironmentImpl.class.getName() + "#parentScriptable";
+    static {
+        CycleUtil.registVariableFactory(PARENT_SCRIPTABLE_KEY,
+                new DefaultCycleLocalInstantiator() {
+                    public Object create(Object[] params) {
+                        ServiceCycle cycle = CycleUtil.getServiceCycle();
+                        Scriptable parent;
+                        Context cx = RhinoUtil.enter();
+                        try {
+                            Scriptable standard = getStandardObjects();
+                            parent = cx.getWrapFactory().wrapAsJavaObject(
+                                    cx, standard, cycle, ServiceCycle.class);
+                        } finally {
+                            Context.exit();
+                        }
+                        return parent;
+                        
+                    }
+                });
+    }
 
     public void initScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.setPageScope(null);
-        _parent.set(null);
+        CycleUtil.clearGlobalVariable(PARENT_SCRIPTABLE_KEY);
     }
 
     public void startScope(Map variables) {
@@ -103,18 +126,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
         if (scope == null) {
-            parent = (Scriptable) _parent.get();
-            if (parent == null) {
-                Context cx = RhinoUtil.enter(_wrap);
-                try {
-                    Scriptable standard = getStandardObjects();
-                    parent = cx.getWrapFactory().wrapAsJavaObject(
-                            cx, standard, cycle, ServiceCycle.class);
-                } finally {
-                    Context.exit();
-                }
-                _parent.set(parent);
-            }
+            parent = (Scriptable) CycleUtil.getGlobalVariable(PARENT_SCRIPTABLE_KEY, null);
         } else if (scope instanceof PageAttributeScope) {
             PageAttributeScope pageTop = (PageAttributeScope) scope; 
             parent = (PageAttributeScope)pageTop.getAttribute(
@@ -125,7 +137,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         PageAttributeScope pageScope = new PageAttributeScope();
         pageScope.setParentScope(parent);
         if (variables != null) {
-            RhinoUtil.enter(_wrap);
+            RhinoUtil.enter();
             try {
                 for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
                     String name = it.next().toString();
@@ -181,6 +193,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
 
         return result;
+    }
+    
+    static WrapFactory getWrapFactory() {
+        return _wrap;
     }
 
     // Parameterizable implements ------------------------------------

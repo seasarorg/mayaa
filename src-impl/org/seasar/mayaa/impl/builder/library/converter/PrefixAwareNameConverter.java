@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.builder.library.converter;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
@@ -27,11 +29,13 @@ import org.seasar.mayaa.impl.builder.BuilderUtil;
 public class PrefixAwareNameConverter
         extends ParameterAwareImpl implements PropertyConverter {
 
+    private static final long serialVersionUID = 7617633992522264452L;
+
     public Class getPropetyClass() {
         return PrefixAwareName.class;
     }
 
-    public Object convert(
+    public Serializable convert(
             NodeAttribute attribute, String value, Class expectedClass) {
         if (attribute == null || value == null) {
             throw new IllegalArgumentException();

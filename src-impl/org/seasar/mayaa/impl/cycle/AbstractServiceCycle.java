@@ -15,8 +15,12 @@
  */
 package org.seasar.mayaa.impl.cycle;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -25,12 +29,12 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
+import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -39,7 +43,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle {
 
-    private static final WeakValueHashMap _scriptCache = new WeakValueHashMap();
+    private static final ReferenceMap _scriptCache =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -103,32 +108,65 @@ public abstract class AbstractServiceCycle
         return new ScopeIterator(this, it);
     }
 
-    public boolean hasAttributeScope(String scopeName) {
-        if (StringUtil.isEmpty(scopeName)) {
+    private static String ATTRIBUTE_SCOPE_CACHE_KEY = "ATTRIBUTE_SCOPE_CACHE";
+    static {
+        CycleUtil.registVariableFactory(ATTRIBUTE_SCOPE_CACHE_KEY,
+                new DefaultCycleLocalInstantiator() {
+                    public Object create(Object[] params) {
+                        return new HashMap();
+                    }
+                });
+    }
+
+    private Map getAttributeScopeCacheMap() {
+        return (Map) CycleUtil.getGlobalVariable(ATTRIBUTE_SCOPE_CACHE_KEY, null);
+    }
+
+    public AttributeScope findAttributeScope(String scopeName) {
+        boolean currentPageScope = false;
+        if (scopeName == null) {
+            currentPageScope = true;
             scopeName = ServiceCycle.SCOPE_PAGE;
         }
-        for (Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
-                it.hasNext();) {
+        if (currentPageScope == false
+                && getAttributeScopeCacheMap().containsKey(scopeName)) {
+            return (AttributeScope) getAttributeScopeCacheMap().get(scopeName);
+        }
+        for (Iterator it = iterateAttributeScope(); it.hasNext();) {
             AttributeScope scope = (AttributeScope) it.next();
             if (scope.getScopeName().equals(scopeName)) {
-                return true;
+                if (currentPageScope) {
+                    scope =
+                        (AttributeScope)scope.getAttribute(
+                                PageAttributeScope.KEY_CURRENT);
+                    return scope;
+                }
+                getAttributeScopeCacheMap().put(scopeName, scope);
+                return scope;
             }
         }
-        return false;
+        getAttributeScopeCacheMap().put(scopeName, null);
+        return null;
+    }
+
+    public boolean hasAttributeScope(String scopeName) {
+        if (StringUtil.isEmpty(scopeName)) {
+            //scopeName = ServiceCycle.SCOPE_PAGE;
+            scopeName = null;
+        }
+        return findAttributeScope(scopeName) != null;
     }
 
     public AttributeScope getAttributeScope(String scopeName) {
         if (StringUtil.isEmpty(scopeName)) {
-            scopeName = ServiceCycle.SCOPE_PAGE;
+            //scopeName = ServiceCycle.SCOPE_PAGE;
+            scopeName = null;
         }
-        for (Iterator it = CycleUtil.getServiceCycle().iterateAttributeScope();
-                it.hasNext();) {
-            AttributeScope scope = (AttributeScope) it.next();
-            if (scope.getScopeName().equals(scopeName)) {
-                return scope;
-            }
+        AttributeScope result = findAttributeScope(scopeName);
+        if (result == null) {
+            throw new ScopeNotFoundException(scopeName);
         }
-        throw new ScopeNotFoundException(scopeName);
+        return result;
     }
 
     public void setPageScope(AttributeScope page) {

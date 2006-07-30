@@ -29,6 +29,7 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.PropertySet;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -40,10 +41,11 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class LibraryDefinitionImpl extends ParameterAwareImpl
         implements LibraryDefinition {
 
+    private static final long serialVersionUID = -2112164511711535994L;
     private static final Log LOG =
         LogFactory.getLog(LibraryDefinitionImpl.class);
 
-    private String _namespaceURI;
+    private URI _namespaceURI;
     private List _assignedURI = new ArrayList();
     private Map _converters;
     private Map _propertySets;
@@ -61,18 +63,18 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         return _systemID;
     }
 
-    public void setNamespaceURI(String namespaceURI) {
+    public void setNamespaceURI(URI namespaceURI) {
         if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
         _namespaceURI = namespaceURI;
     }
 
-    public String getNamespaceURI() {
+    public URI getNamespaceURI() {
         return _namespaceURI;
     }
 
-    public void addAssignedURI(String assignedURI) {
+    public void addAssignedURI(URI assignedURI) {
         if (StringUtil.isEmpty(assignedURI)) {
             throw new IllegalArgumentException();
         }

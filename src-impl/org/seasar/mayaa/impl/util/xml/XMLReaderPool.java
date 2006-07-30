@@ -36,9 +36,9 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
     private static XMLReaderPool _xmlReaderPool;
 
     public static XMLReaderPool getPool() {
-        if (_xmlReaderPool == null) {
+//        if (_xmlReaderPool == null) {
             _xmlReaderPool = new XMLReaderPool();
-        }
+//        }
         return _xmlReaderPool;
     }
 

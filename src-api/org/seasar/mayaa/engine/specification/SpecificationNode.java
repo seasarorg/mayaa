@@ -65,6 +65,18 @@ public interface SpecificationNode
     Iterator iterateAttribute();
 
     /**
+     * 属性の削除。
+     * @param qName 削除する属性のQName。
+     * @return 設定していたオブジェクト。存在しなかった場合はヌルを返す。
+     */
+    NodeAttribute removeAttribute(QName qName);
+    
+    /**
+     * 属性を全て削除する。
+     */
+    void clearAttributes();
+
+    /**
      * 自分のコピーを生成して返す。ただし、親ノードは設定されていない。
      * @return 自分のコピー。
      */

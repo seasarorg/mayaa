@@ -15,57 +15,42 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import org.seasar.mayaa.builder.library.LibraryManager;
+import org.mozilla.javascript.Undefined;
+import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
-import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CharactersProcessor extends TemplateProcessorSupport {
+public class CharactersProcessor extends TemplateProcessorSupport
+        implements CONST_IMPL {
 
     private static final long serialVersionUID = 2054159396651833214L;
+
+    private ProcessorProperty _text;
 
     public CharactersProcessor() {
         // doNothing
     }
 
-    public CharactersProcessor(CharactersProcessor copy, String text) {
-        this(copy, copy.getText(), text);
+    public CharactersProcessor(CharactersProcessor share, String text) {
+        this(share.getText(), text);
     }
-
-    private static final QName CHARACTERS =
-        SpecificationUtil.createQName("characters");
-
-    public CharactersProcessor(
-            TemplateProcessorSupport copy, ProcessorProperty prop, String text) {
-        setOriginalNode(copy.getOriginalNode());
-        setInjectedNode(copy.getInjectedNode());
-        setEvalBodyInclude(copy.isEvalBodyInclude());
-        if (copy.getParentProcessor() != null) {
-            setParentProcessor(copy.getParentProcessor(), copy.getIndex());
-        }
-        try {
-            setProcessorDefinition(copy.getProcessorDefinition());
-        } catch(IllegalStateException e) {
-            // doNothing
-        }
+    
+    public CharactersProcessor(ProcessorProperty prop, String text) {
         ProcessorProperty propCopy = new ProcessorPropertyImpl(
                 prop.getName(), text, prop.getValue().getExpectedClass());
         setText(propCopy);
-        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-        setProcessorDefinition(libraryManager.getProcessorDefinition(CHARACTERS));
     }
-
-    private ProcessorProperty _text;
 
     public void setText(ProcessorProperty text) {
         _text = text;
@@ -83,21 +68,29 @@ public class CharactersProcessor extends TemplateProcessorSupport {
         } finally {
             SpecificationUtil.startScope(this.getVariables());
         }
-        if (value != null) {
+        if (value != null && value instanceof Undefined == false) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(value.toString());
         }
         return ProcessStatus.SKIP_BODY;
     }
 
-    public ProcessorTreeWalker[] divide() {
+    public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
+        if (getOriginalNode().getQName().equals(QM_CHARACTERS) == false) {
+            return new ProcessorTreeWalker[] { this };
+        }
         CompiledScript script = getText().getValue();
         if (script.isLiteral()) {
-            return new ProcessorTreeWalker[] {
-                    new LiteralCharactersProcessor(this, script.getScriptText())
-            };
+            LiteralCharactersProcessor literal =
+                new LiteralCharactersProcessor(script.getScriptText());
+            BuilderUtil.characterProcessorCopy(this, literal, sequenceIDGenerator);
+            return new ProcessorTreeWalker[] { literal };
         }
-        return super.divide();
+        return super.divide(sequenceIDGenerator);
     }
 
+    public void kill() {
+        _text = null;
+        super.kill();
+    }
 }

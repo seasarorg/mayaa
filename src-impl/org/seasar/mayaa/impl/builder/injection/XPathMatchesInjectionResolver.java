@@ -36,6 +36,7 @@ import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
 public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = -5357509098529015227L;
     protected static final QName QM_XPATH =
         SpecificationUtil.createQName("xpath");
 

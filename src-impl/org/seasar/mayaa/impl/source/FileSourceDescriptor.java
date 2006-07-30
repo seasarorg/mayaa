@@ -66,7 +66,7 @@ public class FileSourceDescriptor
     
     public boolean exists() {
         if (_file == null) {
-            String realPath = getRealPath(); 
+            String realPath = getRealPath();
             if (StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
                  if (file.exists()) {

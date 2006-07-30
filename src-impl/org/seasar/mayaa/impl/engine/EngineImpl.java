@@ -18,8 +18,9 @@ package org.seasar.mayaa.impl.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,12 +39,15 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.impl.util.DateFormatPool;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -56,17 +60,27 @@ public class EngineImpl extends SpecificationImpl
         implements Engine, CONST_IMPL {
 
     private static final long serialVersionUID = 1428444571422324206L;
-    private static final Log LOG = LogFactory.getLog(EngineImpl.class);
     private static final String DEFAULT_SPECIFICATION = "defaultSpecification";
     private static final String PAGE_CLASS = "pageClass";
     private static final String TEMPLATE_CLASS = "templateClass";
+    private static final String PAGE_SERIALIZE = "pageSerialize";
+    private static final String SURVIVE_LIMIT = "surviveLimit";
+    private static final String MAYAA_EXTENSION = ".mayaa";
+    private static final boolean DEFAULT_PAGE_SERIALIZE = true;
+    static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
-    private ErrorHandler _errorHandler;
-    private List _pages;
-    private String _defaultSpecification = "";
+    private transient Specification _defaultSpecification;
+    private transient ErrorHandler _errorHandler;
+    private transient SpecificationCache _specCache;
+    private String _defaultSpecificationID = "";
     private List _templatePathPatterns;
     private Class _pageClass = PageImpl.class;
     private Class _templateClass = TemplateImpl.class;
+    private int _surviveLimit = 5;
+
+    public EngineImpl() {
+        setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
+    }
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         _errorHandler = errorHandler;
@@ -79,46 +93,19 @@ public class EngineImpl extends SpecificationImpl
         return _errorHandler;
     }
 
-    protected Page findPageFromCache(String pageName) {
-        if (_pages != null) {
-            synchronized (_pages) {
-                for (Iterator it = new ChildSpecificationsIterator(_pages);
-                        it.hasNext();) {
-                    Object child = it.next();
-                    if (child instanceof Page) {
-                        Page page = (Page) child;
-                        synchronized (page) {
-                            String name = page.getPageName();
-                            if (pageName.equals(name)) {
-                                page.checkTimestamp();
-                                return page;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+    public Specification findSpecificationFromCache(String systemID) {
+        return getCache().get(systemID);
     }
 
-    protected Page createNewPage(String pageName) {
-        Page page = createPageInstance(pageName);
-        String path = pageName + ".mayaa";
-        SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
-        page.setSource(source);
-        return page;
+    protected Page findPageFromCache(String pageName) {
+        return (Page) findSpecificationFromCache(pageName + MAYAA_EXTENSION);
     }
 
     public Page getPage(String pageName) {
         synchronized (this) {
             Page page = findPageFromCache(pageName);
             if (page == null) {
-                page = createNewPage(pageName);
-                if (_pages == null) {
-                    _pages = new ArrayList();
-                }
-                page.checkTimestamp();
-                _pages.add(new SoftReference(page));
+                page = createPageInstance(pageName);
             }
             return page;
         }
@@ -126,7 +113,7 @@ public class EngineImpl extends SpecificationImpl
 
     public boolean isPageRequested() {
         RequestScope request = CycleUtil.getRequestScope();
-        if ("mayaa".equals(request.getExtension())) {
+        if (QM_MAYAA.getLocalName().equals(request.getExtension())) {
             return true;
         }
 
@@ -160,16 +147,27 @@ public class EngineImpl extends SpecificationImpl
 
     public void handleError(Throwable t, boolean pageFlush) {
         t = removeWrapperRuntimeException(t);
+        // client abort ‚Ío—Í‚µ‚æ‚¤‚ª‚È‚¢‚Ì‚Å–³Ž‹
+        if (t instanceof IOException) {
+            if (isClientAbortException((IOException)t)) {
+                return;
+            }
+        }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         try {
             cycle.setHandledError(t);
             getErrorHandler().doErrorHandle(t, pageFlush);
         } catch (RenderingTerminated ignore) {
             // do nothing.
-        } catch (PageForwarded ignore) {
-            // do nothing.
+        } catch (PageForwarded pf) {
+            // return page service
+            doPageService(CycleUtil.getServiceCycle(), null, pageFlush);
         } catch (Throwable internal) {
-            if (LOG.isFatalEnabled()) {
+            if (internal instanceof PageNotFoundException) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(t.getMessage());
+                }
+            } else if (LOG.isFatalEnabled()) {
                 String fatalMsg = StringUtil.getMessage(
                         EngineImpl.class, 0, internal.getMessage());
                 LOG.fatal(fatalMsg, internal);
@@ -189,9 +187,102 @@ public class EngineImpl extends SpecificationImpl
         cycle.setInjectedNode(this);
     }
 
+    public void build() {
+        synchronized(this) {
+            if (_defaultSpecification != null) {
+                if (_defaultSpecification.isDeprecated() == false) {
+                    return;
+                }
+                releaseDefaultSpecification();
+            }
+            if (StringUtil.hasValue(_defaultSpecificationID)) {
+                _defaultSpecification =
+                    createDefaultSpecification(_defaultSpecificationID);
+            }
+        }
+    }
+
+    // NodeTreeWalker override
+
+    public void addChildNode(NodeTreeWalker childNode) {
+        if (_defaultSpecification != null) {
+            _defaultSpecification.addChildNode(childNode);
+            return;
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public NodeTreeWalker getChildNode(int index) {
+        if (_defaultSpecification != null) {
+            return _defaultSpecification.getChildNode(index);
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public int getChildNodeSize() {
+        if (_defaultSpecification != null) {
+            return _defaultSpecification.getChildNodeSize();
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public void clearChildNodes() {
+        if (_defaultSpecification != null) {
+            _defaultSpecification.clearChildNodes();
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public void kill() {
+        super.kill();
+        releaseDefaultSpecification();
+    }
+
+    protected void releaseDefaultSpecification() {
+        if (_defaultSpecification != null) {
+            _defaultSpecification.kill();
+            _defaultSpecification = null;
+        }
+    }
+
+    public void insertChildNode(int index, NodeTreeWalker childNode) {
+        if (_defaultSpecification != null) {
+            _defaultSpecification.insertChildNode(index, childNode);
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean removeChildNode(NodeTreeWalker node) {
+        if (_defaultSpecification != null) {
+            _defaultSpecification.removeChildNode(node);
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public Iterator iterateChildNode() {
+        if (_defaultSpecification != null) {
+            return _defaultSpecification.iterateChildNode();
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    public Date getTimestamp() {
+        if (_defaultSpecification != null) {
+            return _defaultSpecification.getTimestamp();
+        }
+        return null;
+    }
+
+    public boolean isDeprecated() {
+        if (_defaultSpecification != null) {
+            return _defaultSpecification.isDeprecated();
+        }
+        return false;
+    }
+
     protected void doPageService(
             ServiceCycle cycle, Map pageScopeValues, boolean pageFlush) {
-        checkTimestamp();
+        build();
         try {
             boolean service = true;
             while (service) {
@@ -227,9 +318,9 @@ public class EngineImpl extends SpecificationImpl
                         response.flush();
                     }
                     service = false;
-                } catch (RenderingTerminated t) {
+                } catch (RenderingTerminated rt) {
                     service = false;
-                } catch (PageForwarded f) {
+                } catch (PageForwarded ignore) {
                     // do nothing.
                 }
             }
@@ -237,6 +328,7 @@ public class EngineImpl extends SpecificationImpl
             cycle.getResponse().clearBuffer();
             SpecificationUtil.initScope();
             handleError(t, pageFlush);
+            saveToCycle();
         }
     }
 
@@ -248,27 +340,70 @@ public class EngineImpl extends SpecificationImpl
         SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
 
         source.setSystemID(path);
+        String[] modifiedSinces = (String[])cycle.getRequestScope()
+            .getHeaderValues().getAttribute("If-Modified-Since");
+        if (modifiedSinces != null && modifiedSinces.length > 0) {
+            String modifiedSince = modifiedSinces[0];
+            Date sinceDate = null;
+            DateFormat format = DateFormatPool.borrowRFC1123Format();
+            try {
+                sinceDate = format.parse(modifiedSince);
+            } catch(ParseException e) {
+                DateFormat format2 = DateFormatPool.borrowRFC2822Format();
+                try {
+                    sinceDate = format2.parse(modifiedSince);
+                } catch(ParseException e2) {
+                    // give up
+                } finally {
+                    DateFormatPool.returnFormat(format2);
+                }
+            } finally {
+                DateFormatPool.returnFormat(format);
+            }
+            Date sourceTimestamp = new Date(
+                    source.getTimestamp().getTime() / 1000 * 1000);
+            if (sinceDate != null
+                    && sourceTimestamp.after(sinceDate) == false) {
+                cycle.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+        }
+
         InputStream stream = source.getInputStream();
         if (stream != null) {
+            DateFormat format = DateFormatPool.borrowRFC1123Format();
+            try {
+                cycle.getResponse().setHeader("Last-Modified",
+                        format.format(source.getTimestamp()));
+            } finally {
+                DateFormatPool.returnFormat(format);
+            }
             OutputStream out = cycle.getResponse().getOutputStream();
             try {
-                for (int i = stream.read(); i != -1; i = stream.read()) {
-                    out.write(i);
+                byte[] buffer = new byte[512];
+                int readln;
+                while ((readln = stream.read(buffer)) != -1) {
+                    out.write(buffer, 0, readln);
                 }
                 out.flush();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                if (isClientAbortException(e)) {
+                    stream = null;
+                } else {
+                    throw new RuntimeException(e);
+                }
             } finally {
-                IOUtil.close(stream);
+                if (stream != null) {
+                    IOUtil.close(stream);
+                }
             }
         } else {
             cycle.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
-    // TODO API‚Ì•ÏX‚É‡‚í‚¹‚Ä‚¢‚¸‚êíœ
-    public void doService(boolean pageFlush) {
-        doService(null, pageFlush);
+    protected boolean isClientAbortException(IOException e) {
+        return e.getClass().getName().indexOf("EOFException") >= 0;
     }
 
     public void doService(Map pageScopeValues, boolean pageFlush) {
@@ -280,17 +415,125 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    public Page createPageInstance(String pageName) {
-        Page page = (Page) ObjectUtil.newInstance(getPageClass());
-        page.initialize(pageName);
-        return page;
+    protected SpecificationCache getCache() {
+        if (_specCache == null) {
+            _specCache = new SpecificationCache(_surviveLimit);
+        }
+        return _specCache;
+    }
+
+    private static interface SpecificationGenerator {
+        Class getInstantiator(SourceDescriptor source);
+        void initialize(Specification instance);
+    }
+
+    protected Specification createSpecificationInstance(String systemID,
+            boolean registCache,
+            SpecificationGenerator generator) {
+        Specification spec;
+        if (isSpecificationSerialize()) {
+            spec = deserialize(systemID);
+            if (spec != null) {
+                if (spec.isDeprecated() == false) {
+                    if (registCache) {
+                        getCache().add(spec);
+                    }
+                    return spec;
+                }
+                spec.kill();
+            }
+        }
+        SourceDescriptor source =
+            SourceUtil.getSourceDescriptor(systemID);
+        Class specClass = generator.getInstantiator(source);
+        if (specClass == null) {
+            return null;
+        }
+        spec = (Specification) ObjectUtil.newInstance(specClass);
+        generator.initialize(spec);
+        if (spec instanceof SpecificationImpl) {
+            ((SpecificationImpl)spec).setSpecificationSerialize(
+                    isSpecificationSerialize());
+        }
+        spec.setSource(source);
+        spec.setSystemID(systemID);
+        try {
+            SpecificationUtil.startScope(null);
+            try {
+                spec.build();
+            } finally {
+                SpecificationUtil.endScope();
+            }
+        } catch(RuntimeException e) {
+            spec.kill();
+            throw e;
+        }
+        if (registCache) {
+            getCache().add(spec);
+        }
+        return spec;
+    }
+
+    public Specification createDefaultSpecification(final String systemID) {
+        return createSpecificationInstance(systemID, false,
+                new SpecificationGenerator() {
+                    public Class getInstantiator(SourceDescriptor source) {
+                        return SpecificationImpl.class;
+                    }
+                    public void initialize(Specification instance) {
+                        // no-op
+                    }
+                });
+    }
+
+    public Page createPageInstance(final String pageName) {
+        return (Page) createSpecificationInstance(
+                pageName + MAYAA_EXTENSION, true,
+                new SpecificationGenerator() {
+            public Class getInstantiator(SourceDescriptor source) {
+                return getPageClass();
+            }
+            public void initialize(Specification instance) {
+                ((Page) instance).initialize(pageName);
+            }
+        });
     }
 
     public Template createTemplateInstance(
-            Page page, String suffix, String extension) {
-        Template template = (Template) ObjectUtil.newInstance(getTemplateClass());
-        template.initialize(page, suffix, extension);
-        return template;
+            final Page page, final String suffix, final String extension) {
+        return (Template) createSpecificationInstance(
+                getTemplateID(page, suffix, extension), true,
+                new SpecificationGenerator() {
+            public Class getInstantiator(SourceDescriptor source) {
+                if (source.exists() == false) {
+                    return null;
+                }
+                return getTemplateClass();
+            }
+            public void initialize(Specification instance) {
+                ((Template) instance).initialize(page, suffix, extension);
+            }
+        });
+    }
+
+    public String getTemplateID(Page page, String suffix, String extension) {
+        StringBuffer name = new StringBuffer(page.getPageName());
+        if (StringUtil.hasValue(suffix)) {
+            String separator = EngineUtil.getEngineSetting(
+                    SUFFIX_SEPARATOR, "$");
+            name.append(separator).append(suffix);
+        }
+        if (StringUtil.hasValue(extension)) {
+            name.append(".").append(extension);
+        }
+        return name.toString();
+    }
+
+    protected void finalize() throws Throwable {
+        if (_specCache != null) {
+            _specCache.release();
+        }
+        super.finalize();
     }
 
     // Parameterizable implements ------------------------------------
@@ -300,7 +543,7 @@ public class EngineImpl extends SpecificationImpl
             SourceDescriptor source = new DelaySourceDescriptor();
             source.setSystemID(value);
             setSource(source);
-            _defaultSpecification = value;
+            _defaultSpecificationID = value;
         } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
@@ -333,13 +576,18 @@ public class EngineImpl extends SpecificationImpl
                     _templateClass = templateClass;
                 }
             }
+        } else if (PAGE_SERIALIZE.equals(name)) {
+            setSpecificationSerialize(
+                    Boolean.valueOf(value).booleanValue());
+        } else if (SURVIVE_LIMIT.equals(name)) {
+            _surviveLimit = Integer.parseInt(value);
         }
         super.setParameter(name, value);
     }
 
     public String getParameter(String name) {
         if (DEFAULT_SPECIFICATION.equals(name)) {
-            return _defaultSpecification;
+            return _defaultSpecificationID;
         } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
@@ -354,6 +602,10 @@ public class EngineImpl extends SpecificationImpl
             return _pageClass.getName();
         } else if (TEMPLATE_CLASS.equals(name)) {
             return _templateClass.getName();
+        } else if (PAGE_SERIALIZE.equals(name)) {
+            return String.valueOf(isSpecificationSerialize());
+        } else if (SURVIVE_LIMIT.equals(name)) {
+            return String.valueOf(_surviveLimit);
         }
         return super.getParameter(name);
     }
@@ -370,17 +622,17 @@ public class EngineImpl extends SpecificationImpl
         return sb.toString();
     }
 
-    private Class getPageClass() {
+    protected Class getPageClass() {
         return _pageClass;
     }
 
-    private Class getTemplateClass() {
+    protected Class getTemplateClass() {
         return _templateClass;
     }
 
     //---- support class
 
-    private class PathPattern {
+    private static class PathPattern {
         private Pattern _pattern;
         private boolean _result;
 

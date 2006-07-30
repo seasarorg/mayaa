@@ -21,6 +21,7 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -53,8 +54,8 @@ public class ExecProcessor extends TemplateProcessorSupport {
         if (_src != null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
 
-            String srcValue = (String) _src.getValue().execute(null);
-            String encValue = (String) _encoding.getValue().execute(null);
+            String srcValue = StringUtil.valueOf(_src.getValue().execute(null));
+            String encValue = StringUtil.valueOf(_encoding.getValue().execute(null));
 
             if (StringUtil.isRelativePath(srcValue)) {
                 String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
@@ -64,9 +65,20 @@ public class ExecProcessor extends TemplateProcessorSupport {
             cycle.load(srcValue, encValue);
         }
         if (_script != null) {
-            _script.getValue().execute(null);
+            SpecificationUtil.endScope();
+            try {
+                _script.getValue().execute(null);
+            } finally {
+                SpecificationUtil.startScope(getVariables());
+            }
         }
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
+    public void kill() {
+        _script = null;
+        _src = null;
+        _encoding = null;
+        super.kill();
+    }
 }

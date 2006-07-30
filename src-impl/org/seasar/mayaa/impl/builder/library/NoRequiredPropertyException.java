@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.builder.library;
 
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.MayaaException;
 
 /**
@@ -25,7 +26,7 @@ public class NoRequiredPropertyException extends MayaaException {
 
     private static final long serialVersionUID = -8388715165180536210L;
 
-    private final String _namespaceURI;
+    private final URI _namespaceURI;
     private final String _processorName;
     private final String _propertyName;
 
@@ -40,7 +41,7 @@ public class NoRequiredPropertyException extends MayaaException {
         }
     }
 
-    public String getNamespaceURI() {
+    public URI getNamespaceURI() {
         return _namespaceURI;
     }
 
@@ -53,7 +54,8 @@ public class NoRequiredPropertyException extends MayaaException {
     }
 
     protected String[] getMessageParams() {
-        return new String[] { _namespaceURI, _processorName, _propertyName };
+        return new String[] {
+                String.valueOf(_namespaceURI), _processorName, _propertyName };
     }
 
 }

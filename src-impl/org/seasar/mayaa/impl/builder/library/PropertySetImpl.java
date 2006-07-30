@@ -27,6 +27,7 @@ import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.builder.library.PropertyDefinition;
 import org.seasar.mayaa.builder.library.PropertySet;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
@@ -37,6 +38,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class PropertySetImpl extends ParameterAwareImpl
         implements PropertySet {
 
+    private static final long serialVersionUID = 6254708300179494624L;
     private static final Log LOG =
         LogFactory.getLog(PropertySetImpl.class);
 
@@ -105,14 +107,14 @@ public class PropertySetImpl extends ParameterAwareImpl
         }
     }
 
-    protected boolean contain(String namespaceURI, NodeAttribute attr) {
+    protected boolean contain(URI namespaceURI, NodeAttribute attr) {
         if (StringUtil.isEmpty(namespaceURI) || attr == null) {
             throw new IllegalArgumentException();
         }
         if (_propertyNames == null) {
             return false;
         }
-        String attrNS = attr.getQName().getNamespaceURI();
+        URI attrNS = attr.getQName().getNamespaceURI();
         String attrName = attr.getQName().getLocalName();
         return _propertyNames.contains(attrName)
                 && namespaceURI.equals(attrNS);

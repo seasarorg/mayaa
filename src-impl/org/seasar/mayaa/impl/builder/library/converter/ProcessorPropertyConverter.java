@@ -15,11 +15,15 @@
  */
 package org.seasar.mayaa.impl.builder.library.converter;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.processor.ProcessorPropertyImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -27,17 +31,22 @@ import org.seasar.mayaa.impl.engine.processor.ProcessorPropertyImpl;
 public class ProcessorPropertyConverter
         extends ParameterAwareImpl implements PropertyConverter {
 
+    private static final long serialVersionUID = -6093527316881781459L;
+
     public Class getPropetyClass() {
         return ProcessorProperty.class;
     }
 
-    public Object convert(
+    public Serializable convert(
             NodeAttribute attribute, String value, Class expectedClass) {
         if (attribute == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        return new ProcessorPropertyImpl(
-                attribute, value, expectedClass);
+        // メモリリークを引き起こす可能性があるので参照関係を断つ
+        PrefixAwareName prefixAwareName =
+            SpecificationUtil.createPrefixAwareName(
+                    attribute.getQName(), attribute.getPrefix());
+        return new ProcessorPropertyImpl(prefixAwareName, value, expectedClass);
     }
 
 }

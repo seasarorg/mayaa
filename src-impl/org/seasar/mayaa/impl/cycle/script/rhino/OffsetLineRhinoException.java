@@ -49,7 +49,7 @@ public class OffsetLineRhinoException extends EvaluatorException {
         String[] lines = message.split("\n");
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < lines.length; i++) {
-            if (i == (_offsetLine - 1)) {
+            if (i == _offsetLine) {
                 lines[i] = decorate(lines[i]);
             }
             sb.append(lines[i]);

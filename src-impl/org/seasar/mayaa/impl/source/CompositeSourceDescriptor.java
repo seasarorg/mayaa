@@ -32,6 +32,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     private static final long serialVersionUID = 7557914925525488748L;
 
     private List _descriptors = new ArrayList();
+    private SourceDescriptor _foundLast;
 
     public void addSourceDescriptor(SourceDescriptor source) {
         if (source == null) {
@@ -43,13 +44,24 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     }
 
     private SourceDescriptor findDescriptor() {
+        if (_foundLast != null && _foundLast.exists()) {
+            return _foundLast;
+        }
+        _foundLast = null;
         for (int i = 0; i < _descriptors.size(); i++) {
             SourceDescriptor descriptor = (SourceDescriptor) _descriptors.get(i);
             if (descriptor.exists()) {
+                _foundLast = descriptor;
                 return descriptor;
             }
         }
         return null;
+    }
+
+    public void setSystemID(String systemID) {
+        _foundLast = null;
+        _descriptors.clear();
+        super.setSystemID(systemID);
     }
 
     public boolean exists() {

@@ -15,10 +15,10 @@
  */
 package org.seasar.mayaa.engine.specification;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -26,7 +26,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Specification
-        extends NodeTreeWalker, ParameterAware, Serializable {
+        extends NodeTreeWalker, SequenceIDGenerator, ParameterAware {
 
     /**
      * 最終ビルド時を取得する。
@@ -47,13 +47,17 @@ public interface Specification
     SourceDescriptor getSource();
 
     /**
-     * ビルド例外発生時に、例外補足ブロックにおいて中途半端なビルド結果を殺す。
+     * スペック情報が廃止対象としてマークされているかどうかを返す。
+     * 古いソースでビルドされている場合と、未使用期間が一定の長さを
+     * 超えた場合に真となる。
+     * この値が真の時は、ノード構成やノード内容は保証されない。
+     * @return
      */
-    void kill();
+    boolean isDeprecated();
 
     /**
-     * ソースが更新されていたら再ビルドする。
+     * ソースビルドを行う。
      */
-    void checkTimestamp();
+    void build();
 
 }

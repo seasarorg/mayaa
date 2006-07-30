@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.cycle;
 
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.CycleFactory;
+import org.seasar.mayaa.cycle.CycleLocalInstantiator;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
@@ -39,6 +40,10 @@ public class CycleUtil {
         // singleton.
     }
 
+    public static boolean isInitialized() {
+        return _singleton._factory != null;
+    }
+
     public static CycleFactory getFactory() {
         if (_singleton._factory == null) {
             synchronized (_singleton) {
@@ -54,6 +59,38 @@ public class CycleUtil {
     public static void initialize(
             Object requestContext, Object responseContext) {
         getFactory().initialize(requestContext, responseContext);
+    }
+
+    public static void cycleFinalize() {
+        getFactory().cycleFinalize();
+    }
+
+    public static void registVariableFactory(String key, CycleLocalInstantiator instantiator) {
+        CycleThreadLocalFactory.registFactory(key, instantiator);
+    }
+
+    public static Object getGlobalVariable(String key, Object[] params) {
+        return getFactory().getLocalVariables().getGlobalVariable(key, params);
+    }
+
+    public static void setGlobalVariable(String key, Object value) {
+        getFactory().getLocalVariables().setGlobalVariable(key, value);
+    }
+
+    public static void clearGlobalVariable(String key) {
+        getFactory().getLocalVariables().clearGlobalVariable(key);
+    }
+
+    public static Object getLocalVariable(String key, Object owner, Object[] params) {
+        return getFactory().getLocalVariables().getVariable(key, owner, params);
+    }
+    
+    public static void setLocalVariable(String key, Object owner, Object value) {
+        getFactory().getLocalVariables().setVariable(key, owner, value);
+    }
+
+    public static void clearLocalVariable(String key, Object owner) {
+        getFactory().getLocalVariables().clearVariable(key, owner);
     }
 
     public static ServiceCycle getServiceCycle() {
@@ -72,13 +109,11 @@ public class CycleUtil {
     }
 
     public static RequestScope getRequestScope() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        return cycle.getRequestScope();
+        return getServiceCycle().getRequestScope();
     }
 
     public static Response getResponse() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        return cycle.getResponse();
+        return getServiceCycle().getResponse();
     }
 
     public static AttributeScope findStandardAttributeScope(String name) {
@@ -92,8 +127,19 @@ public class CycleUtil {
                 if (scope instanceof PageAttributeScope) {
                     scope = (AttributeScope)
                             scope.getAttribute(PageAttributeScope.KEY_CURRENT);
-                }
-                if (scope.hasAttribute(name)) {
+                    while (scope != null) {
+                        if (scope.hasAttribute(name)) {
+                            return scope;
+                        }
+                        Object parent =
+                            ((PageAttributeScope)scope).getParentScope();
+                        if (parent instanceof AttributeScope) {
+                            scope = (AttributeScope)parent;
+                        } else {
+                            scope = null;
+                        }
+                    }
+                } else if (scope.hasAttribute(name)) {
                     return scope;
                 }
             }

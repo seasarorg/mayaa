@@ -1,6 +1,8 @@
-<html xmlns:m="http://mayaa.seasar.org">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:m="http://mayaa.seasar.org"
+      xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 		<title>${ handledError.getClass().getName() }</title>
 	</head>
 	<body m:inject="m:exec"
@@ -8,9 +10,9 @@
 		<h1><span m:inject="m:write" m:value="${ msg }" m:escapeXml="false" m:escapeEol="true"></span></h1>
 		<h3>properties:</h3>
 		<p>
-			sourceName: ${ handledError.sourceName() }<br>
-			lineNumber: ${ handledError.lineNumber() }<br>
-			lineSource: ${ handledError.lineSource() }<br>
+			sourceName: ${ handledError.sourceName() }<br/>
+			lineNumber: ${ handledError.lineNumber() }<br/>
+			lineSource: ${ handledError.lineSource() }<br/>
 		</p>
 		<h3>stackTrace:</h3>
 		<p>
@@ -20,5 +22,6 @@
 				${ trace[i].className }.${ trace[i].methodName }(${ trace[i].lineNumber })<br>
 			</span>
 		</p>
+	    ${ response.setStatus(500); }
 	</body>
 </html>

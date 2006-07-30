@@ -15,9 +15,14 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
+
+import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -39,6 +44,21 @@ public class TLDScriptingVariableInfo {
             return false;
         }
 
+        VariableInfo variableInfo = findVariableInfo(name);
+        return variableInfo != null
+                && variableInfo.getScope() == VariableInfo.NESTED;
+    }
+    
+    public VariableInfo findVariableInfo(String name) {
+        for (Iterator it = variableInfos(); it.hasNext(); ) {
+            VariableInfo info = (VariableInfo)it.next();
+            if (name.equals(info.getVarName())) {
+                return info;
+            }
+        }
+        return null;
+    }
+    public Iterator variableInfos() {
         VariableInfo[] variableInfos;
         if (_hasDynamicName) {
             variableInfos = _tei.getVariableInfo(_tagData);
@@ -46,12 +66,10 @@ public class TLDScriptingVariableInfo {
             variableInfos = _variableInfos;
         }
 
-        for (int i = 0; i < variableInfos.length; i++) {
-            if (name.equals(variableInfos[i].getVarName())) {
-                return variableInfos[i].getScope() == VariableInfo.NESTED;
-            }
+        if (variableInfos == null) {
+            return NullIterator.getInstance();
         }
-        return false;
+        return Arrays.asList(variableInfos).iterator();
     }
 
     public void setTagExtraInfo(TagExtraInfo tei) {

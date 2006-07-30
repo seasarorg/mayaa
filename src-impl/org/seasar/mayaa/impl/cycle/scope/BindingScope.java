@@ -21,9 +21,7 @@ import java.util.Map;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
-import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.engine.processor.DoRenderProcessor;
 import org.seasar.mayaa.impl.engine.processor.InsertProcessor;
 
 /**
@@ -31,34 +29,7 @@ import org.seasar.mayaa.impl.engine.processor.InsertProcessor;
  */
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
-    protected InsertProcessor getInsertProcessor() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        for (ProcessorTreeWalker current = cycle.getProcessor();
-                current != null; current = current.getParentProcessor()) {
-            if (current instanceof DoRenderProcessor) {
-                DoRenderProcessor doRender = (DoRenderProcessor) current;
-                return doRender.peekInsertProcessor();
-            }
-        }
-        return null;
-    }
-
-    // AttributeScope implements -------------------------------------
-
-    public String getScopeName() {
-        return "binding";
-    }
-
-    public Iterator iterateAttributeNames() {
-        InsertProcessor processor = getInsertProcessor();
-        if (processor != null) {
-            return new BindingIterator(
-                    processor.getInformalProperties().iterator());
-        }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope param = cycle.getAttributeScope("param");
-        return param.iterateAttributeNames();
-    }
+    private static final long serialVersionUID = 5954219830862345209L;
 
     protected ProcessorProperty getTargetAttribute(
             InsertProcessor processor, String name) {
@@ -72,18 +43,41 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         return null;
     }
 
+    // AttributeScope implements -------------------------------------
+
+    private static AttributeScope _paramScope;
+
+    private static AttributeScope getParamScope() {
+        if (_paramScope == null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            _paramScope = cycle.getAttributeScope("param");
+        }
+        return _paramScope;
+    }
+
+    public String getScopeName() {
+        return "binding";
+    }
+
+    public Iterator iterateAttributeNames() {
+        InsertProcessor processor = InsertProcessor.getRenderingCurrent();
+        if (processor != null) {
+            return new BindingIterator(
+                    processor.getInformalProperties().iterator());
+        }
+        return getParamScope().iterateAttributeNames();
+    }
+
     public boolean hasAttribute(String name) {
-        InsertProcessor processor = getInsertProcessor();
+        InsertProcessor processor = InsertProcessor.getRenderingCurrent();
         if (processor != null) {
             return getTargetAttribute(processor, name) != null;
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope param = cycle.getAttributeScope("param");
-        return param.hasAttribute(name);
+        return getParamScope().hasAttribute(name);
     }
 
     public Object getAttribute(String name) {
-        InsertProcessor processor = getInsertProcessor();
+        InsertProcessor processor = InsertProcessor.getRenderingCurrent();
         if (processor != null) {
             ProcessorProperty prop = getTargetAttribute(processor, name);
             if (prop != null) {
@@ -95,9 +89,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
             }
             return null;
         }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        AttributeScope param = cycle.getAttributeScope("param");
-        return param.getAttribute(name);
+        return getParamScope().getAttribute(name);
     }
 
     // support class ------------------------------------------------
@@ -106,7 +98,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
         private Iterator _it;
 
-        private BindingIterator(Iterator it) {
+        protected BindingIterator(Iterator it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }

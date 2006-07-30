@@ -36,7 +36,7 @@ public class NamespaceContextImpl implements NamespaceContext {
     public String translateNamespacePrefixToUri(String prefix) {
         PrefixMapping mapping = _namespace.getMappingFromPrefix(prefix, true);
         if (mapping != null) {
-            return mapping.getNamespaceURI();
+            return mapping.getNamespaceURI().getValue();
         }
         return null;
     }

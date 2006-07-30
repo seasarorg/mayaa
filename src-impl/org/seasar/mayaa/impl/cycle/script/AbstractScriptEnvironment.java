@@ -33,7 +33,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public abstract class AbstractScriptEnvironment
         extends ParameterAwareImpl implements ScriptEnvironment {
 
-    private List _attributeScopes;
+    private transient List _attributeScopes;
     private String _blockSign = "$";
 
     public void addAttributeScope(AttributeScope attrs) {

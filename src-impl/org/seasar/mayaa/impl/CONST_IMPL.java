@@ -16,7 +16,9 @@
 package org.seasar.mayaa.impl;
 
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
+import org.seasar.mayaa.impl.engine.specification.URIImpl;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -29,10 +31,10 @@ public interface CONST_IMPL {
     String TEMPLATE_PATH_PATTERN = "templatePathPattern";
     String NOT_TEMPLATE_PATH_PATTERN = "notTemplatePathPattern";
 
-    String URI_MAYAA = "http://mayaa.seasar.org";
-    String URI_HTML = "http://www.w3.org/TR/html4";
-    String URI_XHTML = "http://www.w3.org/1999/xhtml";
-    String URI_XML = "http://www.w3.org/XML/1998/namespace";
+    URI URI_MAYAA = URIImpl.getInstance("http://mayaa.seasar.org");
+    URI URI_HTML = URIImpl.getInstance("http://www.w3.org/TR/html4");
+    URI URI_XHTML = URIImpl.getInstance("http://www.w3.org/1999/xhtml");
+    URI URI_XML = URIImpl.getInstance("http://www.w3.org/XML/1998/namespace");
 
     String PUBLIC_FACTORY10 =
         "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";
@@ -52,9 +54,16 @@ public interface CONST_IMPL {
     QName QM_MAYAA = QNameImpl.getInstance("mayaa");
     QName QM_PI = QNameImpl.getInstance("processingInstruction");
     QName QM_TEMPLATE_ELEMENT = QNameImpl.getInstance("templateElement");
+    QName QM_LITERALS = QNameImpl.getInstance("literals");
 
     QName QM_AFTER_RENDER = QNameImpl.getInstance("afterRender");
     QName QM_BEFORE_RENDER = QNameImpl.getInstance("beforeRender");
+    QName QM_AFTER_RENDER_PAGE = QNameImpl.getInstance("afterRenderPage");
+    QName QM_BEFORE_RENDER_PAGE = QNameImpl.getInstance("beforeRenderPage");
+    QName QM_AFTER_RENDER_COMPONENT = QNameImpl.getInstance("afterRenderComponent");
+    QName QM_BEFORE_RENDER_COMPONENT = QNameImpl.getInstance("beforeRenderComponent");
+    QName QM_AFTER_RENDER_PROCESSOR = QNameImpl.getInstance("afterRenderProcessor");
+    QName QM_BEFORE_RENDER_PROCESSOR = QNameImpl.getInstance("beforeRenderProcessor");
 
     QName QM_CONTENT_TYPE = QNameImpl.getInstance("contentType");
     QName QM_ID = QNameImpl.getInstance("id");

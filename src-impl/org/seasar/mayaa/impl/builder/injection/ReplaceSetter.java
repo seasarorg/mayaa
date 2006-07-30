@@ -20,6 +20,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
@@ -33,6 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ReplaceSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = 442671575099062287L;
     protected static final QName QM_REPLACE =
         SpecificationUtil.createQName("replace");
 
@@ -57,10 +59,10 @@ public class ReplaceSetter extends ParameterAwareImpl
             return null;
         }
         if (isReplace(original) == false || isReplace(injected) == false) {
-               QName qName = original.getQName();
-               String uri = qName.getNamespaceURI();
-               SpecificationNode element = BuilderUtil.createInjectedNode(
-                       QM_DUPLECATED, uri, original, false);
+            QName qName = original.getQName();
+            URI uri = qName.getNamespaceURI();
+            SpecificationNode element = BuilderUtil.createInjectedNode(
+                    QM_DUPLECATED, uri, original, false);
             StringBuffer name = new StringBuffer();
             String prefix = original.getPrefix();
             if (StringUtil.hasValue(prefix)) {
@@ -69,8 +71,8 @@ public class ReplaceSetter extends ParameterAwareImpl
             name.append(qName.getLocalName());
             element.addAttribute(QM_NAME, name.toString());
             element.addChildNode(injected);
-               return element;
-           }
+            return element;
+        }
         return injected;
     }
 

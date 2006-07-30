@@ -42,6 +42,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class EqualsIDInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = 3248707016394881768L;
     private static final Log LOG =
         LogFactory.getLog(EqualsIDInjectionResolver.class);
 

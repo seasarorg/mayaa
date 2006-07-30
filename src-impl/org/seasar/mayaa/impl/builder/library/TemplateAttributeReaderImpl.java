@@ -27,7 +27,7 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.engine.specification.QNameImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -36,6 +36,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class TemplateAttributeReaderImpl
         extends ParameterAwareImpl
         implements TemplateAttributeReader {
+
+    private static final long serialVersionUID = -7340519771743083660L;
 
     private Set _ignoreAttributes;
     private Map _aliasAttributes;
@@ -112,9 +114,10 @@ public class TemplateAttributeReaderImpl
     private QName getQName(SpecificationNode original, String attribute) {
         if(attribute.startsWith("{")) {
             String[] split = attribute.split("[\\{\\}]");
-            return QNameImpl.getInstance(split[1], split[2]);
+            return SpecificationUtil.createQName(
+                    SpecificationUtil.createURI(split[1]), split[2]);
         }
-        return QNameImpl.getInstance(
+        return SpecificationUtil.createQName(
                 original.getQName().getNamespaceURI(), attribute);
     }
 

@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder.library.mld;
 
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.impl.builder.library.LibraryDefinitionImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.factory.AbstractParameterAwareTagHandler;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -40,7 +41,7 @@ public class LibraryTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         String uri = attributes.getValue("uri");
         _libraryDefinition = new LibraryDefinitionImpl();
-        _libraryDefinition.setNamespaceURI(uri);
+        _libraryDefinition.setNamespaceURI(SpecificationUtil.createURI(uri));
         _libraryDefinition.setSystemID(StringUtil.removeFileProtocol(systemID));
         _libraryDefinition.setLineNumber(lineNumber);
     }

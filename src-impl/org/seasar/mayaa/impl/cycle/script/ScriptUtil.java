@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.script;
 
+import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
@@ -70,6 +71,11 @@ public class ScriptUtil {
         if (iterator.hasNext()) {
             throw new UnbalancedBraceException(text, iterator.getOffset());
         }
+    }
+    
+    public static boolean isEmpty(Object scriptResult) {
+        return scriptResult == null
+                    || scriptResult instanceof Undefined;
     }
 
 }

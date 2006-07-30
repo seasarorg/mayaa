@@ -28,7 +28,9 @@ import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
 public class ParamValuesScope
         extends AbstractReadOnlyAttributeScope {
 
-    private HttpServletRequest _request;
+    private static final long serialVersionUID = -1118348498272772955L;
+
+    private transient HttpServletRequest _request;
 
     public ParamValuesScope(HttpServletRequest request) {
         if (request == null) {

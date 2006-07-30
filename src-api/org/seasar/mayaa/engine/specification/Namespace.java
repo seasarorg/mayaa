@@ -39,7 +39,7 @@ public interface Namespace extends NodeObject {
      * @param prefix 名前空間プレフィックス。
      * @param namespaceURI 名前空間URI。
      */
-    void addPrefixMapping(String prefix, String namespaceURI);
+    void addPrefixMapping(String prefix, URI namespaceURI);
 
     /**
      * このスコープにて、名前空間モデルを追加したかどうか。
@@ -55,7 +55,7 @@ public interface Namespace extends NodeObject {
      * 登録したものがデフォルトになる。 
      * @param namespaceURI 名前空間URI。
      */
-    void setDefaultNamespaceURI(String namespaceURI);
+    void setDefaultNamespaceURI(URI namespaceURI);
 
     /**
      * 現在のスコープでPrefixが無指定の場合に選択される
@@ -63,7 +63,7 @@ public interface Namespace extends NodeObject {
      * 
      * @return デフォルト名前空間。デフォルト名前空間がない場合にはnull
      */
-    String getDefaultNamespaceURI();
+    URI getDefaultNamespaceURI();
 
     /**
      * 名前空間モデルの取得。
@@ -79,7 +79,7 @@ public interface Namespace extends NodeObject {
      * @param all 親スコープも検索する。
      * @return 名前空間モデル。
      */
-    PrefixMapping getMappingFromURI(String namespaceURI, boolean all);
+    PrefixMapping getMappingFromURI(URI namespaceURI, boolean all);
 
     /**
      * 適用される名前空間のイテレート。

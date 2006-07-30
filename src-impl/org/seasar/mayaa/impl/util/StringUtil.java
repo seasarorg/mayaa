@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.cyberneko.html.HTMLEntities;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 
 /**
@@ -38,6 +39,19 @@ public final class StringUtil {
         // no instantiation.
     }
 
+    public static boolean isEmpty(Object test) {
+        boolean result;
+        if (test instanceof String) {
+            result = isEmpty((String)test);
+        } else {
+            result = ScriptUtil.isEmpty(test);
+            if (result == false) {
+                result = isEmpty(test.toString());
+            }
+        }
+        return result;
+    }
+
     public static String valueOf(Object value) {
         String result = null;
         if (value != null) {
@@ -48,6 +62,11 @@ public final class StringUtil {
 
     public static boolean isEmpty(String test) {
         return test == null || test.length() == 0;
+    }
+
+
+    public static boolean hasValue(Object test) {
+        return !isEmpty(test);
     }
 
     public static boolean hasValue(String test) {
@@ -132,6 +151,10 @@ public final class StringUtil {
         } else {
             ret[0] = folder + file;
             ret[1] = "";
+        }
+
+        if (ret[0].startsWith("/") == false) {
+            ret[0] = "/" + ret[0];
         }
         return ret;
     }
@@ -375,9 +398,22 @@ public final class StringUtil {
         return "";
     }
 
-    public static boolean equals(String s1, String s2) {
+    public static boolean equals(Object s1, Object s2) {
         return s1 == null && s2 == null
-            || (s1 != null && s2 != null && s1.equals(s2));
+            || (s1 != null && s1.equals(s2));
     }
 
+    public static String join(Object[] items, String delimiter) {
+        if (items == null) {
+            return String.valueOf(items);
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < items.length; i++) {
+            if (i > 0) {
+                sb.append(delimiter);
+            }
+            sb.append(items[i]);
+        }
+        return sb.toString();
+    }
 }

@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.builder.injection;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -58,7 +59,7 @@ public class DefaultInjectionChain
             return original.copyTo();
         }
         QName qName = original.getQName();
-        String uri = qName.getNamespaceURI();
+        URI uri = qName.getNamespaceURI();
         SpecificationNode element =  BuilderUtil.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original, false);
         StringBuffer name = new StringBuffer();

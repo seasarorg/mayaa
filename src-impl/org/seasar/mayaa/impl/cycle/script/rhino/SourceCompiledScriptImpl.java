@@ -24,7 +24,6 @@ import java.util.Date;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
-import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.mayaa.impl.cycle.script.AbstractSourceCompiledScript;
 import org.seasar.mayaa.impl.util.IOUtil;
@@ -38,14 +37,12 @@ public class SourceCompiledScriptImpl
 
     private static final long serialVersionUID = 970613841877330176L;
 
-    private WrapFactory _wrap;
     private Script _rhinoScript;
     private Date _compiledTimestamp;
 
     public SourceCompiledScriptImpl(
-            SourceDescriptor source, String encoding, WrapFactory wrap) {
+            SourceDescriptor source, String encoding) {
         super(source, encoding);
-        _wrap = wrap;
         _compiledTimestamp = new Date();
     }
 
@@ -77,7 +74,7 @@ public class SourceCompiledScriptImpl
     }
 
     public Object execute(Object[] args) {
-        Context cx = RhinoUtil.enter(_wrap);
+        Context cx = RhinoUtil.enter();
         Object ret = null;
         try {
             compileFromSource(cx, getSource());

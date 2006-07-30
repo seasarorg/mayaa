@@ -17,33 +17,23 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.ErrorData;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.VariableResolver;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.SimpleTag;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TryCatchFinally;
+import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.seasar.mayaa.cycle.CycleWriter;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ChildEvaluationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -54,9 +44,9 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.library.TLDScriptingVariableInfo;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
-import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
@@ -72,17 +62,30 @@ public class JspProcessor extends TemplateProcessorSupport
             CONST_IMPL {
 
     private static final long serialVersionUID = -4416320364576454337L;
-    private static PageContext _pageContext = new PageContextImpl();
-    private static Map _tagPools = new HashMap();
+    private static final PageContext _pageContext = new PageContextImpl();
+    private static final Map _tagPools = new HashMap();
+    private static final String LOADED_TAG_KEY =
+        JspProcessor.class.getName() + "#loadedTag";
+    private static final String STOCK_VARIABLES_KEY =
+        JspProcessor.class.getName() + "#stockVariables";
+    static {
+        CycleUtil.registVariableFactory(LOADED_TAG_KEY, new DefaultCycleLocalInstantiator() {
+            public Object create(Object owner, Object[] params) {
+                return null; 
+            }
+        });
+        CycleUtil.registVariableFactory(STOCK_VARIABLES_KEY, new DefaultCycleLocalInstantiator() {
+            public Object create(Object owner, Object[] params) {
+                return new HashMap();
+            }
+        });
+    }
 
     private Class _tagClass;
     private List _properties;
     private String _attributesKey;
-    private ThreadLocal _loadedTag = new ThreadLocal();
-    private PageContextWrapper _wrappedContext =
-        new PageContextWrapper(_pageContext);
-
-    private TLDScriptingVariableInfo _variableInfo =
+    private Boolean _nestedVariableExists;
+    private transient TLDScriptingVariableInfo _variableInfo =
         new TLDScriptingVariableInfo();
 
     public static boolean isSupportClass(Class test) {
@@ -97,6 +100,7 @@ public class JspProcessor extends TemplateProcessorSupport
             throw new IllegalArgumentException();
         }
         _variableInfo = variableInfo;
+        _nestedVariableExists = null;
     }
 
     public TLDScriptingVariableInfo getTLDScriptingVariableInfo() {
@@ -159,22 +163,22 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     protected void clearLoadedTag() {
-        _loadedTag.set(null);
+        CycleUtil.clearLocalVariable(LOADED_TAG_KEY, this);
     }
-
+    
     protected Tag getLoadedTag() {
-        Tag tag = (Tag) _loadedTag.get();
+        Tag tag = (Tag) CycleUtil.getLocalVariable(LOADED_TAG_KEY, this, null);
         if (tag == null) {
             tag = getTagPool().borrowTag();
-            tag.setPageContext(_wrappedContext);
-            _loadedTag.set(tag);
+            tag.setPageContext(_pageContext);
+            CycleUtil.setLocalVariable(LOADED_TAG_KEY, this, tag);
         }
         return tag;
     }
 
     protected void releaseLoadedTag() {
-        Tag tag = (Tag) _loadedTag.get();
-        _loadedTag.set(null);
+        Tag tag = (Tag) CycleUtil.getLocalVariable(LOADED_TAG_KEY, this, null);
+        CycleUtil.setLocalVariable(LOADED_TAG_KEY, this, null);
         tag.release();
         getTagPool().returnTag(tag);
     }
@@ -200,6 +204,7 @@ public class JspProcessor extends TemplateProcessorSupport
         if (_tagClass == null) {
             throw new IllegalStateException();
         }
+        topLevelPage.registBeginRenderNotifier(this);
         clearLoadedTag();
         Tag customTag = getLoadedTag();
 
@@ -228,6 +233,7 @@ public class JspProcessor extends TemplateProcessorSupport
             }
         }
         try {
+            pushNestedVariables();
             final int result = customTag.doStartTag();
             return getProcessStatus(result, true);
         } catch (JspException e) {
@@ -257,6 +263,75 @@ public class JspProcessor extends TemplateProcessorSupport
         } finally {
             if (!canCatch()) {
                 releaseLoadedTag();
+                popNestedVariables();
+            }
+        }
+    }
+
+    public void notifyBeginRender(Page topLevelPage) {
+        CycleUtil.clearLocalVariable(STOCK_VARIABLES_KEY, this);
+    }
+    
+    protected Map getNestedVariablesMap() {
+        return (Map) CycleUtil.getLocalVariable(STOCK_VARIABLES_KEY, this, null);
+    }
+
+    protected void pushNestedVariables() {
+        operateNestedVariables(new NestedVariableOperator() {
+            public void operate(AttributeScope pageScope,
+                    VariableInfo info, boolean firstHit) {
+                String name = info.getVarName();
+                if (pageScope.hasAttribute(name)) {
+                    if (firstHit) {
+                        getNestedVariablesMap().clear();
+                    }
+                    getNestedVariablesMap().put(name,
+                            pageScope.getAttribute(name));
+                }
+            }
+        });
+    }
+
+    protected void popNestedVariables() {
+        operateNestedVariables(new NestedVariableOperator() {
+            public void operate(AttributeScope pageScope,
+                    VariableInfo info, boolean firstHit) {
+                String name = info.getVarName();
+                Map map = getNestedVariablesMap();
+                if (map.containsKey(name)) {
+                    pageScope.setAttribute(name,
+                            map.get(name));
+                } else {
+                    pageScope.removeAttribute(name);
+                }
+            }
+        });
+    }
+    
+    private interface NestedVariableOperator {
+        void operate(AttributeScope pageScope, VariableInfo info, boolean firstHit);
+    }
+
+    protected void operateNestedVariables(NestedVariableOperator operator) {
+        if (_nestedVariableExists != Boolean.FALSE) {
+            TLDScriptingVariableInfo variableInfo =
+                getTLDScriptingVariableInfo();
+            if (variableInfo != null) {
+                AttributeScope pageScope =
+                    CycleUtil.getServiceCycle().getPageScope();
+                boolean firstHit = true;
+                for (Iterator it = variableInfo.variableInfos();
+                        it.hasNext(); ) {
+                    VariableInfo info = (VariableInfo)it.next();
+                    if (info.getScope() == VariableInfo.NESTED) {
+                        _nestedVariableExists = Boolean.TRUE;
+                        operator.operate(pageScope, info, firstHit);
+                        firstHit = false;
+                    }
+                }
+            }
+            if (_nestedVariableExists == null) {
+                _nestedVariableExists = Boolean.FALSE;
             }
         }
     }
@@ -353,7 +428,26 @@ public class JspProcessor extends TemplateProcessorSupport
         }
     }
 
-    protected class TagPool extends AbstractSoftReferencePool {
+    public void kill() {
+        _tagClass = null;
+        if (_properties != null) {
+            _properties.clear();
+        }
+        _variableInfo = null;
+        super.kill();
+    }
+    
+    // for serialize
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        _variableInfo = new TLDScriptingVariableInfo();
+    }
+
+    // support class
+
+    protected static class TagPool extends AbstractSoftReferencePool {
 
         private static final long serialVersionUID = -4519484537723904500L;
 
@@ -388,187 +482,8 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
     }
-
-    protected class PageContextWrapper extends PageContext {
-
-        private PageContext _context;
-
-        public PageContextWrapper(PageContext context) {
-            _context = context;
-        }
-
-        public boolean useTop(String name, int scope) {
-            TLDScriptingVariableInfo variableInfo =
-                    getTLDScriptingVariableInfo();
-            return scope == PageContext.PAGE_SCOPE
-                    && (variableInfo.hasNestedVariable() == false
-                            || variableInfo.isNestedVariable(name) == false);
-        }
-
-        public boolean useCurrent(String name, int scope) {
-            TLDScriptingVariableInfo variableInfo =
-                    getTLDScriptingVariableInfo();
-            return scope == PageContext.PAGE_SCOPE
-                    && variableInfo.isNestedVariable(name);
-        }
-
-        protected PageAttributeScope findTopPageAttributeScope() {
-            return (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
-        }
-
-        protected PageAttributeScope getCurrentScope() {
-            PageAttributeScope scope =
-                (PageAttributeScope) CycleUtil.getServiceCycle().getPageScope();
-            if (scope != null) {
-                return (PageAttributeScope)
-                        scope.getAttribute(PageAttributeScope.KEY_CURRENT);
-            }
-            return scope;
-        }
-
-        public void removeAttribute(String name, int scope) {
-            if (name == null) {
-                throw new IllegalArgumentException();
-            }
-
-            if (useCurrent(name, scope)) {
-                getCurrentScope().removeAttribute(name);
-            } else {
-                _context.removeAttribute(name, scope);
-            }
-        }
-
-        public void removeAttribute(String name) {
-            getCurrentScope().removeAttribute(name);
-        }
-
-        public void setAttribute(String name, Object value, int scope) {
-            if (name == null) {
-                throw new IllegalArgumentException();
-            }
-
-            if (useCurrent(name, scope)) {
-                getCurrentScope().setAttribute(name, value);
-            } else {
-                _context.setAttribute(name, value, scope);
-            }
-        }
-
-        public void setAttribute(String name, Object value) {
-            getCurrentScope().setAttribute(name, value);
-        }
-
-        public Object getAttribute(String name, int scope) {
-            if (name == null) {
-                throw new IllegalArgumentException();
-            }
-
-            if (useCurrent(name, scope)) {
-                return getCurrentScope().getAttribute(name);
-            }
-            return _context.getAttribute(name, scope);
-        }
-
-        public Object getAttribute(String name) {
-            return getCurrentScope().getAttribute(name);
-        }
-
-        public Object findAttribute(String name) {
-            return _context.findAttribute(name);
-        }
-
-        public void initialize(Servlet servlet, ServletRequest request,
-                ServletResponse response, String errorPageURL,
-                boolean needsSession, int bufferSize, boolean autoFlush)
-                throws IOException {
-            _context.initialize(servlet, request, response, errorPageURL,
-                    needsSession, bufferSize, autoFlush);
-        }
-
-        public void release() {
-            _context.release();
-        }
-
-        public HttpSession getSession() {
-            return _context.getSession();
-        }
-
-        public Object getPage() {
-            return _context.getPage();
-        }
-
-        public ServletRequest getRequest() {
-            return _context.getRequest();
-        }
-
-        public ServletResponse getResponse() {
-            return _context.getResponse();
-        }
-
-        public Exception getException() {
-            return _context.getException();
-        }
-
-        public ServletConfig getServletConfig() {
-            return _context.getServletConfig();
-        }
-
-        public ServletContext getServletContext() {
-            return _context.getServletContext();
-        }
-
-        public void forward(String relativeUrlPath)
-                throws ServletException, IOException {
-            _context.forward(relativeUrlPath);
-        }
-
-        public void include(String relativeUrlPath)
-                throws ServletException, IOException {
-            _context.include(relativeUrlPath);
-        }
-
-        public void include(String relativeUrlPath, boolean flush)
-                throws ServletException, IOException {
-            _context.include(relativeUrlPath, flush);
-        }
-
-        public void handlePageException(Exception e)
-                throws ServletException, IOException {
-            _context.handlePageException(e);
-        }
-
-        public void handlePageException(Throwable t)
-                throws ServletException, IOException {
-            _context.handlePageException(t);
-        }
-
-        public int getAttributesScope(String name) {
-            return _context.getAttributesScope(name);
-        }
-
-        public Enumeration getAttributeNamesInScope(int scope) {
-            return _context.getAttributeNamesInScope(scope);
-        }
-
-        public JspWriter getOut() {
-            return _context.getOut();
-        }
-
-        public ExpressionEvaluator getExpressionEvaluator() {
-            return _context.getExpressionEvaluator();
-        }
-
-        public VariableResolver getVariableResolver() {
-            return _context.getVariableResolver();
-        }
-
-        public ErrorData getErrorData() {
-            return _context.getErrorData();
-        }
-
-    }
-
-    public class SimpleTagWrapper implements Tag {
+    
+    public static class SimpleTagWrapper implements Tag {
 
         private SimpleTag _simpleTag;
 

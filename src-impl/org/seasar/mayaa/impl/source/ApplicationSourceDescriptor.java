@@ -15,35 +15,28 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Date;
-
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ApplicationSourceDescriptor
-        extends ParameterAwareImpl implements SourceDescriptor {
+		extends FileSourceDescriptor  {
 
     private static final long serialVersionUID = -2775274363708858237L;
 
     public static final String WEB_INF = "/WEB-INF";
 
-    private String _root = "";
-
-    private File _file;
-    private ApplicationScope _application;
+    private transient ApplicationScope _application;
 
     private boolean _denyWebInf = true;
+    
+    public ApplicationSourceDescriptor() {
+        super.setRoot("");
+    }
 
     // use while building ServiceProvider.
     public void setApplicationScope(ApplicationScope application) {
@@ -64,67 +57,29 @@ public class ApplicationSourceDescriptor
         _denyWebInf = denyWebInf;
     }
 
-    // use at InternalApplicationSourceScanner.FileToSourceIterator
-    public void setFile(File file) {
-        _file = file;
-    }
-
-    public File getFile() {
-        exists();
-        return _file;
-    }
-
-    public void setRoot(String root) {
-        _root = StringUtil.preparePath(root);
-    }
-
-    public String getRoot() {
-        return _root;
-    }
-
     public void setSystemID(String systemID) {
         if (_denyWebInf) {
             if (systemID != null && systemID.indexOf(WEB_INF) != -1) {
                 throw new ForbiddenPathException(systemID);
             }
         }
-        super.setSystemID(StringUtil.preparePath(systemID));
+        super.setSystemID(systemID);
     }
 
-    public boolean exists() {
-        if (_file == null) {
-            String realPath =
-                getApplicationScope().getRealPath(_root + getSystemID());
-            if (StringUtil.hasValue(realPath)) {
-                 File file = new File(realPath);
-                 if (file.exists()) {
-                     _file = file;
-                 }
-            }
+    protected String getRealPath() {
+        String path = super.getRealPath();
+        if (StringUtil.isEmpty(path)) {
+            path = "/";
         }
-        return (_file != null) && _file.exists();
+        return getApplicationScope().getRealPath(path);
     }
 
-    public InputStream getInputStream() {
-        if (exists()) {
-            if (_file.isFile()) {
-                try {
-                    return new FileInputStream(_file);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            } else if (_file.isDirectory()) {
-                CycleUtil.getServiceCycle().redirect(_file.getName() + "/");
-            }
-        }
-        return null;
-    }
+    // for serialize
 
-    public Date getTimestamp() {
-        if (exists()) {
-            return new Date(_file.lastModified());
-        }
-        return new Date(0);
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        _application = CycleUtil.getServiceCycle().getApplicationScope();
     }
 
 }

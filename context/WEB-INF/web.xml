@@ -4,16 +4,16 @@
 	"http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
 
-    <servlet>
-        <servlet-name>MayaaServlet</servlet-name>
-        <servlet-class>org.seasar.mayaa.impl.MayaaServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+	<servlet>
+		<servlet-name>MayaaServlet</servlet-name>
+		<servlet-class>org.seasar.mayaa.impl.MayaaServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 
-    <servlet-mapping>
-        <servlet-name>MayaaServlet</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MayaaServlet</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
 
 </web-app>
 

@@ -30,6 +30,7 @@ import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
@@ -143,10 +144,17 @@ public class SpecificationUtil implements CONST_IMPL {
         }
         SpecificationNode mayaa = getMayaaNode(spec);
         if (mayaa != null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             for (Iterator it = mayaa.iterateChildNode(); it.hasNext();) {
                 SpecificationNode child = (SpecificationNode) it.next();
                 if (eventName.equals(child.getQName())) {
-                    _eventScripts.execEventScript(mayaa, child);
+                    NodeTreeWalker save = cycle.getInjectedNode();
+                    try {
+                        cycle.setInjectedNode(child);
+                        _eventScripts.execEventScript(mayaa, child);
+                    } finally {
+                        cycle.setInjectedNode(save);
+                    }
                 }
             }
             NodeAttribute attr = mayaa.getAttribute(eventName);
@@ -161,19 +169,29 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Namespace createNamespace() {
         return new NamespaceImpl();
     }
+    
+    public static Namespace getFixedNamespace(Namespace original) {
+        return original;
+        //return NamespaceImpl.getInstance(original);
+    }
 
     public static QName createQName(String localName) {
         return createQName(URI_MAYAA, localName);
     }
 
     public static QName createQName(
-            String namespaceURI, String localName) {
+            URI namespaceURI, String localName) {
         return QNameImpl.getInstance(namespaceURI, localName);
     }
 
     public static PrefixMapping createPrefixMapping(
-            String prefix, String namespaceURI) {
+            String prefix, URI namespaceURI) {
         return PrefixMappingImpl.getInstance(prefix, namespaceURI);
+    }
+
+    public static PrefixMapping createPrefixMapping(
+            String prefixAndNamespaceURI) {
+        return PrefixMappingImpl.revertStringToMapping(prefixAndNamespaceURI);
     }
 
     public static QName parseQName(String qName) {
@@ -184,7 +202,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 String localName = qName.substring(end + 1).trim();
                 if (StringUtil.hasValue(namespaceURI)
                         && StringUtil.hasValue(localName)) {
-                    return QNameImpl.getInstance(namespaceURI, localName);
+                    return QNameImpl.getInstance(createURI(namespaceURI), localName);
                 }
             }
         }
@@ -208,6 +226,10 @@ public class SpecificationUtil implements CONST_IMPL {
         node.setLineNumber(lineNumber);
         node.setOnTemplate(onTemplate);
         return node;
+    }
+
+    public static URI createURI(String uri) {
+        return URIImpl.getInstance(uri);
     }
 
     // script cache ----------------------------------------------
@@ -285,4 +307,8 @@ public class SpecificationUtil implements CONST_IMPL {
 
     }
 
+    public static Namespace copyNamespace(Namespace original) {
+        return NamespaceImpl.copyOf(original);
+    }
+    
 }

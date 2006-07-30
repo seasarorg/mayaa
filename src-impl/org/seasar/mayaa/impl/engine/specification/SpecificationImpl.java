@@ -15,88 +15,145 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.SpecificationBuilder;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
+import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
+import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.NullSourceDescriptor;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationImpl extends ParameterAwareImpl
-        implements Specification, CONST_IMPL {
+        implements Specification, NodeReferenceResolver, CONST_IMPL {
 
     private static final long serialVersionUID = 174451168836001746L;
+    private static final Log LOG =
+        LogFactory.getLog(SpecificationImpl.class);
 
     private Date _buildTimestamp;
+    private Date _builtSourceTime;
     private SourceDescriptor _source;
-    private List _childNodes;
+    private NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
-
-    protected void clear() {
-        synchronized (this) {
-            if (_childNodes != null) {
-                _childNodes.clear();
-            }
-        }
-    }
-
+    private boolean _deprecated;
+    private int _lastSequenceID;
+    private transient boolean _specificationSerialize;
+    
     protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
     }
 
-    protected boolean isSourceNotExists() {
-        if (needCheckTimestamp() == false) {
-            return false;
-        }
-        return getSource().exists() == false;
+    protected boolean isSourceExists() {
+        return getSource().exists();
     }
 
-    protected boolean isOldSpecification() {
-        if (needCheckTimestamp() == false) {
-            return false;
-        }
-
-        if (_hasSource != getSource().exists()) {
-            clear();
-            kill();
-            _hasSource = getSource().exists();
-            return true;
-        }
-
-        if (getTimestamp() == null) {
-            return true;
-        }
-
-        Date source = getSource().getTimestamp();
-        Date now = new Date();
-        return source.after(getTimestamp()) && now.after(source);
+    public boolean isSpecificationSerialize() {
+        return _specificationSerialize;
     }
 
-    protected void parseSpecification() {
-        setTimestamp(new Date());
-        if (getSource().exists()) {
-            clear();
-            SpecificationBuilder builder = ProviderUtil.getSpecificationBuilder();
-            builder.build(this);
-        }
+    public void setSpecificationSerialize(boolean specificationSerialize) {
+        _specificationSerialize = specificationSerialize;
+    }
+    
+    protected SpecificationBuilder getBuilder() {
+        return ProviderUtil.getSpecificationBuilder();
     }
 
     protected void setTimestamp(Date buildTimestamp) {
         _buildTimestamp = buildTimestamp;
+    }
+
+    protected NodeTreeWalker getNodeTreeWalker() {
+        if (_delegateNodeTreeWalker == null) {
+            synchronized (this) {
+                _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
+                _delegateNodeTreeWalker.setOwner(this);
+            }
+        }
+        return _delegateNodeTreeWalker;
+    }
+
+    protected void finalize() throws Throwable {
+        if (LOG.isTraceEnabled()) {
+            LOG.debug(toString() + " unloaded.");
+        }
+    }
+    
+    public String toString() {
+        String className = ObjectUtil.getSimpleClassName(getClass());
+        return getSystemID() + "(" + className + "@"  + Integer.toHexString(hashCode()) + ")";
+    }
+    
+    // Specification implements ------------------------------------
+    
+    public boolean isDeprecated() {
+        if (_deprecated == false) {
+            _deprecated = _hasSource != isSourceExists();
+            if (_deprecated == false) {
+                if (_hasSource == false) {
+                    return false;
+                }
+                _deprecated = (getTimestamp() == null);
+                if (_deprecated == false) {
+                    if (needCheckTimestamp() == false) {
+                        return false;
+                    }
+                    Date sourceTime = getSource().getTimestamp();
+                    // リバートしてもビルドする。
+                    _deprecated =
+                        sourceTime.equals(_builtSourceTime) == false;
+                }
+            }
+        }
+        return _deprecated;
+    }
+
+    public void build() {
+        if (isDeprecated()) {
+            _hasSource = isSourceExists();
+            if (_hasSource) {
+                LOG.debug(getSystemID() + " build start.");
+                Date sourceTime = getSource().getTimestamp();
+                _lastSequenceID = 0;
+                getBuilder().build(this);
+                setTimestamp(new Date());
+                _builtSourceTime = sourceTime;
+                _deprecated = false;
+                if (isSpecificationSerialize()) {
+                    SerializeThreadManager.serializeReserve(
+                            this, CycleUtil.getServiceCycle().getApplicationScope().getUnderlyingContext());
+                }
+                return;
+            }
+            setTimestamp(new Date(0));
+            _builtSourceTime = new Date(0);
+            _deprecated = false;
+        }
     }
 
     public Date getTimestamp() {
@@ -114,17 +171,32 @@ public class SpecificationImpl extends ParameterAwareImpl
         return _source;
     }
 
-    public void kill() {
-        setTimestamp(null);
+    // SequenceIDGenerator implements ------------------------------------
+    
+    public void resetSequenceID(int sequenceID) {
+        _lastSequenceID = sequenceID;
     }
-
-    public void checkTimestamp() {
-        if (isOldSpecification()) {
-            parseSpecification();
-        }
+    
+    public int nextSequenceID() {
+        return _lastSequenceID++;
     }
 
     // NodeTreeWalker implements ------------------------------------
+
+    public void kill() {
+        _deprecated = true;
+        if (_delegateNodeTreeWalker != null) {
+            _delegateNodeTreeWalker.kill();
+            _delegateNodeTreeWalker = null;
+        }
+        setTimestamp(null);
+    }
+
+    public void clearChildNodes() {
+        if (_delegateNodeTreeWalker != null) {
+            _delegateNodeTreeWalker.clearChildNodes();
+        }
+    }
 
     public void setParentNode(NodeTreeWalker parentNode) {
         throw new IllegalStateException();
@@ -135,28 +207,36 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public void addChildNode(NodeTreeWalker childNode) {
-        if (childNode == null) {
-            throw new IllegalArgumentException();
-        }
-        synchronized (this) {
-            if (_childNodes == null) {
-                _childNodes = new ArrayList();
-            }
-        }
-        synchronized (_childNodes) {
-            _childNodes.add(childNode);
-            childNode.setParentNode(this);
-        }
+        getNodeTreeWalker().addChildNode(childNode);
+    }
+
+    public void insertChildNode(int index, NodeTreeWalker childNode) {
+        getNodeTreeWalker().insertChildNode(index, childNode);
     }
 
     public Iterator iterateChildNode() {
-        if (_childNodes == null) {
-            return NullIterator.getInstance();
-        }
-        return _childNodes.iterator();
+        return getNodeTreeWalker().iterateChildNode();
     }
 
-    // PositionAware implements ------------------------------------
+    public boolean removeChildNode(NodeTreeWalker node) {
+        return getNodeTreeWalker().removeChildNode(node);
+    }
+
+    public NodeTreeWalker getChildNode(int index) {
+        return getNodeTreeWalker().getChildNode(index);
+    }
+
+    public int getChildNodeSize() {
+        return getNodeTreeWalker().getChildNodeSize();
+    }
+
+    // NodeReferenceResolverFinder implements --------------------------------------
+    
+    public NodeReferenceResolver findNodeResolver() {
+        return getNodeTreeWalker().findNodeResolver();
+    }
+    
+    // PositionAware overrides ------------------------------------
 
     public String getSystemID() {
         if (getSource() == null) {
@@ -173,55 +253,131 @@ public class SpecificationImpl extends ParameterAwareImpl
         return false;
     }
 
-    // support class -------------------------------------------------
-
-    protected class ChildSpecificationsIterator implements Iterator {
-
-        private int _index;
-        private Specification _next;
-        private List _list;
-
-        public ChildSpecificationsIterator(List list) {
-            if (list == null) {
-                throw new IllegalArgumentException();
-            }
-            _list = list;
-            _index = list.size();
-        }
-
-        public boolean hasNext() {
-            if (_next != null) {
-                return true;
-            }
-            while (_next == null) {
-                _index--;
-                if (_index < 0) {
-                    return false;
+    // for serialize
+    private static final String SERIALIZE_CONTROLLER_KEY =
+        SpecificationImpl.class.getName() + "#serializeController";
+    static {
+        CycleUtil.registVariableFactory(
+            SERIALIZE_CONTROLLER_KEY,
+            new DefaultCycleLocalInstantiator() {
+                public Object create(Object[] params) {
+                    return new NodeSerializeController();
                 }
-                synchronized (_list) {
-                    SoftReference ref = (SoftReference) _list.get(_index);
-                    _next = (Specification) ref.get();
-                    if (_next == null) {
-                        _list.remove(_index);
+                public void destroy(Object instance) {
+                    if (instance instanceof NodeSerializeController) {
+                        ((NodeSerializeController) instance).release();
                     }
                 }
+            });
+    }
+    
+
+    protected static File getSerializedFile(String systemID) {
+        ApplicationScope scope =
+            CycleUtil.getServiceCycle().getApplicationScope(); 
+        String cachePath = scope.getRealPath("WEB-INF/.mayaaSpecCache");
+        File cacheDir = new File(cachePath);
+        cacheDir.mkdirs();
+        return new File(cacheDir,
+                systemID.substring("/".length()).replace('/', '.') + ".ser");
+    }
+    
+    public void serialize() {
+        synchronized(this) {
+            try {
+                File outputFile = getSerializedFile(getSystemID());
+                ObjectOutputStream stream =
+                    new ObjectOutputStream(new FileOutputStream(outputFile));
+                try {
+                    nodeSerializer().init();
+                    try {
+                        stream.writeObject(this);
+                    } finally {
+                        nodeSerializer().release();
+                    }
+                } finally {
+                    stream.close();
+                }
+            } catch (IOException e) {
+                LOG.error("page serialize failed.", e);
             }
-            return true;
         }
+    }
 
-        public Object next() {
-            if (_next == null && hasNext() == false) {
-                throw new NoSuchElementException();
+    protected void afterDeserialize() {
+        // no-op
+    }
+
+    public Specification deserialize(String systemID) {
+        synchronized(this) {
+            File cacheFile = getSerializedFile(systemID);
+            if (cacheFile.exists() == false) {
+                return null;
             }
-            Specification ret = _next;
-            _next = null;
-            return ret;
+            Specification result;
+            try {
+                ObjectInputStream stream =
+                    new ObjectInputStream(new FileInputStream(cacheFile));
+                try {
+                    nodeSerializer().init();
+                    try {
+                        result = (Specification) stream.readObject();
+                        if (result instanceof SpecificationImpl) {
+                            ((SpecificationImpl) result).afterDeserialize();
+                        }
+                    } finally {
+                        nodeSerializer().release();
+                    }
+                } finally {
+                    stream.close();
+                }
+                return result;
+            } catch(Throwable e) {
+                String message =
+                    getSystemID() + " specification deserialize failed."; 
+                if (e.getMessage() != null) {
+                    message += " " + e.getMessage();
+                }
+                LOG.info(message);
+                cacheFile.delete();
+                return null;
+            }
         }
+    }
 
-        public void remove() {
-            throw new UnsupportedOperationException();
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (_delegateNodeTreeWalker != null) {
+            _delegateNodeTreeWalker.setOwner(this);
         }
+        for (Iterator it = iterateChildNode(); it.hasNext(); ) {
+            NodeTreeWalker child = (NodeTreeWalker) it.next();
+            child.setParentNode(this);
+        }
+        nodeSerializer().specLoaded(this);
+    }
+    
+    private void writeObject(ObjectOutputStream out)
+            throws IOException {
+        out.defaultWriteObject();
+    }
 
+    public static NodeSerializeController nodeSerializer() {
+        return (NodeSerializeController) CycleUtil.getGlobalVariable(
+                SERIALIZE_CONTROLLER_KEY, null);
+    }
+    
+    // NodeReferenceResolver implements ----------------------------
+    
+    public void registResolveNodeListener(
+            String uniqueID, NodeResolveListener listener) {
+        nodeSerializer().registResolveNodeListener(
+                uniqueID, listener);
+    }
+
+    public void nodeLoaded(SpecificationNode item) {
+        nodeSerializer().nodeLoaded(item);
     }
 
 }

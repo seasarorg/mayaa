@@ -9,13 +9,14 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 package org.seasar.mayaa.impl.engine.processor;
 
 import java.util.Iterator;
+import java.util.Stack;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
@@ -23,6 +24,7 @@ import org.seasar.mayaa.engine.processor.IterationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.IteratorUtil;
 
@@ -33,12 +35,21 @@ public class ForEachProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
     private static final long serialVersionUID = -1762792311844341560L;
+    private static final String PROCESS_TIME_INFO_KEY =
+        ForEachProcessor.class.getName() + "#processTimeInfo";
+    static {
+        CycleUtil.registVariableFactory(PROCESS_TIME_INFO_KEY,
+                new DefaultCycleLocalInstantiator() {
+            public Object create(Object owner, Object[] params) {
+                ForEachProcessor processor = (ForEachProcessor) owner;
+                return processor.new IndexIteratorStack();
+            }
+        });
+    }
 
     private String _var;
-    private ProcessorProperty _items;
-    private String _indexName;
-    private ThreadLocal _iterator = new ThreadLocal();
-    private ThreadLocal _index = new ThreadLocal();
+    protected ProcessorProperty _items;
+    protected String _indexName;
 
     // MLD property, required
     public void setVar(String var) {
@@ -62,14 +73,20 @@ public class ForEachProcessor extends TemplateProcessorSupport
         return true;
     }
 
-    protected boolean next() {
-        Iterator iterator = (Iterator) _iterator.get();
+    protected boolean prepareEvalBody() {
+        IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null);
+        IndexedIterator iterator = stack.peek();
+
         if (iterator.hasNext() == false) {
             return false;
         }
 
-        inclementIndex();
-        CycleUtil.setAttribute(_var, iterator.next(), ServiceCycle.SCOPE_PAGE);
+        CycleUtil.setAttribute(_var, iterator.next(), null);
+        if (_indexName != null) {
+            CycleUtil.setAttribute(_indexName,
+                    iterator.getNextIndex(), ServiceCycle.SCOPE_PAGE);
+        }
         return true;
     }
 
@@ -77,35 +94,88 @@ public class ForEachProcessor extends TemplateProcessorSupport
         if (_items == null || _var == null) {
             throw new IllegalStateException();
         }
+        // CycleUtil.clearLocalVariable(PROCESS_TIME_INFO_KEY, this);
 
-        Object obj =
-                ProviderUtil.getScriptEnvironment().convertFromScriptObject(
-                        _items.getValue().execute(null));
-        Iterator iterator = IteratorUtil.toIterator(obj);
-        _iterator.set(iterator);
+        IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null);
+        stack.pushOne();
 
-        clear();
-
-        return next() ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
+        if (prepareEvalBody() == false) {
+            stack.pop();
+            return ProcessStatus.SKIP_BODY;
+        }
+        return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doAfterChildProcess() {
-        return next() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
+        if (prepareEvalBody() == false) {
+            IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
+                    PROCESS_TIME_INFO_KEY, this, null);
+            stack.pop();
+            return ProcessStatus.SKIP_BODY;
+        }
+        return ProcessStatus.EVAL_BODY_AGAIN;
     }
 
-    protected void inclementIndex() {
-        if (_indexName != null) {
-            Integer next =
-                new Integer(((Integer) _index.get()).intValue() + 1);
-            _index.set(next);
-            CycleUtil.setAttribute(_indexName, next, ServiceCycle.SCOPE_PAGE);
+    public void kill() {
+        _items = null;
+        super.kill();
+    }
+
+    // for serialize
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+    }
+
+    // support class
+
+    private class IndexIteratorStack {
+        private Stack _stack;
+
+        public IndexIteratorStack() {
+            _stack = new Stack();
+        }
+
+        public void pushOne() {
+            _stack.push(new IndexedIterator());
+        }
+
+        public IndexedIterator pop() {
+            return (IndexedIterator) _stack.pop();
+        }
+
+        public IndexedIterator peek() {
+            return (IndexedIterator) _stack.peek();
         }
     }
 
-    protected void clear() {
-        if (_indexName != null) {
-            _index.set(new Integer(-1));
-        }
-    }
+    private class IndexedIterator {
+        private int _index;
+        private Iterator _iterator;
 
+        public IndexedIterator() {
+            if (_indexName != null) {
+                _index = -1;
+            }
+            Object obj =
+                ProviderUtil.getScriptEnvironment().convertFromScriptObject(
+                        _items.getValue().execute(null));
+            _iterator = IteratorUtil.toIterator(obj);
+        }
+
+        public Integer getNextIndex() {
+            return new Integer(++_index);
+        }
+
+        public boolean hasNext() {
+            return _iterator.hasNext();
+        }
+
+        public Object next() {
+            return _iterator.next();
+        }
+
+    }
 }

@@ -15,9 +15,11 @@
  */
 package org.seasar.mayaa.engine.specification;
 
+import java.io.Serializable;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeObject {
+public interface NodeObject extends Serializable {
     // marker interface.
 }

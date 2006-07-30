@@ -25,7 +25,7 @@ public interface QName {
      * 名前空間URIの取得。
      * @return 名前空間URI。
      */
-    String getNamespaceURI();
+    URI getNamespaceURI();
 
     /**
      * ローカル名の取得。

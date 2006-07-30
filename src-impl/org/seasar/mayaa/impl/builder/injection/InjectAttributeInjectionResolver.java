@@ -22,6 +22,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
@@ -34,9 +35,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class InjectAttributeInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = 2380780440814507007L;
     private static final Log LOG =
         LogFactory.getLog(InjectAttributeInjectionResolver.class);
-
     protected static final QName QM_INJECT =
         SpecificationUtil.createQName("inject");
 
@@ -52,7 +53,7 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
                 BuilderUtil.parseName(original, injectName);
             QName qName = prefixAwareName.getQName();
             if (QM_IGNORE.equals(qName) == false) {
-                String uri = qName.getNamespaceURI();
+                URI uri = qName.getNamespaceURI();
                 if (URI_HTML.equals(uri)
                         || URI_XHTML.equals(uri) || URI_XML.equals(uri)) {
                     LOG.error("inject=\""+ injectName +"\" is not processor");

@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder;
 
 import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -27,6 +28,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PathAdjusterImpl
         extends ParameterAwareImpl
         implements PathAdjuster, CONST_IMPL {
+
+    private static final long serialVersionUID = -6683061623840171581L;
 
     private String[][] _adjustTarget;
 
@@ -66,7 +69,7 @@ public class PathAdjusterImpl
             return false;
         }
 
-        String uri = nodeName.getNamespaceURI();
+        URI uri = nodeName.getNamespaceURI();
         if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
             String local = nodeName.getLocalName().toLowerCase();
             for (int i = 0; i < _adjustTarget.length; i++) {
@@ -83,15 +86,12 @@ public class PathAdjusterImpl
             return false;
         }
 
-        String uri = attributeName.getNamespaceURI();
-        if (URI_HTML.equals(uri) || URI_XHTML.equals(uri)) {
-            String nodeLocal = nodeName.getLocalName().toLowerCase();
-            String attributeLocal = attributeName.getLocalName().toLowerCase();
-            for (int i = 0; i < _adjustTarget.length; i++) {
-                if (_adjustTarget[i][0].equals(nodeLocal)
-                        && _adjustTarget[i][1].equals(attributeLocal)) {
-                    return true;
-                }
+        String nodeLocal = nodeName.getLocalName().toLowerCase();
+        String attributeLocal = attributeName.getLocalName().toLowerCase();
+        for (int i = 0; i < _adjustTarget.length; i++) {
+            if (_adjustTarget[i][0].equals(nodeLocal)
+                    && _adjustTarget[i][1].equals(attributeLocal)) {
+                return true;
             }
         }
         return false;

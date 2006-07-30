@@ -104,6 +104,12 @@ public class AttributeProcessor extends TemplateProcessorSupport {
                 new ProcessorPropertyWrapper(_name, _value, basePath));
         return ProcessStatus.SKIP_BODY;
     }
+    
+    public void kill() {
+        _name = null;
+        _value = null;
+        super.kill();
+    }
 
     // support class ------------------------------------------------
 
@@ -169,7 +175,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public Object execute(Object[] args) {
             Object result = super.execute(args);
-            if (isString() && StringUtil.hasValue((String) result)) {
+            if (isString() && StringUtil.hasValue(result)) {
                 if (_basePath != null) {
                     result =
                         StringUtil.adjustRelativePath(_basePath, result.toString());
@@ -193,7 +199,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
             if (isString()) {
                 Object obj = super.execute(null);
-                if (StringUtil.hasValue((String) obj)) {
+                if (StringUtil.hasValue(obj)) {
                     _escapedValue = obj.toString();
                     if (basePath != null) {
                         _escapedValue =

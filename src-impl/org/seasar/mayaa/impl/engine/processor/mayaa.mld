@@ -149,6 +149,7 @@
 			class="org.seasar.mayaa.impl.engine.processor.EchoProcessor">
 		<description>m:echo injection</description>
 		<property name="childEvaluation" final="true"/>
+		<property name="name" />
 	</processor>
 
 	<processor name="formatNumber"

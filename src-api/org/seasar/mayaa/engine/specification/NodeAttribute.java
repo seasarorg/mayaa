@@ -19,7 +19,7 @@ package org.seasar.mayaa.engine.specification;
  * 設定XMLの構成物の属性。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeAttribute extends PrefixAwareName, NodeObject {
+public interface NodeAttribute extends PrefixAwareName {
 
     /**
      * 所属するノードを取得する。

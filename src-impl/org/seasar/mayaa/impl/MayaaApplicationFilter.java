@@ -46,7 +46,11 @@ public class MayaaApplicationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, 
             FilterChain chain) throws IOException, ServletException {
         CycleUtil.initialize(request, response);
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            CycleUtil.cycleFinalize();
+        }
     }
 
 }

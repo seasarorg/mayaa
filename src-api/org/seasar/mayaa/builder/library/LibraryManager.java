@@ -21,6 +21,7 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 
 /**
  * MLDモデルオブジェクトのルート。
@@ -84,7 +85,7 @@ public interface LibraryManager extends ParameterAware {
      * @param namespaceURI 取得したいMLDの名前空間URI。
      * @return MLD設定のイテレータ。
      */
-    Iterator iterateLibraryDefinition(String namespaceURI);
+    Iterator iterateLibraryDefinition(URI namespaceURI);
 
     /**
      * QNameで該当するプロセッサ定義（=<code>ProcessorDefinition</code>）を検索する。

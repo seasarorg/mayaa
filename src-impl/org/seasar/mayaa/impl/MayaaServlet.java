@@ -49,7 +49,17 @@ public class MayaaServlet extends HttpServlet {
         LOG.info("prepareLibraries start");
         ProviderUtil.getLibraryManager().prepareLibraries();
         LOG.info("prepareLibraries end");
+        initAutoPageBuilder();
         LOG.info("init end");
+    }
+
+    protected void initAutoPageBuilder() {
+        AutoPageBuilder.INSTANCE.init(getServletConfig());
+    }
+
+    public void destroy() {
+        AutoPageBuilder.INSTANCE.destroy();
+        ProviderUtil.getEngine().kill();
     }
 
     public void doGet(
@@ -65,12 +75,16 @@ public class MayaaServlet extends HttpServlet {
     protected void doService(
             HttpServletRequest request, HttpServletResponse response) {
         CycleUtil.initialize(request, response);
-        Engine engine = ProviderUtil.getEngine();
+        try {
+            Engine engine = ProviderUtil.getEngine();
 
-        setupCharacterEncoding(request,
-                engine.getParameter("requestCharacterEncoding"));
+            setupCharacterEncoding(request,
+                    engine.getParameter("requestCharacterEncoding"));
 
-        engine.doService(null, true);
+            engine.doService(null, true);
+        } finally {
+            CycleUtil.cycleFinalize();
+        }
     }
 
     protected void setupCharacterEncoding(

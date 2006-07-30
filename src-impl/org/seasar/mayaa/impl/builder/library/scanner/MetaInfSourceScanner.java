@@ -15,23 +15,15 @@
  */
 package org.seasar.mayaa.impl.builder.library.scanner;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
-import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.collection.IteratorIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -40,90 +32,47 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class MetaInfSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
 
-    private static Map _cache = new HashMap();
+    private static final long serialVersionUID = -7285416169718204350L;
 
-    private FolderSourceScanner _folderScanner =
-        new FolderSourceScanner();
+    private FolderSourceScanner _folderScanner = new FolderSourceScanner();
     private Set _ignores = new HashSet();
-
-    protected String getJarName(String systemID) {
-        if (StringUtil.hasValue(systemID)) {
-            int pos = systemID.lastIndexOf("/");
-            if (pos != -1) {
-                return systemID.substring(pos + 1);
-            }
-            return systemID;
+    
+    private String _jarScanFolder;
+    private Set _jarScanIgnores = new HashSet();
+    private Set _jarScanExtensions = new HashSet();
+    
+    private void initJarScanOptions() {
+        if (_jarScanFolder == null) {
+            _jarScanFolder = "META-INF/";
         }
-        return null;
-    }
-
-    protected boolean containIgnores(String name) {
-        if (StringUtil.isEmpty(name)) {
-            throw new IllegalArgumentException();
+        if (_jarScanIgnores.size() == 0) {
+            _jarScanIgnores.add("META-INF/MANIFEST.MF");
         }
-        for (Iterator it = _ignores.iterator(); it.hasNext();) {
-            if (name.startsWith(it.next().toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void addAliases(
-            JarInputStream jar, String jarPath, Date timestamp, Set aliases)
-            throws IOException {
-        JarEntry entry;
-        while ((entry = jar.getNextJarEntry()) != null) {
-            String entryName = entry.getName();
-            if ("META-INF/MANIFEST.MF".equals(entryName) == false
-                    && entryName.startsWith("META-INF/")) {
-                aliases.add(new SourceAlias(jarPath, entryName, timestamp));
-            }
+        if (_jarScanExtensions.size() == 0) {
+            _jarScanExtensions.add(".mld");
+            _jarScanExtensions.add(".tld");
         }
     }
-
-    protected void scanSource(SourceDescriptor source, Set aliases) {
-        if (source == null && source.exists() == false) {
-            throw new IllegalArgumentException();
-        }
-        String jarName = getJarName(source.getSystemID());
-        if (StringUtil.hasValue(jarName)
-                && containIgnores(jarName) == false) {
-
-            String jarPath = _folderScanner.getFolder() + source.getSystemID();
-            Date timestamp = source.getTimestamp();
-            InputStream stream = source.getInputStream();
-            try {
-                JarInputStream jar = new JarInputStream(stream);
-                addAliases(jar, jarPath, timestamp, aliases);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } finally {
-                IOUtil.close(stream);
-            }
-        }
-    }
-
-    protected Set scanAll(SourceScanner scanner) {
-        if (scanner == null) {
-            throw new IllegalArgumentException();
-        }
-        Set aliases = new HashSet();
-        for (Iterator it = scanner.scan(); it.hasNext();) {
-            SourceDescriptor source = (SourceDescriptor) it.next();
-            scanSource(source, aliases);
-        }
-        return aliases;
-    }
-
+    
     public Iterator scan() {
-        String folder = _folderScanner.getFolder();
-        Set aliases = (Set) _cache.get(folder);
-        if (aliases == null) {
-            aliases = scanAll(_folderScanner);
-            _cache.put(folder, aliases);
+        initJarScanOptions();
+        IteratorIterator itit = new IteratorIterator();
+        for (Iterator it = _folderScanner.scan(); it.hasNext(); ) {
+            JarSourceScanner scanner = new JarSourceScanner();
+            scanner.setDescriptor((SourceDescriptor) it.next());
+            scanner.setParameter("root", _folderScanner.getFolder());
+            scanner.setParameter("folder", _jarScanFolder);
+            for (Iterator itIgnore = _jarScanIgnores.iterator()
+                    ; itIgnore.hasNext(); ) {
+                scanner.setParameter("ignore", (String) itIgnore.next());
+            }
+            for (Iterator itExtension = _jarScanExtensions.iterator()
+                    ; itExtension.hasNext(); ) {
+                scanner.setParameter("extension", (String) itExtension.next());
+            }
+            itit.add(scanner);
         }
-        return new MetaInfSourceIterator(aliases.iterator());
+        return itit;
     }
 
     // Parameterizable implements ------------------------------------
@@ -134,43 +83,20 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _ignores.add(value);
+        } else if (name.startsWith("jar.")) {
+            name = name.substring("jar.".length());
+            if ("folder".equals(name)) {
+                _jarScanFolder = value;
+            } else if ("ignore".equals(name)) {
+                _jarScanIgnores.add(value);
+            } else if ("extension".equals(name)) {
+                _jarScanExtensions.add(value);
+            }
         } else {
             _folderScanner.setParameter(name, value);
+            return;
         }
         super.setParameter(name, value);
-    }
-
-    // suppport class -----------------------------------------------
-
-    protected class MetaInfSourceIterator implements Iterator {
-
-        private Iterator _it;
-
-        public MetaInfSourceIterator(Iterator it) {
-            if (it == null) {
-                throw new IllegalArgumentException();
-            }
-            _it = it;
-        }
-
-        public boolean hasNext() {
-            return _it.hasNext();
-        }
-
-        public Object next() {
-            SourceAlias alias = (SourceAlias) _it.next();
-            ClassLoaderSourceDescriptor source =
-                new ClassLoaderSourceDescriptor();
-            source.setSystemID(alias.getSystemID());
-            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
-            source.setTimestamp(alias.getTimestamp());
-            return source;
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
     }
 
 }

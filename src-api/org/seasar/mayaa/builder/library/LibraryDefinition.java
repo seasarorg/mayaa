@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.engine.specification.URI;
 
 
 /**
@@ -31,13 +32,13 @@ public interface LibraryDefinition extends ParameterAware {
      * 当該ライブラリの名前空間URIを取得する。
      * @return 名前空間URI。
      */
-    String getNamespaceURI();
+    URI getNamespaceURI();
 
     /**
      * 当該ライブラリに、名前空間URIを追加アサインする。
      * @param assignedURI 追加アサインする名前空間URI。
      */
-    void addAssignedURI(String assignedURI);
+    void addAssignedURI(URI assignedURI);
 
     /**
      * 当該ライブラリに追加アサインされた名前空間URIをイテレートする。

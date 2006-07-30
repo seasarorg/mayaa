@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE provider
 	PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
-    "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
+	"http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
 <provider class="org.seasar.mayaa.impl.provider.ServiceProviderImpl">
 
 	<engine class="org.seasar.mayaa.impl.engine.EngineImpl">
@@ -16,6 +16,13 @@
 		<parameter name="suffixSeparator" value="$"/>
 		<parameter name="welcomeFileName" value="index.html"/>
 		<parameter name="requestCharacterEncoding" value="UTF-8"/>
+		<parameter name="pageSerialize" value="false"/>
+		<parameter name="surviveLimit" value="5"/>
+		<parameter name="autoBuild" value="false"/>
+		<parameter name="autoBuild.repeat" value="false"/>
+		<parameter name="autoBuild.wait" value="60"/><!-- seconds -->
+		<parameter name="autoBuild.fileNameFilters" value=".html"/><!-- .html;^(sample|howto).+\.htm$ -->
+		<parameter name="autoBuild.renderMate" value="false"/>
 	</engine>
 
 	<scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
@@ -49,7 +56,17 @@
 			<parameter name="ignore" value="xml-apis-"/>
 			<parameter name="ignore" value="xercesImpl-"/>
 			<parameter name="ignore" value="rhino-"/>
+			<parameter name="jar.ignore" value="META-INF/MANIFEST.MF"/>
+			<parameter name="jar.extension" value=".mld"/>
+			<parameter name="jar.extension" value=".tld"/>
 		</scanner>
+		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.ResourceScanner">
+			<parameter name="root" value="META-INF/"/>
+			<parameter name="ignore" value="META-INF/MANIFEST.MF"/>
+			<parameter name="extension" value=".mld"/>
+			<parameter name="extension" value=".tld"/>
+		</scanner>
+
 		<scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>
 
 		<!-- after scan jars -->

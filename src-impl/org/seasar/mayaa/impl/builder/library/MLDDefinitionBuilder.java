@@ -21,11 +21,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.DefinitionBuilder;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.mld.LibraryDefinitionHandler;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
@@ -37,6 +39,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class MLDDefinitionBuilder extends ParameterAwareImpl
         implements DefinitionBuilder, CONST_IMPL {
 
+    private static final long serialVersionUID = -2992197676369912663L;
     private static final Log LOG =
         LogFactory.getLog(MLDDefinitionBuilder.class);
 
@@ -63,7 +66,9 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
             boolean assigned = ObjectUtil.booleanValue(source.getParameter(
                     WebXMLTaglibSourceScanner.ASSIGNED), false);
             if (assigned) {
-                library.addAssignedURI(source.getParameter(SourceAlias.ALIAS));
+                URI assignedURI = SpecificationUtil.createURI(
+                        source.getParameter(SourceAlias.ALIAS));
+                library.addAssignedURI(assignedURI);
             }
             return library;
         }

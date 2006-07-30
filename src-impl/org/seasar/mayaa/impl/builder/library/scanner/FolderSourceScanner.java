@@ -30,6 +30,7 @@ import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
+import org.seasar.mayaa.impl.source.FileSourceDescriptor;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
@@ -40,11 +41,14 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class FolderSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
 
-    private ApplicationSourceDescriptor _source;
+    private static final long serialVersionUID = 2888604805693825909L;
+
+    private FileSourceDescriptor _source;
 
     private String _folder;
 
     private boolean _recursive = false;
+    private boolean _absolute = false;
 
     private Set _extensions = new HashSet();
     private Set _unmodifiableExtensions =
@@ -70,13 +74,21 @@ public class FolderSourceScanner extends ParameterAwareImpl
     }
 
     public Iterator scan() {
+        ApplicationScope appScope = null;
         if (_source == null) {
-            _source = new ApplicationSourceDescriptor();
-            _source.setDenyWebInf(false);
+            if (_absolute) {
+                _source = new FileSourceDescriptor();
+            } else {
+                ApplicationSourceDescriptor appSource =
+                    new ApplicationSourceDescriptor();
+                appScope = appSource.getApplicationScope();
+                appSource.setDenyWebInf(false);
+                _source = appSource;
+            }
             _source.setRoot(getFolder());
         }
         if (_source.exists() && _source.getFile().isDirectory()) {
-            return new FileToSourceIterator(_source.getApplicationScope(),
+            return new FileToSourceIterator(appScope,
                     _source.getRoot(), iterateFiles(_source.getFile()));
         }
         return NullIterator.getInstance();
@@ -102,7 +114,9 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 if (pathName.isDirectory()) {
                     return true;
                 }
-
+                if (_acceptableExtensions.length == 0) {
+                    return true;
+                }
                 for (int i = 0; i < _acceptableExtensions.length; i++) {
                     if (pathName.getName().endsWith(_acceptableExtensions[i])) {
                         return true;
@@ -159,6 +173,8 @@ public class FolderSourceScanner extends ParameterAwareImpl
             _folder = value;
         } else if ("recursive".equals(name)) {
             _recursive = Boolean.valueOf(value).booleanValue();
+        } else if ("absolute".equals(name)) {
+            _absolute = Boolean.valueOf(value).booleanValue();
         } else if ("extension".equals(name)) {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
@@ -212,7 +228,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
         public FileToSourceIterator(ApplicationScope applicationScope,
                 String root, Iterator iterator) {
-            if (applicationScope == null || iterator == null) {
+            if (iterator == null) {
                 throw new IllegalArgumentException();
             }
             _applicationScope = applicationScope;
@@ -229,7 +245,12 @@ public class FolderSourceScanner extends ParameterAwareImpl
             if (StringUtil.isEmpty(sourceRoot)) {
                 sourceRoot = "/";
             }
-            String root = _applicationScope.getRealPath(sourceRoot);
+            String root;
+            if (_applicationScope != null) {
+                root = _applicationScope.getRealPath(sourceRoot);
+            } else {
+                root = "";
+            }
             String absolutePath = file.getAbsolutePath();
             String path = absolutePath.substring(root.length());
             return StringUtil.preparePath(path);

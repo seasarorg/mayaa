@@ -18,52 +18,52 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.seasar.mayaa.engine.Page;
+
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class InsertRenderingParams {
 
-    private ThreadLocal _rendering;
-    private ThreadLocal _params;
+    private boolean _rendering;
+    private LinkedHashMap _params;
+    private Page _stackComponent;
+    private Page _currentComponent;
 
-    private ThreadLocal renderingInstance() {
-        if (_rendering == null) {
-            synchronized(this) {
-                if (_rendering == null) {
-                    _rendering = new ThreadLocal();
-                }
-            }
-        }
+    public boolean isRendering() {
         return _rendering;
     }
 
-    public boolean isRendering() {
-        Boolean result = (Boolean) renderingInstance().get();
-        if (result == null) {
-            result = Boolean.FALSE;
-            renderingInstance().set(result);
-        }
-        return result.booleanValue();
-    }
-
     public void setRendering(boolean rendering) {
-        renderingInstance().set(Boolean.valueOf(rendering));
+        _rendering = rendering;
     }
 
     public Map getParams() {
         if (_params == null) {
-            synchronized (this) {
-                if (_params == null) {
-                    _params = new ThreadLocal();
-                }
-            }
+            _params = new LinkedHashMap();
         }
-        Map result = (Map) _params.get();
-        if (result == null) {
-            result = new LinkedHashMap();
-            _params.set(result);
-        }
-        return result;
+        return _params;
+    }
+
+    public void setStackComponent(Page component) {
+        _stackComponent = component;
+    }
+
+    public Page getStackComponent() {
+        return _stackComponent;
+    }
+
+    public void setCurrentComponent(Page component) {
+        _currentComponent = component;
+    }
+
+    public Page getCurrentComponent() {
+        return _currentComponent;
+    }
+
+    public void clear() {
+        _stackComponent = null;
+        _currentComponent = null;
     }
 
 }

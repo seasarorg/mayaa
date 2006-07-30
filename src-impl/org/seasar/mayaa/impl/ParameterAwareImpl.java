@@ -15,6 +15,9 @@
  */
 package org.seasar.mayaa.impl;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,10 +31,14 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  */
 public class ParameterAwareImpl implements ParameterAware {
 
-    private Map _parameters;
+    private static final long serialVersionUID = 7520826050429074016L;
+    
+    private transient Map _parameters;
     private String _systemID = "";
     private int _lineNumber;
     private boolean _onTemplate;
+
+    // ParameterAware implements --------------------------------------
 
     public void setParameter(String name, String value) {
         if (StringUtil.isEmpty(name)) {
@@ -63,6 +70,8 @@ public class ParameterAwareImpl implements ParameterAware {
         return _parameters.keySet().iterator();
     }
 
+    // PositionAware implements ---------------------------------------
+    
     public void setSystemID(String systemID) {
         _systemID = StringUtil.preparePath(systemID);
     }
@@ -88,6 +97,26 @@ public class ParameterAwareImpl implements ParameterAware {
 
     public boolean isOnTemplate() {
         return _onTemplate;
+    }
+
+    // for serialize
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(_parameters);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        Map map = (Map) in.readObject();
+        if (map != null) {
+            for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) it.next();
+                // for override method
+                setParameter((String) entry.getKey(),
+                        (String) entry.getValue());
+            }
+        }
     }
 
 }

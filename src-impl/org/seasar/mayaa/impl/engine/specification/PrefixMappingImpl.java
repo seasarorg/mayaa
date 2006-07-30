@@ -15,21 +15,28 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixMappingImpl implements PrefixMapping {
-    private static Map _cache = new WeakValueHashMap();
+public class PrefixMappingImpl implements PrefixMapping, Serializable {
+    private static final long serialVersionUID = -7627574345551562433L;
 
-    public static PrefixMapping getInstance(
-            String prefix, String namespaceURI) {
+    private static Map _cache =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
 
+    public static PrefixMapping getInstance(String prefix, URI namespaceURI) {
+        if (namespaceURI == null) {
+            throw new IllegalArgumentException();
+        }
         String key = forPrefixMappingString(prefix, namespaceURI);
         PrefixMapping result;
         synchronized (_cache) {
@@ -45,9 +52,9 @@ public class PrefixMappingImpl implements PrefixMapping {
 
 
     private String _prefix;
-    private String _namespaceURI;
+    private URI _namespaceURI;
 
-    private PrefixMappingImpl(String prefix, String namespaceURI) {
+    private PrefixMappingImpl(String prefix, URI namespaceURI) {
         if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
@@ -62,19 +69,37 @@ public class PrefixMappingImpl implements PrefixMapping {
         return _prefix;
     }
 
-    public String getNamespaceURI() {
+    public URI getNamespaceURI() {
         return _namespaceURI;
     }
 
     public static String forPrefixMappingString(
-            String prefix, String namespaceURI) {
+            String prefix, URI namespaceURI) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("xmlns");
         if (StringUtil.hasValue(prefix)) {
-            buffer.append(":").append(prefix);
+            buffer.append(prefix);
         }
-        buffer.append("=").append(namespaceURI);
+        buffer.append(":").append(namespaceURI);
         return buffer.toString();
+    }
+
+    public static PrefixMapping revertStringToMapping(String prefixMappingString) {
+        if (prefixMappingString == null) {
+            return null;
+        }
+        int index = prefixMappingString.indexOf(':');
+        String prefix;
+        String namespaceURI;
+        if (index >= 0) {
+            prefix = prefixMappingString.substring(0, index);
+            namespaceURI = prefixMappingString.substring(index+1);
+        } else if (String.valueOf((Object)null).equals(prefixMappingString)) {
+            return null;
+        } else {
+            prefix = "";
+            namespaceURI = prefixMappingString;
+        }
+        return getInstance(prefix, SpecificationUtil.createURI(namespaceURI));
     }
 
     public String toString() {
@@ -96,6 +121,9 @@ public class PrefixMappingImpl implements PrefixMapping {
 
     public static int keptSize() {
         return _cache.size();
+    }
+    private Object readResolve() {
+        return getInstance(_prefix, _namespaceURI);
     }
 
 }

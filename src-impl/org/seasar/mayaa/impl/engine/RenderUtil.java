@@ -34,6 +34,7 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -128,6 +129,9 @@ public class RenderUtil implements CONST_IMPL {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         ProcessStatus ret = EVAL_PAGE;
         boolean buffered = false;
+
+        setCurrentProcessor(current);
+        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_BEFORE_RENDER_PROCESSOR);
         try {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
@@ -201,11 +205,24 @@ public class RenderUtil implements CONST_IMPL {
             if (isTryCatchFinally(current)) {
                 getTryCatchFinally(current).doFinallyProcess();
             }
+            setCurrentProcessor(current);
+            SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_AFTER_RENDER_PROCESSOR);
+            setCurrentProcessor(null);
         }
         if (buffered) {
             getEvaluation(current).setBodyContent(cycle.getResponse().getWriter());
         }
         return ret;
+    }
+    
+    private static final String CURRENT_PROCESSOR_KEY = "__currentProcessor__";
+    
+    protected static TemplateProcessor getCurrentProcessor() {
+        return (TemplateProcessor)CycleUtil.getRequestScope().getAttribute(CURRENT_PROCESSOR_KEY);
+    }
+    
+    protected static void setCurrentProcessor(TemplateProcessor processor) {
+        CycleUtil.getRequestScope().setAttribute(CURRENT_PROCESSOR_KEY, processor);
     }
 
     // Rendering entry point
@@ -235,7 +252,7 @@ public class RenderUtil implements CONST_IMPL {
 
     protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
-        if ("mayaa".equals(extension)) {
+        if (QM_MAYAA.getLocalName().equals(extension)) {
             SourceDescriptor source = page.getSource();
             if (source.exists() == false) {
                 String pageName = page.getPageName();

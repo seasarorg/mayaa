@@ -31,6 +31,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class MetaValuesSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = 3263443313691061874L;
     protected static final QName QH_CONTENT =
         SpecificationUtil.createQName(URI_HTML, "content");
     protected static final QName QH_HTTP_EQUIV =

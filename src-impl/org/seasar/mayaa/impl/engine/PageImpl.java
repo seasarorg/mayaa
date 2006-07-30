@@ -15,51 +15,58 @@
  */
 package org.seasar.mayaa.impl.engine;
 
-import java.io.Serializable;
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class PageImpl extends SpecificationImpl
-        implements Page, Serializable, CONST_IMPL {
+public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
 
     private static final long serialVersionUID = -5345416943673041700L;
+    static final Log LOG = LogFactory.getLog(PageImpl.class);
+    private static final String CURRENT_PAGE_KEY = "__currentPage__";
+    private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
 
-    private Page _superPage;
-    private String _superSuffix;
-    private String _superExtension;
     private String _pageName;
-    private List _templates;
+    private transient Page _superPage;
+    private transient String _superSuffix;
+    private transient String _superExtension;
+    private transient Map _beginRenderListeners;
 
     public void initialize(String pageName) {
         if (StringUtil.isEmpty(pageName)) {
             throw new IllegalArgumentException();
         }
+        if (pageName.charAt(0) != '/') {
+            pageName = "/" + pageName;
+        }
         _pageName = pageName;
     }
 
-    protected void clear() {
+    public void kill() {
         synchronized (this) {
             _superPage = null;
-            super.clear();
+            _beginRenderListeners = null;
+            super.kill();
         }
     }
 
@@ -88,17 +95,8 @@ public class PageImpl extends SpecificationImpl
         }
     }
 
-    public void checkTimestamps() {
-        if (isOldSpecification()) {
-            parseSpecification();
-        }
-    }
-
     public Page getSuperPage() {
         prepareSuper();
-        if (_superPage != null) {
-            _superPage.checkTimestamp();
-        }
         return _superPage;
     }
 
@@ -129,47 +127,15 @@ public class PageImpl extends SpecificationImpl
         return ScriptUtil.compile(value, String.class);
     }
 
-    protected Template findTemplateFromCache(
-            String suffix, String extension) {
-        if (_templates != null) {
-            for (Iterator it = new ChildSpecificationsIterator(_templates);
-                    it.hasNext();) {
-                Object obj = it.next();
-                if (obj instanceof Template == false) {
-                    throw new IllegalStateException();
-                }
-                Template template = (Template) obj;
-                String templateSuffix = template.getSuffix();
-                String templateExtension = template.getExtension();
-                if (templateSuffix.equals(suffix)
-                        && templateExtension.equals(extension)) {
-                    return template;
-                }
-            }
+    protected Template findTemplateFromCache(String systemID) {
+        Engine engine = ProviderUtil.getEngine();
+        Template template = (Template) engine.findSpecificationFromCache(systemID);
+        /* TODO Šm”F
+        if (template instanceof TemplateImpl) {
+            ((TemplateImpl)template).ready();
         }
-        return null;
-    }
-
-    protected Template createNewTemplate(String suffix, String extension) {
-        StringBuffer name = new StringBuffer(_pageName);
-        if (StringUtil.hasValue(suffix)) {
-            String separator = EngineUtil.getEngineSetting(
-                    SUFFIX_SEPARATOR, "$");
-            name.append(separator).append(suffix);
-        }
-        if (StringUtil.hasValue(extension)) {
-            name.append(".").append(extension);
-        }
-        SourceDescriptor source =
-            SourceUtil.getSourceDescriptor(name.toString());
-        if (source.exists()) {
-            Engine engine = ProviderUtil.getEngine();
-            Template template =
-                engine.createTemplateInstance(this, suffix, extension);
-            template.setSource(source);
-            return template;
-        }
-        return null;
+        */
+        return template;
     }
 
     protected Template getTemplateFromFixedSuffix(
@@ -177,24 +143,18 @@ public class PageImpl extends SpecificationImpl
         if (suffix == null || extension == null) {
             throw new IllegalArgumentException();
         }
-        synchronized (this) {
-            Template template = findTemplateFromCache(suffix, extension);
+        Engine engine = ProviderUtil.getEngine();
+        synchronized (engine) {
+            String systemID = engine.getTemplateID(this, suffix, extension);
+            Template template = findTemplateFromCache(systemID);
             if (template != null) {
                 if (template.getSource().exists()) {
                     return template;
                 }
+                template.kill();
                 return null;
             }
-            template = createNewTemplate(suffix, extension);
-            if (template == null) {
-                return null;
-            }
-
-            if (_templates == null) {
-                _templates = new ArrayList();
-            }
-            _templates.add(new SoftReference(template));
-            return template;
+            return engine.createTemplateInstance(this, suffix, extension);
         }
     }
 
@@ -204,6 +164,9 @@ public class PageImpl extends SpecificationImpl
         }
         if (extension == null) {
             extension = "";
+        }
+        if (QM_MAYAA.getLocalName().equals(extension)) {
+            return null;
         }
         Template template = getTemplateFromFixedSuffix(suffix, extension);
         if (template == null && StringUtil.hasValue(suffix)) {
@@ -217,8 +180,71 @@ public class PageImpl extends SpecificationImpl
 
     public ProcessStatus doPageRender(
             String requestedSuffix, String extension) {
-        return RenderUtil.renderPage(true, this, null,
-                this, requestedSuffix, extension);
+        Page prevPage = getCurrentPage();
+        setCurrentPage(this);
+        SpecificationUtil.execEvent(ProviderUtil.getEngine(),
+                QM_BEFORE_RENDER_PAGE);
+        try {
+            Page component = this;
+            Page superPage = component.getSuperPage();
+            if (superPage != null) {
+                component = superPage;
+            }
+            Page prevComponent = getCurrentComponent();
+            setCurrentComponent(component);
+            SpecificationUtil.execEvent(ProviderUtil.getEngine(),
+                    QM_BEFORE_RENDER_COMPONENT);
+            try {
+                notifyBeginRender();
+                return RenderUtil.renderPage(true, this, null,
+                        this, requestedSuffix, extension);
+            } finally {
+                setCurrentComponent(component);
+                try {
+                    SpecificationUtil.execEvent(ProviderUtil.getEngine(),
+                            QM_AFTER_RENDER_COMPONENT);
+                } finally {
+                    setCurrentComponent(prevComponent);
+                }
+            }
+        } finally {
+            setCurrentPage(this);
+            try {
+                SpecificationUtil.execEvent(ProviderUtil.getEngine(),
+                        QM_AFTER_RENDER_PAGE);
+            } finally {
+                setCurrentPage(prevPage);
+            }
+        }
+    }
+
+    protected static Page getCurrentPage() {
+        return (Page)CycleUtil.getRequestScope().getAttribute(CURRENT_PAGE_KEY);
+    }
+
+    protected static void setCurrentPage(Page page) {
+        CycleUtil.getRequestScope().setAttribute(CURRENT_PAGE_KEY, page);
+    }
+
+
+    public static Page getCurrentComponent() {
+        return (Page)CycleUtil.getRequestScope().getAttribute(CURRENT_COMPONENT_KEY);
+    }
+
+    public static void setCurrentComponent(Page component) {
+        CycleUtil.getRequestScope().setAttribute(CURRENT_COMPONENT_KEY, component);
+    }
+
+    protected void finalize() throws Throwable {
+        kill();
+        super.finalize();
+    }
+
+    // for serialize
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
     }
 
     // TemplateRenderer implements ----------------------------------
@@ -230,6 +256,33 @@ public class PageImpl extends SpecificationImpl
             throw new IllegalArgumentException();
         }
         return templates[0].doTemplateRender(topLevelPage);
+    }
+
+    protected Map getBeginRenderListeners() {
+        synchronized(this) {
+            if (_beginRenderListeners == null) {
+                _beginRenderListeners = new ReferenceMap(
+                        AbstractReferenceMap.SOFT, AbstractReferenceMap.WEAK, true);
+            }
+        }
+        return _beginRenderListeners;
+    }
+
+    public boolean registBeginRenderNotifier(TemplateProcessor processor) {
+        boolean result =
+            getBeginRenderListeners().containsKey(processor) == false;
+        if (result == false) {
+            getBeginRenderListeners().put(processor, Boolean.TRUE);
+        }
+        return result;
+    }
+
+    protected void notifyBeginRender() {
+        for (Iterator it = getBeginRenderListeners().keySet().iterator();
+                it.hasNext(); ) {
+            TemplateProcessor listener = (TemplateProcessor) it.next();
+            listener.notifyBeginRender(this);
+        }
     }
 
 }

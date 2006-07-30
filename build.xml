@@ -9,8 +9,8 @@
 	<property name="jar.name" value="${project.name}-${project.ver}.jar"/>
 	<property name="jar.title" value="${project.title} API &amp; Impl"/>
 	<property name="src.name" value="${project.name}-src-${project.ver}.zip"/>
-	
-	
+
+
 	<property name="javadoc.charset" value="Shift_JIS"/>
 	<property name="javadoc.packages" value="*"/>
 	<property name="javadoc.source" value="1.4"/>
@@ -22,13 +22,14 @@
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
 	<property name="folder.context.debug" value="${folder.context}/debug"/>
-	
+
 	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
 	<property name="webinf" value="WEB-INF"/>
 	<property name="webinf.classes" value="${webinf}/classes"/>
 	<property name="webinf.lib" value="${webinf}/lib"/>
 	<property name="webinf.lib-servlet" value="${webinf}/lib-servlet"/>
+	<property name="webinf.spec-cache" value="${webinf}/.mayaaSpecCache"/>
 
 	<target name="cleanjar">
 		<delete verbose="${project.verbose}">
@@ -117,13 +118,15 @@
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.classes}/**/*"/>
 				<exclude name="${project.folder}/${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
+				<exclude name="${project.folder}/${folder.context}/${webinf.spec-cache}"/>
+				<exclude name="${project.folder}/${folder.context}/${webinf.spec-cache}/**/*"/>
 				<exclude name="${project.folder}/${folder.src.zip}/${src.name}"/>
 				<exclude name="${project.folder}/**/.svn"/>
 				<exclude name="${project.folder}/**/.svn/**/*"/>
 			</fileset>
 		</zip>
 	</target>
-	
+
 	<target name="makewar" depends="make">
 		<war destfile="../${war.name}" webxml="${folder.context}/${webinf}/web.xml">
 			<fileset dir="${folder.context}">
@@ -135,6 +138,8 @@
 				<exclude name="${webinf.classes}/**/*"/>
 				<exclude name="${webinf.lib-servlet}"/>
 				<exclude name="${webinf.lib-servlet}/**/*"/>
+				<exclude name="${webinf.spec-cache}"/>
+				<exclude name="${webinf.spec-cache}/**/*"/>
 				<exclude name="**/.svn"/>
 				<exclude name="**/.svn/**/*"/>
 			</fileset>
@@ -149,5 +154,5 @@
 	</target>
 
 	<target name="distro" depends="makezip, makewar"/>
-	
+
 </project>

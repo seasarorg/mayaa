@@ -39,6 +39,14 @@ public interface Engine extends ParameterAware, Specification {
      * @return エラーハンドラ。
      */
     ErrorHandler getErrorHandler();
+    
+    /**
+     * ページやテンプレートなどのスペック情報のインスタンスが
+     * メモリキャッシュに存在する場合は返却する。
+     * @param systemID システムID
+     * @return スペック情報インスタンス
+     */
+    Specification findSpecificationFromCache(String systemID);    
 
     /**
      * Pageオブジェクトのインスタンスを返す。
@@ -55,13 +63,6 @@ public interface Engine extends ParameterAware, Specification {
 
     /**
      * サービスメソッド。
-     * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
-     * @deprecated
-     */
-    void doService(boolean pageFlush);
-
-    /**
-     * サービスメソッド。
      * @param pageScopeValues PAGEスコープのトップに含めるもの。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
@@ -75,19 +76,27 @@ public interface Engine extends ParameterAware, Specification {
     void handleError(Throwable t, boolean pageFlush);
 
     /**
-     * ページのインスタンスを生成して返す。
+     * ページのインスタンスを生成しソースビルドを行ってから返す。
      * @param pageName ページ名
      * @return ページ
      */
     Page createPageInstance(String pageName);
 
     /**
-     * テンプレートのインスタンスを生成して返す。
+     * テンプレートのインスタンスを生成しソースビルドを行ってから返す。
      * @param page ページ
      * @param suffix テンプレートの接尾子。
      * @param extension ページの拡張子。
      * @return テンプレート
      */
     Template createTemplateInstance(Page page, String suffix, String extension);
-
+    
+    /**
+     * テンプレートの示すシステムIDを返す。
+     * @param page 属するページ
+     * @param suffix サフィックス
+     * @param extension 拡張子
+     * @return テンプレートのシステムID
+     */
+    String getTemplateID(Page page, String suffix, String extension);
 }

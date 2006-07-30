@@ -17,12 +17,16 @@ package org.seasar.mayaa.impl.cycle;
 
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.CycleFactory;
+import org.seasar.mayaa.cycle.CycleLocalVariables;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.impl.CycleLocalVariablesImpl;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -36,11 +40,14 @@ public class CycleFactoryImpl
         extends ParameterAwareImpl implements CycleFactory {
 
     private static final long serialVersionUID = 6930908159752133949L;
+    private static final Log LOG = LogFactory.getLog(CycleFactoryImpl.class);
+
+    private static ThreadLocal _currentCycle = new ThreadLocal();
 
     protected StandardScope _standardScope = new StandardScope();
     private Object _context;
     private Class _serviceClass;
-    private ThreadLocal _currentCycle = new ThreadLocal();
+    private CycleLocalVariables _localVariables = new CycleLocalVariablesImpl();
 
     public void setServiceClass(Class serviceClass) {
         if (serviceClass == null) {
@@ -60,6 +67,25 @@ public class CycleFactoryImpl
         if (requestContext == null || responseContext == null) {
             throw new IllegalArgumentException();
         }
+        ServiceCycle cycle = defaultServiceCycle();
+        _currentCycle.set(cycle);
+        RequestScope request = cycle.getRequestScope();
+        request.setUnderlyingContext(requestContext);
+        Response response = cycle.getResponse();
+        response.setUnderlyingContext(responseContext);
+        CycleThreadLocalFactory.cycleLocalInitialize();
+    }
+
+    public void cycleFinalize() {
+        CycleThreadLocalFactory.cycleLocalFinalize();
+        _currentCycle.set(null);
+    }
+
+    public CycleLocalVariables getLocalVariables() {
+        return _localVariables;
+    }
+
+    protected ServiceCycle defaultServiceCycle() {
         Class serviceCycleClass = getServiceClass();
         if (serviceCycleClass == null) {
             throw new IllegalStateException();
@@ -71,17 +97,15 @@ public class CycleFactoryImpl
             String value = getParameter(key);
             cycle.setParameter(key, value);
         }
-        _currentCycle.set(cycle);
-        RequestScope request = cycle.getRequestScope();
-        request.setUnderlyingContext(requestContext);
-        Response response = cycle.getResponse();
-        response.setUnderlyingContext(responseContext);
+        return cycle;
     }
 
     public ServiceCycle getServiceCycle() {
         ServiceCycle cycle = (ServiceCycle) _currentCycle.get();
         if (cycle == null) {
-            throw new CycleNotInitializedException();
+            cycle = defaultServiceCycle();
+            _currentCycle.set(cycle);
+            LOG.info("serviceCycle created out of request cycle.");
         }
         return cycle;
     }

@@ -18,15 +18,20 @@ package org.seasar.mayaa.impl.builder;
 import java.util.Iterator;
 
 import org.seasar.mayaa.builder.PathAdjuster;
+import org.seasar.mayaa.builder.SequenceIDGenerator;
+import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -41,7 +46,7 @@ public class BuilderUtil implements CONST_IMPL {
     }
 
     public static SpecificationNode createInjectedNode(QName qName,
-            String uri, SpecificationNode original, boolean mayaa) {
+            URI uri, SpecificationNode original, boolean mayaa) {
         if (qName == null || original == null) {
             throw new IllegalArgumentException();
         }
@@ -87,6 +92,7 @@ public class BuilderUtil implements CONST_IMPL {
                         prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }
         }
+        //node.setParentSpace(SpecificationUtil.getFixedNamespace(original.getParentSpace()));
         node.setParentSpace(original.getParentSpace());
         node.setDefaultNamespaceURI(original.getDefaultNamespaceURI());
         return node;
@@ -97,7 +103,7 @@ public class BuilderUtil implements CONST_IMPL {
         String[] parsed = qName.split(":");
         String prefix = null;
         String localName = null;
-        String namespaceURI = null;
+        URI namespaceURI = null;
         PrefixMapping mapping = null;
         if (parsed.length == 2) {
             prefix = parsed[0];
@@ -107,7 +113,12 @@ public class BuilderUtil implements CONST_IMPL {
                 if ("xml".equals(prefix)) {
                     mapping = SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
                 } else {
-                    throw new PrefixMappingNotFoundException(prefix);
+                    // HTA:Applicationのような無作法なものもあるので対応できるようにする。
+                    //throw new PrefixMappingNotFoundException(prefix);
+                    namespaceURI = URI_HTML;
+                    mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+                    localName = qName;  // コロン付きの全てを要素名扱いとする。
+                    prefix = "";
                 }
             }
             namespaceURI = mapping.getNamespaceURI();
@@ -138,6 +149,26 @@ public class BuilderUtil implements CONST_IMPL {
                 SpecificationUtil.createQName(namespaceURI, localName),
                 prefix);
         return ret;
+    }
+
+    static SpecificationNode nodeCopyOf(SpecificationNode node, QName newQName,
+            SequenceIDGenerator sequenceIDGenerator) {
+        if (newQName == null) {
+            newQName = node.getQName();
+        }
+        return SpecificationUtil.createSpecificationNode(newQName,
+                node.getSystemID(), node.getLineNumber(),
+                true, sequenceIDGenerator.nextSequenceID());
+    }
+
+    public static void characterProcessorCopy(TemplateProcessor from,
+            TemplateProcessorSupport to, SequenceIDGenerator idGenerator) {
+        to.setOriginalNode(from.getOriginalNode());
+        to.setInjectedNode(from.getInjectedNode());
+        to.setEvalBodyInclude(false);
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        to.setProcessorDefinition(
+                libraryManager.getProcessorDefinition(CONST_IMPL.QM_CHARACTERS));
     }
 
 }

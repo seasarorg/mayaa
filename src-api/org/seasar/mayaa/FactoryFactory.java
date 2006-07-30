@@ -61,6 +61,16 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
+     * ファクトリファクトリインスタンスとコンテキストオブジェクトが
+     * 初期化済みかを判定する。
+     * 
+     * @return 初期化済みの場合はtrueを返却する。
+     */
+    public static boolean isInitialized() {
+        return _instance != null && _context != null;
+    }
+
+    /**
      * ブートストラップ時に用いる、/WEB-INFフォルダを読むソース。
      * @param root ルートパス。
      * @param systemID ソースのSystemID。

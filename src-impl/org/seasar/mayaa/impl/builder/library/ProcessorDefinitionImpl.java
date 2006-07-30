@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -45,6 +47,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class ProcessorDefinitionImpl extends PropertySetImpl
         implements ProcessorDefinition, CONST_IMPL {
 
+    private static final long serialVersionUID = -9158405427849768423L;
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
 
@@ -100,7 +103,11 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             SpecificationNode injected, String propertyName) {
         QName qName = SpecificationUtil.createQName(
                 injected.getQName().getNamespaceURI(), propertyName);
-        return injected.getAttribute(qName);
+        // メモリリークを起こす可能性があるので参照を断つ
+        NodeAttribute attr = injected.getAttribute(qName);
+        PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
+                attr.getQName(), attr.getPrefix());
+        return name;
     }
 
     protected void settingProperty(
@@ -159,7 +166,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     protected void settingInformalProperties(SpecificationNode injected,
             InformalPropertyAcceptable acceptable) {
-        String injectedNS = injected.getQName().getNamespaceURI();
+        URI injectedNS = injected.getQName().getNamespaceURI();
         for (Iterator it = injected.iterateAttribute(); it.hasNext();) {
             NodeAttribute attr = (NodeAttribute) it.next();
             if (contain(injectedNS, attr)) {
@@ -175,11 +182,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             }
             Class expectedClass = acceptable.getExpectedClass();
             String value = attr.getValue();
-            Object property = converter.convert(attr, value, expectedClass);
+            Serializable property = converter.convert(attr, value, expectedClass);
             if (property == null) {
                 throw new ConverterOperationException(converter, value);
             }
-            acceptable.addInformalProperty(attr, property);
+            // メモリリークを起こす可能性があるので参照を断つ
+            PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
+                    attr.getQName(), attr.getPrefix()); 
+            acceptable.addInformalProperty(name, property);
         }
     }
 
@@ -204,8 +214,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     // support class ------------------------------------------------
 
-    protected class PropertySetRef {
+    protected class PropertySetRef implements Serializable {
 
+        private static final long serialVersionUID = -3425332447146558868L;
+        
         private String _name;
         private String _systemID;
         private int _lineNumber;

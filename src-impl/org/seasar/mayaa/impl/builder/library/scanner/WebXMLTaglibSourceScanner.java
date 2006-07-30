@@ -32,6 +32,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
 
+    private static final long serialVersionUID = -4740935373481152275L;
+
     public static final String ASSIGNED =
         WebXMLTaglibSourceScanner.class + ".ASSIGNED";
     public static final String REAL_PATH =
@@ -65,7 +67,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
 
         private Iterator _it;
 
-        private TaglibLocationIterator(Iterator it) {
+        protected TaglibLocationIterator(Iterator it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }

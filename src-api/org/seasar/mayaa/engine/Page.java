@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.Specification;
 
 /**
@@ -52,7 +53,7 @@ public interface Page
      * @return テンプレート拡張子。
      */
     String getSuperExtension();
-
+    
     /**
      * ページの名前を取得する。/context/hello.htmlであれば、
      * 「/context/hello」を返す。
@@ -73,7 +74,7 @@ public interface Page
      * @return レンダリングするテンプレート。
      */
     Template getTemplate(String suffix, String extension);
-
+    
     /**
      * テンプレートレンダリングを行う。
      * @param requestedSuffix リクエストされたテンプレート接尾辞。
@@ -82,4 +83,12 @@ public interface Page
      */
     ProcessStatus doPageRender(String requestedSuffix, String extension);
 
+    /**
+     * トップページの場合に、レンダリング開始時にプロセッサに対して
+     * 通知を行うよう登録する。
+     * @param processor 通知を受けるプロセッサ。
+     * @return true=登録成功 / false=既に登録済み
+     */
+    boolean registBeginRenderNotifier(TemplateProcessor processor);
+    
 }

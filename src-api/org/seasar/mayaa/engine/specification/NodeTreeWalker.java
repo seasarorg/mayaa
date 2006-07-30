@@ -18,11 +18,12 @@ package org.seasar.mayaa.engine.specification;
 import java.util.Iterator;
 
 import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFinder;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeTreeWalker extends PositionAware {
+public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFinder {
 
     /**
      * 親ノードの設定をセットする。
@@ -43,9 +44,45 @@ public interface NodeTreeWalker extends PositionAware {
     void addChildNode(NodeTreeWalker childNode);
 
     /**
+     * 子ノードの設定を指定位置に挿入する。
+     * @param index
+     * @param childNode
+     */
+    void insertChildNode(int index, NodeTreeWalker childNode);
+    
+    /**
+     * 子ノードを削除する。
+     * @param childNode 子ノード。
+     */
+    boolean removeChildNode(NodeTreeWalker childNode);
+
+    /**
+     * 子ノードの数を返す。
+     * @return 子ノードの数
+     */
+    int getChildNodeSize();
+    
+    /**
+     * 指定インデックスの子ノードを返す。
+     * @param index インデックス値。
+     * @return ノード。
+     */
+    NodeTreeWalker getChildNode(int index);
+
+    /**
      * 子ノードのイテレータを取得する。
      * @return 子ノード（<code>NodeTreeWalker</code>）を保持したイテレータ。
      */
     Iterator iterateChildNode();
 
+    /**
+     * インスタンスを破棄対象とし、親ノードや子ノードなど
+     * インスタンスが保持していた他のオブジェクトへの参照リンクを切る。
+     */
+    void kill();
+
+    /**
+     * 子ノードをクリアする
+     */
+    void clearChildNodes();
 }

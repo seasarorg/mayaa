@@ -30,6 +30,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -54,7 +55,7 @@ public class SpecificationNavigator extends DefaultNavigator
         // singleton
     }
 
-    protected String getNamespaceURI(Namespace namespace, String prefix) {
+    protected URI getNamespaceURI(Namespace namespace, String prefix) {
         if (namespace == null) {
             throw new IllegalArgumentException();
         }
@@ -103,9 +104,10 @@ public class SpecificationNavigator extends DefaultNavigator
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
             if (StringUtil.isEmpty(namespaceURI)) {
-                namespaceURI = getNamespaceURI(node, namespacePrefix);
+                namespaceURI = getNamespaceURI(node, namespacePrefix).getValue();
             }
-            QName qName = SpecificationUtil.createQName(namespaceURI, localName);
+            QName qName = SpecificationUtil.createQName(
+                    SpecificationUtil.createURI(namespaceURI), localName);
             return new QNameFilteredIterator(qName, node.iterateAttribute());
         }
         return NullIterator.getInstance();
@@ -126,12 +128,14 @@ public class SpecificationNavigator extends DefaultNavigator
             NodeTreeWalker node = (NodeTreeWalker) obj;
             if (StringUtil.isEmpty(namespaceURI)) {
                 if (node instanceof Namespace) {
-                    namespaceURI = getNamespaceURI((Namespace) node, namespacePrefix);
+                    namespaceURI = getNamespaceURI(
+                            (Namespace) node, namespacePrefix).getValue();
                 } else {
-                    namespaceURI = URI_MAYAA;
+                    namespaceURI = URI_MAYAA.getValue();
                 }
             }
-            QName qName = SpecificationUtil.createQName(namespaceURI, localName);
+            QName qName = SpecificationUtil.createQName(
+                    SpecificationUtil.createURI(namespaceURI), localName);
             return new QNameFilteredIterator(qName, node.iterateChildNode());
         }
         return NullIterator.getInstance();
@@ -155,7 +159,7 @@ public class SpecificationNavigator extends DefaultNavigator
             namaspace = (Namespace) obj;
         }
         if (namaspace != null) {
-            return getNamespaceURI(namaspace, prefix);
+            return getNamespaceURI(namaspace, prefix).getValue();
         }
         return null;
     }
@@ -171,7 +175,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public String getAttributeNamespaceUri(Object obj) {
         if (obj instanceof NodeAttribute) {
             NodeAttribute attr = (NodeAttribute) obj;
-            return attr.getQName().getNamespaceURI();
+            return attr.getQName().getNamespaceURI().getValue();
         }
         return null;
     }
@@ -215,7 +219,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public String getElementNamespaceUri(Object obj) {
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
-            return node.getQName().getNamespaceURI();
+            return node.getQName().getNamespaceURI().getValue();
         }
         return null;
     }
@@ -261,7 +265,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public String getNamespaceStringValue(Object obj) {
         if (obj instanceof PrefixMapping) {
             PrefixMapping mapping = (PrefixMapping) obj;
-            return mapping.getNamespaceURI();
+            return mapping.getNamespaceURI().getValue();
         }
         return null;
     }

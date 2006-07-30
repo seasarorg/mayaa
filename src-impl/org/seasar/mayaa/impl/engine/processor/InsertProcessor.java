@@ -15,10 +15,12 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.lang.ref.SoftReference;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -35,9 +37,12 @@ import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.PageImpl;
 import org.seasar.mayaa.impl.engine.RenderNotCompletedException;
 import org.seasar.mayaa.impl.engine.RenderUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -49,14 +54,29 @@ public class InsertProcessor
         InformalPropertyAcceptable, TemplateRenderer {
 
     private static final long serialVersionUID = -1240398725406503403L;
+    private static final String RENDERING_INSERT_CHAIN =
+        InsertProcessor.class.getName() + "#renderingInsertChain";
+    private static final String INSERT_PARAMS =
+        InsertProcessor.class.getName() + "#insertParams";
+    static {
+        CycleUtil.registVariableFactory(RENDERING_INSERT_CHAIN, new DefaultCycleLocalInstantiator() {
+            public Object create(Object[] params) {
+                return new Stack();
+            }
+        });
+        CycleUtil.registVariableFactory(INSERT_PARAMS, new DefaultCycleLocalInstantiator() {
+            public Object create(Object owner, Object[] params) {
+                return new Stack();
+            }
+        });
+    }
 
     private String _path;
     private String _name = "";
-    private SoftReference _page;
     private String _suffix;
     private String _extension;
-    private List _attributes;
-    private InsertRenderingParams _renderingParams = new InsertRenderingParams();
+    private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
+                    _attributes;
 
     // MLD property, required
     public void setPath(String path) {
@@ -71,7 +91,7 @@ public class InsertProcessor
     }
 
     // MLD method
-    public void addInformalProperty(PrefixAwareName name, Object attr) {
+    public void addInformalProperty(PrefixAwareName name, Serializable attr) {
         if (_attributes == null) {
             _attributes = new ArrayList();
         }
@@ -94,48 +114,72 @@ public class InsertProcessor
     }
 
     protected Page getPage() {
-        Page page = null;
-        if (_page != null) {
-            page = (Page) _page.get();
-            if (page == null) {
-                _page = null;
-            }
-        }
-        return page;
-    }
-
-    protected void preparePage() {
+        Page result = null;
         if (StringUtil.hasValue(_path)) {
             synchronized (this) {
-                Page page = getPage();
-                if (page == null) {
-                    Engine engine = ProviderUtil.getEngine();
-                    String suffixSeparator =
-                        engine.getParameter(SUFFIX_SEPARATOR);
-                    String[] pagePath =
-                        StringUtil.parsePath(_path, suffixSeparator);
+                Engine engine = ProviderUtil.getEngine();
+                String suffixSeparator =
+                    engine.getParameter(SUFFIX_SEPARATOR);
+                String[] pagePath =
+                    StringUtil.parsePath(_path, suffixSeparator);
 
-                    String sourcePath =
-                        EngineUtil.getSourcePath(getParentProcessor());
-                    page = engine.getPage(
-                            StringUtil.adjustRelativePath(sourcePath, pagePath[0]));
-                    _page = new SoftReference(page);
-                    _suffix = pagePath[1];
-                    _extension = pagePath[2];
-                }
+                String sourcePath =
+                    EngineUtil.getSourcePath(getParentProcessor());
+                result = engine.getPage(
+                        StringUtil.adjustRelativePath(sourcePath, pagePath[0]));
+                _suffix = pagePath[1];
+                _extension = pagePath[2];
             }
         }
+        return result;
+    }
+
+    protected Stack getRenderingParams() {
+        return (Stack) CycleUtil.getLocalVariable(INSERT_PARAMS, this, null);
+    }
+
+    protected InsertRenderingParams pushRenderingParams() {
+        InsertRenderingParams newParams = new InsertRenderingParams();
+        return (InsertRenderingParams) getRenderingParams().push(newParams);
+    }
+
+    protected InsertRenderingParams peekRenderingParams() {
+        return (InsertRenderingParams) getRenderingParams().peek();
+    }
+
+    protected InsertRenderingParams popRenderingParams() {
+        Stack stack = getRenderingParams();
+        return (InsertRenderingParams) stack.pop();
     }
 
     public Map getRenderingParameters() {
-        if (_renderingParams.isRendering()) {
-            return _renderingParams.getParams();
+        InsertRenderingParams params = peekRenderingParams();
+        if (params.isRendering()) {
+            return params.getParams();
         }
         return null;
     }
 
+    protected void invokeBeforeRenderComponent(Page component) {
+        InsertRenderingParams params = peekRenderingParams();
+        params.setRendering(true);
+        params.setStackComponent(PageImpl.getCurrentComponent());
+        params.setCurrentComponent(component);
+        PageImpl.setCurrentComponent(component);
+        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_BEFORE_RENDER_COMPONENT);
+    }
+
+    protected void invokeAfterRenderComponent() {
+        InsertRenderingParams params = peekRenderingParams();
+        PageImpl.setCurrentComponent(params.getCurrentComponent());
+        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_AFTER_RENDER_COMPONENT);
+        PageImpl.setCurrentComponent(params.getStackComponent());
+        params.setRendering(false);
+        params.clear();
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        preparePage();
+        // レンダリング中にページが解放されないようにする。
         Page renderPage = getPage();
         String requestedSuffix = _suffix;
         String extension = _extension;
@@ -151,38 +195,63 @@ public class InsertProcessor
         if (renderPage == null) {
             throw new IllegalStateException();
         }
-        renderPage.checkTimestamp();
 
-        Map params = _renderingParams.getParams();
-        params.clear();
+        Map properties = new LinkedHashMap(getInformalProperties().size());
         for (int i = 0; i < getInformalProperties().size(); i++) {
             Object object = getInformalProperties().get(i);
             if (object instanceof ProcessorProperty) {
-                ProcessorProperty prop = (ProcessorProperty)object;
-                params.put(
+                ProcessorProperty prop = (ProcessorProperty) object;
+                properties.put(
                         prop.getName().getQName().getLocalName(),
                         prop.getValue().execute(null));
             }
         }
+        Map params = pushRenderingParams().getParams();
+        params.clear();
+        params.putAll(properties);
+        properties.clear();
 
-        _renderingParams.setRendering(true);
-        ProcessStatus ret = RenderUtil.renderPage(fireEvent, this,
-                getVariables(), renderPage, requestedSuffix, extension);
-        if (ret == null) {
-            Response response = CycleUtil.getResponse();
-            if (response.getWriter().isDirty() == false) {
-                throw new RenderNotCompletedException(
-                        renderPage.getPageName(), extension);
+        invokeBeforeRenderComponent(renderPage);
+        try {
+            ProcessStatus ret;
+            getRenderingInsertChain().push(this);
+            try {
+                ret = RenderUtil.renderPage(fireEvent, this,
+                        getVariables(), renderPage, requestedSuffix, extension);
+            } finally {
+                getRenderingInsertChain().pop();
             }
+            if (ret == null) {
+                Response response = CycleUtil.getResponse();
+                if (response.getWriter().isDirty() == false) {
+                    throw new RenderNotCompletedException(
+                            renderPage.getPageName(), extension);
+                }
+            }
+            if (ret == ProcessStatus.EVAL_PAGE) {
+                ret = ProcessStatus.SKIP_BODY;
+            }
+            return ret;
+        } catch(RuntimeException e) {
+            invokeAfterRenderComponent();
+            throw e;
         }
-        if (ret == ProcessStatus.EVAL_PAGE) {
-            ret = ProcessStatus.SKIP_BODY;
+    }
+
+    protected static Stack getRenderingInsertChain() {
+        return (Stack) CycleUtil.getGlobalVariable(RENDERING_INSERT_CHAIN, null);
+    }
+
+    public static InsertProcessor getRenderingCurrent() {
+        if (getRenderingInsertChain().size() == 0) {
+            return null;
         }
-        return ret;
+        return (InsertProcessor) getRenderingInsertChain().peek();
     }
 
     public ProcessStatus doEndProcess() {
-        _renderingParams.setRendering(false);
+        invokeAfterRenderComponent();
+        popRenderingParams();
         return super.doEndProcess();
     }
 
@@ -210,11 +279,12 @@ public class InsertProcessor
 
     protected DoRenderProcessor findDoRender(
             Template[] templates, String name) {
-        for (int i = templates.length - 1; 0 <= i; i--) {
-            templates[i].checkTimestamp();
-            DoRenderProcessor doRender = findDoRender(templates[i], name);
-            if (doRender != null) {
-                return doRender;
+        synchronized (ProviderUtil.getEngine()) {
+            for (int i = templates.length - 1; 0 <= i; i--) {
+                DoRenderProcessor doRender = findDoRender(templates[i], name);
+                if (doRender != null) {
+                    return doRender;
+                }
             }
         }
         return null;
@@ -248,6 +318,25 @@ public class InsertProcessor
                 RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot);
         doRender.popInsertProcessor();
         return ret;
+    }
+
+    public void kill() {
+        if (_attributes != null) {
+            _attributes.clear();
+        }
+        super.kill();
+    }
+
+    // for serialize
+
+    private void writeObject(java.io.ObjectOutputStream out)
+            throws java.io.IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
@@ -28,6 +29,7 @@ import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -63,6 +65,7 @@ public class SpecificationNodeHandler
         SpecificationUtil.createQName("target");
 
     private Specification _specification;
+    private SequenceIDGenerator _sequenceIDGenerator; 
     private NodeTreeWalker _current;
     private Locator _locator;
     private Namespace _namespace;
@@ -70,8 +73,8 @@ public class SpecificationNodeHandler
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
     private int _inEntity;
-    private int _sequenceID;
-    private Map _internalNamespacePrefixMap; 
+    private Map/*<NodeTreeWalker,Map<String(prefix),String(uri)>>*/
+                _internalNamespacePrefixMap; 
     private boolean _inCData;
 
     public SpecificationNodeHandler(Specification specification) {
@@ -79,6 +82,12 @@ public class SpecificationNodeHandler
             throw new IllegalArgumentException();
         }
         _specification = specification;
+        _current = _specification;      // by kato
+        _sequenceIDGenerator = specification;
+    }
+
+    protected Specification getSpecification() {
+        return _specification;
     }
 
     public void setOutputMayaaWhitespace(boolean outputMayaaWhitespace) {
@@ -128,7 +137,7 @@ public class SpecificationNodeHandler
     }
 
     public void startDocument() {
-        _sequenceID = 1;
+        _sequenceIDGenerator.resetSequenceID(1);
         initCharactersBuffer();
         _charactersStartLineNumber = -1;
         _current = _specification;
@@ -146,7 +155,8 @@ public class SpecificationNodeHandler
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        getCurrentInternalNamespacePrefixMap().put(prefix, uri);
+        getCurrentInternalNamespacePrefixMap().put(prefix, 
+                SpecificationUtil.createURI(uri));
     }
 
     public void endPrefixMapping(String prefix) {
@@ -167,9 +177,9 @@ public class SpecificationNodeHandler
     protected SpecificationNode addNode(QName qName, int lineNumber) {
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = createChildNode(
-                qName, systemID, lineNumber, _sequenceID);
-        _sequenceID += 1;
-        child.setParentSpace(_namespace);
+                qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID());
+        
+        child.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
         _current.addChildNode(child);
         return child;
     }
@@ -234,21 +244,22 @@ public class SpecificationNodeHandler
         Iterator it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry)it.next();
-            elementNS.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
+            elementNS.addPrefixMapping((String)entry.getKey(), (URI)entry.getValue());
         }
-        elementNS.setParentSpace(_namespace);
+        elementNS.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
 
         PrefixAwareName parsedName =
             BuilderUtil.parseName(elementNS, qName);
         QName nodeQName = parsedName.getQName();
-        String nodeURI = nodeQName.getNamespaceURI();
+        URI nodeURI = nodeQName.getNamespaceURI();
         elementNS.setDefaultNamespaceURI(nodeURI);
+        elementNS = SpecificationUtil.getFixedNamespace(elementNS);
 
         SpecificationNode node = addNode(nodeQName);
         it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry)it.next();
-            node.addPrefixMapping((String)entry.getKey(), (String)entry.getValue());
+            node.addPrefixMapping((String)entry.getKey(), (URI)entry.getValue());
         }
         node.setDefaultNamespaceURI(nodeURI);
 
@@ -262,7 +273,9 @@ public class SpecificationNodeHandler
                 node.addAttribute(attrQName, attrName, attrValue);
             }
         }
+        NodeTreeWalker parent = _current; // by kato
         _current = node;
+        _current.setParentNode(parent);
         saveToCycle(_current);
         pushNamespace(elementNS);
     }
@@ -279,6 +292,7 @@ public class SpecificationNodeHandler
         saveToCycle(_specification);
         _internalNamespacePrefixMap.clear();
         _internalNamespacePrefixMap = null;
+        _current = null;
     }
 
     public void characters(char[] buffer, int start, int length) {
@@ -374,7 +388,10 @@ public class SpecificationNodeHandler
     public void startCDATA() {
         addCharactersNode();
         SpecificationNode node = addNode(QM_CDATA);
+        
+        NodeTreeWalker parent = _current; // by kato
         _current = node;
+        _current.setParentNode(parent);
         _inCData = true;
     }
 
@@ -383,25 +400,32 @@ public class SpecificationNodeHandler
         _current = _current.getParentNode();
         _inCData = false;
     }
-
+    
+    private String exceptionMessage(SAXParseException e) {
+        return 
+            "The problem occurred during Perse. " +
+            _specification.getSystemID() +
+            ((e.getMessage() != null)?" - " + e.getMessage(): "");
+    }
+    
     public void warning(SAXParseException e) {
         if (LOG.isWarnEnabled()) {
-            LOG.warn(e);
+            LOG.warn(exceptionMessage(e), e);
         }
     }
 
     public void fatalError(SAXParseException e) {
         if (LOG.isFatalEnabled()) {
-            LOG.fatal(e);
+            LOG.fatal(exceptionMessage(e), e);
         }
-        throw new RuntimeException(e);
+        throw new RuntimeException(exceptionMessage(e), e);
     }
 
     public void error(SAXParseException e) {
         if (LOG.isErrorEnabled()) {
-            LOG.error(e);
+            LOG.error(exceptionMessage(e), e);
         }
-        throw new RuntimeException(e);
+        throw new RuntimeException(exceptionMessage(e), e);
     }
 
 }

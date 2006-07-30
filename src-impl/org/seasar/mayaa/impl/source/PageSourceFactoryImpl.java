@@ -28,6 +28,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.source.PageSourceFactory;
+import org.seasar.mayaa.source.SourceHolder;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -114,6 +115,25 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         }
         _parameterNames.add(name);
         _parameterValues.add(value);
+        
+        Class sourceHolderClass = null;
+        if ("folder".equals(name)) {
+            sourceHolderClass = WebContextFolderSourceHolder.class;
+        } else if ("absolutePath".equals(name)) {
+            sourceHolderClass = AbsolutePathSourceHolder.class;
+        } else {
+            super.setParameter(name, value);
+            return;
+        }
+        SourceHolder holder =
+            (SourceHolder) ObjectUtil.newInstance(sourceHolderClass);
+        try {
+            holder.setRoot(value);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalParameterValueException(
+                    sourceHolderClass, name + "=" + value);
+        }
+        SourceHolderFactory.appendSourceHolder(holder);
     }
 
     // first value only

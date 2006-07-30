@@ -19,38 +19,25 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
-import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class LiteralCharactersProcessor extends TemplateProcessorSupport {
+public class LiteralCharactersProcessor extends TemplateProcessorSupport implements CONST_IMPL {
     private static final long serialVersionUID = -9037177269127933225L;
 
-    private static final QName LITERALS =
-        SpecificationUtil.createQName("literals");
+    private String _text;
 
-    public LiteralCharactersProcessor(TemplateProcessorSupport copy, String text) {
-        setOriginalNode(copy.getOriginalNode());
-        setInjectedNode(copy.getInjectedNode());
-        setEvalBodyInclude(copy.isEvalBodyInclude());
-        if (copy.getParentProcessor() != null) {
-            setParentProcessor(copy.getParentProcessor(), copy.getIndex());
-        }
-        try {
-            setProcessorDefinition(copy.getProcessorDefinition());
-        } catch(IllegalStateException ignore) {
-            // doNothing
-        }
+    public LiteralCharactersProcessor(String text) {
         setText(text);
         LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-        setProcessorDefinition(libraryManager.getProcessorDefinition(LITERALS));
+        setProcessorDefinition(
+                libraryManager.getProcessorDefinition(QM_LITERALS));
     }
-
-    private String _text;
+    
 
     public String getText() {
         return _text;

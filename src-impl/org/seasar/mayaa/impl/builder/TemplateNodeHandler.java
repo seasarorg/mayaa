@@ -15,25 +15,24 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.xml.sax.SAXParseException;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class TemplateNodeHandler extends SpecificationNodeHandler {
 
-    private static final Log LOG = LogFactory.getLog(TemplateNodeHandler.class);
-
     private boolean _outputTemplateWhitespace = true;
 
-    public TemplateNodeHandler(Specification specification) {
+    public TemplateNodeHandler(Template specification) {
         super(specification);
+    }
+
+    protected Template getTemplate() {
+        return (Template) getSpecification();
     }
 
     public void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
@@ -84,26 +83,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         String comment = new String(buffer, start, length);
         SpecificationNode node = addNode(QM_COMMENT);
         node.addAttribute(QM_TEXT, comment);
-    }
-
-    public void warning(SAXParseException e) {
-        if (LOG.isWarnEnabled()) {
-            LOG.warn(e);
-        }
-    }
-
-    public void fatalError(SAXParseException e) {
-        if (LOG.isFatalEnabled()) {
-            LOG.fatal(e);
-        }
-        throw new RuntimeException(e);
-    }
-
-    public void error(SAXParseException e) {
-        if (LOG.isErrorEnabled()) {
-            LOG.error(e);
-        }
-        throw new RuntimeException(e);
     }
 
 }

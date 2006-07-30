@@ -68,10 +68,16 @@ public class WriteProcessor extends TemplateProcessorSupport {
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         if (_value != null) {
-            String ret = (String) _value.getValue().execute(null);
-            if (StringUtil.isEmpty(ret) && _default != null) {
-                ret = (String) _default.getValue().execute(null);
-            } else {
+            Object result = _value.getValue().execute(null);
+            String ret = null;
+            boolean empty = StringUtil.isEmpty(result);
+            if (empty && _default != null) {
+                result = _default.getValue().execute(null);
+                if (result != null) {
+                    ret = result.toString();
+                }
+            } else if (empty == false) {
+                ret = String.valueOf(result);
                 if (toBoolean(_escapeXml)) {
                     ret = StringUtil.escapeXml(ret);
                 }
@@ -82,15 +88,24 @@ public class WriteProcessor extends TemplateProcessorSupport {
                     ret = StringUtil.escapeWhitespace(ret);
                 }
             }
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.getResponse().write(ret);
+            if (ret != null) {
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
+                cycle.getResponse().write(ret);
+            }
         }
         return ProcessStatus.SKIP_BODY;
     }
 
     private boolean toBoolean(ProcessorProperty property) {
-        return property != null
-            && ObjectUtil.booleanValue(property.getValue().execute(null), false);
+        return property != null && ObjectUtil.booleanValue(property.getValue().execute(null), false);
     }
 
+    public void kill() {
+        _value = null;
+        _default = null;
+        _escapeXml = null;
+        _escapeWhitespace = null;
+        _escapeEol = null;
+        super.kill();
+    }
 }

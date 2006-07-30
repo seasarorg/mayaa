@@ -25,7 +25,6 @@ import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.seasar.mayaa.source.SourceDescriptor;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -43,7 +42,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
         return XMLReaderPool.getPool();
     }
 
-    protected ContentHandler createContentHandler(
+    protected SpecificationNodeHandler createContentHandler(
             Specification specification) {
         SpecificationNodeHandler handler =
             new SpecificationNodeHandler(specification);
@@ -65,7 +64,9 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
         }
         SourceDescriptor source = specification.getSource();
         if (source.exists()) {
-            ContentHandler handler = createContentHandler(specification);
+            SpecificationNodeHandler handler =
+                createContentHandler(specification);
+            
             XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
             XMLReader xmlReader =
                 pool.borrowXMLReader(handler, true, false, false);
@@ -81,7 +82,8 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
                 if (t instanceof RuntimeException) {
                     throw (RuntimeException) t;
                 }
-                throw new RuntimeException(t);
+                throw new RuntimeException(
+                        "build failed. " + source.getSystemID(), t);
             } finally {
                 pool.returnXMLReader(xmlReader);
                 IOUtil.close(stream);

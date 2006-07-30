@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.cycle.script.rhino;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.Undefined;
 import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -33,10 +34,11 @@ public class RhinoUtil {
         // no instantiation.
     }
 
-    public static Context enter(WrapFactory wrap) {
+    public static Context enter() {
         Context cx = Context.enter();
-        if (wrap != null) {
-            cx.setWrapFactory(wrap);
+        WrapFactory factory = ScriptEnvironmentImpl.getWrapFactory();
+        if (factory != null) {
+            cx.setWrapFactory(factory);
         }
         return cx;
     }
@@ -56,13 +58,13 @@ public class RhinoUtil {
 
     public static Object convertResult(
             Context cx, Class expectedClass, Object jsRet) {
-        Object ret = null;
+        Object ret;
         if (expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);
         } else if (expectedClass == Void.class
                 || expectedClass == void.class
-                || (jsRet instanceof org.mozilla.javascript.Undefined)) {
+                || (jsRet == Undefined.instance)) {
             ret = null;
         } else {
             ret = JavaAdapter.convertResult(jsRet, expectedClass);
@@ -70,7 +72,7 @@ public class RhinoUtil {
 
         return ret;
     }
-
+    
     public static  void removeWrappedException(WrappedException e) {
         Throwable t = e.getWrappedException();
         if (t instanceof RuntimeException) {
@@ -78,5 +80,26 @@ public class RhinoUtil {
         }
         throw new RuntimeException(t);
     }
+
+    /*
+    public static class NativeEmpty extends NativeJavaObject {
+        
+        private static final long serialVersionUID = 7282176381199691056L;
+        
+        public static final NativeEmpty instance = new NativeEmpty();
+        
+        private NativeEmpty() {
+            // singleton
+        }
+
+        public String getClassName() {
+            return "undefined";
+        }
+        
+        public String toString() {
+            return "";
+        }
+    }
+    */
 
 }

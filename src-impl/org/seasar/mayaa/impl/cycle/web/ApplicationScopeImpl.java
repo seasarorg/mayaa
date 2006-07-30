@@ -35,7 +35,9 @@ public class ApplicationScopeImpl
         extends AbstractWritableAttributeScope
         implements ApplicationScope {
 
-    private ServletContext _servletContext;
+    private static final long serialVersionUID = 5216746677132589700L;
+
+    private transient ServletContext _servletContext;
 
     protected void check() {
         if (_servletContext == null) {

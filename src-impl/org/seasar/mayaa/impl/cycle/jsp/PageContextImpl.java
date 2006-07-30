@@ -159,11 +159,12 @@ public class PageContextImpl extends PageContext {
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         SessionScope session = cycle.getSessionScope();
+        
         Object obj = session.getUnderlyingContext();
         if (obj instanceof HttpSession) {
             return (HttpSession) obj;
         }
-        throw new IllegalStateException();
+        return null;
     }
 
     public ServletRequest getRequest() {
@@ -235,41 +236,43 @@ public class PageContextImpl extends PageContext {
         throw new IllegalArgumentException();
     }
 
-    public Object findAttribute(String name) {
+    protected AttributeScope findAttributeScope(String name) {
+        AttributeScope pageScope =
+            CycleUtil.getServiceCycle().getPageScope();
+        if (pageScope.hasAttribute(name)) {
+            return pageScope;
+        }
         AttributeScope scope = CycleUtil.findStandardAttributeScope(name);
         if (scope != null) {
-            return scope.getAttribute(name);
+            return scope;
         }
-        return null;
+        return pageScope; 
+    }
+
+    public Object findAttribute(String name) {
+        return findAttributeScope(name).getAttribute(name);
     }
 
     public Object getAttribute(String name, int scope) {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = toServiceScope(scope);
-        return CycleUtil.getAttribute(name, scopeName);
-    }
-
-    public Object getAttribute(String name) {
-        return getAttribute(name, PAGE_SCOPE);
+        if (scope != PageContext.PAGE_SCOPE) {
+            String scopeName = toServiceScope(scope);
+            return CycleUtil.getAttribute(name, scopeName);
+        }
+        return findAttributeScope(name).getAttribute(name);
     }
 
     public void removeAttribute(String name, int scope) {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = toServiceScope(scope);
-        CycleUtil.removeAttribute(name, scopeName);
-    }
-
-    public void removeAttribute(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException();
-        }
-        StandardScope standardScope = CycleUtil.getStandardScope();
-        for (int i = 0; i < standardScope.size(); i++) {
-            CycleUtil.removeAttribute(name, standardScope.get(i));
+        if (scope != PageContext.PAGE_SCOPE) {
+            String scopeName = toServiceScope(scope);
+            CycleUtil.removeAttribute(name, scopeName);
+        } else {
+            findAttributeScope(name).removeAttribute(name);
         }
     }
 
@@ -277,8 +280,31 @@ public class PageContextImpl extends PageContext {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        String scopeName = toServiceScope(scope);
-        CycleUtil.setAttribute(name, value, scopeName);
+        if (scope != PageContext.PAGE_SCOPE) {
+            String scopeName = toServiceScope(scope);
+            CycleUtil.setAttribute(name, value, scopeName);
+        } else {
+            findAttributeScope(name).setAttribute(name, value);
+        }
+    }
+
+    public Object getAttribute(String name) {
+        return getAttribute(name, PAGE_SCOPE);
+    }
+
+    public void removeAttribute(String name) {
+        /* removeAttribute(name, scope)‚ª‚ ‚é‚Ì‚É‚±‚ê‚ð‚â‚é‚Æ
+         * ‘z’èŠO‚Ì“®ì‚É‚È‚Á‚Ä‚µ‚Ü‚¤B
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+        StandardScope standardScope = CycleUtil.getStandardScope();
+        for (int i = 0; i < standardScope.size(); i++) {
+            CycleUtil.removeAttribute(name, standardScope.get(i));
+        }
+        */
+
+        removeAttribute(name, PAGE_SCOPE);
     }
 
     public void setAttribute(String name, Object value) {
@@ -312,6 +338,9 @@ public class PageContextImpl extends PageContext {
     // support class -------------------------------------------------
 
     private class CycleServletConfig implements ServletConfig {
+        protected CycleServletConfig() {
+            // do nothing.
+        }
 
         public String getInitParameter(String name) {
             return getServletContext().getInitParameter(name);

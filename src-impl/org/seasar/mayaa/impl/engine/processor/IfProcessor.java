@@ -45,4 +45,8 @@ public class IfProcessor extends TemplateProcessorSupport {
         return test ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
 
+    public void kill() {
+        _test = null;
+        super.kill();
+    }
 }

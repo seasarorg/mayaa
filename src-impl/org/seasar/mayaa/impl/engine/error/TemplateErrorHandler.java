@@ -35,6 +35,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class TemplateErrorHandler extends ParameterAwareImpl
         implements ErrorHandler {
 
+    private static final long serialVersionUID = -6643723526947091557L;
+
     private static final Log LOG =
         LogFactory.getLog(TemplateErrorHandler.class);
 
@@ -62,6 +64,10 @@ public class TemplateErrorHandler extends ParameterAwareImpl
         if (t == null) {
             throw new IllegalArgumentException();
         }
+        boolean isPageNotFound = t instanceof PageNotFoundException;
+        if (isPageNotFound && LOG.isInfoEnabled()) {
+            LOG.info(t.getMessage());
+        }
         for (Class throwableClass = t.getClass();
                 throwableClass != null;
                 throwableClass = throwableClass.getSuperclass()) {
@@ -75,7 +81,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 } finally {
                     SpecificationUtil.endScope();
                 }
-                if (LOG.isErrorEnabled()) {
+                if (isPageNotFound == false && LOG.isErrorEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 1, t.getMessage());
                     LOG.error(msg, t);

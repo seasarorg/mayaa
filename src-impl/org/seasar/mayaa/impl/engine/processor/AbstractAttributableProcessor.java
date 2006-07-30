@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
@@ -36,20 +39,26 @@ public abstract class AbstractAttributableProcessor
         implements ChildEvaluationProcessor, InformalPropertyAcceptable {
 
     private boolean _childEvaluation;
-    private List _attributes;
-    private ThreadLocal _processtimeInfo = new ThreadLocal();
+    private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
+                    _attributes;
+    private static final String PROCESS_TIME_INFO_KEY =
+        AbstractAttributableProcessor.class.getName() + "#processtimeInfo";
+    static {
+        CycleUtil.registVariableFactory(PROCESS_TIME_INFO_KEY,
+                new DefaultCycleLocalInstantiator() {
+                    public Object create(Object owner, Object[] params) {
+                        return new ProcesstimeInfo();
+                    }
+                });
+    }
 
     protected void clearProcesstimeInfo() {
-        _processtimeInfo.set(null);
+        CycleUtil.clearLocalVariable(PROCESS_TIME_INFO_KEY, this);
     }
 
     protected ProcesstimeInfo getProcesstimeInfo() {
-        ProcesstimeInfo info = (ProcesstimeInfo) _processtimeInfo.get();
-        if (info == null) {
-            info = new ProcesstimeInfo();
-            _processtimeInfo.set(info);
-        }
-        return info;
+        return (ProcesstimeInfo) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null);
     }
 
     // MLD property
@@ -58,7 +67,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     // MLD method
-    public void addInformalProperty(PrefixAwareName name, Object attr) {
+    public void addInformalProperty(PrefixAwareName name, Serializable attr) {
         if (_attributes == null) {
             _attributes = new ArrayList();
         }
@@ -152,10 +161,26 @@ public abstract class AbstractAttributableProcessor
         writeEndElement();
         return ProcessStatus.EVAL_PAGE;
     }
+    
+    public void kill() {
+        if (_attributes != null) {
+            _attributes.clear();
+        }
+        clearProcesstimeInfo();
+        super.kill();
+    }
+    
+    // for serialize
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        clearProcesstimeInfo();
+    }
 
     //helper class, methods ----------------------------------------
 
-    protected class ProcesstimeInfo {
+    protected static class ProcesstimeInfo {
 
         private CycleWriter _body;
         private List _processtimeProperties;

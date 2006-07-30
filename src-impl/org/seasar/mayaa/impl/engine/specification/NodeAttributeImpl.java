@@ -22,6 +22,7 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
@@ -30,7 +31,9 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  */
 public class NodeAttributeImpl implements NodeAttribute {
 
-    private SpecificationNode _node;
+    private static final long serialVersionUID = -1384526104972846069L;
+
+    private transient SpecificationNode _node;
     private QName _qName;
     private String _value;
     private String _prefix; // ’è‹`Žž‚Ì‚à‚Ì
@@ -75,15 +78,15 @@ public class NodeAttributeImpl implements NodeAttribute {
 
     public String getPrefix() {
         if (_prefix == null) {
-           String namespaceURI = getQName().getNamespaceURI();
-           PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
-           if (mapping != null) {
+            URI namespaceURI = getQName().getNamespaceURI();
+            PrefixMapping mapping = getMappingFromURI(namespaceURI, true);
+            if (mapping != null) {
                 if (StringUtil.equals(namespaceURI,
                         mapping.getNamespaceURI()) == false) {
     	            return mapping.getPrefix();
     	        }
             }
-	        return "";
+            return "";
         }
         return _prefix;
     }
@@ -113,7 +116,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     }
 
     public PrefixMapping getMappingFromURI(
-            String namespaceURI, boolean all) {
+            URI namespaceURI, boolean all) {
         if (getNode() != null) {
             return getNode().getMappingFromURI(namespaceURI, all);
         }
@@ -131,14 +134,14 @@ public class NodeAttributeImpl implements NodeAttribute {
         return false;
     }
 
-    public String getDefaultNamespaceURI() {
+    public URI getDefaultNamespaceURI() {
         if (getNode() != null) {
             return getNode().getDefaultNamespaceURI();
         }
         return null;
     }
 
-    public void setDefaultNamespaceURI(String namespaceURI) {
+    public void setDefaultNamespaceURI(URI namespaceURI) {
         if (getNode() != null) {
             getNode().setDefaultNamespaceURI(namespaceURI);
         }

@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.builder.library.converter;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 
@@ -37,6 +39,6 @@ public interface PropertyConverter extends ParameterAware {
      * @param expectedClass 動的値の場合に期待する動的型。
      * @return 変換値。
      */
-    Object convert(NodeAttribute attribute, String value, Class expectedClass);
+    Serializable convert(NodeAttribute attribute, String value, Class expectedClass);
 
 }

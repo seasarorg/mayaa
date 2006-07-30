@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.builder.library.tld;
 
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.library.TLDLibraryDefinition;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.TagHandler;
 import org.xml.sax.Attributes;
@@ -42,7 +44,7 @@ public class TaglibTagHandler extends TagHandler {
         });
         putHandler(new TagHandler("uri") {
             protected void end(String body) {
-                setNamespaceURI(body);
+                setNamespaceURI(SpecificationUtil.createURI(body));
             }
         });
     }
@@ -51,7 +53,7 @@ public class TaglibTagHandler extends TagHandler {
         _library.setRequiredVersion(requiredVersion);
     }
 
-    protected void setNamespaceURI(String namespaceURI) {
+    protected void setNamespaceURI(URI namespaceURI) {
         _library.setNamespaceURI(namespaceURI);
     }
 

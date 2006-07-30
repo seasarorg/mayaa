@@ -19,6 +19,8 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.IterationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
@@ -28,14 +30,21 @@ public class ForProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
     private static final long serialVersionUID = -1762792311844341560L;
-
     private static final int DEFAULT_MAX = 256;
+    private static final String COUNTER_KEY = ForProcessor.class.getName() + "#counter";
+    static {
+        CycleUtil.registVariableFactory(COUNTER_KEY,
+                new DefaultCycleLocalInstantiator() {
+            public Object create(Object owner, Object[] params) {
+                return new Integer(0);
+            }
+        });
+    }
 
     private ProcessorProperty _init;
     private ProcessorProperty _test;
     private ProcessorProperty _after;
     private int _max = DEFAULT_MAX;
-    private ThreadLocal _counter = new ThreadLocal();
 
     // MLD property, expectedClass=void
     public void setInit(ProcessorProperty init) {
@@ -68,17 +77,25 @@ public class ForProcessor extends TemplateProcessorSupport
         if (_test == null) {
             throw new IllegalStateException();
         }
-        int count = ((Integer) _counter.get()).intValue();
+        int count = getCounter();
         if (0 <= _max && _max < count) {
             throw new TooManyLoopException(_max);
         }
-        count++;
-        _counter.set(new Integer(count));
+        setCounter(++count);
         return ObjectUtil.booleanValue(_test.getValue().execute(null), false);
     }
 
+    protected int getCounter() {
+        return ((Integer)CycleUtil.getLocalVariable(
+                COUNTER_KEY, this, null)).intValue();
+    }
+    
+    protected void setCounter(int counter) {
+        CycleUtil.setLocalVariable(COUNTER_KEY, this, new Integer(counter));
+    }
+    
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        _counter.set(new Integer(0));
+        CycleUtil.clearLocalVariable(COUNTER_KEY, this);
         if (_init != null) {
             _init.getValue().execute(null);
         }
@@ -90,6 +107,20 @@ public class ForProcessor extends TemplateProcessorSupport
             _after.getValue().execute(null);
         }
         return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
+    }
+
+    public void kill() {
+        _init = null;
+        _test = null;
+        _after = null;
+        super.kill();
+    }
+    
+    // for serialize
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
     }
 
 }

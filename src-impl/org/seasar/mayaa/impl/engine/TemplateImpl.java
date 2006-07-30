@@ -17,10 +17,11 @@ package org.seasar.mayaa.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.seasar.mayaa.builder.TemplateBuilder;
+import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.RequestScope;
@@ -28,13 +29,19 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
+import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
+import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -43,11 +50,12 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateImpl
-        extends SpecificationImpl implements Template, CONST_IMPL {
+        extends SpecificationImpl
+        implements Template, NodeReferenceResolver, ProcessorReferenceResolver, CONST_IMPL {
 
     private static final long serialVersionUID = -5368325487192629078L;
 
-    private Page _page;
+    private String _pageName;
     private String _suffix;
     private String _extension;
     private List _childProcessors = new ArrayList();
@@ -56,17 +64,17 @@ public class TemplateImpl
         if (page == null || suffix == null || extension == null) {
             throw new IllegalArgumentException();
         }
-        if (_page != null) {
-            /* only once */
+        if (_pageName != null) {
+            // only once
             throw new IllegalStateException();
         }
-        _page = page;
+        _pageName = page.getPageName();
         _suffix = suffix;
         _extension = extension;
     }
 
     public Page getPage() {
-        return _page;
+        return ProviderUtil.getEngine().getPage(_pageName);
     }
 
     public String getSuffix() {
@@ -138,25 +146,26 @@ public class TemplateImpl
     }
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
-        checkTimestamp();
-
         RenderUtil.saveToCycle(this);
         prepareCycle(topLevelPage);
         ProcessStatus ret =
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
     }
-
-    public void clear() {
+    
+    public void kill() {
         synchronized (this) {
-            _childProcessors.clear();
-            super.clear();
+            for (Iterator it = _childProcessors.iterator(); it.hasNext(); ) {
+                TemplateProcessor processor = (TemplateProcessor) it.next();
+                processor.kill();
+            }
+            super.kill();
         }
     }
 
     protected void replaceProcessors(List processors) {
         synchronized (this) {
-            _childProcessors.clear();
+            clearChildProcessors();
             for (int i = 0; i < processors.size(); i++) {
                 Object item = processors.get(i);
                 if (item instanceof ProcessorTreeWalker) {
@@ -166,33 +175,36 @@ public class TemplateImpl
         }
     }
 
-    protected void parseSpecification() {
-        setTimestamp(new Date());
-        clear();
-        TemplateBuilder builder = ProviderUtil.getTemplateBuilder();
+    public void build() {
         CycleUtil.beginDraftWriting();
         try {
-            builder.build(this);
+            super.build();
         } finally {
             CycleUtil.endDraftWriting();
         }
     }
 
-    public void checkTimestamp() {
+    protected SpecificationBuilder getBuilder() {
+        return ProviderUtil.getTemplateBuilder();
+    }
+
+    public boolean isDeprecated() {
         Date templateTime = getTimestamp();
         if (templateTime != null) {
             Page page = getPage();
             Date pageTime = page.getTimestamp();
+            if (pageTime == null) {
+                pageTime = new Date(0);
+            }
             Date engineTime = ProviderUtil.getEngine().getTimestamp();
-            if (pageTime.after(templateTime) || engineTime.after(templateTime)) {
-                setTimestamp(null);
+            if (engineTime == null) {
+                engineTime = new Date(0);
+            }
+            if (pageTime.after(templateTime) || engineTime.after(templateTime) ) {
+                return true;
             }
         }
-        synchronized (this) {
-            if (isSourceNotExists() || isOldSpecification()) {
-                parseSpecification();
-            }
-        }
+        return super.isDeprecated();
     }
 
     // ProcessorTreeWalker implements --------------------------------
@@ -201,7 +213,7 @@ public class TemplateImpl
         return null;
     }
 
-    public void setParentProcessor(ProcessorTreeWalker parent, int index) {
+    public void setParentProcessor(ProcessorTreeWalker parent) {
         throw new IllegalStateException();
     }
 
@@ -209,17 +221,30 @@ public class TemplateImpl
         return null;
     }
 
-    public int getIndex() {
-        return 0;
+    public void addChildProcessor(ProcessorTreeWalker child) {
+        insertProcessor(_childProcessors.size(), child);
     }
 
-    public void addChildProcessor(ProcessorTreeWalker child) {
-        if (child == null) {
-            throw new IllegalArgumentException();
-        }
+    public void insertProcessor(int index, ProcessorTreeWalker child) {
         synchronized (_childProcessors) {
-            _childProcessors.add(child);
-            child.setParentProcessor(this, _childProcessors.size() - 1);
+            if (child == null) {
+                throw new IllegalArgumentException();
+            }
+            if (index < 0 || index > _childProcessors.size()) {
+                throw new IndexOutOfBoundsException(); 
+            }
+            _childProcessors.add(index, child);
+            child.setParentProcessor(this);
+            for (index += 1; index < _childProcessors.size(); index++) {
+                child = (ProcessorTreeWalker)_childProcessors.get(index); 
+                child.setParentProcessor(this);
+            }
+        }
+    }
+
+    public boolean removeProcessor(ProcessorTreeWalker child) {
+        synchronized (this) {
+            return _childProcessors.remove(child);
         }
     }
 
@@ -236,11 +261,68 @@ public class TemplateImpl
     public ProcessorTreeWalker getChildProcessor(int index) {
         return (ProcessorTreeWalker) _childProcessors.get(index);
     }
+    
+    // for serialize
+    private static final String SERIALIZE_CONTROLLER_KEY =
+        TemplateImpl.class.getName() + "#serializeController";
+    static {
+        CycleUtil.registVariableFactory(SERIALIZE_CONTROLLER_KEY,
+                new DefaultCycleLocalInstantiator() {
+            public Object create(Object[] params) {
+                ProcessorSerializeController result =
+                    new ProcessorSerializeController();
+                result.init();
+                return result;
+            }
+        });
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        if (_childProcessors != null) {
+            for (int i = _childProcessors.size() - 1; i >= 0 ; i--) {
+                ProcessorTreeWalker child =
+                    (ProcessorTreeWalker) _childProcessors.get(i);
+                child.setParentProcessor(this);
+            }
+        }        
+        nodeSerializer().specLoaded(this);
+    }
+    
+    protected void afterDeserialize() {
+        processorSerializer().release();
+    }
+    
+    public static ProcessorSerializeController processorSerializer() {
+        return (ProcessorSerializeController) CycleUtil.getGlobalVariable(
+                SERIALIZE_CONTROLLER_KEY, null);
+    }
+    
+    // ProcessorReferenceResolver implements ------------------------
+    
+    public void registResolveProcessorListener(
+            String uniqueID, ProcessorResolveListener listener) {
+        processorSerializer().registResolveProcessorListener(uniqueID, listener);
+    }
+
+    public void processorLoaded(String uniqueID, ProcessorTreeWalker item) {
+        processorSerializer().processorLoaded(uniqueID, item);
+    }
+
+    public ProcessorReferenceResolver findProcessorResolver() {
+        return processorSerializer();
+    }
 
     // PositionAware implements ------------------------------------
 
     public boolean isOnTemplate() {
         return true;
     }
-
+    
 }

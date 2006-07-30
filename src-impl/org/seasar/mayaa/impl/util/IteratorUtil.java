@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
@@ -46,7 +48,9 @@ public class IteratorUtil {
     };
 
     public static Iterator toIterator(Object o) {
-        if (o instanceof Collection) {
+        if (o instanceof AttributeScope) {
+            return ((AttributeScope)o).iterateAttributeNames();
+        } else if (o instanceof Collection) {
             return ((Collection) o).iterator();
         } else if (o instanceof Iterator) {
             return (Iterator) o;
@@ -151,7 +155,7 @@ public class IteratorUtil {
 
         private Enumeration _enumeration;
 
-        private EnumrationIterator(Enumeration enumeration) {
+        protected EnumrationIterator(Enumeration enumeration) {
             _enumeration = enumeration;
         }
 

@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.cyberneko.html.HTMLElements;
+import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
@@ -30,11 +31,16 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -47,6 +53,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
     private static final long serialVersionUID = 923306412062075314L;
     private static final String SUFFIX_DUPLICATED = "_d";
     private static final Set XHTML_EMPTY_ELEMENTS;
+    private static final String RENDERED_NS_STACK_KEY =
+        ElementProcessor.class.getName() + "#renderedNSStack";
+    private static final String CURRENT_NS_KEY =
+        ElementProcessor.class.getName() + "#currentNS";
     static {
         XHTML_EMPTY_ELEMENTS = new HashSet();
         XHTML_EMPTY_ELEMENTS.add("base");
@@ -69,52 +79,52 @@ public class ElementProcessor extends AbstractAttributableProcessor
         XHTML_EMPTY_ELEMENTS.add("nextid");
         XHTML_EMPTY_ELEMENTS.add("sound");
         XHTML_EMPTY_ELEMENTS.add("spacer");
+
+        CycleUtil.registVariableFactory(RENDERED_NS_STACK_KEY,
+                new DefaultCycleLocalInstantiator() {
+            public Object create(Object[] params) {
+                return new Stack();
+            }});
+        CycleUtil.registVariableFactory(CURRENT_NS_KEY,
+                new DefaultCycleLocalInstantiator() {
+            public Object create(Object[] params) {
+                SpecificationNode originalNode = (SpecificationNode) params[0];
+                Namespace currentNS = SpecificationUtil.createNamespace();
+                currentNS.setParentSpace(originalNode.getParentSpace());
+                for (Iterator it = originalNode.iteratePrefixMapping(false); it.hasNext();) {
+                    PrefixMapping prefixMapping = (PrefixMapping) it.next();
+                    currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
+                }
+                currentNS.setDefaultNamespaceURI(originalNode.getDefaultNamespaceURI());
+                return currentNS;
+            }});
     }
 
     private PrefixAwareName _name;
     private boolean _duplicated;
-    private ThreadLocal _currentNS = new ThreadLocal();
-    private static ThreadLocal _renderedNS = new ThreadLocal();
 
     protected void clearCurrentNS() {
-        _currentNS.set(null);
+        CycleUtil.clearGlobalVariable(CURRENT_NS_KEY);
     }
 
     protected Namespace getCurrentNS() {
-        Namespace currentNS = (Namespace) _currentNS.get();
-        if (currentNS == null) {
-            currentNS = SpecificationUtil.createNamespace();
-            currentNS.setParentSpace(getOriginalNode().getParentSpace());
-            for (Iterator it = getOriginalNode().iteratePrefixMapping(false); it.hasNext();) {
-                PrefixMapping prefixMapping = (PrefixMapping) it.next();
-                currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
-            }
-            currentNS.setDefaultNamespaceURI(getOriginalNode().getDefaultNamespaceURI());
-            _currentNS.set(currentNS);
-        }
-        return currentNS;
+        return (Namespace) CycleUtil.getGlobalVariable(CURRENT_NS_KEY,
+                new Object[] { getOriginalNode() });
     }
 
-    private static final String RENDERD_PREFIX_MAPPINGS = "--rendered prefix mappings mark--";
+    public void notifyBeginRender(Page topLevelPage) {
+        CycleUtil.clearGlobalVariable(RENDERED_NS_STACK_KEY);
+    }
 
     protected Stack getRenderedNS() {
-        Stack renderedNS;
-        Boolean mark = (Boolean) CycleUtil.getServiceCycle().getPageScope().getAttribute(RENDERD_PREFIX_MAPPINGS);
-        if (mark == null) {
-            CycleUtil.getServiceCycle().getPageScope().setAttribute(RENDERD_PREFIX_MAPPINGS, Boolean.TRUE);
-            renderedNS = new Stack();
-            _renderedNS.set(renderedNS);
-        } else {
-            renderedNS = (Stack)_renderedNS.get();
-        }
-        return renderedNS;
+        return (Stack) CycleUtil.getGlobalVariable(RENDERED_NS_STACK_KEY, null);
     }
 
     protected void addRendered(PrefixMapping mapping) {
         ((List) getRenderedNS().peek()).add(mapping);
     }
 
-    protected String alreadyRenderedPrefix(String namespaceURI) {
+    protected String alreadyRenderedPrefix(URI namespaceURI) {
         Iterator iteratorRendered = getRenderedNS().iterator();
         while (iteratorRendered.hasNext()) {
             Iterator mappings = ((List) iteratorRendered.next()).iterator();
@@ -165,17 +175,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return String.class;
     }
 
-    protected void resolvePrefix(PrefixAwareName name) {
+    protected void resolvePrefix(PrefixAwareName name, Namespace currentNS) {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        Namespace currentNS = getCurrentNS();
-        String namespaceURI = name.getQName().getNamespaceURI();
+
+        URI namespaceURI = name.getQName().getNamespaceURI();
         PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
         if (mapping != null) {
             return;
         }
+
         Namespace namespace = getInjectedNode().getParentSpace();
         mapping = namespace.getMappingFromURI(namespaceURI, true);
         if (mapping != null) {
@@ -187,14 +198,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected void resolvePrefixAll() {
-        resolvePrefix(getName());
+        Namespace currentNS = getCurrentNS();
+        if (CycleUtil.isDraftWriting() == false) {
+            currentNS = SpecificationUtil.copyNamespace(currentNS);
+        }
+        resolvePrefix(getName(), currentNS);
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            resolvePrefix(prop.getName());
+            resolvePrefix(prop.getName(), currentNS);
         }
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            resolvePrefix(prop.getName());
+            resolvePrefix(prop.getName(), currentNS);
         }
     }
 
@@ -211,23 +226,26 @@ public class ElementProcessor extends AbstractAttributableProcessor
             return prefix;
         }
         Namespace currentNS = getCurrentNS();
-        String namespaceURI = name.getQName().getNamespaceURI();
+        URI namespaceURI = name.getQName().getNamespaceURI();
         PrefixMapping mapping =
             currentNS.getMappingFromURI(namespaceURI, true);
         if (mapping != null) {
             return mapping.getPrefix();
         }
-        throw new IllegalStateException();
+        // new inject prefixMapping
+        currentNS.addPrefixMapping("", namespaceURI);
+        return "";
+        //throw new IllegalStateException();
     }
 
     protected boolean appendPrefixMappingString(
             StringBuffer buffer, PrefixMapping mapping) {
         String pre = mapping.getPrefix();
-        String uri = mapping.getNamespaceURI();
-        if (uri.startsWith(URI_MAYAA)) {
+        URI uri = mapping.getNamespaceURI();
+        if (URI_MAYAA.equals(uri)) {
             return false;
         }
-        if (uri.startsWith(URI_XML) && pre.equals("xml")) {
+        if (URI_XML.equals(uri) && pre.equals("xml")) {
             return false;
         }
         if (StringUtil.hasValue(pre)) {
@@ -264,21 +282,27 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrPrefix = attrPrefix + ":";
             }
         }
-        buffer.append(" ");
-        buffer.append(attrPrefix);
-        buffer.append(qName.getLocalName());
-        buffer.append("=\"");
+        StringBuffer temp = new StringBuffer();
+        temp.append(" ");
+        temp.append(attrPrefix);
+        temp.append(qName.getLocalName());
+        temp.append("=\"");
         if (value instanceof CompiledScript) {
             CompiledScript script = (CompiledScript) value;
             if (CycleUtil.isDraftWriting()) {
-                buffer.append(script.getScriptText());
+                temp.append(script.getScriptText());
             } else {
-                buffer.append(script.execute(null));
+                Object result = script.execute(null);
+                if (StringUtil.isEmpty(result)) {
+                    return;
+                }
+                temp.append(result);
             }
         } else {
-            buffer.append(value.toString());
+            temp.append(value.toString());
         }
-        buffer.append("\"");
+        temp.append("\"");
+        buffer.append(temp.toString());
     }
 
     protected boolean needsCloseElement(QName qName) {
@@ -328,9 +352,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
         PrefixAwareName propName = prop.getName();
         if (isDuplicated()) {
             QName propQName = propName.getQName();
-            String propURI = propQName.getNamespaceURI();
+            URI propURI = propQName.getNamespaceURI();
             String propLocalName = propQName.getLocalName();
-            // TODO Feb 24, 2006 8:40:30 AM id ‚ðÁ‚·‚©H
+
             if (getName().getQName().getNamespaceURI().equals(propURI)
                     && "id".equals(propLocalName)) {
                 return;
@@ -398,6 +422,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
+        if (topLevelPage != null) {
+            topLevelPage.registBeginRenderNotifier(this);
+        }
         renderInit();
         return super.doStartProcess(topLevelPage);
     }
@@ -417,11 +444,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
         getRenderedNS().pop();
     }
 
-    public ProcessorTreeWalker[] divide() {
+    public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
         renderInit();
         try {
-            if (getProcessorDefinition().getName().equals(
-                    QM_TEMPLATE_ELEMENT.getLocalName()) == false) {
+            if (getInjectedNode().getQName().equals(
+                    QM_TEMPLATE_ELEMENT) == false) {
                 return new ProcessorTreeWalker[] { this };
             }
             StringBuffer xmlnsDefs = new StringBuffer();
@@ -436,16 +463,19 @@ public class ElementProcessor extends AbstractAttributableProcessor
             writePart1(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part1 =
-                        new LiteralCharactersProcessor(this, buffer.toString());
+                        new LiteralCharactersProcessor(buffer.toString());
+                BuilderUtil.characterProcessorCopy(
+                        this, part1, sequenceIDGenerator);
                 list.add(part1);
             }
-    
+
             for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 buffer = new StringBuffer();
                 internalWritePart2(buffer, prop);
                 CharactersProcessor part2 =
-                        new CharactersProcessor(this, prop, buffer.toString());
+                        new CharactersProcessor(prop, buffer.toString());
+                BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
                 list.add(part2);
             }
             for (Iterator it = iterateInformalProperties(); it.hasNext();) {
@@ -455,16 +485,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     buffer = new StringBuffer();
                     internalWritePart2(buffer, prop);
                     CharactersProcessor part2 =
-                            new CharactersProcessor(this, prop, buffer.toString());
+                            new CharactersProcessor(prop, buffer.toString());
+                    BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
                     list.add(part2);
                 }
             }
-    
+
             buffer = new StringBuffer();
             writePart3(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part3 =
-                        new LiteralCharactersProcessor(this, buffer.toString());
+                        new LiteralCharactersProcessor(buffer.toString());
+                BuilderUtil.characterProcessorCopy(this, part3, sequenceIDGenerator);
                 list.add(part3);
             }
             int size = getChildProcessorSize();
@@ -475,10 +507,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
             writePart4(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part4 =
-                        new LiteralCharactersProcessor(this, buffer.toString());
+                        new LiteralCharactersProcessor(buffer.toString());
+                BuilderUtil.characterProcessorCopy(
+                        this, part4, sequenceIDGenerator);
                 list.add(part4);
             }
-
+            //optimizeNodes();
             clearChildProcessors();
             clearProcesstimeInfo();
             return (ProcessorTreeWalker[]) list.toArray(
@@ -486,6 +520,29 @@ public class ElementProcessor extends AbstractAttributableProcessor
         } finally {
             renderExit();
         }
+    }
+
+    public void kill() {
+        _name = null;
+        super.kill();
+    }
+
+    protected void optimizeNodes() {
+        SpecificationNode originalNode = getOriginalNode();
+        NodeTreeWalker originalParent = originalNode.getParentNode();
+        for (Iterator it = originalParent.iterateChildNode(); it.hasNext(); ) {
+            if (it.next() == originalNode) {
+                it.remove();
+                break;
+            }
+        }
+        for (Iterator it = getOriginalNode().iterateChildNode(); it.hasNext(); ) {
+            NodeTreeWalker child = (NodeTreeWalker)it.next();
+            child.setParentNode(originalParent);
+            originalParent.addChildNode(child);
+        }
+        getOriginalNode().clearChildNodes();
+        getOriginalNode().clearAttributes();
     }
 
 }

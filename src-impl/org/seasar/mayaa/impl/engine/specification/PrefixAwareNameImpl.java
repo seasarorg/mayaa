@@ -15,18 +15,23 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixAwareNameImpl implements PrefixAwareName {
-    private static Map _cache = new WeakValueHashMap();
+public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
+    private static final long serialVersionUID = -8898891078217203404L;
+
+    private static Map _cache =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
 
     public static PrefixAwareName getInstance(QName qName, String prefix) {
         String key = forPrefixAwareNameString(qName, prefix);
@@ -43,6 +48,10 @@ public class PrefixAwareNameImpl implements PrefixAwareName {
 
     private QName _qName;
     private String _prefix;
+
+    private PrefixAwareNameImpl() {
+        // for serialize
+    }
 
     private PrefixAwareNameImpl(QName qName, String prefix) {
         if (qName == null || prefix == null) {
@@ -79,6 +88,10 @@ public class PrefixAwareNameImpl implements PrefixAwareName {
         }
         buffer.append(qName.toString());
         return buffer.toString();
+    }
+
+    private Object readResolve() {
+        return getInstance(_qName, _prefix);
     }
 
 }

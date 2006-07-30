@@ -30,6 +30,6 @@ public interface PrefixMapping {
      * 名前空間URIの取得。
      * @return 名前空間URI。
      */
-    String getNamespaceURI();
+    URI getNamespaceURI();
 
 }

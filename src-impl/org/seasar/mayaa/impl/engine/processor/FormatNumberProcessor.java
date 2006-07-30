@@ -26,6 +26,7 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 
 /**
@@ -35,10 +36,11 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 7899970766673369995L;
 
+    private static Map _formatPools = new HashMap();
+    
     private ProcessorProperty _value;
     private ProcessorProperty _default;
     private String _pattern;
-    private static Map _formatPools = new HashMap();
 
     public void initialize() {
         if (_pattern == null) {
@@ -69,7 +71,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private String format(ProcessorProperty property) {
         Object result = property.getValue().execute(null);
-        if (result != null) {
+        if (StringUtil.hasValue(result)) {
             if (result instanceof Number || result instanceof String) {
                 NumberFormatPool pool = getFormatPool();
 
@@ -100,7 +102,15 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
         }
     }
 
-    protected class NumberFormatPool extends AbstractSoftReferencePool {
+    public void kill() {
+        _value = null;
+        _default = null;
+        super.kill();
+    }
+
+    // support class
+
+    protected static class NumberFormatPool extends AbstractSoftReferencePool {
 
         private static final long serialVersionUID = -4295432835558317767L;
 

@@ -15,26 +15,32 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class QNameImpl implements QName, CONST_IMPL {
-    private static Map _cache = new WeakValueHashMap();
+public class QNameImpl implements QName, CONST_IMPL, Serializable {
+    private static final long serialVersionUID = -102674132611191747L;
+
+    private static Map _cache =
+        new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true);
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);
     }
 
     public static synchronized QName getInstance(
-            String namespaceURI, String localName) {
+            URI namespaceURI, String localName) {
         String key = forQNameString(namespaceURI, localName);
         QName result;
         synchronized (_cache) {
@@ -47,10 +53,14 @@ public class QNameImpl implements QName, CONST_IMPL {
         return result;
     }
 
-    private String _namespaceURI;
+    private URI _namespaceURI;
     private String _localName;
 
-    protected QNameImpl(String namespaceURI, String localName) {
+    private QNameImpl() {
+        // for serialize
+    }
+
+    private QNameImpl(URI namespaceURI, String localName) {
         if (StringUtil.isEmpty(namespaceURI) || StringUtil.isEmpty(localName)) {
             throw new IllegalArgumentException();
         }
@@ -58,7 +68,7 @@ public class QNameImpl implements QName, CONST_IMPL {
         _localName = localName;
     }
 
-    public String getNamespaceURI() {
+    public URI getNamespaceURI() {
         return _namespaceURI;
     }
 
@@ -66,7 +76,7 @@ public class QNameImpl implements QName, CONST_IMPL {
         return _localName;
     }
 
-    private static String forQNameString(String namespaceURI, String localName) {
+    private static String forQNameString(URI namespaceURI, String localName) {
         return "{" + namespaceURI + "}" + localName;
     }
 
@@ -85,6 +95,10 @@ public class QNameImpl implements QName, CONST_IMPL {
 
     public int hashCode() {
         return toString().hashCode();
+    }
+
+    private Object readResolve() {
+        return getInstance(_namespaceURI, _localName);
     }
 
 }

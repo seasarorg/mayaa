@@ -17,16 +17,21 @@ package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.IdScriptableObject;
+import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.WrapFactory;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
 import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.engine.specification.PrefixAwareNameImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -40,24 +45,34 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     private final String _sourceName;
     private final int _lineNumber;
     private final int _offsetLine;
-    private final WrapFactory _wrap;
-    private Script _rhinoScript;
+    private transient Script _rhinoScript;
     // for el style --------------
-    private Script _elRhinoScript;
+    private transient Script _elRhinoScript;
     private String _elScriptText;
     private String _elStyleName;
     private boolean _elStyle;
 
     public TextCompiledScriptImpl(
-            String text, WrapFactory wrap, PositionAware position, int offsetLine) {
+            String text, PositionAware position, int offsetLine) {
         super(text);
-        _wrap = wrap;
-        _sourceName = position.getSystemID();
+        String sourceName = position.getSystemID();
+        if (position instanceof PrefixAwareName) {
+            PrefixAwareName prefixAwareName = (PrefixAwareName) position;
+            QName qName = prefixAwareName.getQName();
+            if (CONST_IMPL.URI_MAYAA == qName.getNamespaceURI()) {
+                sourceName += "#" + qName.getLocalName();
+            } else {
+                sourceName += "#"
+                    + PrefixAwareNameImpl.forPrefixAwareNameString(qName,
+                        prefixAwareName.getPrefix());
+            }
+        }
+        _sourceName = sourceName;
         _lineNumber = position.getLineNumber();
         _offsetLine = offsetLine;
         processText(text);
     }
-
+    
     protected boolean maybeELStyle(String text) {
         boolean start = true;
         for (int i = 0; i < text.length(); i++) {
@@ -139,7 +154,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
     }
 
     public Object execute(Object[] args) {
-        Context cx = RhinoUtil.enter(_wrap);
+        Context cx = RhinoUtil.enter();
         Object ret = null;
         try {
             Scriptable scope = RhinoUtil.getScope();
@@ -159,9 +174,25 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                     RhinoUtil.removeWrappedException(we);
                 }
             }
-            int offsetLine = e.lineNumber() - _lineNumber + 1;// one "\n" is added
+            int offsetLine;
+            String message;
+            if (e instanceof JavaScriptException
+                    && ((JavaScriptException)e).getValue() instanceof IdScriptableObject) {
+                offsetLine = -1;
+                IdScriptableObject scriptable =
+                    (IdScriptableObject) ((JavaScriptException) e).getValue();
+                Object messageProperty = scriptable.get("message", scriptable);
+                if (messageProperty != Scriptable.NOT_FOUND) {
+                    message = messageProperty.toString();
+                } else {
+                    message = scriptable.toString();
+                }
+            } else {
+                offsetLine = e.lineNumber() - _lineNumber + 1;  // one "\n" is added
+                message = e.details() + " in script=\n" + getText();
+            }
             throw new OffsetLineRhinoException(
-                    e.details() + " in script=\n" + getText(),
+                    message,
                     _sourceName, e.lineNumber(), e.lineSource(),
                     e.columnNumber(), offsetLine, e.getCause());
         } finally {
@@ -178,7 +209,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         if (isReadOnly()) {
             throw new ReadOnlyScriptBlockException(getScriptText());
         }
-        Context cx = RhinoUtil.enter(_wrap);
+        Context cx = RhinoUtil.enter();
         try {
             Scriptable scope = RhinoUtil.getScope();
             if (_elStyle) {

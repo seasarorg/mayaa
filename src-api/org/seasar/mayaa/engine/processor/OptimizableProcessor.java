@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine.processor;
 
+import org.seasar.mayaa.builder.SequenceIDGenerator;
+
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
@@ -24,8 +26,9 @@ public interface OptimizableProcessor {
      * 子プロセッサの作成完了時点で呼び出され、
      * 自身を静的パートと動的パートに分割する。
      * 最低でも自身を示す１要素が返却される。
+     * @param 最適化によって新たなノードが必要な際に使用するsequenceIDジェネレータ
      * @return 分割プロセッサー配列
      */
-    ProcessorTreeWalker[] divide();
+    ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator);
 
 }

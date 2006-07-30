@@ -31,14 +31,16 @@ public abstract class AbstractSoftReferencePool implements Serializable {
 
     protected abstract boolean validateObject(Object obj);
 
-    protected synchronized Object borrowObject() {
+    protected Object borrowObject() {
         Object obj = null;
         while (obj == null) {
-            if (_pool.isEmpty()) {
-                obj = createObject();
-            } else {
-                SoftReference ref = (SoftReference) _pool.remove(_pool.size() - 1);
-                obj = ref.get();
+            synchronized(_pool) {
+                if (_pool.isEmpty()) {
+                    obj = createObject();
+                } else {
+                    SoftReference ref = (SoftReference) _pool.remove(_pool.size() - 1);
+                    obj = ref.get();
+                }
             }
         }
         return obj;
@@ -46,11 +48,10 @@ public abstract class AbstractSoftReferencePool implements Serializable {
 
     protected void returnObject(Object obj) {
         boolean success = validateObject(obj);
-        synchronized (this) {
+        synchronized (_pool) {
             if (success) {
                 _pool.add(new SoftReference(obj));
             }
-            notifyAll();
         }
     }
 

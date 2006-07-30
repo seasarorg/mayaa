@@ -15,63 +15,57 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import java.io.File;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 
-import org.seasar.mayaa.impl.IllegalParameterValueException;
-import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.source.SourceHolder;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceDescriptor extends CompositeSourceDescriptor {
+public class PageSourceDescriptor extends CompositeSourceDescriptor
+    implements SourceDescriptorObserver {
 
     private static final long serialVersionUID = -6821253020265849514L;
 
-    private LinkedHashSet _folders = new LinkedHashSet();
-    private LinkedHashSet _absolutePaths = new LinkedHashSet();
+    public boolean collectSourceDescriptor(
+            SourceDescriptorObserver listener) throws Exception {
+        for (Iterator it = SourceHolderFactory.iterator();
+                it.hasNext();) {
+            SourceHolder holder = (SourceHolder) it.next();
+            if (listener.nextSourceDescriptor(
+                    holder.getSourceDescriptor("")) == false) {
+                return false;
+            }
+        }
+        ClassLoaderSourceDescriptor loader =
+            new ClassLoaderSourceDescriptor();
+        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setTimestamp(new Date());
+        if (listener.nextSourceDescriptor(loader) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean nextSourceDescriptor(
+            SourceDescriptor sourceDescriptor) {
+        sourceDescriptor.setSystemID(getSystemID());
+        addSourceDescriptor(sourceDescriptor);
+        return true;
+    }
 
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
-        ApplicationSourceDescriptor app1 = new ApplicationSourceDescriptor();
-        app1.setSystemID(systemID);
-        addSourceDescriptor(app1);
-
-        for (Iterator it = _absolutePaths.iterator(); it.hasNext();) {
-            FileSourceDescriptor file = new FileSourceDescriptor();
-            file.setRoot((String) it.next());
-            file.setSystemID(systemID);
-            addSourceDescriptor(file);
+        try {
+            collectSourceDescriptor(this);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
         }
-
-        for (Iterator it = _folders.iterator(); it.hasNext();) {
-            ApplicationSourceDescriptor app2 = new ApplicationSourceDescriptor();
-            app2.setRoot((String) it.next());
-            app2.setSystemID(systemID);
-            addSourceDescriptor(app2);
-        }
-
-        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
-        loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
-        loader.setSystemID(systemID);
-        addSourceDescriptor(loader);
     }
 
     public void setParameter(String name, String value) {
-        if ("folder".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _folders.add(value);
-        } else if ("absolutePath".equals(name)) {
-            String path = StringUtil.preparePath(value);
-            if (StringUtil.isEmpty(path)
-                    || new File(path).isDirectory() == false) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _absolutePaths.add(path);
-        }
         super.setParameter(name, value);
     }
 

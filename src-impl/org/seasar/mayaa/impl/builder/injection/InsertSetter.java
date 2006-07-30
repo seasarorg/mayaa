@@ -20,6 +20,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
@@ -35,6 +36,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class InsertSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
+    private static final long serialVersionUID = -326245681584232257L;
     protected static final QName QM_INSERT =
         SpecificationUtil.createQName("insert");
     protected static final QName QM_PATH =
@@ -48,7 +50,7 @@ public class InsertSetter extends ParameterAwareImpl
         SpecificationNode injected = chain.getNode(original);
         QName qName = injected.getQName();
 
-        if (qName.getNamespaceURI().startsWith("/")) {
+        if (qName.getNamespaceURI().getValue().startsWith("/")) {
             return convertToInsert(injected, qName);
         }
         return injected;
@@ -58,12 +60,12 @@ public class InsertSetter extends ParameterAwareImpl
             SpecificationNode injected, QName qName) {
         LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         if (libraryManager.getProcessorDefinition(qName) == null) {
-            String uri = qName.getNamespaceURI();
+            URI uri = qName.getNamespaceURI();
             String name = qName.getLocalName();
             String path =
-                StringUtil.preparePath(uri) + StringUtil.preparePath(name);
+                StringUtil.preparePath(uri.getValue()) + StringUtil.preparePath(name);
             // TODO 存在チェック (テンプレートがあるかどうかはsuffixのチェックが必要)
-            SourceDescriptor source = SourceUtil.getSourceDescriptor(uri);
+            SourceDescriptor source = SourceUtil.getSourceDescriptor(uri.getValue());
             if (source.exists()) {
                 SpecificationNode node = BuilderUtil.createInjectedNode(
                         QM_INSERT, uri, injected, false);

@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine.processor;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
@@ -31,7 +33,7 @@ public interface InformalPropertyAcceptable
      * @param name プロパティ名。
      * @param property インフォーマルプロパティ。
      */
-    void addInformalProperty(PrefixAwareName name, Object property);
+    void addInformalProperty(PrefixAwareName name, Serializable property);
 
     /**
      * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。

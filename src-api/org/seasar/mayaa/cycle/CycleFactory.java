@@ -30,6 +30,17 @@ public interface CycleFactory extends UnifiedFactory {
     void initialize(Object requestContext, Object responseContext);
 
     /**
+     * リクエストの終了時に行う後処理。
+     */
+    void cycleFinalize();
+    
+    /**
+     * リクエストサイクル中で有効な動的変数を制御するオブジェクトを返す。
+     * @return リクエストサイクル中で有効な動的変数を制御するオブジェクト
+     */
+    CycleLocalVariables getLocalVariables();
+
+    /**
      * サービスサイクルを取得する。
      * @return カレントスレッドでのサービスサイクル。
      */

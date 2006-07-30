@@ -42,6 +42,10 @@ public class WrapFactoryImpl extends WrapFactory {
         } else if (javaObject instanceof ServiceCycle) {
             ServiceCycle cycle = (ServiceCycle) javaObject;
             return new NativeServiceCycle(scope, cycle);
+        /*
+        } else if (javaObject instanceof ScriptUtil.Empty) {
+            return RhinoUtil.NativeEmpty.instance;
+        */
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);
     }

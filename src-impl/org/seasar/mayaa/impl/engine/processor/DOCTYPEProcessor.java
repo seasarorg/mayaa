@@ -15,17 +15,21 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DOCTYPEProcessor extends TemplateProcessorSupport {
+public class DOCTYPEProcessor extends TemplateProcessorSupport 
+            implements CONST_IMPL {
 
     private static final long serialVersionUID = 8518993579074245108L;
 
@@ -81,11 +85,18 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport {
         return ProcessStatus.SKIP_BODY;
     }
 
-    public ProcessorTreeWalker[] divide() {
+    public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
+        if (getOriginalNode().getQName().equals(QM_DOCTYPE) == false) {
+            return new ProcessorTreeWalker[] { this };
+        }
         StringBuffer sb = new StringBuffer();
         writeData(sb);
-        return new ProcessorTreeWalker[] {
-                    new LiteralCharactersProcessor(this, sb.toString()) };
+        LiteralCharactersProcessor literal =
+            new LiteralCharactersProcessor(sb.toString());
+        BuilderUtil.characterProcessorCopy(
+                this, literal, sequenceIDGenerator);
+        getParentProcessor().removeProcessor(this);
+        return new ProcessorTreeWalker[] { literal };
     }
 
 }

@@ -136,7 +136,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
 
     public Object getUnderlyingContext() {
         // When getting, UnderlyingObject is "HttpSession"
-        check(true);
+        check(false);
         return _httpSession;
     }
 

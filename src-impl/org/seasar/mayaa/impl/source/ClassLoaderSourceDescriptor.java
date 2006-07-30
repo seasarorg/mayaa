@@ -34,8 +34,8 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
 
     private String _root = "";
     private Class _neighbor;
-    private InputStream _inputStream;
-    private Date _timestamp;
+    private transient InputStream _inputStream;
+    private transient Date _timestamp;
 
     public void setNeighborClass(Class neighbor) {
         _neighbor = neighbor;
@@ -90,7 +90,8 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         if (_timestamp != null) {
             return _timestamp;
         }
-        return new Date(0);
+        _timestamp = new Date(); 
+        return _timestamp;
     }
 
 }

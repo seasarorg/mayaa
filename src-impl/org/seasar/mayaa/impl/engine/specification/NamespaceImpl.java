@@ -287,7 +287,7 @@ public class NamespaceImpl implements Namespace {
         for (int i = spaces.size()-1; i >= 0; i--) {
             Namespace current = (Namespace)spaces.get(i);
             if (current instanceof NamespaceImpl) {
-                NamespaceImpl currentImpl = (NamespaceImpl)current;
+                NamespaceImpl currentImpl = (NamespaceImpl) current;
                 buffer.append(currentImpl.namespaceToString());
             } else {
                 throw new IllegalStateException();

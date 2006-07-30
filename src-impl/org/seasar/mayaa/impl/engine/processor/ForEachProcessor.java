@@ -94,8 +94,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
         if (_items == null || _var == null) {
             throw new IllegalStateException();
         }
-        // CycleUtil.clearLocalVariable(PROCESS_TIME_INFO_KEY, this);
-
         IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
         stack.pushOne();

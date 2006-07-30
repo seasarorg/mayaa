@@ -152,10 +152,6 @@ public final class StringUtil {
             ret[0] = folder + file;
             ret[1] = "";
         }
-
-        if (ret[0].startsWith("/") == false) {
-            ret[0] = "/" + ret[0];
-        }
         return ret;
     }
 

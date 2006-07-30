@@ -60,33 +60,33 @@
 	</target>
 
 	<target name="javadoc" depends="cleandoc">
-        <javadoc
-        	charset="${javadoc.charset}"
-        	destdir="${folder.context}/${javadoc}"
-        	access="${javadoc.access}"
-        	source="${javadoc.source}"
-        	use="false"
-        	notree="true"
-        	nonavbar="false"
-        	noindex="true"
-        	splitindex="false"
-        	author="false"
-        	version="false"
-        	nodeprecatedlist="false"
-        	nodeprecated="false"
-        	packagenames="${javadoc.packages}"
-        	sourcepath="${folder.src.api}"
-        	doctitle="${javadoc.title}"
-        	verbose="${project.verbose}">
-        	<classpath>
-        		<fileset dir=".">
-	        		<include name="${folder.context}/${webinf.lib}/*.jar"/>
-	        		<include name="${folder.context}/${webinf.lib-servlet}/*.jar"/>
-	        		<exclude name="${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
-        		</fileset>
-       		</classpath>
-       	</javadoc>
-    </target>
+		<javadoc
+			charset="${javadoc.charset}"
+			destdir="${folder.context}/${javadoc}"
+			access="${javadoc.access}"
+			source="${javadoc.source}"
+			use="false"
+			notree="true"
+			nonavbar="false"
+			noindex="true"
+			splitindex="false"
+			author="false"
+			version="false"
+			nodeprecatedlist="false"
+			nodeprecated="false"
+			packagenames="${javadoc.packages}"
+			sourcepath="${folder.src.api}"
+			doctitle="${javadoc.title}"
+			verbose="${project.verbose}">
+			<classpath>
+				<fileset dir=".">
+					<include name="${folder.context}/${webinf.lib}/*.jar"/>
+					<include name="${folder.context}/${webinf.lib-servlet}/*.jar"/>
+					<exclude name="${folder.context}/${webinf.lib}/${project.name}-*.jar"/>
+				</fileset>
+			</classpath>
+		</javadoc>
+	</target>
 
 	<target name="cleansrc">
 		<delete verbose="${project.verbose}">

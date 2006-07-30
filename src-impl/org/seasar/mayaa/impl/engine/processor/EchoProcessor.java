@@ -61,6 +61,7 @@ public class EchoProcessor extends ElementProcessor
         if (_customName != null) {
             super.setName(_customName);
         } else {
+            // メモリリークを起こす可能性のある参照関係を断つ
             PrefixAwareName prefixAwareName = SpecificationUtil.createPrefixAwareName(
                     originalNode.getQName(), originalNode.getPrefix());
             super.setName(prefixAwareName);

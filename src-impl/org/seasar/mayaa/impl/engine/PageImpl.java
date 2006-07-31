@@ -129,13 +129,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
 
     protected Template findTemplateFromCache(String systemID) {
         Engine engine = ProviderUtil.getEngine();
-        Template template = (Template) engine.findSpecificationFromCache(systemID);
-        /* TODO Šm”F
-        if (template instanceof TemplateImpl) {
-            ((TemplateImpl)template).ready();
-        }
-        */
-        return template;
+        return (Template) engine.findSpecificationFromCache(systemID);
     }
 
     protected Template getTemplateFromFixedSuffix(

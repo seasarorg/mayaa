@@ -51,7 +51,7 @@ public interface Specification
      * 古いソースでビルドされている場合と、未使用期間が一定の長さを
      * 超えた場合に真となる。
      * この値が真の時は、ノード構成やノード内容は保証されない。
-     * @return
+     * @return 廃止対象としてマークされているならtrue
      */
     boolean isDeprecated();
 

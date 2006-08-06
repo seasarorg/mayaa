@@ -145,12 +145,13 @@ public class AutoPageBuilder implements Runnable {
                 if (_renderMate) {
                     LOG.info("page all render time: " + _renderTimeSum + " msec.");
                 }
-                if (_repeat == false)
+                if (_repeat == false) {
                     break;
+                }
                 Thread.sleep(_wait);
             }
 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
             // no operation
         }
     }
@@ -191,7 +192,7 @@ public class AutoPageBuilder implements Runnable {
                     engine.doService(null, true);
                     renderTime = diffMillis(renderTime);
                     if (response.getStatus() ==
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                            HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
                         LOG.debug(systemID + " (render: ----"
                                 + " / build: " + templateBuildTime + " msec)");
                     } else {

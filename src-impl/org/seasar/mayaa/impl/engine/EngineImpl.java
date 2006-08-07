@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,15 +60,18 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class EngineImpl extends SpecificationImpl
         implements Engine, CONST_IMPL {
 
+    static final Log LOG = LogFactory.getLog(EngineImpl.class);
+
     private static final long serialVersionUID = 1428444571422324206L;
     private static final String DEFAULT_SPECIFICATION = "defaultSpecification";
     private static final String PAGE_CLASS = "pageClass";
     private static final String TEMPLATE_CLASS = "templateClass";
     private static final String PAGE_SERIALIZE = "pageSerialize";
     private static final String SURVIVE_LIMIT = "surviveLimit";
+    private static final String FORWARD_LIMIT = "forwardLimit";
+    private static final String DUMP_ENABLED = "dumpEnabled";
     private static final String MAYAA_EXTENSION = ".mayaa";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
-    static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
     private transient Specification _defaultSpecification;
     private transient ErrorHandler _errorHandler;
@@ -77,6 +81,8 @@ public class EngineImpl extends SpecificationImpl
     private Class _pageClass = PageImpl.class;
     private Class _templateClass = TemplateImpl.class;
     private int _surviveLimit = 5;
+    private boolean _dumpEnabled = false;
+    private int _forwardLimit = 10;
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
@@ -153,6 +159,10 @@ public class EngineImpl extends SpecificationImpl
                 return;
             }
         }
+        if (t instanceof CyclicForwardException) {
+            // èzä¬forwardÇÃâ¬î\ê´
+            throw (CyclicForwardException) t;
+        }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         try {
             cycle.setHandledError(t);
@@ -161,7 +171,8 @@ public class EngineImpl extends SpecificationImpl
             // do nothing.
         } catch (PageForwarded pf) {
             // return page service
-            doPageService(CycleUtil.getServiceCycle(), null, pageFlush);
+            checkCyclicForward(cycle.getRequestScope());
+            doPageService(cycle, null, pageFlush);
         } catch (Throwable internal) {
             if (internal instanceof PageNotFoundException) {
                 if (LOG.isInfoEnabled()) {
@@ -179,6 +190,39 @@ public class EngineImpl extends SpecificationImpl
         } finally {
             cycle.setHandledError(null);
         }
+    }
+
+    protected void checkCyclicForward(RequestScope request) {
+        if (_forwardLimit <= 0) {
+            return;
+        }
+
+        String key = CyclicForwardException.class.getName();
+        Map pathMap = (Map) request.getAttribute(key);
+        if (pathMap == null) {
+            pathMap = new HashMap();
+            request.setAttribute(key, pathMap);
+        }
+
+        String pageName = getRequestedPageName(request);
+        Integer count = (Integer) pathMap.get(pageName);
+        int countInt = (count != null) ? count.intValue() + 1 : 1;
+        if (countInt > _forwardLimit) {
+            throw new CyclicForwardException(pageName);
+        }
+        pathMap.put(pageName, new Integer(countInt));
+    }
+
+    protected String getRequestedPageName(RequestScope request) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(request.getPageName());
+        if (StringUtil.hasValue(request.getRequestedSuffix())) {
+            sb.append(getSuffixSeparator());
+            sb.append(request.getRequestedSuffix());
+        }
+        sb.append('.');
+        sb.append(request.getExtension());
+        return sb.toString();
     }
 
     protected void saveToCycle() {
@@ -321,7 +365,7 @@ public class EngineImpl extends SpecificationImpl
                 } catch (RenderingTerminated rt) {
                     service = false;
                 } catch (PageForwarded ignore) {
-                    // do nothing.
+                    checkCyclicForward(cycle.getRequestScope());
                 }
             }
         } catch (Throwable t) {
@@ -410,9 +454,22 @@ public class EngineImpl extends SpecificationImpl
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (isPageRequested()) {
             doPageService(cycle, pageScopeValues, pageFlush);
+
+            if (_dumpEnabled) {
+                dump(cycle);
+            }
         } else {
             doResourceService(cycle);
         }
+    }
+
+    protected void dump(ServiceCycle cycle) {
+        ProcessorDump dump = new ProcessorDump();
+        dump.setPrintContents(true);
+        RequestScope request = cycle.getRequestScope();
+        String pageName = request.getPageName();
+        Page page = getPage(pageName);
+        dump.printSource(page);
     }
 
     protected SpecificationCache getCache() {
@@ -519,14 +576,17 @@ public class EngineImpl extends SpecificationImpl
     public String getTemplateID(Page page, String suffix, String extension) {
         StringBuffer name = new StringBuffer(page.getPageName());
         if (StringUtil.hasValue(suffix)) {
-            String separator = EngineUtil.getEngineSetting(
-                    SUFFIX_SEPARATOR, "$");
+            String separator = getSuffixSeparator();
             name.append(separator).append(suffix);
         }
         if (StringUtil.hasValue(extension)) {
             name.append(".").append(extension);
         }
         return name.toString();
+    }
+
+    protected String getSuffixSeparator() {
+        return EngineUtil.getEngineSetting(SUFFIX_SEPARATOR, "$");
     }
 
     protected void finalize() throws Throwable {
@@ -581,6 +641,10 @@ public class EngineImpl extends SpecificationImpl
                     Boolean.valueOf(value).booleanValue());
         } else if (SURVIVE_LIMIT.equals(name)) {
             _surviveLimit = Integer.parseInt(value);
+        } else if (FORWARD_LIMIT.equals(name)) {
+            _forwardLimit = Integer.parseInt(value);
+        } else if (DUMP_ENABLED.equals(name)) {
+            _dumpEnabled = Boolean.valueOf(value).booleanValue();
         }
         super.setParameter(name, value);
     }
@@ -606,6 +670,10 @@ public class EngineImpl extends SpecificationImpl
             return String.valueOf(isSpecificationSerialize());
         } else if (SURVIVE_LIMIT.equals(name)) {
             return String.valueOf(_surviveLimit);
+        } else if (FORWARD_LIMIT.equals(name)) {
+            return String.valueOf(_forwardLimit);
+        } else if (DUMP_ENABLED.equals(name)) {
+            return String.valueOf(_dumpEnabled);
         }
         return super.getParameter(name);
     }

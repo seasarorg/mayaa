@@ -22,6 +22,8 @@ import org.seasar.mayaa.impl.util.AbstractMessagedException;
  */
 public class CyclicForwardException extends AbstractMessagedException {
 
+    private static final long serialVersionUID = 7307438131920621929L;
+
     private String _pageName;
 
     private CyclicForwardException() {

@@ -43,6 +43,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class ProcessorDump extends EchoProcessor {
 
+    private static final long serialVersionUID = 8044884422670533823L;
+
     private static final PrintStream DEFAULT_OUT = System.out;
 
     private PrintStream _out = DEFAULT_OUT;

@@ -91,7 +91,7 @@ public class WeakValueHashMap extends AbstractMap {
          * @param key
          * @param q
          */
-        private WeakValue(Object k, Object key, ReferenceQueue q) {
+        protected WeakValue(Object k, Object key, ReferenceQueue q) {
             super(k, q);
             this.key = key;
         }

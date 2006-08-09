@@ -92,7 +92,7 @@ public class TagTagHandler extends TagHandler {
 
         private TagTagHandler _handler;
 
-        private TagClassSetter(String name, TagTagHandler handler) {
+        protected TagClassSetter(String name, TagTagHandler handler) {
             super(name);
             _handler = handler;
         }
@@ -120,7 +120,7 @@ public class TagTagHandler extends TagHandler {
 
         private TagTagHandler _handler;
 
-        private TeiClassSetter(String name, TagTagHandler handler) {
+        protected TeiClassSetter(String name, TagTagHandler handler) {
             super(name);
             _handler = handler;
         }

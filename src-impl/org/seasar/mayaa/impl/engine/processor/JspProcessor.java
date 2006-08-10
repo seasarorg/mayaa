@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.SimpleTag;
@@ -40,6 +41,7 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.library.TLDScriptingVariableInfo;
@@ -47,6 +49,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
@@ -208,6 +211,7 @@ public class JspProcessor extends TemplateProcessorSupport
         clearLoadedTag();
         Tag customTag = getLoadedTag();
 
+        // javax.servlet.jsp.tagext.SimpleTag対応
         Object targetTag = customTag;
         if (customTag instanceof SimpleTagWrapper) {
             targetTag = ((SimpleTagWrapper) customTag).getSimpleTag();
@@ -217,6 +221,36 @@ public class JspProcessor extends TemplateProcessorSupport
             ObjectUtil.setProperty(targetTag,
                     property.getName().getQName().getLocalName(),
                     property.getValue().execute(null));
+        }
+        
+        // javax.servlet.jsp.tagext.DynamicAttributes対応
+        if(DynamicAttributes.class.isAssignableFrom(customTag.getClass())) {
+        	// 明示的に指定されている属性を列挙
+        	List qnameList = new ArrayList();
+       		for(Iterator it = iterateProperties(); it.hasNext();) {
+    			ProcessorProperty property = (ProcessorProperty)it.next();
+            	qnameList.add(property.getName().getQName());
+        	}
+        	
+        	for(Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
+        		NodeAttribute attr = (NodeAttribute)it.next();
+        		// 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため
+        		// 動的属性として扱わない
+        		if(!qnameList.contains(attr.getQName())
+        				&& !CONST_IMPL.URI_MAYAA.equals(attr.getQName().getNamespaceURI())) {
+        			try {
+        				// 式実行値を指定して、setDynamicAttribute
+        				Object execValue = ScriptUtil.compile(attr.getValue(), Object.class).execute(null);
+	            		((DynamicAttributes)customTag).setDynamicAttribute(
+	            				attr.getQName().getNamespaceURI().getValue(),
+	            				attr.getQName().getLocalName(),
+	            				execValue);
+        	        } catch (JspException e) {
+        	            throw createJspRuntimeException(
+        	                    getOriginalNode(), getInjectedNode(), e);
+        	        }
+        		}
+        	}
         }
 
         ProcessorTreeWalker processor = this;

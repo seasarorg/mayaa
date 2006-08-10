@@ -35,6 +35,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ChildEvaluationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -57,6 +58,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class JspProcessor extends TemplateProcessorSupport
         implements
@@ -236,20 +238,25 @@ public class JspProcessor extends TemplateProcessorSupport
         		NodeAttribute attr = (NodeAttribute)it.next();
         		// 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため
         		// 動的属性として扱わない
-        		if(!qnameList.contains(attr.getQName())
-        				&& !CONST_IMPL.URI_MAYAA.equals(attr.getQName().getNamespaceURI())) {
-        			try {
-        				// 式実行値を指定して、setDynamicAttribute
-        				Object execValue = ScriptUtil.compile(attr.getValue(), Object.class).execute(null);
-	            		((DynamicAttributes)customTag).setDynamicAttribute(
-	            				attr.getQName().getNamespaceURI().getValue(),
-	            				attr.getQName().getLocalName(),
-	            				execValue);
-        	        } catch (JspException e) {
-        	            throw createJspRuntimeException(
-        	                    getOriginalNode(), getInjectedNode(), e);
-        	        }
-        		}
+        		if(qnameList.contains(attr.getQName())
+        				|| CONST_IMPL.URI_MAYAA.equals(
+                                attr.getQName().getNamespaceURI())) {
+                    continue;
+                }
+
+                try {
+    				// 式実行値を指定して、setDynamicAttribute
+                    CompiledScript script =
+                        ScriptUtil.compile(attr.getValue(), Object.class);
+    				Object execValue = script.execute(null);
+            		((DynamicAttributes)customTag).setDynamicAttribute(
+            				attr.getQName().getNamespaceURI().getValue(),
+            				attr.getQName().getLocalName(),
+            				execValue);
+    	        } catch (JspException e) {
+    	            throw createJspRuntimeException(
+    	                    getOriginalNode(), getInjectedNode(), e);
+    	        }
         	}
         }
 

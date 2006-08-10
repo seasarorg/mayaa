@@ -42,14 +42,24 @@ public class PathAdjusterImpl
             { "link", "href" },
             { "script", "src" },
             { "form", "action" },
+            { "input", "src" },
             { "area", "href" },
             { "iframe", "src" },
             { "frame", "src" },
             { "frame", "longdesc" },
+            { "img", "usemap" },
+            { "input", "usemap" },
             { "embed", "src" },
             { "applet", "code" },
+            { "applet", "codebase" },
             { "object", "data" },
-            { "base", "href" }
+            { "object", "codebase" },
+            { "object", "usemap" },
+            { "base", "href" },
+            { "blockquote", "cite" },
+            { "del", "cite" },
+            { "ins", "cite" },
+            { "q", "cite" }
         });
     }
 

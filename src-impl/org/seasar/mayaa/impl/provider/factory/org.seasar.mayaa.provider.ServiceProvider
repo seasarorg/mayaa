@@ -24,13 +24,16 @@
 		<parameter name="autoBuild.fileNameFilters" value=".html"/><!-- .html;^(sample|howto).+\.htm$ -->
 		<parameter name="autoBuild.renderMate" value="false"/>
 		<parameter name="forwardLimit" value="10"/>
-		<parameter name="dumpEnabled" value="true" />
+		<parameter name="dumpEnabled" value="false" />
 	</engine>
 
 	<scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
 		<scope class="org.seasar.mayaa.impl.cycle.scope.ParamScope"/>
 		<scope class="org.seasar.mayaa.impl.cycle.scope.HeaderScope"/>
 		<scope class="org.seasar.mayaa.impl.cycle.scope.BindingScope"/>
+		<!-- extension: java.lang.System.getProperty()
+		<scope class="org.seasar.mayaa.impl.cycle.scope.EnvScope"/>
+		-->
 		<parameter name="wrapFactory" value="org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl"/>
 	</scriptEnvironment>
 
@@ -52,6 +55,7 @@
 			<parameter name="folder" value="/WEB-INF/lib"/>
 			<parameter name="extension" value=".jar"/>
 			<parameter name="ignore" value="commons-beanutils-"/>
+			<parameter name="ignore" value="commons-collections-"/>
 			<parameter name="ignore" value="commons-logging-"/>
 			<parameter name="ignore" value="nekohtml-"/>
 			<parameter name="ignore" value="jaxen-"/>

@@ -23,14 +23,18 @@ import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.engine.processor.ProcessorPropertyLiteral;
 import org.seasar.mayaa.impl.engine.specification.NodeAttributeImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class TLDPropertyDefinition extends PropertyDefinitionImpl {
 
@@ -38,6 +42,8 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     private static final Log LOG =
         LogFactory.getLog(TLDPropertyDefinition.class);
 
+    private boolean _rtexprvalue;
+    
     protected PropertyConverter getConverterForProcessorProperty() {
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
         PropertyConverter converter =
@@ -80,9 +86,17 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
             attribute = getTemplateAttribute(original, injected);
         }
         if (attribute != null) {
-            String value = attribute.getValue();
-            PropertyConverter converter = getConverterForProcessorProperty();
-            return converter.convert(attribute, value, propertyClass);
+        	if(isRtexprvalue()) {
+            	// 動的値を許可
+	            PropertyConverter converter = getConverterForProcessorProperty();
+	            return converter.convert(attribute, attribute.getValue(), propertyClass);
+        	} else {
+            	// 動的値は不許可
+                PrefixAwareName prefixAwareName =
+                    SpecificationUtil.createPrefixAwareName(
+                            attribute.getQName(), attribute.getPrefix());
+        		return new ProcessorPropertyLiteral(prefixAwareName, attribute.getValue());
+        	}
         } else if (isRequired()) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
@@ -90,4 +104,11 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         return null;
     }
 
+	public boolean isRtexprvalue() {
+		return _rtexprvalue;
+	}
+
+	public void setRtexprvalue(boolean rtexprvalue) {
+		this._rtexprvalue = rtexprvalue;
+	}
 }

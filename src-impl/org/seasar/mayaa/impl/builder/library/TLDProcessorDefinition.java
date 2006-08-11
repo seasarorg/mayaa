@@ -34,6 +34,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
@@ -41,6 +42,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
     private Class _tagClass;
     private Class _teiClass;
+    private boolean _dynamicAttribute;
 
     public void setProcessorClass(Class processorClass) {
         if (JspProcessor.isSupportClass(processorClass) == false) {
@@ -68,7 +70,15 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return _teiClass;
     }
 
-    protected TemplateProcessor newInstance() {
+    public boolean isDynamicAttribute() {
+		return _dynamicAttribute;
+	}
+
+	public void setDynamicAttribute(boolean dynamicAttribute) {
+		this._dynamicAttribute = dynamicAttribute;
+	}
+
+	protected TemplateProcessor newInstance() {
         JspProcessor processor = new JspProcessor();
         processor.setTagClass(getProcessorClass());
         return processor;

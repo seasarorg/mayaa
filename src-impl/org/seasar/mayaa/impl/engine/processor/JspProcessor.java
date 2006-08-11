@@ -45,6 +45,7 @@ import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.library.TLDProcessorDefinition;
 import org.seasar.mayaa.impl.builder.library.TLDScriptingVariableInfo;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
@@ -226,37 +227,45 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         
         // javax.servlet.jsp.tagext.DynamicAttributes対応
-        if(DynamicAttributes.class.isAssignableFrom(customTag.getClass())) {
-        	// 明示的に指定されている属性を列挙
-        	List qnameList = new ArrayList();
-       		for(Iterator it = iterateProperties(); it.hasNext();) {
-    			ProcessorProperty property = (ProcessorProperty)it.next();
-            	qnameList.add(property.getName().getQName());
-        	}
-        	
-        	for(Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
-        		NodeAttribute attr = (NodeAttribute)it.next();
-        		// 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため
-        		// 動的属性として扱わない
-        		if(qnameList.contains(attr.getQName())
-        				|| CONST_IMPL.URI_MAYAA.equals(
-                                attr.getQName().getNamespaceURI())) {
-                    continue;
+        if(TLDProcessorDefinition.class.isAssignableFrom(getProcessorDefinition().getClass())) {
+        	TLDProcessorDefinition def = (TLDProcessorDefinition)getProcessorDefinition();
+        	if(def.isDynamicAttribute()) {
+                if((DynamicAttributes.class.isAssignableFrom(customTag.getClass())) == false) {
+    	            throw new IllegalArgumentException(
+    	            		new DynamicAttributeImplementsException(customTag.getClass()).getMessage());
                 }
+        		
+            	// 明示的に指定されている属性を列挙
+            	List qnameList = new ArrayList();
+           		for(Iterator it = iterateProperties(); it.hasNext();) {
+        			ProcessorProperty property = (ProcessorProperty)it.next();
+                	qnameList.add(property.getName().getQName());
+            	}
+            	
+            	for(Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
+            		NodeAttribute attr = (NodeAttribute)it.next();
+            		// 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため
+            		// 動的属性として扱わない
+            		if(qnameList.contains(attr.getQName())
+            				|| CONST_IMPL.URI_MAYAA.equals(
+                                    attr.getQName().getNamespaceURI())) {
+                        continue;
+                    }
 
-                try {
-    				// 式実行値を指定して、setDynamicAttribute
-                    CompiledScript script =
-                        ScriptUtil.compile(attr.getValue(), Object.class);
-    				Object execValue = script.execute(null);
-            		((DynamicAttributes)customTag).setDynamicAttribute(
-            				attr.getQName().getNamespaceURI().getValue(),
-            				attr.getQName().getLocalName(),
-            				execValue);
-    	        } catch (JspException e) {
-    	            throw createJspRuntimeException(
-    	                    getOriginalNode(), getInjectedNode(), e);
-    	        }
+                    try {
+        				// 式実行値を指定して、setDynamicAttribute
+                        CompiledScript script =
+                            ScriptUtil.compile(attr.getValue(), Object.class);
+        				Object execValue = script.execute(null);
+                		((DynamicAttributes)customTag).setDynamicAttribute(
+                				attr.getQName().getNamespaceURI().getValue(),
+                				attr.getQName().getLocalName(),
+                				execValue);
+        	        } catch (JspException e) {
+        	            throw createJspRuntimeException(
+        	                    getOriginalNode(), getInjectedNode(), e);
+        	        }
+            	}
         	}
         }
 

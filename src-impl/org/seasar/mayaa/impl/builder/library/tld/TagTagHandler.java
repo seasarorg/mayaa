@@ -30,6 +30,7 @@ import org.xml.sax.Attributes;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
+ * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class TagTagHandler extends TagHandler {
 
@@ -53,6 +54,19 @@ public class TagTagHandler extends TagHandler {
         putHandler(new TagClassSetter("tagclass", this));
         putHandler(new TeiClassSetter("tei-class", this));
         putHandler(new TeiClassSetter("teiclass", this));
+        putHandler(new TagHandler("dynamic-attributes") {
+            protected void end(String body) {
+                try {
+                    getProcessorDefinition().setDynamicAttribute(
+                    		ObjectUtil.booleanValue(body, false));
+                } catch (RuntimeException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                    invalidate();
+                }
+            }
+        });
     }
 
     protected void setProcessorName(String name) {

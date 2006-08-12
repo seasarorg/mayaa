@@ -273,7 +273,7 @@ public class JspProcessor extends TemplateProcessorSupport
         if ((DynamicAttributes.class.isAssignableFrom(custamTagClass)) == false) {
             String message = 
                 StringUtil.getMessage(
-                        JspProcessor.class, 2,
+                        JspProcessor.class, 0,
                         custamTagClass.getName(),
                         DynamicAttributes.class.getName());
             throw new IllegalArgumentException(message);

@@ -27,9 +27,9 @@ import org.seasar.mayaa.impl.cycle.script.LiteralScript;
  * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class ProcessorPropertyLiteral implements ProcessorProperty, Serializable {
-	private static final long serialVersionUID = -5156693929626730452L;
-	
-	private PrefixAwareName _name;
+    private static final long serialVersionUID = -5156693929626730452L;
+
+    private PrefixAwareName _name;
     private CompiledScript _compiled;
 
     public ProcessorPropertyLiteral(

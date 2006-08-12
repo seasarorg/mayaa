@@ -83,8 +83,8 @@ public class NodeAttributeImpl implements NodeAttribute {
             if (mapping != null) {
                 if (StringUtil.equals(namespaceURI,
                         mapping.getNamespaceURI()) == false) {
-    	            return mapping.getPrefix();
-    	        }
+                    return mapping.getPrefix();
+                }
             }
             return "";
         }

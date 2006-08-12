@@ -24,7 +24,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ApplicationSourceDescriptor
-		extends FileSourceDescriptor  {
+        extends FileSourceDescriptor  {
 
     private static final long serialVersionUID = -2775274363708858237L;
 
@@ -33,7 +33,7 @@ public class ApplicationSourceDescriptor
     private transient ApplicationScope _application;
 
     private boolean _denyWebInf = true;
-    
+
     public ApplicationSourceDescriptor() {
         super.setRoot("");
     }

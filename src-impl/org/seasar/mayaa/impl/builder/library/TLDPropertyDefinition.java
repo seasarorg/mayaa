@@ -86,17 +86,17 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
             attribute = getTemplateAttribute(original, injected);
         }
         if (attribute != null) {
-        	if(isRtexprvalue()) {
-            	// 動的値を許可
-	            PropertyConverter converter = getConverterForProcessorProperty();
-	            return converter.convert(attribute, attribute.getValue(), propertyClass);
-        	} else {
-            	// 動的値は不許可
-                PrefixAwareName prefixAwareName =
-                    SpecificationUtil.createPrefixAwareName(
-                            attribute.getQName(), attribute.getPrefix());
-        		return new ProcessorPropertyLiteral(prefixAwareName, attribute.getValue());
-        	}
+            if (isRtexprvalue()) {
+                // 動的値を許可
+                PropertyConverter converter = getConverterForProcessorProperty();
+                return converter.convert(attribute, attribute.getValue(), propertyClass);
+            }
+
+            // 動的値は不許可
+            PrefixAwareName prefixAwareName =
+                SpecificationUtil.createPrefixAwareName(
+                        attribute.getQName(), attribute.getPrefix());
+            return new ProcessorPropertyLiteral(prefixAwareName, attribute.getValue());
         } else if (isRequired()) {
             String processorName = processorDef.getName();
             throw new NoRequiredPropertyException(processorName, qName);
@@ -104,11 +104,11 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         return null;
     }
 
-	public boolean isRtexprvalue() {
-		return _rtexprvalue;
-	}
+    public boolean isRtexprvalue() {
+        return _rtexprvalue;
+    }
 
-	public void setRtexprvalue(boolean rtexprvalue) {
-		this._rtexprvalue = rtexprvalue;
-	}
+    public void setRtexprvalue(boolean rtexprvalue) {
+        this._rtexprvalue = rtexprvalue;
+    }
 }

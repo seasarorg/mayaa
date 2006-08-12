@@ -58,7 +58,7 @@ public class TagTagHandler extends TagHandler {
             protected void end(String body) {
                 try {
                     getProcessorDefinition().setDynamicAttribute(
-                    		ObjectUtil.booleanValue(body, false));
+                            ObjectUtil.booleanValue(body, false));
                 } catch (RuntimeException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);

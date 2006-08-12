@@ -71,14 +71,14 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     public boolean isDynamicAttribute() {
-		return _dynamicAttribute;
-	}
+        return _dynamicAttribute;
+    }
 
-	public void setDynamicAttribute(boolean dynamicAttribute) {
-		this._dynamicAttribute = dynamicAttribute;
-	}
+    public void setDynamicAttribute(boolean dynamicAttribute) {
+        this._dynamicAttribute = dynamicAttribute;
+    }
 
-	protected TemplateProcessor newInstance() {
+    protected TemplateProcessor newInstance() {
         JspProcessor processor = new JspProcessor();
         processor.setTagClass(getProcessorClass());
         return processor;

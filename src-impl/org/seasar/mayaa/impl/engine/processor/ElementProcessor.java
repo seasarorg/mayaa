@@ -235,7 +235,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         // new inject prefixMapping
         currentNS.addPrefixMapping("", namespaceURI);
         return "";
-        //throw new IllegalStateException();
     }
 
     protected boolean appendPrefixMappingString(

@@ -56,16 +56,16 @@ public class AttributeTagHandler extends TagHandler {
             }
         });
         putHandler(new TagHandler("rtexprvalue") {
-        	protected void end(String body) {
-        		try {
-        			getProperty().setRtexprvalue(ObjectUtil.booleanValue(body, false));
+            protected void end(String body) {
+                try {
+                    getProperty().setRtexprvalue(ObjectUtil.booleanValue(body, false));
                 } catch (RuntimeException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error(e.getMessage(), e);
                     }
                     invalidateParent();
                 }
-        	}
+            }
         });
         putHandler(new TagHandler("type") {
             protected void end(String body) {

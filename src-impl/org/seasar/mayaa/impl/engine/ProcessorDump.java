@@ -38,16 +38,19 @@ import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
- * @version $Revision$ $Date$
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class ProcessorDump extends EchoProcessor {
+    // TODO EchoProcessorÇåpè≥ÇµÇƒégÇ¡ÇƒÇ¢ÇÈïîï™ÇÇ‹Ç∆ÇﬂÇÈ
+    // TODO ServiceProviderÇ≈ç∑Çµë÷Ç¶â¬î\Ç…Ç∑ÇÈ
 
     private static final long serialVersionUID = 8044884422670533823L;
 
     private static final PrintStream DEFAULT_OUT = System.out;
 
     private PrintStream _out = DEFAULT_OUT;
+    private String _headerLine = "DUMPSTART =======================================";
+    private String _footerLine = "DUMPEND =========================================";
     private String _indentChar = "    ";
     private boolean _printContents = false;
 
@@ -75,8 +78,10 @@ public class ProcessorDump extends EchoProcessor {
 
         Template template = topLevelPage.getTemplate(requestedSuffix, extension);
 
+        print(_headerLine);
         print(template.getSystemID());
         printTree(0, template);
+        print(_footerLine);
     }
 
     protected void printTree(int indentCount, ProcessorTreeWalker walker) {

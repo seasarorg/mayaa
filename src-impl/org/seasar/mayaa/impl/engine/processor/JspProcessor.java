@@ -18,9 +18,11 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -43,6 +45,7 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.library.TLDProcessorDefinition;
@@ -53,6 +56,7 @@ import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
@@ -75,12 +79,14 @@ public class JspProcessor extends TemplateProcessorSupport
     private static final String STOCK_VARIABLES_KEY =
         JspProcessor.class.getName() + "#stockVariables";
     static {
-        CycleUtil.registVariableFactory(LOADED_TAG_KEY, new DefaultCycleLocalInstantiator() {
+        CycleUtil.registVariableFactory(
+                LOADED_TAG_KEY, new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
-                return null; 
+                return null;
             }
         });
-        CycleUtil.registVariableFactory(STOCK_VARIABLES_KEY, new DefaultCycleLocalInstantiator() {
+        CycleUtil.registVariableFactory(
+                STOCK_VARIABLES_KEY, new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
                 return new HashMap();
             }
@@ -92,7 +98,7 @@ public class JspProcessor extends TemplateProcessorSupport
     private String _attributesKey;
     private Boolean _nestedVariableExists;
     private transient TLDScriptingVariableInfo _variableInfo =
-        new TLDScriptingVariableInfo();
+            new TLDScriptingVariableInfo();
 
     public static boolean isSupportClass(Class test) {
         return test != null &&
@@ -171,7 +177,7 @@ public class JspProcessor extends TemplateProcessorSupport
     protected void clearLoadedTag() {
         CycleUtil.clearLocalVariable(LOADED_TAG_KEY, this);
     }
-    
+
     protected Tag getLoadedTag() {
         Tag tag = (Tag) CycleUtil.getLocalVariable(LOADED_TAG_KEY, this, null);
         if (tag == null) {
@@ -225,48 +231,15 @@ public class JspProcessor extends TemplateProcessorSupport
                     property.getName().getQName().getLocalName(),
                     property.getValue().execute(null));
         }
-        
-        // javax.servlet.jsp.tagext.DynamicAttributes対応
-        if(TLDProcessorDefinition.class.isAssignableFrom(getProcessorDefinition().getClass())) {
-        	TLDProcessorDefinition def = (TLDProcessorDefinition)getProcessorDefinition();
-        	if(def.isDynamicAttribute()) {
-                if((DynamicAttributes.class.isAssignableFrom(customTag.getClass())) == false) {
-    	            throw new IllegalArgumentException(
-    	            		new DynamicAttributeImplementsException(customTag.getClass()).getMessage());
-                }
-        		
-            	// 明示的に指定されている属性を列挙
-            	List qnameList = new ArrayList();
-           		for(Iterator it = iterateProperties(); it.hasNext();) {
-        			ProcessorProperty property = (ProcessorProperty)it.next();
-                	qnameList.add(property.getName().getQName());
-            	}
-            	
-            	for(Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
-            		NodeAttribute attr = (NodeAttribute)it.next();
-            		// 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため
-            		// 動的属性として扱わない
-            		if(qnameList.contains(attr.getQName())
-            				|| CONST_IMPL.URI_MAYAA.equals(
-                                    attr.getQName().getNamespaceURI())) {
-                        continue;
-                    }
 
-                    try {
-        				// 式実行値を指定して、setDynamicAttribute
-                        CompiledScript script =
-                            ScriptUtil.compile(attr.getValue(), Object.class);
-        				Object execValue = script.execute(null);
-                		((DynamicAttributes)customTag).setDynamicAttribute(
-                				attr.getQName().getNamespaceURI().getValue(),
-                				attr.getQName().getLocalName(),
-                				execValue);
-        	        } catch (JspException e) {
-        	            throw createJspRuntimeException(
-        	                    getOriginalNode(), getInjectedNode(), e);
-        	        }
-            	}
-        	}
+        // javax.servlet.jsp.tagext.DynamicAttributes対応
+        if (TLDProcessorDefinition.class.isAssignableFrom(
+                getProcessorDefinition().getClass())) {
+            TLDProcessorDefinition tldDef =
+                (TLDProcessorDefinition) getProcessorDefinition();
+            if (tldDef.isDynamicAttribute()) {
+                setupDynamicAttributes(customTag);
+            }
         }
 
         ProcessorTreeWalker processor = this;
@@ -289,6 +262,53 @@ public class JspProcessor extends TemplateProcessorSupport
         } catch (JspException e) {
             throw createJspRuntimeException(
                     getOriginalNode(), getInjectedNode(), e);
+        }
+    }
+
+    /**
+     * @param customTag
+     */
+    private void setupDynamicAttributes(Tag customTag) {
+        Class custamTagClass = customTag.getClass();
+        if ((DynamicAttributes.class.isAssignableFrom(custamTagClass)) == false) {
+            String message = 
+                StringUtil.getMessage(
+                        JspProcessor.class, 2,
+                        custamTagClass.getName(),
+                        DynamicAttributes.class.getName());
+            throw new IllegalArgumentException(message);
+        }
+
+        // 明示的に指定されている属性を列挙
+        Set definedQNames = new HashSet();
+        for (Iterator it = iterateProperties(); it.hasNext();) {
+            ProcessorProperty property = (ProcessorProperty) it.next();
+            definedQNames.add(property.getName().getQName());
+        }
+
+        for (Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = (NodeAttribute) it.next();
+            QName qName = attr.getQName();
+
+            // 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため動的属性として扱わない
+            if (definedQNames.contains(qName)
+                    || CONST_IMPL.URI_MAYAA.equals(qName.getNamespaceURI())) {
+                continue;
+            }
+
+            try {
+                // 式を実行してからsetDynamicAttribute
+                CompiledScript script =
+                    ScriptUtil.compile(attr.getValue(), Object.class);
+                Object execValue = script.execute(null);
+                ((DynamicAttributes) customTag).setDynamicAttribute(
+                        qName.getNamespaceURI().getValue(),
+                        qName.getLocalName(),
+                        execValue);
+            } catch (JspException e) {
+                throw createJspRuntimeException(
+                        getOriginalNode(), getInjectedNode(), e);
+            }
         }
     }
 
@@ -321,7 +341,7 @@ public class JspProcessor extends TemplateProcessorSupport
     public void notifyBeginRender(Page topLevelPage) {
         CycleUtil.clearLocalVariable(STOCK_VARIABLES_KEY, this);
     }
-    
+
     protected Map getNestedVariablesMap() {
         return (Map) CycleUtil.getLocalVariable(STOCK_VARIABLES_KEY, this, null);
     }
@@ -357,7 +377,7 @@ public class JspProcessor extends TemplateProcessorSupport
             }
         });
     }
-    
+
     private interface NestedVariableOperator {
         void operate(AttributeScope pageScope, VariableInfo info, boolean firstHit);
     }
@@ -486,7 +506,7 @@ public class JspProcessor extends TemplateProcessorSupport
         _variableInfo = null;
         super.kill();
     }
-    
+
     // for serialize
 
     private void readObject(java.io.ObjectInputStream in)
@@ -532,7 +552,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
     }
-    
+
     public static class SimpleTagWrapper implements Tag {
 
         private SimpleTag _simpleTag;

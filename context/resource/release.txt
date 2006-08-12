@@ -65,12 +65,19 @@ MayaaのWEBサイト：
 -パスの自動調整機能でinputタグのsrc属性が対象になっていなかったのを修正しました。
  その他いくつかの属性も対象に追加しました。
 
--ビルドした結果をログに出力する機能を追加しました。デフォルトは無効です。
+-JIRA[MAYAA-1] ビルドした結果をログに出力する機能を追加しました。デフォルトは無効です。
  ServiceProvider設定でEngineのパラメータに"dumpEnabled"を追加し、
  値に"true"または"false"を指定してください。
  現状ではテンプレート機能、コンポーネント機能には対応していません。
 
 -JSP2.0のDynamic Attributeをサポートしました。
+
+-XMLをテンプレートにした場合にデフォルト名前空間指定で例外が出る問題を修正しました。
+
+-Maven2 から利用できるようになりました。
+   groupId   : org.seasar.mayaa
+   artifactId: mayaa
+ 詳しくは Wiki をご覧ください。(http://www.seasar.org/wiki/index.php?Maven2RepoRemote)
 
 
 -------------------------------------------------------------------

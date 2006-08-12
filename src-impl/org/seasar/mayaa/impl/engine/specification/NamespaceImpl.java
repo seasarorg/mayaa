@@ -174,7 +174,10 @@ public class NamespaceImpl implements Namespace {
             _serializeKey = null;
             return;
         }
-        throw new IllegalStateException("unregisted namespace: " + namespaceURI);
+
+        _defaultNamespaceMapping =
+            SpecificationUtil.createPrefixMapping("", namespaceURI);
+        _serializeKey = null;
     }
 
     protected void setDefaultNamespaceMapping(

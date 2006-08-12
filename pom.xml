@@ -7,7 +7,7 @@
   <groupId>org.seasar.mayaa</groupId>
   <artifactId>mayaa</artifactId>
   <name>Mayaa</name>
-  <version>1.1.0-beta6</version>
+  <version>1.1.0</version>
   <description>Web Template Engine</description>
   <url>http://mayaa.seasar.org/</url>
   <issueManagement>
@@ -26,10 +26,50 @@
   </mailingLists>
   <developers>
     <developer>
+      <id>suga</id>
+      <name>SUGA Koji</name>
+      <email></email>
+      <url>http://suga.parfe.jp/td/</url>
+      <organization>Gluegent.Inc</organization>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
       <id>masataka_k</id>
       <name>KURIHARA Masataka</name>
       <email></email>
       <url>http://d.hatena.ne.jp/masataka_k/</url>
+      <organization>Gluegent.Inc</organization>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>maruo</id>
+      <name>MARUO Syunsuke</name>
+      <email></email>
+      <url>http://d.hatena.ne.jp/maruo_syunsuke/</url>
+      <organization>Gluegent.Inc</organization>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>duran</id>
+      <name>duran</name>
+      <email></email>
+      <url>http://d.hatena.ne.jp/duran/</url>
+      <organization></organization>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>katochin</id>
+      <name>KATO Taro</name>
+      <email></email>
+      <url>http://d.hatena.ne.jp/t-katochin/</url>
+      <organization>Gluegent.Inc</organization>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>sasakichi</id>
+      <name>SASAKI Hisanobu</name>
+      <email></email>
+      <url></url>
       <organization>Gluegent.Inc</organization>
       <timezone>+9</timezone>
     </developer>

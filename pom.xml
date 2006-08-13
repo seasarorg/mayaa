@@ -85,6 +85,13 @@
     <name>The Seasar Foundation</name>
     <url>http://www.seasar.org/</url>
   </organization>
+  <profiles>
+    <profile>
+      <activation>
+        <jdk>1.4.2_09</jdk>
+      </activation>
+    </profile>
+  </profiles>
   <build>
     <sourceDirectory>src-api</sourceDirectory>
     <resources>
@@ -110,7 +117,7 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <encoding>Shift_JIS</encoding>
+            <encoding>Windows-31J</encoding>
           </configuration>
         </plugin>
       </plugins>
@@ -128,6 +135,7 @@
           </execution>
         </executions>
       </plugin>
+	  <!--
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <executions>
@@ -140,11 +148,12 @@
           </execution>
         </executions>
         <configuration>
-          <encoding>Shift_JIS</encoding>
+          <encoding>Windows-31J</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
         </configuration>
       </plugin>
+	  -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>

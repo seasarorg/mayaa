@@ -25,17 +25,18 @@ public interface ProcessorReferenceResolver {
     /**
      * デシリアライズ完了の際に、プロセッサ参照が解決したことを
      * 通知してもらうためのリスナを登録する。
-     * @processorSequenceID 対象プロセッサID
-     * @param listener リスナ 
+     * @param uniqueID 対象プロセッサID
+     * @param listener リスナ
      */
     void registResolveProcessorListener(
             String uniqueID, ProcessorResolveListener listener);
-    
+
     /**
      * 復元したプロセッサをリゾルバに通知する。
+     * @param uniqueID 対象プロセッサID
      * @param item 復元したプロセッサ
      */
     void processorLoaded(String uniqueID, ProcessorTreeWalker item);
-    
+
 }
 

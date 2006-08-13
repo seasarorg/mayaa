@@ -26,10 +26,10 @@ public interface ProcessorResolveListener {
     /**
      * デシリアライズに復元しようとしているプロセッサ参照を解決する
      * オリジナルプロセッサがロードされた際に非同期に通知する。
-     * @processorSequenceID 要求していたプロセッサID
+     * @param uniqueID 要求していたプロセッサID
      * @param loadedInstance 復元された対象プロセッサ。ヌルの場合は見つからなかったことを示す。
      */
-    void notify(String processorUniqueID, ProcessorTreeWalker loadedInstance);
+    void notify(String uniqueID, ProcessorTreeWalker loadedInstance);
 
     /**
      * 復元処理が終わった際に呼び出される。

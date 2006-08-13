@@ -22,6 +22,7 @@
 	<property name="folder.src.impl"  value="src-impl"/>
 	<property name="folder.context" value="context"/>
 	<property name="folder.context.debug" value="${folder.context}/debug"/>
+	<property name="folder.mvn.target"  value="target"/>
 
 	<property name="resource" value="resource"/>
 	<property name="javadoc" value="javadoc"/>
@@ -31,7 +32,8 @@
 	<property name="webinf.lib-servlet" value="${webinf}/lib-servlet"/>
 	<property name="webinf.spec-cache" value="${webinf}/.mayaaSpecCache"/>
 
-	<target name="cleanjar">
+	<!-- not use : maven2 -->
+	<target name="cleanjar_old">
 		<delete verbose="${project.verbose}">
 			<fileset dir="${folder.context}/${webinf.lib}">
 				<include name="${project.name}-*.jar"/>
@@ -39,7 +41,8 @@
 		</delete>
 	</target>
 
-	<target name="makejar" depends="cleanjar">
+	<!-- not use : maven2 -->
+	<target name="makejar_old" depends="cleanjar_old">
 		<jar jarfile="${folder.context}/${webinf.lib}/${jar.name}">
 			<fileset dir="${folder.context}/${webinf.classes}">
 				<include name="**/*"/>
@@ -52,6 +55,12 @@
 			</manifest>
 			<metainf dir="${folder.context}" includes="${resource}/*"/>
 		</jar>
+	</target>
+
+	<target name="makejar">
+		<copyfile dest="${folder.context}/${webinf.lib}/${jar.name}"
+				src="${folder.mvn.target}/${jar.name}"
+				forceoverwrite="true" />
 	</target>
 
 	<target name="cleandoc">

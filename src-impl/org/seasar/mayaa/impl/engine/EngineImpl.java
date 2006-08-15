@@ -447,7 +447,14 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected boolean isClientAbortException(IOException e) {
-        return e.getClass().getName().indexOf("EOFException") >= 0;
+        String simpleClassName = ObjectUtil.getSimpleClassName(e.getClass());
+        switch (simpleClassName.charAt(0)) {
+        case 'E':
+            return simpleClassName.equals("EOFException");
+        case 'C':
+            return simpleClassName.equals("ClientAbortException");
+        }
+        return false;
     }
 
     public void doService(Map pageScopeValues, boolean pageFlush) {

@@ -132,7 +132,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public int getSequenceID() {
         if (_sequenceID < 0) {
             LOG.info("already unloaded." + makeReleasedLabel());
-            //throw new IllegalStateException("illegal sequenceID");
         }
         return _sequenceID;
     }
@@ -147,7 +146,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
         synchronized (this) {
             if (_attributes == null) {
-                _attributes = new AttributeLinkedHashMap();
+                _attributes = new LinkedHashMap();
             }
         }
         synchronized (_attributes) {
@@ -377,9 +376,4 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     }
     
-    protected static class AttributeLinkedHashMap extends LinkedHashMap {
-        private static final long serialVersionUID = -875872412340352283L;
-        // for memory debug 
-    }
-
 }

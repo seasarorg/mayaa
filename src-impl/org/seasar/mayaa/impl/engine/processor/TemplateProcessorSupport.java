@@ -255,11 +255,13 @@ public class TemplateProcessorSupport
     }
     
     protected void finalize() throws Throwable {
-        String name = ObjectUtil.getSimpleClassName(getClass());
-        if (_definition != null) {
-            LOG.debug(name + " " + getProcessorDefinition().getName() + " unloaded.");
-        } else {
-            LOG.debug(name + " " + " unloaded.");
+        if (LOG.isTraceEnabled()) {
+            String name = ObjectUtil.getSimpleClassName(getClass());
+            if (_definition != null) {
+                LOG.trace(name + " " + getProcessorDefinition().getName() + " unloaded.");
+            } else {
+                LOG.trace(name + " " + " unloaded.");
+            }
         }
     }
     

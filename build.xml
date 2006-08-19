@@ -58,9 +58,9 @@
 	</target>
 
 	<target name="makejar">
-		<copyfile dest="${folder.context}/${webinf.lib}/${jar.name}"
-				src="${folder.mvn.target}/${jar.name}"
-				forceoverwrite="true" />
+		<copy tofile="${folder.context}/${webinf.lib}/${jar.name}"
+				file="${folder.mvn.target}/${jar.name}"
+				overwrite="true" />
 	</target>
 
 	<target name="cleandoc">

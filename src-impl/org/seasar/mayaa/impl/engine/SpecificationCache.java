@@ -212,9 +212,11 @@ public class SpecificationCache {
                 if (_specifications == null || _cleanUpSpecification == null) {
                     return;
                 }
-                LOG.info("remove " + label +"th time."
-                        + " free:" + Runtime.getRuntime().freeMemory()
-                        + " / total:" + Runtime.getRuntime().totalMemory());
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("remove " + label +"th time."
+                            + " free:" + Runtime.getRuntime().freeMemory()
+                            + " / total:" + Runtime.getRuntime().totalMemory());
+                }
                 List releaseItems = null;
                 for (Iterator it = _specifications.values().iterator()
                         ; it.hasNext(); ) {
@@ -234,7 +236,10 @@ public class SpecificationCache {
                         Specification spec = refer.getSpecification();
                         _cleanUpSpecification.add(spec);
                         _specifications.remove(spec.getSystemID());
-                        LOG.info("remove " + label +"th time. " + spec.getSystemID() + " remove from cache");
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("remove " + label +"th time. "
+                                    + spec.getSystemID() + " remove from cache");
+                        }
                     }
                 }
                 postNewGabage(); /*gabage polling next*/

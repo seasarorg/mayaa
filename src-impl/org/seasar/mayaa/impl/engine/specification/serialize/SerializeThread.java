@@ -29,16 +29,18 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class SerializeThread extends Thread {
+    private static final int RECYCLE_LIVE_COUNT = 600;   // x 100 msec => 1 min
     private int _index;
     private volatile int _liveCount;
     private List _queue = new ArrayList();
     private Object _requestContext;
     private Object _responseContext;
+    private boolean _terminated;
 
     SerializeThread(int index, Object servletContext) {
         setName("serializeThread-" + index);
         _index = index;
-        _liveCount = 600;
+        _liveCount = RECYCLE_LIVE_COUNT;
         _requestContext = new MockHttpServletRequest(
                 (ServletContext)servletContext);
         _responseContext = new MockHttpServletResponse();
@@ -49,7 +51,7 @@ public class SerializeThread extends Thread {
     }
 
     public boolean add(SpecificationImpl specification) {
-        if (_liveCount > 0) {
+        if (_liveCount > 0 && _terminated == false) {
             synchronized(_queue) {
                 _queue.add(specification);
                 return true;
@@ -62,7 +64,7 @@ public class SerializeThread extends Thread {
         CycleUtil.initialize(_requestContext, _responseContext);
         SpecificationImpl specification;
         try {
-            while (_liveCount > 0) {
+            while (_liveCount > 0 && _terminated == false) {
                 Thread.sleep(100);
                 specification = null;
                 synchronized(_queue) {
@@ -72,7 +74,7 @@ public class SerializeThread extends Thread {
                     }
                 }
                 if (specification != null) {
-                    _liveCount = 600;
+                    _liveCount = RECYCLE_LIVE_COUNT;    // enlargement
                     synchronized(specification) {
                         try {
                             specification.serialize();
@@ -91,6 +93,10 @@ public class SerializeThread extends Thread {
             CycleUtil.cycleFinalize();
             SerializeThreadManager.threadDestroy(_index);
         }
+    }
+    
+    public void terminate() {
+        _terminated = true;
     }
 
 }

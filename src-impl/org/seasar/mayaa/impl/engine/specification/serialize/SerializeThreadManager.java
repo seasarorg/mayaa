@@ -24,6 +24,8 @@ public class SerializeThreadManager {
 
     protected static SerializeThread[] _serializeThreads = new SerializeThread[10];
 
+    private static volatile boolean _terminated;
+    
     private SerializeThreadManager() {
         throw new UnsupportedOperationException();
     }
@@ -33,6 +35,9 @@ public class SerializeThreadManager {
         int fewIndex = -1;
         int min = Integer.MAX_VALUE;
         synchronized(_serializeThreads) {
+            if (_terminated) {
+                return false;
+            }
             for (int i = 0; i < _serializeThreads.length; i++) {
                 if (_serializeThreads[i] == null) {
                     _serializeThreads[i] = new SerializeThread(i, servletContext);
@@ -50,12 +55,40 @@ public class SerializeThreadManager {
             return _serializeThreads[fewIndex].add(spec);
         }
     }
+    
+    public static void destroy() {
+        _terminated = true;
+        synchronized (_serializeThreads) {
+            for (int i = 0; i < _serializeThreads.length; i++) {
+                if (_serializeThreads[i] != null) {
+                    _serializeThreads[i].terminate();
+                }
+            }
+        }
+        while (!isReleasedAll()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
 
     static void threadDestroy(int index) {
         synchronized (_serializeThreads) {
             _serializeThreads[index] = null;
         }
-
+    }
+    
+    static boolean isReleasedAll() {
+        synchronized (_serializeThreads) {
+            for (int i = 0; i < _serializeThreads.length; i++) {
+                if (_serializeThreads[i] != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
 

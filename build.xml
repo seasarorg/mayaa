@@ -33,7 +33,7 @@
 	<property name="webinf.spec-cache" value="${webinf}/.mayaaSpecCache"/>
 
 	<!-- not use : maven2 -->
-	<target name="cleanjar_old">
+	<target name="cleanjar">
 		<delete verbose="${project.verbose}">
 			<fileset dir="${folder.context}/${webinf.lib}">
 				<include name="${project.name}-*.jar"/>
@@ -42,7 +42,7 @@
 	</target>
 
 	<!-- not use : maven2 -->
-	<target name="makejar_old" depends="cleanjar_old">
+	<target name="makejar_old" depends="cleanjar">
 		<jar jarfile="${folder.context}/${webinf.lib}/${jar.name}">
 			<fileset dir="${folder.context}/${webinf.classes}">
 				<include name="**/*"/>
@@ -57,7 +57,7 @@
 		</jar>
 	</target>
 
-	<target name="makejar">
+	<target name="makejar" depends="cleanjar">
 		<copy tofile="${folder.context}/${webinf.lib}/${jar.name}"
 				file="${folder.mvn.target}/${jar.name}"
 				overwrite="true" />

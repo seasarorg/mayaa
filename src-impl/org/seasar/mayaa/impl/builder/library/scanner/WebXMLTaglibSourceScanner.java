@@ -67,7 +67,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
 
         private Iterator _it;
 
-        private TaglibLocationIterator(Iterator it) {
+        public TaglibLocationIterator(Iterator it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }

@@ -151,7 +151,7 @@ public class IteratorUtil {
 
         private Enumeration _enumeration;
 
-        private EnumrationIterator(Enumeration enumeration) {
+        public EnumrationIterator(Enumeration enumeration) {
             _enumeration = enumeration;
         }
 

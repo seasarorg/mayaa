@@ -108,7 +108,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
         private Iterator _it;
 
-        private BindingIterator(Iterator it) {
+        public BindingIterator(Iterator it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }

@@ -83,7 +83,7 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
     }
 
     protected void scanSource(SourceDescriptor source, Set aliases) {
-        if (source == null && source.exists() == false) {
+        if (source == null || source.exists() == false) {
             throw new IllegalArgumentException();
         }
         String jarName = getJarName(source.getSystemID());

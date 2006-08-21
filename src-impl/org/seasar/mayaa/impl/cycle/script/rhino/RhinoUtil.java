@@ -52,7 +52,7 @@ public class RhinoUtil {
 
     public static Object convertResult(
             Context cx, Class expectedClass, Object jsRet) {
-        Object ret = null;
+        Object ret;
         if (expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3
             ret = JavaAdapter.convertResult(jsRet, Object.class);

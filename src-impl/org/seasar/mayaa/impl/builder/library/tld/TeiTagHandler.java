@@ -60,7 +60,7 @@ public class TeiTagHandler extends TagHandler {
 
         private TeiTagHandler _handler;
 
-        private TeiClassSetter(String name, TeiTagHandler handler) {
+        public TeiClassSetter(String name, TeiTagHandler handler) {
             super(name);
             _handler = handler;
         }

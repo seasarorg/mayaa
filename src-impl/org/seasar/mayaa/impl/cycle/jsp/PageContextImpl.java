@@ -313,6 +313,10 @@ public class PageContextImpl extends PageContext {
 
     private class CycleServletConfig implements ServletConfig {
 
+        public CycleServletConfig() {
+            // no-op
+        }
+
         public String getInitParameter(String name) {
             return getServletContext().getInitParameter(name);
         }

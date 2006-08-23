@@ -97,42 +97,42 @@ public class TemplateProcessorSupport
 
     public void setOriginalNode(SpecificationNode node) {
         if (node == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("originalNode must not be null");
         }
         _originalNode = node;
     }
 
     public SpecificationNode getOriginalNode() {
         if (_originalNode == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("originalNode is null");
         }
-        return _originalNode; 
+        return _originalNode;
     }
 
     public void setInjectedNode(SpecificationNode node) {
         if (node == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("injectedNode must not be null");
         }
         _injectedNode = node;
     }
 
     public SpecificationNode getInjectedNode() {
         if (_injectedNode == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("injectedNode is null");
         }
         return _injectedNode;
     }
 
     public void setProcessorDefinition(ProcessorDefinition definition) {
         if (definition == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("processorDefinition must not be null");
         }
         _definition = definition;
     }
 
     public ProcessorDefinition getProcessorDefinition() {
         if (_definition == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("processorDefinition is null");
         }
         return _definition;
     }
@@ -155,7 +155,7 @@ public class TemplateProcessorSupport
 
     public void setParentProcessor(ProcessorTreeWalker parent) {
         if (parent == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("parentProcessor must not be null");
         }
         _parent = parent;
     }
@@ -170,7 +170,7 @@ public class TemplateProcessorSupport
 
     public void insertProcessor(int index, ProcessorTreeWalker child) {
         if (child == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("child is null");
         }
         synchronized (this) {
             if (_children == null) {
@@ -184,7 +184,7 @@ public class TemplateProcessorSupport
             _children.add(index, child);
             child.setParentProcessor(this);
             for (index += 1; index < _children.size(); index++) {
-                child = (ProcessorTreeWalker)_children.get(index); 
+                child = (ProcessorTreeWalker)_children.get(index);
                 child.setParentProcessor(this);
             }
         }
@@ -201,13 +201,13 @@ public class TemplateProcessorSupport
 
     public ProcessorTreeWalker getChildProcessor(int index) {
         if (index < 0 || index >= getChildProcessorSize()) {
-            throw new IndexOutOfBoundsException(); 
+            throw new IndexOutOfBoundsException();
         }
         synchronized (_children) {
             return (ProcessorTreeWalker) _children.get(index);
         }
     }
-    
+
     public boolean removeProcessor(ProcessorTreeWalker child) {
         if (_children != null) {
             synchronized (_children) {
@@ -228,7 +228,7 @@ public class TemplateProcessorSupport
             }
         }
     }
-    
+
     public void kill() {
         synchronized (this) {
             _originalNode = null;
@@ -249,11 +249,11 @@ public class TemplateProcessorSupport
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
         return new ProcessorTreeWalker[] { this };
     }
-    
+
     public void notifyBeginRender(Page topLevelPage) {
         // no operation
     }
-    
+
     protected void finalize() throws Throwable {
         if (LOG.isTraceEnabled()) {
             String name = ObjectUtil.getSimpleClassName(getClass());
@@ -264,7 +264,7 @@ public class TemplateProcessorSupport
             }
         }
     }
-    
+
     // for serialize
     private static final String DUPLICATE_ROOT_MARK = "<<root>>";
 
@@ -275,7 +275,7 @@ public class TemplateProcessorSupport
         out.writeUTF(originalNodeID);
         out.writeUTF(uniqueID);
         out.writeObject(_injectedNode.getQName());
-        
+
         if (_injectedNode.getParentNode() != null) {
             String injectedNodeID = NodeSerializeController.makeKey(_injectedNode);
             out.writeUTF(injectedNodeID);
@@ -297,14 +297,14 @@ public class TemplateProcessorSupport
 
     private static class TemplateProcessorSupportOriginalNodeListener
             implements NodeResolveListener {
-        
+
         private TemplateProcessorSupport _target;
-        
+
         public TemplateProcessorSupportOriginalNodeListener(
                 TemplateProcessorSupport target) {
             _target = target;
         }
-        
+
         public void notify(
                 String uniqueID, NodeTreeWalker loadedInstance) {
             if (loadedInstance instanceof SpecificationNode) {
@@ -322,19 +322,19 @@ public class TemplateProcessorSupport
 
     private static class TemplateProcessorSupportInjectedNodeListener
             implements NodeResolveListener {
-        
+
         private TemplateProcessorSupport _target;
-        
+
         public TemplateProcessorSupportInjectedNodeListener(
                 TemplateProcessorSupport target) {
             _target = target;
         }
-        
+
         public void notify(
                 String uniqueID, NodeTreeWalker loadedInstance) {
             if (loadedInstance instanceof SpecificationNode) {
                 SpecificationNode specNode =
-                    (SpecificationNode)loadedInstance; 
+                    (SpecificationNode)loadedInstance;
                 _target._injectedNode = specNode;
                 _target.nodeLoadAfter();
             }
@@ -344,7 +344,7 @@ public class TemplateProcessorSupport
             _target = null;
         }
     }
-    
+
     private void readObject(ObjectInputStream in)
                 throws IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -353,13 +353,13 @@ public class TemplateProcessorSupport
         QName qName = (QName)in.readObject();
         LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         setProcessorDefinition(libraryManager.getProcessorDefinition(qName));
-        
+
         String injectedNodeID = in.readUTF();
         NodeResolveListener listener =
             new TemplateProcessorSupportOriginalNodeListener(this);
         findNodeResolver().registResolveNodeListener(
                 originalNodeID, listener);
-        
+
         if (DUPLICATE_ROOT_MARK.equals(injectedNodeID)) {
             _injectedNode = (SpecificationNode) in.readObject();
         } else {
@@ -380,11 +380,11 @@ public class TemplateProcessorSupport
         }
         LOG.debug("templateProcessorSupport loaded");
     }
-    
+
     public ProcessorReferenceResolver findProcessorResolver() {
         return TemplateImpl.processorSerializer();
     }
-    
+
     public NodeReferenceResolver findNodeResolver() {
         return SpecificationImpl.nodeSerializer();
     }

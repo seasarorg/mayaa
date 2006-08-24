@@ -38,8 +38,6 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
     private static final long serialVersionUID = 2380780440814507007L;
     private static final Log LOG =
         LogFactory.getLog(InjectAttributeInjectionResolver.class);
-    protected static final QName QM_INJECT =
-        SpecificationUtil.createQName("inject");
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {

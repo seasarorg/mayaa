@@ -274,6 +274,17 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
         }
+        if (getInjectedNode().getQName().equals(QM_DUPLECATED)) {
+            if (getChildProcessorSize() > 0
+                    && getChildProcessor(0) instanceof JspProcessor) {
+                JspProcessor processor = (JspProcessor)getChildProcessor(0);
+                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI(); 
+                if (injectNS == qName.getNamespaceURI()) {
+                    return;
+                }
+            }
+        }
+        
         String attrPrefix = propName.getPrefix();
         if (StringUtil.hasValue(attrPrefix)) {
             attrPrefix = getResolvedPrefix(propName);

@@ -73,5 +73,6 @@ public interface CONST_IMPL {
     QName QM_TEMPLATE_SUFFIX = QNameImpl.getInstance("templateSuffix");
     QName QM_EXTENDS = QNameImpl.getInstance("extends");
     QName QM_TEXT = QNameImpl.getInstance("text");
+    QName QM_INJECT = QNameImpl.getInstance("inject");
 
 }

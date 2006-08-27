@@ -45,6 +45,14 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (_httpRequest == null) {
             throw new IllegalStateException();
         }
+        if (_httpSession != null) {
+            try {
+                _httpSession.getId();
+            } catch (IllegalArgumentException e) {
+                // Session already invalidated;
+                _httpSession = null;
+            }
+        }
         if (_httpSession == null) {
             _httpSession = _httpRequest.getSession(create);
         }

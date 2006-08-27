@@ -19,8 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
@@ -37,8 +37,6 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
     private static final long serialVersionUID = 2380780440814507007L;
     private static final Log LOG =
         LogFactory.getLog(InjectAttributeInjectionResolver.class);
-    protected static final QName QM_INJECT =
-        SpecificationUtil.createQName("inject");
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {

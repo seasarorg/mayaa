@@ -30,9 +30,10 @@ import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -164,6 +165,34 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         }
     }
 
+    protected void settingOriginalProperties(SpecificationNode original,
+            InformalPropertyAcceptable acceptable) {
+        String originalNS = original.getQName().getNamespaceURI();
+        for (Iterator it = original.iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = (NodeAttribute) it.next();
+            String namespace = attr.getQName().getNamespaceURI();
+            if (originalNS.equals(namespace)
+                    || CONST_IMPL.URI_MAYAA.equals(namespace)) {
+                continue;
+            }
+            LibraryDefinition library = getLibraryDefinition();
+            Class propertyClass = acceptable.getPropertyClass();
+            PropertyConverter converter =
+                library.getPropertyConverter(propertyClass);
+            if (converter == null) {
+                throw new ConverterNotFoundException(
+                        propertyClass.getName(), getSystemID(), getLineNumber());
+            }
+            Class expectedClass = acceptable.getExpectedClass();
+            String value = attr.getValue();
+            Object property = converter.convert(attr, value, expectedClass);
+            if (property == null) {
+                throw new ConverterOperationException(converter, value);
+            }
+            acceptable.addInformalProperty(attr, property);
+        }
+    }
+
     public TemplateProcessor createTemplateProcessor(
             SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {
@@ -179,6 +208,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         if (processor instanceof InformalPropertyAcceptable) {
             settingInformalProperties(
                     injected, (InformalPropertyAcceptable) processor);
+            settingOriginalProperties(
+                    original, (InformalPropertyAcceptable) processor);
         }
         return processor;
     }

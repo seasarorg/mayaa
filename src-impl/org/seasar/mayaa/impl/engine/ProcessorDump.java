@@ -27,12 +27,12 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.engine.processor.EchoProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -40,7 +40,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class ProcessorDump extends EchoProcessor {
+public class ProcessorDump extends ElementProcessor {
     // TODO EchoProcessor‚ðŒp³‚µ‚ÄŽg‚Á‚Ä‚¢‚é•”•ª‚ð‚Ü‚Æ‚ß‚é
     // TODO ServiceProvider‚Å·‚µ‘Ö‚¦‰Â”\‚É‚·‚é
 
@@ -144,9 +144,13 @@ public class ProcessorDump extends EchoProcessor {
     }
 
     protected SpecificationNode getNode(TemplateProcessor processor) {
-        if (processor instanceof ElementProcessor &&
-                ((ElementProcessor) processor).isDuplicated()) {
-            return processor.getOriginalNode();
+        if (processor instanceof ElementProcessor) {
+            ElementProcessor ep = (ElementProcessor) processor;
+            if (ep.isDuplicated()) {
+                // TODO templateElement‚àoriginalNode‚É‚·‚é
+                // ep.getInjectedNode().getQName().equals(QM_TEMPLATE_ELEMENT)
+                return processor.getOriginalNode();
+            }
         }
         return processor.getInjectedNode();
     }
@@ -194,6 +198,54 @@ public class ProcessorDump extends EchoProcessor {
                 appendAttributeString(sb, prop.getName(), prop.getValue());
             }
         }
+    }
+
+    protected void appendAttributeString(
+            StringBuffer buffer, PrefixAwareName propName, Object value) {
+        QName qName = propName.getQName();
+        if (URI_MAYAA.equals(qName.getNamespaceURI())) {
+            return;
+        }
+        // TODO ³‚µ‚­•`‰æ‚·‚é
+//        if (getInjectedNode().getQName().equals(QM_DUPLECATED)) {
+//            if (getChildProcessorSize() > 0
+//                    && getChildProcessor(0) instanceof JspProcessor) {
+//                JspProcessor processor = (JspProcessor)getChildProcessor(0);
+//                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI(); 
+//                if (injectNS == qName.getNamespaceURI()) {
+//                    return;
+//                }
+//            }
+//        }
+
+        String attrPrefix = propName.getPrefix();
+        if (StringUtil.hasValue(attrPrefix)) {
+//            attrPrefix = getResolvedPrefix(propName);
+            if (StringUtil.hasValue(attrPrefix)) {
+                attrPrefix = attrPrefix + ":";
+            }
+        }
+        StringBuffer temp = new StringBuffer();
+        temp.append(" ");
+        temp.append(attrPrefix);
+        temp.append(qName.getLocalName());
+        temp.append("=\"");
+        if (value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript) value;
+            if (CycleUtil.isDraftWriting()) {
+                temp.append(script.getScriptText());
+            } else {
+                Object result = script.execute(null);
+                if (StringUtil.isEmpty(result)) {
+                    return;
+                }
+                temp.append(result);
+            }
+        } else {
+            temp.append(value.toString());
+        }
+        temp.append("\"");
+        buffer.append(temp.toString());
     }
 
     protected void writeProcessorAttributeString(

@@ -212,8 +212,8 @@ public class SpecificationCache {
                 if (_specifications == null || _cleanUpSpecification == null) {
                     return;
                 }
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("remove " + label +"th time."
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("remove " + label +"th time."
                             + " free:" + Runtime.getRuntime().freeMemory()
                             + " / total:" + Runtime.getRuntime().totalMemory());
                 }
@@ -236,8 +236,8 @@ public class SpecificationCache {
                         Specification spec = refer.getSpecification();
                         _cleanUpSpecification.add(spec);
                         _specifications.remove(spec.getSystemID());
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("remove " + label +"th time. "
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("remove " + label +"th time. "
                                     + spec.getSystemID() + " remove from cache");
                         }
                     }

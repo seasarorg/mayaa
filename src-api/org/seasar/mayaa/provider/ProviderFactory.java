@@ -18,14 +18,14 @@ package org.seasar.mayaa.provider;
 import org.seasar.mayaa.UnifiedFactory;
 
 /**
- * アプリケーションサービスプロバイダのファクトリ
+ * 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ繧ｵ繝ｼ繝薙せ繝励Ο繝舌う繝縺ｮ繝輔ぃ繧ｯ繝医Μ
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProviderFactory extends UnifiedFactory {
 
     /**
-     * サービスプロバイダの取得。
-     * @return サービスプロバイダ。
+     * 繧ｵ繝ｼ繝薙せ繝励Ο繝舌う繝縺ｮ蜿門ｾ励�
+     * @return 繧ｵ繝ｼ繝薙せ繝励Ο繝舌う繝縲�
      */
     ServiceProvider getServiceProvider();
 

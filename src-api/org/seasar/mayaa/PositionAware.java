@@ -23,38 +23,38 @@ import java.io.Serializable;
 public interface PositionAware extends Serializable {
 
     /**
-     * ƒ\[ƒX‚ÌSystemID‚ğİ’è‚·‚éB
-     * @param systemID ƒ\[ƒXSystemIDB
+     * ã‚½ãƒ¼ã‚¹ã®SystemIDã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param systemID ã‚½ãƒ¼ã‚¹SystemIDã€‚
      */
     void setSystemID(String systemID);
 
     /**
-     * ƒ\[ƒX‚ÌSystemID‚ğæ“¾‚·‚éB
-     * @return ƒ\[ƒXSystemIDB
+     * ã‚½ãƒ¼ã‚¹ã®SystemIDã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚½ãƒ¼ã‚¹SystemIDã€‚
      */
     String getSystemID();
 
     /**
-     * ƒ\[ƒXã‚ÌsˆÊ’u‚ğİ’è‚·‚éB
-     * @param lineNumber ˆÊ’uî•ñB
+     * ã‚½ãƒ¼ã‚¹ä¸Šã®è¡Œä½ç½®ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param lineNumber ä½ç½®æƒ…å ±ã€‚
      */
     void setLineNumber(int lineNumber);
 
     /**
-     * ƒ\[ƒXã‚ÌsˆÊ’u‚ğæ“¾‚·‚éB
-     * @return ˆÊ’uî•ñB
+     * ã‚½ãƒ¼ã‚¹ä¸Šã®è¡Œä½ç½®ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ä½ç½®æƒ…å ±ã€‚
      */
     int getLineNumber();
 
     /**
-     * ƒ\[ƒX‚ªƒeƒ“ƒvƒŒ[ƒg‚©‚ğİ’è‚·‚éB
-     * @param onTemplate ƒ\[ƒX‚ªƒeƒ“ƒvƒŒ[ƒg‚©B
+     * ã‚½ãƒ¼ã‚¹ãŒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‹ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param onTemplate ã‚½ãƒ¼ã‚¹ãŒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‹ã€‚
      */
     void setOnTemplate(boolean onTemplate);
 
     /**
-     * ƒ\[ƒX‚ªƒeƒ“ƒvƒŒ[ƒg‚©‚ğæ“¾‚·‚éB
-     * @return ƒ\[ƒX‚ªƒeƒ“ƒvƒŒ[ƒg‚©B
+     * ã‚½ãƒ¼ã‚¹ãŒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‹ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚½ãƒ¼ã‚¹ãŒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‹ã€‚
      */
     boolean isOnTemplate();
 

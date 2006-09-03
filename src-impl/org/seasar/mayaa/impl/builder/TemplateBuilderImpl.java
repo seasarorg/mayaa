@@ -429,7 +429,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             try {
                 child = (SpecificationNode) it.next();
             } catch(ConcurrentModificationException e) {
-                LOG.error("original.childNodes をイテレート中に更新されてしまった。", e);
+                LOG.error("original.childNodes 繧偵う繝�繝ｬ繝ｼ繝井ｸｭ縺ｫ譖ｴ譁ｰ縺輔ｌ縺ｦ縺励∪縺｣縺溘�", e);
                 throw e;
             }
             saveToCycle(child, child);

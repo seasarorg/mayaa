@@ -113,11 +113,11 @@ public class BuilderUtil implements CONST_IMPL {
                 if ("xml".equals(prefix)) {
                     mapping = SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
                 } else {
-                    // HTA:Application‚Ì‚æ‚¤‚È–³ì–@‚È‚à‚Ì‚à‚ ‚é‚Ì‚Å‘Î‰‚Å‚«‚é‚æ‚¤‚É‚·‚éB
+                    // HTA:Applicationã®ã‚ˆã†ãªç„¡ä½œæ³•ãªã‚‚ã®ã‚‚ã‚ã‚‹ã®ã§å¯¾å¿œã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚
                     //throw new PrefixMappingNotFoundException(prefix);
                     namespaceURI = URI_HTML;
                     mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
-                    localName = qName;  // ƒRƒƒ“•t‚«‚Ì‘S‚Ä‚ğ—v‘f–¼ˆµ‚¢‚Æ‚·‚éB
+                    localName = qName;  // ã‚³ãƒ­ãƒ³ä»˜ãã®å…¨ã¦ã‚’è¦ç´ åæ‰±ã„ã¨ã™ã‚‹ã€‚
                     prefix = "";
                 }
             }
@@ -131,7 +131,7 @@ public class BuilderUtil implements CONST_IMPL {
                 if (mapping != null) {
                     namespaceURI = mapping.getNamespaceURI();
                 } else {
-                    // ƒfƒtƒHƒ‹ƒgƒl[ƒ€ƒXƒy[ƒX‚Í html ‚Æ‚·‚é
+                    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ã¯ html ã¨ã™ã‚‹
                     //throw new PrefixMappingNotFoundException("");
                     namespaceURI = URI_HTML;
                     mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;

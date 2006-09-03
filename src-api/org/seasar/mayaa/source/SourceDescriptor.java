@@ -22,38 +22,38 @@ import java.util.Date;
 import org.seasar.mayaa.ParameterAware;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹‚âİ’èXMLƒtƒ@ƒCƒ‹‚ÌƒfƒBƒXƒNƒŠƒvƒ^B
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚„è¨­å®šXMLãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SourceDescriptor extends Serializable, ParameterAware {
 
     /**
-     * ƒ\[ƒXSystemID‚ğİ’è‚·‚éB
+     * ã‚½ãƒ¼ã‚¹SystemIDã‚’è¨­å®šã™ã‚‹ã€‚
      * @param systemID
      */
     void setSystemID(String systemID);
 
     /**
-     * ƒ\[ƒXSystemID‚ğæ“¾‚·‚éB
-     * @return SystemIDB
+     * ã‚½ãƒ¼ã‚¹SystemIDã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return SystemIDã€‚
      */
     String getSystemID();
 
     /**
-     * ƒ\[ƒX‚ª‘¶İ‚·‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚éB
-     * @return ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚ê‚ÎtrueB–³‚¯‚ê‚ÎfalseB
+     * ã‚½ãƒ¼ã‚¹ãŒå­˜åœ¨ã™ã‚‹ã‹ã©ã†ã‹ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚Œã°trueã€‚ç„¡ã‘ã‚Œã°falseã€‚
      */
     boolean exists();
 
     /**
-     * ƒtƒ@ƒCƒ‹‚ÌƒCƒ“ƒvƒbƒgƒXƒgƒŠ[ƒ€‚ğæ“¾‚·‚éB
-     * @return ƒXƒgƒŠ[ƒ€B‚à‚µƒtƒ@ƒCƒ‹‚ª–³‚¢ê‡‚ÍAnullB
+     * ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¤ãƒ³ãƒ—ãƒƒãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€‚ã‚‚ã—ãƒ•ã‚¡ã‚¤ãƒ«ãŒç„¡ã„å ´åˆã¯ã€nullã€‚
      */
     InputStream getInputStream();
 
     /**
-     * ƒtƒ@ƒCƒ‹‚Ì“ú•t‚ğæ“¾‚·‚éB
-     * @return ƒtƒ@ƒCƒ‹‚ÌÅIXV“ú•tBƒtƒ@ƒCƒ‹‚ª–³‚¢ê‡‚Íunew Date(0)v‚ğ•Ô‚·B
+     * ãƒ•ã‚¡ã‚¤ãƒ«ã®æ—¥ä»˜ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€çµ‚æ›´æ–°æ—¥ä»˜ã€‚ãƒ•ã‚¡ã‚¤ãƒ«ãŒç„¡ã„å ´åˆã¯ã€Œnew Date(0)ã€ã‚’è¿”ã™ã€‚
      */
     Date getTimestamp();
 

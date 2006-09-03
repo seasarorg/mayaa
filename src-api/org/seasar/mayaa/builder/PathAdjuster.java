@@ -19,31 +19,31 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.QName;
 
 /**
- * HTMLƒ^ƒO‘®«‚Ì‘Š‘ÎƒpƒX‚ğâ‘ÎƒpƒX‚É’uŠ·‚·‚éB
+ * HTMLã‚¿ã‚°å±æ€§ã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«ç½®æ›ã™ã‚‹ã€‚
  * @author Koji Suga (Gluegent, Inc.)
  */
 public interface PathAdjuster extends ParameterAware {
 
     /**
-     * ’uŠ·‘ÎÛ‚Ì‘®«‚ğ‚Âƒ^ƒO‚©”»’è‚·‚éB
-     * @param nodeName ‘ÎÛƒ^ƒO‚ÌQName
-     * @return ’uŠ·‘ÎÛ‚Ì‘®«‚ğ‚Âƒ^ƒO‚È‚çtrue
+     * ç½®æ›å¯¾è±¡ã®å±æ€§ã‚’æŒã¤ã‚¿ã‚°ã‹åˆ¤å®šã™ã‚‹ã€‚
+     * @param nodeName å¯¾è±¡ã‚¿ã‚°ã®QName
+     * @return ç½®æ›å¯¾è±¡ã®å±æ€§ã‚’æŒã¤ã‚¿ã‚°ãªã‚‰true
      */
     boolean isTargetNode(QName nodeName);
 
     /**
-     * ’uŠ·‘ÎÛ‚Ì‘®«‚©”»’è‚·‚éB
-     * @param nodeName ‘ÎÛƒ^ƒO‚ÌQName
-     * @param attributeName ‘ÎÛ‘®«‚ÌQName
-     * @return ’uŠ·‘ÎÛ‚Ì‘®«‚È‚çtrue
+     * ç½®æ›å¯¾è±¡ã®å±æ€§ã‹åˆ¤å®šã™ã‚‹ã€‚
+     * @param nodeName å¯¾è±¡ã‚¿ã‚°ã®QName
+     * @param attributeName å¯¾è±¡å±æ€§ã®QName
+     * @return ç½®æ›å¯¾è±¡ã®å±æ€§ãªã‚‰true
      */
     boolean isTargetAttribute(QName nodeName, QName attributeName);
 
     /**
-     * ‘Š‘ÎƒpƒX‚ğâ‘ÎƒpƒX‚É’uŠ·‚·‚éB
-     * @param base ‘Š‘ÎƒpƒX‚Ì‹N“_(ƒŠƒ\[ƒX–¼‚Ü‚ÅŠÜ‚Ş)
-     * @param path ’uŠ·‘ÎÛ‚Ì‘Š‘ÎƒpƒX
-     * @return ‘Š‘ÎƒpƒX‚È‚çâ‘ÎƒpƒX‚É’uŠ·‚·‚é
+     * ç›¸å¯¾ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«ç½®æ›ã™ã‚‹ã€‚
+     * @param base ç›¸å¯¾ãƒ‘ã‚¹ã®èµ·ç‚¹(ãƒªã‚½ãƒ¼ã‚¹åã¾ã§å«ã‚€)
+     * @param path ç½®æ›å¯¾è±¡ã®ç›¸å¯¾ãƒ‘ã‚¹
+     * @return ç›¸å¯¾ãƒ‘ã‚¹ãªã‚‰çµ¶å¯¾ãƒ‘ã‚¹ã«ç½®æ›ã™ã‚‹
      */
     String adjustRelativePath(String base, String path);
 

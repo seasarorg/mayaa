@@ -20,86 +20,86 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * �e���v���[�g����HTML�^�O����������N���X�B
- * ���N�G�X�g�ɑ΂��ăX�e�[�g���X�Ȃ悤�Ɏ������Ȃ���΂Ȃ�Ȃ��B
+ * テンプレート中のHTMLタグを処理するクラス。
+ * リクエストに対してステートレスなように実装しなければならない。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateProcessor extends ProcessorTreeWalker {
 
     /**
-     * �C���X�^���X���������̍Ō�A�v���p�e�B���Z�b�g������ŌĂ΂��B
+     * インスタンス生成処理の最後、プロパティをセットした後で呼ばれる。
      */
     void initialize();
 
     /**
-     * �e���v���[�g���Ń��j�[�N��ID�l���擾����B
-     * @return �e���v���[�g���Ń��j�[�N��ID�B
+     * テンプレート内でユニークなID値を取得する。
+     * @return テンプレート中でユニークなID。
      */
     String getUniqueID();
 
     /**
-     * �J���^�O�̏o�́B�e���v���[�g�e�L�X�g��WhiteSpace�̏ꍇ���A
-     * ���̃��\�b�h�ŏo�͂���B
-     * @param topLevelPage �`��g�b�v���x���̃y�[�W�B
-     * @return �q�v���Z�b�T����������ꍇ�ɂ�EVAL_BODY_INCLUDE�A
-     * �q�v���Z�b�T�̏������X�L�b�v����ꍇ�ɂ�SKIP_BODY��Ԃ��B
+     * 開きタグの出力。テンプレートテキストやWhiteSpaceの場合も、
+     * このメソッドで出力する。
+     * @param topLevelPage 描画トップレベルのページ。
+     * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
+     * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
      */
     ProcessStatus doStartProcess(Page topLevelPage);
 
     /**
-     * ���^�O�̏o�́B
-     * @return �y�[�W�̂��̃^�O�ȍ~����������ꍇ�ɂ�EVAL_PAGE�A
-     * �ȍ~�̏������X�L�b�v����ꍇ�ɂ�SKIP_PAGE�B
+     * 閉じタグの出力。
+     * @return ページのこのタグ以降を処理する場合にはEVAL_PAGE、
+     * 以降の処理をスキップする場合にはSKIP_PAGE。
      */
     ProcessStatus doEndProcess();
 
     /**
-     * �e���v���[�g��̊Y������m�[�h����ݒ肷��B
-     * @param node �e���v���[�g�m�[�h�B
+     * テンプレート上の該当するノード情報を設定する。
+     * @param node テンプレートノード。
      */
     void setOriginalNode(SpecificationNode node);
 
     /**
-     * �e���v���[�g��̊Y������m�[�h���̎擾�B
-     * @return �e���v���[�g�m�[�h�B
+     * テンプレート上の該当するノード情報の取得。
+     * @return テンプレートノード。
      */
     SpecificationNode getOriginalNode();
 
     /**
-     * �C���W�F�N�V�������ꂽ�m�[�h���̐ݒ�B
-     * @param node �C���W�F�N�g���ꂽ�m�[�h�B
+     * インジェクションされたノード情報の設定。
+     * @param node インジェクトされたノード。
      */
     void setInjectedNode(SpecificationNode node);
 
     /**
-     * �C���W�F�N�V�������ꂽ�m�[�h���̎擾�B
-     * @return �C���W�F�N�g���ꂽ�m�[�h�B
+     * インジェクションされたノード情報の取得。
+     * @return インジェクトされたノード。
      */
     SpecificationNode getInjectedNode();
 
     /**
-     * ���̃v���Z�b�T�̒�`�ւ̎Q�Ƃ�ݒ肷��B
-     * @param definition �v���Z�b�T��`�B
+     * このプロセッサの定義への参照を設定する。
+     * @param definition プロセッサ定義。
      */
     void setProcessorDefinition(ProcessorDefinition definition);
 
     /**
-     * ���̃v���Z�b�T�̒�`���擾����B
-     * @return �v���Z�b�T��`�B
+     * このプロセッサの定義を取得する。
+     * @return プロセッサ定義。
      */
     ProcessorDefinition getProcessorDefinition();
 
     /**
-     * �{�v���Z�b�T�̃C���X�^���X��j���ΏۂƂ��A
-     * �{�v���Z�b�T���ێ����Ă������̃I�u�W�F�N�g�ւ̎Q�ƃ����N��؂�B
+     * 本プロセッサのインスタンスを破棄対象とし、
+     * 本プロセッサが保持していた他のオブジェクトへの参照リンクを切る。
      */
     void kill();
 
     /**
-     * �y�[�W�ɑ΂��ė\�ߒʒm���󂯂�悤�ɓo�^���Ă����ꍇ�ɁA
-     * �Ăяo�����B
+     * ページに対して予め通知を受けるように登録していた場合に、
+     * 呼び出される。
      * 
-     * @param topLevelPage �`��g�b�v���x���̃y�[�W�B
+     * @param topLevelPage 描画トップレベルのページ。
      */
     void notifyBeginRender(Page topLevelPage);
 }

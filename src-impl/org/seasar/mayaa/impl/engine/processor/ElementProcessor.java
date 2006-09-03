@@ -339,12 +339,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append(qName.getLocalName());
     }
 
-    protected void writePart1(StringBuffer buffer) {   // Ã“I <xxx
+    protected void writePart1(StringBuffer buffer) {   // é™çš„ <xxx
         buffer.append("<");
         writeElementName(buffer);
     }
 
-    protected void writePart2(StringBuffer buffer) {   // “®“I attribute
+    protected void writePart2(StringBuffer buffer) {   // å‹•çš„ attribute
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             internalWritePart2(buffer, prop);
@@ -373,7 +373,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         appendAttributeString(buffer, propName, prop.getValue());
     }
 
-    protected void writePart3(StringBuffer buffer) {   // Ã“I attribute‚ÆA>
+    protected void writePart3(StringBuffer buffer) {   // é™çš„ attributeã¨ã€>
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
@@ -396,7 +396,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
     }
 
-    protected void writePart4(StringBuffer buffer) {   // Ã“I </xxx>
+    protected void writePart4(StringBuffer buffer) {   // é™çš„ </xxx>
         QName qName = getName().getQName();
         if (needsCloseElement(qName)) {
             buffer.append("</");
@@ -464,7 +464,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             StringBuffer xmlnsDefs = new StringBuffer();
             appendPrefixMappingStrings(xmlnsDefs, getCurrentNS());
             if (xmlnsDefs.length() > 0) {
-                // ƒl[ƒ€ƒXƒy[ƒXéŒ¾‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚Éˆø‚«Œp‚ª‚ê‚È‚­‚È‚é‚Ì‚Å“®“I‚È‚à‚Ì‚Æ‚·‚éB
+                // ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å®£è¨€ãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã«å¼•ãç¶™ãŒã‚Œãªããªã‚‹ã®ã§å‹•çš„ãªã‚‚ã®ã¨ã™ã‚‹ã€‚
                 return new ProcessorTreeWalker[] { this };
             }
 

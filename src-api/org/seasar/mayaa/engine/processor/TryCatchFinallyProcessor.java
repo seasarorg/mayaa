@@ -16,28 +16,28 @@
 package org.seasar.mayaa.engine.processor;
 
 /**
- * TemplateProcessor‚ÌŠg’£ƒCƒ“ƒ^[ƒtƒFƒCƒXB—áŠOˆ—ŠÖ˜A‚ÌƒCƒxƒ“ƒg‚ð
- * Žó‚¯Žæ‚é‹@”\‚ðŽ‚½‚¹‚éB
+ * TemplateProcessorã®æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚ä¾‹å¤–å‡¦ç†é–¢é€£ã®ã‚¤ãƒ™ãƒ³ãƒˆã‚’
+ * å—ã‘å–ã‚‹æ©Ÿèƒ½ã‚’æŒãŸã›ã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TryCatchFinallyProcessor extends TemplateProcessor {
 
     /**
-     * —áŠO‚ðcatch‚·‚é‚©‚Ç‚¤‚©‚ð•Ô‚·BJSP‚ÌTryCatchFinally‚ðƒzƒXƒg‚µ‚Ä‚¢‚éê‡‚É
-     * —˜—p‚·‚éBƒfƒtƒHƒ‹ƒg‚Å‚Ífalse‚ð•Ô‚·Btrue‚¾‚ÆA—áŠO”­¶Žž‚É
-     * doCatchProcessA—áŠO‚Æ‚Í–³ŠÖŒW‚ÉdoFinallyProcess‚ªƒRƒ“ƒeƒi‚æ‚èŒÄ‚Ño‚³‚ê‚éB
-     * @return —áŠO‚ðcatch‚·‚éê‡AtrueB•’Ê‚ÍfalseB
+     * ä¾‹å¤–ã‚’catchã™ã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã™ã€‚JSPã®TryCatchFinallyã‚’ãƒ›ã‚¹ãƒˆã—ã¦ã„ã‚‹å ´åˆã«
+     * åˆ©ç”¨ã™ã‚‹ã€‚ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ã¯falseã‚’è¿”ã™ã€‚trueã ã¨ã€ä¾‹å¤–ç™ºç”Ÿæ™‚ã«
+     * doCatchProcessã€ä¾‹å¤–ã¨ã¯ç„¡é–¢ä¿‚ã«doFinallyProcessãŒã‚³ãƒ³ãƒ†ãƒŠã‚ˆã‚Šå‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
+     * @return ä¾‹å¤–ã‚’catchã™ã‚‹å ´åˆã€trueã€‚æ™®é€šã¯falseã€‚
      */
     boolean canCatch();
 
     /**
-     * ƒvƒƒZƒX’†‚Ì—áŠO‚ðƒLƒƒƒbƒ`‚µ‚Äs‚¤ˆ—B
-     * @param t ƒvƒƒZƒX’†‚É”­¶‚µ‚½—áŠO
+     * ãƒ—ãƒ­ã‚»ã‚¹ä¸­ã®ä¾‹å¤–ã‚’ã‚­ãƒ£ãƒƒãƒã—ã¦è¡Œã†å‡¦ç†ã€‚
+     * @param t ãƒ—ãƒ­ã‚»ã‚¹ä¸­ã«ç™ºç”Ÿã—ãŸä¾‹å¤–
      */
     void doCatchProcess(Throwable t);
 
     /**
-     * ƒvƒƒZƒX’†‚É—áŠO‚ª‹N‚«‚Ä‚às‚¤Œãˆ—B
+     * ãƒ—ãƒ­ã‚»ã‚¹ä¸­ã«ä¾‹å¤–ãŒèµ·ãã¦ã‚‚è¡Œã†å¾Œå‡¦ç†ã€‚
      */
     void doFinallyProcess();
 

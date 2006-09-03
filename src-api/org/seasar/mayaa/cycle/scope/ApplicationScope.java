@@ -18,22 +18,22 @@ package org.seasar.mayaa.cycle.scope;
 import org.seasar.mayaa.ContextAware;
 
 /**
- * WEBƒAƒvƒŠƒP[ƒVƒ‡ƒ“‘S‘Ì‚Å‹¤—L‚³‚ê‚éƒXƒR[ƒvB
+ * WEBã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å…¨ä½“ã§å…±æœ‰ã•ã‚Œã‚‹ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ApplicationScope extends AttributeScope, ContextAware {
 
     /**
-     * MIMEŒ^‚ğSystemID‚©‚ç—Ş„‚µ‚Ä•Ô‚·B
-     * @param systemID ƒeƒXƒg‚·‚éSyste‚IDB
-     * @return MIMEŒ^B
+     * MIMEå‹ã‚’SystemIDã‹ã‚‰é¡æ¨ã—ã¦è¿”ã™ã€‚
+     * @param systemID ãƒ†ã‚¹ãƒˆã™ã‚‹Systeï½IDã€‚
+     * @return MIMEå‹ã€‚
      */
     String getMimeType(String systemID);
 
     /**
-     * ƒŠƒNƒGƒXƒgURI‚ÌƒRƒ“ƒeƒLƒXƒg‘Š‘ÎƒpƒX‚ğAOSã‚Ìƒtƒ@ƒCƒ‹ƒpƒX‚É•ÏŠ·‚·‚éB
-     * @param contextRelatedPath ƒRƒ“ƒeƒLƒXƒg‘Š‘ÎƒpƒXB
-     * @return OSã‚Ìƒtƒ@ƒCƒ‹ƒpƒXB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆURIã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆç›¸å¯¾ãƒ‘ã‚¹ã‚’ã€OSä¸Šã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã«å¤‰æ›ã™ã‚‹ã€‚
+     * @param contextRelatedPath ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆç›¸å¯¾ãƒ‘ã‚¹ã€‚
+     * @return OSä¸Šã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã€‚
      */
     String getRealPath(String contextRelatedPath);
 

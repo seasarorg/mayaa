@@ -23,71 +23,71 @@ import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.Specification;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒg‚ÌƒŒƒ“ƒ_ƒŠƒ“ƒOƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒgBƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ğ\¬‚·‚é
- * Šeƒy[ƒW‚Ìƒ‚ƒfƒ‹‚Å‚ ‚èAƒŠƒNƒGƒXƒg‚É‘Î‚µ‚Ä‚ÍƒXƒe[ƒgƒŒƒX‚ÈƒIƒuƒWƒFƒNƒg‚Å‚ ‚éB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆã€‚ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’æ§‹æˆã™ã‚‹
+ * å„ãƒšãƒ¼ã‚¸ã®ãƒ¢ãƒ‡ãƒ«ã§ã‚ã‚Šã€ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å¯¾ã—ã¦ã¯ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¬ã‚¹ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã§ã‚ã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Page
         extends Serializable, Specification, TemplateRenderer {
 
     /**
-     * ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‚ğ‰Šú‰»‚·‚éB
-     * @param pageName ƒy[ƒW–¼B
+     * ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
+     * @param pageName ãƒšãƒ¼ã‚¸åã€‚
      */
     void initialize(String pageName);
 
     /**
-     * Œp³Œ³ƒy[ƒW‚Ìæ“¾B
-     * @return Œp³Œ³ƒy[ƒW‚à‚µ‚­‚ÍnullB
+     * ç¶™æ‰¿å…ƒãƒšãƒ¼ã‚¸ã®å–å¾—ã€‚
+     * @return ç¶™æ‰¿å…ƒãƒšãƒ¼ã‚¸ã‚‚ã—ãã¯nullã€‚
      */
     Page getSuperPage();
 
     /**
-     * Œp³Œ³ƒeƒ“ƒvƒŒ[ƒgÚ”ö«‚Ìæ“¾B
-     * @return ƒeƒ“ƒvƒŒ[ƒgÚ”ö«B
+     * ç¶™æ‰¿å…ƒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã®å–å¾—ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã€‚
      */
     String getSuperSuffix();
 
     /**
-     * Œp³Œ³ƒeƒ“ƒvƒŒ[ƒgŠg’£q‚Ìæ“¾B
-     * @return ƒeƒ“ƒvƒŒ[ƒgŠg’£qB
+     * ç¶™æ‰¿å…ƒãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ‹¡å¼µå­ã®å–å¾—ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ‹¡å¼µå­ã€‚
      */
     String getSuperExtension();
     
     /**
-     * ƒy[ƒW‚Ì–¼‘O‚ğæ“¾‚·‚éB/context/hello.html‚Å‚ ‚ê‚ÎA
-     * u/context/hellov‚ğ•Ô‚·B
-     * @return ƒy[ƒW–¼B
+     * ãƒšãƒ¼ã‚¸ã®åå‰ã‚’å–å¾—ã™ã‚‹ã€‚/context/hello.htmlã§ã‚ã‚Œã°ã€
+     * ã€Œ/context/helloã€ã‚’è¿”ã™ã€‚
+     * @return ãƒšãƒ¼ã‚¸åã€‚
      */
     String getPageName();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgÚ”ö«‚ğŒˆ’è‚·‚éƒRƒ“ƒpƒCƒ‹Ï‚İƒXƒNƒŠƒvƒgB
-     * @return ƒRƒ“ƒpƒCƒ‹Ï‚İƒXƒNƒŠƒvƒgB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã‚’æ±ºå®šã™ã‚‹ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€‚
+     * @return ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€‚
      */
     CompiledScript getSuffixScript();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgÚ”ö«‚æ‚è“KØ‚ÈTemplateƒIƒuƒWƒFƒNƒg‚ğƒ[ƒh‚µ‚Ä•Ô‚·B
-     * @param suffix ƒeƒ“ƒvƒŒ[ƒgÚ”ö«B
-     * @param extension ƒeƒ“ƒvƒŒ[ƒgŠg’£qB
-     * @return ƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚éƒeƒ“ƒvƒŒ[ƒgB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã‚ˆã‚Šé©åˆ‡ãªTemplateã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¦è¿”ã™ã€‚
+     * @param suffix ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã€‚
+     * @param extension ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ‹¡å¼µå­ã€‚
+     * @return ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã™ã‚‹ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã€‚
      */
     Template getTemplate(String suffix, String extension);
     
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgƒŒƒ“ƒ_ƒŠƒ“ƒO‚ğs‚¤B
-     * @param requestedSuffix ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒeƒ“ƒvƒŒ[ƒgÚ”ö«B
-     * @param extension ƒeƒ“ƒvƒŒ[ƒgŠg’£qB
-     * @return ƒvƒƒZƒbƒTˆ—ƒXƒe[ƒ^ƒXB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚’è¡Œã†ã€‚
+     * @param requestedSuffix ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ¥å°¾è¾ã€‚
+     * @param extension ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæ‹¡å¼µå­ã€‚
+     * @return ãƒ—ãƒ­ã‚»ãƒƒã‚µå‡¦ç†ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã€‚
      */
     ProcessStatus doPageRender(String requestedSuffix, String extension);
 
     /**
-     * ƒgƒbƒvƒy[ƒW‚Ìê‡‚ÉAƒŒƒ“ƒ_ƒŠƒ“ƒOŠJn‚ÉƒvƒƒZƒbƒT‚É‘Î‚µ‚Ä
-     * ’Ê’m‚ğs‚¤‚æ‚¤“o˜^‚·‚éB
-     * @param processor ’Ê’m‚ğó‚¯‚éƒvƒƒZƒbƒTB
-     * @return true=“o˜^¬Œ÷ / false=Šù‚É“o˜^Ï‚İ
+     * ãƒˆãƒƒãƒ—ãƒšãƒ¼ã‚¸ã®å ´åˆã«ã€ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°é–‹å§‹æ™‚ã«ãƒ—ãƒ­ã‚»ãƒƒã‚µã«å¯¾ã—ã¦
+     * é€šçŸ¥ã‚’è¡Œã†ã‚ˆã†ç™»éŒ²ã™ã‚‹ã€‚
+     * @param processor é€šçŸ¥ã‚’å—ã‘ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µã€‚
+     * @return true=ç™»éŒ²æˆåŠŸ / false=æ—¢ã«ç™»éŒ²æ¸ˆã¿
      */
     boolean registBeginRenderNotifier(TemplateProcessor processor);
     

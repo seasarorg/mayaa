@@ -103,7 +103,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             SpecificationNode injected, String propertyName) {
         QName qName = SpecificationUtil.createQName(
                 injected.getQName().getNamespaceURI(), propertyName);
-        // ƒƒ‚ƒŠƒŠ[ƒN‚ð‹N‚±‚·‰Â”\«‚ª‚ ‚é‚Ì‚ÅŽQÆ‚ð’f‚Â
+        // ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’èµ·ã“ã™å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§å‚ç…§ã‚’æ–­ã¤
         NodeAttribute attr = injected.getAttribute(qName);
         PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
                 attr.getQName(), attr.getPrefix());
@@ -119,7 +119,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
             if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
-                // prefix‚ª•t‚¢‚Ä‚¢‚È‚¢ŒÀ‚èoriginal‚ðˆø‚«Œp‚ª‚¹‚é
+                // prefixãŒä»˜ã„ã¦ã„ãªã„é™ã‚Šoriginalã‚’å¼•ãç¶™ãŒã›ã‚‹
                 if (value instanceof PrefixAwareName) {
                     value = settingDefaultNamespace(
                             original, (PrefixAwareName) value);
@@ -186,7 +186,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             if (property == null) {
                 throw new ConverterOperationException(converter, value);
             }
-            // ƒƒ‚ƒŠƒŠ[ƒN‚ð‹N‚±‚·‰Â”\«‚ª‚ ‚é‚Ì‚ÅŽQÆ‚ð’f‚Â
+            // ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’èµ·ã“ã™å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§å‚ç…§ã‚’æ–­ã¤
             PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
                     attr.getQName(), attr.getPrefix()); 
             acceptable.addInformalProperty(name, property);

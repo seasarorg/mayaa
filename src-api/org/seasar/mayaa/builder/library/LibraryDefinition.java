@@ -23,72 +23,72 @@ import org.seasar.mayaa.engine.specification.URI;
 
 
 /**
- * MLD‚ÌlibraryƒGƒŒƒƒ“ƒg‚Ìƒ‚ƒfƒ‹ƒIƒuƒWƒFƒNƒgB
+ * MLDã®libraryã‚¨ãƒ¬ãƒ¡ãƒ³ãƒˆã®ãƒ¢ãƒ‡ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface LibraryDefinition extends ParameterAware {
 
     /**
-     * “–ŠYƒ‰ƒCƒuƒ‰ƒŠ‚Ì–¼‘O‹óŠÔURI‚ğæ“¾‚·‚éB
-     * @return –¼‘O‹óŠÔURIB
+     * å½“è©²ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åå‰ç©ºé–“URIã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return åå‰ç©ºé–“URIã€‚
      */
     URI getNamespaceURI();
 
     /**
-     * “–ŠYƒ‰ƒCƒuƒ‰ƒŠ‚ÉA–¼‘O‹óŠÔURI‚ğ’Ç‰ÁƒAƒTƒCƒ“‚·‚éB
-     * @param assignedURI ’Ç‰ÁƒAƒTƒCƒ“‚·‚é–¼‘O‹óŠÔURIB
+     * å½“è©²ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«ã€åå‰ç©ºé–“URIã‚’è¿½åŠ ã‚¢ã‚µã‚¤ãƒ³ã™ã‚‹ã€‚
+     * @param assignedURI è¿½åŠ ã‚¢ã‚µã‚¤ãƒ³ã™ã‚‹åå‰ç©ºé–“URIã€‚
      */
     void addAssignedURI(URI assignedURI);
 
     /**
-     * “–ŠYƒ‰ƒCƒuƒ‰ƒŠ‚É’Ç‰ÁƒAƒTƒCƒ“‚³‚ê‚½–¼‘O‹óŠÔURI‚ğƒCƒeƒŒ[ƒg‚·‚éB
-     * @return ’Ç‰ÁƒAƒTƒCƒ“‚³‚ê‚½–¼‘O‹óŠÔURI‚ÌƒCƒeƒŒ[ƒ^B
+     * å½“è©²ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«è¿½åŠ ã‚¢ã‚µã‚¤ãƒ³ã•ã‚ŒãŸåå‰ç©ºé–“URIã‚’ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
+     * @return è¿½åŠ ã‚¢ã‚µã‚¤ãƒ³ã•ã‚ŒãŸåå‰ç©ºé–“URIã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateAssignedURI();
 
     /**
-     * “o˜^ƒRƒ“ƒo[ƒ^‚Ìæ“¾B
-     * @param converterName ƒRƒ“ƒo[ƒ^“o˜^–¼B
-     * @return w’è–¼‚ÌƒRƒ“ƒo[ƒ^A‚à‚µ‚­‚ÍnullB
+     * ç™»éŒ²ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®å–å¾—ã€‚
+     * @param converterName ã‚³ãƒ³ãƒãƒ¼ã‚¿ç™»éŒ²åã€‚
+     * @return æŒ‡å®šåã®ã‚³ãƒ³ãƒãƒ¼ã‚¿ã€ã‚‚ã—ãã¯nullã€‚
      */
     PropertyConverter getPropertyConverter(String converterName);
 
     /**
-     * “o˜^ƒRƒ“ƒo[ƒ^‚ÌƒCƒeƒŒ[ƒ^B
-     * @return ƒRƒ“ƒo[ƒ^ƒCƒeƒŒ[ƒ^B
+     * ç™»éŒ²ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
+     * @return ã‚³ãƒ³ãƒãƒ¼ã‚¿ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iteratePropertyConverters();
 
     /**
-     * “o˜^ƒRƒ“ƒo[ƒ^‚Ìæ“¾B
-     * @param propertyClass ƒRƒ“ƒo[ƒg‘ÎÛŒ^B
-     * @return w’èŒ^‚É‘Î‰‚µ‚½ƒRƒ“ƒo[ƒ^A‚à‚µ‚­‚ÍnullB
+     * ç™»éŒ²ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®å–å¾—ã€‚
+     * @param propertyClass ã‚³ãƒ³ãƒãƒ¼ãƒˆå¯¾è±¡å‹ã€‚
+     * @return æŒ‡å®šå‹ã«å¯¾å¿œã—ãŸã‚³ãƒ³ãƒãƒ¼ã‚¿ã€ã‚‚ã—ãã¯nullã€‚
      */
     PropertyConverter getPropertyConverter(Class propertyClass);
 
     /**
-     * “o˜^ƒvƒƒpƒeƒBƒZƒbƒg‚ÌƒCƒeƒŒ[ƒ^B
-     * @return ƒvƒƒpƒeƒBƒZƒbƒgƒCƒeƒŒ[ƒ^B
+     * ç™»éŒ²ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iteratePropertySets();
 
     /**
-     * “o˜^ƒvƒƒpƒeƒBƒZƒbƒg‚Ìæ“¾B
-     * @param name ƒvƒƒpƒeƒBƒZƒbƒg–¼B
-     * @return w’è–¼‚ÌƒvƒƒpƒeƒBƒZƒbƒgA‚à‚µ‚­‚ÍnullB
+     * ç™»éŒ²ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã®å–å¾—ã€‚
+     * @param name ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆåã€‚
+     * @return æŒ‡å®šåã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã€ã‚‚ã—ãã¯nullã€‚
      */
     PropertySet getPropertySet(String name);
 
     /**
-     * q‚Ìprocessorƒm[ƒh‚ÌƒCƒeƒŒ[ƒ^B
-     * @return ƒm[ƒhƒCƒeƒŒ[ƒ^B
+     * å­ã®processorãƒãƒ¼ãƒ‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
+     * @return ãƒãƒ¼ãƒ‰ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateProcessorDefinitions();
 
     /**
-     * w’èQName‚ÅŠY“–‚·‚éProcessorDefinition‚Ìæ“¾B
-     * @param name æ“¾‚µ‚½‚¢ProcessorDefinition‚Ì–¼‘OB
-     * @return ŠY“–ProcessorDefinition‚à‚µ‚­‚ÍnullB
+     * æŒ‡å®šQNameã§è©²å½“ã™ã‚‹ProcessorDefinitionã®å–å¾—ã€‚
+     * @param name å–å¾—ã—ãŸã„ProcessorDefinitionã®åå‰ã€‚
+     * @return è©²å½“ProcessorDefinitionã‚‚ã—ãã¯nullã€‚
      */
     ProcessorDefinition getProcessorDefinition(String name);
 

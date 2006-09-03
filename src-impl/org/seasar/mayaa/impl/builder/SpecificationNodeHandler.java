@@ -302,7 +302,7 @@ public class SpecificationNodeHandler
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-//‚±‚ê‚Í—v‘f“à‚ÌƒXƒy[ƒX‚È‚Ì‚Å•Û‘¶‚·‚é•K—v‚Í–³‚¢        
+//ã“ã‚Œã¯è¦ç´ å†…ã®ã‚¹ãƒšãƒ¼ã‚¹ãªã®ã§ä¿å­˜ã™ã‚‹å¿…è¦ã¯ç„¡ã„        
 //        appendCharactersBuffer(buffer, start, length);
     }
 

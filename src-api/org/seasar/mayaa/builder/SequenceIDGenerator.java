@@ -21,14 +21,14 @@ package org.seasar.mayaa.builder;
 public interface SequenceIDGenerator {
 
     /**
-     * ƒV[ƒPƒ“ƒX”Ô†‚ðƒŠƒZƒbƒg‚·‚é
-     * @param sequenceID ƒŠƒZƒbƒg‚·‚é’l
+     * ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ç•ªå·ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
+     * @param sequenceID ãƒªã‚»ãƒƒãƒˆã™ã‚‹å€¤
      */
     void resetSequenceID(int sequenceID);
     
     /**
-     * ƒV[ƒPƒ“ƒX”Ô†‚ð”­s‚·‚éB
-     * @return V‚µ‚¢ƒV[ƒPƒ“ƒX”Ô†
+     * ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ç•ªå·ã‚’ç™ºè¡Œã™ã‚‹ã€‚
+     * @return æ–°ã—ã„ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ç•ªå·
      */
     int nextSequenceID();
 

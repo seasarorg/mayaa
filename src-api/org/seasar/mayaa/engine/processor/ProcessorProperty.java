@@ -19,20 +19,20 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
- * ƒvƒƒZƒbƒT‚Éİ’è‚·‚éƒvƒƒpƒeƒB‚Ìƒ‰ƒ“ƒ^ƒCƒ€ƒIƒuƒWƒFƒNƒgB
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µã«è¨­å®šã™ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorProperty {
 
     /**
-     * ƒvƒƒZƒbƒT‚ÌƒvƒƒpƒeƒB–¼B
-     * @return ƒvƒƒpƒeƒB–¼B
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
      */
     PrefixAwareName getName();
 
     /**
-     * ƒvƒƒpƒeƒB’l‚ÌƒRƒ“ƒpƒCƒ‹Ï‚İƒXƒNƒŠƒvƒgƒIƒuƒWƒFƒNƒg‚ğæ“¾‚·‚éB
-     * @return ƒvƒƒpƒeƒB’lB
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å€¤ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å€¤ã€‚
      */
     CompiledScript getValue();
 

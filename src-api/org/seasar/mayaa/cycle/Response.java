@@ -22,111 +22,111 @@ import org.seasar.mayaa.ContextAware;
 
 
 /**
- * ƒŒƒXƒ|ƒ“ƒX‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Response extends Serializable, ContextAware  {
 
     /**
-     * ƒRƒ“ƒeƒ“ƒcƒ^ƒCƒv‚Ìw’è‚ğs‚¤B
-     * @param contentType ƒRƒ“ƒeƒ“ƒcƒ^ƒCƒvBMIMEŒ^‚¨‚æ‚ÑƒGƒ“ƒR[ƒfƒBƒ“ƒOî•ñB
+     * ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚¿ã‚¤ãƒ—ã®æŒ‡å®šã‚’è¡Œã†ã€‚
+     * @param contentType ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚¿ã‚¤ãƒ—ã€‚MIMEå‹ãŠã‚ˆã³ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°æƒ…å ±ã€‚
      */
     void setContentType(String contentType);
 
     /**
-     * HTTPƒXƒe[ƒ^ƒXƒR[ƒh‚Ìİ’èB
-     * @param code ƒXƒe[ƒ^ƒXƒR[ƒhB’Êí‚Í200B404A500‚È‚ÇB
+     * HTTPã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚³ãƒ¼ãƒ‰ã®è¨­å®šã€‚
+     * @param code ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚³ãƒ¼ãƒ‰ã€‚é€šå¸¸ã¯200ã€‚404ã€500ãªã©ã€‚
      */
     void setStatus(int code);
 
     /**
-     * ƒŒƒXƒ|ƒ“ƒXƒwƒbƒ_‚Ì‘‚«o‚µB
-     * @param name ƒwƒbƒ_–¼B
-     * @param value ƒwƒbƒ_‚Ì’lB
+     * ãƒ¬ã‚¹ãƒãƒ³ã‚¹ãƒ˜ãƒƒãƒ€ã®æ›¸ãå‡ºã—ã€‚
+     * @param name ãƒ˜ãƒƒãƒ€åã€‚
+     * @param value ãƒ˜ãƒƒãƒ€ã®å€¤ã€‚
      */
     void addHeader(String name, String value);
 
     /**
-     * ƒŒƒXƒ|ƒ“ƒXƒwƒbƒ_‚Ì‘‚«o‚µ‚Ü‚½‚Íã‘‚«B
-     * @param name ƒwƒbƒ_–¼B
-     * @param value ƒwƒbƒ_‚Ì’lB
+     * ãƒ¬ã‚¹ãƒãƒ³ã‚¹ãƒ˜ãƒƒãƒ€ã®æ›¸ãå‡ºã—ã¾ãŸã¯ä¸Šæ›¸ãã€‚
+     * @param name ãƒ˜ãƒƒãƒ€åã€‚
+     * @param value ãƒ˜ãƒƒãƒ€ã®å€¤ã€‚
      */
     void setHeader(String name, String value);
 
     /**
-     * ‘‚«o‚µƒoƒbƒtƒ@‚ÌƒNƒŠƒA‚ğs‚¤B
+     * æ›¸ãå‡ºã—ãƒãƒƒãƒ•ã‚¡ã®ã‚¯ãƒªã‚¢ã‚’è¡Œã†ã€‚
      */
     void clearBuffer();
 
     /**
-     * ƒoƒbƒtƒ@‚Ö‚Ì‘‚«o‚µB
-     * @param b ‘‚«o‚µ’lB
+     * ãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãå‡ºã—ã€‚
+     * @param b æ›¸ãå‡ºã—å€¤ã€‚
      */
     void write(int b);
 
     /**
-     * ƒoƒbƒtƒ@‚Ö‚Ì‘‚«o‚µB
-     * @param cbuf ‘‚«o‚µ’lB
+     * ãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãå‡ºã—ã€‚
+     * @param cbuf æ›¸ãå‡ºã—å€¤ã€‚
      */
     void write(char[] cbuf);
 
     /**
-     * ƒoƒbƒtƒ@‚Ö‚Ì‘‚«o‚µB
-     * @param cbuf ‘‚«o‚µ’lB
-     * @param off cbuf‚Ì‘‚«o‚µƒIƒtƒZƒbƒgB
-     * @param len cbuf‚Ì‘‚«o‚µ’·B
+     * ãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãå‡ºã—ã€‚
+     * @param cbuf æ›¸ãå‡ºã—å€¤ã€‚
+     * @param off cbufã®æ›¸ãå‡ºã—ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+     * @param len cbufã®æ›¸ãå‡ºã—é•·ã€‚
      */
     void write(char[] cbuf, int off, int len);
 
     /**
-     * ƒoƒbƒtƒ@‚Ö‚Ì‘‚«o‚µB
-     * @param str ‘‚«o‚µ’lB
+     * ãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãå‡ºã—ã€‚
+     * @param str æ›¸ãå‡ºã—å€¤ã€‚
      */
     void write(String str);
 
     /**
-     * ƒoƒbƒtƒ@‚Ö‚Ì‘‚«o‚µB
-     * @param str ‘‚«o‚µ’lB
-     * @param off str‚Ì‘‚«o‚µƒIƒtƒZƒbƒgB
-     * @param len str‚Ì‘‚«o‚µ’·B
+     * ãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãå‡ºã—ã€‚
+     * @param str æ›¸ãå‡ºã—å€¤ã€‚
+     * @param off strã®æ›¸ãå‡ºã—ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+     * @param len strã®æ›¸ãå‡ºã—é•·ã€‚
      */
     void write(String str, int off, int len);
 
     /**
-     * ƒoƒbƒtƒ@‚Ìƒtƒ‰ƒbƒVƒ…BƒJƒŒƒ“ƒgƒoƒbƒtƒ@‚ªƒXƒ^ƒbƒN‚ÉÏ‚Ü‚ê‚Ä‚¢‚éê‡‚ÍA
-     * ‚Ğ‚Æ‚ÂãˆÊ‚Ìƒoƒbƒtƒ@‚É‘‚«o‚·Bƒ‹[ƒg‚Ìƒoƒbƒtƒ@‚Å‚ ‚éê‡‚É‚ÍA
-     * ÀÛ‚Ìo—ÍƒXƒgƒŠ[ƒ€‚É‘‚«o‚·B
+     * ãƒãƒƒãƒ•ã‚¡ã®ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã€‚ã‚«ãƒ¬ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ãŒã‚¹ã‚¿ãƒƒã‚¯ã«ç©ã¾ã‚Œã¦ã„ã‚‹å ´åˆã¯ã€
+     * ã²ã¨ã¤ä¸Šä½ã®ãƒãƒƒãƒ•ã‚¡ã«æ›¸ãå‡ºã™ã€‚ãƒ«ãƒ¼ãƒˆã®ãƒãƒƒãƒ•ã‚¡ã§ã‚ã‚‹å ´åˆã«ã¯ã€
+     * å®Ÿéš›ã®å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã«æ›¸ãå‡ºã™ã€‚
      */
     void flush();
 
     /**
-     * ƒoƒbƒtƒ@‚³‚ê‚½ƒ‰ƒCƒ^‚ğæ“¾‚·‚éB
-     * @return ƒoƒbƒtƒ@‚³‚ê‚½ƒ‰ƒCƒ^B
+     * ãƒãƒƒãƒ•ã‚¡ã•ã‚ŒãŸãƒ©ã‚¤ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒãƒƒãƒ•ã‚¡ã•ã‚ŒãŸãƒ©ã‚¤ã‚¿ã€‚
      */
     CycleWriter getWriter();
 
     /**
-     * ƒoƒbƒtƒ@‚³‚ê‚½ƒ‰ƒCƒ^‚ğƒXƒ^ƒbƒN‚ÉÏ‚ŞB
-     * @return Ï‚ñ‚¾ƒoƒbƒtƒ@‚³‚ê‚½ƒ‰ƒCƒ^B
+     * ãƒãƒƒãƒ•ã‚¡ã•ã‚ŒãŸãƒ©ã‚¤ã‚¿ã‚’ã‚¹ã‚¿ãƒƒã‚¯ã«ç©ã‚€ã€‚
+     * @return ç©ã‚“ã ãƒãƒƒãƒ•ã‚¡ã•ã‚ŒãŸãƒ©ã‚¤ã‚¿ã€‚
      */
     CycleWriter pushWriter();
 
     /**
-     * ƒXƒ^ƒbƒNÅãˆÊ‚Ìƒoƒbƒtƒ@ƒ‰ƒCƒ^‚ğæ‚èœ‚­B
-     * @return æ‚èœ‚¢‚½ƒoƒbƒtƒ@ƒ‰ƒCƒ^B
+     * ã‚¹ã‚¿ãƒƒã‚¯æœ€ä¸Šä½ã®ãƒãƒƒãƒ•ã‚¡ãƒ©ã‚¤ã‚¿ã‚’å–ã‚Šé™¤ãã€‚
+     * @return å–ã‚Šé™¤ã„ãŸãƒãƒƒãƒ•ã‚¡ãƒ©ã‚¤ã‚¿ã€‚
      */
     CycleWriter popWriter();
 
     /**
-     * ÀÛ‚Ìo—ÍƒXƒgƒŠ[ƒ€‚Ìæ“¾B
-     * @return o—ÍƒXƒgƒŠ[ƒ€B
+     * å®Ÿéš›ã®å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®å–å¾—ã€‚
+     * @return å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€‚
      */
     OutputStream getOutputStream();
 
     /**
-     * “n‚³‚ê‚½URL•¶š—ñ‚ÉA•K—v‚Å‚ ‚ê‚ÎƒZƒbƒVƒ‡ƒ“ID‚ğ•t‰Á‚·‚éB
-     * @param url URL•¶š—ñB
-     * @return ƒZƒbƒVƒ‡ƒ“ID‚ğ•t‰Á‚µ‚½•¶š—ñB
+     * æ¸¡ã•ã‚ŒãŸURLæ–‡å­—åˆ—ã«ã€å¿…è¦ã§ã‚ã‚Œã°ã‚»ãƒƒã‚·ãƒ§ãƒ³IDã‚’ä»˜åŠ ã™ã‚‹ã€‚
+     * @param url URLæ–‡å­—åˆ—ã€‚
+     * @return ã‚»ãƒƒã‚·ãƒ§ãƒ³IDã‚’ä»˜åŠ ã—ãŸæ–‡å­—åˆ—ã€‚
      */
     String encodeURL(String url);
 

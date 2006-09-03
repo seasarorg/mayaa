@@ -23,15 +23,15 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 public interface NodeResolveListener {
     
     /**
-     * �f�V���A���C�Y�ɕ������悤�Ƃ��Ă���m�[�h�Q�Ƃ���������
-     * �I���W�i���̃m�[�h�����[�h���ꂽ�ۂɔ񓯊��ɒʒm����B
-     * @param uniqueID �v�����Ă������j�[�NID
-     * @param loadedInstance �������ꂽ�Ώۃm�[�h�B�k���̏ꍇ�͌�����Ȃ��������Ƃ������B
+     * デシリアライズに復元しようとしているノード参照を解決する
+     * オリジナルのノードがロードされた際に非同期に通知する。
+     * @param uniqueID 要求していたユニークID
+     * @param loadedInstance 復元された対象ノード。ヌルの場合は見つからなかったことを示す。
      */
     void notify(String uniqueID, NodeTreeWalker loadedInstance);
     
     /**
-     * �����������I������ۂɌĂяo�����B
+     * 復元処理が終わった際に呼び出される。
      */
     void release();
 

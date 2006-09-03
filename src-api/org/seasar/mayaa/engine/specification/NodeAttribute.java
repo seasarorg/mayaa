@@ -16,20 +16,20 @@
 package org.seasar.mayaa.engine.specification;
 
 /**
- * İ’èXML‚Ì\¬•¨‚Ì‘®«B
+ * è¨­å®šXMLã®æ§‹æˆç‰©ã®å±æ€§ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface NodeAttribute extends PrefixAwareName {
 
     /**
-     * Š‘®‚·‚éƒm[ƒh‚ğæ“¾‚·‚éB
-     * @return Š‘®ƒm[ƒhB
+     * æ‰€å±ã™ã‚‹ãƒãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return æ‰€å±ãƒãƒ¼ãƒ‰ã€‚
      */
     SpecificationNode getNode();
 
     /**
-     * ‘®«‚Ì’lB
-     * @return ‘®«‚Ì’lBƒ[ƒ’·•¶š—ñ‚à‚ ‚è‚¦‚éB
+     * å±æ€§ã®å€¤ã€‚
+     * @return å±æ€§ã®å€¤ã€‚ã‚¼ãƒ­é•·æ–‡å­—åˆ—ã‚‚ã‚ã‚Šãˆã‚‹ã€‚
      */
     String getValue();
 

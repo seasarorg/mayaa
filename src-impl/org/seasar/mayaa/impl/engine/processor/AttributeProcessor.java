@@ -83,7 +83,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             parentQName = parent.getOriginalNode().getQName();
         }
         QName attributeQName = getName().getQName();
-        // ©“®“I‚Émayaaƒl[ƒ€ƒXƒy[ƒX‚ğˆø‚«Œp‚¢‚¾‚¾‚¯‚Å‚ ‚ê‚ÎAe—v‘f‚Æ“¯‚¶‚É‚·‚éB
+        // è‡ªå‹•çš„ã«mayaaãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ã‚’å¼•ãç¶™ã„ã ã ã‘ã§ã‚ã‚Œã°ã€è¦ªè¦ç´ ã¨åŒã˜ã«ã™ã‚‹ã€‚
         if (getName().getPrefix().equals("")
                 && parentQName.equals(getName().getQName()) == false) {
             attributeQName = SpecificationUtil.createQName(

@@ -22,7 +22,7 @@ import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFind
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolverFinder;
 
 /**
- * ƒvƒƒZƒbƒTƒcƒŠ[‚ğ‘€ì‚·‚éB
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µãƒ„ãƒªãƒ¼ã‚’æ“ä½œã™ã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorTreeWalker
@@ -30,59 +30,59 @@ public interface ProcessorTreeWalker
                  NodeReferenceResolverFinder, Serializable {
 
     /**
-     * ƒvƒƒZƒbƒTÀsƒXƒR[ƒv‚ÉA“o˜^ƒXƒNƒŠƒvƒg•Ï”‚ğ’ñ‹Ÿ‚·‚éB
-     * @return “o˜^•Ï”‚Ìƒ}ƒbƒvBƒL[‚ª•Ï”–¼‚Æ‚È‚éB
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µå®Ÿè¡Œã‚¹ã‚³ãƒ¼ãƒ—ã«ã€ç™»éŒ²ã‚¹ã‚¯ãƒªãƒ—ãƒˆå¤‰æ•°ã‚’æä¾›ã™ã‚‹ã€‚
+     * @return ç™»éŒ²å¤‰æ•°ã®ãƒãƒƒãƒ—ã€‚ã‚­ãƒ¼ãŒå¤‰æ•°åã¨ãªã‚‹ã€‚
      */
     Map getVariables();
 
     /**
-     * ƒm[ƒh‚Ì‰Šú‰»‚ğs‚¤B‚±‚Ìƒƒ\ƒbƒh‚ÍATemplateBuilder#build‚Ì’†‚ÅŒÄ‚Î‚ê‚éB
-     * @param parent eProcessorTreeWalker
+     * ãƒãƒ¼ãƒ‰ã®åˆæœŸåŒ–ã‚’è¡Œã†ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ã€TemplateBuilder#buildã®ä¸­ã§å‘¼ã°ã‚Œã‚‹ã€‚
+     * @param parent è¦ªProcessorTreeWalker
      */
     void setParentProcessor(ProcessorTreeWalker parent);
 
     /**
-     * qProcessorTreeWalker‚ğ’Ç‰Á‚·‚éB‚±‚Ìƒƒ\ƒbƒh‚ÍA
-     * TemplateBuilder#build‚Ì’†‚ÅŒÄ‚Î‚ê‚éB
-     * @param child qProcessorTreeWalker
+     * å­ProcessorTreeWalkerã‚’è¿½åŠ ã™ã‚‹ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ã€
+     * TemplateBuilder#buildã®ä¸­ã§å‘¼ã°ã‚Œã‚‹ã€‚
+     * @param child å­ProcessorTreeWalker
      */
     void addChildProcessor(ProcessorTreeWalker child);
 
     /**
-     * qProcessorTreeWalker‚ğw’è‚µ‚½ˆÊ’u‚É‘}“ü‚µ‚Ä’Ç‰Á‚·‚éB
-     * @param index ƒCƒ“ƒfƒbƒNƒX’l
-     * @param child qProcessorTreeWalker
+     * å­ProcessorTreeWalkerã‚’æŒ‡å®šã—ãŸä½ç½®ã«æŒ¿å…¥ã—ã¦è¿½åŠ ã™ã‚‹ã€‚
+     * @param index ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤
+     * @param child å­ProcessorTreeWalker
      */
     void insertProcessor(int index, ProcessorTreeWalker child);
     
     /**
-     * qProcessorTreeWalker‚ğíœ‚·‚éB
-     * @param child qProcessorTreeWalker
-     * @return íœ‚µ‚½ê‡‚ÍtrueB‘¶İ‚µ‚È‚©‚Á‚½ê‡‚Ífalse‚ğ•Ô‚·B
+     * å­ProcessorTreeWalkerã‚’å‰Šé™¤ã™ã‚‹ã€‚
+     * @param child å­ProcessorTreeWalker
+     * @return å‰Šé™¤ã—ãŸå ´åˆã¯trueã€‚å­˜åœ¨ã—ãªã‹ã£ãŸå ´åˆã¯falseã‚’è¿”ã™ã€‚
      */
     boolean removeProcessor(ProcessorTreeWalker child);
 
     /**
-     * eProcessorTreeWalker‚ğæ“¾‚·‚éB
-     * @return eProcessorTreeWalker
+     * è¦ªProcessorTreeWalkerã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return è¦ªProcessorTreeWalker
      */
     ProcessorTreeWalker getParentProcessor();
 
     /**
-     * qProcessorTreeWalker‚Ì”‚ğæ“¾‚·‚éB
-     * @return qProcessorTreeWalker‚Ì”
+     * å­ProcessorTreeWalkerã®æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return å­ProcessorTreeWalkerã®æ•°
      */
     int getChildProcessorSize();
 
     /**
-     * w’èƒCƒ“ƒfƒbƒNƒX‚ÌqProcessorTreeWalker‚ğæ“¾‚·‚éB
-     * @param index w’èindexB
-     * @return w’èindex‚ÌqProcessorTreeWalkerB
+     * æŒ‡å®šã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®å­ProcessorTreeWalkerã‚’å–å¾—ã™ã‚‹ã€‚
+     * @param index æŒ‡å®šindexã€‚
+     * @return æŒ‡å®šindexã®å­ProcessorTreeWalkerã€‚
      */
     ProcessorTreeWalker getChildProcessor(int index);
 
     /**
-     * qProcessorTreeWalker‚ğ‘S‚Äíœ‚·‚éB
+     * å­ProcessorTreeWalkerã‚’å…¨ã¦å‰Šé™¤ã™ã‚‹ã€‚
      */
     void clearChildProcessors();
 

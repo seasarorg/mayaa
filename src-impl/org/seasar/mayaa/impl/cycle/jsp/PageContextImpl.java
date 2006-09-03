@@ -293,8 +293,8 @@ public class PageContextImpl extends PageContext {
     }
 
     public void removeAttribute(String name) {
-        /* removeAttribute(name, scope)‚ª‚ ‚é‚Ì‚É‚±‚ê‚ğ‚â‚é‚Æ
-         * ‘z’èŠO‚Ì“®ì‚É‚È‚Á‚Ä‚µ‚Ü‚¤B
+        /* removeAttribute(name, scope)ãŒã‚ã‚‹ã®ã«ã“ã‚Œã‚’ã‚„ã‚‹ã¨
+         * æƒ³å®šå¤–ã®å‹•ä½œã«ãªã£ã¦ã—ã¾ã†ã€‚
         if (name == null) {
             throw new IllegalArgumentException();
         }

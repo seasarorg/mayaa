@@ -153,14 +153,14 @@ public class EngineImpl extends SpecificationImpl
 
     public void handleError(Throwable t, boolean pageFlush) {
         t = removeWrapperRuntimeException(t);
-        // client abort ‚Ío—Í‚µ‚æ‚¤‚ª‚È‚¢‚Ì‚Å–³‹
+        // client abort ã¯å‡ºåŠ›ã—ã‚ˆã†ãŒãªã„ã®ã§ç„¡è¦–
         if (t instanceof IOException) {
             if (isClientAbortException((IOException)t)) {
                 return;
             }
         }
         if (t instanceof CyclicForwardException) {
-            // zŠÂforward‚Ì‰Â”\«
+            // å¾ªç’°forwardã®å¯èƒ½æ€§
             throw (CyclicForwardException) t;
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();

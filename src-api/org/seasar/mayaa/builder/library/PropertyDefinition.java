@@ -19,69 +19,69 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * MLD‚Ìpropertyƒm[ƒh‚Ìƒ‚ƒfƒ‹ƒIƒuƒWƒFƒNƒgB
+ * MLDã®propertyãƒãƒ¼ãƒ‰ã®ãƒ¢ãƒ‡ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface PropertyDefinition extends ParameterAware {
 
     /**
-     * Š‘®‚·‚éƒvƒƒpƒeƒBƒZƒbƒg‚Ìæ“¾B
-     * @return ƒvƒƒpƒeƒBƒZƒbƒgB
+     * æ‰€å±ã™ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã®å–å¾—ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã€‚
      */
     PropertySet getPropertySet();
 
     /**
-     * MLD‚Ìname‘®«‚Å‚ ‚éƒvƒƒpƒeƒB–¼B
-     * ƒeƒ“ƒvƒŒ[ƒg‚âİ’èXMLã‚Ì‘®«‚ÆAƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒT‚ÌƒvƒƒpƒeƒB‚ğ
-     * ƒoƒCƒ“ƒfƒBƒ“ƒO‚·‚é–¼‘O‚Æ‚È‚éB
-     * @return ƒoƒCƒ“ƒfƒBƒ“ƒO–¼B
+     * MLDã®nameå±æ€§ã§ã‚ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚„è¨­å®šXMLä¸Šã®å±æ€§ã¨ã€ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’
+     * ãƒã‚¤ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã™ã‚‹åå‰ã¨ãªã‚‹ã€‚
+     * @return ãƒã‚¤ãƒ³ãƒ‡ã‚£ãƒ³ã‚°åã€‚
      */
     String getName();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒTÀ‘•‚ÌƒvƒƒpƒeƒB–¼B
-     * İ’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Îname‘®«‚Ì’lB
-     * @return ƒvƒƒpƒeƒB–¼B
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µå®Ÿè£…ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
+     * è¨­å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°nameå±æ€§ã®å€¤ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
      */
     String getImplName();
 
     /**
-     * MLD‚Érequired‘®«‚Å‹Lq‚³‚ê‚½•K{ƒtƒ‰ƒOBƒfƒtƒHƒ‹ƒg‚ÍfalseB
-     * @return •K{ƒtƒ‰ƒOB
+     * MLDã«requiredå±æ€§ã§è¨˜è¿°ã•ã‚ŒãŸå¿…é ˆãƒ•ãƒ©ã‚°ã€‚ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯falseã€‚
+     * @return å¿…é ˆãƒ•ãƒ©ã‚°ã€‚
      */
     boolean isRequired();
 
     /**
-     * MLD‚ÉexpectedClass‘®«‚Å‹Lq‚³‚ê‚½‘®«Œ^B
-     * ƒfƒtƒHƒ‹ƒg‚Íjava.lang.ObjectB
-     * @return ‘®«Œ^B
+     * MLDã«expectedClasså±æ€§ã§è¨˜è¿°ã•ã‚ŒãŸå±æ€§å‹ã€‚
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯java.lang.Objectã€‚
+     * @return å±æ€§å‹ã€‚
      */
     Class getExpectedClass();
 
     /**
-     * MLD‚Ìdefault‘®«’lBƒJƒXƒ^ƒ}ƒCƒY‚Å“n‚·ƒvƒƒpƒeƒB‚ÌƒfƒtƒHƒ‹ƒg’lB
-     * @return ƒJƒXƒ^ƒ}ƒCƒYƒfƒtƒHƒ‹ƒg’lB
+     * MLDã®defaultå±æ€§å€¤ã€‚ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºã§æ¸¡ã™ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã€‚
+     * @return ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã€‚
      */
     String getDefaultValue();
 
     /**
-     * MLD‚Ìfinal‘®«’lBMLD‚É’è‹`‚µ‚½’l‚Íƒ†[ƒU[ƒAƒvƒŠ‚Åã‘‚«‚³‚ê‚È‚¢B
-     * @return ƒtƒ@ƒCƒiƒ‹’lB
+     * MLDã®finalå±æ€§å€¤ã€‚MLDã«å®šç¾©ã—ãŸå€¤ã¯ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚¢ãƒ—ãƒªã§ä¸Šæ›¸ãã•ã‚Œãªã„ã€‚
+     * @return ãƒ•ã‚¡ã‚¤ãƒŠãƒ«å€¤ã€‚
      */
     String getFinalValue();
 
     /**
-     * MLDw’è‚ÌƒvƒƒpƒeƒB’lƒRƒ“ƒo[ƒ^–¼B
-     * @return ƒRƒ“ƒo[ƒ^–¼B
+     * MLDæŒ‡å®šã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å€¤ã‚³ãƒ³ãƒãƒ¼ã‚¿åã€‚
+     * @return ã‚³ãƒ³ãƒãƒ¼ã‚¿åã€‚
      */
     String getPropertyConverterName();
 
     /**
-     * ƒvƒƒpƒeƒBƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚éB
-     * @param processorDef ƒvƒƒZƒbƒT’è‹`B
-     * @param original ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹ƒm[ƒhB
-     * @param injected ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒm[ƒhB
-     * @return ƒvƒƒpƒeƒBƒIƒuƒWƒFƒNƒgB
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+     * @param processorDef ãƒ—ãƒ­ã‚»ãƒƒã‚µå®šç¾©ã€‚
+     * @param original ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒãƒ¼ãƒ‰ã€‚
+     * @param injected ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒãƒ¼ãƒ‰ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     Object createProcessorProperty(ProcessorDefinition processorDef,
             SpecificationNode original, SpecificationNode injected);

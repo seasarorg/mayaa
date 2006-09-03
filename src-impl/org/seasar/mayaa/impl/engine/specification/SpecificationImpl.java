@@ -124,7 +124,7 @@ public class SpecificationImpl extends ParameterAwareImpl
                         return false;
                     }
                     Date sourceTime = getSource().getTimestamp();
-                    // リバートしてもビルドする。
+                    // 繝ｪ繝舌�ｼ繝医＠縺ｦ繧ゅン繝ｫ繝峨☆繧九�
                     _deprecated =
                         sourceTime.equals(_builtSourceTime) == false;
                 }

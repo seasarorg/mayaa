@@ -23,11 +23,11 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public interface SourceDescriptorObserver {
 
     /**
-     * “o˜^‚³‚ê‚Ä‚¢‚éSourceDescriptor‚ğ’Ê’m‚·‚éB
+     * ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹SourceDescriptorã‚’é€šçŸ¥ã™ã‚‹ã€‚
      * 
      * @param sourceDescriptor
-     *            “o˜^‚³‚ê‚Ä‚¢‚éSourceDescriptor
-     * @return Ÿ‚Ì“o˜^SourceDescriptor‚Ì’Ê’m‚ğó‚¯‚½‚¢ê‡‚Í true‚ğ•Ô‚·‚±‚ÆB ŒŸõ‚ğI—¹‚µ‚½‚¢ê‡‚Í false ‚ğ•Ô‚·‚±‚ÆB
+     *            ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹SourceDescriptor
+     * @return æ¬¡ã®ç™»éŒ²SourceDescriptorã®é€šçŸ¥ã‚’å—ã‘ãŸã„å ´åˆã¯ trueã‚’è¿”ã™ã“ã¨ã€‚ æ¤œç´¢ã‚’çµ‚äº†ã—ãŸã„å ´åˆã¯ false ã‚’è¿”ã™ã“ã¨ã€‚
      */
     boolean nextSourceDescriptor(SourceDescriptor sourceDescriptor);
 

@@ -26,63 +26,63 @@ import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFind
 public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFinder {
 
     /**
-     * eƒm[ƒh‚Ìİ’è‚ğƒZƒbƒg‚·‚éB
-     * @param parentNode eƒm[ƒhB
+     * è¦ªãƒãƒ¼ãƒ‰ã®è¨­å®šã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
+     * @param parentNode è¦ªãƒãƒ¼ãƒ‰ã€‚
      */
     void setParentNode(NodeTreeWalker parentNode);
 
     /**
-     * eƒm[ƒh‚ğæ“¾‚·‚éB
-     * @return eƒm[ƒhB
+     * è¦ªãƒãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return è¦ªãƒãƒ¼ãƒ‰ã€‚
      */
     NodeTreeWalker getParentNode();
 
     /**
-     * qƒm[ƒh‚Ìİ’è‚ğƒZƒbƒg‚·‚éB
-     * @param childNode qƒm[ƒhB
+     * å­ãƒãƒ¼ãƒ‰ã®è¨­å®šã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
+     * @param childNode å­ãƒãƒ¼ãƒ‰ã€‚
      */
     void addChildNode(NodeTreeWalker childNode);
 
     /**
-     * qƒm[ƒh‚Ìİ’è‚ğw’èˆÊ’u‚É‘}“ü‚·‚éB
+     * å­ãƒãƒ¼ãƒ‰ã®è¨­å®šã‚’æŒ‡å®šä½ç½®ã«æŒ¿å…¥ã™ã‚‹ã€‚
      * @param index
      * @param childNode
      */
     void insertChildNode(int index, NodeTreeWalker childNode);
     
     /**
-     * qƒm[ƒh‚ğíœ‚·‚éB
-     * @param childNode qƒm[ƒhB
+     * å­ãƒãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+     * @param childNode å­ãƒãƒ¼ãƒ‰ã€‚
      */
     boolean removeChildNode(NodeTreeWalker childNode);
 
     /**
-     * qƒm[ƒh‚Ì”‚ğ•Ô‚·B
-     * @return qƒm[ƒh‚Ì”
+     * å­ãƒãƒ¼ãƒ‰ã®æ•°ã‚’è¿”ã™ã€‚
+     * @return å­ãƒãƒ¼ãƒ‰ã®æ•°
      */
     int getChildNodeSize();
     
     /**
-     * w’èƒCƒ“ƒfƒbƒNƒX‚Ìqƒm[ƒh‚ğ•Ô‚·B
-     * @param index ƒCƒ“ƒfƒbƒNƒX’lB
-     * @return ƒm[ƒhB
+     * æŒ‡å®šã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®å­ãƒãƒ¼ãƒ‰ã‚’è¿”ã™ã€‚
+     * @param index ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ã€‚
+     * @return ãƒãƒ¼ãƒ‰ã€‚
      */
     NodeTreeWalker getChildNode(int index);
 
     /**
-     * qƒm[ƒh‚ÌƒCƒeƒŒ[ƒ^‚ğæ“¾‚·‚éB
-     * @return qƒm[ƒhi<code>NodeTreeWalker</code>j‚ğ•Û‚µ‚½ƒCƒeƒŒ[ƒ^B
+     * å­ãƒãƒ¼ãƒ‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return å­ãƒãƒ¼ãƒ‰ï¼ˆ<code>NodeTreeWalker</code>ï¼‰ã‚’ä¿æŒã—ãŸã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateChildNode();
 
     /**
-     * ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü‘ÎÛ‚Æ‚µAeƒm[ƒh‚âqƒm[ƒh‚È‚Ç
-     * ƒCƒ“ƒXƒ^ƒ“ƒX‚ª•Û‚µ‚Ä‚¢‚½‘¼‚ÌƒIƒuƒWƒFƒNƒg‚Ö‚ÌQÆƒŠƒ“ƒN‚ğØ‚éB
+     * ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„å¯¾è±¡ã¨ã—ã€è¦ªãƒãƒ¼ãƒ‰ã‚„å­ãƒãƒ¼ãƒ‰ãªã©
+     * ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒä¿æŒã—ã¦ã„ãŸä»–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®å‚ç…§ãƒªãƒ³ã‚¯ã‚’åˆ‡ã‚‹ã€‚
      */
     void kill();
 
     /**
-     * qƒm[ƒh‚ğƒNƒŠƒA‚·‚é
+     * å­ãƒãƒ¼ãƒ‰ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
      */
     void clearChildNodes();
 }

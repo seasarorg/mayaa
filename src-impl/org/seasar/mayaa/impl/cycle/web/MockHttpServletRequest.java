@@ -60,7 +60,7 @@ public class MockHttpServletRequest extends MockServletRequest
     }
 
     public String getServletPath() {
-        // TODO servletPath‚ğ³‚µ‚­•Ô‚·
+        // TODO servletPathã‚’æ­£ã—ãè¿”ã™
         return "";
     }
 

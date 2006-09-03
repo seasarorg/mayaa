@@ -16,22 +16,22 @@
 package org.seasar.mayaa.engine.processor;
 
 /**
- * TemplateProcessor�̊g���C���^�[�t�F�C�X�B�����̃C�e���[�g�@�\�B
+ * TemplateProcessorの拡張インターフェイス。処理のイテレート機能。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IterationProcessor extends TemplateProcessor {
 
     /**
-     * �C�e���[�g���s���邩�ǂ�����Ԃ��BJSP��IterationTag��BodyTag���z�X�g
-     * ���Ă���ꍇ�ɗ��p����B�f�t�H���g�ł�false��Ԃ��Btrue���ƁA�q�v���Z�b�T
-     * �̎��s���doAfterChildProcess()���\�b�h���R���e�i���Ăяo�����B
-     * @return �C�e���[�g���s����ꍇ�Atrue�B���ʂ�false�B
+     * イテレート実行するかどうかを返す。JSPのIterationTagやBodyTagをホスト
+     * している場合に利用する。デフォルトではfalseを返す。trueだと、子プロセッサ
+     * の実行後にdoAfterChildProcess()メソッドがコンテナより呼び出される。
+     * @return イテレート実行する場合、true。普通はfalse。
      */
     boolean isIteration();
 
     /**
-     * �C�e���[�g���s����ꍇ�A�q�v���Z�b�T�̎��s��ɃR���e�i���Ăяo�����B
-     * @return ���^�[���t���O�BEVAL_BODY_AGAIN�ōăC�e���[�g�BSKIP_BODY�Œ��~�B
+     * イテレート実行する場合、子プロセッサの実行後にコンテナより呼び出される。
+     * @return リターンフラグ。EVAL_BODY_AGAINで再イテレート。SKIP_BODYで中止。
      */
     ProcessStatus doAfterChildProcess();
 

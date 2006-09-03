@@ -23,7 +23,7 @@ import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
- * ƒtƒ@ƒNƒgƒŠ‚Ìƒtƒ@ƒNƒgƒŠƒIƒuƒWƒFƒNƒgB
+ * ãƒ•ã‚¡ã‚¯ãƒˆãƒªã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class FactoryFactory implements Serializable {
@@ -33,8 +33,8 @@ public abstract class FactoryFactory implements Serializable {
     private static Map _factories = new HashMap();
 
     /**
-     * ƒtƒ@ƒNƒgƒŠ‚Ì‰Šú‰»B
-     * @param instance ƒtƒ@ƒNƒgƒŠ‚ÌƒCƒ“ƒXƒ^ƒ“ƒXB
+     * ãƒ•ã‚¡ã‚¯ãƒˆãƒªã®åˆæœŸåŒ–ã€‚
+     * @param instance ãƒ•ã‚¡ã‚¯ãƒˆãƒªã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
      */
     public static void setInstance(FactoryFactory instance) {
         if (instance == null) {
@@ -44,8 +44,8 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
-     * ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgİ’èB
-     * @param context ƒJƒŒƒ“ƒgƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
+     * ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¨­å®šã€‚
+     * @param context ã‚«ãƒ¬ãƒ³ãƒˆã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     public static void setContext(Object context) {
         if (context == null) {
@@ -61,20 +61,20 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
-     * ƒtƒ@ƒNƒgƒŠƒtƒ@ƒNƒgƒŠƒCƒ“ƒXƒ^ƒ“ƒX‚ÆƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒg‚ª
-     * ‰Šú‰»Ï‚İ‚©‚ğ”»’è‚·‚éB
+     * ãƒ•ã‚¡ã‚¯ãƒˆãƒªãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¨ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒ
+     * åˆæœŸåŒ–æ¸ˆã¿ã‹ã‚’åˆ¤å®šã™ã‚‹ã€‚
      * 
-     * @return ‰Šú‰»Ï‚İ‚Ìê‡‚Ítrue‚ğ•Ô‹p‚·‚éB
+     * @return åˆæœŸåŒ–æ¸ˆã¿ã®å ´åˆã¯trueã‚’è¿”å´ã™ã‚‹ã€‚
      */
     public static boolean isInitialized() {
         return _instance != null && _context != null;
     }
 
     /**
-     * ƒu[ƒgƒXƒgƒ‰ƒbƒv‚É—p‚¢‚éA/WEB-INFƒtƒHƒ‹ƒ_‚ğ“Ç‚Şƒ\[ƒXB
-     * @param root ƒ‹[ƒgƒpƒXB
-     * @param systemID ƒ\[ƒX‚ÌSystemIDB
-     * @return /WEB-INF‘Š‘Î‚Ìƒ\[ƒXB
+     * ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—æ™‚ã«ç”¨ã„ã‚‹ã€/WEB-INFãƒ•ã‚©ãƒ«ãƒ€ã‚’èª­ã‚€ã‚½ãƒ¼ã‚¹ã€‚
+     * @param root ãƒ«ãƒ¼ãƒˆãƒ‘ã‚¹ã€‚
+     * @param systemID ã‚½ãƒ¼ã‚¹ã®SystemIDã€‚
+     * @return /WEB-INFç›¸å¯¾ã®ã‚½ãƒ¼ã‚¹ã€‚
      */
     public static SourceDescriptor getBootstrapSource(
             String root, String systemID) {
@@ -83,9 +83,9 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
-     * ƒtƒ@ƒNƒgƒŠ‚ğæ“¾‚·‚éB
-     * @param interfaceClass æ“¾‚·‚éƒtƒ@ƒNƒgƒŠ‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒXB
-     * @return w’èƒCƒ“ƒ^[ƒtƒFƒCƒX‚É‘Î‰‚µ‚½ƒtƒ@ƒNƒgƒŠB
+     * ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚’å–å¾—ã™ã‚‹ã€‚
+     * @param interfaceClass å–å¾—ã™ã‚‹ãƒ•ã‚¡ã‚¯ãƒˆãƒªã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
+     * @return æŒ‡å®šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã«å¯¾å¿œã—ãŸãƒ•ã‚¡ã‚¯ãƒˆãƒªã€‚
      */
     public static UnifiedFactory getFactory(Class interfaceClass) {
         check();
@@ -101,8 +101,8 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒv‚Ìæ“¾B
-     * @return ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒvB
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã®å–å¾—ã€‚
+     * @return ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     public static ApplicationScope getApplicationScope() {
         check();
@@ -110,28 +110,28 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
-     * ƒtƒ@ƒNƒgƒŠ‚ğ¶¬‚·‚éB
-     * @param interfaceClass ƒtƒ@ƒNƒgƒŠ‚Ìinterface‚ÌClassƒIƒuƒWƒFƒNƒg
-     * @param context ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
-     * @return ƒtƒ@ƒNƒgƒŠB
+     * ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚’ç”Ÿæˆã™ã‚‹ã€‚
+     * @param interfaceClass ãƒ•ã‚¡ã‚¯ãƒˆãƒªã®interfaceã®Classã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+     * @param context ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @return ãƒ•ã‚¡ã‚¯ãƒˆãƒªã€‚
      */
     protected abstract UnifiedFactory getFactory(
             Class interfaceClass, Object context);
 
     /**
-     * ƒu[ƒgƒXƒgƒ‰ƒbƒv—p‚Ìƒ\[ƒXƒfƒBƒXƒNƒŠƒvƒ^‚ğæ“¾‚·‚éB
-     * @param root ƒ‹[ƒgƒpƒXB
-     * @param systemID ƒVƒXƒeƒ€IDB
-     * @param context ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
-     * @return ƒu[ƒgƒXƒgƒ‰ƒbƒv—p‚Ìƒ\[ƒXB
+     * ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚½ãƒ¼ã‚¹ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @param root ãƒ«ãƒ¼ãƒˆãƒ‘ã‚¹ã€‚
+     * @param systemID ã‚·ã‚¹ãƒ†ãƒ IDã€‚
+     * @param context ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @return ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚½ãƒ¼ã‚¹ã€‚
      */
     protected abstract SourceDescriptor getBootstrapSource(
             String root, String systemID, Object context);
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒv‚Ìæ“¾B
-     * @param context ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
-     * @return ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒvB
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã®å–å¾—ã€‚
+     * @param context ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @return ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     protected abstract ApplicationScope getApplicationScope(Object context);
 

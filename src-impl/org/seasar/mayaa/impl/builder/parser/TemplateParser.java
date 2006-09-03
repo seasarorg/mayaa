@@ -41,9 +41,9 @@ public class TemplateParser extends AbstractSAXParser {
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
-            /* Œ³‚Ìƒeƒ“ƒvƒŒ[ƒg“à—e‚ğ’‰À‚ÉÄŒ»‚³‚¹‚éƒIƒvƒVƒ‡ƒ“B
-            ‚½‚¾‚µA</html>‚ÌŒã‚ë‚Í–³‹‚³‚ê‚éBfalse(ƒfƒtƒHƒ‹ƒg)‚Ìê‡‚ÍA
-            </body>‚Æ</html>‚ÌŒã‚É‚Â‚Ã‚­‚à‚Ì‚ğneko‚ª‚Ş‚è‚â‚è‘O‚É‚Á‚Ä‚­‚é */
+            /* å…ƒã®ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆå†…å®¹ã‚’å¿ å®Ÿã«å†ç¾ã•ã›ã‚‹ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã€‚
+            ãŸã ã—ã€</html>ã®å¾Œã‚ã¯ç„¡è¦–ã•ã‚Œã‚‹ã€‚false(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ)ã®å ´åˆã¯ã€
+            </body>ã¨</html>ã®å¾Œã«ã¤ã¥ãã‚‚ã®ã‚’nekoãŒã‚€ã‚Šã‚„ã‚Šå‰ã«æŒã£ã¦ãã‚‹ */
             setFeature(IGNORE_OUTSIDE_CONTENT, true);
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);

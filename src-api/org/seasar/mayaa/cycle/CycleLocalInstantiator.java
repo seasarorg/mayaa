@@ -16,31 +16,31 @@
 package org.seasar.mayaa.cycle;
 
 /**
- * ƒTƒCƒNƒ‹“àƒXƒŒƒbƒhƒ[ƒJƒ‹ƒIƒuƒWƒFƒNƒg¶¬B
+ * ã‚µã‚¤ã‚¯ãƒ«å†…ã‚¹ãƒ¬ãƒƒãƒ‰ãƒ­ãƒ¼ã‚«ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã€‚
  * @author Taro Kato (Gluegent, Inc.)
  */
 public interface CycleLocalInstantiator {
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚éB
-     * ƒTƒCƒNƒ‹‚ª—LŒø‚ÈŠÔAƒOƒ[ƒoƒ‹‚È‹¤—LƒIƒuƒWƒFƒNƒg‚Æ‚È‚éB
-     * @param params ƒCƒ“ƒXƒ^ƒ“ƒXì¬‚É•K—v‚Èƒpƒ‰ƒ[ƒ^B
-     * @return ƒCƒ“ƒXƒ^ƒ“ƒXB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+     * ã‚µã‚¤ã‚¯ãƒ«ãŒæœ‰åŠ¹ãªé–“ã€ã‚°ãƒ­ãƒ¼ãƒãƒ«ãªå…±æœ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ãªã‚‹ã€‚
+     * @param params ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆã«å¿…è¦ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã€‚
+     * @return ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
      */
     Object create(Object[] params);
 
     /**
-     * ‚ ‚éƒIƒuƒWƒFƒNƒg‚ÌŠ—L•¨‚Æ‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚éB
-     * ƒTƒCƒNƒ‹‚ª—LŒø‚ÈŠÔAƒtƒB[ƒ‹ƒh“I‚ÈƒIƒuƒWƒFƒNƒg‚Æ‚È‚éB
-     * @param owner Š—LÒ‚Æ‚È‚éƒIƒuƒWƒFƒNƒgB
-     * @param params ƒCƒ“ƒXƒ^ƒ“ƒXì¬‚É•K—v‚Èƒpƒ‰ƒ[ƒ^B
-     * @return ƒCƒ“ƒXƒ^ƒ“ƒXB
+     * ã‚ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ‰€æœ‰ç‰©ã¨ã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+     * ã‚µã‚¤ã‚¯ãƒ«ãŒæœ‰åŠ¹ãªé–“ã€ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰çš„ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ãªã‚‹ã€‚
+     * @param owner æ‰€æœ‰è€…ã¨ãªã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @param params ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆã«å¿…è¦ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã€‚
+     * @return ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
      */
     Object create(Object owner, Object[] params);
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğ”jŠü‚·‚éB
-     * @param instance create‚³‚ê‚½ƒIƒuƒWƒFƒNƒgB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç ´æ£„ã™ã‚‹ã€‚
+     * @param instance createã•ã‚ŒãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     void destroy(Object instance);
 

@@ -78,7 +78,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
             if (_superPage != null) {
                 return;
             }
-            // TODO mayaaˆÈŠO‚©‚ç‚àæ“¾‚Å‚«‚é‚æ‚¤‚É‚·‚é
+            // TODO mayaaä»¥å¤–ã‹ã‚‰ã‚‚å–å¾—ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
             String extendsPath =
                 SpecificationUtil.getMayaaAttributeValue(this, QM_EXTENDS);
             if (StringUtil.isEmpty(extendsPath)) {

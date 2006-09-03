@@ -21,28 +21,28 @@ import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * MLD‚ÌprocessorƒGƒŒƒƒ“ƒg‚Ìƒ‚ƒfƒ‹ƒIƒuƒWƒFƒNƒgB
+ * MLDã®processorã‚¨ãƒ¬ãƒ¡ãƒ³ãƒˆã®ãƒ¢ãƒ‡ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorDefinition extends PropertySet {
 
     /**
-     * class‘®«‚Åw’è‚µ‚½ATemplateProcessor‚ÌÀ‘•ƒNƒ‰ƒXŠ®‘SCü–¼B
-     * @return À‘•ƒNƒ‰ƒX–¼B
+     * classå±æ€§ã§æŒ‡å®šã—ãŸã€TemplateProcessorã®å®Ÿè£…ã‚¯ãƒ©ã‚¹å®Œå…¨ä¿®é£¾åã€‚
+     * @return å®Ÿè£…ã‚¯ãƒ©ã‚¹åã€‚
      */
     Class getProcessorClass();
 
     /**
-     * “o˜^ƒvƒƒpƒeƒBƒZƒbƒg‚ÌƒCƒeƒŒ[ƒ^B
-     * @return ƒvƒƒpƒeƒBƒZƒbƒgƒCƒeƒŒ[ƒ^B
+     * ç™»éŒ²ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iteratePropertySets();
 
     /**
-     * “–ŠYİ’è‚æ‚èAƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒT‚ğ¶¬‚·‚éB
-     * @param original ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹ƒm[ƒhB
-     * @param injected ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒXƒyƒbƒNƒm[ƒhB
-     * @return ƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒTB
+     * å½“è©²è¨­å®šã‚ˆã‚Šã€ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µã‚’ç”Ÿæˆã™ã‚‹ã€‚
+     * @param original ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒãƒ¼ãƒ‰ã€‚
+     * @param injected ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ã‚¹ãƒšãƒƒã‚¯ãƒãƒ¼ãƒ‰ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µã€‚
      */
     TemplateProcessor createTemplateProcessor(
             SpecificationNode original, SpecificationNode injected);

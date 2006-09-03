@@ -18,28 +18,28 @@ package org.seasar.mayaa.engine.processor;
 import org.seasar.mayaa.cycle.CycleWriter;
 
 /**
- * TemplateProcessor�̊g���C���^�[�t�F�C�X�B�q�v�f�̕]���̋@�\�����B
+ * TemplateProcessorの拡張インターフェイス。子要素の評価の機能を持つ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ChildEvaluationProcessor extends IterationProcessor {
 
     /**
-     * �{�f�B�̃X�^�b�N�]�����s������Ԃ��BJSP��BodyTag���z�X�g���Ă���ꍇ��
-     * ���p����B�f�t�H���g�ł�false��Ԃ��Btrue���ƁAsetBodyContent()���\�b�h
-     * �����doInitChildProcess()���\�b�h���R���e�i���Ăяo�����B
-     * @return �{�f�B�̃X�^�b�N�]��������ꍇ�Atrue�B���ʂ�false�B
+     * ボディのスタック評価を行うかを返す。JSPのBodyTagをホストしている場合に
+     * 利用する。デフォルトではfalseを返す。trueだと、setBodyContent()メソッド
+     * およびdoInitChildProcess()メソッドがコンテナより呼び出される。
+     * @return ボディのスタック評価をする場合、true。普通はfalse。
      */
     boolean isChildEvaluation();
 
     /**
-     * �{�f�B�̃X�^�b�N�]�����s���ꍇ�A�X�^�b�N�������s��ꂽ�{�f�B���̃o�b�t�@��
-     * �R���e�i���Z�b�g����B
-     * @param body �X�^�b�N�ɐς܂ꂽ�{�f�B���̃o�b�t�@�B
+     * ボディのスタック評価を行う場合、スタック処理が行われたボディ部のバッファを
+     * コンテナがセットする。
+     * @param body スタックに積まれたボディ部のバッファ。
      */
     void setBodyContent(CycleWriter body);
 
     /**
-     * �{�f�B�̃X�^�b�N�]�����s���ꍇ�A�]���O�Ɉ�x�A�R���e�i���Ăяo�����B
+     * ボディのスタック評価を行う場合、評価前に一度、コンテナより呼び出される。
      */
     void doInitChildProcess();
 

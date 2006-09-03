@@ -22,7 +22,7 @@ import java.util.List;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
- * ソースディスクリプタを保持するオブジェクトを管理する
+ * 繧ｽ繝ｼ繧ｹ繝�繧｣繧ｹ繧ｯ繝ｪ繝励ち繧剃ｿ晄戟縺吶ｋ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ邂｡逅�縺吶ｋ
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class SourceHolderFactory {

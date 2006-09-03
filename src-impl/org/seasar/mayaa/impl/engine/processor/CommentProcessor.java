@@ -110,7 +110,7 @@ public class CommentProcessor extends CharactersProcessor implements CONST_IMPL 
             getProcessorDefinition().getLibraryDefinition().getNamespaceURI();
         String processorDefName = getProcessorDefinition().getName();
         QName qName = SpecificationUtil.createQName(processorDefNameSpace, processorDefName);
-        // メモリリークを引き起こす可能性のある参照関係を断つ
+        // 繝｡繝｢繝ｪ繝ｪ繝ｼ繧ｯ繧貞ｼ輔″襍ｷ縺薙☆蜿ｯ閭ｽ諤ｧ縺ｮ縺ゅｋ蜿ら�ｧ髢｢菫ゅｒ譁ｭ縺､
         // new NodeAttributeImpl(qName, "text");
         PrefixAwareName prefixAwareName =
             SpecificationUtil.createPrefixAwareName(qName, "");

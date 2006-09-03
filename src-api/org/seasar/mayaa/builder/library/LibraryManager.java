@@ -24,74 +24,74 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 
 /**
- * MLDƒ‚ƒfƒ‹ƒIƒuƒWƒFƒNƒg‚Ìƒ‹[ƒgB
+ * MLDãƒ¢ãƒ‡ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ«ãƒ¼ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface LibraryManager extends ParameterAware {
 
     /**
-     * ƒvƒƒpƒeƒBŒ^ƒRƒ“ƒo[ƒ^‚Ì’Ç‰ÁB
-     * @param name ƒRƒ“ƒo[ƒ^–¼A‚à‚µ‚­‚Ínull‚â‹ó”’•¶š—ñB
-     * @param propertyConverter ƒRƒ“ƒo[ƒ^B
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®è¿½åŠ ã€‚
+     * @param name ã‚³ãƒ³ãƒãƒ¼ã‚¿åã€ã‚‚ã—ãã¯nullã‚„ç©ºç™½æ–‡å­—åˆ—ã€‚
+     * @param propertyConverter ã‚³ãƒ³ãƒãƒ¼ã‚¿ã€‚
      */
     void addPropertyConverter(
             String name, PropertyConverter propertyConverter);
 
     /**
-     * ƒvƒƒpƒeƒBŒ^ƒRƒ“ƒo[ƒ^‚Ìæ“¾B
-     * @param converterName ƒRƒ“ƒo[ƒ^“o˜^–¼B
-     * @return w’è–¼‚ÌƒRƒ“ƒo[ƒ^A‚à‚µ‚­‚ÍnullB
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®å–å¾—ã€‚
+     * @param converterName ã‚³ãƒ³ãƒãƒ¼ã‚¿ç™»éŒ²åã€‚
+     * @return æŒ‡å®šåã®ã‚³ãƒ³ãƒãƒ¼ã‚¿ã€ã‚‚ã—ãã¯nullã€‚
      */
     PropertyConverter getPropertyConverter(String converterName);
 
     /**
-     * ƒvƒƒpƒeƒBŒ^ƒRƒ“ƒo[ƒ^‚Ìæ“¾B
-     * @param propertyClass ƒvƒƒpƒeƒBŒ^B
-     * @return ƒRƒ“ƒo[ƒ^B‚à‚µ‚­‚ÍnullB
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®å–å¾—ã€‚
+     * @param propertyClass ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã€‚
+     * @return ã‚³ãƒ³ãƒãƒ¼ã‚¿ã€‚ã‚‚ã—ãã¯nullã€‚
      */
     PropertyConverter getPropertyConverter(Class propertyClass);
 
     /**
-     * ƒvƒƒpƒeƒBŒ^ƒRƒ“ƒo[ƒ^‚ÌƒCƒeƒŒ[ƒ^B
-     * @return ƒRƒ“ƒo[ƒ^ƒCƒeƒŒ[ƒ^B
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã‚³ãƒ³ãƒãƒ¼ã‚¿ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
+     * @return ã‚³ãƒ³ãƒãƒ¼ã‚¿ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iteratePropertyConverters();
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒXƒXƒLƒƒƒi‚Ì’Ç‰ÁB
-     * @param scanner ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒXƒXƒLƒƒƒiB
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã‚¹ã‚­ãƒ£ãƒŠã®è¿½åŠ ã€‚
+     * @param scanner ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã‚¹ã‚­ãƒ£ãƒŠã€‚
      */
     void addSourceScanner(SourceScanner scanner);
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒrƒ‹ƒ_‚Ì’Ç‰ÁB
-     * @param builder ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒrƒ‹ƒ_B
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ãƒ“ãƒ«ãƒ€ã®è¿½åŠ ã€‚
+     * @param builder ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ãƒ“ãƒ«ãƒ€ã€‚
      */
     void addDefinitionBuilder(DefinitionBuilder builder);
 
     /**
-     * •K—v‚È‚çƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»ˆ—‚ğs‚¤B
+     * å¿…è¦ãªã‚‰ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–å‡¦ç†ã‚’è¡Œã†ã€‚
      */
     void prepareLibraries();
 
     /**
-     * ‘SMLDİ’èi=<code>LibraryDefinition</code>j‚ÌƒCƒeƒŒ[ƒ^æ“¾B
-     * @return MLDİ’è‚ÌƒCƒeƒŒ[ƒ^B
+     * å…¨MLDè¨­å®šï¼ˆ=<code>LibraryDefinition</code>ï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿å–å¾—ã€‚
+     * @return MLDè¨­å®šã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateLibraryDefinition();
 
     /**
-     * w’èURI‚ÅŠY“–‚·‚éMLDİ’è‚ÌƒCƒeƒŒ[ƒ^æ“¾B
-     * @param namespaceURI æ“¾‚µ‚½‚¢MLD‚Ì–¼‘O‹óŠÔURIB
-     * @return MLDİ’è‚ÌƒCƒeƒŒ[ƒ^B
+     * æŒ‡å®šURIã§è©²å½“ã™ã‚‹MLDè¨­å®šã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿å–å¾—ã€‚
+     * @param namespaceURI å–å¾—ã—ãŸã„MLDã®åå‰ç©ºé–“URIã€‚
+     * @return MLDè¨­å®šã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateLibraryDefinition(URI namespaceURI);
 
     /**
-     * QName‚ÅŠY“–‚·‚éƒvƒƒZƒbƒT’è‹`i=<code>ProcessorDefinition</code>j‚ğŒŸõ‚·‚éB
-     * ˆê”Ô‚Í‚¶‚ß‚ÉŒ©‚Â‚©‚Á‚½‚à‚Ì‚ğ•Ô‚·B
-     * @param qName æ“¾‚µ‚½‚¢ƒvƒƒZƒbƒT’è‹`‚Ìw’èQNameB
-     * @return w’èQName‚ÌƒvƒƒZƒbƒT’è‹`BŒ©‚Â‚©‚ç‚È‚¢ê‡‚ÍnullB
+     * QNameã§è©²å½“ã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µå®šç¾©ï¼ˆ=<code>ProcessorDefinition</code>ï¼‰ã‚’æ¤œç´¢ã™ã‚‹ã€‚
+     * ä¸€ç•ªã¯ã˜ã‚ã«è¦‹ã¤ã‹ã£ãŸã‚‚ã®ã‚’è¿”ã™ã€‚
+     * @param qName å–å¾—ã—ãŸã„ãƒ—ãƒ­ã‚»ãƒƒã‚µå®šç¾©ã®æŒ‡å®šQNameã€‚
+     * @return æŒ‡å®šQNameã®ãƒ—ãƒ­ã‚»ãƒƒã‚µå®šç¾©ã€‚è¦‹ã¤ã‹ã‚‰ãªã„å ´åˆã¯nullã€‚
      */
     ProcessorDefinition getProcessorDefinition(QName qName);
 

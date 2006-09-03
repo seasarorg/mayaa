@@ -18,19 +18,19 @@ package org.seasar.mayaa.builder.injection;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒg‚É‹Lq‚³‚ê‚½HTMLƒ^ƒO‚ÉA’Ç‰Á“I‚Èî•ñ‚ð•ÛŽ‚·‚éƒm[ƒh‚ð
- * ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒŒƒ]ƒ‹ƒoƒ`ƒF[ƒ“B‚±‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX‚ÌŽÀ‘•ƒIƒuƒWƒFƒNƒg‚Í
- * ƒGƒ“ƒWƒ“‚ª’ñ‹Ÿ‚·‚éB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã«è¨˜è¿°ã•ã‚ŒãŸHTMLã‚¿ã‚°ã«ã€è¿½åŠ çš„ãªæƒ…å ±ã‚’ä¿æŒã™ã‚‹ãƒŽãƒ¼ãƒ‰ã‚’
+ * ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒ¬ã‚¾ãƒ«ãƒãƒã‚§ãƒ¼ãƒ³ã€‚ã“ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å®Ÿè£…ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯
+ * ã‚¨ãƒ³ã‚¸ãƒ³ãŒæä¾›ã™ã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface InjectionChain {
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹‚Èƒm[ƒh‚ÉƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒm[ƒh‚ðŒˆ’è‚·‚éÛ‚Ì
-     * ƒ`ƒF[ƒ“ƒƒ\ƒbƒhBInjectionResolver#getNode()‚Ìˆø”‚Æ‚µ‚Ä“n‚³‚ê‚éB
-     * InjectionResolver‚ÌŠeŽÀ‘•‚Í‚±‚ÌInjectionChain‚©‚çƒm[ƒh‚Ì‰ðŒˆ‚ð“¾‚éB
-     * @param original ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹‚Èƒm[ƒhB
-     * @return ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒm[ƒh‚à‚µ‚­‚ÍnullB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãªãƒŽãƒ¼ãƒ‰ã«ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒŽãƒ¼ãƒ‰ã‚’æ±ºå®šã™ã‚‹éš›ã®
+     * ãƒã‚§ãƒ¼ãƒ³ãƒ¡ã‚½ãƒƒãƒ‰ã€‚InjectionResolver#getNode()ã®å¼•æ•°ã¨ã—ã¦æ¸¡ã•ã‚Œã‚‹ã€‚
+     * InjectionResolverã®å„å®Ÿè£…ã¯ã“ã®InjectionChainã‹ã‚‰ãƒŽãƒ¼ãƒ‰ã®è§£æ±ºã‚’å¾—ã‚‹ã€‚
+     * @param original ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãªãƒŽãƒ¼ãƒ‰ã€‚
+     * @return ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒŽãƒ¼ãƒ‰ã‚‚ã—ãã¯nullã€‚
      */
     SpecificationNode getNode(SpecificationNode original);
 

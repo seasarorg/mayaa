@@ -179,7 +179,7 @@ public class InsertProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        // ƒŒƒ“ƒ_ƒŠƒ“ƒO’†‚Éƒy[ƒW‚ª‰ğ•ú‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚éB
+        // ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ä¸­ã«ãƒšãƒ¼ã‚¸ãŒè§£æ”¾ã•ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹ã€‚
         Page renderPage = getPage();
         String requestedSuffix = _suffix;
         String extension = _extension;

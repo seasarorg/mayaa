@@ -22,10 +22,10 @@ package org.seasar.mayaa.engine.specification.serialize;
 public interface ProcessorReferenceResolverFinder {
 
     /**
-     * ƒcƒŠ[ãˆÊ‚ÉˆÊ’u‚·‚éƒVƒŠƒAƒ‰ƒCƒY‚ÌˆË‘¶ŠÖŒW‚ğ
-     * ‰ğŒˆ‚·‚é‚½‚ß‚ÌAƒvƒƒZƒbƒTQÆƒŠƒ]ƒ‹ƒo‚ğŒŸõ‚·‚éB
+     * ãƒ„ãƒªãƒ¼ä¸Šä½ã«ä½ç½®ã™ã‚‹ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºæ™‚ã®ä¾å­˜é–¢ä¿‚ã‚’
+     * è§£æ±ºã™ã‚‹ãŸã‚ã®ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µå‚ç…§ãƒªã‚¾ãƒ«ãƒã‚’æ¤œç´¢ã™ã‚‹ã€‚
      * 
-     * @return ‘Î‰‚·‚éƒvƒƒZƒbƒTQÆƒŠƒ]ƒ‹ƒoB‘¶İ‚µ‚È‚¢ê‡‚Íƒkƒ‹B
+     * @return å¯¾å¿œã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µå‚ç…§ãƒªã‚¾ãƒ«ãƒã€‚å­˜åœ¨ã—ãªã„å ´åˆã¯ãƒŒãƒ«ã€‚
      */
     ProcessorReferenceResolver findProcessorResolver();
 

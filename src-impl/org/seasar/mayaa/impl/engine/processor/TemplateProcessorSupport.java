@@ -370,7 +370,7 @@ public class TemplateProcessorSupport
         ProcessorReferenceResolver resolver = findProcessorResolver();
         resolver.processorLoaded(processorUniqueID, this);
 
-        // readResolveはextendsした最終クラスでしか発生しないので、ここで解決
+        // readResolve縺ｯextends縺励◆譛邨ゅけ繝ｩ繧ｹ縺ｧ縺励°逋ｺ逕溘＠縺ｪ縺�縺ｮ縺ｧ縲√％縺薙〒隗｣豎ｺ
         if (_children != null) {
             for (int i = _children.size() - 1; i >= 0 ; i--) {
                 ProcessorTreeWalker child =

@@ -21,23 +21,23 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 
 /**
- * ƒvƒƒZƒbƒTİ’è‚ÌƒvƒƒpƒeƒB’l‚ğ•ÏŠ·’ñ‹Ÿ‚·‚éƒRƒ“ƒo[ƒ^B
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µè¨­å®šã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å€¤ã‚’å¤‰æ›æä¾›ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ã‚¿ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface PropertyConverter extends ParameterAware {
 
     /**
-     * ‚±‚ÌƒRƒ“ƒo[ƒ^‚ªˆ—‚ğs‚¤ƒvƒƒpƒeƒB‚ÌÃ“IŒ^‚ğæ“¾‚·‚éB
-     * @return ƒvƒƒpƒeƒBŒ^B
+     * ã“ã®ã‚³ãƒ³ãƒãƒ¼ã‚¿ãŒå‡¦ç†ã‚’è¡Œã†ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®é™çš„å‹ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‹ã€‚
      */
     Class getPropetyClass();
 
     /**
-     * ƒvƒƒpƒeƒB‚Ì•ÏŠ·‚ğs‚¤B
-     * @param attribute İ’è‘®«B
-     * @param value •ÏŠ·‚·‚é•¶š—ñ’lB
-     * @param expectedClass “®“I’l‚Ìê‡‚ÉŠú‘Ò‚·‚é“®“IŒ^B
-     * @return •ÏŠ·’lB
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®å¤‰æ›ã‚’è¡Œã†ã€‚
+     * @param attribute è¨­å®šå±æ€§ã€‚
+     * @param value å¤‰æ›ã™ã‚‹æ–‡å­—åˆ—å€¤ã€‚
+     * @param expectedClass å‹•çš„å€¤ã®å ´åˆã«æœŸå¾…ã™ã‚‹å‹•çš„å‹ã€‚
+     * @return å¤‰æ›å€¤ã€‚
      */
     Serializable convert(NodeAttribute attribute, String value, Class expectedClass);
 

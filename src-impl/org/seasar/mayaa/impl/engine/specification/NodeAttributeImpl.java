@@ -36,7 +36,7 @@ public class NodeAttributeImpl implements NodeAttribute {
     private transient SpecificationNode _node;
     private QName _qName;
     private String _value;
-    private String _prefix; // ’è‹`‚Ì‚à‚Ì
+    private String _prefix; // å®šç¾©æ™‚ã®ã‚‚ã®
 
     public NodeAttributeImpl(QName qName, String value) {
         this(qName, value, null);

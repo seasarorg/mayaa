@@ -18,18 +18,18 @@ package org.seasar.mayaa.engine.processor;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
- * ‚ ‚ç‚©‚¶‚ßAMLDiMayaa Library Definitionjƒtƒ@ƒCƒ‹‚É‹Lq‚³‚ê‚Ä‚¢‚é‚ªA
- * ƒvƒƒZƒbƒT‚ÉŒÅ—L‚ÌƒvƒƒpƒeƒB‚ª–³‚¢ê‡iƒo[ƒ`ƒƒƒ‹ƒvƒƒpƒeƒBj
- * ‚Ìó‚¯“ü‚ê‚ğs‚¤ƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * ã‚ã‚‰ã‹ã˜ã‚ã€MLDï¼ˆMayaa Library Definitionï¼‰ãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¿°ã•ã‚Œã¦ã„ã‚‹ãŒã€
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µã«å›ºæœ‰ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãŒç„¡ã„å ´åˆï¼ˆãƒãƒ¼ãƒãƒ£ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼‰
+ * ã®å—ã‘å…¥ã‚Œã‚’è¡Œã†ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface VirtualPropertyAcceptable
         extends ProcessorTreeWalker {
 
     /**
-     * ƒo[ƒ`ƒƒƒ‹ƒvƒƒpƒeƒB‚Ö‚Ì’lİ’èB
-     * @param name ƒvƒƒpƒeƒB–¼B
-     * @param property ƒvƒƒpƒeƒB’lB
+     * ãƒãƒ¼ãƒãƒ£ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¸ã®å€¤è¨­å®šã€‚
+     * @param name ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£åã€‚
+     * @param property ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å€¤ã€‚
      */
     void addVirtualProperty(PrefixAwareName name, Object property);
 

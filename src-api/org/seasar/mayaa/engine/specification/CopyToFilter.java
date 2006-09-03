@@ -21,10 +21,10 @@ package org.seasar.mayaa.engine.specification;
 public interface CopyToFilter {
 
     /**
-     * q‚Ìƒm[ƒhƒIƒuƒWƒFƒNƒgiSpecificationNodeANodeAttributeANodeNamespacej‚ğ
-     * ƒRƒs[‚·‚é‚©‚Ç‚¤‚©‚ğ•Ô‚·ƒtƒBƒ‹ƒ^Btrue‚¾‚ÆƒRƒs[B
-     * @param test ƒeƒXƒg‚·‚éƒm[ƒhƒIƒuƒWƒFƒNƒgB
-     * @return ƒRƒs[‚·‚é‚©‚Ç‚¤‚©B
+     * å­ã®ãƒãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆSpecificationNodeã€NodeAttributeã€NodeNamespaceï¼‰ã‚’
+     * ã‚³ãƒ”ãƒ¼ã™ã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã™ãƒ•ã‚£ãƒ«ã‚¿ã€‚trueã ã¨ã‚³ãƒ”ãƒ¼ã€‚
+     * @param test ãƒ†ã‚¹ãƒˆã™ã‚‹ãƒãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @return ã‚³ãƒ”ãƒ¼ã™ã‚‹ã‹ã©ã†ã‹ã€‚
      */
     boolean accept(NodeObject test);
 

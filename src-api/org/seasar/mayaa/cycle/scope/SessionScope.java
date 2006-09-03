@@ -20,15 +20,15 @@ import java.io.Serializable;
 import org.seasar.mayaa.ContextAware;
 
 /**
- * ƒZƒbƒVƒ‡ƒ“ƒŒƒxƒ‹‚ÌƒXƒR[ƒvB
+ * ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒ¬ãƒ™ãƒ«ã®ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SessionScope
         extends Serializable, AttributeScope, ContextAware {
 
     /**
-     * ƒZƒbƒVƒ‡ƒ“ID‚Ìæ“¾B
-     * @return ƒZƒbƒVƒ‡ƒ“IDB
+     * ã‚»ãƒƒã‚·ãƒ§ãƒ³IDã®å–å¾—ã€‚
+     * @return ã‚»ãƒƒã‚·ãƒ§ãƒ³IDã€‚
      */
     String getSessionID();
 

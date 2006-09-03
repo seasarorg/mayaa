@@ -24,17 +24,17 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 public interface NodeReferenceResolver {
 
     /**
-     * ƒfƒVƒŠƒAƒ‰ƒCƒYŠ®—¹‚ÌÛ‚ÉAƒm[ƒhQÆ‚ª‰ğŒˆ‚µ‚½‚±‚Æ‚ğ
-     * ’Ê’m‚µ‚Ä‚à‚ç‚¤‚½‚ß‚ÌƒŠƒXƒi‚ğ“o˜^‚·‚éB
-     * @param uniqueID ‘ÎÛƒm[ƒh‚Ìƒ†ƒj[ƒN¯•ÊqBsystemID{sequenceID
-     * @param listener ƒŠƒXƒi
+     * ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå®Œäº†ã®éš›ã«ã€ãƒãƒ¼ãƒ‰å‚ç…§ãŒè§£æ±ºã—ãŸã“ã¨ã‚’
+     * é€šçŸ¥ã—ã¦ã‚‚ã‚‰ã†ãŸã‚ã®ãƒªã‚¹ãƒŠã‚’ç™»éŒ²ã™ã‚‹ã€‚
+     * @param uniqueID å¯¾è±¡ãƒãƒ¼ãƒ‰ã®ãƒ¦ãƒ‹ãƒ¼ã‚¯è­˜åˆ¥å­ã€‚systemIDï¼‹sequenceID
+     * @param listener ãƒªã‚¹ãƒŠ
      */
     void registResolveNodeListener(
             String uniqueID, NodeResolveListener listener);
 
     /**
-     * •œŒ³‚µ‚½ƒvƒƒZƒbƒT‚ğƒŠƒ]ƒ‹ƒo‚É’Ê’m‚·‚éB
-     * @param item •Û‘¶‚·‚éƒm[ƒh
+     * å¾©å…ƒã—ãŸãƒ—ãƒ­ã‚»ãƒƒã‚µã‚’ãƒªã‚¾ãƒ«ãƒã«é€šçŸ¥ã™ã‚‹ã€‚
+     * @param item ä¿å­˜ã™ã‚‹ãƒãƒ¼ãƒ‰
      */
     void nodeLoaded(SpecificationNode item);
 

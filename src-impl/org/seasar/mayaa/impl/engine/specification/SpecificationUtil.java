@@ -78,7 +78,7 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Specification findSpecification() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         NodeTreeWalker current = cycle.getOriginalNode();
-        // ƒŠƒ\[ƒXƒAƒNƒZƒX’†‚Éredirect‚µ‚Ä‚à‘Î‰‚Å‚«‚é‚æ‚¤‚É‚·‚éB
+        // ãƒªã‚½ãƒ¼ã‚¹ã‚¢ã‚¯ã‚»ã‚¹ä¸­ã«redirectã—ã¦ã‚‚å¯¾å¿œã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚
         if (current != null) {
             return findSpecification(current);
         }
@@ -234,8 +234,8 @@ public class SpecificationUtil implements CONST_IMPL {
 
     // script cache ----------------------------------------------
 
-    // TODO SpecificationNode ƒŠƒrƒ‹ƒh‚ÉƒLƒƒƒbƒVƒ…‚ª–³‘Ê‚É‚È‚é‚±‚Æ‚ğ‘Îˆ
-    // WeakHashMap ‚ğg‚Á‚Ä‚¢‚é‚©‚ç‘åä•vH
+    // TODO SpecificationNode ãƒªãƒ“ãƒ«ãƒ‰æ™‚ã«ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãŒç„¡é§„ã«ãªã‚‹ã“ã¨ã‚’å¯¾å‡¦
+    // WeakHashMap ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã‚‰å¤§ä¸ˆå¤«ï¼Ÿ
     protected static class EventScriptEnvironment {
 
         private static final LiteralScript NULL_SCRIPT = new LiteralScript("");

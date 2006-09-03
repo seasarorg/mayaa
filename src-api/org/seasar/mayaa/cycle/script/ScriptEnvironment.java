@@ -24,69 +24,69 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
- * ƒXƒNƒŠƒvƒg‚ÌŽÀsŠÂ‹«B
+ * ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®å®Ÿè¡Œç’°å¢ƒã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ScriptEnvironment extends ParameterAware {
 
     /**
-     * ƒ†[ƒU[’è‹`ƒXƒR[ƒvƒIƒuƒWƒFƒNƒg‚ð’Ç‰Á‚·‚éB
-     * @param attrs ƒ†[ƒU[’è‹`ƒXƒR[ƒvB
+     * ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿½åŠ ã™ã‚‹ã€‚
+     * @param attrs ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     void addAttributeScope(AttributeScope attrs);
 
     /**
-     * ƒ†[ƒU[’è‹`ƒXƒR[ƒvƒIƒuƒWƒFƒNƒg‚ðƒCƒeƒŒ[ƒg‚·‚éB
-     * @return ƒXƒR[ƒvƒIƒuƒWƒFƒNƒgiAttributeScopej‚ÌƒCƒeƒŒ[ƒ^B
+     * ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
+     * @return ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆAttributeScopeï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateAttributeScope();
 
     /**
-     * ƒXƒNƒŠƒvƒg•¶Žš—ñƒuƒƒbƒN‚ÌŠJ‚«ƒNƒI[ƒg‚É‘O’u‚³‚ê‚éŽ¯•Ê•¶Žš—ñ‚ÌŽæ“¾B
-     * @return ŠJ‚«ƒNƒI[ƒg‘O’u•¶Žš—ñB
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆæ–‡å­—åˆ—ãƒ–ãƒ­ãƒƒã‚¯ã®é–‹ãã‚¯ã‚ªãƒ¼ãƒˆã«å‰ç½®ã•ã‚Œã‚‹è­˜åˆ¥æ–‡å­—åˆ—ã®å–å¾—ã€‚
+     * @return é–‹ãã‚¯ã‚ªãƒ¼ãƒˆå‰ç½®æ–‡å­—åˆ—ã€‚
      */
     String getBlockSign();
 
     /**
-     * Ž®•¶Žš—ñ‚ðƒRƒ“ƒpƒCƒ‹‚·‚éB
-     * @param script ƒXƒNƒŠƒvƒgB
-     * @param position ƒXƒNƒŠƒvƒgƒ\[ƒX‚ÌˆÊ’uî•ñB
-     * @return ƒRƒ“ƒpƒCƒ‹Ï‚ÝƒXƒNƒŠƒvƒgƒIƒuƒWƒFƒNƒgB
+     * å¼æ–‡å­—åˆ—ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚
+     * @param script ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€‚
+     * @param position ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ã®ä½ç½®æƒ…å ±ã€‚
+     * @return ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     CompiledScript compile(String script, PositionAware position);
 
     /**
-     * ƒXƒNƒŠƒvƒgƒ\[ƒXƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ñ‚ÅƒRƒ“ƒpƒCƒ‹‚·‚éB
-     * @param source ƒXƒNƒŠƒvƒgƒ\[ƒXƒtƒ@ƒCƒ‹B
-     * @param encoding ƒXƒNƒŠƒvƒgƒ\[ƒXƒtƒ@ƒCƒ‹‚ÌƒGƒ“ƒR[ƒfƒBƒ“ƒOB
-     * @return ƒRƒ“ƒpƒCƒ‹Ï‚ÝƒXƒNƒŠƒvƒgƒIƒuƒWƒFƒNƒgB
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚“ã§ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚
+     * @param source ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã€‚
+     * @param encoding ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã€‚
+     * @return ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     CompiledScript compile(SourceDescriptor source, String encoding);
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg•`‰æŽž‚ÉAƒvƒƒZƒbƒT‚ÌƒXƒ^[ƒgƒCƒxƒ“ƒg‚Æ“¯Šú‚·‚é‚½‚ß‚Ìƒƒ\ƒbƒhB
-     * ƒJƒŒƒ“ƒgServiceCycle‚Ìƒy[ƒWƒXƒR[ƒv‚ð‰Šú‰»‚·‚éB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæç”»æ™‚ã«ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µã®ã‚¹ã‚¿ãƒ¼ãƒˆã‚¤ãƒ™ãƒ³ãƒˆã¨åŒæœŸã™ã‚‹ãŸã‚ã®ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * ã‚«ãƒ¬ãƒ³ãƒˆServiceCycleã®ãƒšãƒ¼ã‚¸ã‚¹ã‚³ãƒ¼ãƒ—ã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
      */
     void initScope();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg•`‰æŽž‚ÉAƒvƒƒZƒbƒT‚ÌƒXƒ^[ƒgƒCƒxƒ“ƒg‚Æ“¯Šú‚·‚é‚½‚ß‚Ìƒƒ\ƒbƒhB
-     * ƒJƒŒƒ“ƒgServiceCycle‚Ìƒy[ƒWƒXƒR[ƒv‚ÉAƒXƒNƒŠƒvƒg•Ï”‚ðƒvƒbƒVƒ…‚·‚éB
-     * @param variables ƒJƒXƒ^ƒ€ƒXƒR[ƒv•Ï”B
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæç”»æ™‚ã«ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µã®ã‚¹ã‚¿ãƒ¼ãƒˆã‚¤ãƒ™ãƒ³ãƒˆã¨åŒæœŸã™ã‚‹ãŸã‚ã®ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * ã‚«ãƒ¬ãƒ³ãƒˆServiceCycleã®ãƒšãƒ¼ã‚¸ã‚¹ã‚³ãƒ¼ãƒ—ã«ã€ã‚¹ã‚¯ãƒªãƒ—ãƒˆå¤‰æ•°ã‚’ãƒ—ãƒƒã‚·ãƒ¥ã™ã‚‹ã€‚
+     * @param variables ã‚«ã‚¹ã‚¿ãƒ ã‚¹ã‚³ãƒ¼ãƒ—å¤‰æ•°ã€‚
      */
     void startScope(Map variables);
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg•`‰æŽž‚ÉAƒvƒƒZƒbƒT‚ÌƒGƒ“ƒhƒCƒxƒ“ƒg‚Æ“¯Šú‚·‚é‚½‚ß‚Ìƒƒ\ƒbƒhB
-     * ƒJƒŒƒ“ƒgServiceCycle‚Ìƒy[ƒWƒXƒR[ƒv‚©‚çAƒXƒNƒŠƒvƒg‚ÌƒXƒR[ƒvƒIƒuƒWƒFƒNƒg
-     * ‚ðƒ|ƒbƒv‚·‚éB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆæç”»æ™‚ã«ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µã®ã‚¨ãƒ³ãƒ‰ã‚¤ãƒ™ãƒ³ãƒˆã¨åŒæœŸã™ã‚‹ãŸã‚ã®ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * ã‚«ãƒ¬ãƒ³ãƒˆServiceCycleã®ãƒšãƒ¼ã‚¸ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰ã€ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+     * ã‚’ãƒãƒƒãƒ—ã™ã‚‹ã€‚
      */
     void endScope();
 
     /**
-     * ƒXƒNƒŠƒvƒg“à•”•\Œ»ƒIƒuƒWƒFƒNƒg‚©‚çAJava‚ÌƒIƒuƒWƒFƒNƒg‚É•ÏŠ·‚·‚éB
-     * @param scriptObject ƒXƒNƒŠƒvƒg“à•”•\Œ»ƒIƒuƒWƒFƒNƒgB
-     * @return Java‚ÌƒIƒuƒWƒFƒNƒgB
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆå†…éƒ¨è¡¨ç¾ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰ã€Javaã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å¤‰æ›ã™ã‚‹ã€‚
+     * @param scriptObject ã‚¹ã‚¯ãƒªãƒ—ãƒˆå†…éƒ¨è¡¨ç¾ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+     * @return Javaã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     Object convertFromScriptObject(Object scriptObject);
 

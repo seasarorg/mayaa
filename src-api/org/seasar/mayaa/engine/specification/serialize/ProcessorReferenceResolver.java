@@ -23,18 +23,18 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 public interface ProcessorReferenceResolver {
 
     /**
-     * ƒfƒVƒŠƒAƒ‰ƒCƒYŠ®—¹‚ÌÛ‚ÉAƒvƒƒZƒbƒTQÆ‚ª‰ğŒˆ‚µ‚½‚±‚Æ‚ğ
-     * ’Ê’m‚µ‚Ä‚à‚ç‚¤‚½‚ß‚ÌƒŠƒXƒi‚ğ“o˜^‚·‚éB
-     * @param uniqueID ‘ÎÛƒvƒƒZƒbƒTID
-     * @param listener ƒŠƒXƒi
+     * ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå®Œäº†ã®éš›ã«ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µå‚ç…§ãŒè§£æ±ºã—ãŸã“ã¨ã‚’
+     * é€šçŸ¥ã—ã¦ã‚‚ã‚‰ã†ãŸã‚ã®ãƒªã‚¹ãƒŠã‚’ç™»éŒ²ã™ã‚‹ã€‚
+     * @param uniqueID å¯¾è±¡ãƒ—ãƒ­ã‚»ãƒƒã‚µID
+     * @param listener ãƒªã‚¹ãƒŠ
      */
     void registResolveProcessorListener(
             String uniqueID, ProcessorResolveListener listener);
 
     /**
-     * •œŒ³‚µ‚½ƒvƒƒZƒbƒT‚ğƒŠƒ]ƒ‹ƒo‚É’Ê’m‚·‚éB
-     * @param uniqueID ‘ÎÛƒvƒƒZƒbƒTID
-     * @param item •œŒ³‚µ‚½ƒvƒƒZƒbƒT
+     * å¾©å…ƒã—ãŸãƒ—ãƒ­ã‚»ãƒƒã‚µã‚’ãƒªã‚¾ãƒ«ãƒã«é€šçŸ¥ã™ã‚‹ã€‚
+     * @param uniqueID å¯¾è±¡ãƒ—ãƒ­ã‚»ãƒƒã‚µID
+     * @param item å¾©å…ƒã—ãŸãƒ—ãƒ­ã‚»ãƒƒã‚µ
      */
     void processorLoaded(String uniqueID, ProcessorTreeWalker item);
 

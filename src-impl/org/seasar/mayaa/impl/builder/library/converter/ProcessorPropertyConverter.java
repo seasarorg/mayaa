@@ -42,7 +42,7 @@ public class ProcessorPropertyConverter
         if (attribute == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        // メモリリークを引き起こす可能性があるので参照関係を断つ
+        // 繝｡繝｢繝ｪ繝ｪ繝ｼ繧ｯ繧貞ｼ輔″襍ｷ縺薙☆蜿ｯ閭ｽ諤ｧ縺後≠繧九�ｮ縺ｧ蜿ら�ｧ髢｢菫ゅｒ譁ｭ縺､
         PrefixAwareName prefixAwareName =
             SpecificationUtil.createPrefixAwareName(
                     attribute.getQName(), attribute.getPrefix());

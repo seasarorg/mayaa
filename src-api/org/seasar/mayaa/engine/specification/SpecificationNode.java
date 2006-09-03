@@ -18,74 +18,74 @@ package org.seasar.mayaa.engine.specification;
 import java.util.Iterator;
 
 /**
- * İ’èXML‚Ì\¬•¨B
+ * è¨­å®šXMLã®æ§‹æˆç‰©ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationNode
         extends NodeTreeWalker, Namespace, PrefixAwareName {
 
     /**
-     * ƒrƒ‹ƒh‚ÉAƒXƒyƒbƒN“à‚Åƒ†ƒj[ƒN‚ÉÌ”Ô‚³‚ê‚é’l‚ğİ’è‚·‚éB
-     * @param sequenceID ƒXƒyƒbƒN“à‚Ìƒ†ƒj[ƒN’lB
+     * ãƒ“ãƒ«ãƒ‰æ™‚ã«ã€ã‚¹ãƒšãƒƒã‚¯å†…ã§ãƒ¦ãƒ‹ãƒ¼ã‚¯ã«æ¡ç•ªã•ã‚Œã‚‹å€¤ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param sequenceID ã‚¹ãƒšãƒƒã‚¯å†…ã®ãƒ¦ãƒ‹ãƒ¼ã‚¯å€¤ã€‚
      */
     void setSequenceID(int sequenceID);
 
     /**
-     * ƒXƒyƒbƒN“à‚Åƒ†ƒj[ƒN‚Éİ’è‚³‚ê‚½’l‚ğæ“¾‚·‚éB
-     * @return ƒXƒyƒbƒN“à‚Ìƒ†ƒj[ƒN’lB
+     * ã‚¹ãƒšãƒƒã‚¯å†…ã§ãƒ¦ãƒ‹ãƒ¼ã‚¯ã«è¨­å®šã•ã‚ŒãŸå€¤ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚¹ãƒšãƒƒã‚¯å†…ã®ãƒ¦ãƒ‹ãƒ¼ã‚¯å€¤ã€‚
      */
     int getSequenceID();
 
     /**
-     * ƒm[ƒh‘®«‚Ì’Ç‰ÁB
-     * @param qName ‘®«–¼B
-     * @param value ‘®«’lB
+     * ãƒãƒ¼ãƒ‰å±æ€§ã®è¿½åŠ ã€‚
+     * @param qName å±æ€§åã€‚
+     * @param value å±æ€§å€¤ã€‚
      */
     void addAttribute(QName qName, String value);
 
     /**
-     * ƒm[ƒh‘®«‚Ì’Ç‰ÁB
-     * @param qName ‘®«–¼B
-     * @param originalName ‘®«–¼(qName‚É‚·‚é‘O‚ÌƒIƒŠƒWƒiƒ‹)
-     * @param value ‘®«’lB
+     * ãƒãƒ¼ãƒ‰å±æ€§ã®è¿½åŠ ã€‚
+     * @param qName å±æ€§åã€‚
+     * @param originalName å±æ€§å(qNameã«ã™ã‚‹å‰ã®ã‚ªãƒªã‚¸ãƒŠãƒ«)
+     * @param value å±æ€§å€¤ã€‚
      */
     void addAttribute(QName qName, String originalName, String value);
 
     /**
-     * ‘®«‚Ìæ“¾B
-     * @param qName æ“¾‚·‚é‘®«‚ÌQNameB
-     * @return ‘®«ƒIƒuƒWƒFƒNƒgB
+     * å±æ€§ã®å–å¾—ã€‚
+     * @param qName å–å¾—ã™ã‚‹å±æ€§ã®QNameã€‚
+     * @return å±æ€§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     NodeAttribute getAttribute(QName qName);
 
     /**
-     * ‘®«‚ÌƒCƒeƒŒ[ƒgB
-     * @return ‘®«i<code>NodeAttribute</code>j‚ÌƒCƒeƒŒ[ƒ^B
+     * å±æ€§ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã€‚
+     * @return å±æ€§ï¼ˆ<code>NodeAttribute</code>ï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateAttribute();
 
     /**
-     * ‘®«‚ÌíœB
-     * @param qName íœ‚·‚é‘®«‚ÌQNameB
-     * @return İ’è‚µ‚Ä‚¢‚½ƒIƒuƒWƒFƒNƒgB‘¶İ‚µ‚È‚©‚Á‚½ê‡‚Íƒkƒ‹‚ğ•Ô‚·B
+     * å±æ€§ã®å‰Šé™¤ã€‚
+     * @param qName å‰Šé™¤ã™ã‚‹å±æ€§ã®QNameã€‚
+     * @return è¨­å®šã—ã¦ã„ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚å­˜åœ¨ã—ãªã‹ã£ãŸå ´åˆã¯ãƒŒãƒ«ã‚’è¿”ã™ã€‚
      */
     NodeAttribute removeAttribute(QName qName);
     
     /**
-     * ‘®«‚ğ‘S‚Äíœ‚·‚éB
+     * å±æ€§ã‚’å…¨ã¦å‰Šé™¤ã™ã‚‹ã€‚
      */
     void clearAttributes();
 
     /**
-     * ©•ª‚ÌƒRƒs[‚ğ¶¬‚µ‚Ä•Ô‚·B‚½‚¾‚µAeƒm[ƒh‚Íİ’è‚³‚ê‚Ä‚¢‚È‚¢B
-     * @return ©•ª‚ÌƒRƒs[B
+     * è‡ªåˆ†ã®ã‚³ãƒ”ãƒ¼ã‚’ç”Ÿæˆã—ã¦è¿”ã™ã€‚ãŸã ã—ã€è¦ªãƒãƒ¼ãƒ‰ã¯è¨­å®šã•ã‚Œã¦ã„ãªã„ã€‚
+     * @return è‡ªåˆ†ã®ã‚³ãƒ”ãƒ¼ã€‚
      */
     SpecificationNode copyTo();
 
     /**
-     * ƒtƒBƒ‹ƒ^•t‚«‚Å©•ª‚ÌƒRƒs[‚ğ¶¬‚µ‚Ä•Ô‚·B‚½‚¾‚µAeƒm[ƒh‚Íİ’è‚³‚ê‚Ä‚¢‚È‚¢B
-     * @param filter ƒRƒs[ƒtƒBƒ‹ƒ^B
-     * @return ©•ª‚ÌƒRƒs[B
+     * ãƒ•ã‚£ãƒ«ã‚¿ä»˜ãã§è‡ªåˆ†ã®ã‚³ãƒ”ãƒ¼ã‚’ç”Ÿæˆã—ã¦è¿”ã™ã€‚ãŸã ã—ã€è¦ªãƒãƒ¼ãƒ‰ã¯è¨­å®šã•ã‚Œã¦ã„ãªã„ã€‚
+     * @param filter ã‚³ãƒ”ãƒ¼æ™‚ãƒ•ã‚£ãƒ«ã‚¿ã€‚
+     * @return è‡ªåˆ†ã®ã‚³ãƒ”ãƒ¼ã€‚
      */
     SpecificationNode copyTo(CopyToFilter filter);
 

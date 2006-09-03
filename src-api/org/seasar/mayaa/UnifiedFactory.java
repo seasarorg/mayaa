@@ -24,14 +24,14 @@ public interface UnifiedFactory
     extends ContextAware, ParameterAware, Serializable {
 
     /**
-     * �t�@�N�g���̏������B�쐬����T�[�r�X�Ώۂ̎����N���X�̐ݒ�B
-     * @param serviceClass �T�[�r�X�Ώێ����N���X�^�B
+     * ファクトリの初期化。作成するサービス対象の実装クラスの設定。
+     * @param serviceClass サービス対象実装クラス型。
      */
     void setServiceClass(Class serviceClass);
 
     /**
-     * �쐬����T�[�r�X�Ώێ����N���X�̎擾�B
-     * @return �T�[�r�X�Ώێ����N���X�^�B
+     * 作成するサービス対象実装クラスの取得。
+     * @return サービス対象実装クラス型。
      */
     Class getServiceClass();
 

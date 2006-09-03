@@ -21,16 +21,16 @@ package org.seasar.mayaa;
 interface TODO {
 
     /*
-     * TODO �R���|�[�l���g�̃N���C�A���g���X�N���v�g�ACSS�̋@�\�̌����B
+     * TODO コンポーネントのクライアント側スクリプト、CSSの機能の検討。
      *
-     * TODO ���C�A�E�g��R���|�[�l���g�̒��ڎ��s�𐧌�����@�\�̌����B
+     * TODO レイアウトやコンポーネントの直接実行を制限する機能の検討。
      *
-     * FIXME P�̉���DIV��u���ăR���|�[�l���g����낤�Ƃ���ƍ��Ȃ�
-     * �u���b�N�v�f�s�̂Ƃ���Ƀu���b�N�v�f�����邽�߁H
+     * FIXME Pの下にDIVを置いてコンポーネントを作ろうとすると作れない
+     * ブロック要素不可のところにブロック要素があるため？
      *
-     * TODO Marshall���ɓo�^�ς݂�libraryManager/builder���㏑���ł���悤�ɂ��邩
+     * TODO Marshall時に登録済みのlibraryManager/builderを上書きできるようにするか
      *
-     * TODO �O���X�N���v�g�̃G���[���\�[�X�ƈꏏ�ɕ\������
+     * TODO 外部スクリプトのエラーをソースと一緒に表示する
      *
      */
 

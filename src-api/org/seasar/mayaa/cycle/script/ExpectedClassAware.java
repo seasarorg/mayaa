@@ -21,14 +21,14 @@ package org.seasar.mayaa.cycle.script;
 public interface ExpectedClassAware {
 
     /**
-     * �X�N���v�g���s���ʂւ̊��Ҍ^�̐ݒ�B
-     * @param expectedClass ���s���ʂɊ��҂���N���X�^�B
+     * スクリプト実行結果への期待型の設定。
+     * @param expectedClass 実行結果に期待するクラス型。
      */
     void setExpectedClass(Class expectedClass);
 
     /**
-     * �X�N���v�g���s���ʂւ̊��Ҍ^�̎擾�B
-     * @return ���s���ʂɊ��҂����N���X�^�B
+     * スクリプト実行結果への期待型の取得。
+     * @return 実行結果に期待されるクラス型。
      */
     Class getExpectedClass();
 

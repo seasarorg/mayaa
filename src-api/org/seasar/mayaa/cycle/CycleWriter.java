@@ -19,37 +19,37 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * ƒlƒXƒg‚µ‚½o—Í\‘¢‚ğ‚à‚ÂWriterƒIƒuƒWƒFƒNƒgB
+ * ãƒã‚¹ãƒˆã—ãŸå‡ºåŠ›æ§‹é€ ã‚’ã‚‚ã¤Writerã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class CycleWriter extends Writer {
 
     /**
-     * ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Å“n‚³‚ê‚½AãˆÊ‚ÌWriter‚ğ•Ô‚·Bnull‚Ìê‡‚à‚ ‚è‚¦‚éB
-     * @return ãˆÊ‚ÌWriterB
+     * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§æ¸¡ã•ã‚ŒãŸã€ä¸Šä½ã®Writerã‚’è¿”ã™ã€‚nullã®å ´åˆã‚‚ã‚ã‚Šãˆã‚‹ã€‚
+     * @return ä¸Šä½ã®Writerã€‚
      */
     public abstract CycleWriter getEnclosingWriter();
 
     /**
-     * ƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚éB
+     * ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ã€‚
      */
     public abstract void clearBuffer();
 
     /**
-     * ƒoƒbƒtƒ@‚Ì“à—e‚ğString‚Åæ“¾‚·‚éB
-     * @return ƒoƒbƒtƒ@“à—eB
+     * ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’Stringã§å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒãƒƒãƒ•ã‚¡å†…å®¹ã€‚
      */
     public abstract String getString();
 
     /**
-     * ƒoƒbƒtƒ@‚É‘‚«‚İ‚ª‚³‚ê‚½‚©‚Ç‚¤‚©‚ğ•Ô‚·B
-     * @return ƒoƒbƒtƒ@‚É‘‚«‚İ‚ª‚³‚ê‚Ä‚¢‚ê‚Îtrue‚ğ•Ô‚·B
+     * ãƒãƒƒãƒ•ã‚¡ã«æ›¸ãè¾¼ã¿ãŒã•ã‚ŒãŸã‹ã©ã†ã‹ã‚’è¿”ã™ã€‚
+     * @return ãƒãƒƒãƒ•ã‚¡ã«æ›¸ãè¾¼ã¿ãŒã•ã‚Œã¦ã„ã‚Œã°trueã‚’è¿”ã™ã€‚
      */
     public abstract boolean isDirty();
 
     /**
-     * w’èWriter‚Éƒoƒbƒtƒ@“à—e‚ğ‘‚«o‚·B
-     * @param writer ‘‚«o‚µæ‚ÌWriterB
+     * æŒ‡å®šWriterã«ãƒãƒƒãƒ•ã‚¡å†…å®¹ã‚’æ›¸ãå‡ºã™ã€‚
+     * @param writer æ›¸ãå‡ºã—å…ˆã®Writerã€‚
      * @throws IOException
      */
     public abstract void writeOut(Writer writer) throws IOException;

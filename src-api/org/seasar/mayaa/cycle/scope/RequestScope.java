@@ -21,63 +21,63 @@ import java.util.Locale;
 import org.seasar.mayaa.ContextAware;
 
 /**
- * ƒŠƒNƒGƒXƒgƒŒƒxƒ‹‚ÌƒXƒR[ƒvB
+ * ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã®ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface RequestScope
         extends Serializable, AttributeScope, ContextAware {
 
     /**
-     * WEBƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒRƒ“ƒeƒLƒXƒg‚ÌƒpƒX•”‚ð•Ô‚·B
-     * @return ƒRƒ“ƒeƒLƒXƒgƒpƒXB
+     * WEBã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ‘ã‚¹éƒ¨ã‚’è¿”ã™ã€‚
+     * @return ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆãƒ‘ã‚¹ã€‚
      */
     String getContextPath();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒpƒX•¶Žš—ñ‚ðŽæ“¾‚·‚éB
-     * @return ƒpƒX•¶Žš—ñB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒ‘ã‚¹æ–‡å­—åˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ‘ã‚¹æ–‡å­—åˆ—ã€‚
      */
     String getRequestedPath();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒy[ƒW–¼‚ðŽæ“¾‚·‚éB
-     * @return ƒŠƒNƒGƒXƒgƒy[ƒW–¼B
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒšãƒ¼ã‚¸åã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒšãƒ¼ã‚¸åã€‚
      */
     String getPageName();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚Å‹­§‚³‚ê‚éƒy[ƒWÚ”öŽ«‚ðŽæ“¾‚·‚éB
-     * @return ƒŠƒNƒGƒXƒgÚ”öŽ«A‚à‚µ‚­‚ÍnullB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã§å¼·åˆ¶ã•ã‚Œã‚‹ãƒšãƒ¼ã‚¸æŽ¥å°¾è¾žã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆæŽ¥å°¾è¾žã€ã‚‚ã—ãã¯nullã€‚
      */
     String getRequestedSuffix();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒy[ƒWŠg’£Žq‚ðŽæ“¾‚·‚éB
-     * @return ƒŠƒNƒGƒXƒgŠg’£ŽqB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒšãƒ¼ã‚¸æ‹¡å¼µå­ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆæ‹¡å¼µå­ã€‚
      */
     String getExtension();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒpƒX‚æ‚è—Þ„‚Å‚«‚éMIMEŒ^‚ð•Ô‚·B
-     * @return ƒŠƒNƒGƒXƒg‚³‚ê‚½ƒpƒX‚©‚ç—Þ„‚³‚ê‚éMIMEŒ^B
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒ‘ã‚¹ã‚ˆã‚Šé¡žæŽ¨ã§ãã‚‹MIMEåž‹ã‚’è¿”ã™ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆã•ã‚ŒãŸãƒ‘ã‚¹ã‹ã‚‰é¡žæŽ¨ã•ã‚Œã‚‹MIMEåž‹ã€‚
      */
     String getMimeType();
 
     /**
-     * ƒŠƒNƒGƒXƒg‚ÌƒƒP[ƒ‹‚ð•Ô‚·B
-     * @return ƒŠƒNƒGƒXƒgƒƒP[ƒ‹B
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®ãƒ­ã‚±ãƒ¼ãƒ«ã‚’è¿”ã™ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒ­ã‚±ãƒ¼ãƒ«ã€‚
      */
     Locale[] getLocales();
 
     /**
-     * ƒŠƒNƒGƒXƒgƒpƒ‰ƒ[ƒ^‚ðŠÜ‚ÞƒXƒR[ƒv‚ðŽæ“¾‚·‚éB“à•ï‚·‚éƒIƒuƒWƒFƒNƒg‚ÍString‚Ì”z—ñB
-     * @return ƒNƒGƒŠƒpƒ‰ƒ[ƒ^ƒXƒR[ƒvB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å«ã‚€ã‚¹ã‚³ãƒ¼ãƒ—ã‚’å–å¾—ã™ã‚‹ã€‚å†…åŒ…ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯Stringã®é…åˆ—ã€‚
+     * @return ã‚¯ã‚¨ãƒªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     AttributeScope getParamValues();
 
     /**
-     * ƒŠƒNƒGƒXƒgƒwƒbƒ_‚ðŠÜ‚ÞƒXƒR[ƒv‚ðŽæ“¾‚·‚éB“à•ï‚·‚éƒIƒuƒWƒFƒNƒg‚ÍString‚Ì”z—ñB
-     * @return ƒNƒGƒŠƒpƒ‰ƒ[ƒ^ƒXƒR[ƒvB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒ˜ãƒƒãƒ€ã‚’å«ã‚€ã‚¹ã‚³ãƒ¼ãƒ—ã‚’å–å¾—ã™ã‚‹ã€‚å†…åŒ…ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯Stringã®é…åˆ—ã€‚
+     * @return ã‚¯ã‚¨ãƒªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     AttributeScope getHeaderValues();
 

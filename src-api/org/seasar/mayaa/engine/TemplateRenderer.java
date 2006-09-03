@@ -18,17 +18,17 @@ package org.seasar.mayaa.engine;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒg‚ğ•`‰æ‚·‚éƒIƒuƒWƒFƒNƒgB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’æç”»ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateRenderer {
 
     /**
-     * w’èƒeƒ“ƒvƒŒ[ƒg‚ğ•`‰æ‚·‚éB
-     * @param topLevelPage  •`‰æƒgƒbƒvƒŒƒxƒ‹‚Ìƒy[ƒWB
-     * @param templates •`‰æ‚·‚éƒeƒ“ƒvƒŒ[ƒgBƒŒƒCƒAƒEƒg—˜—p‚Ìê‡A
-     * ƒCƒ“ƒfƒbƒNƒX0‚É•`‰æƒeƒ“ƒvƒŒ[ƒgA1,2,3,...‚Æe‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªÏ‚İ‚±‚Ü‚ê‚éB
-     * @return ƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒT‚ÌƒvƒƒZƒXƒXƒe[ƒgƒtƒ‰ƒOB
+     * æŒ‡å®šãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’æç”»ã™ã‚‹ã€‚
+     * @param topLevelPage  æç”»ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã®ãƒšãƒ¼ã‚¸ã€‚
+     * @param templates æç”»ã™ã‚‹ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã€‚ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåˆ©ç”¨ã®å ´åˆã€
+     * ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹0ã«æç”»ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã€1,2,3,...ã¨è¦ªã®ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãŒç©ã¿ã“ã¾ã‚Œã‚‹ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µã®ãƒ—ãƒ­ã‚»ã‚¹ã‚¹ãƒ†ãƒ¼ãƒˆãƒ•ãƒ©ã‚°ã€‚
      */
     ProcessStatus renderTemplate(Page topLevelPage, Template[] templates);
 

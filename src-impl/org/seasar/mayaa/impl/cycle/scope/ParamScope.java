@@ -43,7 +43,7 @@ public class ParamScope extends AbstractReadOnlyAttributeScope {
         return values.hasAttribute(name);
     }
 
-    //TODO ƒL[‚Í‚ ‚Á‚Ä’l‚ª–³‚¢ê‡‚Ì‘Î‰‚ğŒŸ“¢iAttributeScope‘S”ÊjB
+    //TODO ã‚­ãƒ¼ã¯ã‚ã£ã¦å€¤ãŒç„¡ã„å ´åˆã®å¯¾å¿œã‚’æ¤œè¨ï¼ˆAttributeScopeå…¨èˆ¬ï¼‰ã€‚
     public Object getAttribute(String name) {
         if (hasAttribute(name)) {
             AttributeScope values = CycleUtil.getRequestScope().getParamValues();

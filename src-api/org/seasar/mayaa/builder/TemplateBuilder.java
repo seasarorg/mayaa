@@ -18,14 +18,14 @@ package org.seasar.mayaa.builder;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
 
 /**
- * HTMLƒeƒ“ƒvƒŒ[ƒg‚Ìƒrƒ‹ƒ_
+ * HTMLãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ãƒ“ãƒ«ãƒ€
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface TemplateBuilder extends SpecificationBuilder {
 
     /**
-     * ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“ƒŠƒ]ƒ‹ƒo‚Ì’Ç‰Á‚ğs‚¤B
-     * @param resolver ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“ƒŠƒ]ƒ‹ƒoB
+     * ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ãƒªã‚¾ãƒ«ãƒã®è¿½åŠ ã‚’è¡Œã†ã€‚
+     * @param resolver ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ãƒªã‚¾ãƒ«ãƒã€‚
      */
     void addInjectionResolver(InjectionResolver resolver);
 

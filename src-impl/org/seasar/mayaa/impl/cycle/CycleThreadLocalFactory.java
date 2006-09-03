@@ -22,7 +22,7 @@ import java.util.Map;
 import org.seasar.mayaa.cycle.CycleLocalInstantiator;
 
 /**
- * ƒŠƒNƒGƒXƒg‚Ìƒ‰ƒCƒtƒTƒCƒNƒ‹‚¾‚¯—LŒø‚ÈƒIƒuƒWƒFƒNƒg‚ğŠÇ—‚·‚éB
+ * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã ã‘æœ‰åŠ¹ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç®¡ç†ã™ã‚‹ã€‚
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class CycleThreadLocalFactory {

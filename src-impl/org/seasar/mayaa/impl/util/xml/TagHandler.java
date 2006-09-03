@@ -71,7 +71,7 @@ public class TagHandler {
         return _valid;
     }
 
-    // HandlerStack���Ăяo�����B
+    // HandlerStackより呼び出される。
     public TagHandler startElement(String name, Attributes attributes,
             String systemID, int lineNumber) {
         if (_valid) {
@@ -86,12 +86,12 @@ public class TagHandler {
         return NULL_HANDLER;
     }
 
-    // HandlerStack���Ăяo�����B
+    // HandlerStackより呼び出される。
     public void endElement() {
         end(_buffer.toString().trim());
     }
 
-    // HandlerStack���Ăяo�����B
+    // HandlerStackより呼び出される。
     public void characters(String body) {
         _buffer.append(body);
     }

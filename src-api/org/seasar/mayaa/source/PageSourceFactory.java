@@ -18,15 +18,15 @@ package org.seasar.mayaa.source;
 import org.seasar.mayaa.UnifiedFactory;
 
 /**
- * ƒ\[ƒX’è‹`‚Ìƒtƒ@ƒNƒgƒŠB
+ * ã‚½ãƒ¼ã‚¹å®šç¾©ã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface PageSourceFactory extends UnifiedFactory {
 
     /**
-     * ƒ\[ƒX’è‹`‚Ì¶¬Eæ“¾‚ğ‚¨‚±‚È‚¤B
-     * @param systemID ƒ\[ƒX‚ÌSystemIDB
-     * @return ƒ\[ƒX’è‹`B
+     * ã‚½ãƒ¼ã‚¹å®šç¾©ã®ç”Ÿæˆãƒ»å–å¾—ã‚’ãŠã“ãªã†ã€‚
+     * @param systemID ã‚½ãƒ¼ã‚¹ã®SystemIDã€‚
+     * @return ã‚½ãƒ¼ã‚¹å®šç¾©ã€‚
      */
     SourceDescriptor getPageSource(String systemID);
 

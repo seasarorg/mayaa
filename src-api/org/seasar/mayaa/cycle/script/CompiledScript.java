@@ -18,56 +18,56 @@ package org.seasar.mayaa.cycle.script;
 import java.io.Serializable;
 
 /**
- * ƒRƒ“ƒpƒCƒ‹Ï‚Ý‚ÌƒXƒNƒŠƒvƒgƒIƒuƒWƒFƒNƒgB
+ * ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface CompiledScript
         extends Serializable, ExpectedClassAware {
 
     /**
-     * ƒRƒ“ƒpƒCƒ‹‰Â”\‚¨‚æ‚ÑƒŠƒeƒ‰ƒ‹‚ð–â‚í‚¸A“ü—ÍƒeƒLƒXƒg‚ðŽæ“¾‚·‚éB
-     * @return “ü—ÍƒeƒLƒXƒgB
+     * ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å¯èƒ½ãŠã‚ˆã³ãƒªãƒ†ãƒ©ãƒ«ã‚’å•ã‚ãšã€å…¥åŠ›ãƒ†ã‚­ã‚¹ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return å…¥åŠ›ãƒ†ã‚­ã‚¹ãƒˆã€‚
      */
     String getScriptText();
 
     /**
-     * ƒŠƒeƒ‰ƒ‹ƒeƒLƒXƒg‚©‚Ç‚¤‚©B
-     * @return ƒRƒ“ƒpƒCƒ‹Œ‹‰Ê‚ªAƒŠƒeƒ‰ƒ‹‚¾‚Á‚½‚çtrueB
+     * ãƒªãƒ†ãƒ©ãƒ«ãƒ†ã‚­ã‚¹ãƒˆã‹ã©ã†ã‹ã€‚
+     * @return ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«çµæžœãŒã€ãƒªãƒ†ãƒ©ãƒ«ã ã£ãŸã‚‰trueã€‚
      */
     boolean isLiteral();
 
     /**
-     * ƒXƒNƒŠƒvƒg‚ðŽÀs‚µ‚Ä’l‚ðŽæ“¾‚·‚éB
-     * @param args null‚à‚µ‚­‚ÍAŽÀsŽžˆø”iJSF“™ƒ~ƒhƒ‹ƒEƒFƒA‘Î‰žjB
-     * @return ŽÀsŒ‹‰Ê‚Ì’lB
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å®Ÿè¡Œã—ã¦å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @param args nullã‚‚ã—ãã¯ã€å®Ÿè¡Œæ™‚å¼•æ•°ï¼ˆJSFç­‰ãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢å¯¾å¿œï¼‰ã€‚
+     * @return å®Ÿè¡Œçµæžœã®å€¤ã€‚
      */
     Object execute(Object[] args);
 
     /**
-     * JSF“™‚ÌŽ®Œ¾Œê—lŽ®ŽÀsƒ~ƒhƒ‹ƒEƒFƒA‘Î‰žB
-     * Ž®Œ¾Œê—lŽ®‚Ìƒƒ\ƒbƒhƒR[ƒ‹‚Ì‚½‚ß‚Ìˆø”Œ^‚ðÝ’è‚·‚éB
-     * @param methodArgClasses ƒƒ\ƒbƒhˆø”Œ^”z—ñB
+     * JSFç­‰ã®å¼è¨€èªžæ§˜å¼å®Ÿè¡ŒãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢å¯¾å¿œã€‚
+     * å¼è¨€èªžæ§˜å¼ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚³ãƒ¼ãƒ«ã®ãŸã‚ã®å¼•æ•°åž‹ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param methodArgClasses ãƒ¡ã‚½ãƒƒãƒ‰å¼•æ•°åž‹é…åˆ—ã€‚
      */
     void setMethodArgClasses(Class[] methodArgClasses);
 
     /**
-     * JSF“™‚ÌŽ®Œ¾Œê—lŽ®ŽÀsƒ~ƒhƒ‹ƒEƒFƒA‘Î‰žB
-     * Ž®Œ¾Œê—lŽ®‚Ìƒƒ\ƒbƒhƒR[ƒ‹‚Ì‚½‚ß‚Ìˆø”Œ^‚ðŽæ“¾‚·‚éB
-     * @return ƒƒ\ƒbƒhˆø”Œ^”z—ñB
+     * JSFç­‰ã®å¼è¨€èªžæ§˜å¼å®Ÿè¡ŒãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢å¯¾å¿œã€‚
+     * å¼è¨€èªžæ§˜å¼ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚³ãƒ¼ãƒ«ã®ãŸã‚ã®å¼•æ•°åž‹ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ¡ã‚½ãƒƒãƒ‰å¼•æ•°åž‹é…åˆ—ã€‚
      */
     Class[] getMethodArgClasses();
 
     /**
-     * JSF“™‚ÌŽ®Œ¾Œê—lŽ®ŽÀsƒ~ƒhƒ‹ƒEƒFƒA‘Î‰žB
-     * ƒXƒNƒŠƒvƒgƒuƒƒbƒN‚Ìó‘Ô‚ð’²‚×A“Ç‚ÝŽæ‚è‚Ì‚Ý‚©‚Ç‚¤‚©‚ð•Ô‚·B
-     * @return ƒRƒ“ƒpƒCƒ‹Œ‹‰Ê‚ªA’lÝ’è‰Â”\‚Å‚ ‚ê‚ÎtrueB
+     * JSFç­‰ã®å¼è¨€èªžæ§˜å¼å®Ÿè¡ŒãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢å¯¾å¿œã€‚
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ã‚’èª¿ã¹ã€èª­ã¿å–ã‚Šã®ã¿ã‹ã©ã†ã‹ã‚’è¿”ã™ã€‚
+     * @return ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«çµæžœãŒã€å€¤è¨­å®šå¯èƒ½ã§ã‚ã‚Œã°trueã€‚
      */
     boolean isReadOnly();
 
     /**
-     * JSF“™ƒ~ƒhƒ‹ƒEƒFƒA‘Î‰ž‹@”\B
-     * ƒXƒNƒŠƒvƒg‚ðŽÀs‚µ‚Ä’lÝ’è‚·‚éB
-     * @param value Ý’è‚·‚é’lB
+     * JSFç­‰ãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢å¯¾å¿œæ©Ÿèƒ½ã€‚
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å®Ÿè¡Œã—ã¦å€¤è¨­å®šã™ã‚‹ã€‚
+     * @param value è¨­å®šã™ã‚‹å€¤ã€‚
      */
     void assignValue(Object value);
 

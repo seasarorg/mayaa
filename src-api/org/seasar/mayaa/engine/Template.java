@@ -22,45 +22,45 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒgƒIƒuƒWƒFƒNƒgBHTML‚ğƒp[ƒX‚µ‚½Œ‹‰Ê‚ÌA
- * TemplateProcessor‚ÌƒcƒŠ[\‘¢‚ğ“à•ïB
- * ƒŠƒNƒGƒXƒg‚É‘Î‚µ‚ÄAƒXƒe[ƒgƒŒƒX‚Å‚ ‚éB ƒVƒŠƒAƒ‰ƒCƒY‰Â”\B
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚HTMLã‚’ãƒ‘ãƒ¼ã‚¹ã—ãŸçµæœã®ã€
+ * TemplateProcessorã®ãƒ„ãƒªãƒ¼æ§‹é€ ã‚’å†…åŒ…ã€‚
+ * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å¯¾ã—ã¦ã€ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¬ã‚¹ã§ã‚ã‚‹ã€‚ ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå¯èƒ½ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Template
         extends Specification, ProcessorTreeWalker, Serializable {
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚ğ‰Šú‰»‚·‚éB
-     * @param page ƒy[ƒWB
-     * @param suffix ƒeƒ“ƒvƒŒ[ƒg‚ÌÚ”öqB
-     * @param extension ƒy[ƒW‚ÌŠg’£qB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
+     * @param page ãƒšãƒ¼ã‚¸ã€‚
+     * @param suffix ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®æ¥å°¾å­ã€‚
+     * @param extension ãƒšãƒ¼ã‚¸ã®æ‹¡å¼µå­ã€‚
      */
     void initialize(Page page, String suffix, String extension);
 
     /**
-     * ƒy[ƒW‚Ö‚ÌQÆ‚ğæ“¾‚·‚éB
-     * @return ƒy[ƒWB
+     * ãƒšãƒ¼ã‚¸ã¸ã®å‚ç…§ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒšãƒ¼ã‚¸ã€‚
      */
     Page getPage();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚ÌÚ”öq‚ğ•Ô‚·Bhello_ja.html‚Å‚ ‚ê‚ÎAujav‚ğ•Ô‚·B
-     * hello.html‚Å‚Í‹ó”’•¶š—ñB
-     * @return ƒeƒ“ƒvƒŒ[ƒg‚ÌÚ”öqB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®æ¥å°¾å­ã‚’è¿”ã™ã€‚hello_ja.htmlã§ã‚ã‚Œã°ã€ã€Œjaã€ã‚’è¿”ã™ã€‚
+     * hello.htmlã§ã¯ç©ºç™½æ–‡å­—åˆ—ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®æ¥å°¾å­ã€‚
      */
     String getSuffix();
 
     /**
-     * ƒy[ƒW‚ÌŠg’£q‚ğ•Ô‚·B/context/hello.html‚¾‚ÆAuhtmlvBƒhƒbƒg‚ğŠÜ‚Ü‚È‚¢B
-     * @return ƒy[ƒW‚ÌŠg’£qB
+     * ãƒšãƒ¼ã‚¸ã®æ‹¡å¼µå­ã‚’è¿”ã™ã€‚/context/hello.htmlã ã¨ã€ã€Œhtmlã€ã€‚ãƒ‰ãƒƒãƒˆã‚’å«ã¾ãªã„ã€‚
+     * @return ãƒšãƒ¼ã‚¸ã®æ‹¡å¼µå­ã€‚
      */
     String getExtension();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚ğƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚éB
-     * @param topLevelPage  •`‰æƒgƒbƒvƒŒƒxƒ‹‚Ìƒy[ƒWB
-     * @return ƒeƒ“ƒvƒŒ[ƒgƒvƒƒZƒbƒT‚ÌƒvƒƒZƒXƒXƒe[ƒgƒtƒ‰ƒOB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã™ã‚‹ã€‚
+     * @param topLevelPage  æç”»ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã®ãƒšãƒ¼ã‚¸ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ—ãƒ­ã‚»ãƒƒã‚µã®ãƒ—ãƒ­ã‚»ã‚¹ã‚¹ãƒ†ãƒ¼ãƒˆãƒ•ãƒ©ã‚°ã€‚
      */
     ProcessStatus doTemplateRender(Page topLevelPage);
 

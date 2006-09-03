@@ -16,20 +16,20 @@
 package org.seasar.mayaa.engine.specification;
 
 /**
- * QName‚ğæ“¾‚Å‚«‚éƒIƒuƒWƒFƒNƒgB
+ * QNameã‚’å–å¾—ã§ãã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface PrefixAwareName extends NodeObject {
 
     /**
-     * –¼‘O‹óŠÔURI‚¨‚æ‚Ñƒ[ƒJƒ‹–¼‚Ì‘g‚İ‡‚í‚¹‚Ìæ“¾B
-     * @return –¼‘O‹óŠÔURI‚¨‚æ‚Ñƒ[ƒJƒ‹–¼‚Ì‘g‚İ‡‚í‚¹B
+     * åå‰ç©ºé–“URIãŠã‚ˆã³ãƒ­ãƒ¼ã‚«ãƒ«åã®çµ„ã¿åˆã‚ã›ã®å–å¾—ã€‚
+     * @return åå‰ç©ºé–“URIãŠã‚ˆã³ãƒ­ãƒ¼ã‚«ãƒ«åã®çµ„ã¿åˆã‚ã›ã€‚
      */
     QName getQName();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚âİ’èXML‚É‹Lq‚³‚ê‚Ä‚¢‚éƒvƒŒƒtƒBƒbƒNƒX‚ğæ“¾B
-     * @return ƒvƒŒƒtƒBƒbƒNƒX•¶š—ñ‚à‚µ‚­‚ÍnullB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚„è¨­å®šXMLã«è¨˜è¿°ã•ã‚Œã¦ã„ã‚‹ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚’å–å¾—ã€‚
+     * @return ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹æ–‡å­—åˆ—ã‚‚ã—ãã¯nullã€‚
      */
     String getPrefix();
 

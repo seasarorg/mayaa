@@ -40,13 +40,13 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
                 }
                 for (int i = 0; i < filters.length; i++) {
                     String filter = filters[i].trim();
-                    // Šg’£Žq‚ÌƒtƒBƒ‹ƒ^‚©H
+                    // æ‹¡å¼µå­ã®ãƒ•ã‚£ãƒ«ã‚¿ã‹ï¼Ÿ
                     if (filter.matches("^\\.[a-z0-9]+")) {
                         if (name.toLowerCase().endsWith(filter)) {
                             return true;
                         }
                     } else {
-                        // ‚»‚êˆÈŠO‚Í³‹K•\Œ»‚Æ‚Ý‚È‚·
+                        // ãã‚Œä»¥å¤–ã¯æ­£è¦è¡¨ç¾ã¨ã¿ãªã™
                         if (name.matches(filter)) {
                             return true;
                         }

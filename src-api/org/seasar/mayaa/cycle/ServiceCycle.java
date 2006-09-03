@@ -27,173 +27,173 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 
 /**
- * ƒT[ƒrƒX‚Ìƒ‰ƒCƒtƒTƒCƒNƒ‹ƒIƒuƒWƒFƒNƒgBHTTPƒŠƒNƒGƒXƒg‚ÌŠúŠÔA
- * ƒT[ƒrƒX‚ÌƒRƒ“ƒeƒLƒXƒg‚Æ‚È‚éB
+ * ã‚µãƒ¼ãƒ“ã‚¹ã®ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚HTTPãƒªã‚¯ã‚¨ã‚¹ãƒˆã®æœŸé–“ã€
+ * ã‚µãƒ¼ãƒ“ã‚¹ã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã¨ãªã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle
         extends ParameterAware, Serializable {
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒŒƒxƒ‹ƒXƒR[ƒvB
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¬ãƒ™ãƒ«ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     String SCOPE_APPLICATION = "application";
 
     /**
-     * ƒZƒbƒVƒ‡ƒ“ƒŒƒxƒ‹ƒXƒR[ƒvB
+     * ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒ¬ãƒ™ãƒ«ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     String SCOPE_SESSION = "session";
 
     /**
-     * ƒŠƒNƒGƒXƒgƒŒƒxƒ‹ƒXƒR[ƒvB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     String SCOPE_REQUEST = "request";
 
     /**
-     * ƒy[ƒWƒŒƒxƒ‹ƒXƒR[ƒvB
+     * ãƒšãƒ¼ã‚¸ãƒ¬ãƒ™ãƒ«ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     String SCOPE_PAGE = "page";
 
     /**
-     * ƒtƒHƒ[ƒh‚ğs‚¤B
-     * @param forwardPath ƒpƒX•¶š—ñB
+     * ãƒ•ã‚©ãƒ¯ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
+     * @param forwardPath ãƒ‘ã‚¹æ–‡å­—åˆ—ã€‚
      */
     void forward(String forwardPath);
 
     /**
-     * ƒŠƒ_ƒCƒŒƒNƒg‚ğs‚¤B
-     * @param url ƒŠƒ_ƒCƒŒƒNƒg‚ğs‚¤URL•¶š—ñB
+     * ãƒªãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚’è¡Œã†ã€‚
+     * @param url ãƒªãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚’è¡Œã†URLæ–‡å­—åˆ—ã€‚
      */
     void redirect(String url);
 
     /**
-     * ƒGƒ‰[ƒŒƒXƒ|ƒ“ƒX‚ğ•Ô‚·B
-     * @param errorCode ƒGƒ‰[ƒR[ƒhB
+     * ã‚¨ãƒ©ãƒ¼ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã‚’è¿”ã™ã€‚
+     * @param errorCode ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã€‚
      */
     void error(int errorCode);
 
     /**
-     * ƒƒbƒZ[ƒW‚ ‚è‚ÌƒGƒ‰[ƒŒƒXƒ|ƒ“ƒX‚ğ•Ô‚·B
-     * @param errorCode ƒGƒ‰[ƒR[ƒhB
-     * @param message ƒGƒ‰[ƒƒbƒZ[ƒWB
+     * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚ã‚Šã®ã‚¨ãƒ©ãƒ¼ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã‚’è¿”ã™ã€‚
+     * @param errorCode ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã€‚
+     * @param message ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã€‚
      */
     void error(int errorCode, String message);
 
     /**
-     * ƒJƒŒƒ“ƒg‚Ìƒy[ƒWƒXƒR[ƒv‚É‚ÄƒXƒNƒŠƒvƒg‚ğ“Ç‚İ‚İAÀs‚·‚éB
-     * ƒ\[ƒXƒGƒ“ƒR[ƒfƒBƒ“ƒO‚ÍUTF-8‚Æ‚·‚éB
-     * @param systemID ƒXƒNƒŠƒvƒgƒ\[ƒX‚ÌSystemIDB
+     * ã‚«ãƒ¬ãƒ³ãƒˆã®ãƒšãƒ¼ã‚¸ã‚¹ã‚³ãƒ¼ãƒ—ã«ã¦ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’èª­ã¿è¾¼ã¿ã€å®Ÿè¡Œã™ã‚‹ã€‚
+     * ã‚½ãƒ¼ã‚¹ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¯UTF-8ã¨ã™ã‚‹ã€‚
+     * @param systemID ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ã®SystemIDã€‚
      */
     void load(String systemID);
 
     /**
-     * ƒJƒŒƒ“ƒg‚Ìƒy[ƒWƒXƒR[ƒv‚É‚ÄƒXƒNƒŠƒvƒg‚ğ“Ç‚İ‚İAÀs‚·‚éB
-     * @param systemID ƒXƒNƒŠƒvƒgƒ\[ƒX‚ÌSystemIDB
-     * @param encoding ƒ\[ƒXƒGƒ“ƒR[ƒfƒBƒ“ƒOB
+     * ã‚«ãƒ¬ãƒ³ãƒˆã®ãƒšãƒ¼ã‚¸ã‚¹ã‚³ãƒ¼ãƒ—ã«ã¦ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’èª­ã¿è¾¼ã¿ã€å®Ÿè¡Œã™ã‚‹ã€‚
+     * @param systemID ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚½ãƒ¼ã‚¹ã®SystemIDã€‚
+     * @param encoding ã‚½ãƒ¼ã‚¹ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã€‚
      */
     void load(String systemID, String encoding);
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒvƒIƒuƒWƒFƒNƒg‚Ìæ“¾B
-     * @return ƒAƒvƒŠƒP[ƒVƒ‡ƒ“B
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—ã€‚
+     * @return ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã€‚
      */
     ApplicationScope getApplicationScope();
 
     /**
-     * ƒŠƒNƒGƒXƒgƒIƒuƒWƒFƒNƒg‚Ìæ“¾B
-     * @return ƒŠƒNƒGƒXƒgB
+     * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—ã€‚
+     * @return ãƒªã‚¯ã‚¨ã‚¹ãƒˆã€‚
      */
     RequestScope getRequestScope();
 
     /**
-     * ƒZƒbƒVƒ‡ƒ“‚Ìæ“¾B
-     * @return ƒZƒbƒVƒ‡ƒ“ƒIƒuƒWƒFƒNƒgB
+     * ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®å–å¾—ã€‚
+     * @return ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     SessionScope getSessionScope();
 
     /**
-     * ƒŒƒXƒ|ƒ“ƒXƒIƒuƒWƒFƒNƒg‚Ìæ“¾B
-     * @return ƒŒƒXƒ|ƒ“ƒXB
+     * ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—ã€‚
+     * @return ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã€‚
      */
     Response getResponse();
 
     /**
-     * upagevƒXƒR[ƒvƒIƒuƒWƒFƒNƒg‚Ìİ’èB
-     * @param page upagevƒXƒR[ƒvB
+     * ã€Œpageã€ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¨­å®šã€‚
+     * @param page ã€Œpageã€ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     void setPageScope(AttributeScope page);
 
     /**
-     * upagevƒXƒR[ƒvƒIƒuƒWƒFƒNƒg‚Ìæ“¾B
-     * @return upagevƒXƒR[ƒvB
+     * ã€Œpageã€ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—ã€‚
+     * @return ã€Œpageã€ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     AttributeScope getPageScope();
 
     /**
-     * w’èƒXƒR[ƒv‚ğ•Û‚µ‚Ä‚¢‚é‚©‚ğƒeƒXƒg‚·‚éB
-     * @param scopeName w’èƒXƒR[ƒv–¼B
-     * @return ƒeƒXƒgŒ‹‰ÊBw’èƒXƒR[ƒv‚ğ•Û‚µ‚Ä‚¢‚é‚Æ‚«trueB
+     * æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—ã‚’ä¿æŒã—ã¦ã„ã‚‹ã‹ã‚’ãƒ†ã‚¹ãƒˆã™ã‚‹ã€‚
+     * @param scopeName æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—åã€‚
+     * @return ãƒ†ã‚¹ãƒˆçµæœã€‚æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—ã‚’ä¿æŒã—ã¦ã„ã‚‹ã¨ãtrueã€‚
      */
     boolean hasAttributeScope(String scopeName);
 
     /**
-     * w’èƒXƒR[ƒv‚ğæ“¾‚·‚éB
-     * @param scopeName w’èƒXƒR[ƒv–¼B
-     * @return w’èƒXƒR[ƒvBƒXƒR[ƒv‚ª–³‚¢ê‡A—áŠOB
+     * æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @param scopeName æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—åã€‚
+     * @return æŒ‡å®šã‚¹ã‚³ãƒ¼ãƒ—ã€‚ã‚¹ã‚³ãƒ¼ãƒ—ãŒç„¡ã„å ´åˆã€ä¾‹å¤–ã€‚
      */
     AttributeScope getAttributeScope(String scopeName);
 
     /**
-     * ƒXƒR[ƒv‚ğƒCƒeƒŒ[ƒg‚·‚éB
-     * @return ƒXƒR[ƒviAttributeScopej‚ÌƒCƒeƒŒ[ƒ^B
+     * ã‚¹ã‚³ãƒ¼ãƒ—ã‚’ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
+     * @return ã‚¹ã‚³ãƒ¼ãƒ—ï¼ˆAttributeScopeï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateAttributeScope();
 
     /**
-     * Œ»İˆ—’†‚Ìƒeƒ“ƒvƒŒ[ƒgãƒm[ƒhî•ñ‚ğİ’è‚·‚éB
-     * @param node ƒeƒ“ƒvƒŒ[ƒgƒm[ƒhB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šãƒãƒ¼ãƒ‰æƒ…å ±ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param node ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒãƒ¼ãƒ‰ã€‚
      */
     void setOriginalNode(NodeTreeWalker node);
 
     /**
-     * Œ»İˆ—’†‚Ìƒeƒ“ƒvƒŒ[ƒgãƒm[ƒhî•ñ‚Ìæ“¾B
-     * @return ƒeƒ“ƒvƒŒ[ƒgƒm[ƒhB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šãƒãƒ¼ãƒ‰æƒ…å ±ã®å–å¾—ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒãƒ¼ãƒ‰ã€‚
      */
     NodeTreeWalker getOriginalNode();
 
     /**
-     * Œ»İˆ—’†‚ÌƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚³‚ê‚½ƒm[ƒhî•ñ‚Ìİ’èB
-     * @param node ƒCƒ“ƒWƒFƒNƒg‚³‚ê‚½ƒm[ƒhB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã•ã‚ŒãŸãƒãƒ¼ãƒ‰æƒ…å ±ã®è¨­å®šã€‚
+     * @param node ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ãƒˆã•ã‚ŒãŸãƒãƒ¼ãƒ‰ã€‚
      */
     void setInjectedNode(NodeTreeWalker node);
 
     /**
-     * Œ»İˆ—’†‚ÌƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚³‚ê‚½ƒm[ƒhî•ñ‚Ìæ“¾B
-     * @return ƒCƒ“ƒWƒFƒNƒg‚³‚ê‚½ƒm[ƒhB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã•ã‚ŒãŸãƒãƒ¼ãƒ‰æƒ…å ±ã®å–å¾—ã€‚
+     * @return ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ãƒˆã•ã‚ŒãŸãƒãƒ¼ãƒ‰ã€‚
      */
     NodeTreeWalker getInjectedNode();
 
     /**
-     * Œ»İˆ—’†‚ÌƒvƒƒZƒbƒT‚Ìİ’èB
-     * @param processor ˆ—’†‚ÌƒvƒƒZƒbƒTB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ãƒ—ãƒ­ã‚»ãƒƒã‚µã®è¨­å®šã€‚
+     * @param processor å‡¦ç†ä¸­ã®ãƒ—ãƒ­ã‚»ãƒƒã‚µã€‚
      */
     void setProcessor(ProcessorTreeWalker processor);
 
     /**
-     * Œ»İˆ—’†‚ÌƒvƒƒZƒbƒT‚Ìæ“¾B
-     * @return ˆ—’†‚ÌƒvƒƒZƒbƒTB‚à‚µ‚­‚ÍnullB
+     * ç¾åœ¨å‡¦ç†ä¸­ã®ãƒ—ãƒ­ã‚»ãƒƒã‚µã®å–å¾—ã€‚
+     * @return å‡¦ç†ä¸­ã®ãƒ—ãƒ­ã‚»ãƒƒã‚µã€‚ã‚‚ã—ãã¯nullã€‚
      */
     ProcessorTreeWalker getProcessor();
 
     /**
-     * ƒGƒ‰[ƒnƒ“ƒhƒ‹‚ÉQÆ‚·‚éA”­¶‚µ‚½—áŠOî•ñ‚Ìæ“¾B
-     * @param t ”­¶‚µ‚½—áŠOB
+     * ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ«æ™‚ã«å‚ç…§ã™ã‚‹ã€ç™ºç”Ÿã—ãŸä¾‹å¤–æƒ…å ±ã®å–å¾—ã€‚
+     * @param t ç™ºç”Ÿã—ãŸä¾‹å¤–ã€‚
      */
     void setHandledError(Throwable t);
 
     /**
-     * ƒGƒ‰[ƒnƒ“ƒhƒ‹‚ÉA”­¶‚µ‚½—áŠOî•ñ‚ğQÆ‚·‚éB
-     * @return ”­¶‚µ‚½—áŠOB‚à‚µ‚­‚ÍnullB
+     * ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ«æ™‚ã«ã€ç™ºç”Ÿã—ãŸä¾‹å¤–æƒ…å ±ã‚’å‚ç…§ã™ã‚‹ã€‚
+     * @return ç™ºç”Ÿã—ãŸä¾‹å¤–ã€‚ã‚‚ã—ãã¯nullã€‚
      */
     Throwable getHandledError();
 

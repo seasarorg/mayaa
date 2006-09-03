@@ -18,7 +18,7 @@ package org.seasar.mayaa.engine.processor;
 import java.io.Serializable;
 
 /**
- * ƒvƒƒZƒbƒT“®ì‚É‚Äó‘Ô‘JˆÚ‚ğ¦‚·ƒXƒe[ƒ^ƒXB
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µå‹•ä½œã«ã¦çŠ¶æ…‹é·ç§»ã‚’ç¤ºã™ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã€‚
  */
 public class ProcessStatus implements Serializable {
 
@@ -27,7 +27,7 @@ public class ProcessStatus implements Serializable {
     private String _status;
 
     /**
-     * @param status ƒXƒe[ƒ^ƒX•¶š—ñB
+     * @param status ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ–‡å­—åˆ—ã€‚
      */
     public ProcessStatus(String status) {
         if (status == null) {
@@ -37,8 +37,8 @@ public class ProcessStatus implements Serializable {
     }
 
     /**
-     * ƒXƒe[ƒ^ƒX•¶š—ñ‚ğæ“¾‚·‚éB
-     * @return ƒXƒe[ƒ^ƒX•¶š—ñB
+     * ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ–‡å­—åˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ–‡å­—åˆ—ã€‚
      */
     public String getStatus() {
         return _status;
@@ -60,43 +60,43 @@ public class ProcessStatus implements Serializable {
     // values ------------------------------------------------------
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOBTemplateProcessor#doStartProcess()‚ª‚±‚Ì’l‚ğ•Ô‚·‚ÆA
-     * ƒvƒƒZƒbƒTƒ{ƒfƒB‚ğo—Í‚µ‚È‚¢B
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚TemplateProcessor#doStartProcess()ãŒã“ã®å€¤ã‚’è¿”ã™ã¨ã€
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µãƒœãƒ‡ã‚£ã‚’å‡ºåŠ›ã—ãªã„ã€‚
      */
     public static final ProcessStatus SKIP_BODY =
         new ProcessStatus("SKIP_BODY");
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOBTemplateProcessor#doStartProcess()‚ª‚±‚Ì’l‚ğ•Ô‚·‚ÆA
-     * ƒvƒƒZƒbƒTƒ{ƒfƒB‚ğƒoƒbƒtƒ@ƒŠƒ“ƒO–³‚µ‚Åo—Í‚·‚éB
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚TemplateProcessor#doStartProcess()ãŒã“ã®å€¤ã‚’è¿”ã™ã¨ã€
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µãƒœãƒ‡ã‚£ã‚’ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°ç„¡ã—ã§å‡ºåŠ›ã™ã‚‹ã€‚
      */
     public static final ProcessStatus EVAL_BODY_INCLUDE  =
         new ProcessStatus("EVAL_BODY_INCLUDE");
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOBTemplateProcessor#doEndProcess()‚ª‚±‚Ì’l‚ğ•Ô‚·‚ÆA
-     * ˆÈ~‚Ìo—Í‚ğ‚½‚¾‚¿‚É’†~‚·‚éB
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚TemplateProcessor#doEndProcess()ãŒã“ã®å€¤ã‚’è¿”ã™ã¨ã€
+     * ä»¥é™ã®å‡ºåŠ›ã‚’ãŸã ã¡ã«ä¸­æ­¢ã™ã‚‹ã€‚
      */
     public static final ProcessStatus SKIP_PAGE =
            new ProcessStatus("SKIP_PAGE");
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOBTemplateProcessor#doEndProcess()‚ª‚±‚Ì’l‚ğ•Ô‚·‚ÆA
-     * ˆÈ~‚ÌƒvƒƒZƒbƒTo—Í‚ğ‘±‚¯‚éB
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚TemplateProcessor#doEndProcess()ãŒã“ã®å€¤ã‚’è¿”ã™ã¨ã€
+     * ä»¥é™ã®ãƒ—ãƒ­ã‚»ãƒƒã‚µå‡ºåŠ›ã‚’ç¶šã‘ã‚‹ã€‚
      */
     public static final ProcessStatus EVAL_PAGE =
         new ProcessStatus("EVAL_PAGE");
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOB‚±‚Ì’l‚ğItarateProcessor#doAfterChildProcess()
-     * ‚ª•Ô‚·‚ÆAÄƒCƒeƒŒ[ƒg‚·‚éB
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚ã“ã®å€¤ã‚’ItarateProcessor#doAfterChildProcess()
+     * ãŒè¿”ã™ã¨ã€å†ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
      */
     public static final ProcessStatus EVAL_BODY_AGAIN =
         new ProcessStatus("EVAL_BODY_AGAIN");
 
     /**
-     * ƒŠƒ^[ƒ“ƒtƒ‰ƒOB‚±‚Ì’l‚ğChildEvaluationProcessor#doStartProcess()
-     * ‚ª•Ô‚·‚ÆAƒvƒƒZƒbƒTƒ{ƒfƒB‚ğƒoƒbƒtƒ@ƒŠƒ“ƒO‚·‚éB
+     * ãƒªã‚¿ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã€‚ã“ã®å€¤ã‚’ChildEvaluationProcessor#doStartProcess()
+     * ãŒè¿”ã™ã¨ã€ãƒ—ãƒ­ã‚»ãƒƒã‚µãƒœãƒ‡ã‚£ã‚’ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°ã™ã‚‹ã€‚
      */
     public static final ProcessStatus EVAL_BODY_BUFFERED =
         new ProcessStatus("EVAL_BODY_BUFFERED");

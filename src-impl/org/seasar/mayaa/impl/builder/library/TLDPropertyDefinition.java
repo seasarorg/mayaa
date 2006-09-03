@@ -87,12 +87,12 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         }
         if (attribute != null) {
             if (isRtexprvalue()) {
-                // 動的値を許可
+                // 蜍慕噪蛟､繧定ｨｱ蜿ｯ
                 PropertyConverter converter = getConverterForProcessorProperty();
                 return converter.convert(attribute, attribute.getValue(), propertyClass);
             }
 
-            // 動的値は不許可
+            // 蜍慕噪蛟､縺ｯ荳崎ｨｱ蜿ｯ
             PrefixAwareName prefixAwareName =
                 SpecificationUtil.createPrefixAwareName(
                         attribute.getQName(), attribute.getPrefix());

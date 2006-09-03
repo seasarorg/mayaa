@@ -64,7 +64,7 @@ public class InsertSetter extends ParameterAwareImpl
             String name = qName.getLocalName();
             String path =
                 StringUtil.preparePath(uri.getValue()) + StringUtil.preparePath(name);
-            // TODO ‘¶İƒ`ƒFƒbƒN (ƒeƒ“ƒvƒŒ[ƒg‚ª‚ ‚é‚©‚Ç‚¤‚©‚Ísuffix‚Ìƒ`ƒFƒbƒN‚ª•K—v)
+            // TODO å­˜åœ¨ãƒã‚§ãƒƒã‚¯ (ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãŒã‚ã‚‹ã‹ã©ã†ã‹ã¯suffixã®ãƒã‚§ãƒƒã‚¯ãŒå¿…è¦)
             SourceDescriptor source = SourceUtil.getSourceDescriptor(uri.getValue());
             if (source.exists()) {
                 SpecificationNode node = BuilderUtil.createInjectedNode(

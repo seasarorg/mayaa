@@ -27,92 +27,92 @@ import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
 
 /**
- * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒXƒR[ƒv‚Å‚ÌƒT[ƒrƒX’ñ‹ŸƒIƒuƒWƒFƒNƒgB
+ * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã§ã®ã‚µãƒ¼ãƒ“ã‚¹æä¾›ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceProvider extends ParameterAware, Serializable {
 
     /**
-     * ƒGƒ“ƒWƒ“‚ğİ’è‚·‚éB
-     * @param engine ƒGƒ“ƒWƒ“B
+     * ã‚¨ãƒ³ã‚¸ãƒ³ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param engine ã‚¨ãƒ³ã‚¸ãƒ³ã€‚
      */
     void setEngine(Engine engine);
 
     /**
-     * ƒGƒ“ƒWƒ“‚ğæ“¾‚·‚éB
-     * @return ƒGƒ“ƒWƒ“
+     * ã‚¨ãƒ³ã‚¸ãƒ³ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ã‚¨ãƒ³ã‚¸ãƒ³
      */
     Engine getEngine();
 
     /**
-     * ƒXƒNƒŠƒvƒgÀsŠÂ‹«‚Ìİ’èB
-     * @param environment ƒXƒNƒŠƒvƒgÀsŠÂ‹«B
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆå®Ÿè¡Œç’°å¢ƒã®è¨­å®šã€‚
+     * @param environment ã‚¹ã‚¯ãƒªãƒ—ãƒˆå®Ÿè¡Œç’°å¢ƒã€‚
      */
     void setScriptEnvironment(ScriptEnvironment environment);
 
     /**
-     * ƒXƒNƒŠƒvƒgÀsŠÂ‹«‚Ìæ“¾B
-     * @return ƒXƒNƒŠƒvƒgÀsŠÂ‹«B
+     * ã‚¹ã‚¯ãƒªãƒ—ãƒˆå®Ÿè¡Œç’°å¢ƒã®å–å¾—ã€‚
+     * @return ã‚¹ã‚¯ãƒªãƒ—ãƒˆå®Ÿè¡Œç’°å¢ƒã€‚
      */
     ScriptEnvironment getScriptEnvironment();
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠƒ}ƒl[ƒWƒƒ‚ğİ’è‚·‚éB
-     * @param libraryManager ƒ‰ƒCƒuƒ‰ƒŠƒ}ƒl[ƒWƒƒB
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒãƒãƒ¼ã‚¸ãƒ£ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param libraryManager ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒãƒãƒ¼ã‚¸ãƒ£ã€‚
      */
     void setLibraryManager(LibraryManager libraryManager);
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠƒ}ƒl[ƒWƒƒ‚ğæ“¾‚·‚éB
-     * @return ƒ‰ƒCƒuƒ‰ƒŠƒ}ƒl[ƒWƒƒB
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒãƒãƒ¼ã‚¸ãƒ£ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒãƒãƒ¼ã‚¸ãƒ£ã€‚
      */
     LibraryManager getLibraryManager();
 
     /**
-     * İ’èXML‚Ìƒrƒ‹ƒ_‚ğİ’è‚·‚éB
-     * @param specificationBuilder İ’èXMLƒrƒ‹ƒ_B
+     * è¨­å®šXMLã®ãƒ“ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param specificationBuilder è¨­å®šXMLãƒ“ãƒ«ãƒ€ã€‚
      */
     void setSpecificationBuilder(SpecificationBuilder specificationBuilder);
 
     /**
-     * İ’èXML‚Ìƒrƒ‹ƒ_‚ğæ“¾‚·‚éB
-     * @return İ’èXMLƒrƒ‹ƒ_B
+     * è¨­å®šXMLã®ãƒ“ãƒ«ãƒ€ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return è¨­å®šXMLãƒ“ãƒ«ãƒ€ã€‚
      */
     SpecificationBuilder getSpecificationBuilder();
 
     /**
-     * HTMLƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹‚Ìƒrƒ‹ƒ_‚ğİ’è‚·‚éB
-     * @param templateBuilder ƒeƒ“ƒvƒŒ[ƒgƒrƒ‹ƒ_B
+     * HTMLãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ“ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param templateBuilder ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ“ãƒ«ãƒ€ã€‚
      */
     void setTemplateBuilder(TemplateBuilder templateBuilder);
 
     /**
-     * HTMLƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹‚Ìƒrƒ‹ƒ_‚ğæ“¾‚·‚éB
-     * @return ƒeƒ“ƒvƒŒ[ƒgƒrƒ‹ƒ_B
+     * HTMLãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ“ãƒ«ãƒ€ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ“ãƒ«ãƒ€ã€‚
      */
     TemplateBuilder getTemplateBuilder();
 
     /**
-     * HTMLƒ^ƒO‘®«‚Ì‘Š‘ÎƒpƒX‚ğâ‘ÎƒpƒX‚É’uŠ·‚·‚éƒIƒuƒWƒFƒNƒg‚ğİ’è‚·‚éB
-     * @param pathAdjuster ƒpƒXƒAƒWƒƒƒXƒ^B
+     * HTMLã‚¿ã‚°å±æ€§ã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«ç½®æ›ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param pathAdjuster ãƒ‘ã‚¹ã‚¢ã‚¸ãƒ£ã‚¹ã‚¿ã€‚
      */
     void setPathAdjuster(PathAdjuster pathAdjuster);
 
     /**
-     * HTMLƒ^ƒO‘®«‚Ì‘Š‘ÎƒpƒX‚ğâ‘ÎƒpƒX‚É’uŠ·‚·‚éƒIƒuƒWƒFƒNƒg‚ğæ“¾‚·‚éB
-     * @return ƒpƒXƒAƒWƒƒƒXƒ^B
+     * HTMLã‚¿ã‚°å±æ€§ã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«ç½®æ›ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ‘ã‚¹ã‚¢ã‚¸ãƒ£ã‚¹ã‚¿ã€‚
      */
     PathAdjuster getPathAdjuster();
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚Ì‘®«‚ğæ“¾‚·‚éƒIƒuƒWƒFƒNƒg‚ğİ’è‚·‚éB
-     * @param templateAttributeReader ƒeƒ“ƒvƒŒ[ƒg‚Ì‘®«‚ğæ“¾‚·‚éƒIƒuƒWƒFƒNƒgB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®å±æ€§ã‚’å–å¾—ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¨­å®šã™ã‚‹ã€‚
+     * @param templateAttributeReader ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®å±æ€§ã‚’å–å¾—ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     void setTemplateAttributeReader(TemplateAttributeReader templateAttributeReader);
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚Ì‘®«‚ğæ“¾‚·‚éƒIƒuƒWƒFƒNƒg‚ğæ“¾‚·‚éB
-     * @return ƒeƒ“ƒvƒŒ[ƒg‚Ì‘®«‚ğæ“¾‚·‚éƒIƒuƒWƒFƒNƒgB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®å±æ€§ã‚’å–å¾—ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®å±æ€§ã‚’å–å¾—ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     TemplateAttributeReader getTemplateAttributeReader();
 

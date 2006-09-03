@@ -18,15 +18,15 @@ package org.seasar.mayaa.engine.error;
 import org.seasar.mayaa.ParameterAware;
 
 /**
- * ƒGƒ‰[ˆ—‚Ì‚½‚ß‚Ìƒnƒ“ƒhƒ‰BƒŠƒNƒGƒXƒg‚ÌÅŒãAƒGƒ‰[‰æ–Ê‚Ìo—Í‚È‚Ç‚ğs‚¤B
+ * ã‚¨ãƒ©ãƒ¼å‡¦ç†ã®ãŸã‚ã®ãƒãƒ³ãƒ‰ãƒ©ã€‚ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®æœ€å¾Œã€ã‚¨ãƒ©ãƒ¼ç”»é¢ã®å‡ºåŠ›ãªã©ã‚’è¡Œã†ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ErrorHandler extends ParameterAware {
 
     /**
-     * ƒGƒ‰[ˆ—ƒƒ\ƒbƒhB
-     * @param t ˆ—‘ÎÛ‚ÌThrowableB
-     * @param pageFlush ƒeƒ“ƒvƒŒ[ƒgo—Í‚ğ©“®‚Åƒtƒ‰ƒbƒVƒ…‚·‚é‚©‚Ç‚¤‚©B
+     * ã‚¨ãƒ©ãƒ¼å‡¦ç†ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * @param t å‡¦ç†å¯¾è±¡ã®Throwableã€‚
+     * @param pageFlush ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆå‡ºåŠ›ã‚’è‡ªå‹•ã§ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹ã‹ã©ã†ã‹ã€‚
      */
     void doErrorHandle(Throwable t, boolean pageFlush);
 

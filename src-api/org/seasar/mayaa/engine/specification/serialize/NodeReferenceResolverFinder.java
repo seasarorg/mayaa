@@ -21,10 +21,10 @@ package org.seasar.mayaa.engine.specification.serialize;
 public interface NodeReferenceResolverFinder {
 
     /**
-     * ƒcƒŠ[ãˆÊ‚ÉˆÊ’u‚·‚éƒVƒŠƒAƒ‰ƒCƒY‚ÌˆË‘¶ŠÖŒW‚ğ
-     * ‰ğŒˆ‚·‚é‚½‚ß‚ÌAƒm[ƒhQÆƒŠƒ]ƒ‹ƒo‚ğŒŸõ‚·‚éB
+     * ãƒ„ãƒªãƒ¼ä¸Šä½ã«ä½ç½®ã™ã‚‹ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºæ™‚ã®ä¾å­˜é–¢ä¿‚ã‚’
+     * è§£æ±ºã™ã‚‹ãŸã‚ã®ã€ãƒãƒ¼ãƒ‰å‚ç…§ãƒªã‚¾ãƒ«ãƒã‚’æ¤œç´¢ã™ã‚‹ã€‚
      * 
-     * @return ƒm[ƒhQÆƒŠƒ]ƒ‹ƒoB‘¶İ‚µ‚È‚¢ê‡‚Íƒkƒ‹B
+     * @return ãƒãƒ¼ãƒ‰å‚ç…§ãƒªã‚¾ãƒ«ãƒã€‚å­˜åœ¨ã—ãªã„å ´åˆã¯ãƒŒãƒ«ã€‚
      */
     NodeReferenceResolver findNodeResolver();
     

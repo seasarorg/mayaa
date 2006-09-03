@@ -21,15 +21,15 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.Specification;
 
 /**
- * İ’èXML‚Ìƒrƒ‹ƒ_B
+ * è¨­å®šXMLã®ãƒ“ãƒ«ãƒ€ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationBuilder
         extends ParameterAware, Serializable {
 
     /**
-     * ƒy[ƒWİ’è‚Ìƒrƒ‹ƒh‚ğs‚¤B
-     * @param specification İ’èƒIƒuƒWƒFƒNƒgB
+     * ãƒšãƒ¼ã‚¸è¨­å®šã®ãƒ“ãƒ«ãƒ‰ã‚’è¡Œã†ã€‚
+     * @param specification è¨­å®šã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     void build(Specification specification);
 

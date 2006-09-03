@@ -41,8 +41,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class ProcessorDump extends ElementProcessor {
-    // TODO EchoProcessor‚ðŒp³‚µ‚ÄŽg‚Á‚Ä‚¢‚é•”•ª‚ð‚Ü‚Æ‚ß‚é
-    // TODO ServiceProvider‚Å·‚µ‘Ö‚¦‰Â”\‚É‚·‚é
+    // TODO EchoProcessorã‚’ç¶™æ‰¿ã—ã¦ä½¿ã£ã¦ã„ã‚‹éƒ¨åˆ†ã‚’ã¾ã¨ã‚ã‚‹
+    // TODO ServiceProviderã§å·®ã—æ›¿ãˆå¯èƒ½ã«ã™ã‚‹
 
     private static final long serialVersionUID = 8044884422670533823L;
 
@@ -85,7 +85,7 @@ public class ProcessorDump extends ElementProcessor {
     }
 
     protected void printTree(int indentCount, ProcessorTreeWalker walker) {
-// TODO ƒŒƒCƒAƒEƒg‹@”\‚ðŽg‚¤ê‡
+// TODO ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæ©Ÿèƒ½ã‚’ä½¿ã†å ´åˆ
         int childSize = walker.getChildProcessorSize();
         if (walker instanceof TemplateProcessor) {
             printTag(indentCount, (TemplateProcessor) walker,
@@ -106,8 +106,8 @@ public class ProcessorDump extends ElementProcessor {
             String start, String end, boolean printAttributes) {
         if (_printContents && processor instanceof LiteralCharactersProcessor) {
             print(((LiteralCharactersProcessor) processor).getText());
-// TODO insert ‚Ìê‡
-// TODO echo ‚Ìê‡
+// TODO insert ã®å ´åˆ
+// TODO echo ã®å ´åˆ
         } else {
             StringBuffer sb = new StringBuffer(128);
 
@@ -147,7 +147,7 @@ public class ProcessorDump extends ElementProcessor {
         if (processor instanceof ElementProcessor) {
             ElementProcessor ep = (ElementProcessor) processor;
             if (ep.isDuplicated()) {
-                // TODO templateElement‚àoriginalNode‚É‚·‚é
+                // TODO templateElementã‚‚originalNodeã«ã™ã‚‹
                 // ep.getInjectedNode().getQName().equals(QM_TEMPLATE_ELEMENT)
                 return processor.getOriginalNode();
             }
@@ -206,7 +206,7 @@ public class ProcessorDump extends ElementProcessor {
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
         }
-        // TODO ³‚µ‚­•`‰æ‚·‚é
+        // TODO æ­£ã—ãæç”»ã™ã‚‹
 //        if (getInjectedNode().getQName().equals(QM_DUPLECATED)) {
 //            if (getChildProcessorSize() > 0
 //                    && getChildProcessor(0) instanceof JspProcessor) {

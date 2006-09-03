@@ -27,10 +27,10 @@ import javax.servlet.ServletResponse;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
- * Struts‚È‚ÇMayaaˆÈŠO‚Æ‘g‚İ‡‚í‚¹‚éã‚Å•K‚¸•K—v‚Æ‚È‚éB
- * Mayaa‚Öforward‚·‚éƒT[ƒuƒŒƒbƒg‚É‚Í‘S‚Ä
- * ‚±‚ÌƒtƒBƒ‹ƒ^‚ğ“K—p‚·‚é•K—v‚ª‚ ‚éB
- * i‚æ‚èŒµ–§‚É‚Íforward‚³‚ê‚émayaaƒvƒƒZƒX‚©‚çcycle‚ğQÆ‚µ‚Ä‚¢‚éê‡‚ÌˆÓ–¡j
+ * Strutsãªã©Mayaaä»¥å¤–ã¨çµ„ã¿åˆã‚ã›ã‚‹ä¸Šã§å¿…ãšå¿…è¦ã¨ãªã‚‹ã€‚
+ * Mayaaã¸forwardã™ã‚‹ã‚µãƒ¼ãƒ–ãƒ¬ãƒƒãƒˆã«ã¯å…¨ã¦
+ * ã“ã®ãƒ•ã‚£ãƒ«ã‚¿ã‚’é©ç”¨ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
+ * ï¼ˆã‚ˆã‚Šå³å¯†ã«ã¯forwardã•ã‚Œã‚‹mayaaãƒ—ãƒ­ã‚»ã‚¹ã‹ã‚‰cycleã‚’å‚ç…§ã—ã¦ã„ã‚‹å ´åˆã®æ„å‘³ï¼‰
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class MayaaApplicationFilter implements Filter {

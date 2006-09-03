@@ -25,27 +25,27 @@ import org.seasar.mayaa.ParameterAware;
 public interface PropertySet extends ParameterAware {
 
     /**
-     * —áŠO‚âƒƒO‚ÌƒƒbƒZ[ƒW—p“r‚Æ‚µ‚ÄAƒtƒ@ƒCƒ‹’†‚Å‚Ìs”Ô†‚ğæ“¾‚·‚éB
-     * @return s”Ô†B
+     * ä¾‹å¤–ã‚„ãƒ­ã‚°ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç”¨é€”ã¨ã—ã¦ã€ãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã§ã®è¡Œç•ªå·ã‚’å–å¾—ã™ã‚‹ã€‚
+     * @return è¡Œç•ªå·ã€‚
      */
     int getLineNumber();
 
     /**
-     * Š‘®ƒ‰ƒCƒuƒ‰ƒŠ‚Ìî•ñƒ‚ƒfƒ‹æ“¾B
-     * @return ƒ‰ƒCƒuƒ‰ƒŠî•ñB
+     * æ‰€å±ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®æƒ…å ±ãƒ¢ãƒ‡ãƒ«å–å¾—ã€‚
+     * @return ãƒ©ã‚¤ãƒ–ãƒ©ãƒªæƒ…å ±ã€‚
      */
     LibraryDefinition getLibraryDefinition();
 
     /**
-     * ƒvƒƒpƒeƒBƒZƒbƒg–¼‚Ìæ“¾B
-     * @return ƒvƒƒpƒeƒBƒZƒbƒg–¼B
+     * ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆåã®å–å¾—ã€‚
+     * @return ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚»ãƒƒãƒˆåã€‚
      */
     String getName();
 
     /**
-     * ƒvƒƒZƒbƒT‚Ö‚ÌƒoƒCƒ“ƒfƒBƒ“ƒOî•ñƒ‚ƒfƒ‹iPropertyDefinitionj
-     * ƒIƒuƒWƒFƒNƒg‚ÌƒCƒeƒŒ[ƒgB
-     * @return ƒoƒCƒ“ƒfƒBƒ“ƒOî•ñƒCƒeƒŒ[ƒ^[B
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µã¸ã®ãƒã‚¤ãƒ³ãƒ‡ã‚£ãƒ³ã‚°æƒ…å ±ãƒ¢ãƒ‡ãƒ«ï¼ˆPropertyDefinitionï¼‰
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã€‚
+     * @return ãƒã‚¤ãƒ³ãƒ‡ã‚£ãƒ³ã‚°æƒ…å ±ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã€‚
      */
     Iterator iteratePropertyDefinition();
 

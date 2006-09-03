@@ -20,14 +20,14 @@ import java.util.Iterator;
 import org.seasar.mayaa.ParameterAware;
 
 /**
- * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒX‚ÌŒŸõƒXƒLƒƒƒiB
+ * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã®æ¤œç´¢ã‚¹ã‚­ãƒ£ãƒŠã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SourceScanner extends ParameterAware {
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒX‚ğƒCƒeƒŒ[ƒg‚·‚éB
-     * @return ƒ\[ƒXiSourceDescriptorj‚ÌƒCƒeƒŒ[ƒ^B
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã‚’ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
+     * @return ã‚½ãƒ¼ã‚¹ï¼ˆSourceDescriptorï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator scan();
 

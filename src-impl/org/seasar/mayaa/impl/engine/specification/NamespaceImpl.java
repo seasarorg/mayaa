@@ -52,7 +52,7 @@ public class NamespaceImpl implements Namespace {
 
     public static Namespace getInstance(String serializeKey) {
         synchronized(_cache) {
-            // ƒLƒƒƒbƒVƒ…‚³‚ê‚½ƒVƒ“ƒOƒ‹ƒgƒ“‚ğ•Ô‚·
+            // ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã•ã‚ŒãŸã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚’è¿”ã™
             for (Iterator it = _cache.iterator(); it.hasNext(); ) {
                 NamespaceImpl space = (NamespaceImpl) it.next();
                 if (space.getSerializeKey().equals(serializeKey)) {
@@ -122,8 +122,8 @@ public class NamespaceImpl implements Namespace {
         synchronized (this) {
             doDeserialize();
             if (_mappings == null) {
-                // ƒeƒ“ƒvƒŒ[ƒg‚É‚æ‚Á‚Äxmlns‚Ì‹Lq‡‚ªˆÙ‚È‚Á‚½‚Æ‚µ‚Ä‚àA
-                // “¯ˆê‚Ì‚à‚Ì‚ğ•ÛØ‚·‚é‚½‚ß‚Éƒ\[ƒg‚·‚é
+                // ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã«ã‚ˆã£ã¦xmlnsã®è¨˜è¿°é †ãŒç•°ãªã£ãŸã¨ã—ã¦ã‚‚ã€
+                // åŒä¸€ã®ã‚‚ã®ã‚’ä¿è¨¼ã™ã‚‹ãŸã‚ã«ã‚½ãƒ¼ãƒˆã™ã‚‹
                 _mappings = new TreeSet(_prefixMappingComparator);
             }
             PrefixMapping mapping =
@@ -329,7 +329,7 @@ public class NamespaceImpl implements Namespace {
                 }
             } else if (line.startsWith("\t") && current != null) {
                 line = line.substring("\t".length());
-                // ƒpƒtƒH[ƒ}ƒ“ƒXd‹‚Ì‚½‚ß‚ÉaddPrefixMapping‚ğŒÄ‚Î‚È‚¢
+                // ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹é‡è¦–ã®ãŸã‚ã«addPrefixMappingã‚’å‘¼ã°ãªã„
                 if (current._mappings == null) {
                     current._mappings = new TreeSet(_prefixMappingComparator);
                 }

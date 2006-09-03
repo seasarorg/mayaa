@@ -22,41 +22,41 @@ import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
- * �X�y�b�N���ɃA�N�Z�X���邽�߂̃C���^�[�t�F�C�X
+ * スペック情報にアクセスするためのインターフェイス
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Specification
         extends NodeTreeWalker, SequenceIDGenerator, ParameterAware {
 
     /**
-     * �ŏI�r���h�����擾����B
-     * @return �r���h���B���r���h�̏ꍇnull��Ԃ��B
+     * 最終ビルド時を取得する。
+     * @return ビルド時。未ビルドの場合nullを返す。
      */
     Date getTimestamp();
 
     /**
-     * �ݒ�XML�̃\�[�X�ݒ�B
-     * @param source �ݒ�XML�\�[�X�B
+     * 設定XMLのソース設定。
+     * @param source 設定XMLソース。
      */
     void setSource(SourceDescriptor source);
 
     /**
-     * �ݒ�XML�̃\�[�X���擾����B
-     * @return �ݒ�XML�\�[�X�B
+     * 設定XMLのソースを取得する。
+     * @return 設定XMLソース。
      */
     SourceDescriptor getSource();
 
     /**
-     * �X�y�b�N��񂪔p�~�ΏۂƂ��ă}�[�N����Ă��邩�ǂ�����Ԃ��B
-     * �Â��\�[�X�Ńr���h����Ă���ꍇ�ƁA���g�p���Ԃ����̒�����
-     * �������ꍇ�ɐ^�ƂȂ�B
-     * ���̒l���^�̎��́A�m�[�h�\����m�[�h���e�͕ۏ؂���Ȃ��B
-     * @return �p�~�ΏۂƂ��ă}�[�N����Ă���Ȃ�true
+     * スペック情報が廃止対象としてマークされているかどうかを返す。
+     * 古いソースでビルドされている場合と、未使用期間が一定の長さを
+     * 超えた場合に真となる。
+     * この値が真の時は、ノード構成やノード内容は保証されない。
+     * @return 廃止対象としてマークされているならtrue
      */
     boolean isDeprecated();
 
     /**
-     * �\�[�X�r���h���s���B
+     * ソースビルドを行う。
      */
     void build();
 

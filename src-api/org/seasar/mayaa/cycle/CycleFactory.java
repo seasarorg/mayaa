@@ -23,26 +23,26 @@ import org.seasar.mayaa.UnifiedFactory;
 public interface CycleFactory extends UnifiedFactory {
 
     /**
-     * ���N�G�X�g����у��X�|���X�̃R���e�L�X�g�I�u�W�F�N�g�ݒ�B
-     * @param requestContext �J�����g�̃��N�G�X�g�I�u�W�F�N�g�B
-     * @param responseContext �J�����g�̃��X�|���X�I�u�W�F�N�g�B
+     * リクエストおよびレスポンスのコンテキストオブジェクト設定。
+     * @param requestContext カレントのリクエストオブジェクト。
+     * @param responseContext カレントのレスポンスオブジェクト。
      */
     void initialize(Object requestContext, Object responseContext);
 
     /**
-     * ���N�G�X�g�̏I�����ɍs���㏈���B
+     * リクエストの終了時に行う後処理。
      */
     void cycleFinalize();
     
     /**
-     * ���N�G�X�g�T�C�N�����ŗL���ȓ��I�ϐ��𐧌䂷��I�u�W�F�N�g��Ԃ��B
-     * @return ���N�G�X�g�T�C�N�����ŗL���ȓ��I�ϐ��𐧌䂷��I�u�W�F�N�g
+     * リクエストサイクル中で有効な動的変数を制御するオブジェクトを返す。
+     * @return リクエストサイクル中で有効な動的変数を制御するオブジェクト
      */
     CycleLocalVariables getLocalVariables();
 
     /**
-     * �T�[�r�X�T�C�N�����擾����B
-     * @return �J�����g�X���b�h�ł̃T�[�r�X�T�C�N���B
+     * サービスサイクルを取得する。
+     * @return カレントスレッドでのサービスサイクル。
      */
     ServiceCycle getServiceCycle();
 

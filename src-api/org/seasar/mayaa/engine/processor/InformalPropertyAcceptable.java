@@ -20,30 +20,30 @@ import java.io.Serializable;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
- * ���炩���߁AMLD�iMayaa Library Definition�j�t�@�C���ɋL�q����ĂȂ�
- * �v���p�e�B���󂯓����ꍇ�̃C���^�[�t�F�C�X�BMLD�L�q����Ă�v���p�e�B��
- * ���̃��\�b�h���o�R���Ȃ��ŁA���ځABean�v���p�e�B�A�N�Z�X�Őݒ肳���B
+ * あらかじめ、MLD（Mayaa Library Definition）ファイルに記述されてない
+ * プロパティを受け入れる場合のインターフェイス。MLD記述されてるプロパティは
+ * このメソッドを経由しないで、直接、Beanプロパティアクセスで設定される。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface InformalPropertyAcceptable
         extends ProcessorTreeWalker {
 
     /**
-     * ��MLD�ȃC���t�H�[�}���v���p�e�B�̎󂯓��ꃁ�\�b�h�B
-     * @param name �v���p�e�B���B
-     * @param property �C���t�H�[�}���v���p�e�B�B
+     * 非MLDなインフォーマルプロパティの受け入れメソッド。
+     * @param name プロパティ名。
+     * @param property インフォーマルプロパティ。
      */
     void addInformalProperty(PrefixAwareName name, Serializable property);
 
     /**
-     * addInformalProperty()�ɓn�����C���t�H�[�}���v���p�e�B�Ɋ��҂����^�B
-     * @return �C���t�H�[�}���v���p�e�B�^�B
+     * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。
+     * @return インフォーマルプロパティ型。
      */
     Class getPropertyClass();
 
     /**
-     * �C���t�H�[�}���v���p�e�B�̗\�������^���擾����B
-     * @return �C���t�H�[�}���v���p�e�B�̗\�������^�B
+     * インフォーマルプロパティの予測される型を取得する。
+     * @return インフォーマルプロパティの予測される型。
      */
     Class getExpectedClass();
 

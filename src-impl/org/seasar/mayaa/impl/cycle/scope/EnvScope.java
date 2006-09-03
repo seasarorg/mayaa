@@ -18,7 +18,7 @@ package org.seasar.mayaa.impl.cycle.scope;
 import java.util.Iterator;
 
 /**
- * ŠÂ‹«•Ï”‚ğæ“¾‚·‚é“Ç‚İ‚İê—pƒXƒR[ƒvB
+ * ç’°å¢ƒå¤‰æ•°ã‚’å–å¾—ã™ã‚‹èª­ã¿è¾¼ã¿å°‚ç”¨ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
  *
  * @see java.lang.System#getProperty(String)
  * @author Koji Suga (Gluegent, Inc)
@@ -41,7 +41,7 @@ public class EnvScope extends AbstractReadOnlyAttributeScope {
         return System.getProperty(name) != null;
     }
 
-    //TODO ƒL[‚Í‚ ‚Á‚Ä’l‚ª–³‚¢ê‡‚Ì‘Î‰‚ğŒŸ“¢iAttributeScope‘S”ÊjB
+    //TODO ã‚­ãƒ¼ã¯ã‚ã£ã¦å€¤ãŒç„¡ã„å ´åˆã®å¯¾å¿œã‚’æ¤œè¨ï¼ˆAttributeScopeå…¨èˆ¬ï¼‰ã€‚
     public Object getAttribute(String name) {
         if (hasAttribute(name)) {
             return System.getProperty(name);

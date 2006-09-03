@@ -18,21 +18,21 @@ package org.seasar.mayaa.engine.specification.serialize;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 
 /**
- * ƒvƒƒZƒbƒT‚Ì•œŒ³‚ğ’Ê’m‚·‚éB
+ * ãƒ—ãƒ­ã‚»ãƒƒã‚µã®å¾©å…ƒã‚’é€šçŸ¥ã™ã‚‹ã€‚
  * @author Taro Kato (Gluegent, Inc.)
  */
 public interface ProcessorResolveListener {
 
     /**
-     * ƒfƒVƒŠƒAƒ‰ƒCƒY‚É•œŒ³‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚éƒvƒƒZƒbƒTQÆ‚ğ‰ğŒˆ‚·‚é
-     * ƒIƒŠƒWƒiƒ‹ƒvƒƒZƒbƒT‚ªƒ[ƒh‚³‚ê‚½Û‚É”ñ“¯Šú‚É’Ê’m‚·‚éB
-     * @param uniqueID —v‹‚µ‚Ä‚¢‚½ƒvƒƒZƒbƒTID
-     * @param loadedInstance •œŒ³‚³‚ê‚½‘ÎÛƒvƒƒZƒbƒTBƒkƒ‹‚Ìê‡‚ÍŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚±‚Æ‚ğ¦‚·B
+     * ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã«å¾©å…ƒã—ã‚ˆã†ã¨ã—ã¦ã„ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µå‚ç…§ã‚’è§£æ±ºã™ã‚‹
+     * ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸéš›ã«éåŒæœŸã«é€šçŸ¥ã™ã‚‹ã€‚
+     * @param uniqueID è¦æ±‚ã—ã¦ã„ãŸãƒ—ãƒ­ã‚»ãƒƒã‚µID
+     * @param loadedInstance å¾©å…ƒã•ã‚ŒãŸå¯¾è±¡ãƒ—ãƒ­ã‚»ãƒƒã‚µã€‚ãƒŒãƒ«ã®å ´åˆã¯è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã“ã¨ã‚’ç¤ºã™ã€‚
      */
     void notify(String uniqueID, ProcessorTreeWalker loadedInstance);
 
     /**
-     * •œŒ³ˆ—‚ªI‚í‚Á‚½Û‚ÉŒÄ‚Ño‚³‚ê‚éB
+     * å¾©å…ƒå‡¦ç†ãŒçµ‚ã‚ã£ãŸéš›ã«å‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
      */
     void release();
 

@@ -22,8 +22,8 @@ package org.seasar.mayaa.engine.specification;
 public interface URI extends NodeObject, Comparable {
 
     /**
-     * URI‚Ì“à—e‚ğ•Ô‚·
-     * @return URI•¶š—ñ
+     * URIã®å†…å®¹ã‚’è¿”ã™
+     * @return URIæ–‡å­—åˆ—
      */
     String getValue();
 

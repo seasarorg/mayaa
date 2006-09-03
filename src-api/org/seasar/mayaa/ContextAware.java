@@ -16,20 +16,20 @@
 package org.seasar.mayaa;
 
 /**
- * ŠO•”ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒg‚ÌProxyƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * å¤–éƒ¨ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®Proxyã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ContextAware {
 
     /**
-     * ƒzƒXƒg‚·‚éƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒg‚Ìİ’èƒƒ\ƒbƒhB
-     * @param context ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
+     * ãƒ›ã‚¹ãƒˆã™ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¨­å®šãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * @param context ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     void setUnderlyingContext(Object context);
 
     /**
-     * ƒzƒXƒg‚·‚éƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒg‚Ìæ“¾ƒƒ\ƒbƒhB
-     * @return ƒRƒ“ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgB
+     * ãƒ›ã‚¹ãƒˆã™ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * @return ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     Object getUnderlyingContext();
 

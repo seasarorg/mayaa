@@ -22,81 +22,81 @@ import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.specification.Specification;
 
 /**
- * ƒ‰ƒ“ƒ^ƒCƒ€ƒGƒ“ƒWƒ“BƒzƒXƒgƒT[ƒuƒŒƒbƒg‚©‚çservice()‚ªŒÄ‚Ño‚³‚ê‚éB
- * ƒŠƒNƒGƒXƒg‚É‘Î‚µ‚ÄAƒXƒe[ƒgƒŒƒX‚ÉÀ‘•B
+ * ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚¨ãƒ³ã‚¸ãƒ³ã€‚ãƒ›ã‚¹ãƒˆã‚µãƒ¼ãƒ–ãƒ¬ãƒƒãƒˆã‹ã‚‰service()ãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
+ * ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å¯¾ã—ã¦ã€ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¬ã‚¹ã«å®Ÿè£…ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Engine extends ParameterAware, Specification {
 
     /**
-     * ƒGƒ‰[ƒnƒ“ƒhƒ‰‚Ìİ’èB
-     * @param errorHandler ƒGƒ‰[ƒnƒ“ƒhƒ‰B
+     * ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ©ã®è¨­å®šã€‚
+     * @param errorHandler ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ©ã€‚
      */
     void setErrorHandler(ErrorHandler errorHandler);
 
     /**
-     * ƒGƒ‰[ƒnƒ“ƒhƒ‰‚Ìæ“¾B
-     * @return ƒGƒ‰[ƒnƒ“ƒhƒ‰B
+     * ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ©ã®å–å¾—ã€‚
+     * @return ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ©ã€‚
      */
     ErrorHandler getErrorHandler();
     
     /**
-     * ƒy[ƒW‚âƒeƒ“ƒvƒŒ[ƒg‚È‚Ç‚ÌƒXƒyƒbƒNî•ñ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª
-     * ƒƒ‚ƒŠƒLƒƒƒbƒVƒ…‚É‘¶İ‚·‚éê‡‚Í•Ô‹p‚·‚éB
-     * @param systemID ƒVƒXƒeƒ€ID
-     * @return ƒXƒyƒbƒNî•ñƒCƒ“ƒXƒ^ƒ“ƒX
+     * ãƒšãƒ¼ã‚¸ã‚„ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãªã©ã®ã‚¹ãƒšãƒƒã‚¯æƒ…å ±ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒ
+     * ãƒ¡ãƒ¢ãƒªã‚­ãƒ£ãƒƒã‚·ãƒ¥ã«å­˜åœ¨ã™ã‚‹å ´åˆã¯è¿”å´ã™ã‚‹ã€‚
+     * @param systemID ã‚·ã‚¹ãƒ†ãƒ ID
+     * @return ã‚¹ãƒšãƒƒã‚¯æƒ…å ±ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
      */
     Specification findSpecificationFromCache(String systemID);    
 
     /**
-     * PageƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·B
-     * @param pageName ƒy[ƒW–¼B
-     * @return PageƒIƒuƒWƒFƒNƒgB
+     * Pageã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™ã€‚
+     * @param pageName ãƒšãƒ¼ã‚¸åã€‚
+     * @return Pageã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     Page getPage(String pageName);
 
     /**
-     * ƒŒƒ“ƒ_ƒŠƒ“ƒO‰Â”\‚Èƒy[ƒW‚ğ¦‚·ƒŠƒNƒGƒXƒg‚©‚Ç‚¤‚©‚ğ”»’è‚·‚éB
-     * @return mayaa‚ªƒŒƒ“ƒ_ƒŠƒ“ƒO‘ÎÛ‚Æ‚·‚éê‡‚Ítrue
+     * ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°å¯èƒ½ãªãƒšãƒ¼ã‚¸ã‚’ç¤ºã™ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹ã€‚
+     * @return mayaaãŒãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°å¯¾è±¡ã¨ã™ã‚‹å ´åˆã¯true
      */
     boolean isPageRequested();
 
     /**
-     * ƒT[ƒrƒXƒƒ\ƒbƒhB
-     * @param pageScopeValues PAGEƒXƒR[ƒv‚Ìƒgƒbƒv‚ÉŠÜ‚ß‚é‚à‚ÌB
-     * @param pageFlush ƒeƒ“ƒvƒŒ[ƒgo—Í‚ğ©“®‚Åƒtƒ‰ƒbƒVƒ…‚·‚é‚©‚Ç‚¤‚©B
+     * ã‚µãƒ¼ãƒ“ã‚¹ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * @param pageScopeValues PAGEã‚¹ã‚³ãƒ¼ãƒ—ã®ãƒˆãƒƒãƒ—ã«å«ã‚ã‚‹ã‚‚ã®ã€‚
+     * @param pageFlush ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆå‡ºåŠ›ã‚’è‡ªå‹•ã§ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹ã‹ã©ã†ã‹ã€‚
      */
     void doService(Map pageScopeValues, boolean pageFlush);
 
     /**
-     * ƒGƒ‰[ƒnƒ“ƒhƒ‹ƒy[ƒW‚Ì•\¦B
-     * @param t ”­¶‚µ‚½—áŠOB
-     * @param pageFlush ƒeƒ“ƒvƒŒ[ƒgo—Í‚ğ©“®‚Åƒtƒ‰ƒbƒVƒ…‚·‚é‚©‚Ç‚¤‚©B
+     * ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒ«ãƒšãƒ¼ã‚¸ã®è¡¨ç¤ºã€‚
+     * @param t ç™ºç”Ÿã—ãŸä¾‹å¤–ã€‚
+     * @param pageFlush ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆå‡ºåŠ›ã‚’è‡ªå‹•ã§ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹ã‹ã©ã†ã‹ã€‚
      */
     void handleError(Throwable t, boolean pageFlush);
 
     /**
-     * ƒy[ƒW‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚µƒ\[ƒXƒrƒ‹ƒh‚ğs‚Á‚Ä‚©‚ç•Ô‚·B
-     * @param pageName ƒy[ƒW–¼
-     * @return ƒy[ƒW
+     * ãƒšãƒ¼ã‚¸ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã—ã‚½ãƒ¼ã‚¹ãƒ“ãƒ«ãƒ‰ã‚’è¡Œã£ã¦ã‹ã‚‰è¿”ã™ã€‚
+     * @param pageName ãƒšãƒ¼ã‚¸å
+     * @return ãƒšãƒ¼ã‚¸
      */
     Page createPageInstance(String pageName);
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚µƒ\[ƒXƒrƒ‹ƒh‚ğs‚Á‚Ä‚©‚ç•Ô‚·B
-     * @param page ƒy[ƒW
-     * @param suffix ƒeƒ“ƒvƒŒ[ƒg‚ÌÚ”öqB
-     * @param extension ƒy[ƒW‚ÌŠg’£qB
-     * @return ƒeƒ“ƒvƒŒ[ƒg
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã—ã‚½ãƒ¼ã‚¹ãƒ“ãƒ«ãƒ‰ã‚’è¡Œã£ã¦ã‹ã‚‰è¿”ã™ã€‚
+     * @param page ãƒšãƒ¼ã‚¸
+     * @param suffix ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®æ¥å°¾å­ã€‚
+     * @param extension ãƒšãƒ¼ã‚¸ã®æ‹¡å¼µå­ã€‚
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ
      */
     Template createTemplateInstance(Page page, String suffix, String extension);
     
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚Ì¦‚·ƒVƒXƒeƒ€ID‚ğ•Ô‚·B
-     * @param page ‘®‚·‚éƒy[ƒW
-     * @param suffix ƒTƒtƒBƒbƒNƒX
-     * @param extension Šg’£q
-     * @return ƒeƒ“ƒvƒŒ[ƒg‚ÌƒVƒXƒeƒ€ID
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ç¤ºã™ã‚·ã‚¹ãƒ†ãƒ IDã‚’è¿”ã™ã€‚
+     * @param page å±ã™ã‚‹ãƒšãƒ¼ã‚¸
+     * @param suffix ã‚µãƒ•ã‚£ãƒƒã‚¯ã‚¹
+     * @param extension æ‹¡å¼µå­
+     * @return ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ã‚·ã‚¹ãƒ†ãƒ ID
      */
     String getTemplateID(Page page, String suffix, String extension);
 }

@@ -20,65 +20,65 @@ import java.util.Iterator;
 import org.seasar.mayaa.ParameterAware;
 
 /**
- * ���O���ŃI�u�W�F�N�g��ۑ��ł���u�X�R�[�v�v�T�O�C���^�[�t�F�C�X�B
+ * 名前つきでオブジェクトを保存できる「スコープ」概念インターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface AttributeScope extends ParameterAware {
 
     /**
-     * �X�R�[�v���ʂ̎擾���s���⏕���\�b�h�B
-     * @return �X�R�[�v���ʁB
+     * スコープ識別の取得を行う補助メソッド。
+     * @return スコープ識別。
      */
     String getScopeName();
 
     /**
-     * ���̃X�R�[�v�ɕۑ�����Ă��閼�O���C�e���[�g����B
-     * @return ���O�iString�j�̓������C�e���[�^�B
+     * このスコープに保存されている名前をイテレートする。
+     * @return 名前（String）の入ったイテレータ。
      */
     Iterator iterateAttributeNames();
 
     /**
-     * ���̃X�R�[�v���Ɏw�肳�ꂽ���O�ɑΉ������I�u�W�F�N�g�����邩���e�X�g����B
-     * @param name �w��I�u�W�F�N�g���B
-     * @return �e�X�g���ʁB
+     * このスコープ中に指定された名前に対応したオブジェクトがあるかをテストする。
+     * @param name 指定オブジェクト名。
+     * @return テスト結果。
      */
     boolean hasAttribute(String name);
 
     /**
-     * ���̃X�R�[�v������w�肳�ꂽ���O�ɑΉ������I�u�W�F�N�g��Ԃ��B
-     * ���O������null�������͋󔒕�����A�������͊Y���I�u�W�F�N�g�������ꍇ�ɂ́A
-     * UNDEFINED��Ԃ��B
-     * @param name �w��I�u�W�F�N�g���B
-     * @return �w��I�u�W�F�N�g�B
+     * このスコープ中から指定された名前に対応したオブジェクトを返す。
+     * 名前文字列がnullもしくは空白文字列、もしくは該当オブジェクトが無い場合には、
+     * UNDEFINEDを返す。
+     * @param name 指定オブジェクト名。
+     * @return 指定オブジェクト。
      */
     Object getAttribute(String name);
 
     /**
-     * ���̃X�R�[�v���ɃI�u�W�F�N�g�̏������݂���э폜���ł��邩��Ԃ��B
-     * @return �e�X�g���ʁB
+     * このスコープ中にオブジェクトの書き込みおよび削除ができるかを返す。
+     * @return テスト結果。
      */
     boolean isAttributeWritable();
 
     /**
-     * ���̃X�R�[�v���ɁA�w�薼�ŃI�u�W�F�N�g��ۑ�����B
-     * @param name �w�薼�Bnull����ы󔒕����񂾂Ɖ������Ȃ��B
-     * @param attribute �w��I�u�W�F�N�g�B
+     * このスコープ中に、指定名でオブジェクトを保存する。
+     * @param name 指定名。nullおよび空白文字列だと何もしない。
+     * @param attribute 指定オブジェクト。
      */
     void setAttribute(String name, Object attribute);
 
     /**
-     * ���̃X�R�[�v���̎w�薼�I�u�W�F�N�g���폜����B
-     * @param name �w�薼�Bnull����ы󔒕����񂾂Ɖ������Ȃ��B
+     * このスコープ中の指定名オブジェクトを削除する。
+     * @param name 指定名。nullおよび空白文字列だと何もしない。
      */
     void removeAttribute(String name);
 
     /**
-     * ���̃X�R�[�v���ɁA�w��N���X�^�̃I�u�W�F�N�g�𐶐�����B
-     * ���łɓ������O�ňႤ�N���X�^�̃I�u�W�F�N�g�����݂���ꍇ�̏�����A
-     * ���O��N���X�^�̈����`�F�b�N�̎d�l�͒�߂Ȃ��B�������̎d�l�ƂȂ�B
-     * @param name �w�薼�B
-     * @param attributeClass �w��N���X�^�B
-     * @return �w��I�u�W�F�N�g�B
+     * このスコープ中に、指定クラス型のオブジェクトを生成する。
+     * すでに同じ名前で違うクラス型のオブジェクトが存在する場合の処理や、
+     * 名前やクラス型の引数チェックの仕様は定めない。実装毎の仕様となる。
+     * @param name 指定名。
+     * @param attributeClass 指定クラス型。
+     * @return 指定オブジェクト。
      */
     Object newAttribute(String name, Class attributeClass);
 

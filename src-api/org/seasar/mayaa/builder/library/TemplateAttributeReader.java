@@ -20,38 +20,38 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒg‚Ì‘®«’l‚ğæ“¾‚·‚éB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®å±æ€§å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
  *
  * @author Koji Suga (Gluegent, Inc.)
  */
 public interface TemplateAttributeReader extends ParameterAware {
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒg‚©‚çw’è‚µ‚½QName‚Ì‘®«‚ğ“Ç‚İA‚»‚Ì’l‚ğ•Ô‚·B
-     * ‘¶İ‚µ‚È‚¯‚ê‚Înull‚ğ•Ô‚·B
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‹ã‚‰æŒ‡å®šã—ãŸQNameã®å±æ€§ã‚’èª­ã¿ã€ãã®å€¤ã‚’è¿”ã™ã€‚
+     * å­˜åœ¨ã—ãªã‘ã‚Œã°nullã‚’è¿”ã™ã€‚
      *
-     * @param qName ‘ÎÛ‚Æ‚·‚éƒJƒXƒ^ƒ€ƒ^ƒO‚ÌQName
-     * @param attributeName æ“¾‚·‚é‘®«‚ÌLocalName
-     * @param original ƒeƒ“ƒvƒŒ[ƒg‚Ìƒm[ƒh
-     * @return qName‚É‘Î‰‚·‚é‘®«’l
+     * @param qName å¯¾è±¡ã¨ã™ã‚‹ã‚«ã‚¹ã‚¿ãƒ ã‚¿ã‚°ã®QName
+     * @param attributeName å–å¾—ã™ã‚‹å±æ€§ã®LocalName
+     * @param original ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ãƒãƒ¼ãƒ‰
+     * @return qNameã«å¯¾å¿œã™ã‚‹å±æ€§å€¤
      */
     String getValue(QName qName, String attributeName, SpecificationNode original);
 
     /**
-     * –³‹‚·‚é‘®«‚ğ’Ç‰Á‚·‚éB
+     * ç„¡è¦–ã™ã‚‹å±æ€§ã‚’è¿½åŠ ã™ã‚‹ã€‚
      *
-     * @param qName ‘ÎÛ‚Æ‚·‚éƒvƒƒZƒbƒTƒ^ƒO‚ÌQName
-     * @param attributeName ‘ÎÛ‚Æ‚·‚é‘®«‚ÌLocalName
+     * @param qName å¯¾è±¡ã¨ã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µã‚¿ã‚°ã®QName
+     * @param attributeName å¯¾è±¡ã¨ã™ã‚‹å±æ€§ã®LocalName
      */
     void addIgnoreAttribute(String qName, String attributeName);
 
     /**
-     * ƒvƒƒZƒbƒTƒ^ƒO‚Ì‘®«‚Éƒeƒ“ƒvƒŒ[ƒgã‚ÌˆÙ‚È‚é–¼‘O‚Ì‘®«‚ğƒZƒbƒg‚·‚éw’è‚ğ
-     * ’Ç‰Á‚·‚éB
+     * ãƒ—ãƒ­ã‚»ãƒƒã‚µã‚¿ã‚°ã®å±æ€§ã«ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ç•°ãªã‚‹åå‰ã®å±æ€§ã‚’ã‚»ãƒƒãƒˆã™ã‚‹æŒ‡å®šã‚’
+     * è¿½åŠ ã™ã‚‹ã€‚
      *
-     * @param qName ‘ÎÛ‚Æ‚·‚éƒvƒƒZƒbƒTƒ^ƒO‚ÌQName
-     * @param attributeName ‘ÎÛ‚Æ‚·‚é‘®«‚ÌLocalName
-     * @param templateAttributeName ƒeƒ“ƒvƒŒ[ƒgã‚Ì‘®«–¼
+     * @param qName å¯¾è±¡ã¨ã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µã‚¿ã‚°ã®QName
+     * @param attributeName å¯¾è±¡ã¨ã™ã‚‹å±æ€§ã®LocalName
+     * @param templateAttributeName ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®å±æ€§å
      */
     void addAliasAttribute(
             String qName, String attributeName, String templateAttributeName);

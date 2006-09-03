@@ -23,7 +23,7 @@ import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 
 /**
- * ’l‚Ì®‚ğ•¶š—ñ‚Æ‚µ‚Äˆ—‚·‚éƒvƒƒpƒeƒBƒ‰ƒ“ƒ^ƒCƒ€B
+ * å€¤ã®å¼ã‚’æ–‡å­—åˆ—ã¨ã—ã¦å‡¦ç†ã™ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã€‚
  * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
 public class ProcessorPropertyLiteral implements ProcessorProperty, Serializable {

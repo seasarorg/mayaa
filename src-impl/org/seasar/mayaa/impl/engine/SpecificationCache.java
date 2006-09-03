@@ -91,8 +91,8 @@ public class SpecificationCache {
                 if (old == specification) {
                     return;
                 }
-                // ƒtƒ@ƒCƒ‹ƒVƒXƒeƒ€‚Ìˆá‚¢‚É‚æ‚Á‚Ä‘å•¶š¬•¶š‚ª‹æ•Ê‚³‚ê‚È‚¢ê‡‚É
-                // ‚±‚±‚É“’B‚·‚éê‡‚ª‚ ‚é‚Ì‚ÅB
+                // ãƒ•ã‚¡ã‚¤ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã®é•ã„ã«ã‚ˆã£ã¦å¤§æ–‡å­—å°æ–‡å­—ãŒåŒºåˆ¥ã•ã‚Œãªã„å ´åˆã«
+                // ã“ã“ã«åˆ°é”ã™ã‚‹å ´åˆãŒã‚ã‚‹ã®ã§ã€‚
                 _cleanUpSpecification.post(old);
             }
             ReferSpecification refer =
@@ -123,7 +123,7 @@ public class SpecificationCache {
         }
 
         public Specification getSpecification() {
-            // QÆ‚³‚ê‚½‚Ì‚ÅƒŠƒZƒbƒg
+            // å‚ç…§ã•ã‚ŒãŸã®ã§ãƒªã‚»ãƒƒãƒˆ
             _survivingCount = 0;
             return _specification;
         }

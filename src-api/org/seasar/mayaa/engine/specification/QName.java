@@ -16,20 +16,20 @@
 package org.seasar.mayaa.engine.specification;
 
 /**
- * –¼‘O‹óŠÔURI‚Æƒ[ƒJƒ‹–¼‚Ì‘g‚İ‡‚í‚¹‚ğ•Û‚·‚é¯•ÊƒIƒuƒWƒFƒNƒgB
+ * åå‰ç©ºé–“URIã¨ãƒ­ãƒ¼ã‚«ãƒ«åã®çµ„ã¿åˆã‚ã›ã‚’ä¿æŒã™ã‚‹è­˜åˆ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface QName {
 
     /**
-     * –¼‘O‹óŠÔURI‚Ìæ“¾B
-     * @return –¼‘O‹óŠÔURIB
+     * åå‰ç©ºé–“URIã®å–å¾—ã€‚
+     * @return åå‰ç©ºé–“URIã€‚
      */
     URI getNamespaceURI();
 
     /**
-     * ƒ[ƒJƒ‹–¼‚Ìæ“¾B
-     * @return ƒ[ƒJƒ‹–¼B
+     * ãƒ­ãƒ¼ã‚«ãƒ«åã®å–å¾—ã€‚
+     * @return ãƒ­ãƒ¼ã‚«ãƒ«åã€‚
      */
     String getLocalName();
 

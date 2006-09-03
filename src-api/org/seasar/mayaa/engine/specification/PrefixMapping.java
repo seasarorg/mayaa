@@ -21,14 +21,14 @@ package org.seasar.mayaa.engine.specification;
 public interface PrefixMapping {
 
     /**
-     * ƒvƒŒƒtƒBƒbƒNƒX•¶š—ñ‚Ìæ“¾B
-     * @return ƒvƒŒƒtƒBƒbƒNƒX•¶š—ñB
+     * ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹æ–‡å­—åˆ—ã®å–å¾—ã€‚
+     * @return ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹æ–‡å­—åˆ—ã€‚
      */
     String getPrefix();
 
     /**
-     * –¼‘O‹óŠÔURI‚Ìæ“¾B
-     * @return –¼‘O‹óŠÔURIB
+     * åå‰ç©ºé–“URIã®å–å¾—ã€‚
+     * @return åå‰ç©ºé–“URIã€‚
      */
     URI getNamespaceURI();
 

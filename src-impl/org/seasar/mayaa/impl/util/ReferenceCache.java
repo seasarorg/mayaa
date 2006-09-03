@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * ƒŠƒtƒ@ƒŒƒ“ƒXƒLƒƒƒbƒVƒ…ƒNƒ‰ƒXB 
+ * ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚¯ãƒ©ã‚¹ã€‚ 
  * 
  * @author Taro Kato (Gluegent, Inc.)
  */
@@ -40,28 +40,28 @@ public class ReferenceCache extends ArrayList {
     public static final int WEAK = 1;
     
     /**
-     * GC‘ÎÛ‚Æ‚µ‚Äƒ}[ƒN‚³‚ê‰ğ•ú‚³‚ê‚éƒIƒuƒWƒFƒNƒg‚ğ
-     * ’Ê’m‚·‚éBƒIƒuƒWƒFƒNƒg‚Í‰ğ•úÏ‚İ‚É‚È‚é‚Ì‚ÅA
-     * ‚ ‚ç‚©‚¶‚ß‘ÎÛƒIƒuƒWƒFƒNƒg‚É–¼‘O‚ğ•t‚¯‚ÄA
-     * ‰ğ•ú‚É‚Í‚»‚Ì–¼‘O‚Å’Ê’m‚³‚ê‚éB
+     * GCå¯¾è±¡ã¨ã—ã¦ãƒãƒ¼ã‚¯ã•ã‚Œè§£æ”¾ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’
+     * é€šçŸ¥ã™ã‚‹ã€‚ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯è§£æ”¾æ¸ˆã¿ã«ãªã‚‹ã®ã§ã€
+     * ã‚ã‚‰ã‹ã˜ã‚å¯¾è±¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«åå‰ã‚’ä»˜ã‘ã¦ã€
+     * è§£æ”¾æ™‚ã«ã¯ãã®åå‰ã§é€šçŸ¥ã•ã‚Œã‚‹ã€‚
      * 
      * @author Taro Kato (Gluegent, Inc.)
      */
     public static interface SweepListener {
         
         /**
-         * ƒIƒuƒWƒFƒNƒg‚Éƒ‰ƒxƒ‹‚ğ•t‚¯‚éB
-         * @param referent ‰ğ•úŠÄ‹‘ÎÛƒIƒuƒWƒFƒNƒg
-         * @return ƒIƒuƒWƒFƒNƒg‚ğ¯•Ê‚·‚é‚½‚ß‚Ìƒ‰ƒxƒ‹B
-         * referent‚ÆQÆˆË‘¶ŠÖŒW‚Ì‚ ‚éƒIƒuƒWƒFƒNƒg‚ğ•Ô‚µ‚Ä‚Í‚È‚ç‚È‚¢B
+         * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ãƒ©ãƒ™ãƒ«ã‚’ä»˜ã‘ã‚‹ã€‚
+         * @param referent è§£æ”¾ç›£è¦–å¯¾è±¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+         * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è­˜åˆ¥ã™ã‚‹ãŸã‚ã®ãƒ©ãƒ™ãƒ«ã€‚
+         * referentã¨å‚ç…§ä¾å­˜é–¢ä¿‚ã®ã‚ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã—ã¦ã¯ãªã‚‰ãªã„ã€‚
          */
         Object labeling(Object referent);
         
         /**
-         * labering‚Ìreferent‚ª‰ğ•ú‚³‚ê‚½Û‚ÉŒÄ‚Ño‚³‚ê‚éB
-         * labering‚Å•Ô‚µ‚½labelƒIƒuƒWƒFƒNƒg‚ª“n‚³‚ê‚éB
-         * @param monitor ƒŠƒtƒ@ƒŒƒ“ƒXƒLƒƒƒbƒVƒ…
-         * @param label ƒIƒuƒWƒFƒNƒg‚É‘Î‰•t‚¯‚Ä‚¢‚½ƒ‰ƒxƒ‹
+         * laberingæ™‚ã®referentãŒè§£æ”¾ã•ã‚ŒãŸéš›ã«å‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
+         * laberingã§è¿”ã—ãŸlabelã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒæ¸¡ã•ã‚Œã‚‹ã€‚
+         * @param monitor ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã‚­ãƒ£ãƒƒã‚·ãƒ¥
+         * @param label ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å¯¾å¿œä»˜ã‘ã¦ã„ãŸãƒ©ãƒ™ãƒ«
          */
         void sweepFinish(ReferenceCache monitor, Object label); 
     }
@@ -195,8 +195,8 @@ public class ReferenceCache extends ArrayList {
     // support class
     
     /**
-     * ‰ğ•ú‚³‚ê‚Äƒkƒ‹‚É‚È‚Á‚½ƒAƒCƒeƒ€‚ğƒpƒbƒN‚µ‚È‚ª‚ç—LŒø‚È
-     * ƒAƒCƒeƒ€‚ğ•Ô‚·ƒCƒeƒŒ[ƒ^
+     * è§£æ”¾ã•ã‚Œã¦ãƒŒãƒ«ã«ãªã£ãŸã‚¢ã‚¤ãƒ†ãƒ ã‚’ãƒ‘ãƒƒã‚¯ã—ãªãŒã‚‰æœ‰åŠ¹ãª
+     * ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¿”ã™ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
      * @author Taro Kato (Gluegent, Inc.)
      */
     protected class ReferenceCacheIterator implements Iterator {

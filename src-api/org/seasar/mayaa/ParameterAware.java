@@ -18,28 +18,28 @@ package org.seasar.mayaa;
 import java.util.Iterator;
 
 /**
- * ƒIƒuƒWƒFƒNƒg‚Ìƒ`ƒ…[ƒjƒ“ƒOİ’èB
+ * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒãƒ¥ãƒ¼ãƒ‹ãƒ³ã‚°è¨­å®šã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ParameterAware extends PositionAware {
 
     /**
-     * ƒ†[ƒU[İ’è‚Ìó‚¯“ü‚êƒƒ\ƒbƒhB
-     * @param name İ’è–¼B
-     * @param value İ’è’lB
+     * ãƒ¦ãƒ¼ã‚¶ãƒ¼è¨­å®šã®å—ã‘å…¥ã‚Œãƒ¡ã‚½ãƒƒãƒ‰ã€‚
+     * @param name è¨­å®šåã€‚
+     * @param value è¨­å®šå€¤ã€‚
      */
     void setParameter(String name, String value);
 
     /**
-     * İ’èƒpƒ‰ƒ[ƒ^‚Ìæ“¾B
-     * @param name İ’è–¼B
-     * @return İ’è’lB
+     * è¨­å®šãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å–å¾—ã€‚
+     * @param name è¨­å®šåã€‚
+     * @return è¨­å®šå€¤ã€‚
      */
     String getParameter(String name);
 
     /**
-     * İ’èƒpƒ‰ƒ[ƒ^–¼‚ğƒCƒeƒŒ[ƒg‚·‚éB
-     * @return İ’èƒpƒ‰ƒ[ƒ^–¼ƒCƒeƒŒ[ƒ^B
+     * è¨­å®šãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åã‚’ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã™ã‚‹ã€‚
+     * @return è¨­å®šãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iterateParameterNames();
 

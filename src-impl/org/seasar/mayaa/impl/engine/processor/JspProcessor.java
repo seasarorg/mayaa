@@ -220,7 +220,7 @@ public class JspProcessor extends TemplateProcessorSupport
         clearLoadedTag();
         Tag customTag = getLoadedTag();
 
-        // javax.servlet.jsp.tagext.SimpleTag‘Î‰
+        // javax.servlet.jsp.tagext.SimpleTagå¯¾å¿œ
         Object targetTag = customTag;
         if (customTag instanceof SimpleTagWrapper) {
             targetTag = ((SimpleTagWrapper) customTag).getSimpleTag();
@@ -232,7 +232,7 @@ public class JspProcessor extends TemplateProcessorSupport
                     property.getValue().execute(null));
         }
 
-        // javax.servlet.jsp.tagext.DynamicAttributes‘Î‰
+        // javax.servlet.jsp.tagext.DynamicAttributeså¯¾å¿œ
         if (TLDProcessorDefinition.class.isAssignableFrom(
                 getProcessorDefinition().getClass())) {
             TLDProcessorDefinition tldDef =
@@ -279,7 +279,7 @@ public class JspProcessor extends TemplateProcessorSupport
             throw new IllegalArgumentException(message);
         }
 
-        // –¾¦“I‚Éw’è‚³‚ê‚Ä‚¢‚é‘®«‚ğ—ñ‹“
+        // æ˜ç¤ºçš„ã«æŒ‡å®šã•ã‚Œã¦ã„ã‚‹å±æ€§ã‚’åˆ—æŒ™
         Set definedQNames = new HashSet();
         for (Iterator it = iterateProperties(); it.hasNext();) {
             ProcessorProperty property = (ProcessorProperty) it.next();
@@ -290,14 +290,14 @@ public class JspProcessor extends TemplateProcessorSupport
             NodeAttribute attr = (NodeAttribute) it.next();
             QName qName = attr.getQName();
 
-            // –¾¦‚³‚ê‚Ä‚¢‚é‘®«Aƒl[ƒ€ƒXƒy[ƒX‚ªMayaa‚Ì‘®«‚Íˆ—‚ªŒˆ‚Ü‚Á‚Ä‚¢‚é‚½‚ß“®“I‘®«‚Æ‚µ‚Äˆµ‚í‚È‚¢
+            // æ˜ç¤ºã•ã‚Œã¦ã„ã‚‹å±æ€§ã€ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ãŒMayaaã®å±æ€§ã¯å‡¦ç†ãŒæ±ºã¾ã£ã¦ã„ã‚‹ãŸã‚å‹•çš„å±æ€§ã¨ã—ã¦æ‰±ã‚ãªã„
             if (definedQNames.contains(qName)
                     || CONST_IMPL.URI_MAYAA.equals(qName.getNamespaceURI())) {
                 continue;
             }
 
             try {
-                // ®‚ğÀs‚µ‚Ä‚©‚çsetDynamicAttribute
+                // å¼ã‚’å®Ÿè¡Œã—ã¦ã‹ã‚‰setDynamicAttribute
                 CompiledScript script =
                     ScriptUtil.compile(attr.getValue(), Object.class);
                 Object execValue = script.execute(null);

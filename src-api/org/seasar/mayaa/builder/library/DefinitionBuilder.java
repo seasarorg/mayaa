@@ -19,15 +19,15 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
- * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒXƒrƒ‹ƒ_B
+ * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ãƒ“ãƒ«ãƒ€ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface DefinitionBuilder extends ParameterAware {
 
     /**
-     * ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒX‚©‚çƒ‰ƒCƒuƒ‰ƒŠ‚ğƒrƒ‹ƒh‚·‚éB
-     * @param source ƒ‰ƒCƒuƒ‰ƒŠ’è‹`ƒ\[ƒXB
-     * @return ƒrƒ‹ƒhŒ‹‰ÊBˆ—‚Å‚«‚È‚©‚Á‚½ê‡‚É‚Ínull‚ğ•Ô‚·B
+     * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã‹ã‚‰ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ãƒ“ãƒ«ãƒ‰ã™ã‚‹ã€‚
+     * @param source ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©ã‚½ãƒ¼ã‚¹ã€‚
+     * @return ãƒ“ãƒ«ãƒ‰çµæœã€‚å‡¦ç†ã§ããªã‹ã£ãŸå ´åˆã«ã¯nullã‚’è¿”ã™ã€‚
      */
     LibraryDefinition build(SourceDescriptor source);
 

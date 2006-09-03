@@ -19,18 +19,18 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
- * ƒeƒ“ƒvƒŒ[ƒg‚É‹Lq‚³‚ê‚½HTMLƒ^ƒO‚ÉA’Ç‰Á“I‚Èî•ñ‚ð•ÛŽ‚·‚éƒm[ƒh‚ð
- * ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒŒƒ]ƒ‹ƒoB‚±‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX‚ðŽÀ‘•‚µ‚ÄƒGƒ“ƒWƒ“‚Ì‹““®
- * ‚ðƒJƒXƒ^ƒ}ƒCƒY‚·‚é‚±‚Æ‚ª‚Å‚«‚éB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã«è¨˜è¿°ã•ã‚ŒãŸHTMLã‚¿ã‚°ã«ã€è¿½åŠ çš„ãªæƒ…å ±ã‚’ä¿æŒã™ã‚‹ãƒŽãƒ¼ãƒ‰ã‚’
+ * ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒ¬ã‚¾ãƒ«ãƒã€‚ã“ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’å®Ÿè£…ã—ã¦ã‚¨ãƒ³ã‚¸ãƒ³ã®æŒ™å‹•
+ * ã‚’ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚ºã™ã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface InjectionResolver extends ParameterAware {
 
     /**
-     * ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹‚Èƒm[ƒh‚ÉƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒm[ƒh‚ðŒˆ’è‚·‚éB
-     * @param original ƒeƒ“ƒvƒŒ[ƒgã‚ÌƒIƒŠƒWƒiƒ‹‚Èƒm[ƒhB
-     * @param chain ŽŸ‚ÌƒŠƒ]ƒ‹ƒo‚Öˆ—‚ðˆÏ÷‚·‚éƒ`ƒF[ƒ“B
-     * @return ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚·‚éƒm[ƒhB
+     * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãªãƒŽãƒ¼ãƒ‰ã«ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒŽãƒ¼ãƒ‰ã‚’æ±ºå®šã™ã‚‹ã€‚
+     * @param original ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆä¸Šã®ã‚ªãƒªã‚¸ãƒŠãƒ«ãªãƒŽãƒ¼ãƒ‰ã€‚
+     * @param chain æ¬¡ã®ãƒªã‚¾ãƒ«ãƒã¸å‡¦ç†ã‚’å§”è­²ã™ã‚‹ãƒã‚§ãƒ¼ãƒ³ã€‚
+     * @return ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã™ã‚‹ãƒŽãƒ¼ãƒ‰ã€‚
      */
     SpecificationNode getNode(SpecificationNode original, InjectionChain chain);
 

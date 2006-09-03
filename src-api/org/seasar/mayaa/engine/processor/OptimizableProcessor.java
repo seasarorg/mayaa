@@ -23,11 +23,11 @@ import org.seasar.mayaa.builder.SequenceIDGenerator;
 public interface OptimizableProcessor {
 
     /**
-     * qƒvƒƒZƒbƒT‚Ìì¬Š®—¹“_‚ÅŒÄ‚Ño‚³‚êA
-     * ©g‚ğÃ“Iƒp[ƒg‚Æ“®“Iƒp[ƒg‚É•ªŠ„‚·‚éB
-     * Å’á‚Å‚à©g‚ğ¦‚·‚P—v‘f‚ª•Ô‹p‚³‚ê‚éB
-     * @param sequenceIDGenerator Å“K‰»‚É‚æ‚Á‚ÄV‚½‚Èƒm[ƒh‚ª•K—v‚ÈÛ‚Ég—p‚·‚ésequenceIDƒWƒFƒlƒŒ[ƒ^
-     * @return •ªŠ„ƒvƒƒZƒbƒT[”z—ñ
+     * å­ãƒ—ãƒ­ã‚»ãƒƒã‚µã®ä½œæˆå®Œäº†æ™‚ç‚¹ã§å‘¼ã³å‡ºã•ã‚Œã€
+     * è‡ªèº«ã‚’é™çš„ãƒ‘ãƒ¼ãƒˆã¨å‹•çš„ãƒ‘ãƒ¼ãƒˆã«åˆ†å‰²ã™ã‚‹ã€‚
+     * æœ€ä½ã§ã‚‚è‡ªèº«ã‚’ç¤ºã™ï¼‘è¦ç´ ãŒè¿”å´ã•ã‚Œã‚‹ã€‚
+     * @param sequenceIDGenerator æœ€é©åŒ–ã«ã‚ˆã£ã¦æ–°ãŸãªãƒãƒ¼ãƒ‰ãŒå¿…è¦ãªéš›ã«ä½¿ç”¨ã™ã‚‹sequenceIDã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿
+     * @return åˆ†å‰²ãƒ—ãƒ­ã‚»ãƒƒã‚µãƒ¼é…åˆ—
      */
     ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator);
 

@@ -23,68 +23,68 @@ import java.util.Iterator;
 public interface Namespace extends NodeObject {
 
     /**
-     * e–¼‘O‹óŠÔƒXƒR[ƒv‚Ìİ’èB
-     * @param parent e‚Ì–¼‘O‹óŠÔƒXƒR[ƒvB
+     * è¦ªåå‰ç©ºé–“ã‚¹ã‚³ãƒ¼ãƒ—ã®è¨­å®šã€‚
+     * @param parent è¦ªã®åå‰ç©ºé–“ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     void setParentSpace(Namespace parent);
 
     /**
-     * e–¼‘O‹óŠÔƒXƒR[ƒv‚Ìæ“¾B
-     * @return e‚Ì–¼‘O‹óŠÔƒXƒR[ƒvB
+     * è¦ªåå‰ç©ºé–“ã‚¹ã‚³ãƒ¼ãƒ—ã®å–å¾—ã€‚
+     * @return è¦ªã®åå‰ç©ºé–“ã‚¹ã‚³ãƒ¼ãƒ—ã€‚
      */
     Namespace getParentSpace();
 
     /**
-     * –¼‘O‹óŠÔƒ‚ƒfƒ‹‚Ì’Ç‰ÁB
-     * @param prefix –¼‘O‹óŠÔƒvƒŒƒtƒBƒbƒNƒXB
-     * @param namespaceURI –¼‘O‹óŠÔURIB
+     * åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã®è¿½åŠ ã€‚
+     * @param prefix åå‰ç©ºé–“ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã€‚
+     * @param namespaceURI åå‰ç©ºé–“URIã€‚
      */
     void addPrefixMapping(String prefix, URI namespaceURI);
 
     /**
-     * ‚±‚ÌƒXƒR[ƒv‚É‚ÄA–¼‘O‹óŠÔƒ‚ƒfƒ‹‚ğ’Ç‰Á‚µ‚½‚©‚Ç‚¤‚©B
-     * @return ‚±‚ÌƒXƒR[ƒv‚É’Ç‰Áƒ‚ƒfƒ‹‚ª‚ ‚é‚ÆtrueB
+     * ã“ã®ã‚¹ã‚³ãƒ¼ãƒ—ã«ã¦ã€åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã‚’è¿½åŠ ã—ãŸã‹ã©ã†ã‹ã€‚
+     * @return ã“ã®ã‚¹ã‚³ãƒ¼ãƒ—ã«è¿½åŠ ãƒ¢ãƒ‡ãƒ«ãŒã‚ã‚‹ã¨trueã€‚
      */
     boolean addedMapping();
 
     /**
-     * Œ»İ‚ÌƒXƒR[ƒv‚ÅPrefix‚ª–³w’è‚Ìê‡‚É‘I‘ğ‚³‚ê‚é
-     * ƒfƒtƒHƒ‹ƒg–¼‘O‹óŠÔURI‚ğİ’è‚·‚éB
-     * —\‚ß addPrefixMapping‚Å’Ç‰Á‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
-     * null‚ğw’è‚·‚é‚Æ prefixMapping‚Å prefix‚ğ "" ‚Æ‚µ‚Ä
-     * “o˜^‚µ‚½‚à‚Ì‚ªƒfƒtƒHƒ‹ƒg‚É‚È‚éB 
-     * @param namespaceURI –¼‘O‹óŠÔURIB
+     * ç¾åœ¨ã®ã‚¹ã‚³ãƒ¼ãƒ—ã§PrefixãŒç„¡æŒ‡å®šã®å ´åˆã«é¸æŠã•ã‚Œã‚‹
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåå‰ç©ºé–“URIã‚’è¨­å®šã™ã‚‹ã€‚
+     * äºˆã‚ addPrefixMappingã§è¿½åŠ ã•ã‚Œã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
+     * nullã‚’æŒ‡å®šã™ã‚‹ã¨ prefixMappingã§ prefixã‚’ "" ã¨ã—ã¦
+     * ç™»éŒ²ã—ãŸã‚‚ã®ãŒãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã«ãªã‚‹ã€‚ 
+     * @param namespaceURI åå‰ç©ºé–“URIã€‚
      */
     void setDefaultNamespaceURI(URI namespaceURI);
 
     /**
-     * Œ»İ‚ÌƒXƒR[ƒv‚ÅPrefix‚ª–³w’è‚Ìê‡‚É‘I‘ğ‚³‚ê‚é
-     * ƒfƒtƒHƒ‹ƒg–¼‘O‹óŠÔ‚ğ•Ô‚·B
+     * ç¾åœ¨ã®ã‚¹ã‚³ãƒ¼ãƒ—ã§PrefixãŒç„¡æŒ‡å®šã®å ´åˆã«é¸æŠã•ã‚Œã‚‹
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåå‰ç©ºé–“ã‚’è¿”ã™ã€‚
      * 
-     * @return ƒfƒtƒHƒ‹ƒg–¼‘O‹óŠÔBƒfƒtƒHƒ‹ƒg–¼‘O‹óŠÔ‚ª‚È‚¢ê‡‚É‚Ínull
+     * @return ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåå‰ç©ºé–“ã€‚ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåå‰ç©ºé–“ãŒãªã„å ´åˆã«ã¯null
      */
     URI getDefaultNamespaceURI();
 
     /**
-     * –¼‘O‹óŠÔƒ‚ƒfƒ‹‚Ìæ“¾B
-     * @param prefix æ“¾‚µ‚½‚¢–¼‘O‹óŠÔ‚ÌƒvƒŒƒtƒBƒbƒNƒXB
-     * @param all eƒXƒR[ƒv‚àŒŸõ‚·‚éB
-     * @return –¼‘O‹óŠÔƒ‚ƒfƒ‹B
+     * åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã®å–å¾—ã€‚
+     * @param prefix å–å¾—ã—ãŸã„åå‰ç©ºé–“ã®ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã€‚
+     * @param all è¦ªã‚¹ã‚³ãƒ¼ãƒ—ã‚‚æ¤œç´¢ã™ã‚‹ã€‚
+     * @return åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã€‚
      */
     PrefixMapping getMappingFromPrefix(String prefix, boolean all);
 
     /**
-     * –¼‘O‹óŠÔƒ‚ƒfƒ‹‚Ìæ“¾B
-     * @param namespaceURI æ“¾‚µ‚½‚¢–¼‘O‹óŠÔ‚ÌURIB
-     * @param all eƒXƒR[ƒv‚àŒŸõ‚·‚éB
-     * @return –¼‘O‹óŠÔƒ‚ƒfƒ‹B
+     * åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã®å–å¾—ã€‚
+     * @param namespaceURI å–å¾—ã—ãŸã„åå‰ç©ºé–“ã®URIã€‚
+     * @param all è¦ªã‚¹ã‚³ãƒ¼ãƒ—ã‚‚æ¤œç´¢ã™ã‚‹ã€‚
+     * @return åå‰ç©ºé–“ãƒ¢ãƒ‡ãƒ«ã€‚
      */
     PrefixMapping getMappingFromURI(URI namespaceURI, boolean all);
 
     /**
-     * “K—p‚³‚ê‚é–¼‘O‹óŠÔ‚ÌƒCƒeƒŒ[ƒgB
-     * @param all eƒXƒR[ƒv‚àŒŸõ‚·‚éB
-     * @return ƒvƒŒƒtƒBƒbƒNƒXƒ}ƒbƒsƒ“ƒOi<code>PrefixMapping</code>j‚ÌƒCƒeƒŒ[ƒ^B
+     * é©ç”¨ã•ã‚Œã‚‹åå‰ç©ºé–“ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ãƒˆã€‚
+     * @param all è¦ªã‚¹ã‚³ãƒ¼ãƒ—ã‚‚æ¤œç´¢ã™ã‚‹ã€‚
+     * @return ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ”ãƒ³ã‚°ï¼ˆ<code>PrefixMapping</code>ï¼‰ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã€‚
      */
     Iterator iteratePrefixMapping(boolean all);
 

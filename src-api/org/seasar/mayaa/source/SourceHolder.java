@@ -20,40 +20,40 @@ import java.util.Iterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
- * �\�[�X�f�B�X�N���v�^���i�[���Ă��郍�P�[�V����
+ * ソースディスクリプタを格納しているロケーション
  * @author Taro Kato (Gluegent, Inc.)
  */
 public interface SourceHolder {
 
     /**
-     * systemID�̃C�e���[�^��ԋp����B
-     * �K�w�\�����g���[�X���A/ �ŋ�؂�ꂽ���̂�ԋp����B
+     * systemIDのイテレータを返却する。
+     * 階層構造もトレースし、/ で区切られたものを返却する。
      * 
-     * @param filters �s���I�h�Ə�������1�ȏ�̘A���̏ꍇ�͊g���q���A
-     *                 ����ȊO�͐��K�\���Ńt�@�C�����̃}�b�`�������̂�ԋp����B
-     * @return ���݂���systemID�C�e���[�^
+     * @param filters ピリオドと小文字の1つ以上の連続の場合は拡張子を、
+     *                 それ以外は正規表現でファイル名のマッチしたものを返却する。
+     * @return 存在するsystemIDイテレータ
      */
     Iterator iterator(String[] filters);
     
     /**
-     * �\�[�X�f�B�X�N���v�^��ێ�����_���I�ȊJ�n�ʒu��ݒ肷��
-     * @param root �i�[�J�n�ʒu
+     * ソースディスクリプタを保持する論理的な開始位置を設定する
+     * @param root 格納開始位置
      */
     void setRoot(String root);
 
     /**
-     * �\�[�X�f�B�X�N���v�^��ێ�����
-     * �_���I�ȊJ�n�ʒu��ԋp����
-     * @return �i�[�J�n�ʒu
+     * ソースディスクリプタを保持する
+     * 論理的な開始位置を返却する
+     * @return 格納開始位置
      */
     String getRoot();
 
     /**
-     * �\�[�X�f�B�X�N���v�^�𐶐�����
+     * ソースディスクリプタを生成する
      * 
      * @param systemID
-     *            �V�X�e��ID
-     * @return �\�[�X�f�B�X�N���v�^
+     *            システムID
+     * @return ソースディスクリプタ
      */
     SourceDescriptor getSourceDescriptor(String systemID);
 

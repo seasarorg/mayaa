@@ -27,11 +27,7 @@ import org.seasar.mayaa.cycle.CycleLocalInstantiator;
  */
 public class CycleThreadLocalFactory {
 
-    private static ThreadLocal/*<Map>*/ _cycleLocalVariables = new ThreadLocal() {
-    	protected Object initialValue() {
-    		return new HashMap();
-    	}
-    };
+    private static ThreadLocal/*<Map>*/ _cycleLocalVariables = new ThreadLocal();
     private static Map/*<String, Instantiator>*/ _instantiators = new HashMap();
 
     private CycleThreadLocalFactory() {
@@ -39,7 +35,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static void cycleLocalInitialize() {
-        _cycleLocalVariables.remove();
+        _cycleLocalVariables.set(new HashMap());
     }
 
     public static void cycleLocalFinalize() {
@@ -57,7 +53,7 @@ public class CycleThreadLocalFactory {
                 instantiator.destroy(value);
             }
         }
-        _cycleLocalVariables.remove();
+        _cycleLocalVariables.set(null);
     }
 
     public static void registFactory(String key, CycleLocalInstantiator instantiator) {
@@ -65,6 +61,9 @@ public class CycleThreadLocalFactory {
     }
 
     public static void clearLocalVariable(Object key) {
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
         Map map = (Map) _cycleLocalVariables.get();
         Object instance = map.get(key);
         if (instance != null) {
@@ -83,6 +82,9 @@ public class CycleThreadLocalFactory {
     }
 
     public static Object get(Object key, Object[] params) {
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
         Map localVariables = (Map)_cycleLocalVariables.get();
         Object result = localVariables.get(key);
         if (result == null) {
@@ -110,6 +112,9 @@ public class CycleThreadLocalFactory {
     }
 
     public static void set(Object key, Object value) {
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
         Map localVariables = (Map)_cycleLocalVariables.get();
         Object existValue = localVariables.get(key);
         if (existValue != null) {

@@ -148,10 +148,6 @@ public class ResponseImpl extends AbstractResponse {
         return _status;
     }
 
-    public String getContentType() {
-        return _httpServletResponse.getContentType();
-    }
-
     public String getCharacterEncoding() {
         return _httpServletResponse.getCharacterEncoding(); 
     }

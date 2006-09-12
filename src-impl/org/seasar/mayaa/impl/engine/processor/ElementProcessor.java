@@ -278,13 +278,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
             if (getChildProcessorSize() > 0
                     && getChildProcessor(0) instanceof JspProcessor) {
                 JspProcessor processor = (JspProcessor)getChildProcessor(0);
-                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI(); 
+                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI();
                 if (injectNS == qName.getNamespaceURI()) {
                     return;
                 }
             }
         }
-        
+
         String attrPrefix = propName.getPrefix();
         if (StringUtil.hasValue(attrPrefix)) {
             attrPrefix = getResolvedPrefix(propName);
@@ -303,7 +303,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 temp.append(script.getScriptText());
             } else {
                 Object result = script.execute(null);
-                if (StringUtil.isEmpty(result)) {
+                if (result == null) {
                     return;
                 }
                 temp.append(result);

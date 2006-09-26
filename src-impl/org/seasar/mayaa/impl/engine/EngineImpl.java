@@ -69,6 +69,7 @@ public class EngineImpl extends SpecificationImpl
     private static final String PAGE_SERIALIZE = "pageSerialize";
     private static final String SURVIVE_LIMIT = "surviveLimit";
     private static final String FORWARD_LIMIT = "forwardLimit";
+    private static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
     private static final String DUMP_ENABLED = "dumpEnabled";
     private static final String MAYAA_EXTENSION = ".mayaa";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
@@ -81,6 +82,7 @@ public class EngineImpl extends SpecificationImpl
     private Class _pageClass = PageImpl.class;
     private Class _templateClass = TemplateImpl.class;
     private int _surviveLimit = 5;
+    private boolean _requestedSuffixEnabled = false;
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
 
@@ -333,6 +335,7 @@ public class EngineImpl extends SpecificationImpl
                 try {
                     String pageName = null;
                     String extension = null;
+                    String requestedSuffix = null;
                     ProcessStatus ret = null;
 
                     saveToCycle();
@@ -342,10 +345,14 @@ public class EngineImpl extends SpecificationImpl
                         SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
                         RequestScope request = cycle.getRequestScope();
                         pageName = request.getPageName();
-                        String requestedSuffix = request.getRequestedSuffix();
                         extension = request.getExtension();
+                        if (_requestedSuffixEnabled) {
+                            requestedSuffix = request.getRequestedSuffix();
+                        }
+
                         Page page = getPage(pageName);
                         ret = page.doPageRender(requestedSuffix, extension);
+
                         saveToCycle();
                         SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
                     } finally {
@@ -650,6 +657,8 @@ public class EngineImpl extends SpecificationImpl
             _surviveLimit = Integer.parseInt(value);
         } else if (FORWARD_LIMIT.equals(name)) {
             _forwardLimit = Integer.parseInt(value);
+        } else if (REQUESTED_SUFFIX_ENABLED.equals(name)) {
+            _requestedSuffixEnabled = Boolean.valueOf(value).booleanValue();
         } else if (DUMP_ENABLED.equals(name)) {
             _dumpEnabled = Boolean.valueOf(value).booleanValue();
         }
@@ -679,6 +688,8 @@ public class EngineImpl extends SpecificationImpl
             return String.valueOf(_surviveLimit);
         } else if (FORWARD_LIMIT.equals(name)) {
             return String.valueOf(_forwardLimit);
+        } else if (REQUESTED_SUFFIX_ENABLED.equals(name)) {
+            return String.valueOf(_requestedSuffixEnabled);
         } else if (DUMP_ENABLED.equals(name)) {
             return String.valueOf(_dumpEnabled);
         }

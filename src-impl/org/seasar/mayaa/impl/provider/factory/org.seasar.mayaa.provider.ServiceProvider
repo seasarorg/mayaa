@@ -14,6 +14,7 @@
 		<parameter name="defaultSpecification" value="/default.mayaa"/>
 		<parameter name="checkTimestamp" value="true"/>
 		<parameter name="suffixSeparator" value="$"/>
+		<parameter name="requestedSuffixEnabled" value="false" />
 		<parameter name="welcomeFileName" value="index.html"/>
 		<parameter name="requestCharacterEncoding" value="UTF-8"/>
 		<parameter name="pageSerialize" value="false"/>

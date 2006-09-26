@@ -3,15 +3,15 @@
 	<classpathentry kind="src" path="src-api"/>
 	<classpathentry kind="src" path="src-impl"/>
 	<classpathentry exported="true" sourcepath="srczip/commons-beanutils-src-1.7.0.zip" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.7.0.jar"/>
-	<classpathentry exported="true" sourcepath="srczip/rhino-src-1.6r2.zip" kind="lib" path="context/WEB-INF/lib/rhino-1.6r2.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/nekohtml-src-0.9.5.zip" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/Xerces-J-src.2.7.1.zip" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" sourcepath="srczip/jsp-src-2.0.zip" kind="lib" path="context/WEB-INF/lib-servlet/jsp-2.0.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/servlet-src-2.3.zip" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.4.jar"/>
-	<classpathentry exported="true" sourcepath="srczip/jaxen-src-1.1-beta-9.zip" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-9.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.1.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/commons-collections-src-3.1.zip" kind="lib" path="context/WEB-INF/lib/commons-collections-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xml-apis-1.3.03.jar"/>
+	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-10.jar"/>
+	<classpathentry exported="true" sourcepath="srczip/rhino-src-1.6r2.zip" kind="lib" path="context/WEB-INF/lib/rhino-1.6r2.jar"/>
 	<classpathentry kind="output" path="context/WEB-INF/classes"/>
 </classpath>

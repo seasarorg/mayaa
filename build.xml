@@ -10,8 +10,10 @@
 	<property name="jar.title" value="${project.title} API &amp; Impl"/>
 	<property name="src.name" value="${project.name}-src-${project.ver}.zip"/>
 
+	<property name="src.encoding" value="UTF-8"/>
+	<property name="javadoc.encoding" value="UTF-8"/>
 
-	<property name="javadoc.charset" value="Shift_JIS"/>
+	<property name="javadoc.charset" value="UTF-8"/>
 	<property name="javadoc.packages" value="*"/>
 	<property name="javadoc.source" value="1.4"/>
 	<property name="javadoc.access" value="protected"/>
@@ -75,6 +77,8 @@
 			access="${javadoc.access}"
 			source="${javadoc.source}"
 			use="false"
+			encoding="${src.encoding}"
+			docencoding="${javadoc.encoding}"
 			notree="true"
 			nonavbar="false"
 			noindex="true"

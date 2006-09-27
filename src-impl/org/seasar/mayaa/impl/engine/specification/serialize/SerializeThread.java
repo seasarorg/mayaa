@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletRequest;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
@@ -36,13 +37,18 @@ public class SerializeThread extends Thread {
     private Object _requestContext;
     private Object _responseContext;
     private boolean _terminated;
+    private MayaaContext _mayaaContext;
 
-    SerializeThread(int index, Object servletContext) {
+    SerializeThread(int index) {
+    	_mayaaContext = MayaaContext.getCurrentContext(); 
         setName("serializeThread-" + index);
         _index = index;
         _liveCount = RECYCLE_LIVE_COUNT;
-        _requestContext = new MockHttpServletRequest(
-                (ServletContext)servletContext);
+        Object context = _mayaaContext.getApplicationContext();
+        if (context instanceof ServletContext == false) {
+            throw new IllegalStateException();
+        }
+        _requestContext = new MockHttpServletRequest((ServletContext)context);
         _responseContext = new MockHttpServletResponse();
     }
 
@@ -61,6 +67,7 @@ public class SerializeThread extends Thread {
     }
 
     public void run() {
+    	MayaaContext.setCurrentContext(_mayaaContext);
         CycleUtil.initialize(_requestContext, _responseContext);
         SpecificationImpl specification;
         try {

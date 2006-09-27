@@ -44,7 +44,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static final long serialVersionUID = -4067264733660357274L;
-    private static Scriptable _standardObjects;
 
     // singleton
     private static transient WrapFactory _wrap;
@@ -81,28 +80,32 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return new SourceCompiledScriptImpl(source, encoding);
     }
 
-    protected static Scriptable getStandardObjects() {
-        if (_standardObjects == null) {
-            Context cx = Context.enter();
-            try {
-                _standardObjects = cx.initStandardObjects(null, true);
-            } finally {
-                Context.exit();
-            }
-        }
-        return _standardObjects;
-    }
-    
     private static final String PARENT_SCRIPTABLE_KEY =
         ScriptEnvironmentImpl.class.getName() + "#parentScriptable";
     static {
         CycleUtil.registVariableFactory(PARENT_SCRIPTABLE_KEY,
                 new DefaultCycleLocalInstantiator() {
+        			//private Scriptable _standardObjects; 
+        	
+		            protected Scriptable getStandardObjects() {
+		            	Scriptable _standardObjects;
+		                //if (_standardObjects == null) {
+			                Context cx = Context.enter();
+			                try {
+			                    _standardObjects = cx.initStandardObjects(null, true);
+			                } finally {
+			                    Context.exit();
+			                }
+		                //}
+		            	return _standardObjects;
+		            }
+		            
                     public Object create(Object[] params) {
                         ServiceCycle cycle = CycleUtil.getServiceCycle();
                         Scriptable parent;
                         Context cx = RhinoUtil.enter();
                         try {
+                        	
                             Scriptable standard = getStandardObjects();
                             parent = cx.getWrapFactory().wrapAsJavaObject(
                                     cx, standard, cycle, ServiceCycle.class);

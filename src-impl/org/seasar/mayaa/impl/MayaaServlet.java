@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
@@ -35,33 +35,36 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class MayaaServlet extends HttpServlet {
 
-    private static final Log LOG = LogFactory.getLog(MayaaServlet.class);
     private static final long serialVersionUID = -5816552218525836552L;
-    private static boolean _initialized;
+    
+    private final Log LOG = LogFactory.getLog(MayaaServlet.class);
+    private boolean _initialized;
+    private MayaaContext _mayaaContext;
 
     public void init() {
         if (_initialized == false) {
             LOG.info("init start");
-            FactoryFactory.setInstance(new FactoryFactoryImpl());
-            FactoryFactory.setContext(getServletContext());
+        	_mayaaContext = new MayaaContext(getServletContext());
+            
+        	MayaaContext.setCurrentContext(_mayaaContext);
+        	
+            getServletContext().getInitParameter("");	// <- ???
+            _mayaaContext.init();
+            AutoPageBuilder.getInstance().init(getServletConfig());
             _initialized = true;
+            LOG.info("init end");
         }
-        this.getServletContext().getInitParameter("");
-        LOG.info("prepareLibraries start");
-        ProviderUtil.getLibraryManager().prepareLibraries();
-        LOG.info("prepareLibraries end");
-        initAutoPageBuilder();
-        LOG.info("init end");
-    }
-
-    protected void initAutoPageBuilder() {
-        AutoPageBuilder.INSTANCE.init(getServletConfig());
     }
 
     public void destroy() {
-        AutoPageBuilder.INSTANCE.destroy();
-        ProviderUtil.getEngine().kill();
-        SerializeThreadManager.destroy();
+    	MayaaContext.setCurrentContext(_mayaaContext);
+    	try {
+	        AutoPageBuilder.getInstance().destroy();
+	        _mayaaContext.destroy();
+	        SerializeThreadManager.destroy();
+    	} finally {
+    		MayaaContext.setCurrentContext(null);
+    	}
     }
 
     public void doGet(
@@ -76,6 +79,7 @@ public class MayaaServlet extends HttpServlet {
 
     protected void doService(
             HttpServletRequest request, HttpServletResponse response) {
+    	MayaaContext.setCurrentContext(_mayaaContext);
         CycleUtil.initialize(request, response);
         try {
             Engine engine = ProviderUtil.getEngine();

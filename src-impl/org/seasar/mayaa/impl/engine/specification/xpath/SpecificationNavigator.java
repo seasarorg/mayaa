@@ -22,6 +22,7 @@ import org.jaxen.NamedAccessNavigator;
 import org.jaxen.Navigator;
 import org.jaxen.XPath;
 import org.jaxen.util.SingleObjectIterator;
+import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
@@ -45,10 +46,18 @@ public class SpecificationNavigator extends DefaultNavigator
 
     private static final long serialVersionUID = -8845415744894196361L;
 
-    private static final Navigator INSTANCE = new SpecificationNavigator();
-
     public static Navigator getInstance() {
-        return INSTANCE;
+    	MayaaContext currentContext = MayaaContext.getCurrentContext();
+    	if (currentContext == null) {
+    		throw new IllegalStateException();
+    	}
+    	return (Navigator) currentContext.getGrowAttribute(
+    			SpecificationNavigator.class.getName(),
+    			new MayaaContext.Instantiator() {
+		    		public Object newInstance() {
+		    			return new SpecificationNavigator();
+		    		}
+		    	});
     }
 
     protected SpecificationNavigator() {

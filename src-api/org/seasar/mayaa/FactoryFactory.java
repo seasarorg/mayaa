@@ -27,39 +27,17 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class FactoryFactory implements Serializable {
-
-    private static FactoryFactory _instance;
-    private static Object _context;
-    private static Map _factories = new HashMap();
-
-    /**
-     * ファクトリの初期化。
-     * @param instance ファクトリのインスタンス。
-     */
-    public static void setInstance(FactoryFactory instance) {
-        if (instance == null) {
-            throw new IllegalArgumentException();
-        }
-        _instance = instance;
-    }
-
-    /**
-     * コンテキストオブジェクト設定。
-     * @param context カレントアプリケーションのコンテキストオブジェクト。
-     */
-    public static void setContext(Object context) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        _context = context;
-    }
+	
+	private static final String CONTEXT_KEY = FactoryFactory.class.getName()+".context";
+	
+    private Map _factories = new HashMap();
 
     private static void check() {
-        if (_instance == null || _context == null) {
-            throw new IllegalStateException();
-        }
+    	if (isInitialized() == false) {
+    		throw new IllegalStateException();
+    	}
     }
-
+    
     /**
      * ファクトリファクトリインスタンスとコンテキストオブジェクトが
      * 初期化済みかを判定する。
@@ -67,8 +45,49 @@ public abstract class FactoryFactory implements Serializable {
      * @return 初期化済みの場合はtrueを返却する。
      */
     public static boolean isInitialized() {
-        return _instance != null && _context != null;
+    	MayaaContext context = MayaaContext.getCurrentContext();
+    	if (context == null) {
+    		return false;
+    	}
+        if (context.getFactoryFactory() == null
+        		|| context.get(CONTEXT_KEY) == null) {
+            return false;
+        }
+    	return true;
     }
+
+    protected static FactoryFactory getInstance() {
+    	MayaaContext context = MayaaContext.getCurrentContext();
+    	if (context == null) {
+    		throw new IllegalStateException();
+    	}
+    	return context.getFactoryFactory();
+    }
+    
+    protected static Object getContext() {
+    	MayaaContext context = MayaaContext.getCurrentContext();
+    	if (context == null) {
+    		throw new IllegalStateException();
+    	}
+    	return context.get(CONTEXT_KEY);
+    }
+    
+    public static void setInstance(FactoryFactory factoryFactory) {
+    	MayaaContext context = MayaaContext.getCurrentContext();
+    	if (context == null) {
+    		throw new IllegalStateException();
+    	}
+    	context.setFactoryFactory(factoryFactory);
+    }
+    
+    public static void setContext(Object context) {
+    	MayaaContext mayaaContext = MayaaContext.getCurrentContext();
+    	if (mayaaContext == null) {
+    		throw new IllegalStateException();
+    	}
+    	mayaaContext.put(CONTEXT_KEY, context);
+    }
+    
 
     /**
      * ブートストラップ時に用いる、/WEB-INFフォルダを読むソース。
@@ -79,7 +98,7 @@ public abstract class FactoryFactory implements Serializable {
     public static SourceDescriptor getBootstrapSource(
             String root, String systemID) {
         check();
-        return _instance.getBootstrapSource(root, systemID, _context);
+        return getInstance().getBootstrapSource(root, systemID, getContext());
     }
 
     /**
@@ -89,13 +108,13 @@ public abstract class FactoryFactory implements Serializable {
      */
     public static UnifiedFactory getFactory(Class interfaceClass) {
         check();
-        UnifiedFactory factory = (UnifiedFactory) _factories.get(interfaceClass);
+        UnifiedFactory factory = (UnifiedFactory)getInstance()._factories.get(interfaceClass);
         if (factory == null) {
-            factory = _instance.getFactory(interfaceClass, _context);
+            factory = getInstance().getFactory(interfaceClass, getContext());
             if (factory == null) {
                 return null;
             }
-            _factories.put(interfaceClass, factory);
+            getInstance()._factories.put(interfaceClass, factory);
         }
         return factory;
     }
@@ -106,7 +125,7 @@ public abstract class FactoryFactory implements Serializable {
      */
     public static ApplicationScope getApplicationScope() {
         check();
-        return _instance.getApplicationScope(_context);
+        return getInstance().getApplicationScope(getContext());
     }
 
     /**

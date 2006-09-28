@@ -162,7 +162,27 @@ public final class StringUtil {
         return path.startsWith("./");
     }
 
+    /**
+     * ファイル相対パスをコンテキスト相対パスにする。
+     *
+     * @param base リンクのあるページのコンテキスト相対パス ("/"始まり)
+     * @param path リンクに書かれているパス
+     * @return コンテキスト相対パス
+     */
     public static String adjustRelativePath(String base, String path) {
+        return adjustRelativePath(base, path, null);
+    }
+
+    /**
+     * コンポーネントまたはレイアウトに書かれたファイル相対パスを、
+     * コンポーネントまたはレイアウトを使用するページからの相対パスにする。
+     *
+     * @param base リンクのあるコンポーネントまたはレイアウトのコンテキスト相対パス ("/"始まり)
+     * @param path リンクに書かれているパス
+     * @param hostPage コンポーネントまたはレイアウトのコンテキスト相対パス ("/"始まり)
+     * @return pathをhostPageからの相対パスにしたもの
+     */
+    public static String adjustRelativePath(String base, String path, String hostPage) {
         if (isRelativePath(path) == false) {
             return path;
         }
@@ -173,7 +193,8 @@ public final class StringUtil {
 
         try {
             String baseDir = base.substring(0, base.lastIndexOf('/'));
-            return adjustRecursive(baseDir, path);
+            String contextRelativePath = adjustRecursive(baseDir, path);
+            return adjustTrackBack(contextRelativePath, hostPage);
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
@@ -200,6 +221,63 @@ public final class StringUtil {
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * コンテキスト相対パスからファイル相対パスにする。
+     * hostPageからpathへたどるための相対パスを返す。
+     *
+     * @param path リンクのコンテキスト相対パス ("/"始まり)
+     * @param hostPage コンポーネントまたはレイアウトのコンテキスト相対パス ("/"始まり)
+     * @return hostPageからpathへたどるための相対パス
+     */
+    protected static String adjustTrackBack(String path, String hostPage) {
+        if (isEmpty(hostPage)) {
+            return path;
+        }
+
+        String[] hostPath = hostPage.split("/");
+        String[] linkPath = path.split("/");
+
+        int matchedDirs = 1;// 最初は空なので1から
+        while (hostPath.length > matchedDirs && linkPath.length > matchedDirs &&
+                hostPath[matchedDirs].equals(linkPath[matchedDirs])) {
+            matchedDirs += 1;
+        }
+
+        int depth = hostPath.length - (matchedDirs + 1);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(times("../", depth));
+
+        for (int i = matchedDirs; linkPath.length > i; i++) {
+            sb.append(linkPath[i]);
+            sb.append('/');
+        }
+        if (path.charAt(path.length() - 1) != '/') {
+            sb.delete(sb.length() - 1, sb.length());
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * unitをcount回繰り返した文字列を返す。
+     * unitがnull、あるいはcountが0以下ならば空文字列を返す。
+     *
+     * @param unit 繰り返す文字列
+     * @param count 繰り返す回数
+     * @return unitをcount回繰り返した文字列。
+     */
+    public static String times(String unit, int count) {
+        if (count <= 0 || isEmpty(unit)) {
+            return "";
+        }
+        StringBuffer sb = new StringBuffer(unit.length() * count);
+        for (int i = 0; i < count; i++) {
+            sb.append(unit);
+        }
+        return sb.toString();
     }
 
     public static String removeFileProtocol(String systemID) {

@@ -194,7 +194,7 @@ public final class StringUtil {
         try {
             String baseDir = base.substring(0, base.lastIndexOf('/'));
             String contextRelativePath = adjustRecursive(baseDir, path);
-            return adjustTrackBack(contextRelativePath, hostPage);
+            return adjustContextRelativePath(hostPage, contextRelativePath);
         } catch (StringIndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
@@ -227,11 +227,11 @@ public final class StringUtil {
      * コンテキスト相対パスからファイル相対パスにする。
      * hostPageからpathへたどるための相対パスを返す。
      *
+     * @param hostPage リンクのあるページのコンテキスト相対パス ("/"始まり)
      * @param path リンクのコンテキスト相対パス ("/"始まり)
-     * @param hostPage コンポーネントまたはレイアウトのコンテキスト相対パス ("/"始まり)
      * @return hostPageからpathへたどるための相対パス
      */
-    protected static String adjustTrackBack(String path, String hostPage) {
+    protected static String adjustContextRelativePath(String hostPage, String path) {
         if (isEmpty(hostPage)) {
             return path;
         }

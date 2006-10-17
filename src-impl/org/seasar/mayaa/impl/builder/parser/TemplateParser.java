@@ -34,23 +34,19 @@ public class TemplateParser extends AbstractSAXParser {
         /** Ignore outside content. copy from org.cyberneko.html.HTMLTagBalancer */
         protected static final String IGNORE_OUTSIDE_CONTENT =
             "http://cyberneko.org/html/features/balance-tags/ignore-outside-content";
-        /** Ignore outside content. copy from org.cyberneko.html.HTMLTagBalancer */
-        /** Default encoding. copy from org.cyberneko.html.HTMLScanner */
-        protected static final String DEFAULT_ENCODING =
-            "http://cyberneko.org/html/properties/default-encoding";
 
         public TemplateParserConfiguration(HTMLScanner scanner) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
+            /* テンプレート上にエンコーディング指定がなければUTF-8と見なす */
+            setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, "utf-8");
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             /* 元のテンプレート内容を忠実に再現させるオプション。
             ただし、</html>の後ろは無視される。false(デフォルト)の場合は、
             </body>と</html>の後につづくものをnekoがむりやり前に持ってくる */
             setFeature(IGNORE_OUTSIDE_CONTENT, true);
-            /* テンプレート上にエンコーディング指定がなければUTF-8と見なす */
-            setProperty(DEFAULT_ENCODING, "utf-8");
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);
         }

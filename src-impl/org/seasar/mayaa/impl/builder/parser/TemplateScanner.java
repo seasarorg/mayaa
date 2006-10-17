@@ -28,6 +28,7 @@ public class TemplateScanner extends HTMLScanner implements CONST_IMPL {
 
     public static final String HTML_NAMES_ELEMS = HTMLScanner.NAMES_ELEMS;
     public static final String HTML_NAMES_ATTRS = HTMLScanner.NAMES_ATTRS;
+    public static final String HTML_DEFAULT_ENCODING = HTMLScanner.DEFAULT_ENCODING;
     public static final String LEXICAL_HANDLER
             = "http://xml.org/sax/properties/lexical-handler";
     public static final String FILTERS

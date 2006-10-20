@@ -27,13 +27,13 @@ import org.seasar.mayaa.source.SourceHolder;
 public abstract class FileSourceDescriptorProvideSourceHolder implements SourceHolder {
 
     protected abstract FileSourceDescriptor getSourceDescriptor();
-    
+
     private String _root = "";
 
     public String getRoot() {
         return _root;
     }
-    
+
     public void setRoot(String root) {
         _root = root;
     }
@@ -42,16 +42,16 @@ public abstract class FileSourceDescriptorProvideSourceHolder implements SourceH
         FileSourceDescriptor sourceDescriptor = getSourceDescriptor();
         sourceDescriptor.setRoot(getRoot());
         sourceDescriptor.setSystemID(systemID);
-        
+
         return sourceDescriptor;
     }
 
     public Iterator iterator(String[] filters) {
         FileSourceDescriptor root =
-            (FileSourceDescriptor)getSourceDescriptor("");
+            (FileSourceDescriptor) getSourceDescriptor("");
         if (root.exists() == false) {
             return NullIterator.getInstance();
         }
         return new SystemIDFileSearchIterator(root.getFile(), filters);
-    }    
+    }
 }

@@ -57,20 +57,20 @@ public class AutoPageBuilder implements Runnable {
     private static final boolean RENDER_MATE_DEFAULT = false;
     
     public static AutoPageBuilder getInstance() {
-    	final MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-    	if (mayaaContext == null) {
-    		throw new IllegalStateException();
-    	}
-    	return (AutoPageBuilder)mayaaContext.getGrowAttribute(
-    			AutoPageBuilder.class.getName(), new MayaaContext.Instantiator() {
-    				public Object newInstance() {
-    					return new AutoPageBuilder(mayaaContext);
-    				}
-    			});
+        final MayaaContext mayaaContext = MayaaContext.getCurrentContext();
+        if (mayaaContext == null) {
+            throw new IllegalStateException();
+        }
+        return (AutoPageBuilder)mayaaContext.getGrowAttribute(
+                AutoPageBuilder.class.getName(), new MayaaContext.Instantiator() {
+                    public Object newInstance() {
+                        return new AutoPageBuilder(mayaaContext);
+                    }
+                });
     }
 
     protected AutoPageBuilder(MayaaContext context) {
-    	_mayaaContext = context;
+        _mayaaContext = context;
     }
 
     private Thread _thread;

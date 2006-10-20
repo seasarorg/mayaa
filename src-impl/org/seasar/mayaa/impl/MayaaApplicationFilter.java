@@ -36,11 +36,11 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class MayaaApplicationFilter implements Filter {
-	
-	private ServletContext _servletContext;
-	
+
+    private ServletContext _servletContext;
+
     public void init(FilterConfig filterConfig) throws ServletException {
-    	_servletContext = filterConfig.getServletContext();
+        _servletContext = filterConfig.getServletContext();
     }
 
     public void destroy() {
@@ -49,7 +49,7 @@ public class MayaaApplicationFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, 
             FilterChain chain) throws IOException, ServletException {
-    	MayaaContext.setCurrentContext(MayaaContext.getContext(_servletContext));
+        MayaaContext.setCurrentContext(MayaaContext.getContext(_servletContext));
         CycleUtil.initialize(request, response);
         try {
             chain.doFilter(request, response);

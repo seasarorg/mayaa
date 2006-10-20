@@ -16,6 +16,8 @@
 package org.seasar.mayaa.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.net.URLConnection;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,9 +47,9 @@ public class MayaaServlet extends HttpServlet {
         if (_initialized == false) {
             LOG.info("init start");
         	_mayaaContext = new MayaaContext(getServletContext());
-            
+
         	MayaaContext.setCurrentContext(_mayaaContext);
-        	
+
             getServletContext().getInitParameter("");	// <- ???
             _mayaaContext.init();
             AutoPageBuilder.getInstance().init(getServletConfig());
@@ -59,12 +61,33 @@ public class MayaaServlet extends HttpServlet {
     public void destroy() {
     	MayaaContext.setCurrentContext(_mayaaContext);
     	try {
-	        AutoPageBuilder.getInstance().destroy();
+            AutoPageBuilder.getInstance().destroy();
 	        _mayaaContext.destroy();
 	        SerializeThreadManager.destroy();
     	} finally {
     		MayaaContext.setCurrentContext(null);
     	}
+    }
+
+    /**
+     * 以下のバグに対する対応です。 <br/>
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4167874
+     * 
+     */
+    public void disableURLCaches() {
+        try {
+            Field field = URLConnection.class.getDeclaredField("defaultUseCaches");
+            field.setAccessible(true);
+           field.set(null, Boolean.FALSE);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("disable URLCaches failed.", e);
+        } catch (IllegalAccessException e) {
+            LOG.warn("disable URLCaches failed.", e);
+        } catch (SecurityException e) {
+            LOG.warn("disable URLCaches failed.", e);
+        } catch (NoSuchFieldException e) {
+            LOG.warn("disable URLCaches failed.", e);
+        }
     }
 
     public void doGet(

@@ -47,6 +47,11 @@ public class URLSourceDescriptor extends ParameterAwareImpl
 
     public InputStream getInputStream() {
         try {
+            // TODO 内部的には下記の形であり、URLConnectionを使っているためメモリリーク
+            // する可能性あり。
+            // URLConnection connection = _url.openConnection();
+            // connection.setDefaultUseCaches(false);
+            // connection.getInputStream();
             return _url.openStream();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -38,7 +38,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class MayaaServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5816552218525836552L;
-    
+
     private final Log LOG = LogFactory.getLog(MayaaServlet.class);
     private boolean _initialized;
     private MayaaContext _mayaaContext;
@@ -46,11 +46,11 @@ public class MayaaServlet extends HttpServlet {
     public void init() {
         if (_initialized == false) {
             LOG.info("init start");
-        	_mayaaContext = new MayaaContext(getServletContext());
+            _mayaaContext = new MayaaContext(getServletContext());
 
-        	MayaaContext.setCurrentContext(_mayaaContext);
+            MayaaContext.setCurrentContext(_mayaaContext);
 
-            getServletContext().getInitParameter("");	// <- ???
+            getServletContext().getInitParameter("");   // <- ???
             _mayaaContext.init();
             AutoPageBuilder.getInstance().init(getServletConfig());
             _initialized = true;
@@ -59,26 +59,26 @@ public class MayaaServlet extends HttpServlet {
     }
 
     public void destroy() {
-    	MayaaContext.setCurrentContext(_mayaaContext);
-    	try {
+        disableURLCaches();
+        MayaaContext.setCurrentContext(_mayaaContext);
+        try {
             AutoPageBuilder.getInstance().destroy();
-	        _mayaaContext.destroy();
-	        SerializeThreadManager.destroy();
-    	} finally {
-    		MayaaContext.setCurrentContext(null);
-    	}
+            _mayaaContext.destroy();
+            SerializeThreadManager.destroy();
+        } finally {
+            MayaaContext.setCurrentContext(null);
+        }
     }
 
     /**
      * 以下のバグに対する対応です。 <br/>
      * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4167874
-     * 
      */
     public void disableURLCaches() {
         try {
             Field field = URLConnection.class.getDeclaredField("defaultUseCaches");
             field.setAccessible(true);
-           field.set(null, Boolean.FALSE);
+            field.setBoolean(null, false);
         } catch (IllegalArgumentException e) {
             LOG.warn("disable URLCaches failed.", e);
         } catch (IllegalAccessException e) {
@@ -102,7 +102,7 @@ public class MayaaServlet extends HttpServlet {
 
     protected void doService(
             HttpServletRequest request, HttpServletResponse response) {
-    	MayaaContext.setCurrentContext(_mayaaContext);
+        MayaaContext.setCurrentContext(_mayaaContext);
         CycleUtil.initialize(request, response);
         try {
             Engine engine = ProviderUtil.getEngine();

@@ -235,11 +235,15 @@ public class ProcessorDump extends ElementProcessor {
             if (CycleUtil.isDraftWriting()) {
                 temp.append(script.getScriptText());
             } else {
+try { // TODO 修正する [JIRA: MAYAA-5]
                 Object result = script.execute(null);
                 if (StringUtil.isEmpty(result)) {
                     return;
                 }
                 temp.append(result);
+} catch (Throwable ignore) {
+    // no-op
+}
             }
         } else {
             temp.append(value.toString());

@@ -177,8 +177,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             Object result = super.execute(args);
             if (isString() && StringUtil.hasValue(result)) {
                 if (_basePath != null) {
+                    PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
                     result =
-                        StringUtil.adjustRelativePath(_basePath, result.toString());
+                        adjuster.adjustRelativePath(_basePath, result.toString());
                 }
                 result = escape(result.toString());
             }
@@ -202,8 +203,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
                 if (StringUtil.hasValue(obj)) {
                     _escapedValue = obj.toString();
                     if (basePath != null) {
+                        PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
                         _escapedValue =
-                            StringUtil.adjustRelativePath(
+                            adjuster.adjustRelativePath(
                                     basePath, _escapedValue);
                     }
                     _escapedValue = escape(_escapedValue);

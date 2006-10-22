@@ -217,7 +217,7 @@ public final class StringUtil {
      * @param path リンクのコンテキスト相対パス ("/"始まり)
      * @return hostPageからpathへたどるための相対パス
      */
-    protected static String adjustContextRelativePath(String hostPage, String path) {
+    public static String adjustContextRelativePath(String hostPage, String path) {
         if (isEmpty(hostPage) || isEmpty(path) || (path.startsWith("/") == false)) {
             return path;
         }

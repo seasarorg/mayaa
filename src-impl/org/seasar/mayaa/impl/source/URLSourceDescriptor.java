@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.source;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
@@ -47,12 +48,10 @@ public class URLSourceDescriptor extends ParameterAwareImpl
 
     public InputStream getInputStream() {
         try {
-            // TODO 内部的には下記の形であり、URLConnectionを使っているためメモリリーク
-            // する可能性あり。
-            // URLConnection connection = _url.openConnection();
-            // connection.setDefaultUseCaches(false);
-            // connection.getInputStream();
-            return _url.openStream();
+            // キャッシュを使うとjarファイルをロックしてしまう
+            URLConnection connection = _url.openConnection();
+            connection.setDefaultUseCaches(false);
+            return connection.getInputStream();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

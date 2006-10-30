@@ -59,7 +59,8 @@ public class MayaaServlet extends HttpServlet {
     }
 
     public void destroy() {
-        disableURLCaches();
+        // TODO デフォルトキャッシュを無効にするかどうか判断する
+        // disableURLCaches();
         MayaaContext.setCurrentContext(_mayaaContext);
         try {
             AutoPageBuilder.getInstance().destroy();

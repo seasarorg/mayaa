@@ -68,6 +68,7 @@ public class MayaaServlet extends HttpServlet {
             SerializeThreadManager.destroy();
         } finally {
             MayaaContext.setCurrentContext(null);
+            LogFactory.releaseAll();
         }
     }
 

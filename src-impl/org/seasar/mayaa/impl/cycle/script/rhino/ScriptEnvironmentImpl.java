@@ -81,31 +81,28 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     private static final String PARENT_SCRIPTABLE_KEY =
-        ScriptEnvironmentImpl.class.getName() + "#parentScriptable";
+            ScriptEnvironmentImpl.class.getName() + "#parentScriptable";
     static {
         CycleUtil.registVariableFactory(PARENT_SCRIPTABLE_KEY,
                 new DefaultCycleLocalInstantiator() {
-        			//private Scriptable _standardObjects; 
-        	
-		            protected Scriptable getStandardObjects() {
-		            	Scriptable _standardObjects;
-		                //if (_standardObjects == null) {
-			                Context cx = Context.enter();
-			                try {
-			                    _standardObjects = cx.initStandardObjects(null, true);
-			                } finally {
-			                    Context.exit();
-			                }
-		                //}
-		            	return _standardObjects;
-		            }
-		            
+
+                    protected Scriptable getStandardObjects() {
+                        Scriptable _standardObjects;
+                        Context cx = Context.enter();
+                        try {
+                            _standardObjects = cx.initStandardObjects(null, true);
+                        } finally {
+                            Context.exit();
+                        }
+                        return _standardObjects;
+                    }
+
                     public Object create(Object[] params) {
                         ServiceCycle cycle = CycleUtil.getServiceCycle();
                         Scriptable parent;
                         Context cx = RhinoUtil.enter();
                         try {
-                        	
+
                             Scriptable standard = getStandardObjects();
                             parent = cx.getWrapFactory().wrapAsJavaObject(
                                     cx, standard, cycle, ServiceCycle.class);
@@ -113,7 +110,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                             Context.exit();
                         }
                         return parent;
-                        
                     }
                 });
     }
@@ -131,7 +127,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scope == null) {
             parent = (Scriptable) CycleUtil.getGlobalVariable(PARENT_SCRIPTABLE_KEY, null);
         } else if (scope instanceof PageAttributeScope) {
-            PageAttributeScope pageTop = (PageAttributeScope) scope; 
+            PageAttributeScope pageTop = (PageAttributeScope) scope;
             parent = (PageAttributeScope)pageTop.getAttribute(
                     PageAttributeScope.KEY_CURRENT);
         } else {
@@ -177,7 +173,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             } else if (current != null) {
                 cycle.setPageScope(null);
                 return;
-            } 
+            }
         }
         throw new IllegalStateException();
     }
@@ -197,7 +193,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
         return result;
     }
-    
+
     static WrapFactory getWrapFactory() {
         return _wrap;
     }

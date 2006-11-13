@@ -27,67 +27,66 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class FactoryFactory implements Serializable {
-	
-	private static final String CONTEXT_KEY = FactoryFactory.class.getName()+".context";
-	
+
+    private static final String CONTEXT_KEY = FactoryFactory.class.getName() + ".context";
+
     private Map _factories = new HashMap();
 
     private static void check() {
-    	if (isInitialized() == false) {
-    		throw new IllegalStateException();
-    	}
+        if (isInitialized() == false) {
+            throw new IllegalStateException();
+        }
     }
-    
+
     /**
      * ファクトリファクトリインスタンスとコンテキストオブジェクトが
      * 初期化済みかを判定する。
-     * 
+     *
      * @return 初期化済みの場合はtrueを返却する。
      */
     public static boolean isInitialized() {
-    	MayaaContext context = MayaaContext.getCurrentContext();
-    	if (context == null) {
-    		return false;
-    	}
-        if (context.getFactoryFactory() == null
-        		|| context.get(CONTEXT_KEY) == null) {
+        MayaaContext context = MayaaContext.getCurrentContext();
+        if (context == null) {
             return false;
         }
-    	return true;
+        if (context.getFactoryFactory() == null
+                || context.get(CONTEXT_KEY) == null) {
+            return false;
+        }
+        return true;
     }
 
     protected static FactoryFactory getInstance() {
-    	MayaaContext context = MayaaContext.getCurrentContext();
-    	if (context == null) {
-    		throw new IllegalStateException();
-    	}
-    	return context.getFactoryFactory();
+        MayaaContext context = MayaaContext.getCurrentContext();
+        if (context == null) {
+            throw new IllegalStateException();
+        }
+        return context.getFactoryFactory();
     }
-    
+
     protected static Object getContext() {
-    	MayaaContext context = MayaaContext.getCurrentContext();
-    	if (context == null) {
-    		throw new IllegalStateException();
-    	}
-    	return context.get(CONTEXT_KEY);
+        MayaaContext context = MayaaContext.getCurrentContext();
+        if (context == null) {
+            throw new IllegalStateException();
+        }
+        return context.get(CONTEXT_KEY);
     }
-    
+
     public static void setInstance(FactoryFactory factoryFactory) {
-    	MayaaContext context = MayaaContext.getCurrentContext();
-    	if (context == null) {
-    		throw new IllegalStateException();
-    	}
-    	context.setFactoryFactory(factoryFactory);
+        MayaaContext context = MayaaContext.getCurrentContext();
+        if (context == null) {
+            throw new IllegalStateException();
+        }
+        context.setFactoryFactory(factoryFactory);
     }
-    
+
     public static void setContext(Object context) {
-    	MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-    	if (mayaaContext == null) {
-    		throw new IllegalStateException();
-    	}
-    	mayaaContext.put(CONTEXT_KEY, context);
+        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
+        if (mayaaContext == null) {
+            throw new IllegalStateException();
+        }
+        mayaaContext.put(CONTEXT_KEY, context);
     }
-    
 
     /**
      * ブートストラップ時に用いる、/WEB-INFフォルダを読むソース。

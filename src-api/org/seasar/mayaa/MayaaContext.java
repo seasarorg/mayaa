@@ -34,128 +34,129 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
  * @author Taro Kato (Gluegent, Inc)
  */
 public class MayaaContext {
-	private static final Log LOG = LogFactory.getLog(MayaaContext.class);
 
-	private static ThreadLocal _currentContext = new ThreadLocal();
-        
-	protected static Map/*<appContext, MayaaContext>*/ _contextVariables =
-		new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT);  
-	
-	private Map _attributes = new HashMap();
-	
-	private Object _context;
-	
-	public static void setCurrentContext(MayaaContext context) {
-		if (context == null) {
-			_currentContext.set(null);
-		} else {
-			_currentContext.set(context);
-		}
-	}
-	
-	public static MayaaContext getCurrentContext() {
-		MayaaContext result = (MayaaContext) _currentContext.get();
-		if (result == null) {
-			synchronized (_currentContext) {
-				result = (MayaaContext) _currentContext.get();	// retry
-				if (result == null) {
-					result = new MayaaContext();
-					_currentContext.set(result);
+    private static final Log LOG = LogFactory.getLog(MayaaContext.class);
+
+    private static ThreadLocal _currentContext = new ThreadLocal();
+
+    protected static Map/*<appContext, MayaaContext>*/ _contextVariables =
+        new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT);
+
+    private Map _attributes = new HashMap();
+
+    private Object _context;
+
+    public static void setCurrentContext(MayaaContext context) {
+        if (context == null) {
+            _currentContext.set(null);
+        } else {
+            _currentContext.set(context);
+        }
+    }
+
+    public static MayaaContext getCurrentContext() {
+        MayaaContext result = (MayaaContext) _currentContext.get();
+        if (result == null) {
+            synchronized (_currentContext) {
+                result = (MayaaContext) _currentContext.get();  // retry
+                if (result == null) {
+                    result = new MayaaContext();
+                    _currentContext.set(result);
                 }
             }
-		}
-		return result;
-	}
-	
-	public static MayaaContext getContext(Object appContext) {
-		return (MayaaContext) _contextVariables.get(appContext);
-	}
-	
-	/**
-	 * 匿名アプリケーション用の管理コンテナ生成
-	 */
-	public MayaaContext() {
-		this(null);
-	}
-	
-	/**
-	 * 特定アプリケーション用の管理コンテナ生成
-	 * @param appContext アプリケーション用コンテキスト
-	 */
-	public MayaaContext(Object appContext) {
-		_context = appContext;
-	}
-	
-	public void init() {
-		setFactoryFactory(new FactoryFactoryImpl());
-		FactoryFactory.setContext(_context);
+        }
+        return result;
+    }
+
+    public static MayaaContext getContext(Object appContext) {
+        return (MayaaContext) _contextVariables.get(appContext);
+    }
+
+    /**
+     * 匿名アプリケーション用の管理コンテナ生成
+     */
+    public MayaaContext() {
+        this(null);
+    }
+
+    /**
+     * 特定アプリケーション用の管理コンテナ生成
+     * @param appContext アプリケーション用コンテキスト
+     */
+    public MayaaContext(Object appContext) {
+        _context = appContext;
+    }
+
+    public void init() {
+        setFactoryFactory(new FactoryFactoryImpl());
+        FactoryFactory.setContext(_context);
         LOG.info("prepareLibraries start");
-		ProviderUtil.getLibraryManager().prepareLibraries();
+        ProviderUtil.getLibraryManager().prepareLibraries();
         LOG.info("prepareLibraries end");
-		
-		if (_context != null) {
-			_contextVariables.put(_context, this);
-		}
-	}
-	
-	public void destroy() {
-		ProviderUtil.getEngine().kill();
-	}
-	
-	public Object getApplicationContext() {
-		return _context;
-	}
-	
-	public static interface Instantiator {
-		Object newInstance();
-	}
-	
-	public Object getGrowAttribute(String key, Instantiator instantiator) {
-		Object result = _attributes.get(key);
-		if (result == null) {
-			synchronized(_attributes) {
-				result = _attributes.get(key);	// retry
-				if (result == null) {
-					result = instantiator.newInstance();
-					_attributes.put(key, result);
-				}
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * @return _factoryFactory
-	 */
-	public FactoryFactory getFactoryFactory() {
-		return (FactoryFactory)_attributes.get(FactoryFactory.class.getName());
-	}
 
-	/**
-	 * @param factory �ݒ肷�� _factoryFactory
-	 */
-	public void setFactoryFactory(FactoryFactory factory) {
-		_attributes.put(FactoryFactory.class.getName(), factory);
-	}
+        if (_context != null) {
+            _contextVariables.put(_context, this);
+        }
+    }
 
-	public boolean containsKey(String key) {
-		return _attributes.containsKey(key);
-	}
+    public void destroy() {
+        ProviderUtil.getEngine().kill();
+    }
 
-	public Object[] getKeys() {
-		return _attributes.keySet().toArray();
-	}
+    public Object getApplicationContext() {
+        return _context;
+    }
 
-	public Object get(String key) {
-		return _attributes.get(key);
-	}
-	
-	public void put(String key, Object value) {
-		_attributes.put(key, value);
-	}
+    public static interface Instantiator {
+        Object newInstance();
+    }
 
-	public Object remove(String key) {
-		return _attributes.remove(key);
-	}
+    public Object getGrowAttribute(String key, Instantiator instantiator) {
+        Object result = _attributes.get(key);
+        if (result == null) {
+            synchronized(_attributes) {
+                result = _attributes.get(key);  // retry
+                if (result == null) {
+                    result = instantiator.newInstance();
+                    _attributes.put(key, result);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @return _factoryFactory
+     */
+    public FactoryFactory getFactoryFactory() {
+        return (FactoryFactory)_attributes.get(FactoryFactory.class.getName());
+    }
+
+    /**
+     * @param factory ??セットするfactoryFactory
+     */
+    public void setFactoryFactory(FactoryFactory factory) {
+        _attributes.put(FactoryFactory.class.getName(), factory);
+    }
+
+    public boolean containsKey(String key) {
+        return _attributes.containsKey(key);
+    }
+
+    public Object[] getKeys() {
+        return _attributes.keySet().toArray();
+    }
+
+    public Object get(String key) {
+        return _attributes.get(key);
+    }
+
+    public void put(String key, Object value) {
+        _attributes.put(key, value);
+    }
+
+    public Object remove(String key) {
+        return _attributes.remove(key);
+    }
 
 }

@@ -133,7 +133,7 @@ public class MayaaContext {
     }
 
     /**
-     * @param factory ??セットするfactoryFactory
+     * @param factory セットするfactoryFactory
      */
     public void setFactoryFactory(FactoryFactory factory) {
         _attributes.put(FactoryFactory.class.getName(), factory);

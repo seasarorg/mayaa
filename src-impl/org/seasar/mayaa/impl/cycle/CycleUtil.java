@@ -37,18 +37,18 @@ public class CycleUtil {
     }
 
     public static boolean isInitialized() {
-    	MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-    	if (mayaaContext == null || mayaaContext.getFactoryFactory() == null) {
-    		return false;
-    	}
+        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
+        if (mayaaContext == null || mayaaContext.getFactoryFactory() == null) {
+            return false;
+        }
         return FactoryFactory.getFactory(CycleFactory.class) != null;
     }
 
     public static CycleFactory getFactory() {
-    	if (isInitialized() == false) {
-    		throw new IllegalStateException();
-    	}
-    	return (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+        if (isInitialized() == false) {
+            throw new IllegalStateException();
+        }
+        return (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
     }
 
     public static void initialize(
@@ -79,7 +79,7 @@ public class CycleUtil {
     public static Object getLocalVariable(String key, Object owner, Object[] params) {
         return getFactory().getLocalVariables().getVariable(key, owner, params);
     }
-    
+
     public static void setLocalVariable(String key, Object owner, Object value) {
         getFactory().getLocalVariables().setVariable(key, owner, value);
     }
@@ -96,19 +96,19 @@ public class CycleUtil {
     }
 
     public static StandardScope getStandardScope() {
-    	MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-    	if (mayaaContext == null) {
-    		throw new IllegalStateException();
-    	}
-    	return (StandardScope) mayaaContext.getGrowAttribute(StandardScope.class.getName(), new MayaaContext.Instantiator() {
-    		public Object newInstance() {
-    			return new StandardScope();
-    		}
-    	});
+        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
+        if (mayaaContext == null) {
+            throw new IllegalStateException();
+        }
+        return (StandardScope) mayaaContext.getGrowAttribute(StandardScope.class.getName(), new MayaaContext.Instantiator() {
+            public Object newInstance() {
+                return new StandardScope();
+            }
+        });
     }
 
     public static void addStandardScope(String newScopeName) {
-    	getStandardScope().addScope(newScopeName);
+        getStandardScope().addScope(newScopeName);
     }
 
     public static RequestScope getRequestScope() {

@@ -70,7 +70,7 @@ public class RhinoUtil {
                 || (jsRet == Undefined.instance)) {
             ret = null;
         } else {
-            if (isPrimitiveWrapper(jsRet)) {
+            if (isNumber(expectedClass, jsRet)) {
                 ret = jsRet;
             } else {
                 ret = JavaAdapter.convertResult(jsRet, expectedClass);
@@ -88,10 +88,10 @@ public class RhinoUtil {
         throw new RuntimeException(t);
     }
 
-    public static boolean isPrimitiveWrapper(Object jsRet) {
-        if (jsRet != null) {
+    public static boolean isNumber(Class expectedClass, Object jsRet) {
+        if (jsRet != null && expectedClass != null) {
             Class originalClass = jsRet.getClass();
-            if (originalClass.equals(Boolean.class) ||
+            if (originalClass.equals(Number.class) ||
                     originalClass.equals(Byte.class) ||
                     originalClass.equals(Short.class) ||
                     originalClass.equals(Integer.class) ||
@@ -100,7 +100,11 @@ public class RhinoUtil {
                     originalClass.equals(Double.class) ||
                     originalClass.equals(BigInteger.class) ||
                     originalClass.equals(BigDecimal.class)) {
-                return true;
+                if (expectedClass == Object.class ||
+                        expectedClass == Number.class ||
+                        originalClass == expectedClass) {
+                    return true;
+                }
             }
         }
         return false;

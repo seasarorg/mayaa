@@ -26,8 +26,10 @@ import org.seasar.mayaa.impl.engine.specification.URIImpl;
 public interface CONST_IMPL {
 
     String CHECK_TIMESTAMP = "checkTimestamp";
+    String DEFAULT_SPECIFICATION = "defaultSpecification";
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";
+    String MAYAA_EXTENSION = "mayaaExtension";
     String TEMPLATE_PATH_PATTERN = "templatePathPattern";
     String NOT_TEMPLATE_PATH_PATTERN = "notTemplatePathPattern";
 

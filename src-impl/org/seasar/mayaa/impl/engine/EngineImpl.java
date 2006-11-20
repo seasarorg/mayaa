@@ -63,7 +63,6 @@ public class EngineImpl extends SpecificationImpl
     static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
     private static final long serialVersionUID = 1428444571422324206L;
-    private static final String DEFAULT_SPECIFICATION = "defaultSpecification";
     private static final String PAGE_CLASS = "pageClass";
     private static final String TEMPLATE_CLASS = "templateClass";
     private static final String PAGE_SERIALIZE = "pageSerialize";
@@ -71,7 +70,6 @@ public class EngineImpl extends SpecificationImpl
     private static final String FORWARD_LIMIT = "forwardLimit";
     private static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
     private static final String DUMP_ENABLED = "dumpEnabled";
-    private static final String MAYAA_EXTENSION = ".mayaa";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
     private transient Specification _defaultSpecification;
@@ -85,6 +83,7 @@ public class EngineImpl extends SpecificationImpl
     private boolean _requestedSuffixEnabled = false;
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
+    private String _mayaaExtension = ".mayaa";
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
@@ -106,7 +105,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected Page findPageFromCache(String pageName) {
-        return (Page) findSpecificationFromCache(pageName + MAYAA_EXTENSION);
+        return (Page) findSpecificationFromCache(pageName + _mayaaExtension);
     }
 
     public Page getPage(String pageName) {
@@ -559,7 +558,7 @@ public class EngineImpl extends SpecificationImpl
 
     public Page createPageInstance(final String pageName) {
         return (Page) createSpecificationInstance(
-                pageName + MAYAA_EXTENSION, true,
+                pageName + _mayaaExtension, true,
                 new SpecificationGenerator() {
             public Class getInstantiator(SourceDescriptor source) {
                 return getPageClass();
@@ -636,6 +635,10 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), false);
                 _templatePathPatterns.add(0, pathPattern);
             }
+        } else if (MAYAA_EXTENSION.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                _mayaaExtension = value.trim();
+            }
         } else if (PAGE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 Class pageClass = ObjectUtil.loadClass(value);
@@ -678,6 +681,8 @@ public class EngineImpl extends SpecificationImpl
                 return null;
             }
             return patternToString(_templatePathPatterns, false);
+        } else if (MAYAA_EXTENSION.equals(name)) {
+            return _mayaaExtension;
         } else if (PAGE_CLASS.equals(name)) {
             return _pageClass.getName();
         } else if (TEMPLATE_CLASS.equals(name)) {

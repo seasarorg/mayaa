@@ -57,7 +57,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public SpecificationNodeImpl(QName qName) {
         _qName = qName;
     }
-    
+
     protected NodeTreeWalker getNodeTreeWalker() {
         if (_delegateNodeTreeWalker == null) {
             synchronized (this) {
@@ -85,12 +85,12 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     public String toString() {
         StringBuffer path = new StringBuffer();
-        
+
         if (getParentNode() != null
                 && getParentNode() instanceof Specification == false) {
             path.append(getParentNode());
         }
-        
+
         path.append("/");
         path.append(PrefixAwareNameImpl.forPrefixAwareNameString(
                 getQName(), getPrefix()));
@@ -139,7 +139,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public void addAttribute(QName qName, String value) {
         addAttribute(qName, null, value);
     }
-    
+
     public void addAttribute(QName qName, String originalName, String value) {
         if (qName == null || value == null) {
             throw new IllegalArgumentException();
@@ -153,7 +153,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
             if (_attributes.containsKey(qName) == false) {
                 String prefix = null;
                 if (originalName != null) {
-                    prefix = StringUtil.parsePrefix(originalName); 
+                    prefix = StringUtil.parsePrefix(originalName);
                 }
                 NodeAttributeImpl attr = new NodeAttributeImpl(
                         qName, value, prefix);
@@ -239,7 +239,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public void addChildNode(NodeTreeWalker childNode) {
         getNodeTreeWalker().addChildNode(childNode);
     }
-    
+
     public void insertChildNode(int index, NodeTreeWalker childNode) {
         getNodeTreeWalker().insertChildNode(index, childNode);
     }
@@ -305,13 +305,13 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public boolean isOnTemplate() {
         return getNodeTreeWalker().isOnTemplate();
     }
-    
+
     // NodeReferenceResolverFinder implements ------------------------------------
 
     public NodeReferenceResolver findNodeResolver() {
         return getNodeTreeWalker().findNodeResolver();
     }
-    
+
     // for serialize
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -335,12 +335,12 @@ public class SpecificationNodeImpl extends NamespaceImpl
             _delegateNodeTreeWalker.setOwner(this);
         }
         // namespace
-        String currentMappingInfo = in.readUTF();       
+        String currentMappingInfo = in.readUTF();
         NamespaceImpl namespace = deserialize(currentMappingInfo);
         setDefaultNamespaceMapping(namespace.getDefaultNamespaceMapping());
         for (Iterator it = namespace.iteratePrefixMapping(false)
                 ; it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping) it.next(); 
+            PrefixMapping mapping = (PrefixMapping) it.next();
             addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
         }
         // parent namespace
@@ -350,10 +350,10 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
         findNodeResolver().nodeLoaded(this);
     }
-    
+
     private Object readResolve() {
         for (Iterator it = iterateChildNode(); it.hasNext(); ) {
-            NodeTreeWalker child = (NodeTreeWalker) it.next(); 
+            NodeTreeWalker child = (NodeTreeWalker) it.next();
             child.setParentNode(this);
             if (child instanceof Namespace) {
                 ((Namespace)child).setParentSpace(this);
@@ -366,6 +366,20 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return this;
     }
 
+    public boolean equals(Object other) {
+        if (other instanceof SpecificationNodeImpl) {
+            SpecificationNodeImpl otherNode = (SpecificationNodeImpl) other;
+            return _qName.equals(otherNode._qName) &&
+                getSystemID().equals(otherNode.getSystemID()) &&
+                _sequenceID == otherNode._sequenceID;
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return (_qName.toString() + ":" + getSystemID() + ":" + _sequenceID).hashCode();
+    }
+
     // support class --------------------------------------------------
 
     protected static class AllCopyToFilter implements CopyToFilter {
@@ -375,5 +389,5 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
 
     }
-    
+
 }

@@ -15,6 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
@@ -67,12 +70,16 @@ public class RhinoUtil {
                 || (jsRet == Undefined.instance)) {
             ret = null;
         } else {
-            ret = JavaAdapter.convertResult(jsRet, expectedClass);
+            if (isPrimitiveWrapper(jsRet)) {
+                ret = jsRet;
+            } else {
+                ret = JavaAdapter.convertResult(jsRet, expectedClass);
+            }
         }
 
         return ret;
     }
-    
+
     public static  void removeWrappedException(WrappedException e) {
         Throwable t = e.getWrappedException();
         if (t instanceof RuntimeException) {
@@ -81,13 +88,31 @@ public class RhinoUtil {
         throw new RuntimeException(t);
     }
 
+    public static boolean isPrimitiveWrapper(Object jsRet) {
+        if (jsRet != null) {
+            Class originalClass = jsRet.getClass();
+            if (originalClass.equals(Boolean.class) ||
+                    originalClass.equals(Byte.class) ||
+                    originalClass.equals(Short.class) ||
+                    originalClass.equals(Integer.class) ||
+                    originalClass.equals(Long.class) ||
+                    originalClass.equals(Float.class) ||
+                    originalClass.equals(Double.class) ||
+                    originalClass.equals(BigInteger.class) ||
+                    originalClass.equals(BigDecimal.class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*
     public static class NativeEmpty extends NativeJavaObject {
-        
+
         private static final long serialVersionUID = 7282176381199691056L;
-        
+
         public static final NativeEmpty instance = new NativeEmpty();
-        
+
         private NativeEmpty() {
             // singleton
         }
@@ -95,7 +120,7 @@ public class RhinoUtil {
         public String getClassName() {
             return "undefined";
         }
-        
+
         public String toString() {
             return "";
         }

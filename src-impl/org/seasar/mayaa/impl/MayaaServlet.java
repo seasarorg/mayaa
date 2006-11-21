@@ -37,7 +37,7 @@ public class MayaaServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5816552218525836552L;
 
-    private final Log LOG = LogFactory.getLog(MayaaServlet.class);
+    private Log LOG = LogFactory.getLog(MayaaServlet.class);
     private boolean _initialized;
     private MayaaContext _mayaaContext;
 
@@ -64,7 +64,8 @@ public class MayaaServlet extends HttpServlet {
             SerializeThreadManager.destroy();
         } finally {
             MayaaContext.setCurrentContext(null);
-            LogFactory.releaseAll();
+            LOG = null;
+            LogFactory.release(Thread.currentThread().getContextClassLoader());
         }
     }
 

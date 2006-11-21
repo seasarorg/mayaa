@@ -169,7 +169,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         walkTreeNodeChainModify(idGenerator, template, children);
         template.addChildNode(mayaaNode);
     }
-    
+
     protected void breakRelationship(NodeTreeWalker parent) {
         for (int i = 0; i < parent.getChildNodeSize(); i++) {
             breakRelationship(parent.getChildNode(i));
@@ -189,7 +189,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             walkTreeNodeChainModify(idGenerator, node, nodeAndChildren._list);
         }
     }
-    
+
     protected void walkTreeOptimizeNode(
             SequenceIDGenerator idGenerator, ProcessorTreeWalker parent,
             List children, List usingNodes) {
@@ -485,7 +485,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
                 QM_MAYAA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
-        
+
         Set divided = null;
         if (_optimize) {
             divided = new HashSet();

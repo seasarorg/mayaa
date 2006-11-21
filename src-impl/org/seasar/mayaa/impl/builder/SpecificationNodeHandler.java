@@ -65,7 +65,7 @@ public class SpecificationNodeHandler
         SpecificationUtil.createQName("target");
 
     private Specification _specification;
-    private SequenceIDGenerator _sequenceIDGenerator; 
+    private SequenceIDGenerator _sequenceIDGenerator;
     private NodeTreeWalker _current;
     private Locator _locator;
     private Namespace _namespace;
@@ -74,7 +74,7 @@ public class SpecificationNodeHandler
     private boolean _outputMayaaWhitespace = false;
     private int _inEntity;
     private Map/*<NodeTreeWalker,Map<String(prefix),String(uri)>>*/
-                _internalNamespacePrefixMap; 
+                _internalNamespacePrefixMap;
     private boolean _inCData;
 
     public SpecificationNodeHandler(Specification specification) {
@@ -155,7 +155,7 @@ public class SpecificationNodeHandler
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-        getCurrentInternalNamespacePrefixMap().put(prefix, 
+        getCurrentInternalNamespacePrefixMap().put(prefix,
                 SpecificationUtil.createURI(uri));
     }
 
@@ -178,7 +178,7 @@ public class SpecificationNodeHandler
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = createChildNode(
                 qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID());
-        
+
         child.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
         _current.addChildNode(child);
         return child;
@@ -239,7 +239,7 @@ public class SpecificationNodeHandler
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
         addCharactersNode();
-        
+
         Namespace elementNS = SpecificationUtil.createNamespace();
         Iterator it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
         while (it.hasNext()) {
@@ -302,7 +302,7 @@ public class SpecificationNodeHandler
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-//これは要素内のスペースなので保存する必要は無い        
+//これは要素内のスペースなので保存する必要は無い
 //        appendCharactersBuffer(buffer, start, length);
     }
 
@@ -388,7 +388,7 @@ public class SpecificationNodeHandler
     public void startCDATA() {
         addCharactersNode();
         SpecificationNode node = addNode(QM_CDATA);
-        
+
         NodeTreeWalker parent = _current; // by kato
         _current = node;
         _current.setParentNode(parent);
@@ -400,14 +400,14 @@ public class SpecificationNodeHandler
         _current = _current.getParentNode();
         _inCData = false;
     }
-    
+
     private String exceptionMessage(SAXParseException e) {
-        return 
+        return
             "The problem occurred during Perse. " +
             _specification.getSystemID() +
             ((e.getMessage() != null)?" - " + e.getMessage(): "");
     }
-    
+
     public void warning(SAXParseException e) {
         if (LOG.isWarnEnabled()) {
             LOG.warn(exceptionMessage(e), e);

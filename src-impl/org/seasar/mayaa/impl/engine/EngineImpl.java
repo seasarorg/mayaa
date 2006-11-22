@@ -84,6 +84,7 @@ public class EngineImpl extends SpecificationImpl
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
     private String _mayaaExtension = ".mayaa";
+    private String _mayaaExtensionName = "mayaa";
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
@@ -120,7 +121,7 @@ public class EngineImpl extends SpecificationImpl
 
     public boolean isPageRequested() {
         RequestScope request = CycleUtil.getRequestScope();
-        if (QM_MAYAA.getLocalName().equals(request.getExtension())) {
+        if (_mayaaExtensionName.equals(request.getExtension())) {
             return true;
         }
 
@@ -637,7 +638,13 @@ public class EngineImpl extends SpecificationImpl
             }
         } else if (MAYAA_EXTENSION.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                _mayaaExtension = value.trim();
+                if (value.startsWith(".")) {
+                    _mayaaExtension = value;
+                    _mayaaExtensionName = value.substring(1);
+                } else {
+                    _mayaaExtension = "." + value;
+                    _mayaaExtensionName = value;
+                }
             }
         } else if (PAGE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {

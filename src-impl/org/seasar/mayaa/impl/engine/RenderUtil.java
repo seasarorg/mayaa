@@ -214,13 +214,13 @@ public class RenderUtil implements CONST_IMPL {
         }
         return ret;
     }
-    
+
     private static final String CURRENT_PROCESSOR_KEY = "__currentProcessor__";
-    
+
     protected static TemplateProcessor getCurrentProcessor() {
         return (TemplateProcessor)CycleUtil.getRequestScope().getAttribute(CURRENT_PROCESSOR_KEY);
     }
-    
+
     protected static void setCurrentProcessor(TemplateProcessor processor) {
         CycleUtil.getRequestScope().setAttribute(CURRENT_PROCESSOR_KEY, processor);
     }

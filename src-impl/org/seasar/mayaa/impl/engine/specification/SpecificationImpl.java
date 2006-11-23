@@ -63,7 +63,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     private boolean _deprecated;
     private int _lastSequenceID;
     private transient boolean _specificationSerialize;
-    
+
     protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
     }
@@ -79,7 +79,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     public void setSpecificationSerialize(boolean specificationSerialize) {
         _specificationSerialize = specificationSerialize;
     }
-    
+
     protected SpecificationBuilder getBuilder() {
         return ProviderUtil.getSpecificationBuilder();
     }
@@ -103,15 +103,16 @@ public class SpecificationImpl extends ParameterAwareImpl
             LOG.debug(toString() + " unloaded.");
         }
     }
-    
+
     public String toString() {
         String className = ObjectUtil.getSimpleClassName(getClass());
         return getSystemID() + "(" + className + "@"  + Integer.toHexString(hashCode()) + ")";
     }
-    
+
     // Specification implements ------------------------------------
-    
+
     public boolean isDeprecated() {
+        // TODO isDeprecatedの高速化
         if (_deprecated == false) {
             _deprecated = _hasSource != isSourceExists();
             if (_deprecated == false) {
@@ -172,11 +173,11 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     // SequenceIDGenerator implements ------------------------------------
-    
+
     public void resetSequenceID(int sequenceID) {
         _lastSequenceID = sequenceID;
     }
-    
+
     public int nextSequenceID() {
         return _lastSequenceID++;
     }
@@ -231,11 +232,11 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     // NodeReferenceResolverFinder implements --------------------------------------
-    
+
     public NodeReferenceResolver findNodeResolver() {
         return getNodeTreeWalker().findNodeResolver();
     }
-    
+
     // PositionAware overrides ------------------------------------
 
     public String getSystemID() {
@@ -270,18 +271,18 @@ public class SpecificationImpl extends ParameterAwareImpl
                 }
             });
     }
-    
+
 
     protected static File getSerializedFile(String systemID) {
         ApplicationScope scope =
-            CycleUtil.getServiceCycle().getApplicationScope(); 
+            CycleUtil.getServiceCycle().getApplicationScope();
         String cachePath = scope.getRealPath("WEB-INF/.mayaaSpecCache");
         File cacheDir = new File(cachePath);
         cacheDir.mkdirs();
         return new File(cacheDir,
                 systemID.substring("/".length()).replace('/', '.') + ".ser");
     }
-    
+
     public void serialize() {
         synchronized(this) {
             try {
@@ -334,7 +335,7 @@ public class SpecificationImpl extends ParameterAwareImpl
                 return result;
             } catch(Throwable e) {
                 String message =
-                    getSystemID() + " specification deserialize failed."; 
+                    getSystemID() + " specification deserialize failed.";
                 if (e.getMessage() != null) {
                     message += " " + e.getMessage();
                 }
@@ -357,7 +358,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         }
         nodeSerializer().specLoaded(this);
     }
-    
+
     private void writeObject(ObjectOutputStream out)
             throws IOException {
         out.defaultWriteObject();
@@ -367,9 +368,9 @@ public class SpecificationImpl extends ParameterAwareImpl
         return (NodeSerializeController) CycleUtil.getGlobalVariable(
                 SERIALIZE_CONTROLLER_KEY, null);
     }
-    
+
     // NodeReferenceResolver implements ----------------------------
-    
+
     public void registResolveNodeListener(
             String uniqueID, NodeResolveListener listener) {
         nodeSerializer().registResolveNodeListener(

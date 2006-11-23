@@ -169,7 +169,7 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Namespace createNamespace() {
         return new NamespaceImpl();
     }
-    
+
     public static Namespace getFixedNamespace(Namespace original) {
         return original;
         //return NamespaceImpl.getInstance(original);
@@ -233,9 +233,6 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     // script cache ----------------------------------------------
-
-    // TODO SpecificationNode リビルド時にキャッシュが無駄になることを対処
-    // WeakHashMap を使っているから大丈夫？
     protected static class EventScriptEnvironment {
 
         private static final LiteralScript NULL_SCRIPT = new LiteralScript("");
@@ -310,5 +307,5 @@ public class SpecificationUtil implements CONST_IMPL {
     public static Namespace copyNamespace(Namespace original) {
         return NamespaceImpl.copyOf(original);
     }
-    
+
 }

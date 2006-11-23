@@ -71,11 +71,11 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
     }
 
     protected void prepareSuper() {
-        if (_superPage != null) {
+        if (_superPage != null && _superPage.isDeprecated() == false) {
             return;
         }
         synchronized (this) {
-            if (_superPage != null) {
+            if (_superPage != null && _superPage.isDeprecated() == false) {
                 return;
             }
             // TODO mayaa以外からも取得できるようにする

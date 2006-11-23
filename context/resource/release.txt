@@ -66,7 +66,7 @@ MayaaのWEBサイト：
 - (rev.2739) PathAdjusterが適用されない場合があるのを修正しました。
 
 - (rev.2741)JIRA[MAYAA-7] Jarの内容を参照するとき、URLConnectionのキャッシュを
-  使わないよう修正しました。。Mayaaを含むwarをdeploy解除した場合などに、Mayaaが
+  使わないよう修正しました。Mayaaを含むwarをdeploy解除した場合などに、Mayaaが
   参照するリソース(tldなど)を含むjarファイルが削除されない問題の対処となります。
 
 - (rev.2754)JavaScriptからJavaに数値を渡すとき、型情報があるならそれを維持するようにしました。

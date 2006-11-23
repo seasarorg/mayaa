@@ -176,7 +176,8 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
             String requestedSuffix, String extension) {
         Page prevPage = getCurrentPage();
         setCurrentPage(this);
-        SpecificationUtil.execEvent(ProviderUtil.getEngine(),
+        Engine engine = ProviderUtil.getEngine();
+        SpecificationUtil.execEvent(engine,
                 QM_BEFORE_RENDER_PAGE);
         try {
             Page component = this;
@@ -186,8 +187,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
             }
             Page prevComponent = getCurrentComponent();
             setCurrentComponent(component);
-            SpecificationUtil.execEvent(ProviderUtil.getEngine(),
-                    QM_BEFORE_RENDER_COMPONENT);
+            SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_COMPONENT);
             try {
                 notifyBeginRender();
                 return RenderUtil.renderPage(true, this, null,
@@ -195,8 +195,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
             } finally {
                 setCurrentComponent(component);
                 try {
-                    SpecificationUtil.execEvent(ProviderUtil.getEngine(),
-                            QM_AFTER_RENDER_COMPONENT);
+                    SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_COMPONENT);
                 } finally {
                     setCurrentComponent(prevComponent);
                 }
@@ -204,8 +203,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
         } finally {
             setCurrentPage(this);
             try {
-                SpecificationUtil.execEvent(ProviderUtil.getEngine(),
-                        QM_AFTER_RENDER_PAGE);
+                SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_PAGE);
             } finally {
                 setCurrentPage(prevPage);
             }

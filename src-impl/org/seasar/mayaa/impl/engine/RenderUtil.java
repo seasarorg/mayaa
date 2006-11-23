@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.TemplateRenderer;
@@ -131,7 +132,8 @@ public class RenderUtil implements CONST_IMPL {
         boolean buffered = false;
 
         setCurrentProcessor(current);
-        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_BEFORE_RENDER_PROCESSOR);
+        Engine engine = ProviderUtil.getEngine();
+        SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_PROCESSOR);
         try {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
@@ -206,7 +208,7 @@ public class RenderUtil implements CONST_IMPL {
                 getTryCatchFinally(current).doFinallyProcess();
             }
             setCurrentProcessor(current);
-            SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_AFTER_RENDER_PROCESSOR);
+            SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_PROCESSOR);
             setCurrentProcessor(null);
         }
         if (buffered) {

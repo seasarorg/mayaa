@@ -62,9 +62,7 @@ public class ProviderUtil {
     }
 
     public static Engine getEngine() {
-        synchronized (getServiceProvider().getEngine()) {
-            return getServiceProvider().getEngine();
-        }
+        return getServiceProvider().getEngine();
     }
 
     public static TemplateAttributeReader getTemplateAttributeReader() {

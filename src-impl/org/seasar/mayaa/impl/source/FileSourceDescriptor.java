@@ -63,7 +63,7 @@ public class FileSourceDescriptor
     protected String getRealPath() {
         return _root + getSystemID();
     }
-    
+
     public boolean exists() {
         if (_file == null) {
             String realPath = getRealPath();

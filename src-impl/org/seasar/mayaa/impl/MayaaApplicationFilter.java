@@ -20,12 +20,10 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
@@ -37,10 +35,8 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class MayaaApplicationFilter implements Filter {
 
-    private ServletContext _servletContext;
-
     public void init(FilterConfig filterConfig) throws ServletException {
-        _servletContext = filterConfig.getServletContext();
+        // no operation
     }
 
     public void destroy() {
@@ -49,7 +45,6 @@ public class MayaaApplicationFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, 
             FilterChain chain) throws IOException, ServletException {
-        MayaaContext.setCurrentContext(MayaaContext.getContext(_servletContext));
         CycleUtil.initialize(request, response);
         try {
             chain.doFilter(request, response);

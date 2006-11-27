@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
@@ -55,22 +54,11 @@ public class AutoPageBuilder implements Runnable {
     private static final boolean REPEAT_DEFAULT = false;
     private static final int WAIT_DEFAULT = 60;
     private static final boolean RENDER_MATE_DEFAULT = false;
-    
-    public static AutoPageBuilder getInstance() {
-        final MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-        if (mayaaContext == null) {
-            throw new IllegalStateException();
-        }
-        return (AutoPageBuilder)mayaaContext.getGrowAttribute(
-                AutoPageBuilder.class.getName(), new MayaaContext.Instantiator() {
-                    public Object newInstance() {
-                        return new AutoPageBuilder(mayaaContext);
-                    }
-                });
-    }
 
-    protected AutoPageBuilder(MayaaContext context) {
-        _mayaaContext = context;
+    public static final AutoPageBuilder INSTANCE = new AutoPageBuilder();
+
+    private AutoPageBuilder() {
+        // no operation
     }
 
     private Thread _thread;
@@ -81,7 +69,6 @@ public class AutoPageBuilder implements Runnable {
     private ServletContext _servletContext;
     private long _buildTimeSum;
     private long _renderTimeSum;
-    private MayaaContext _mayaaContext;
 
     public void init(ServletConfig servletConfig) {
         Engine engine = ProviderUtil.getEngine();
@@ -130,7 +117,6 @@ public class AutoPageBuilder implements Runnable {
 
     public void run() {
         Thread currentThread = Thread.currentThread();
-        MayaaContext.setCurrentContext(_mayaaContext);
         try {
             Engine engine = ProviderUtil.getEngine();
             long engineBuildTime = diffMillis(0);

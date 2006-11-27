@@ -636,6 +636,13 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), false);
                 _templatePathPatterns.add(0, pathPattern);
             }
+        } else if (PAGE_CLASS.equals(name)) {
+            if (StringUtil.hasValue(value)) {
+                Class pageClass = ObjectUtil.loadClass(value);
+                if (Page.class.isAssignableFrom(pageClass)) {
+                    _pageClass = pageClass;
+                }
+            }
         } else if (MAYAA_EXTENSION.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (value.startsWith(".")) {
@@ -644,13 +651,6 @@ public class EngineImpl extends SpecificationImpl
                 } else {
                     _mayaaExtension = "." + value;
                     _mayaaExtensionName = value;
-                }
-            }
-        } else if (PAGE_CLASS.equals(name)) {
-            if (StringUtil.hasValue(value)) {
-                Class pageClass = ObjectUtil.loadClass(value);
-                if (Page.class.isAssignableFrom(pageClass)) {
-                    _pageClass = pageClass;
                 }
             }
         } else if (TEMPLATE_CLASS.equals(name)) {

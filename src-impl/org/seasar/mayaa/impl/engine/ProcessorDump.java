@@ -211,7 +211,7 @@ public class ProcessorDump extends ElementProcessor {
 //            if (getChildProcessorSize() > 0
 //                    && getChildProcessor(0) instanceof JspProcessor) {
 //                JspProcessor processor = (JspProcessor)getChildProcessor(0);
-//                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI(); 
+//                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI();
 //                if (injectNS == qName.getNamespaceURI()) {
 //                    return;
 //                }

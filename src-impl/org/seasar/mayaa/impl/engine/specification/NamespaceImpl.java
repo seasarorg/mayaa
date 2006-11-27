@@ -44,8 +44,11 @@ public class NamespaceImpl implements Namespace {
     private static final Log LOG = LogFactory.getLog(NamespaceImpl.class);
 
     private static ReferenceCache/*<Namespace>*/ _cache =
-    	new ReferenceCache(Namespace.class);
-    	
+        new ReferenceCache(Namespace.class);
+
+    public static Namespace getInstance(Namespace namespace) {
+        return getInstance(serialize(namespace));
+    }
 
     public static Namespace getInstance(String serializeKey) {
         synchronized(_cache) {

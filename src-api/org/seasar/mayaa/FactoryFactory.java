@@ -28,12 +28,34 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public abstract class FactoryFactory implements Serializable {
 
-    private static final String CONTEXT_KEY = FactoryFactory.class.getName() + ".context";
+    private static FactoryFactory _instance;
+    private static Object _context;
+    private static Map _factories = new HashMap();
 
-    private Map _factories = new HashMap();
+    /**
+     * ファクトリの初期化。
+     * @param instance ファクトリのインスタンス。
+     */
+    public static void setInstance(FactoryFactory instance) {
+        if (instance == null) {
+            throw new IllegalArgumentException();
+        }
+        _instance = instance;
+    }
+
+    /**
+     * コンテキストオブジェクト設定。
+     * @param context カレントアプリケーションのコンテキストオブジェクト。
+     */
+    public static void setContext(Object context) {
+        if (context == null) {
+            throw new IllegalArgumentException();
+        }
+        _context = context;
+    }
 
     private static void check() {
-        if (isInitialized() == false) {
+        if (_instance == null || _context == null) {
             throw new IllegalStateException();
         }
     }
@@ -45,47 +67,7 @@ public abstract class FactoryFactory implements Serializable {
      * @return 初期化済みの場合はtrueを返却する。
      */
     public static boolean isInitialized() {
-        MayaaContext context = MayaaContext.getCurrentContext();
-        if (context == null) {
-            return false;
-        }
-        if (context.getFactoryFactory() == null
-                || context.get(CONTEXT_KEY) == null) {
-            return false;
-        }
-        return true;
-    }
-
-    protected static FactoryFactory getInstance() {
-        MayaaContext context = MayaaContext.getCurrentContext();
-        if (context == null) {
-            throw new IllegalStateException();
-        }
-        return context.getFactoryFactory();
-    }
-
-    protected static Object getContext() {
-        MayaaContext context = MayaaContext.getCurrentContext();
-        if (context == null) {
-            throw new IllegalStateException();
-        }
-        return context.get(CONTEXT_KEY);
-    }
-
-    public static void setInstance(FactoryFactory factoryFactory) {
-        MayaaContext context = MayaaContext.getCurrentContext();
-        if (context == null) {
-            throw new IllegalStateException();
-        }
-        context.setFactoryFactory(factoryFactory);
-    }
-
-    public static void setContext(Object context) {
-        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-        if (mayaaContext == null) {
-            throw new IllegalStateException();
-        }
-        mayaaContext.put(CONTEXT_KEY, context);
+        return _instance != null && _context != null;
     }
 
     /**
@@ -97,7 +79,7 @@ public abstract class FactoryFactory implements Serializable {
     public static SourceDescriptor getBootstrapSource(
             String root, String systemID) {
         check();
-        return getInstance().getBootstrapSource(root, systemID, getContext());
+        return _instance.getBootstrapSource(root, systemID, _context);
     }
 
     /**
@@ -107,13 +89,13 @@ public abstract class FactoryFactory implements Serializable {
      */
     public static UnifiedFactory getFactory(Class interfaceClass) {
         check();
-        UnifiedFactory factory = (UnifiedFactory)getInstance()._factories.get(interfaceClass);
+        UnifiedFactory factory = (UnifiedFactory) _factories.get(interfaceClass);
         if (factory == null) {
-            factory = getInstance().getFactory(interfaceClass, getContext());
+            factory = _instance.getFactory(interfaceClass, _context);
             if (factory == null) {
                 return null;
             }
-            getInstance()._factories.put(interfaceClass, factory);
+            _factories.put(interfaceClass, factory);
         }
         return factory;
     }
@@ -124,7 +106,7 @@ public abstract class FactoryFactory implements Serializable {
      */
     public static ApplicationScope getApplicationScope() {
         check();
-        return getInstance().getApplicationScope(getContext());
+        return _instance.getApplicationScope(_context);
     }
 
     /**

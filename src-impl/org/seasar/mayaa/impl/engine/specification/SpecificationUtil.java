@@ -233,6 +233,7 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     // script cache ----------------------------------------------
+
     protected static class EventScriptEnvironment {
 
         private static final LiteralScript NULL_SCRIPT = new LiteralScript("");

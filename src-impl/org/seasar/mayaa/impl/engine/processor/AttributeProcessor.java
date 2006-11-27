@@ -104,7 +104,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
                 new ProcessorPropertyWrapper(_name, _value, basePath));
         return ProcessStatus.SKIP_BODY;
     }
-    
+
     public void kill() {
         _name = null;
         _value = null;

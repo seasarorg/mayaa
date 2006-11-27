@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.cycle;
 
 import org.seasar.mayaa.FactoryFactory;
-import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.CycleLocalInstantiator;
 import org.seasar.mayaa.cycle.Response;
@@ -32,23 +31,29 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class CycleUtil {
 
+    private static CycleUtil _singleton = new CycleUtil();
+    private CycleFactory _factory;
+
+    private static StandardScope _standardScope = new StandardScope();
+
     private CycleUtil() {
         // singleton.
     }
 
     public static boolean isInitialized() {
-        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-        if (mayaaContext == null || mayaaContext.getFactoryFactory() == null) {
-            return false;
-        }
-        return FactoryFactory.getFactory(CycleFactory.class) != null;
+        return _singleton._factory != null;
     }
 
     public static CycleFactory getFactory() {
-        if (isInitialized() == false) {
-            throw new IllegalStateException();
+        if (_singleton._factory == null) {
+            synchronized (_singleton) {
+                if (_singleton._factory == null) {
+                    _singleton._factory =
+                        (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+                }
+            }
         }
-        return (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
+        return _singleton._factory;
     }
 
     public static void initialize(
@@ -79,7 +84,7 @@ public class CycleUtil {
     public static Object getLocalVariable(String key, Object owner, Object[] params) {
         return getFactory().getLocalVariables().getVariable(key, owner, params);
     }
-
+    
     public static void setLocalVariable(String key, Object owner, Object value) {
         getFactory().getLocalVariables().setVariable(key, owner, value);
     }
@@ -96,19 +101,11 @@ public class CycleUtil {
     }
 
     public static StandardScope getStandardScope() {
-        MayaaContext mayaaContext = MayaaContext.getCurrentContext();
-        if (mayaaContext == null) {
-            throw new IllegalStateException();
-        }
-        return (StandardScope) mayaaContext.getGrowAttribute(StandardScope.class.getName(), new MayaaContext.Instantiator() {
-            public Object newInstance() {
-                return new StandardScope();
-            }
-        });
+        return _standardScope;
     }
 
     public static void addStandardScope(String newScopeName) {
-        getStandardScope().addScope(newScopeName);
+        _standardScope.addScope(newScopeName);
     }
 
     public static RequestScope getRequestScope() {
@@ -124,10 +121,8 @@ public class CycleUtil {
             return null;
         }
         ServiceCycle cycle = getServiceCycle();
-        StandardScope standardScope = getStandardScope();
-        int size = standardScope.size();
-        for (int i = 0; i < size; i++) {
-            AttributeScope scope = cycle.getAttributeScope(standardScope.get(i));
+        for (int i = 0; i < _standardScope.size(); i++) {
+            AttributeScope scope = cycle.getAttributeScope(_standardScope.get(i));
             if (scope != null) {
                 if (scope instanceof PageAttributeScope) {
                     scope = (AttributeScope)

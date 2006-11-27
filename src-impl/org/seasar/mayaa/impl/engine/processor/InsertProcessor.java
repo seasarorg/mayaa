@@ -243,11 +243,10 @@ public class InsertProcessor
     }
 
     public static InsertProcessor getRenderingCurrent() {
-    	Stack chain = getRenderingInsertChain();
-        if (chain.size() == 0) {
+        if (getRenderingInsertChain().size() == 0) {
             return null;
         }
-        return (InsertProcessor) chain.peek();
+        return (InsertProcessor) getRenderingInsertChain().peek();
     }
 
     public ProcessStatus doEndProcess() {

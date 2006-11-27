@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification.serialize;
 
-import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 
 /**
@@ -23,62 +22,46 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
  */
 public class SerializeThreadManager {
 
-    protected SerializeThread[] _serializeThreads = new SerializeThread[10];
+    protected static SerializeThread[] _serializeThreads = new SerializeThread[10];
 
-    private volatile boolean _terminated;
+    private static volatile boolean _terminated;
     
-    public static SerializeThreadManager getInstance() {
-    	MayaaContext currentContext = MayaaContext.getCurrentContext();
-    	if (currentContext == null) {
-    		throw new IllegalStateException();
-    	}
-    	return (SerializeThreadManager)currentContext.getGrowAttribute(
-    			SerializeThreadManager.class.getName(),
-    			new MayaaContext.Instantiator() {
-		    		public Object newInstance() {
-		    			return new SerializeThreadManager();
-		    		}
-    			});
-    }
-    
-    protected SerializeThreadManager() {
-        // no-op
+    private SerializeThreadManager() {
+        throw new UnsupportedOperationException();
     }
 
     public static boolean serializeReserve(
             SpecificationImpl spec, Object servletContext) {
         int fewIndex = -1;
         int min = Integer.MAX_VALUE;
-        SerializeThreadManager instance = getInstance();
-        synchronized(instance._serializeThreads) {
-            if (instance._terminated) {
+        synchronized(_serializeThreads) {
+            if (_terminated) {
                 return false;
             }
-            for (int i = 0; i < instance._serializeThreads.length; i++) {
-                if (instance._serializeThreads[i] == null) {
-                	instance._serializeThreads[i] = new SerializeThread(i);
-                    if (instance._serializeThreads[i].add(spec)) {
-                    	instance._serializeThreads[i].start();
+            for (int i = 0; i < _serializeThreads.length; i++) {
+                if (_serializeThreads[i] == null) {
+                    _serializeThreads[i] = new SerializeThread(i, servletContext);
+                    if (_serializeThreads[i].add(spec)) {
+                        _serializeThreads[i].start();
                         return true;
                     }
                 }
-                int waitCount = instance._serializeThreads[i].waitCount();
+                int waitCount = _serializeThreads[i].waitCount();
                 if (waitCount < min) {
                     min = waitCount;
                     fewIndex = i;
                 }
             }
-            return instance._serializeThreads[fewIndex].add(spec);
+            return _serializeThreads[fewIndex].add(spec);
         }
     }
     
     public static void destroy() {
-    	SerializeThreadManager instance = getInstance();
-    	instance._terminated = true;
-        synchronized (instance._serializeThreads) {
-            for (int i = 0; i < instance._serializeThreads.length; i++) {
-                if (instance._serializeThreads[i] != null) {
-                	instance._serializeThreads[i].terminate();
+        _terminated = true;
+        synchronized (_serializeThreads) {
+            for (int i = 0; i < _serializeThreads.length; i++) {
+                if (_serializeThreads[i] != null) {
+                    _serializeThreads[i].terminate();
                 }
             }
         }
@@ -92,17 +75,15 @@ public class SerializeThreadManager {
     }
 
     static void threadDestroy(int index) {
-    	SerializeThreadManager instance = getInstance();
-        synchronized (instance._serializeThreads) {
-        	instance._serializeThreads[index] = null;
+        synchronized (_serializeThreads) {
+            _serializeThreads[index] = null;
         }
     }
     
     static boolean isReleasedAll() {
-    	SerializeThreadManager instance = getInstance();
-        synchronized (instance._serializeThreads) {
-            for (int i = 0; i < instance._serializeThreads.length; i++) {
-                if (instance._serializeThreads[i] != null) {
+        synchronized (_serializeThreads) {
+            for (int i = 0; i < _serializeThreads.length; i++) {
+                if (_serializeThreads[i] != null) {
                     return false;
                 }
             }

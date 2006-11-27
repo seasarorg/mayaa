@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.seasar.mayaa.MayaaContext;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
@@ -28,27 +27,20 @@ import org.seasar.mayaa.source.SourceHolder;
  */
 public class SourceHolderFactory {
 
-    private List _sourceHolders = new ArrayList();
-    
-    private static SourceHolderFactory getInstance() {
-    	MayaaContext currentContext = MayaaContext.getCurrentContext();
-    	return (SourceHolderFactory) currentContext.getGrowAttribute(
-    			SourceHolderFactory.class.getName(),
-    			new MayaaContext.Instantiator() {
-    		public Object newInstance() {
-    			return new SourceHolderFactory();
-    		}
-    	});
+    private static List _sourceHolders = new ArrayList();
+
+    private SourceHolderFactory() {
+        // no instantiate
     }
 
-    protected SourceHolderFactory() {
+    static {
         // for context root
         SourceHolder contentRoot = new WebContextFolderSourceHolder();
         contentRoot.setRoot("/");
-        append(contentRoot);
+        appendSourceHolder(contentRoot);
     }
 
-    public void append(SourceHolder sourceHolder) {
+    public static void appendSourceHolder(SourceHolder sourceHolder) {
         synchronized(_sourceHolders) {
             if (sourceHolder == null) {
                 throw new IllegalArgumentException();
@@ -57,14 +49,9 @@ public class SourceHolderFactory {
         }
     }
 
-    public static void appendSourceHolder(SourceHolder sourceHolder) {
-    	getInstance().append(sourceHolder);
-    }
-
     public static Iterator iterator() {
-    	SourceHolderFactory instance = getInstance();
-        synchronized(instance._sourceHolders) {
-            return new ArrayList(instance._sourceHolders).iterator();
+        synchronized(_sourceHolders) {
+            return new ArrayList(_sourceHolders).iterator();
         }
     }
 

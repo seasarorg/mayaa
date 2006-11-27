@@ -111,8 +111,8 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     // Specification implements ------------------------------------
 
-    public boolean isDeprecated() {
         // TODO isDeprecatedの高速化
+    public boolean isDeprecated() {
         if (_deprecated == false) {
             _deprecated = _hasSource != isSourceExists();
             if (_deprecated == false) {

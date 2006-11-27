@@ -177,8 +177,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
         Page prevPage = getCurrentPage();
         setCurrentPage(this);
         Engine engine = ProviderUtil.getEngine();
-        SpecificationUtil.execEvent(engine,
-                QM_BEFORE_RENDER_PAGE);
+        SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_PAGE);
         try {
             Page component = this;
             Page superPage = component.getSuperPage();

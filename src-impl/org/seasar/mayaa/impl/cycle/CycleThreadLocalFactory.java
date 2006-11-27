@@ -35,25 +35,11 @@ public class CycleThreadLocalFactory {
     }
 
     public static void cycleLocalInitialize() {
-    	_cycleLocalVariables.set(null);
-    }
-    
-    private static Map getCycleLocalVariableMap() {
-    	Map result = (Map) _cycleLocalVariables.get();
-		if (result == null) {
-			synchronized (_cycleLocalVariables) {
-				result = (Map) _cycleLocalVariables.get();	// retry
-				if (result == null) {
-					result = new HashMap();
-					_cycleLocalVariables.set(result);
-                }
-            }
-		}
-		return result;    	
+        _cycleLocalVariables.set(new HashMap());
     }
 
     public static void cycleLocalFinalize() {
-        Map map = getCycleLocalVariableMap();
+        Map map = (Map) _cycleLocalVariables.get();
         if (map != null) {
             for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) it.next();
@@ -75,7 +61,10 @@ public class CycleThreadLocalFactory {
     }
 
     public static void clearLocalVariable(Object key) {
-        Map map = getCycleLocalVariableMap();
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
+        Map map = (Map) _cycleLocalVariables.get();
         Object instance = map.get(key);
         if (instance != null) {
             String strKey;
@@ -93,7 +82,10 @@ public class CycleThreadLocalFactory {
     }
 
     public static Object get(Object key, Object[] params) {
-        Map localVariables = getCycleLocalVariableMap();
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
+        Map localVariables = (Map)_cycleLocalVariables.get();
         Object result = localVariables.get(key);
         if (result == null) {
             String strKey;
@@ -120,7 +112,10 @@ public class CycleThreadLocalFactory {
     }
 
     public static void set(Object key, Object value) {
-        Map localVariables = getCycleLocalVariableMap();
+        if (_cycleLocalVariables.get() == null) {
+            cycleLocalInitialize();
+        }
+        Map localVariables = (Map)_cycleLocalVariables.get();
         Object existValue = localVariables.get(key);
         if (existValue != null) {
             clearLocalVariable(key);

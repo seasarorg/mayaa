@@ -18,19 +18,21 @@ package org.seasar.mayaa.impl.source;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.source.WritableSourceDescriptor;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class FileSourceDescriptor
-        extends ParameterAwareImpl implements SourceDescriptor {
+        extends ParameterAwareImpl implements WritableSourceDescriptor {
 
     private static final long serialVersionUID = 9199082270985131347L;
 
@@ -64,7 +66,7 @@ public class FileSourceDescriptor
         return _root + getSystemID();
     }
 
-    public boolean exists() {
+    protected void prepareFile() {
         if (_file == null) {
             String realPath = getRealPath();
             if (StringUtil.hasValue(realPath)) {
@@ -74,6 +76,10 @@ public class FileSourceDescriptor
                  }
             }
         }
+    }
+
+    public boolean exists() {
+        prepareFile();
         return (_file != null) && _file.exists();
     }
 
@@ -98,6 +104,29 @@ public class FileSourceDescriptor
             return new Date(_file.lastModified());
         }
         return new Date(0);
+    }
+
+    /**
+     * @see WritableSourceDescriptor#canWrite()
+     */
+    public boolean canWrite() {
+        prepareFile();
+        return (_file != null) && _file.isFile() && _file.canWrite();
+    }
+
+    /**
+     * @see WritableSourceDescriptor#getOutputStream()
+     */
+    public OutputStream getOutputStream() {
+        if (canWrite()) {
+            try {
+                _file.mkdirs();
+                return new FileOutputStream(_file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 
 }

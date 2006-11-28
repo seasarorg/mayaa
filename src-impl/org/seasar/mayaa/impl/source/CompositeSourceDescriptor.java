@@ -16,18 +16,20 @@
 package org.seasar.mayaa.impl.source;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.source.WritableSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CompositeSourceDescriptor extends ParameterAwareImpl
-        implements SourceDescriptor {
+        implements WritableSourceDescriptor {
 
     private static final long serialVersionUID = 7557914925525488748L;
 
@@ -83,6 +85,26 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
         }
         return new Date(0);
 
+    }
+
+    /**
+     * @see WritableSourceDescriptor#canWrite()
+     */
+    public boolean canWrite() {
+        SourceDescriptor descriptor = findDescriptor();
+        return (descriptor instanceof WritableSourceDescriptor) &&
+                ((WritableSourceDescriptor) descriptor).canWrite();
+    }
+
+    /**
+     * @see WritableSourceDescriptor#getOutputStream()
+     */
+    public OutputStream getOutputStream() {
+        SourceDescriptor descriptor = findDescriptor();
+        if (descriptor != null && (descriptor instanceof WritableSourceDescriptor)) {
+            return ((WritableSourceDescriptor) descriptor).getOutputStream();
+        }
+        return null;
     }
 
 }

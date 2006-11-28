@@ -11,7 +11,7 @@
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.1.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/commons-collections-src-3.1.zip" kind="lib" path="context/WEB-INF/lib/commons-collections-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xml-apis-1.3.03.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-10.jar"/>
 	<classpathentry exported="true" sourcepath="srczip/rhino-src-1.6r2.zip" kind="lib" path="context/WEB-INF/lib/rhino-1.6r2.jar"/>
+	<classpathentry exported="true" sourcepath="srczip/jaxen-src-1.1-beta-11.zip" kind="lib" path="context/WEB-INF/lib/jaxen-1.1-beta-11.jar"/>
 	<classpathentry kind="output" path="context/WEB-INF/classes"/>
 </classpath>

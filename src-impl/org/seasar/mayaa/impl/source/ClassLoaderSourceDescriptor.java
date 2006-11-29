@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -28,7 +29,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         implements SourceDescriptor {
 
-    private static final long serialVersionUID = -4924522601395047024L;
+    private static final long serialVersionUID = 1L;
 
     public static final String META_INF = "/META-INF";
 
@@ -63,11 +64,11 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     public boolean exists() {
         String path = (_root + getSystemID()).substring(1);
         if (_neighbor != null) {
-            _inputStream = _neighbor.getResourceAsStream(path);
+            _inputStream = IOUtil.getResourceAsStream(path, _neighbor);
         }
         if (_inputStream == null) {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            _inputStream = loader.getResourceAsStream(path);
+            _inputStream = IOUtil.getResourceAsStream(path, loader);
         }
         return _inputStream != null;
     }
@@ -90,7 +91,7 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         if (_timestamp != null) {
             return _timestamp;
         }
-        _timestamp = new Date(); 
+        _timestamp = new Date();
         return _timestamp;
     }
 

@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,13 +33,23 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IOUtil {
 
+    private static final Log LOG = LogFactory.getLog(IOUtil.class);
+    private static boolean _useURLCache = false;
+
+    static {
+        String env = System.getProperty("org.seasar.mayaa.useURLCache");
+        if (env != null && env.equalsIgnoreCase("true")) {
+            _useURLCache = true;
+        }
+    }
+
     private IOUtil() {
         // no instantiation.
     }
 
     /**
      * InputStreamをcloseする。
-     * 例外が発生した場合はログにFATALレベルで出力する。
+     * 例外が発生した場合はログにINFOレベルで出力する。
      *
      * @param stream closeするInputStream
      */
@@ -46,15 +58,14 @@ public class IOUtil {
             try {
                 stream.close();
             } catch (IOException ignore) {
-                Log log = LogFactory.getLog(IOUtil.class);
-                log.fatal(ignore.getMessage(), ignore);
+                LOG.info(ignore.getMessage(), ignore);
             }
         }
     }
 
     /**
      * OutputStreamをcloseする。
-     * 例外が発生した場合はログにFATALレベルで出力する。
+     * 例外が発生した場合はログにINFOレベルで出力する。
      *
      * @param stream closeするOutputStream
      */
@@ -63,8 +74,7 @@ public class IOUtil {
             try {
                 stream.close();
             } catch (IOException ignore) {
-                Log log = LogFactory.getLog(IOUtil.class);
-                log.fatal(ignore.getMessage(), ignore);
+                LOG.info(ignore.getMessage(), ignore);
             }
         }
     }
@@ -118,6 +128,147 @@ public class IOUtil {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    /**
+     * URLからInputStreamを取得する。
+     * 標準だとURLのキャッシュを使わない。
+     * キャッシュを使わない場合、jarファイルをホールドしない代わりに
+     * パフォーマンスに問題が出る場合がある。
+     * urlがnullの場合はnullを返す。
+     *
+     * URLのキャッシュを使うようにするには、システムプロパティに
+     * "org.seasar.mayaa.useURLCache=true" を設定すること。
+     *
+     * @param url 読み込むURL
+     * @return InputStream
+     */
+    public static InputStream openStream(URL url) {
+        if (url == null) {
+            return null;
+        }
+        try {
+            URLConnection connection = url.openConnection();
+            // キャッシュを使うとjarファイルを掴んでしまう
+            connection.setUseCaches(_useURLCache);
+            return connection.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * カレントスレッドのContextClassLoaderを使ってリソースを読み込むInputStreamを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはクラスパスをルートとする絶対パス。
+     *
+     * @param name リソースの名前
+     * @return InputStream
+     */
+    public static URL getResource(String name) {
+        return getResource(name, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * カレントスレッドのContextClassLoaderを使ってリソースを読み込むInputStreamを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはクラスパスをルートとする絶対パス。
+     *
+     * @param name リソースの名前
+     * @return InputStream
+     */
+    public static InputStream getResourceAsStream(String name) {
+        return getResourceAsStream(name, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * クラスのあるパッケージを起点としてパスを解決する。
+     * java.lang.Class#resolveName(String)
+     *
+     * @param neighbor 基準とするクラス
+     * @param name リソースの名前
+     * @return 解決したパス
+     */
+    protected static String resolveName(Class neighbor, String name) {
+        if (name == null) {
+            return name;
+        }
+        if (name.startsWith("/") == false) {
+            Class c = neighbor;
+            while (c.isArray()) {
+                c = c.getComponentType();
+            }
+            String baseName = c.getName();
+            int index = baseName.lastIndexOf('.');
+            if (index != -1) {
+                name = baseName.substring(0, index).replace('.', '/') + '/' + name;
+            }
+        } else {
+            name = name.substring(1);
+        }
+        return name;
+    }
+
+    /**
+     * neighborのClassLoaderを使ってリソースのURLを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはクラスパスをルートとする絶対パス。
+     * neighborがnullの場合はカレントスレッドのContextClassLoaderを使う。
+     *
+     * @param name リソースの名前
+     * @param neighbor リソースを探すための起点とするクラス
+     * @return InputStream
+     */
+    public static URL getResource(String name, Class neighbor) {
+        if (neighbor == null) {
+            return getResource(name);
+        }
+        return getResource(resolveName(neighbor, name), neighbor.getClassLoader());
+    }
+
+    /**
+     * neighborのClassLoaderを使ってリソースを読み込むInputStreamを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはneighborのパッケージを起点とする相対パス。
+     * neighborがnullの場合はカレントスレッドのContextClassLoaderを使う。
+     *
+     * @param name リソースの名前
+     * @param neighbor リソースを探すための起点とするクラス
+     * @return InputStream
+     */
+    public static InputStream getResourceAsStream(String name, Class neighbor) {
+        return openStream(getResource(name, neighbor));
+    }
+
+    /**
+     * 指定したClassLoaderを使ってリソースのURLを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはクラスパスをルートとする絶対パス。
+     * loaderがnullの場合はnullを返す。
+     *
+     * @param name リソースの名前
+     * @param loader リソースを読み込むためのクラスローダー
+     * @return InputStream
+     */
+    public static URL getResource(String name, ClassLoader loader) {
+        if (loader == null) {
+            return null;
+        }
+        return loader.getResource(name);
+    }
+
+    /**
+     * 指定したClassLoaderを使ってリソースを読み込むInputStreamを返す。
+     * リソースが見つからない場合、あるいは権限がない場合はnullを返す。
+     * リソースのパスはクラスパスをルートとする絶対パス。
+     * loaderがnullの場合はnullを返す。
+     *
+     * @param name リソースの名前
+     * @param loader リソースを読み込むためのクラスローダー
+     * @return InputStream
+     */
+    public static InputStream getResourceAsStream(String name, ClassLoader loader) {
+        return openStream(getResource(name, loader));
     }
 
 }

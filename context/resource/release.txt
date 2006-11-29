@@ -63,7 +63,12 @@ MayaaのWEBサイト：
 
 - (rev.2769) 書き込み可能なSourceDescriptorを定義できるようにしました。
 
-- (rev.2770) jaxenを1.1-beta-11にしました。
+- (rev.2771) jaxenを1.1-beta-11にしました。
+
+- (rev.2772) ClassLoader#getResourceAsStream()をURLConnectionに変更しました。
+
+- (rev.2772) URLConnectionのキャッシュを使うかどうかをシステムプロパティで
+  設定できるようにしました。デフォルトはfalse(キャッシュを使わない)です。
 
 
 -------------------------------------------------------------------

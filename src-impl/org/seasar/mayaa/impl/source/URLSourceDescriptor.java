@@ -15,17 +15,20 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
+ * URLを基準とするSourceDescriptor。
+ * URLのConnectionではキャッシュを使わないため、頻繁に使う場合は注意が必要。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class URLSourceDescriptor extends ParameterAwareImpl
         implements SourceDescriptor {
@@ -47,14 +50,7 @@ public class URLSourceDescriptor extends ParameterAwareImpl
     }
 
     public InputStream getInputStream() {
-        try {
-            // キャッシュを使うとjarファイルをロックしてしまう
-            URLConnection connection = _url.openConnection();
-            connection.setDefaultUseCaches(false);
-            return connection.getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return IOUtil.openStream(_url);
     }
 
     public void setTimestamp(Date timestamp) {

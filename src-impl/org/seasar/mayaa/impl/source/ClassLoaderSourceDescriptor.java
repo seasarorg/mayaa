@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.source;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.ParameterAwareImpl;
@@ -35,7 +36,7 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
 
     private String _root = "";
     private Class _neighbor;
-    private transient InputStream _inputStream;
+    private URL _url;
     private transient Date _timestamp;
 
     public void setNeighborClass(Class neighbor) {
@@ -62,20 +63,30 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     }
 
     public boolean exists() {
+        if (_url == null) {
+            synchronized (this) {
+                if (_url == null) {
+                    prepareURL();
+                }
+            }
+        }
+        return _url != null;
+    }
+
+    protected void prepareURL() {
         String path = (_root + getSystemID()).substring(1);
         if (_neighbor != null) {
-            _inputStream = IOUtil.getResourceAsStream(path, _neighbor);
+            _url = IOUtil.getResource(path, _neighbor);
         }
-        if (_inputStream == null) {
+        if (_url == null) {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            _inputStream = IOUtil.getResourceAsStream(path, loader);
+            _url = IOUtil.getResource(path, loader);
         }
-        return _inputStream != null;
     }
 
     public InputStream getInputStream() {
         if (exists()) {
-            return _inputStream;
+            return IOUtil.openStream(_url);
         }
         return null;
     }

@@ -1,27 +1,173 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:m="http://mayaa.seasar.org"
-      xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-		<title>${ handledError.getClass().getName() }</title>
-	</head>
-	<body m:replace="false" m:inject="m:exec"
-			m:script="${ var msg = handledError.emphasizeDetails(); if(!msg) { msg = handledError.message; if(msg == null) { msg = handledError.getClass().getName(); } } }">
-		<h1 style="white-space: pre;"><span m:inject="m:write" m:value="${ msg }" m:escapeXml="false">エラーメッセージ</span></h1>
-		<h3>properties:</h3>
-		<p>
-			sourceName: ${ handledError.sourceName() }<br/>
-			lineNumber: ${ handledError.lineNumber() }<br/>
-			lineSource: ${ handledError.lineSource() }<br/>
-		</p>
-		<h3>stackTrace:</h3>
-		<p>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja" xmlns:m="http://mayaa.seasar.org">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<title>${ handledError.getClass().getName() }</title>
+	<script type="text/javascript"><!--
+		function swapVisibility(elementId, anchorElement) {
+			var style = document.getElementById(elementId).style;
+			if (style.display == 'none') {
+				style.display = 'block';
+				anchorElement.innerText = '[-]';
+			} else {
+				style.display = 'none';
+				anchorElement.innerText = '[+]';
+			}
+		}
+		function hideFoldings() {
+			var i = 0;
+			var element = document.getElementById('folding' + i);
+			while (element) {
+				element.style.display = 'none';
+				element = document.getElementById('folding' + ++i)
+			}
+		}
+/* ${// server side
+	response.setStatus(500);
+	function traceToString(current) {
+		return current.className + '.' + current.methodName + '(' +
+			((current.lineNumber &gt;= 0) ? current.lineNumber : 'unknown') + ')';
+	}
+
+	function getMessage() {
+		var msg = handledError.emphasizeDetails();
+		if (msg == null) {
+			msg = handledError.message;
+			if (msg == null) {
+				msg = handledError.getClass().getName();
+			}
+		}
+		return msg;
+	}
+	var foldingCount = 0;
+} */
+	//--></script>
+	<style type="text/css"><!--
+		* {
+			margin: 0;
+			padding: 0;
+			text-indent: 0;
+		}
+		body {
+			text-align: left;
+			color: black;
+			background: white;
+		}
+		.header {
+			color: white;
+			border-bottom: 6px double white;
+			background: #1c4baf;
+		}
+		.header h1 {
+			padding: 8px;
+			border-bottom: 4px double white;
+		}
+		.main {
+			font-size: 100%;
+			padding: 8px;
+		}
+		h2 {
+			font-size: large;
+			margin-top: 1em;
+			padding: 4px;
+			border-left: 8px solid #1c4baf;
+			border-bottom: 1px solid #1c4baf;
+		}
+		p.fixed {
+			white-space: pre;
+			font-family: monospace;
+		}
+		span.foldingAnchor {
+			cursor: pointer;
+			color: #48d;
+			font-family: monospace;
+		}
+		div.print {
+			background-color: #e5ecf9;
+			margin-bottom: 1em;
+			margin-left: 4px;
+			margin-right: 4px;
+			padding: 4px;
+			font-family: monospace;
+			border: 1px solid #1c4baf;
+		}
+	--></style>
+</head>
+<body onload="hideFoldings()">
+	<div class="header">
+		<h1>Error occurred while rendering.</h1>
+	</div>
+	<div class="main">
+
+	<p class="fixed"><span m:inject="m:write" m:value="${ getMessage() }" m:escapeXml="false">error message in Exception</span></p>
+
+	<h2>requested path:</h2>
+	<div class="print">
+		 <span m:inject="m:write" m:value="${ request.requestedPath }">/index.html</span>
+	</div>
+
+	<h2>properties:</h2>
+	<div class="print">
+		sourceName: ${ handledError.sourceName() }<br/>
+		lineNumber: ${ handledError.lineNumber() }<br/>
+		lineSource: ${ handledError.lineSource() }<br/>
+	</div>
+
+	<div m:inject="m:if" m:test="${ var items = param.iterateAttributeNames(); items.hasNext() }">
+	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
+		parameters</h2>
+	<div id="folding${ foldingCount++ }">
+		<div class="print">
+			<div m:inject="m:forEach"
+					m:items="${ items }"
+					m:var="paramName">
+			<span m:inject="m:write" m:value="${ paramName }">name</span> =
+			<span m:inject="m:write" m:value="${ param[paramName] }">value</span><br/>
+			</div>
+		</div>
+	</div>
+	</div>
+
+<div m:inject="m:for"
+	m:init="${ var exception = handledError }"
+	m:test="${ exception != null }"
+	m:after="${ exception = exception.cause }">
+		${ var trace = exception.stackTrace; }
+	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
+		stackTrace: ${ exception.getClass().name }</h2>
+	<div id="folding${ foldingCount++ }">
+		<div class="print">
 			<span m:inject="m:for"
-					m:init="${ var trace = handledError.stackTrace; var i = 0 }"
+					m:init="${ var i = 0 }"
 					m:test="${ i &lt; trace.length }" m:after="${ i++ }">
-				${ trace[i].className }.${ trace[i].methodName }(${ trace[i].lineNumber })<br>
+			${ traceToString(trace[i]) }<br/>
 			</span>
-		</p>
-	    ${ response.setStatus(500); }
-	</body>
+			<div m:rendered="false">
+			trace<br/>
+			trace<br/>
+			trace<br/>
+			trace<br/>
+			trace<br/>
+			</div>
+		</div>
+	</div>
+	<div m:rendered="false">
+	<h2><span class="foldingAnchor" onclick="swapVisibility('folding2', this)">[+]</span>
+		stackTrace: Dummy java.lang.NullPointerException</h2>
+	<div id="folding2" style="display: none">
+		<div class="print">
+			org.seasar.mayaa.impl.cycle.script.rhino.TextCompiledScriptImpl.execute(194)<br/>
+			org.seasar.mayaa.impl.engine.specification.SpecificationUtil$EventScriptEnvironment.execEventScript(293)<br/>
+			org.seasar.mayaa.impl.engine.specification.SpecificationUtil.execEvent(154)<br/>
+			org.seasar.mayaa.impl.engine.RenderUtil.renderPage(293)<br/>
+			org.seasar.mayaa.impl.engine.PageImpl.doPageRender(192)<br/>
+			org.seasar.mayaa.impl.engine.EngineImpl.doPageService(354)<br/>
+		</div>
+	</div>
+	</div>
+</div>
+
+	</div>
+
+</body>
 </html>

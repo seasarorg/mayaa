@@ -72,7 +72,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         _offsetLine = offsetLine;
         processText(text);
     }
-    
+
     protected boolean maybeELStyle(String text) {
         boolean start = true;
         for (int i = 0; i < text.length(); i++) {
@@ -174,6 +174,9 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                     RhinoUtil.removeWrappedException(we);
                 }
             }
+
+            // エラーとなったソース情報が微妙なので微調整。
+            // 行番号はスクリプト次第でずれてしまう。
             int offsetLine;
             String message;
             if (e instanceof JavaScriptException
@@ -188,8 +191,15 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                     message = scriptable.toString();
                 }
             } else {
-                offsetLine = e.lineNumber() - _lineNumber + 1;  // one "\n" is added
+                offsetLine = e.lineNumber() - _lineNumber + 1; // one "\n" is added
                 message = e.details() + " in script=\n" + getText();
+            }
+            if (e.lineSource() == null && message != null) {
+                String[] lines = message.split("\n");
+                offsetLine = (lines.length > offsetLine) ? offsetLine : _offsetLine;
+                if (lines.length > offsetLine) {
+                    e.initLineSource(lines[offsetLine]);
+                }
             }
             throw new OffsetLineRhinoException(
                     message,

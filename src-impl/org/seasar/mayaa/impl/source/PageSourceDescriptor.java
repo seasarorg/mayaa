@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -42,7 +41,6 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor
         ClassLoaderSourceDescriptor loader =
             new ClassLoaderSourceDescriptor();
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
-        loader.setTimestamp(new Date());
         if (listener.nextSourceDescriptor(loader) == false) {
             return false;
         }

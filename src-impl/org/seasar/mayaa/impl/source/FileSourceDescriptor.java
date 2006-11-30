@@ -36,6 +36,8 @@ public class FileSourceDescriptor
 
     private static final long serialVersionUID = 9199082270985131347L;
 
+    private static final Date NOTFOUND_TIMESTAMP = new Date(0);
+
     private String _root = "/";
 
     private File _file;
@@ -103,7 +105,7 @@ public class FileSourceDescriptor
         if (exists()) {
             return new Date(_file.lastModified());
         }
-        return new Date(0);
+        return NOTFOUND_TIMESTAMP;
     }
 
     /**

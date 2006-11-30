@@ -39,6 +39,16 @@
 		}
 		return msg;
 	}
+
+	var scopes = [
+		{ 'name' : 'application', 'scope' : application },
+		{ 'name' : 'session', 'scope' : session },
+		{ 'name' : 'request', 'scope' : request },
+		{ 'name' : 'parameters', 'scope' : param },
+		{ 'name' : 'header', 'scope' : header }
+	];
+
+	var isDebugEnabled = true;
 	var foldingCount = 0;
 } */
 	//--></script>
@@ -113,20 +123,28 @@
 		lineSource: ${ handledError.lineSource() }<br/>
 	</div>
 
-	<div m:inject="m:if" m:test="${ var items = param.iterateAttributeNames(); items.hasNext() }">
+<div m:inject="m:if" m:test="${ isDebugEnabled }">
+
+<div m:inject="m:forEach"
+		m:items="${ scopes }"
+		m:var="currentScope">
+<div m:inject="m:if" m:test="${ var items = currentScope.scope.iterateAttributeNames(); items.hasNext() }">
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
-		parameters</h2>
+		${ currentScope.name }</h2>
 	<div id="folding${ foldingCount++ }">
 		<div class="print">
 			<div m:inject="m:forEach"
 					m:items="${ items }"
 					m:var="paramName">
 			<span m:inject="m:write" m:value="${ paramName }">name</span> =
-			<span m:inject="m:write" m:value="${ param[paramName] }">value</span><br/>
+			<span m:inject="m:write" m:value="${ currentScope.scope[paramName] }">value</span><br/>
 			</div>
 		</div>
 	</div>
-	</div>
+</div>
+</div>
+
+</div>
 
 <div m:inject="m:for"
 	m:init="${ var exception = handledError }"

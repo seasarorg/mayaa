@@ -43,6 +43,7 @@ public class URLSourceDescriptor extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         _url = url;
+        _timestamp = new Date(IOUtil.getLastModified(_url));
     }
 
     public boolean exists() {

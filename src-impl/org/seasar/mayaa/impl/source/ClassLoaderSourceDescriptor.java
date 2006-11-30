@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
@@ -26,6 +27,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         implements SourceDescriptor {
@@ -33,11 +35,13 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     private static final long serialVersionUID = 1L;
 
     public static final String META_INF = "/META-INF";
+    private static final Date NOTFOUND_TIMESTAMP = new Date(0);
 
     private String _root = "";
     private Class _neighbor;
     private URL _url;
-    private transient Date _timestamp;
+    private File _file;
+    private Date _timestamp;
 
     public void setNeighborClass(Class neighbor) {
         _neighbor = neighbor;
@@ -82,6 +86,10 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             _url = IOUtil.getResource(path, loader);
         }
+        _file = IOUtil.getFile(_url);
+        if (_timestamp == null && _file == null) {
+            _timestamp = new Date();
+        }
     }
 
     public InputStream getInputStream() {
@@ -102,8 +110,10 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         if (_timestamp != null) {
             return _timestamp;
         }
-        _timestamp = new Date();
-        return _timestamp;
+        if (exists() && _file != null && _file.exists()) {
+            return new Date(_file.lastModified());
+        }
+        return NOTFOUND_TIMESTAMP;
     }
 
 }

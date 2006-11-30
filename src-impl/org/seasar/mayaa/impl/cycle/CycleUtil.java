@@ -84,7 +84,7 @@ public class CycleUtil {
     public static Object getLocalVariable(String key, Object owner, Object[] params) {
         return getFactory().getLocalVariables().getVariable(key, owner, params);
     }
-    
+
     public static void setLocalVariable(String key, Object owner, Object value) {
         getFactory().getLocalVariables().setVariable(key, owner, value);
     }
@@ -187,7 +187,7 @@ public class CycleUtil {
     }
 
     public static void endDraftWriting() {
-        setAttribute(DRAFT_WRITING, Boolean.FALSE, ServiceCycle.SCOPE_REQUEST);
+        removeAttribute(DRAFT_WRITING, ServiceCycle.SCOPE_REQUEST);
     }
 
 }

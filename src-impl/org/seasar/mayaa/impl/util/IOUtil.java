@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +23,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -150,11 +153,48 @@ public class IOUtil {
         try {
             URLConnection connection = url.openConnection();
             // キャッシュを使うとjarファイルを掴んでしまう
+            // TODO useURLCacheをエンジン設定できるようにする
             connection.setUseCaches(_useURLCache);
             return connection.getInputStream();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * URLがファイルプロトコルかどうか判定する。
+     * urlがnullまたは不正な場合はfalseを返す。
+     *
+     * @param url 対象のURL
+     * @return ファイルプロトコルならtrue
+     */
+    public static File getFile(URL url) {
+        if (url != null) {
+            try {
+                URI uri = new URI(url.toString());
+                if ("file".equalsIgnoreCase(uri.getScheme())) {
+                    return new File(uri);
+                }
+            } catch (URISyntaxException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * URLから最終更新時刻を取得する。
+     * fileにのみ対応。それ以外はシステム時刻を返す。
+     *
+     * @param url 読み込むURL
+     * @return InputStream
+     */
+    public static long getLastModified(URL url) {
+        File file = getFile(url);
+        if (file != null) {
+            return file.lastModified();
+        }
+        return System.currentTimeMillis();
     }
 
     /**

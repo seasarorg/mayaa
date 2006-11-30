@@ -40,6 +40,7 @@ public class IOUtil {
     private static boolean _useURLCache = false;
 
     static {
+        // 一応環境変数で設定できるように。基本的に有効にしない。
         String env = System.getProperty("org.seasar.mayaa.useURLCache");
         if (env != null && env.equalsIgnoreCase("true")) {
             _useURLCache = true;

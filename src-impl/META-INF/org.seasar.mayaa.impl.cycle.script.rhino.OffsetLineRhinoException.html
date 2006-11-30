@@ -48,7 +48,6 @@
 		{ 'name' : 'header', 'scope' : header }
 	];
 
-	var isDebugEnabled = true;
 	var foldingCount = 0;
 } */
 	//--></script>
@@ -123,15 +122,13 @@
 		lineSource: ${ handledError.lineSource() }<br/>
 	</div>
 
-<div m:inject="m:if" m:test="${ isDebugEnabled }">
-
 <div m:inject="m:forEach"
 		m:items="${ scopes }"
 		m:var="currentScope">
 <div m:inject="m:if" m:test="${ var items = currentScope.scope.iterateAttributeNames(); items.hasNext() }">
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
 		${ currentScope.name }</h2>
-	<div id="folding${ foldingCount++ }">
+	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }" />
 		<div class="print">
 			<div m:inject="m:forEach"
 					m:items="${ items }"
@@ -144,8 +141,6 @@
 </div>
 </div>
 
-</div>
-
 <div m:inject="m:for"
 	m:init="${ var exception = handledError }"
 	m:test="${ exception != null }"
@@ -153,7 +148,7 @@
 		${ var trace = exception.stackTrace; }
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
 		stackTrace: ${ exception.getClass().name }</h2>
-	<div id="folding${ foldingCount++ }">
+	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }" />
 		<div class="print">
 			<span m:inject="m:for"
 					m:init="${ var i = 0 }"
@@ -168,20 +163,6 @@
 			trace<br/>
 			</div>
 		</div>
-	</div>
-	<div m:rendered="false">
-	<h2><span class="foldingAnchor" onclick="swapVisibility('folding2', this)">[+]</span>
-		stackTrace: Dummy java.lang.NullPointerException</h2>
-	<div id="folding2" style="display: none">
-		<div class="print">
-			org.seasar.mayaa.impl.cycle.script.rhino.TextCompiledScriptImpl.execute(194)<br/>
-			org.seasar.mayaa.impl.engine.specification.SpecificationUtil$EventScriptEnvironment.execEventScript(293)<br/>
-			org.seasar.mayaa.impl.engine.specification.SpecificationUtil.execEvent(154)<br/>
-			org.seasar.mayaa.impl.engine.RenderUtil.renderPage(293)<br/>
-			org.seasar.mayaa.impl.engine.PageImpl.doPageRender(192)<br/>
-			org.seasar.mayaa.impl.engine.EngineImpl.doPageService(354)<br/>
-		</div>
-	</div>
 	</div>
 </div>
 

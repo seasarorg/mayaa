@@ -38,11 +38,11 @@
 	}
 
 	var scopes = [
-		{ 'name' : 'application', 'scope' : application },
-		{ 'name' : 'session', 'scope' : session },
-		{ 'name' : 'request', 'scope' : request },
-		{ 'name' : 'parameters', 'scope' : param },
-		{ 'name' : 'header', 'scope' : header }
+		{ 'name' : 'application scope', 'scope' : application },
+		{ 'name' : 'session scope', 'scope' : session },
+		{ 'name' : 'request scope', 'scope' : request },
+		{ 'name' : 'parameter scope', 'scope' : param },
+		{ 'name' : 'header scope', 'scope' : header }
 	];
 
 	var foldingCount = 0;
@@ -112,25 +112,6 @@
 		 <span m:inject="m:write" m:value="${ request.requestedPath }">/index.html</span>
 	</div>
 
-<div m:inject="m:forEach"
-		m:items="${ scopes }"
-		m:var="currentScope">
-<div m:inject="m:if" m:test="${ var items = currentScope.scope.iterateAttributeNames(); items.hasNext() }">
-	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
-		${ currentScope.name }</h2>
-	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }" />
-		<div class="print">
-			<div m:inject="m:forEach"
-					m:items="${ items }"
-					m:var="paramName">
-			<span m:inject="m:write" m:value="${ paramName }">name</span> =
-			<span m:inject="m:write" m:value="${ currentScope.scope[paramName] }">value</span><br/>
-			</div>
-		</div>
-	</div>
-</div>
-</div>
-
 <div m:inject="m:for"
 	m:init="${ var exception = handledError }"
 	m:test="${ exception != null }"
@@ -138,7 +119,7 @@
 		${ var trace = exception.stackTrace; }
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
 		stackTrace: ${ exception.getClass().name }</h2>
-	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }" />
+	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }">attribute</span>
 		<div class="print">
 			<span m:inject="m:for"
 					m:init="${ var i = 0 }"
@@ -154,6 +135,25 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div m:inject="m:forEach"
+		m:items="${ scopes }"
+		m:var="currentScope">
+<div m:inject="m:if" m:test="${ var items = currentScope.scope.iterateAttributeNames(); items.hasNext() }">
+	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
+		${ currentScope.name }</h2>
+	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }">attribute</span>
+		<div class="print">
+			<div m:inject="m:forEach"
+					m:items="${ items }"
+					m:var="paramName">
+			<span m:inject="m:write" m:value="${ paramName }">name</span> =
+			<span m:inject="m:write" m:value="${ currentScope.scope[paramName] }">value</span><br/>
+			</div>
+		</div>
+	</div>
+</div>
 </div>
 
 	</div>

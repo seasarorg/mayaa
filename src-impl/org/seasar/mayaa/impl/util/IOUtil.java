@@ -23,8 +23,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -187,13 +185,8 @@ public class IOUtil {
      */
     public static File getFile(URL url) {
         if (url != null) {
-            try {
-                URI uri = new URI(url.toString());
-                if ("file".equalsIgnoreCase(uri.getScheme())) {
-                    return new File(uri);
-                }
-            } catch (URISyntaxException e) {
-                LOG.warn(e.getMessage(), e);
+            if ("file".equalsIgnoreCase(url.getProtocol())) {
+                return new File(url.toString().substring(5));
             }
         }
         return null;

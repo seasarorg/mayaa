@@ -40,14 +40,19 @@ public class SourceCompiledScriptImpl
     private Script _rhinoScript;
     private Date _compiledTimestamp;
 
-    public SourceCompiledScriptImpl(
-            SourceDescriptor source, String encoding) {
+    public SourceCompiledScriptImpl(SourceDescriptor source, String encoding) {
         super(source, encoding);
         _compiledTimestamp = new Date();
     }
 
-    protected void compileFromSource(
-            Context cx, SourceDescriptor source) {
+    /**
+     * スクリプトが未コンパイルか、前回コンパイル時刻よりもタイムスタンプが
+     * 新しければコンパイルする。
+     *
+     * @param cx コンパイルのためのコンテキスト
+     * @param source コンパイルするソース
+     */
+    protected void compileFromSource(Context cx, SourceDescriptor source) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
@@ -59,16 +64,22 @@ public class SourceCompiledScriptImpl
                         new FileNotFoundException(source.getSystemID()));
             }
 
-            InputStream stream = source.getInputStream();
+            InputStream stream = null;
+            Reader reader = null;
             try {
-                Reader reader = new InputStreamReader(stream, getEncoding());
+                stream = source.getInputStream();
+                reader = new InputStreamReader(stream, getEncoding());
                 _rhinoScript = cx.compileReader(
                         reader, source.getSystemID(), 1, null);
                 _compiledTimestamp = source.getTimestamp();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
-                IOUtil.close(stream);
+                if (reader != null) {
+                    IOUtil.close(reader);
+                } else {
+                    IOUtil.close(stream);
+                }
             }
         }
     }

@@ -17,11 +17,12 @@ package org.seasar.mayaa.impl.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 
 /**
@@ -29,8 +30,9 @@ import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
  */
 public class DateFormatPool {
 
-    private static Map _formatPools = new HashMap();
-    
+    private static Map _formatPools =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+
     private DateFormatPool() {
         throw new UnsupportedOperationException();
     }
@@ -38,11 +40,11 @@ public class DateFormatPool {
     public static DateFormat borrowFormat(String formatPattern) {
         return borrowFormat(formatPattern, Locale.getDefault());
     }
-    
+
     private static String makeKey(String formatPattern, Locale locale) {
         return formatPattern + "\n" + locale.toString();
     }
-    
+
     public static DateFormat borrowFormat(String formatPattern, Locale locale) {
         String key = makeKey(formatPattern, locale);
         Pool pool = (Pool) _formatPools.get(key);
@@ -52,32 +54,32 @@ public class DateFormatPool {
         }
         return pool.borrowFormat();
     }
-    
+
     public static void returnFormat(DateFormat object) {
         if (object instanceof SimpleLocaleDateFormat == false) {
             return;
         }
         SimpleLocaleDateFormat format = (SimpleLocaleDateFormat) object;
-        
+
         String key = makeKey(format.toPattern(), format.getLocale());
         Pool pool = (Pool) _formatPools.get(key);
         if (pool != null) {
             pool.returnFormat(format);
         }
     }
-    
+
     public static DateFormat borrowRFC1123Format() {
         DateFormat result = borrowFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
         result.setTimeZone(TimeZone.getTimeZone("GMT"));
         return result;
     }
-    
+
     public static DateFormat borrowRFC2822Format() {
         DateFormat result = borrowFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
         result.setTimeZone(TimeZone.getTimeZone("GMT"));
         return result;
     }
-    
+
     // support class
 
     private static class Pool extends AbstractSoftReferencePool {
@@ -115,17 +117,17 @@ public class DateFormatPool {
         }
 
     }
-    
+
     private static class SimpleLocaleDateFormat extends SimpleDateFormat {
         private static final long serialVersionUID = 1L;
-        
+
         private Locale _locale;
-        
+
         public SimpleLocaleDateFormat(String pattern, Locale locale) {
             super(pattern, locale);
             _locale = locale;
         }
-        
+
         public Locale getLocale() {
             return _locale;
         }

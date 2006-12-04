@@ -102,6 +102,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
         if (LOG.isTraceEnabled()) {
             LOG.trace(makeReleasedLabel());
         }
+        super.finalize();
     }
 
     // PrefixAwareName implements

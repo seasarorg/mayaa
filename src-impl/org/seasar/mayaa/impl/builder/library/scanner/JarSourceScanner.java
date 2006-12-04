@@ -75,14 +75,21 @@ public class JarSourceScanner extends ParameterAwareImpl implements
         if (StringUtil.hasValue(jarName)) {
             String jarPath = ((_root != null) ? _root : "") + source.getSystemID();
             Date timestamp = source.getTimestamp();
-            InputStream stream = source.getInputStream();
+
+            InputStream stream = null;
+            JarInputStream jar = null;
             try {
-                JarInputStream jar = new JarInputStream(stream);
+                stream = source.getInputStream();
+                jar = new JarInputStream(stream);
                 addAliases(jar, jarPath, timestamp, aliases);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
-                IOUtil.close(stream);
+                if (jar != null) {
+                    IOUtil.close(jar);
+                } else {
+                    IOUtil.close(stream);
+                }
             }
         }
     }

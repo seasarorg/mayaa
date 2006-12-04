@@ -17,9 +17,10 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -36,8 +37,9 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 7899970766673369995L;
 
-    private static Map _formatPools = new HashMap();
-    
+    private static Map _formatPools =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+
     private ProcessorProperty _value;
     private ProcessorProperty _default;
     private String _pattern;

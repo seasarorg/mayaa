@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.source;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,11 +24,14 @@ import org.seasar.mayaa.source.SourceHolder;
 
 /**
  * ソースディスクリプタを保持するオブジェクトを管理する
+ *
  * @author Taro Kato (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class SourceHolderFactory {
 
-    private static List _sourceHolders = new ArrayList();
+    private static List _sourceHolders;
+    private static boolean _immutable = false;
 
     private SourceHolderFactory() {
         // no instantiate
@@ -35,12 +39,24 @@ public class SourceHolderFactory {
 
     static {
         // for context root
+        _sourceHolders = new ArrayList();
         SourceHolder contentRoot = new WebContextFolderSourceHolder();
         contentRoot.setRoot("/");
         appendSourceHolder(contentRoot);
     }
 
+    /**
+     * SourceHolderを追加する。
+     * 一度でもiterator()が呼ばれた後は、追加しようとするとIllegalStateExceptionを
+     * 投げる。
+     *
+     * @param sourceHolder 追加するSourceHolder
+     * @throws IllegalStateException 追加不能な状態
+     */
     public static void appendSourceHolder(SourceHolder sourceHolder) {
+        if (_immutable) {
+            throw new IllegalStateException("SourceHolderFactory is already immutable.");
+        }
         synchronized(_sourceHolders) {
             if (sourceHolder == null) {
                 throw new IllegalArgumentException();
@@ -49,10 +65,27 @@ public class SourceHolderFactory {
         }
     }
 
+    /**
+     * SourceHolderのIteratorを返す。
+     * 最初に呼ばれた時点でビルド済みと見なし、以降変更不可とする。
+     *
+     * @return SourceHolderのIterator
+     */
     public static Iterator iterator() {
-        synchronized(_sourceHolders) {
-            return new ArrayList(_sourceHolders).iterator();
+        if (_immutable == false) {
+            // 2回目以降のsynchronizedを避けるために変更不可とする
+            synchronized(_sourceHolders) {
+                if (_immutable == false) {
+                    _sourceHolders = Collections.unmodifiableList(_sourceHolders);
+                    _immutable = true;
+                }
+            }
         }
+        return _sourceHolders.iterator();
+    }
+
+    public static void clear() {
+        _sourceHolders.clear();
     }
 
 }

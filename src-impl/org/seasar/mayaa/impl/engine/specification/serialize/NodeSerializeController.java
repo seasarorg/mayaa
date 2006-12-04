@@ -34,11 +34,11 @@ public class NodeSerializeController implements NodeReferenceResolver {
 
     private List _nodeListeners;
     private Map _nodes;
-    
+
     public class NodeListener {
         String _id;
         NodeResolveListener _listener;
-        
+
         public NodeListener(String id, NodeResolveListener listener) {
             _id = id;
             _listener = listener;
@@ -49,12 +49,12 @@ public class NodeSerializeController implements NodeReferenceResolver {
             _listener = null;
         }
     }
-    
+
     public void init() {
         _nodeListeners = new ArrayList(20);
         _nodes = new HashMap(100);
     }
-    
+
     public void release() {
         doNotify();
         for (Iterator it = _nodeListeners.iterator(); it.hasNext(); ) {
@@ -64,11 +64,11 @@ public class NodeSerializeController implements NodeReferenceResolver {
         _nodeListeners.clear();
         _nodes.clear();
     }
-    
+
     public NodeTreeWalker getNode(String uniqueID) {
         return (NodeTreeWalker) _nodes.get(uniqueID);
     }
-    
+
     public void doNotify() {
         for (Iterator it = _nodeListeners.iterator(); it.hasNext(); ) {
             NodeListener listener = (NodeListener) it.next();
@@ -91,7 +91,7 @@ public class NodeSerializeController implements NodeReferenceResolver {
     public void specLoaded(Specification item) {
         _nodes.put(makeKey(item), item);
     }
-    
+
     public static String makeKey(SpecificationNode item) {
         return item.getSystemID() + "\n"
                 + item.getSequenceID() + "\n"

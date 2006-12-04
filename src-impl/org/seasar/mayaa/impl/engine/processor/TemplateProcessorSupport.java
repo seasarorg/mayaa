@@ -263,6 +263,7 @@ public class TemplateProcessorSupport
                 LOG.trace(name + " " + " unloaded.");
             }
         }
+        super.finalize();
     }
 
     // for serialize

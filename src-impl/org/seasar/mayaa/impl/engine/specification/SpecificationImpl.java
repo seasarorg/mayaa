@@ -102,6 +102,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         if (LOG.isTraceEnabled()) {
             LOG.debug(toString() + " unloaded.");
         }
+        super.finalize();
     }
 
     public String toString() {

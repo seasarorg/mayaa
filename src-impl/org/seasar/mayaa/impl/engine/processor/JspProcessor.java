@@ -35,6 +35,8 @@ import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -73,7 +75,11 @@ public class JspProcessor extends TemplateProcessorSupport
 
     private static final long serialVersionUID = -4416320364576454337L;
     private static final PageContext _pageContext = new PageContextImpl();
-    private static final Map _tagPools = new HashMap();
+
+    // TODO TagPoolの保持期間などパフォーマンスの調整
+    private static final Map _tagPools =
+        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+
     private static final String LOADED_TAG_KEY =
         JspProcessor.class.getName() + "#loadedTag";
     private static final String STOCK_VARIABLES_KEY =
@@ -99,6 +105,10 @@ public class JspProcessor extends TemplateProcessorSupport
     private Boolean _nestedVariableExists;
     private transient TLDScriptingVariableInfo _variableInfo =
             new TLDScriptingVariableInfo();
+
+    public static void clear() {
+        _tagPools.clear();
+    }
 
     public static boolean isSupportClass(Class test) {
         return test != null &&
@@ -271,7 +281,7 @@ public class JspProcessor extends TemplateProcessorSupport
     private void setupDynamicAttributes(Tag customTag) {
         Class custamTagClass = customTag.getClass();
         if ((DynamicAttributes.class.isAssignableFrom(custamTagClass)) == false) {
-            String message = 
+            String message =
                 StringUtil.getMessage(
                         JspProcessor.class, 0,
                         custamTagClass.getName(),

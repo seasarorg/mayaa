@@ -68,6 +68,22 @@ public class IOUtil {
     }
 
     /**
+     * Readerをcloseする。
+     * 例外が発生した場合はログにINFOレベルで出力する。
+     *
+     * @param reader closeするReader
+     */
+    public static void close(Reader reader) {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException ignore) {
+                LOG.info(ignore.getMessage(), ignore);
+            }
+        }
+    }
+
+    /**
      * OutputStreamをcloseする。
      * 例外が発生した場合はログにINFOレベルで出力する。
      *

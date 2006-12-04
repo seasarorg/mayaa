@@ -28,27 +28,27 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * リファレンスキャッシュクラス。 
- * 
+ * リファレンスキャッシュクラス。
+ *
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class ReferenceCache extends ArrayList {
 
     private static final long serialVersionUID = -6808020476640514389L;
-    
+
     public static final int SOFT = 0;
     public static final int WEAK = 1;
-    
+
     /**
      * GC対象としてマークされ解放されるオブジェクトを
      * 通知する。オブジェクトは解放済みになるので、
      * あらかじめ対象オブジェクトに名前を付けて、
      * 解放時にはその名前で通知される。
-     * 
+     *
      * @author Taro Kato (Gluegent, Inc.)
      */
     public static interface SweepListener {
-        
+
         /**
          * オブジェクトにラベルを付ける。
          * @param referent 解放監視対象オブジェクト
@@ -56,29 +56,29 @@ public class ReferenceCache extends ArrayList {
          * referentと参照依存関係のあるオブジェクトを返してはならない。
          */
         Object labeling(Object referent);
-        
+
         /**
          * labering時のreferentが解放された際に呼び出される。
          * laberingで返したlabelオブジェクトが渡される。
          * @param monitor リファレンスキャッシュ
          * @param label オブジェクトに対応付けていたラベル
          */
-        void sweepFinish(ReferenceCache monitor, Object label); 
+        void sweepFinish(ReferenceCache monitor, Object label);
     }
 
-    protected volatile boolean _liveSweepMonitor; 
+    protected volatile boolean _liveSweepMonitor;
     protected SweepListener _sweepBeginListener;
     protected ReferenceQueue _queue;
-    
+
     private Class _elementType;
     private int _referenceType;
     private String _name;
     protected Map _labelReferenceMap;
-    
+
     public ReferenceCache() {
         this(Object.class, SOFT, null);
     }
-    
+
     public ReferenceCache(Class elementType) {
         this(elementType, SOFT, null);
     }
@@ -86,7 +86,7 @@ public class ReferenceCache extends ArrayList {
     public ReferenceCache(Class elementType, int referenceType) {
         this(elementType, SOFT, null);
     }
-    
+
     public ReferenceCache(Class elementType,
             int referenceType, SweepListener listener) {
         if (referenceType != SOFT && referenceType != WEAK) {
@@ -99,22 +99,22 @@ public class ReferenceCache extends ArrayList {
         _referenceType = referenceType;
         _sweepBeginListener = listener;
     }
-    
+
     private void check(Object element) {
         if (element == null
                 || _elementType.isAssignableFrom(element.getClass()) == false) {
             throw new IllegalArgumentException();
         }
     }
-    
+
     public void setName(String name) {
         _name = name;
     }
-    
+
     public String getName() {
         return _name;
     }
-    
+
     protected synchronized void sweepMonitorStart() {
         if (_liveSweepMonitor) {
             return;
@@ -127,7 +127,7 @@ public class ReferenceCache extends ArrayList {
         }
         _labelReferenceMap = new HashMap();
         _queue = new ReferenceQueue();
-        
+
         new Thread(topThreadGroup, "ReferenceCache Sweep Monitor") {
             {
                 setPriority(Thread.MIN_PRIORITY);
@@ -149,11 +149,11 @@ public class ReferenceCache extends ArrayList {
                         // no operation
                     }
                 }
-                
+
             }
         }.start();
     }
-    
+
     protected Reference createReference(Object referent) {
         if (_sweepBeginListener != null) {
             sweepMonitorStart();
@@ -172,28 +172,28 @@ public class ReferenceCache extends ArrayList {
         }
         throw new IllegalStateException();
     }
-    
+
     public void add(int index, Object element) {
         check(element);
         super.add(index, createReference(element));
     }
-    
+
     public boolean add(Object o) {
         check(o);
         return super.add(createReference(o));
     }
-    
+
     public Iterator iterator() {
         return new ReferenceCacheIterator(this);
     }
-    
+
     protected void finalize() throws Throwable {
         _liveSweepMonitor = false;
         super.finalize();
     }
 
     // support class
-    
+
     /**
      * 解放されてヌルになったアイテムをパックしながら有効な
      * アイテムを返すイテレータ

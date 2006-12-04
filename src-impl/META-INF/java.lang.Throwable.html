@@ -24,13 +24,22 @@
 		}
 /* ${// server side
 	response.setStatus(500);
+
+	var isRhinoError = handledError instanceof Packages.org.seasar.mayaa.impl.cycle.script.rhino.OffsetLineRhinoException;;
+
 	function traceToString(current) {
 		return current.className + '.' + current.methodName + '(' +
 			((current.lineNumber &gt;= 0) ? current.lineNumber : 'unknown') + ')';
 	}
 
 	function getMessage() {
-		var msg = handledError.message;
+		var msg = null;
+		if (isRhinoError) {
+			msg = handledError.emphasizeDetails();
+		}
+		if (msg == null) {
+			msg = handledError.message;
+		}
 		if (msg == null) {
 			msg = handledError.getClass().getName();
 		}
@@ -111,6 +120,15 @@
 	<div class="print">
 		 <span m:inject="m:write" m:value="${ request.requestedPath }">/index.html</span>
 	</div>
+
+<div m:inject="m:if" m:test="${ isRhinoError }">
+	<h2>properties:</h2>
+	<div class="print">
+		sourceName: ${ handledError.sourceName() }<br/>
+		lineNumber: ${ handledError.lineNumber() }<br/>
+		lineSource: ${ handledError.lineSource() }<br/>
+	</div>
+</div>
 
 <div m:inject="m:for"
 	m:init="${ var exception = handledError }"

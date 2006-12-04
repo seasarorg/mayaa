@@ -98,13 +98,19 @@
 			font-family: monospace;
 		}
 		div.print {
-			background-color: #e5ecf9;
+			background-color: #f5f7ff;
 			margin-bottom: 1em;
 			margin-left: 4px;
 			margin-right: 4px;
 			padding: 4px;
 			font-family: monospace;
 			border: 1px solid #1c4baf;
+		}
+		div.print div.message {
+			background-color: white;
+			border: 1px dotted #1c4baf;
+			margin-bottom: 0.5em;
+			padding: 4px;
 		}
 	--></style>
 </head>
@@ -139,6 +145,7 @@
 		stackTrace: ${ exception.getClass().name }</h2>
 	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }">attribute</span>
 		<div class="print">
+			<div class="message">${ exception.message }</div>
 			<span m:inject="m:for"
 					m:init="${ var i = 0 }"
 					m:test="${ i &lt; trace.length }" m:after="${ i++ }">

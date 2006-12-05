@@ -8,10 +8,10 @@
 			var style = document.getElementById(elementId).style;
 			if (style.display == 'none') {
 				style.display = 'block';
-				anchorElement.innerText = '[-]';
+				anchorElement.innerHTML = '[-]';
 			} else {
 				style.display = 'none';
-				anchorElement.innerText = '[+]';
+				anchorElement.innerHTML = '[+]';
 			}
 		}
 		function hideFoldings() {

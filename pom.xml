@@ -7,7 +7,7 @@
   <groupId>org.seasar.mayaa</groupId>
   <artifactId>mayaa</artifactId>
   <name>Mayaa</name>
-  <version>1.1.4</version>
+  <version>1.1.5-SNAPSHOT</version>
   <description>Web Template Engine</description>
   <url>http://mayaa.seasar.org/</url>
 
@@ -233,7 +233,7 @@
     <dependency>
       <groupId>rhino</groupId>
       <artifactId>js</artifactId>
-      <version>1.6R2</version>
+      <version>1.6R5</version>
     </dependency>
     <dependency>
       <groupId>xerces</groupId>

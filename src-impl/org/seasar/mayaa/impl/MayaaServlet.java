@@ -29,7 +29,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.JspProcessor;
 import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -66,7 +65,6 @@ public class MayaaServlet extends HttpServlet {
         ProviderUtil.getEngine().kill();
         SerializeThreadManager.destroy();
         JspProcessor.clear();
-        SourceHolderFactory.clear();
 
         LOG = null;
         LogFactory.releaseAll();

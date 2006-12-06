@@ -84,8 +84,4 @@ public class SourceHolderFactory {
         return _sourceHolders.iterator();
     }
 
-    public static void clear() {
-        _sourceHolders.clear();
-    }
-
 }

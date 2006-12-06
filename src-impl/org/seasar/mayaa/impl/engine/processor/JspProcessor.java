@@ -77,7 +77,7 @@ public class JspProcessor extends TemplateProcessorSupport
     private static final PageContext _pageContext = new PageContextImpl();
 
     // TODO TagPoolの保持期間などパフォーマンスの調整
-    private static final Map _tagPools =
+    private static Map _tagPools =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
 
     private static final String LOADED_TAG_KEY =

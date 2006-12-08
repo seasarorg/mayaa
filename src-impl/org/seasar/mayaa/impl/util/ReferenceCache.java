@@ -39,6 +39,16 @@ public class ReferenceCache extends ArrayList {
     public static final int SOFT = 0;
     public static final int WEAK = 1;
 
+    /** 全スレッド共通の活動可能フラグ */
+    static boolean _alive = true;
+
+    /**
+     * ReferenceCacheで活動している全スレッドを止める。
+     */
+    public static void finishThreads() {
+        _alive = false;
+    }
+
     /**
      * GC対象としてマークされ解放されるオブジェクトを
      * 通知する。オブジェクトは解放済みになるので、
@@ -135,7 +145,7 @@ public class ReferenceCache extends ArrayList {
                 _liveSweepMonitor = true;
             }
             public void run() {
-                while(_liveSweepMonitor) {
+                while(_liveSweepMonitor && _alive) {
                      try {
                         PhantomReference ref =
                             (PhantomReference) _queue.remove(1);

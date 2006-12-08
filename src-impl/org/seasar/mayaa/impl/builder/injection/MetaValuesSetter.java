@@ -32,17 +32,17 @@ public class MetaValuesSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
     private static final long serialVersionUID = 3263443313691061874L;
-    protected static final QName QH_CONTENT =
+    protected static QName QH_CONTENT =
         SpecificationUtil.createQName(URI_HTML, "content");
-    protected static final QName QH_HTTP_EQUIV =
+    protected static QName QH_HTTP_EQUIV =
         SpecificationUtil.createQName(URI_HTML, "http-equiv");
-    protected static final QName QH_META =
+    protected static QName QH_META =
         SpecificationUtil.createQName(URI_HTML, "meta");
-    protected static final QName QX_CONTENT =
+    protected static QName QX_CONTENT =
         SpecificationUtil.createQName(URI_XHTML, "content");
-    protected static final QName QX_HTTP_EQUIV =
+    protected static QName QX_HTTP_EQUIV =
         SpecificationUtil.createQName(URI_XHTML, "http-equiv");
-    protected static final QName QX_META =
+    protected static QName QX_META =
         SpecificationUtil.createQName(URI_XHTML, "meta");
 
     protected void addMayaaAttribute(

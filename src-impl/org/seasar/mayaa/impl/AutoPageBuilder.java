@@ -55,7 +55,7 @@ public class AutoPageBuilder implements Runnable {
     private static final int WAIT_DEFAULT = 60;
     private static final boolean RENDER_MATE_DEFAULT = false;
 
-    public static final AutoPageBuilder INSTANCE = new AutoPageBuilder();
+    public static AutoPageBuilder INSTANCE = new AutoPageBuilder();
 
     private AutoPageBuilder() {
         // no operation

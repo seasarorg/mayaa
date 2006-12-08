@@ -24,10 +24,10 @@ import org.jaxen.XPath;
 import org.jaxen.util.SingleObjectIterator;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
-import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
@@ -45,7 +45,7 @@ public class SpecificationNavigator extends DefaultNavigator
 
     private static final long serialVersionUID = -8845415744894196361L;
 
-    private static final Navigator INSTANCE = new SpecificationNavigator();
+    private static Navigator INSTANCE = new SpecificationNavigator();
 
     public static Navigator getInstance() {
         return INSTANCE;

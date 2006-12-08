@@ -33,7 +33,7 @@ public class IteratorUtil {
         // no instantiation.
     }
 
-    public static final Iterator NULL_ITERATOR = new Iterator() {
+    public static Iterator NULL_ITERATOR = new Iterator() {
         public void remove() {
             throw new UnsupportedOperationException();
         }

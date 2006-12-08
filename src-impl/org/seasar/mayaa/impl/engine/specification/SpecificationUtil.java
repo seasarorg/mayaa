@@ -46,10 +46,10 @@ public class SpecificationUtil implements CONST_IMPL {
     private static EventScriptEnvironment _eventScripts =
         new EventScriptEnvironment();
 
-    public static final PrefixMapping XML_DEFAULT_PREFIX_MAPPING =
+    public static PrefixMapping XML_DEFAULT_PREFIX_MAPPING =
         PrefixMappingImpl.getInstance("xml", CONST_IMPL.URI_XML);
 
-    public static final PrefixMapping HTML_DEFAULT_PREFIX_MAPPING =
+    public static PrefixMapping HTML_DEFAULT_PREFIX_MAPPING =
         PrefixMappingImpl.getInstance("", CONST_IMPL.URI_HTML);
 
     private SpecificationUtil() {
@@ -236,7 +236,7 @@ public class SpecificationUtil implements CONST_IMPL {
 
     protected static class EventScriptEnvironment {
 
-        private static final LiteralScript NULL_SCRIPT = new LiteralScript("");
+        private static LiteralScript NULL_SCRIPT = new LiteralScript("");
 
         private WeakHashMap _mayaaScriptCache = new WeakHashMap();
 

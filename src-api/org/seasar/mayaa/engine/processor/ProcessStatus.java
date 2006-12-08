@@ -63,42 +63,42 @@ public class ProcessStatus implements Serializable {
      * リターンフラグ。TemplateProcessor#doStartProcess()がこの値を返すと、
      * プロセッサボディを出力しない。
      */
-    public static final ProcessStatus SKIP_BODY =
+    public static ProcessStatus SKIP_BODY =
         new ProcessStatus("SKIP_BODY");
 
     /**
      * リターンフラグ。TemplateProcessor#doStartProcess()がこの値を返すと、
      * プロセッサボディをバッファリング無しで出力する。
      */
-    public static final ProcessStatus EVAL_BODY_INCLUDE  =
+    public static ProcessStatus EVAL_BODY_INCLUDE  =
         new ProcessStatus("EVAL_BODY_INCLUDE");
 
     /**
      * リターンフラグ。TemplateProcessor#doEndProcess()がこの値を返すと、
      * 以降の出力をただちに中止する。
      */
-    public static final ProcessStatus SKIP_PAGE =
+    public static ProcessStatus SKIP_PAGE =
            new ProcessStatus("SKIP_PAGE");
 
     /**
      * リターンフラグ。TemplateProcessor#doEndProcess()がこの値を返すと、
      * 以降のプロセッサ出力を続ける。
      */
-    public static final ProcessStatus EVAL_PAGE =
+    public static ProcessStatus EVAL_PAGE =
         new ProcessStatus("EVAL_PAGE");
 
     /**
      * リターンフラグ。この値をItarateProcessor#doAfterChildProcess()
      * が返すと、再イテレートする。
      */
-    public static final ProcessStatus EVAL_BODY_AGAIN =
+    public static ProcessStatus EVAL_BODY_AGAIN =
         new ProcessStatus("EVAL_BODY_AGAIN");
 
     /**
      * リターンフラグ。この値をChildEvaluationProcessor#doStartProcess()
      * が返すと、プロセッサボディをバッファリングする。
      */
-    public static final ProcessStatus EVAL_BODY_BUFFERED =
+    public static ProcessStatus EVAL_BODY_BUFFERED =
         new ProcessStatus("EVAL_BODY_BUFFERED");
 
 }

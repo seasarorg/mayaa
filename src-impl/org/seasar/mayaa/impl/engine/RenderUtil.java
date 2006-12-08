@@ -44,18 +44,12 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class RenderUtil implements CONST_IMPL {
 
-    private static final ProcessStatus SKIP_BODY =
-            ProcessStatus.SKIP_BODY;
-    private static final ProcessStatus EVAL_BODY_INCLUDE =
-            ProcessStatus.EVAL_BODY_INCLUDE;
-    private static final ProcessStatus SKIP_PAGE =
-            ProcessStatus.SKIP_PAGE;
-    private static final ProcessStatus EVAL_PAGE =
-            ProcessStatus.EVAL_PAGE;
-    private static final ProcessStatus EVAL_BODY_AGAIN =
-            ProcessStatus.EVAL_BODY_AGAIN;
-    private static final ProcessStatus EVAL_BODY_BUFFERED =
-            ProcessStatus.EVAL_BODY_BUFFERED;
+    private static ProcessStatus SKIP_BODY = ProcessStatus.SKIP_BODY;
+    private static ProcessStatus EVAL_BODY_INCLUDE = ProcessStatus.EVAL_BODY_INCLUDE;
+    private static ProcessStatus SKIP_PAGE = ProcessStatus.SKIP_PAGE;
+    private static ProcessStatus EVAL_PAGE = ProcessStatus.EVAL_PAGE;
+    private static ProcessStatus EVAL_BODY_AGAIN = ProcessStatus.EVAL_BODY_AGAIN;
+    private static ProcessStatus EVAL_BODY_BUFFERED = ProcessStatus.EVAL_BODY_BUFFERED;
 
     private RenderUtil() {
         // no instantiation.

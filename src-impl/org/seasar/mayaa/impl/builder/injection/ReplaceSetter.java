@@ -35,8 +35,7 @@ public class ReplaceSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
     private static final long serialVersionUID = 442671575099062287L;
-    protected static final QName QM_REPLACE =
-        SpecificationUtil.createQName("replace");
+    protected static QName QM_REPLACE = SpecificationUtil.createQName("replace");
 
     protected boolean isReplace(SpecificationNode node) {
         if (node == null) {

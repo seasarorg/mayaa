@@ -45,7 +45,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     private static final long serialVersionUID = -6279723388151915362L;
     private static final Log LOG = LogFactory.getLog(SpecificationNodeImpl.class);
-    private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
+    private static CopyToFilter FILTER_ALL = new AllCopyToFilter();
 
     private int _sequenceID = -1;
     private int _hashCode = 0;

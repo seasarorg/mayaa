@@ -113,7 +113,6 @@ public class FactoryFactoryImpl extends FactoryFactory
 
     protected SourceDescriptor getBootstrapSource(
             String root, String systemID, Object context) {
-        // TODO URL(context.getResource)を実体とするSourceDescriptorにする
         ApplicationSourceDescriptor appSource =
             new ApplicationSourceDescriptor();
         if (StringUtil.hasValue(root)) {

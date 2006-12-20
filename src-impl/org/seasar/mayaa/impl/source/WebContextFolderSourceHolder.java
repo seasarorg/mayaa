@@ -23,9 +23,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class WebContextFolderSourceHolder extends FileSourceDescriptorProvideSourceHolder {
 
     protected FileSourceDescriptor getSourceDescriptor() {
-        return new ApplicationSourceDescriptor();
+        return new ApplicationFileSourceDescriptor();
     }
-    
+
     public void setRoot(String value) {
         if (StringUtil.isEmpty(value)) {
             throw new IllegalArgumentException();

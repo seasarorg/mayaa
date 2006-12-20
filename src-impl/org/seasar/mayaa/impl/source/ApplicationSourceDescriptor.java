@@ -15,16 +15,29 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
+
+import javax.servlet.ServletContext;
+
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
+ * ApplicationScopeを基準としたSourceDescriptor。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
-public class ApplicationSourceDescriptor
-        extends FileSourceDescriptor  {
+public class ApplicationSourceDescriptor extends ParameterAwareImpl
+        implements SourceDescriptor {
 
     private static final long serialVersionUID = -2775274363708858237L;
 
@@ -32,10 +45,15 @@ public class ApplicationSourceDescriptor
 
     private transient ApplicationScope _application;
 
-    private boolean _denyWebInf = true;
+    /** Fileベースで取得できるかどうか */
+    private transient Boolean _useFile;
+    private transient URL _url;
+
+    private FileSourceDescriptor _fileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-        super.setRoot("");
+        _fileSourceDescriptor = new FileSourceDescriptor();
+        _fileSourceDescriptor.setRoot("");
     }
 
     // use while building ServiceProvider.
@@ -53,25 +71,92 @@ public class ApplicationSourceDescriptor
         return _application;
     }
 
-    public void setDenyWebInf(boolean denyWebInf) {
-        _denyWebInf = denyWebInf;
+    public void setRoot(String root) {
+        _fileSourceDescriptor.setRoot(root);
     }
 
-    public void setSystemID(String systemID) {
-        if (_denyWebInf) {
-            if (systemID != null && systemID.indexOf(WEB_INF) != -1) {
-                throw new ForbiddenPathException(systemID);
-            }
-        }
-        super.setSystemID(systemID);
-    }
-
-    protected String getRealPath() {
-        String path = super.getRealPath();
+    protected URL getURL() {
+        String path = _fileSourceDescriptor.getRealPath();
         if (StringUtil.isEmpty(path)) {
             path = "/";
         }
-        return getApplicationScope().getRealPath(path);
+        // TODO ここにServletContextクラスが登場しないようにする
+        ServletContext context =
+            (ServletContext) getApplicationScope().getUnderlyingContext();
+        try {
+            return context.getResource(path);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("invalid: " + path);
+        }
+    }
+
+    /**
+     * ファイルが見つからない場合、ServletContextからURLで探す。
+     * ServletContextから見つかった場合はそれを利用するようにする。
+     * それでも見つからなかった場合、存在しないリソースとして処理する。
+     *
+     * @return ファイルとして扱うならtrue
+     */
+    protected final boolean canUseFile() {
+        if (_useFile == null) {
+            _useFile = Boolean.TRUE;
+            if (true || _fileSourceDescriptor.exists() == false) {
+                URL url = getURL();
+                if (url != null) {
+                    _url = url;
+                    _useFile = Boolean.FALSE;
+                }
+            }
+        }
+        return _useFile.booleanValue();
+    }
+
+    /* (non-Javadoc)
+     * @see org.seasar.mayaa.source.SourceDescriptor#exists()
+     */
+    public boolean exists() {
+        if (canUseFile()) {
+            return _fileSourceDescriptor.exists();
+        }
+        return _url != null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.seasar.mayaa.source.SourceDescriptor#getInputStream()
+     */
+    public InputStream getInputStream() {
+        if (canUseFile()) {
+            return _fileSourceDescriptor.getInputStream();
+        }
+        return IOUtil.openStream(_url);
+    }
+
+    /* (non-Javadoc)
+     * @see org.seasar.mayaa.source.SourceDescriptor#getTimestamp()
+     */
+    public Date getTimestamp() {
+        if (canUseFile()) {
+            return _fileSourceDescriptor.getTimestamp();
+        }
+        return new Date(IOUtil.getLastModified(_url));
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.seasar.mayaa.impl.ParameterAwareImpl#setSystemID()
+     */
+    public void setSystemID(String systemID) {
+        if (systemID != null && systemID.indexOf(WEB_INF) != -1) {
+            throw new ForbiddenPathException(systemID);
+        }
+        _fileSourceDescriptor.setSystemID(systemID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.seasar.mayaa.impl.ParameterAwareImpl#getSystemID()
+     */
+    public String getSystemID() {
+        return _fileSourceDescriptor.getSystemID();
     }
 
     // for serialize

@@ -48,8 +48,17 @@ public class FileSourceDescriptor
     }
 
     public File getFile() {
-        exists();
-        return _file;
+        if (exists()) {
+            return _file;
+        }
+        return null;
+    }
+
+    public boolean isDirectory() {
+        if (exists()) {
+            return _file.isDirectory();
+        }
+        return false;
     }
 
     public void setRoot(String root) {

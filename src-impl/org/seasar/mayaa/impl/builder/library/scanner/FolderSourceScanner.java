@@ -29,7 +29,7 @@ import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
+import org.seasar.mayaa.impl.source.ApplicationFileSourceDescriptor;
 import org.seasar.mayaa.impl.source.FileSourceDescriptor;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
@@ -79,15 +79,15 @@ public class FolderSourceScanner extends ParameterAwareImpl
             if (_absolute) {
                 _source = new FileSourceDescriptor();
             } else {
-                ApplicationSourceDescriptor appSource =
-                    new ApplicationSourceDescriptor();
+                ApplicationFileSourceDescriptor appSource =
+                    new ApplicationFileSourceDescriptor();
                 appScope = appSource.getApplicationScope();
                 appSource.setDenyWebInf(false);
                 _source = appSource;
             }
             _source.setRoot(getFolder());
         }
-        if (_source.exists() && _source.getFile().isDirectory()) {
+        if (_source.exists() && _source.isDirectory()) {
             return new FileToSourceIterator(appScope,
                     _source.getRoot(), iterateFiles(_source.getFile()));
         }
@@ -261,8 +261,8 @@ public class FolderSourceScanner extends ParameterAwareImpl
             if (ret instanceof File) {
                 File file = (File) ret;
                 String systemID = getSystemID(file);
-                ApplicationSourceDescriptor source =
-                    new ApplicationSourceDescriptor();
+                ApplicationFileSourceDescriptor source =
+                    new ApplicationFileSourceDescriptor();
                 source.setDenyWebInf(false);
                 source.setRoot(_root);
                 source.setSystemID(systemID);

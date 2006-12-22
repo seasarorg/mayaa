@@ -25,13 +25,16 @@ import org.seasar.mayaa.impl.util.ReferenceCache;
  */
 public class URIImpl implements URI {
     private static final long serialVersionUID = 7985133276316017754L;
-    
-    private static ReferenceCache _cache =
-        new ReferenceCache(URIImpl.class);
-    
+
+    private static ReferenceCache _cache = new ReferenceCache(URIImpl.class);
+
     public static URIImpl getInstance(String uri) {
         if (uri == null) {
             throw new IllegalArgumentException();
+        }
+        // undeploy時に_cacheが消されたあとアクセスされる場合がある
+        if (_cache == null) {
+            return null;
         }
         for (Iterator it = _cache.iterator(); it.hasNext(); ) {
             URIImpl namespaceURI = (URIImpl)it.next();
@@ -41,21 +44,22 @@ public class URIImpl implements URI {
         }
         return new URIImpl(uri);
     }
-    
+
     private String _value;
-    
+    private int _hashCode;
+
     private URIImpl() {
         // for serialize
     }
-    
+
     private URIImpl(String uri) {
         setValue(uri);
     }
-    
+
     public String getValue() {
         return _value;
     }
-    
+
     public void setValue(String uri) {
         if (uri == null) {
             throw new IllegalArgumentException();
@@ -67,25 +71,34 @@ public class URIImpl implements URI {
         if (_cache.contains(this) == false) {
             _cache.add(this);
         }
+        _hashCode = (getClass().getName() + "|" + _value).hashCode();
     }
 
     public String toString() {
         return _value;
     }
-    
+
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
         if (obj instanceof URIImpl) {
-            obj = ((URIImpl)obj)._value;
+            obj = ((URIImpl) obj)._value;
         }
         if (obj instanceof String) {
             return obj.equals(_value);
         }
         return false;
     }
-    
+
+    public int hashCode() {
+        return _hashCode;
+    }
+
+    protected void finalize() {
+        _value = null;
+    }
+
     private Object readResolve() {
         return getInstance(_value);
     }

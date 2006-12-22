@@ -34,8 +34,17 @@ public class CycleThreadLocalFactory {
         throw new UnsupportedOperationException();
     }
 
-    public static void cycleLocalInitialize() {
+    protected static void cycleLocalInitialize() {
         _cycleLocalVariables.set(new HashMap());
+    }
+
+    protected static Map getThreadLocalMap() {
+        Map map = (Map) _cycleLocalVariables.get();
+        if (map == null) {
+            cycleLocalInitialize();
+            map = (Map) _cycleLocalVariables.get();
+        }
+        return map;
     }
 
     public static void cycleLocalFinalize() {
@@ -52,6 +61,7 @@ public class CycleThreadLocalFactory {
                     (CycleLocalInstantiator) _instantiators.get(key);
                 instantiator.destroy(value);
             }
+            map.clear();
         }
         _cycleLocalVariables.set(null);
     }
@@ -61,10 +71,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static void clearLocalVariable(Object key) {
-        if (_cycleLocalVariables.get() == null) {
-            cycleLocalInitialize();
-        }
-        Map map = (Map) _cycleLocalVariables.get();
+        Map map = getThreadLocalMap();
         Object instance = map.get(key);
         if (instance != null) {
             String strKey;
@@ -73,7 +80,8 @@ public class CycleThreadLocalFactory {
             } else {
                 strKey = key.toString();
             }
-            CycleLocalInstantiator instantiator = (CycleLocalInstantiator) _instantiators.get(strKey);
+            CycleLocalInstantiator instantiator =
+                (CycleLocalInstantiator) _instantiators.get(strKey);
             if (instantiator != null) {
                 instantiator.destroy(instance);
             }
@@ -82,10 +90,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static Object get(Object key, Object[] params) {
-        if (_cycleLocalVariables.get() == null) {
-            cycleLocalInitialize();
-        }
-        Map localVariables = (Map)_cycleLocalVariables.get();
+        Map localVariables = getThreadLocalMap();
         Object result = localVariables.get(key);
         if (result == null) {
             String strKey;
@@ -112,10 +117,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static void set(Object key, Object value) {
-        if (_cycleLocalVariables.get() == null) {
-            cycleLocalInitialize();
-        }
-        Map localVariables = (Map)_cycleLocalVariables.get();
+        Map localVariables = getThreadLocalMap();
         Object existValue = localVariables.get(key);
         if (existValue != null) {
             clearLocalVariable(key);

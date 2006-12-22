@@ -44,6 +44,10 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         String key = forQNameString(namespaceURI, localName);
         QName result;
         synchronized (_cache) {
+            // undeploy時に_cacheが消されたあとアクセスされる場合がある
+            if (_cache == null) {
+                return null;
+            }
             result = (QName)_cache.get(key);
             if (result == null) {
                 result = new QNameImpl(namespaceURI, localName);
@@ -95,6 +99,11 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
 
     public int hashCode() {
         return toString().hashCode();
+    }
+
+    protected void finalize() {
+        _namespaceURI = null;
+        _localName = null;
     }
 
     private Object readResolve() {

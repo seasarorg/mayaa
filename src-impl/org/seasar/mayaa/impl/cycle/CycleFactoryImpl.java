@@ -49,6 +49,49 @@ public class CycleFactoryImpl
     private Class _serviceClass;
     private CycleLocalVariables _localVariables = new CycleLocalVariablesImpl();
 
+    protected synchronized void initCurrentStrage() {
+        if (_currentCycle.get() == null) {
+            _currentCycle.set(new Object[1]);
+        }
+    }
+
+    protected ServiceCycle getCurrentServiceCycle() {
+        Object[] storage = (Object[]) _currentCycle.get();
+        if (storage == null) {
+            initCurrentStrage();
+            storage = (Object[]) _currentCycle.get();
+        }
+        return (ServiceCycle) storage[0];
+    }
+
+    protected void setCurrentServiceCycle(ServiceCycle serviceCycle) {
+        Object[] storage = (Object[]) _currentCycle.get();
+        if (storage == null) {
+            initCurrentStrage();
+            storage = (Object[]) _currentCycle.get();
+        }
+        storage[0] = serviceCycle;
+    }
+
+    public void cycleFinalize() {
+        CycleThreadLocalFactory.cycleLocalFinalize();
+        setCurrentServiceCycle(null);
+        _currentCycle.set(null);
+    }
+
+    public void initialize(Object requestContext, Object responseContext) {
+        if (requestContext == null || responseContext == null) {
+            throw new IllegalArgumentException();
+        }
+        ServiceCycle cycle = defaultServiceCycle();
+        setCurrentServiceCycle(cycle);
+        RequestScope request = cycle.getRequestScope();
+        request.setUnderlyingContext(requestContext);
+        Response response = cycle.getResponse();
+        response.setUnderlyingContext(responseContext);
+        CycleThreadLocalFactory.cycleLocalInitialize();
+    }
+
     public void setServiceClass(Class serviceClass) {
         if (serviceClass == null) {
             throw new IllegalArgumentException();
@@ -61,24 +104,6 @@ public class CycleFactoryImpl
             throw new IllegalArgumentException();
         }
         return _serviceClass;
-    }
-
-    public void initialize(Object requestContext, Object responseContext) {
-        if (requestContext == null || responseContext == null) {
-            throw new IllegalArgumentException();
-        }
-        ServiceCycle cycle = defaultServiceCycle();
-        _currentCycle.set(cycle);
-        RequestScope request = cycle.getRequestScope();
-        request.setUnderlyingContext(requestContext);
-        Response response = cycle.getResponse();
-        response.setUnderlyingContext(responseContext);
-        CycleThreadLocalFactory.cycleLocalInitialize();
-    }
-
-    public void cycleFinalize() {
-        CycleThreadLocalFactory.cycleLocalFinalize();
-        _currentCycle.set(null);
     }
 
     public CycleLocalVariables getLocalVariables() {
@@ -101,10 +126,10 @@ public class CycleFactoryImpl
     }
 
     public ServiceCycle getServiceCycle() {
-        ServiceCycle cycle = (ServiceCycle) _currentCycle.get();
+        ServiceCycle cycle = getCurrentServiceCycle();
         if (cycle == null) {
             cycle = defaultServiceCycle();
-            _currentCycle.set(cycle);
+            setCurrentServiceCycle(cycle);
             LOG.info("serviceCycle created out of request cycle.");
         }
         return cycle;

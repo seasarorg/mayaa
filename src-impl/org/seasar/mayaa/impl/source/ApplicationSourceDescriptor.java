@@ -100,7 +100,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     protected final boolean canUseFile() {
         if (_useFile == null) {
             _useFile = Boolean.TRUE;
-            if (true || _fileSourceDescriptor.exists() == false) {
+            if (_fileSourceDescriptor.exists() == false) {
                 URL url = getURL();
                 if (url != null) {
                     _url = url;

@@ -73,10 +73,40 @@ public class InsertProcessor
 
     private String _path;
     private String _name = "";
+    private String _pageName;
     private String _suffix;
     private String _extension;
+    private boolean _needAdjustPath = false;
     private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
                     _attributes;
+
+    /**
+     * 相対パスを解決、分解して拡張子などをあらかじめ取得する。
+     */
+    public void initialize() {
+        if (StringUtil.isEmpty(_path)) {
+            String systemID = getInjectedNode().getSystemID();
+            String lineNumber =
+                Integer.toString(getInjectedNode().getLineNumber());
+            throw new IllegalArgumentException(
+                    StringUtil.getMessage(InsertProcessor.class, 0,
+                            systemID, lineNumber));
+        }
+
+        Engine engine = ProviderUtil.getEngine();
+        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+
+        String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+
+        String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+
+        _pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
+        _suffix = pagePath[1];
+        _extension = pagePath[2];
+        if (_path.startsWith("/") == false && _path.startsWith("./") == false) {
+            _needAdjustPath = true;
+        }
+    }
 
     // MLD property, required
     public void setPath(String path) {
@@ -114,24 +144,13 @@ public class InsertProcessor
     }
 
     protected Page getPage() {
-        Page result = null;
-        if (StringUtil.hasValue(_path)) {
-            synchronized (this) {
-                Engine engine = ProviderUtil.getEngine();
-                String suffixSeparator =
-                    engine.getParameter(SUFFIX_SEPARATOR);
-                String[] pagePath =
-                    StringUtil.parsePath(_path, suffixSeparator);
-
-                String sourcePath =
-                    EngineUtil.getSourcePath(getParentProcessor());
-                result = engine.getPage(
-                        StringUtil.adjustRelativePath(sourcePath, pagePath[0]));
-                _suffix = pagePath[1];
-                _extension = pagePath[2];
-            }
+        if (_needAdjustPath) {
+            // "/" 始まりでも "./" 始まりでもない場合は相対パス解決をする
+            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+            return ProviderUtil.getEngine().getPage(
+                    StringUtil.adjustRelativePath(sourcePath, "./" + _pageName));
         }
-        return result;
+        return ProviderUtil.getEngine().getPage(_pageName);
     }
 
     protected Stack getRenderingParams() {

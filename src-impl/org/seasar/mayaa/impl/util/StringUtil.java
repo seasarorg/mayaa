@@ -397,7 +397,6 @@ public final class StringUtil {
                 case '<': sb.append("&lt;"); break;
                 case '>': sb.append("&gt;"); break;
                 case '"': sb.append("&quot;"); break;
-                case '\'': sb.append("&#39;"); break;
                 default: sb.append(chars[i]);
             }
         }

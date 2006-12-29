@@ -84,27 +84,20 @@ public class InsertProcessor
      * 相対パスを解決、分解して拡張子などをあらかじめ取得する。
      */
     public void initialize() {
-        if (StringUtil.isEmpty(_path)) {
-            String systemID = getInjectedNode().getSystemID();
-            String lineNumber =
-                Integer.toString(getInjectedNode().getLineNumber());
-            throw new IllegalArgumentException(
-                    StringUtil.getMessage(InsertProcessor.class, 0,
-                            systemID, lineNumber));
-        }
+        if (StringUtil.hasValue(_path)) {
+            Engine engine = ProviderUtil.getEngine();
+            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
 
-        Engine engine = ProviderUtil.getEngine();
-        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
 
-        String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
+            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
 
-        String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-
-        _pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
-        _suffix = pagePath[1];
-        _extension = pagePath[2];
-        if (_path.startsWith("/") == false && _path.startsWith("./") == false) {
-            _needAdjustPath = true;
+            _pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
+            _suffix = pagePath[1];
+            _extension = pagePath[2];
+            if (_path.startsWith("/") == false && _path.startsWith("./") == false) {
+                _needAdjustPath = true;
+            }
         }
     }
 
@@ -143,7 +136,17 @@ public class InsertProcessor
         return _attributes;
     }
 
+    /**
+     * pathを指定されていない場合(レイアウト側)はnullを返す。
+     * pathが指定されている場合(コンポーネント利用)はEngineからPageを
+     * 取得して返す。その際、必要ならばパスの自動解決をする。
+     *
+     * @return ページオブジェクト
+     */
     protected Page getPage() {
+        if (StringUtil.isEmpty(_path)) {
+            return null;
+        }
         if (_needAdjustPath) {
             // "/" 始まりでも "./" 始まりでもない場合は相対パス解決をする
             String sourcePath = EngineUtil.getSourcePath(getParentProcessor());

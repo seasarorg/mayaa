@@ -37,8 +37,10 @@ public class InsertSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
     private static final long serialVersionUID = -326245681584232257L;
-    protected static QName QM_INSERT = SpecificationUtil.createQName("insert");
-    protected static QName QM_PATH = SpecificationUtil.createQName("path");
+    protected static final QName QM_INSERT =
+        SpecificationUtil.createQName("insert");
+    protected static final QName QM_PATH =
+        SpecificationUtil.createQName("path");
 
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {

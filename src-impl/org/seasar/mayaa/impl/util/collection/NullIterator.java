@@ -19,11 +19,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * Iterator用のNullObject。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class NullIterator implements Iterator {
 
-    private static NullIterator NULL_ITERATOR = new NullIterator();
+    private static final NullIterator NULL_ITERATOR = new NullIterator();
 
     public static final Iterator getInstance() {
         return NULL_ITERATOR;

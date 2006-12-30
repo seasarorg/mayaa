@@ -25,6 +25,12 @@ import java.util.NoSuchElementException;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 
 /**
+ * 配列やEnumeration, Collectionなどを共通で扱ってIteratorを取得するためのユーティリティ。
+ * AttributeScopeの場合はiterateAttributeNames()の結果を返す。
+ * Mapの場合はentrySet()のiterator()を返す。
+ * Iteratorを取得できないオブジェクトの場合は、それ自体をObject配列に入れた
+ * もののIteratorを返す。ただしnullの場合はNullIteratorを返す。
+ *
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class IteratorUtil {
@@ -33,7 +39,7 @@ public class IteratorUtil {
         // no instantiation.
     }
 
-    public static Iterator NULL_ITERATOR = new Iterator() {
+    public static final Iterator NULL_ITERATOR = new Iterator() {
         public void remove() {
             throw new UnsupportedOperationException();
         }

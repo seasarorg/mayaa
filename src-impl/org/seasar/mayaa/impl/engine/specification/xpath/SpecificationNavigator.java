@@ -45,7 +45,7 @@ public class SpecificationNavigator extends DefaultNavigator
 
     private static final long serialVersionUID = -8845415744894196361L;
 
-    private static Navigator INSTANCE = new SpecificationNavigator();
+    private static final Navigator INSTANCE = new SpecificationNavigator();
 
     public static Navigator getInstance() {
         return INSTANCE;

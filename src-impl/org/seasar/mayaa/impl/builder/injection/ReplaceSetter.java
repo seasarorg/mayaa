@@ -29,13 +29,17 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * テンプレートを見てm:replace="false"がセットされているなら、テンプレート
+ * オリジナルのノードを複製してオリジナルノードがそのまま出力されるようにする。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ReplaceSetter extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
     private static final long serialVersionUID = 442671575099062287L;
-    protected static QName QM_REPLACE = SpecificationUtil.createQName("replace");
+    protected static final QName QM_REPLACE =
+        SpecificationUtil.createQName("replace");
 
     protected boolean isReplace(SpecificationNode node) {
         if (node == null) {

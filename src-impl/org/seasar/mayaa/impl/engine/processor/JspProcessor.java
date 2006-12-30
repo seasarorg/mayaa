@@ -74,10 +74,10 @@ public class JspProcessor extends TemplateProcessorSupport
             CONST_IMPL {
 
     private static final long serialVersionUID = -4416320364576454337L;
-    private static PageContext _pageContext = new PageContextImpl();
+    private static final PageContext _pageContext = new PageContextImpl();
 
     // TODO TagPoolの保持期間などパフォーマンスの調整
-    private static Map _tagPools =
+    private static final Map _tagPools =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
 
     private static final String LOADED_TAG_KEY =

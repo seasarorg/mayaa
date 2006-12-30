@@ -55,10 +55,14 @@ public class SpecificationNodeHandler
     private static final Log LOG =
         LogFactory.getLog(SpecificationNodeHandler.class);
 
-    protected static QName QM_DATA = SpecificationUtil.createQName("data");
-    protected static QName QM_PUBLIC_ID = SpecificationUtil.createQName("publicID");
-    protected static QName QM_SYSTEM_ID = SpecificationUtil.createQName("systemID");
-    protected static QName QM_TARGET = SpecificationUtil.createQName("target");
+    protected static final QName QM_DATA =
+        SpecificationUtil.createQName("data");
+    protected static final QName QM_PUBLIC_ID =
+        SpecificationUtil.createQName("publicID");
+    protected static final QName QM_SYSTEM_ID =
+        SpecificationUtil.createQName("systemID");
+    protected static final QName QM_TARGET =
+        SpecificationUtil.createQName("target");
 
     private Specification _specification;
     private SequenceIDGenerator _sequenceIDGenerator;

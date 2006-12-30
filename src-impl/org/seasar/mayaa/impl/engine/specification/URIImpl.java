@@ -95,10 +95,6 @@ public class URIImpl implements URI {
         return _hashCode;
     }
 
-    protected void finalize() {
-        _value = null;
-    }
-
     private Object readResolve() {
         return getInstance(_value);
     }

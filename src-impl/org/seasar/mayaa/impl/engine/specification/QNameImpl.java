@@ -101,11 +101,6 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         return toString().hashCode();
     }
 
-    protected void finalize() {
-        _namespaceURI = null;
-        _localName = null;
-    }
-
     private Object readResolve() {
         return getInstance(_namespaceURI, _localName);
     }

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpSession;
 import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 
 /**
+ * AutoPageBuilderで利用するHttpSessionのモック。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MockHttpSession implements HttpSession {

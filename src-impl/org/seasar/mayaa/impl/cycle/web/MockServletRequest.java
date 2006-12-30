@@ -31,6 +31,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 
 /**
+ * AutoPageBuilderで利用するServletRequestのモック。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MockServletRequest implements ServletRequest {

@@ -19,13 +19,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * AutoPageBuilderで利用するHttpServletResponseのモック。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MockHttpServletResponse extends MockServletResponse
         implements HttpServletResponse {
-    
+
     private int _status;
-    
+
     public void sendRedirect(String url) {
         // do nothing.
     }
@@ -45,7 +47,7 @@ public class MockHttpServletResponse extends MockServletResponse
     public void setStatus(int status) {
         _status = status;
     }
-    
+
     public int getStatus() {
         return _status;
     }

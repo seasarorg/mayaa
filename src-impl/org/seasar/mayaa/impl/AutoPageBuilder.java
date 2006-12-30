@@ -37,6 +37,12 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
+ * ファイルとしてコンテキストルート以下にあるテンプレートを探して順にビルドする。
+ * 単独のスレッドで動作する。
+ * ServiceProviderファイルのEngine設定でautoBuildオプションをtrueにすると有効。
+ * TODO AutoPageBuilderの詳細な設定説明
+ * TODO AutoPageBuilderを抽象化し、処理のカスタマイズを可能にする
+ *
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class AutoPageBuilder implements Runnable {

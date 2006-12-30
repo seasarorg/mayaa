@@ -26,6 +26,8 @@ import javax.servlet.http.HttpSession;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * AutoPageBuilderで利用するHttpServletRequestのモック。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MockHttpServletRequest extends MockServletRequest

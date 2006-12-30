@@ -25,6 +25,8 @@ import javax.servlet.ServletResponse;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * AutoPageBuilderで利用するServletResponseのモック。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MockServletResponse implements ServletResponse {

@@ -15,13 +15,19 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
 
+import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -37,6 +43,16 @@ public class MockServletResponse implements ServletResponse {
     private int _bufferSize;
     private Locale _locale;
     private MockServletOutputStream _outputStream = new MockServletOutputStream();
+
+    /**
+     * コミット時に出力するOutputStreamをセットする。
+     * 出力後はこのStreamをcloseする。
+     *
+     * @param onCommitOutputStream コミット時に出力するOutputStream
+     */
+    public void setOnCommitOutputStream(OutputStream onCommitOutputStream) {
+        _outputStream.setOnCommitOutputStream(onCommitOutputStream);
+    }
 
     public byte[] getBuffer() {
         return _outputStream.getBuffer();
@@ -58,7 +74,13 @@ public class MockServletResponse implements ServletResponse {
     }
 
     public PrintWriter getWriter() {
-        return new PrintWriter(_outputStream);
+        try {
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(getOutputStream(), getCharacterEncoding()));
+            return new PrintWriter(writer);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e.toString());
+        }
     }
 
     public boolean isCommitted() {
@@ -111,7 +133,8 @@ public class MockServletResponse implements ServletResponse {
 
     private class MockServletOutputStream extends ServletOutputStream {
 
-        private ByteArrayOutputStream _buffer = new ByteArrayOutputStream();
+        private ByteArrayOutputStream _buffer = new ByteArrayOutputStream(5120);
+        private OutputStream _onCommitOutputStream;
 
         protected MockServletOutputStream() {
             // do nothing.
@@ -131,6 +154,45 @@ public class MockServletResponse implements ServletResponse {
 
         public void write(int b) {
             _buffer.write(b);
+        }
+
+        /**
+         * コミット時に出力するOutputStreamをセットする。
+         *
+         * @param onCommitOutputStream コミット時に出力するOutputStream
+         */
+        public void setOnCommitOutputStream(OutputStream onCommitOutputStream) {
+            _onCommitOutputStream = onCommitOutputStream;
+        }
+
+        /**
+         * onCommitOutputStreamがセットされているなら、onCommitOutputStreamに
+         * 対して内容を出力する。
+         *
+         * @see java.io.OutputStream#flush()
+         */
+        public void flush() throws IOException {
+            if (_onCommitOutputStream != null) {
+                try {
+                    final int bufferSize = 1024;
+                    int offset = 0;
+                    while (offset < getBufferSize()) {
+                        if (offset + bufferSize > getBufferSize()) {
+                            _onCommitOutputStream.write(
+                                    getBuffer(), offset, getBufferSize() - offset);
+                            offset = getBufferSize();
+                        } else {
+                            _onCommitOutputStream.write(getBuffer(), offset, bufferSize);
+                            offset += bufferSize;
+                        }
+                    }
+                    _onCommitOutputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    IOUtil.close(_onCommitOutputStream);
+                }
+            }
         }
 
     }

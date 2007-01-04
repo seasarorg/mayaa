@@ -38,12 +38,12 @@ public class MockHttpServletRequest extends MockServletRequest
     private String _contextPath;
     private HttpSession _session;
 
-    public MockHttpServletRequest(ServletContext servletContext) {
+    public MockHttpServletRequest(ServletContext servletContext, String contextPath) {
         if(servletContext == null) {
             throw new IllegalArgumentException();
         }
         _servletContext = servletContext;
-        _contextPath = _servletContext.getServletContextName();
+        _contextPath = contextPath;
     }
 
     public HttpSession getSession(boolean create) {

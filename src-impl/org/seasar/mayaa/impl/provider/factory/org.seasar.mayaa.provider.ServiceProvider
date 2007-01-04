@@ -24,6 +24,7 @@
 		<parameter name="autoBuild.wait" value="60"/><!-- seconds -->
 		<parameter name="autoBuild.fileNameFilters" value=".html"/><!-- .html;^(sample|howto).+\.htm$ -->
 		<parameter name="autoBuild.renderMate" value="false"/>
+		<parameter name="autoBuild.contextPath" value="/"/>
 		<parameter name="forwardLimit" value="10"/>
 		<parameter name="dumpEnabled" value="false" />
 	</engine>

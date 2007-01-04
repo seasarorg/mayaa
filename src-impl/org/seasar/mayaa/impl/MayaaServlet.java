@@ -40,7 +40,7 @@ public class MayaaServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
     private static boolean _initialized;
 
-    private Log LOG = LogFactory.getLog(MayaaServlet.class);
+    private static final Log LOG = LogFactory.getLog(MayaaServlet.class);
 
     public void init() {
         if (_initialized == false) {
@@ -49,7 +49,6 @@ public class MayaaServlet extends HttpServlet {
             FactoryFactory.setContext(getServletContext());
             _initialized = true;
         }
-        this.getServletContext().getInitParameter("");
         LOG.info("prepareLibraries start");
         ProviderUtil.getLibraryManager().prepareLibraries();
         LOG.info("prepareLibraries end");
@@ -57,6 +56,9 @@ public class MayaaServlet extends HttpServlet {
         LOG.info("init end");
     }
 
+    /**
+     * AutoPageBuilderを初期化する。
+     */
     protected void initAutoPageBuilder() {
         AutoPageBuilder.INSTANCE.init(getServletConfig());
     }
@@ -68,7 +70,6 @@ public class MayaaServlet extends HttpServlet {
         SerializeThreadManager.destroy();
         JspProcessor.clear();
 
-        LOG = null;
         LogFactory.releaseAll();
     }
 

@@ -41,8 +41,9 @@ public class SerializeThread extends Thread {
         setName("serializeThread-" + index);
         _index = index;
         _liveCount = RECYCLE_LIVE_COUNT;
+        // TODO contextPathをセット
         _requestContext = new MockHttpServletRequest(
-                (ServletContext)servletContext);
+                (ServletContext) servletContext, "/");
         _responseContext = new MockHttpServletResponse();
     }
 

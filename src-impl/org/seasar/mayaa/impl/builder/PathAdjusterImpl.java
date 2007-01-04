@@ -23,7 +23,35 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
- * @author Koji Suga (Gluegent, Inc.)
+ * "./"で始まるパスをコンテキストパスを含む絶対パスに置換します。
+ * 対象とするのは、デフォルトでは以下のタグの属性。(名前空間はHTML/XHTML限定)
+ * <ul>
+ * <li>&lt;a href="..."&gt;</li>
+ * <li>&lt;applet code="..."&gt;</li>
+ * <li>&lt;applet codebase="..."&gt;</li>
+ * <li>&lt;area href="..."&gt;</li>
+ * <li>&lt;base href="..."&gt;</li>
+ * <li>&lt;blockquote cite="..."&gt;</li>
+ * <li>&lt;del cite="..."&gt;</li>
+ * <li>&lt;embed src="..."&gt;</li>
+ * <li>&lt;form action="..."&gt;</li>
+ * <li>&lt;frame longdesc="..."&gt;</li>
+ * <li>&lt;frame src="..."&gt;</li>
+ * <li>&lt;iframe src="..."&gt;</li>
+ * <li>&lt;img src="..."&gt;</li>
+ * <li>&lt;img usemap="..."&gt;</li>
+ * <li>&lt;input src="..."&gt;</li>
+ * <li>&lt;input usemap="..."&gt;</li>
+ * <li>&lt;ins cite="..."&gt;</li>
+ * <li>&lt;link href="..."&gt;</li>
+ * <li>&lt;object codebase="..."&gt;</li>
+ * <li>&lt;object data="..."&gt;</li>
+ * <li>&lt;object usemap="..."&gt;</li>
+ * <li>&lt;q cite="..."&gt;</li>
+ * <li>&lt;script src="..."&gt;</li>
+ * </ul>
+ *
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class PathAdjusterImpl
         extends ParameterAwareImpl
@@ -35,6 +63,10 @@ public class PathAdjusterImpl
 
     private boolean _enabled = true;
 
+    /**
+     * デフォルトのコンストラクタ。
+     * 処理対象のタグ属性はクラスコメントを参照。
+     */
     public PathAdjusterImpl() {
         this(new String[][] {
             { "a", "href" },
@@ -63,6 +95,12 @@ public class PathAdjusterImpl
         });
     }
 
+    /**
+     * 処理対象のタグ属性を引数に取るコンストラクタ。
+     * 形式は[[タグ名, 属性名], [タグ名, 属性名], ...]のString配列。
+     *
+     * @param adjustTarget 処理対象のタグ属性
+     */
     public PathAdjusterImpl(String[][] adjustTarget) {
         _adjustTarget = adjustTarget;
     }
@@ -107,6 +145,13 @@ public class PathAdjusterImpl
         return false;
     }
 
+    /**
+     * "./"で始まるパスを解決して返します。
+     *
+     * @param base 対象タグのあるページのパス
+     * @param path 解決対象のパス
+     * @return 解決後のパス
+     */
     public String adjustRelativePath(String base, String path) {
         return StringUtil.adjustRelativePath(base, path);
     }

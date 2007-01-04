@@ -34,6 +34,7 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
@@ -44,6 +45,7 @@ import org.seasar.mayaa.source.SourceHolder;
  * TODO AutoPageBuilderを抽象化し、処理のカスタマイズを可能にする
  *
  * @author Taro Kato (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class AutoPageBuilder implements Runnable {
     private static final Log LOG = LogFactory.getLog(AutoPageBuilder.class);
@@ -57,9 +59,12 @@ public class AutoPageBuilder implements Runnable {
         OPTION_AUTO_BUILD + ".fileNameFilters";
     private static final String OPTION_AUTO_BUILD_RENDER_MATE =
         OPTION_AUTO_BUILD + ".renderMate";
+    private static final String OPTION_AUTO_BUILD_CONTEXT_PATH =
+        OPTION_AUTO_BUILD + ".contextPath";
     private static final boolean REPEAT_DEFAULT = false;
     private static final int WAIT_DEFAULT = 60;
     private static final boolean RENDER_MATE_DEFAULT = false;
+    private static final String CONTEXT_PATH_DEFAULT = "/";
 
     public static final AutoPageBuilder INSTANCE = new AutoPageBuilder();
 
@@ -73,15 +78,31 @@ public class AutoPageBuilder implements Runnable {
     private boolean _renderMate;
     private String[] _fileFilters;
     private ServletContext _servletContext;
+    private String _contextPath;
     private long _buildTimeSum;
     private long _renderTimeSum;
 
     public void init(ServletConfig servletConfig) {
+        init(servletConfig, null);
+    }
+
+    /**
+     * 初期化処理。
+     * Engine設定の各種パラメータを取得した後、別スレッドで自動ビルドを開始する。
+     * ただしautoBuildがfalseに設定されている場合は何もしない。
+     *
+     * contextPathは"/mayaa"のように"/"始まり、"/"無しで終わる。
+     *
+     * @param servletConfig ServletConfig
+     * @param contextPath コンテキストパス
+     */
+    public void init(ServletConfig servletConfig, String contextPath) {
         Engine engine = ProviderUtil.getEngine();
         boolean autoBuild = ObjectUtil.booleanValue(
                 engine.getParameter(OPTION_AUTO_BUILD), false);
         if (autoBuild) {
             _servletContext = servletConfig.getServletContext();
+            _contextPath = prepareContextPath(contextPath, engine);
             _repeat = ObjectUtil.booleanValue(
                     engine.getParameter(OPTION_AUTO_BUILD_REPRAT),
                     REPEAT_DEFAULT);
@@ -108,6 +129,33 @@ public class AutoPageBuilder implements Runnable {
             };
             LOG.info("mayaa.AutoPageBuilder start");
         }
+    }
+
+    /**
+     * コンテキストパスの前処理をする。
+     * contextPathがnullならEngine設定のautoBuild.contextPathから値を取得する。
+     * どちらもnullまたは空文字列ならデフォルトの"/"を返す。
+     * そうでない場合、"/foobar"の形式になるよう"/"を調整して返す。
+     *
+     * @param contextPath initメソッドのパラメータに渡されたcontextPath
+     * @param engine 現在のEngineインスタンス
+     * @return コンテキストパス
+     */
+    protected String prepareContextPath(String contextPath, Engine engine) {
+        if (contextPath == null) {
+            contextPath = engine.getParameter(OPTION_AUTO_BUILD_CONTEXT_PATH);
+        }
+        if (StringUtil.isEmpty(contextPath)) {
+            return CONTEXT_PATH_DEFAULT;
+        }
+        if (contextPath.charAt(0) != '/') {
+            contextPath = '/' + contextPath;
+        }
+        int length = contextPath.length();
+        if (length > 1 && contextPath.charAt(length - 1) == '/') {
+            contextPath = contextPath.substring(0, length - 1);
+        }
+        return contextPath;
     }
 
     public void destroy() {
@@ -173,7 +221,8 @@ public class AutoPageBuilder implements Runnable {
         if (systemID.indexOf(ApplicationSourceDescriptor.WEB_INF) >= 0) {
             return;
         }
-        MockHttpServletRequest request = new MockHttpServletRequest(_servletContext);
+        MockHttpServletRequest request =
+            new MockHttpServletRequest(_servletContext, _contextPath);
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.setPathInfo(systemID);
         CycleUtil.initialize(request, response);

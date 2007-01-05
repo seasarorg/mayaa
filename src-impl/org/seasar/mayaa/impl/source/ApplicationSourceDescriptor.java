@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
@@ -40,6 +42,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
         implements SourceDescriptor {
 
     private static final long serialVersionUID = -2775274363708858237L;
+    private static final Log LOG = LogFactory.getLog(ApplicationSourceDescriptor.class);
 
     public static final String WEB_INF = "/WEB-INF";
 
@@ -105,6 +108,15 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
                 if (url != null) {
                     _url = url;
                     _useFile = Boolean.FALSE;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(getSystemID() + " is read by URL (" +
+                                _url + ")");
+                    }
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(getSystemID() + " is read by FILE (" +
+                            _fileSourceDescriptor.getFile() + ")");
                 }
             }
         }

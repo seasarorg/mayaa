@@ -21,10 +21,30 @@ import org.seasar.mayaa.impl.util.FileSearchIterator;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * 指定フォルダ以下のファイルのSystemIDを順番に返すIterator。
+ * フォルダ内のファイルを全て返したら、次はサブフォルダを処理します。
+ * 見つけたファイルのうち、ファイル名がフィルタに合致するファイルのみを対象とします。
+ * ただし隠しファイルは対象としません。
+ *
+ * フィルタはセミコロン(";")で区切ることで複数指定できます。
+ * フィルタの指定方法は2パターンあります。
+ * <ol>
+ * <li>"."で始まる英数字のみの文字列の場合は拡張子とみなし、一致するものを対象とします。
+ *    (大文字小文字を区別しない)</li>
+ * <li>1以外の場合は正規表現とみなし、絶対パスがマッチするものを対象とします。</li>
+ * </ol>
+ *
  * @author Taro Kato (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class SystemIDFileSearchIterator extends FileSearchIterator {
 
+    /**
+     * filtersにnullを渡すと、".html"というフィルタが指定されたものとみなす。
+     *
+     * @param rootDir 探索を開始するフォルダ
+     * @param filters フィルタ文字列の配列
+     */
     public SystemIDFileSearchIterator(File rootDir, final String[] filters) {
         super(rootDir, new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -41,13 +61,15 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
                 for (int i = 0; i < filters.length; i++) {
                     String filter = filters[i].trim();
                     // 拡張子のフィルタか？
-                    if (filter.matches("^\\.[a-z0-9]+")) {
-                        if (name.toLowerCase().endsWith(filter)) {
+                    if (filter.matches("^\\.[a-zA-Z0-9]+")) {
+                        if (name.toLowerCase().endsWith(filter.toLowerCase())) {
                             return true;
                         }
                     } else {
                         // それ以外は正規表現とみなす
-                        if (name.matches(filter)) {
+                        String absolutePath =
+                            file.getAbsolutePath().replace(File.separatorChar, '/');
+                        if (absolutePath.matches(filter)) {
                             return true;
                         }
                     }
@@ -64,7 +86,7 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
     }
 
     public Object next() {
-        return makeSystemID((File)super.next());
+        return makeSystemID((File) super.next());
     }
 
     protected String makeSystemID(File current) {

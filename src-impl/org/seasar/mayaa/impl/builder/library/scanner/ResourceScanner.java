@@ -34,13 +34,13 @@ import org.seasar.mayaa.impl.util.collection.IteratorIterator;
 public class ResourceScanner extends ParameterAwareImpl implements SourceScanner {
 
     private static final long serialVersionUID = 9001235862576049476L;
-    
+
     private String _root;
     private List _classPath = new ArrayList();
     private List _jars = new ArrayList();
     private Set _extensions = new HashSet();
     private Set _ignores = new HashSet();
-    
+
     public ResourceScanner() {
         String[] pathArray = System.getProperty(
                 "java.class.path", ".").split(File.pathSeparator);
@@ -56,7 +56,7 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             }
         }
     }
-    
+
     public Iterator scan() {
         IteratorIterator itit = new IteratorIterator();
         for (Iterator it = _classPath.iterator(); it.hasNext(); ) {
@@ -74,7 +74,7 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
                     continue;
                 }
             }
-            
+
             FolderSourceScanner folderScanner = new FolderSourceScanner();
             folderScanner.setParameter("folder", path);
             folderScanner.setParameter("recursive", "true");
@@ -87,11 +87,11 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             itit.add(folderScanner.scan());
         }
         for (Iterator it = _jars.iterator(); it.hasNext(); ) {
-            String path = (String)it.next();
+            String path = (String) it.next();
             if (StringUtil.isEmpty(path)) {
                 continue;
             }
-            File jarFile = new File(path);
+            File jarFile = new File(path).getAbsoluteFile();
             JarSourceScanner jarScanner = new JarSourceScanner();
             FileSourceDescriptor descriptor = new FileSourceDescriptor();
             descriptor.setParameter("absolute", "true");

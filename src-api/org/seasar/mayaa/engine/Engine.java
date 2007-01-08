@@ -39,14 +39,14 @@ public interface Engine extends ParameterAware, Specification {
      * @return エラーハンドラ。
      */
     ErrorHandler getErrorHandler();
-    
+
     /**
      * ページやテンプレートなどのスペック情報のインスタンスが
      * メモリキャッシュに存在する場合は返却する。
      * @param systemID システムID
      * @return スペック情報インスタンス
      */
-    Specification findSpecificationFromCache(String systemID);    
+    Specification findSpecificationFromCache(String systemID);
 
     /**
      * Pageオブジェクトのインスタンスを返す。
@@ -90,7 +90,7 @@ public interface Engine extends ParameterAware, Specification {
      * @return テンプレート
      */
     Template createTemplateInstance(Page page, String suffix, String extension);
-    
+
     /**
      * テンプレートの示すシステムIDを返す。
      * @param page 属するページ
@@ -99,4 +99,11 @@ public interface Engine extends ParameterAware, Specification {
      * @return テンプレートのシステムID
      */
     String getTemplateID(Page page, String suffix, String extension);
+
+    /**
+     * Engineを破棄します。
+     * destroy()が呼ばれた後のEngineの動作は保証されません。
+     */
+    void destroy();
+
 }

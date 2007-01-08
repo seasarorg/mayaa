@@ -85,6 +85,8 @@ public class EngineImpl extends SpecificationImpl
     private int _forwardLimit = 10;
     private String _mayaaExtension = ".mayaa";
     private String _mayaaExtensionName = "mayaa";
+    /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
+    private boolean _destroyed = false;
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
@@ -465,6 +467,9 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public void doService(Map pageScopeValues, boolean pageFlush) {
+        if (_destroyed) {
+            throw new IllegalStateException(StringUtil.getMessage(EngineImpl.class, 1));
+        }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (isPageRequested()) {
             doPageService(cycle, pageScopeValues, pageFlush);
@@ -603,10 +608,16 @@ public class EngineImpl extends SpecificationImpl
         return EngineUtil.getEngineSetting(SUFFIX_SEPARATOR, "$");
     }
 
-    protected void finalize() throws Throwable {
+    public void destroy() {
+        _destroyed = true;
+        kill();
         if (_specCache != null) {
             _specCache.release();
         }
+    }
+
+    protected void finalize() throws Throwable {
+        destroy();
         super.finalize();
     }
 

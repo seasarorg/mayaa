@@ -206,6 +206,8 @@ public class FileGenerator {
     /**
      * --attributesと--propertyから属性情報を抽出してMapにして返します。
      * ひとつもない場合はnullを返します。
+     * --attributesと--propertyとで同一名の属性を定義した場合、--attributes側が
+     * 優先されます。
      *
      * @param argument コマンドライン引数
      * @return 属性のMapまたはnull
@@ -239,7 +241,9 @@ public class FileGenerator {
                 prop.load(is);
                 for (Iterator keys = prop.keySet().iterator(); keys.hasNext();) {
                     String key = (String) keys.next();
-                    result.put(key, prop.getProperty(key).trim());
+                    if (result.containsKey(key) == false) {
+                        result.put(key, prop.getProperty(key).trim());
+                    }
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

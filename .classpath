@@ -8,10 +8,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/jsp-2.0.jar" sourcepath="srczip/jsp-src-2.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.4.jar" sourcepath="srczip/servlet-src-2.3.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-collections-3.1.jar" sourcepath="srczip/commons-collections-src-3.1.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xml-apis-1.3.03.jar"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/rhino-1.6r5.jar" sourcepath="srczip/rhino-src-1.6r5.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1.jar" sourcepath="srczip/jaxen-src-1.1.zip"/>
+	<classpathentry kind="lib" path="context/WEB-INF/lib/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="output" path="context/WEB-INF/classes"/>
 </classpath>

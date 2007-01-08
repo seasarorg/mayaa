@@ -208,27 +208,38 @@ public class MockServletContext implements ServletContext {
     }
 
     /**
-     * 現在スレッドのコンテキストクラスローダーを使ってgetReasourceの
-     * 結果を返します。
+     * コンテキストルートからファイルとして見つけられる場合はそのファイルの
+     * URLを返します。見つけられない場合は現在スレッドのコンテキストクラスローダー
+     * を使ってgetReasourceの結果を返します。
      *
      * @param path URLを取得するリソース名
      * @return pathに対応するURL。存在しない場合はnull
      * @see javax.servlet.ServletContext#getResource(java.lang.String)
      */
     public URL getResource(String path) throws MalformedURLException {
+        File file = getFile(path);
+        if (file != null && file.exists()) {
+            return file.toURL();
+        }
         return IOUtil.getResource(path);
     }
 
     /**
-     * 現在スレッドのコンテキストクラスローダーを使ってgetReasourceAsStreamの
-     * 結果を返します。
+     * コンテキストルートからファイルとして見つけられる場合はそのファイルの
+     * InputStreamを返します。見つけられない場合は現在スレッドの
+     * コンテキストクラスローダーを使ってgetReasourceの結果URLをopenして返します。
      *
      * @param path URLを取得するリソース名
      * @return pathに対応するリソースのInputStream。存在しない場合はnull
      * @see javax.servlet.ServletContext#getResourceAsStream(java.lang.String)
      */
     public InputStream getResourceAsStream(String path) {
-        return IOUtil.getResourceAsStream(path);
+        try {
+            return IOUtil.openStream(getResource(path));
+        } catch (MalformedURLException ignore) {
+            ignore.printStackTrace();
+        }
+        return null;
     }
 
     /**

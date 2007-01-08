@@ -18,33 +18,53 @@ package org.seasar.mayaa.impl.builder.library.scanner;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.IteratorUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
+ * web.xmlのtaglibディレクティブを参照するためのクラス。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
 
     private static final long serialVersionUID = -4740935373481152275L;
+    private static final Log LOG = LogFactory.getLog(WebXMLTaglibSourceScanner.class);
 
     public static final String ASSIGNED =
         WebXMLTaglibSourceScanner.class + ".ASSIGNED";
     public static final String REAL_PATH =
         WebXMLTaglibSourceScanner.class + ".REAL_PATH";
 
+    /**
+     * web.xmlをパースし、&lt;taglib-uri&gt;と&lt;taglib-location&gt;から作成した
+     * {@link SourceDescriptor}のIteratorを返します。(nullにはなりません)
+     * {@link SourceAlias}を元にしたaliasパラメータがセットされるものもあります。
+     *
+     * @param source web.xmlのSourceDescriptor
+     * @return SourceAliasのIterator
+     */
     protected Iterator scanWebXml(SourceDescriptor source) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
         if (source.exists() == false) {
-            throw new IllegalStateException();
+            if (LOG.isInfoEnabled()) {
+                LOG.info(StringUtil.getMessage(
+                        WebXMLTaglibSourceScanner.class, 0, source.getSystemID()));
+            }
+            return IteratorUtil.NULL_ITERATOR;
         }
         InputStream stream = source.getInputStream();
         try {
@@ -63,6 +83,12 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
         return new TaglibLocationIterator(scanWebXml(source));
     }
 
+    /**
+     * {@link SourceAlias}のIteratorを{@link SourceDescriptor}のIteratorとして
+     * 扱うためのクラス。
+     *
+     * @author Koji Suga (Gluegent Inc.)
+     */
     private class TaglibLocationIterator implements Iterator {
 
         private Iterator _it;

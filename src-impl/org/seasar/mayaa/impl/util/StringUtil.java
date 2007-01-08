@@ -62,10 +62,15 @@ public final class StringUtil {
         return result;
     }
 
+    /**
+     * testがnullまたは空文字列ならtrueを返します。
+     *
+     * @param test 対象の文字列
+     * @return nullまたは空文字列ならtrue
+     */
     public static boolean isEmpty(String test) {
         return test == null || test.length() == 0;
     }
-
 
     public static boolean hasValue(Object test) {
         return !isEmpty(test);
@@ -75,21 +80,82 @@ public final class StringUtil {
         return !isEmpty(test);
     }
 
-    public static String preparePath(String path) {
+    /**
+     * パスの形式統一処理をしたものを返します。
+     * 区切り文字を"/"に変え、末尾の"/"を取り除き、先頭が"/"でなければ
+     * "/"始まりにします。
+     * pathがnullまたは空文字列、trim()で空文字列になる場合は空文字列を返します。
+     *
+     * @param path 処理対象のパス
+     * @return 処理後のパス
+     */
+    public static String preparePath(final String path) {
         if (isEmpty(path)) {
             return "";
         }
-        path = path.trim();
-        path = path.replace(File.separatorChar, '/');
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
+        char[] chars = toTrimedCharArray(path);
+        if (chars.length == 0) {
+            return "";
         }
-        if (path.length() > 0 && !path.startsWith("/")) {
-            path = "/" + path;
+
+        int length = chars.length;
+        if (File.separatorChar != '/') {
+            for (int i = 0; i < length; i++) {
+                if (chars[i] == File.separatorChar) {
+                    chars[i] = '/';
+                }
+            }
         }
-        return path;
+        if (chars[length - 1] == '/') {
+            length = length - 1;
+        }
+        if (chars[0] != '/') {
+            char[] extended = new char[length + 1];
+            System.arraycopy(chars, 0, extended, 1, length);
+            extended[0] = '/';
+            length = length + 1;
+
+            chars = extended;
+        }
+        return new String(chars, 0, length);
     }
 
+    /**
+     * {@link String#trim()}後に{@link String#toCharArray()}したものと
+     * 同じ、前後の空白を除去したchar配列を返す。
+     *
+     * @param value 処理対象の文字列
+     * @return 前後の空白を除去したchar配列
+     */
+    public static char[] toTrimedCharArray(String value) {
+        if (value == null) {
+            return null;
+        }
+        char[] chars = value.toCharArray();
+        int end = chars.length;
+        int start = 0;
+
+        while ((start < end) && (chars[start] <= ' ')) {
+            start++;
+        }
+        while ((start < end) && (chars[end - 1] <= ' ')) {
+            end--;
+        }
+        if (start > 0 || end < chars.length) {
+            int length = end - start;
+            char[] result = new char[length];
+            System.arraycopy(chars, start, result, 0, length);
+            return result;
+        }
+        return chars;
+    }
+
+    /**
+     * &amp;xx;表記のエンティティを実体に置き換えて返します。
+     *
+     * @param blockString 置き換え処理対象の文字列
+     * @return 実体に置き換えた後の文字列
+     */
     public static String resolveEntity(String blockString) {
         StringBuffer buffer = new StringBuffer();
         int start = blockString.indexOf("&");

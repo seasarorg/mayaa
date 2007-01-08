@@ -274,7 +274,7 @@
     </repository>
     <snapshotRepository>
       <uniqueVersion>true</uniqueVersion>
-      <id>snapshot.maven.seasar.org</id>
+      <id>maven.seasar.org</id>
       <name>The Seasar Foundation Maven2 Snapshot Repository</name>
       <url>scp://www.seasar.org/home/groups/mayaa/maven/maven2-snapshot</url>
     </snapshotRepository>

@@ -63,13 +63,13 @@ public class EngineImpl extends SpecificationImpl
     static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
     private static final long serialVersionUID = 1428444571422324206L;
-    private static final String PAGE_CLASS = "pageClass";
-    private static final String TEMPLATE_CLASS = "templateClass";
-    private static final String PAGE_SERIALIZE = "pageSerialize";
-    private static final String SURVIVE_LIMIT = "surviveLimit";
-    private static final String FORWARD_LIMIT = "forwardLimit";
-    private static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
-    private static final String DUMP_ENABLED = "dumpEnabled";
+    public static final String PAGE_CLASS = "pageClass";
+    public static final String TEMPLATE_CLASS = "templateClass";
+    public static final String PAGE_SERIALIZE = "pageSerialize";
+    public static final String SURVIVE_LIMIT = "surviveLimit";
+    public static final String FORWARD_LIMIT = "forwardLimit";
+    public static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
+    public static final String DUMP_ENABLED = "dumpEnabled";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
     private transient Specification _defaultSpecification;

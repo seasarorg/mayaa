@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -220,8 +221,6 @@ public class FileSearchRenderer {
             }
         }
         LOG.info("page all build time: " + _buildTimeSum + " msec.");
-
-        destroy();
     }
 
     public void destroy() {
@@ -253,7 +252,7 @@ public class FileSearchRenderer {
      * @param systemID レンダリング対象のsystemID
      * @return レンダリング結果を出力するOutputStream
      */
-    protected FileOutputStream createOutputStream(
+    protected OutputStream createOutputStream(
             final MockHttpServletRequest request, final String systemID) {
         final String filePath = _outputPath + systemID;
         new File(filePath).getParentFile().mkdirs();

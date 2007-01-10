@@ -84,6 +84,9 @@ MayaaのWEBサイト：
 - (rev.2838) コマンドラインから実行してレンダリング結果ファイルを生成する
   FileGeneratorを追加しました。
 
+- (rev.2852) グローバル関数"throwJava"を追加しました。レンダリング中にJavaの
+  例外を投げたい場合に使用します。(ServiceCycle#throwJava(Throwable)を追加)
+
 - xercesのclassだけを同梱したjarファイルを用意しました。warファイルを
   undeployしてもメモリが解放されない場合にご利用ください。
   Windows版のJ2SDK1.5.0_10, Tomcat5.5.20で動作確認しています。

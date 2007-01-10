@@ -108,4 +108,10 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         }
     }
 
+    public void throwJava(Throwable t) throws Throwable {
+        if (t != null) {
+            throw t;
+        }
+    }
+
 }

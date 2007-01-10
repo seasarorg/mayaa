@@ -94,6 +94,14 @@ public interface ServiceCycle
     void load(String systemID, String encoding);
 
     /**
+     * 例外をthrow。
+     * レンダリング中にJavaの例外をthrowしたい場合に利用する。
+     * @param t 投げる例外。
+     * @throws t
+     */
+    void throwJava(Throwable t) throws Throwable;
+
+    /**
      * アプリケーションスコープオブジェクトの取得。
      * @return アプリケーション。
      */

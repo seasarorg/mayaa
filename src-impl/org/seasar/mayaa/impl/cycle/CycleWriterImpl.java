@@ -32,7 +32,7 @@ public class CycleWriterImpl extends CycleWriter {
 
     public CycleWriterImpl(CycleWriter enclosingWriter) {
         _enclosingWriter = enclosingWriter;
-        _buffer = new CharArrayWriter();
+        _buffer = new CharArrayWriter(65536);
     }
 
     public CycleWriter getEnclosingWriter() {

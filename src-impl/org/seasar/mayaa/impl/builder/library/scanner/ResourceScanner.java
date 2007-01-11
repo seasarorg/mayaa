@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.FileSourceDescriptor;
@@ -34,6 +36,7 @@ import org.seasar.mayaa.impl.util.collection.IteratorIterator;
 public class ResourceScanner extends ParameterAwareImpl implements SourceScanner {
 
     private static final long serialVersionUID = 9001235862576049476L;
+    private static final Log LOG = LogFactory.getLog(ResourceScanner.class);
 
     private String _root;
     private List _classPath = new ArrayList();
@@ -85,6 +88,9 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
                         (String) extIterator.next());
             }
             itit.add(folderScanner.scan());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("scan path: " + path);
+            }
         }
         for (Iterator it = _jars.iterator(); it.hasNext(); ) {
             String path = (String) it.next();
@@ -98,7 +104,9 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             descriptor.setFile(jarFile);
             descriptor.setSystemID(jarFile.getName());
             jarScanner.setDescriptor(descriptor);
-            jarScanner.setParameter("appPath", jarFile.getParent());
+            if (jarFile.getParent() != null) {
+                jarScanner.setParameter("appPath", jarFile.getParent());
+            }
             if (_root != null) {
                 jarScanner.setParameter("folder", _root);
             }
@@ -111,6 +119,9 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
                         (String) extIterator.next());
             }
             itit.add(jarScanner);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("scan jar: " + jarFile.getAbsolutePath());
+            }
         }
         return itit;
     }

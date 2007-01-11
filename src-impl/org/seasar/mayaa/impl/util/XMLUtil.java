@@ -51,7 +51,7 @@ public final class XMLUtil {
             if (t instanceof RuntimeException) {
                 throw (RuntimeException) t;
             }
-            throw new RuntimeException(t);
+            throw new RuntimeException(t.getMessage(), t);
         } finally {
             pool.returnXMLReader(xmlReader);
         }

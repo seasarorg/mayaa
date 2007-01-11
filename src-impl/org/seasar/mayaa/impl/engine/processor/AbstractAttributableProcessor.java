@@ -161,7 +161,7 @@ public abstract class AbstractAttributableProcessor
         writeEndElement();
         return ProcessStatus.EVAL_PAGE;
     }
-    
+
     public void kill() {
         if (_attributes != null) {
             _attributes.clear();
@@ -169,7 +169,7 @@ public abstract class AbstractAttributableProcessor
         clearProcesstimeInfo();
         super.kill();
     }
-    
+
     // for serialize
 
     private void readObject(java.io.ObjectInputStream in)

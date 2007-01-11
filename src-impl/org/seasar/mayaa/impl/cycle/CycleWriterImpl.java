@@ -26,13 +26,19 @@ import org.seasar.mayaa.cycle.CycleWriter;
  */
 public class CycleWriterImpl extends CycleWriter {
 
+    // インスタンス数が多いため、初期バッファサイズは大きすぎないように
+    private static final int DEFAULT_BUFFER_SIZE = 512;
+
     private CycleWriter _enclosingWriter;
     private CharArrayWriter _buffer;
     private boolean _flushed;
 
+    /**
+     * @param enclosingWriter 内部Writer
+     */
     public CycleWriterImpl(CycleWriter enclosingWriter) {
         _enclosingWriter = enclosingWriter;
-        _buffer = new CharArrayWriter(4096);
+        _buffer = new CharArrayWriter(DEFAULT_BUFFER_SIZE);
     }
 
     public CycleWriter getEnclosingWriter() {
@@ -68,6 +74,13 @@ public class CycleWriterImpl extends CycleWriter {
             return;
         }
         _buffer.write(cbuf, off, len);
+    }
+
+    public void write(String str, int off, int len) {
+        if (len == 0) {
+            return;
+        }
+        _buffer.write(str, off, len);
     }
 
     public void flush() throws IOException {

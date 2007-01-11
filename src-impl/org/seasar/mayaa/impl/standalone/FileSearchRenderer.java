@@ -308,13 +308,15 @@ public class FileSearchRenderer {
 
                 _buildTimeSum += renderTime;
 
-                if (response.getStatus() ==
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-                    LOG.debug(systemID + " (render: ----"
-                            + " / build: " + templateBuildTime + " msec)");
-                } else {
-                    LOG.debug(systemID + " (render: " + renderTime
-                                        + " / build: " + templateBuildTime + " msec)");
+                if (LOG.isDebugEnabled()) {
+                    if (response.getStatus() ==
+                            HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                        LOG.debug(systemID + " (render: ----"
+                                + " / build: " + templateBuildTime + " msec)");
+                    } else {
+                        LOG.debug(systemID + " (render: " + renderTime
+                                            + " / build: " + templateBuildTime + " msec)");
+                    }
                 }
             }
         } finally {

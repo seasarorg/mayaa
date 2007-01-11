@@ -80,8 +80,23 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         return _localName;
     }
 
+    /**
+     * "{URI}localName"形式の文字列を返します。
+     *
+     * @param namespaceURI 名前空間のURI
+     * @param localName ローカル名
+     * @return "{URI}localName"形式の文字列
+     */
     private static String forQNameString(URI namespaceURI, String localName) {
-        return "{" + namespaceURI + "}" + localName;
+        String namespace = namespaceURI.getValue();
+        int namespaceLength = namespace.length();
+        int localNameLength = localName.length();
+        char[] buffer = new char[namespaceLength + localNameLength + 2];
+        buffer[0] = '{';
+        namespace.getChars(0, namespaceLength, buffer, 1);
+        buffer[namespaceLength + 1] = '}';
+        localName.getChars(0, localNameLength, buffer, namespaceLength + 2);
+        return new String(buffer);
     }
 
     public String toString() {
@@ -91,8 +106,12 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     public boolean equals(Object test) {
         if (test instanceof QName) {
             QName qName = (QName) test;
-            return getNamespaceURI().equals(qName.getNamespaceURI())
-                && getLocalName().equalsIgnoreCase(qName.getLocalName());
+            URI uri = getNamespaceURI();
+            URI otherURI = qName.getNamespaceURI();
+            return (uri == otherURI || uri.getValue().equals(otherURI.getValue()))
+                && getLocalName().equals(qName.getLocalName());
+            // TODO 大文字小文字を区別すべきか否か検討
+            //  && getLocalName().equalsIgnoreCase(qName.getLocalName());
         }
         return false;
     }

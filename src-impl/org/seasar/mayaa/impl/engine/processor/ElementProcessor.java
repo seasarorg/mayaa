@@ -292,7 +292,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrPrefix = attrPrefix + ":";
             }
         }
-        StringBuffer temp = new StringBuffer();
+        StringBuffer temp = new StringBuffer(32);
         temp.append(" ");
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
@@ -329,6 +329,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
         cycle.getResponse().write(value);
     }
 
+    /**
+     * 要素名をbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     */
     protected void writeElementName(StringBuffer buffer) {
         QName qName = getName().getQName();
         String prefix;
@@ -339,12 +344,22 @@ public class ElementProcessor extends AbstractAttributableProcessor
         buffer.append(qName.getLocalName());
     }
 
-    protected void writePart1(StringBuffer buffer) {   // 静的 <xxx
+    /**
+     * "<"と要素名をbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     */
+    protected void writePart1(StringBuffer buffer) {
         buffer.append("<");
         writeElementName(buffer);
     }
 
-    protected void writePart2(StringBuffer buffer) {   // 動的 attribute
+    /**
+     * 動的なattributeをbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     */
+    protected void writePart2(StringBuffer buffer) {
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             internalWritePart2(buffer, prop);
@@ -358,7 +373,14 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
     }
 
+    /**
+     * ProcessorPropertyをattributeとしてbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     * @param prop ProcessorProperty
+     */
     protected void internalWritePart2(StringBuffer buffer, ProcessorProperty prop) {
+        /* TODO 不要ならば削除
         PrefixAwareName propName = prop.getName();
         if (isDuplicated()) {
             QName propQName = propName.getQName();
@@ -370,10 +392,16 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 return;
             }
         }
-        appendAttributeString(buffer, propName, prop.getValue());
+        */
+        appendAttributeString(buffer, prop.getName(), prop.getValue());
     }
 
-    protected void writePart3(StringBuffer buffer) {   // 静的 attributeと、>
+    /**
+     * 静的なattributeと">"をbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     */
+    protected void writePart3(StringBuffer buffer) {
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
@@ -396,7 +424,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
     }
 
-    protected void writePart4(StringBuffer buffer) {   // 静的 </xxx>
+    /**
+     * 静的な閉じタグをbufferに書き出します。
+     *
+     * @param buffer 書き出す対象
+     */
+    protected void writePart4(StringBuffer buffer) {
         QName qName = getName().getQName();
         if (needsCloseElement(qName)) {
             buffer.append("</");
@@ -409,7 +442,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer(128);
         writePart1(buffer);
         appendPrefixMappingStrings(buffer, getCurrentNS());
         writePart2(buffer);
@@ -426,7 +459,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer(16);
         writePart4(buffer);
         write(buffer.toString());
     }

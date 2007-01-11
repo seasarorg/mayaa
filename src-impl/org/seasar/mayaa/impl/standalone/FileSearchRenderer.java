@@ -233,8 +233,8 @@ public class FileSearchRenderer {
     }
 
     protected void reportTime(final Specification spec, final long time) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info(spec.getSystemID() + " build time: " + time + " msec.");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(spec.getSystemID() + " build time: " + time + " msec.");
         }
     }
 

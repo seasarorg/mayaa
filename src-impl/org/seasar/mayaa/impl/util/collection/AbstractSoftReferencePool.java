@@ -25,16 +25,46 @@ import java.util.List;
  */
 public abstract class AbstractSoftReferencePool implements Serializable {
 
-    private List _pool = new ArrayList();
+    private List _pool;
 
+    /**
+     * 新たなインスタンスを生成して返します。
+     * Poolにインスタンスが無い場合に使用されます。
+     *
+     * @return 新たなインスタンス
+     */
     protected abstract Object createObject();
 
+    /**
+     * インスタンスがこのPoolに戻せるものか判定します。
+     *
+     * @param obj 判定するオブジェクト
+     * @return このPoolに戻せるものならtrue
+     */
     protected abstract boolean validateObject(Object obj);
+
+    /**
+     * 初期容量32のコンストラクタ。
+     * 容量はインスタンス数。
+     */
+    public AbstractSoftReferencePool() {
+        this(32);
+    }
+
+    /**
+     * 初期容量を指定するコンストラクタ。
+     * 容量はインスタンス数。
+     *
+     * @param initialCapacity 初期容量
+     */
+    public AbstractSoftReferencePool(int initialCapacity) {
+        _pool = new ArrayList(initialCapacity);
+    }
 
     protected Object borrowObject() {
         Object obj = null;
-        while (obj == null) {
-            synchronized(_pool) {
+        synchronized(_pool) {
+            while (obj == null) {
                 if (_pool.isEmpty()) {
                     obj = createObject();
                 } else {
@@ -47,9 +77,8 @@ public abstract class AbstractSoftReferencePool implements Serializable {
     }
 
     protected void returnObject(Object obj) {
-        boolean success = validateObject(obj);
-        synchronized (_pool) {
-            if (success) {
+        if (validateObject(obj)) {
+            synchronized (_pool) {
                 _pool.add(new SoftReference(obj));
             }
         }

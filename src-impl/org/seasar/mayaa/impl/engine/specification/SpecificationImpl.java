@@ -100,7 +100,7 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     protected void finalize() throws Throwable {
         if (LOG.isTraceEnabled()) {
-            LOG.debug(toString() + " unloaded.");
+            LOG.trace(toString() + " unloaded.");
         }
         super.finalize();
     }

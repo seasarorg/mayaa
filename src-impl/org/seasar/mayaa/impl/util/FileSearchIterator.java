@@ -24,53 +24,54 @@ import java.util.NoSuchElementException;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class FileSearchIterator implements Iterator, Runnable {
-    
+
     private File _root;
     private FilenameFilter _filenameFilter;
     private boolean _done = false;
     private File _current;
     private Thread _stepFindThread;
     private boolean _gotNext = false;
-    
+
     private volatile boolean _doFindNext;
     private volatile boolean _doFindNextDone;
 
     public FileSearchIterator(File rootDir) {
         this(rootDir, null);
     }
-    
+
     public FileSearchIterator(File rootDir, FilenameFilter filenameFilter) {
         _root = rootDir;
         _filenameFilter = filenameFilter;
     }
-    
+
     public File getRoot() {
         return _root;
     }
-    
+
     public FilenameFilter getFilenameFilter() {
         return _filenameFilter;
     }
-    
+
     protected void startThread() {
         if (_stepFindThread == null) {
             _done = false;
             _doFindNext = false;
             _stepFindThread = new Thread(this);
             _stepFindThread.setName("fileSearch:root=" + _root + ":filter=" + _filenameFilter);
+            _stepFindThread.setDaemon(true);
             _stepFindThread.start();
         }
     }
-    
+
     protected void stopThread() {
         _stepFindThread = null;
     }
-    
+
     public boolean hasNext() {
         if (_done && _current == null) {
             return false;
         }
-        startThread();       
+        startThread();
         _doFindNext = true;
         while (_done == false && _doFindNextDone == false) {
             try {
@@ -94,7 +95,7 @@ public class FileSearchIterator implements Iterator, Runnable {
         _gotNext = found;
         return found;
     }
-    
+
     public Object next() {
         if (_gotNext == false) {
             if (hasNext() == false) {
@@ -104,9 +105,9 @@ public class FileSearchIterator implements Iterator, Runnable {
         _gotNext = false;
         return _current;
     }
-    
+
     private Thread _internalCurrentThread;
-    
+
     public void run() {
         try {
             _done = false;
@@ -118,7 +119,7 @@ public class FileSearchIterator implements Iterator, Runnable {
         }
         _done = true;
     }
-    
+
     protected void findFile(File root, File dir)
             throws InterruptedException {
         File[] files;
@@ -159,14 +160,14 @@ public class FileSearchIterator implements Iterator, Runnable {
             }
         }
     }
-    
+
     public void remove() {
         throw new UnsupportedOperationException();
     }
-    
+
     protected void finalize() throws Throwable {
         stopThread();
         super.finalize();
     }
-    
+
 }

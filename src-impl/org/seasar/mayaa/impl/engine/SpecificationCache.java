@@ -148,12 +148,20 @@ public class SpecificationCache {
         }
     }
 
+    /**
+     * Specificationインスタンスの解放処理を独自スレッドで実行します。
+     * コンストラクタでデーモンスレッドとして動作を開始します。
+     * 解放したいSpecificationはpostメソッドで渡します。
+     *
+     * @author Taro Kato (Gluegent Inc.)
+     */
     private static class TimeredSweepThread extends Thread {
 
         private Map _repeaseSpecs = new LinkedHashMap();
 
         public TimeredSweepThread() {
             setName("TimeredSweepThread");
+            setDaemon(true);
             start();
         }
 

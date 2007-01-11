@@ -18,7 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.IterationProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -73,6 +73,13 @@ public class ForEachProcessor extends TemplateProcessorSupport
         return true;
     }
 
+    /**
+     * 次の要素があるかどうか判定します。
+     * また、次の要素がある場合はそれを現在のスコープのvarにセットします。
+     * このとき必要ならばindexもセットします。
+     *
+     * @return 次の要素があるならtrue
+     */
     protected boolean prepareEvalBody() {
         IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
@@ -82,10 +89,10 @@ public class ForEachProcessor extends TemplateProcessorSupport
             return false;
         }
 
-        CycleUtil.setAttribute(_var, iterator.next(), null);
+        AttributeScope currentScope = CycleUtil.getCurrentPageScope();
+        currentScope.setAttribute(_var, iterator.next());
         if (_indexName != null) {
-            CycleUtil.setAttribute(_indexName,
-                    iterator.getNextIndex(), ServiceCycle.SCOPE_PAGE);
+            currentScope.setAttribute(_indexName, iterator.getNextIndex());
         }
         return true;
     }
@@ -129,6 +136,11 @@ public class ForEachProcessor extends TemplateProcessorSupport
 
     // support class
 
+    /**
+     * forEachの入れ子に対応するためのIndexIterator専用Stackクラス。
+     *
+     * @author Koji Suga (Gluegent Inc.)
+     */
     private class IndexIteratorStack {
         private Stack _stack;
 
@@ -149,6 +161,14 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
     }
 
+    /**
+     * nextの回数を取得できるIterator。
+     * getNextIndex() は 0～を返します。
+     * ただし余分な処理をしないために、next()の次にgetNextINdex()を呼ぶ
+     * 形で使うことを前提とします。
+     *
+     * @author Koji Suga (Gluegent Inc.)
+     */
     private class IndexedIterator {
         private int _index;
         private Iterator _iterator;

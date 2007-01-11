@@ -108,6 +108,25 @@ public class CycleUtil {
         _standardScope.addScope(newScopeName);
     }
 
+    /**
+     * ルートのPageスコープを取得します。
+     *
+     * @return ルートのPageスコープ
+     */
+    public static AttributeScope getPageScope() {
+        return getServiceCycle().getPageScope();
+    }
+
+    /**
+     * 現在のPageスコープを取得します。
+     *
+     * @return 現在のPageスコープ
+     */
+    public static AttributeScope getCurrentPageScope() {
+        return (AttributeScope) getPageScope().getAttribute(
+                PageAttributeScope.KEY_CURRENT);
+    }
+
     public static RequestScope getRequestScope() {
         return getServiceCycle().getRequestScope();
     }
@@ -174,20 +193,31 @@ public class CycleUtil {
         }
     }
 
-    private static final String DRAFT_WRITING =
-            "org.seasar.mayaa.cycle.DRAFT_WRITING";
+    /** ノードツリー最適化中か否かを保持するキー */
+    private static final ThreadLocal/*<Boolean>*/ IS_DRAFT_WRITING =
+        new ThreadLocal/*<Boolean>*/();
 
+    /**
+     * ノードツリー最適化中か。
+     *
+     * @return ノードツリー最適化中ならtrue
+     */
     public static boolean isDraftWriting() {
-        return Boolean.TRUE.equals(
-                getAttribute(DRAFT_WRITING, ServiceCycle.SCOPE_REQUEST));
+        return IS_DRAFT_WRITING.get() != null;
     }
 
+    /**
+     * ノードツリー最適化を開始する。
+     */
     public static void beginDraftWriting() {
-        setAttribute(DRAFT_WRITING, Boolean.TRUE, ServiceCycle.SCOPE_REQUEST);
+        IS_DRAFT_WRITING.set(Boolean.TRUE);
     }
 
+    /**
+     * ノードツリー最適化を終了する。
+     */
     public static void endDraftWriting() {
-        removeAttribute(DRAFT_WRITING, ServiceCycle.SCOPE_REQUEST);
+        IS_DRAFT_WRITING.set(null);
     }
 
 }

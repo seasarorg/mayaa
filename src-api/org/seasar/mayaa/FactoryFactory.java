@@ -110,6 +110,15 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
+     * インスタンスやキャッシュを解放する。
+     */
+    public static synchronized void release() {
+        _instance = null;
+        _context = null;
+        _factories.clear();
+    }
+
+    /**
      * ファクトリを生成する。
      * @param interfaceClass ファクトリのinterfaceのClassオブジェクト
      * @param context コンテキストオブジェクト。

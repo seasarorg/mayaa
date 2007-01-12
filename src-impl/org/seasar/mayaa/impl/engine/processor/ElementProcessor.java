@@ -362,38 +362,15 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writePart2(StringBuffer buffer) {
         for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            internalWritePart2(buffer, prop);
+            appendAttributeString(buffer, prop.getName(), prop.getValue());
         }
         for (Iterator it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral() == false) {
-                internalWritePart2(buffer, prop);
+                appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
-    }
-
-    /**
-     * ProcessorPropertyをattributeとしてbufferに書き出します。
-     *
-     * @param buffer 書き出す対象
-     * @param prop ProcessorProperty
-     */
-    protected void internalWritePart2(StringBuffer buffer, ProcessorProperty prop) {
-        /* TODO 不要ならば削除
-        PrefixAwareName propName = prop.getName();
-        if (isDuplicated()) {
-            QName propQName = propName.getQName();
-            URI propURI = propQName.getNamespaceURI();
-            String propLocalName = propQName.getLocalName();
-
-            if (getName().getQName().getNamespaceURI().equals(propURI)
-                    && "id".equals(propLocalName)) {
-                return;
-            }
-        }
-        */
-        appendAttributeString(buffer, prop.getName(), prop.getValue());
     }
 
     /**
@@ -515,7 +492,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 buffer = new StringBuffer();
-                internalWritePart2(buffer, prop);
+                appendAttributeString(buffer, prop.getName(), prop.getValue());
                 CharactersProcessor part2 =
                         new CharactersProcessor(prop, buffer.toString());
                 BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
@@ -526,7 +503,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 if (hasProcesstimeProperty(prop) == false
                         && prop.getValue().isLiteral() == false) {
                     buffer = new StringBuffer();
-                    internalWritePart2(buffer, prop);
+                    appendAttributeString(buffer, prop.getName(), prop.getValue());
                     CharactersProcessor part2 =
                             new CharactersProcessor(prop, buffer.toString());
                     BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);

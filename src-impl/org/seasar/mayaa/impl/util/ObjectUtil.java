@@ -267,7 +267,7 @@ public class ObjectUtil {
                 }
                 return new BigInteger(str);
             } catch (NumberFormatException ignore) {
-                // 
+                //
             }
         }
 
@@ -276,7 +276,7 @@ public class ObjectUtil {
         }
 
         throw new IllegalArgumentException(
-                "argument type mismatch: " + obj.getClass().getName());
+                StringUtil.getMessage(ObjectUtil.class, 1, String.valueOf(obj)));
     }
 
     public static String getSimpleClassName(Class clazz) {

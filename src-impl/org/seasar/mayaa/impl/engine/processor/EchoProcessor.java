@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
@@ -28,9 +29,12 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -57,6 +61,35 @@ public class EchoProcessor extends ElementProcessor
         return converter;
     }
 
+    /**
+     * テンプレート上の属性に相対パス調整が必要な場合、調整して返します。
+     * 必要なければそのまま返します。
+     *
+     * @param adjuster パス調整クラス
+     * @param originalNode テンプレート上の対象要素
+     * @param attribute テンプレート上の対象属性
+     * @return 相対パス調整済み対象属性の値
+     */
+    protected String getAdjustedValue(PathAdjuster adjuster,
+            SpecificationNode originalNode, NodeAttribute attribute) {
+        String value = attribute.getValue();
+        QName nodeName = originalNode.getQName();
+        if (adjuster.isTargetNode(nodeName)) {
+            QName attributeName = attribute.getQName();
+            if (adjuster.isTargetAttribute(nodeName, attributeName)) {
+                String contextPath = CycleUtil.getRequestScope().getContextPath();
+                String basePath = contextPath + originalNode.getSystemID();
+                return adjuster.adjustRelativePath(basePath, value);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * 対応するテンプレートの要素の属性をinformal propertyに追加します。
+     *
+     * @param originalNode 対応するテンプレートの要素
+     */
     protected void setupElement(SpecificationNode originalNode) {
         if (_customName != null) {
             super.setName(_customName);
@@ -67,9 +100,10 @@ public class EchoProcessor extends ElementProcessor
             super.setName(prefixAwareName);
         }
         PropertyConverter converter = getConverterForProcessorProperty();
+        PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
         for (Iterator it = originalNode.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
-            String value = attribute.getValue();
+            String value = getAdjustedValue(adjuster, originalNode, attribute);
             Class expectedClass = getExpectedClass();
             Serializable property = converter.convert(attribute, value, expectedClass);
             PrefixAwareName propName = SpecificationUtil.createPrefixAwareName(

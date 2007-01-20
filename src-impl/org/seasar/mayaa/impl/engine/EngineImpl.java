@@ -608,7 +608,7 @@ public class EngineImpl extends SpecificationImpl
         return EngineUtil.getEngineSetting(SUFFIX_SEPARATOR, "$");
     }
 
-    public void destroy() {
+    public synchronized void destroy() {
         _destroyed = true;
         kill();
         if (_specCache != null) {

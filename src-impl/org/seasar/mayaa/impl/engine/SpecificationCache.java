@@ -33,12 +33,15 @@ import org.seasar.mayaa.impl.util.ReferenceCache;
  */
 public class SpecificationCache {
 
+    protected static volatile TimeredSweepThread _cleanUpSpecification =
+        new TimeredSweepThread();
+    /** 終了処理後かどうか。終了処理後は追加処理をしない。 */
+    protected static volatile boolean _sweepThreadAlive = true;
+
     protected int _surviveLimit;
     protected Map _specifications = new HashMap();
 
     protected ReferenceCache _gcChecker;
-    protected static TimeredSweepThread _cleanUpSpecification =
-        new TimeredSweepThread();
     protected SoftReference _gabage;
 
     public SpecificationCache(int surviveLimit) {
@@ -50,10 +53,27 @@ public class SpecificationCache {
         }
     }
 
+    protected static void relaseThread() {
+        _sweepThreadAlive = false;
+        _cleanUpSpecification = null;
+    }
+
     protected void postNewGabage() {
         Object gabage = new Object();
         _gabage = new SoftReference(gabage);
         _gcChecker.add(gabage);
+    }
+
+    /**
+     * 掃除スレッドに投げます。
+     * 呼ぶ側でSpecificationCache.thisでsynchronizedして呼ぶようにします。
+     *
+     * @param releaseSpec
+     */
+    protected void postGabage(final Specification releaseSpec) {
+        if (_sweepThreadAlive) {
+            _cleanUpSpecification.post(releaseSpec);
+        }
     }
 
     public boolean contains(String systemID) {
@@ -75,7 +95,9 @@ public class SpecificationCache {
         }
         Specification result = refer.getSpecification();
         if (refer.isDeprecated()) {
-            _cleanUpSpecification.post(result);
+            synchronized(this) {
+                postGabage(result);
+            }
             return null;
         }
         return result;
@@ -93,7 +115,7 @@ public class SpecificationCache {
                 }
                 // ファイルシステムの違いによって大文字小文字が区別されない場合に
                 // ここに到達する場合があるので。
-                _cleanUpSpecification.post(old);
+                postGabage(old);
             }
             ReferSpecification refer =
                 new ReferSpecification(specification);
@@ -104,7 +126,7 @@ public class SpecificationCache {
     public void release() {
         synchronized(this) {
             _specifications = null;
-            _cleanUpSpecification = null;
+            relaseThread();
         }
     }
 
@@ -181,7 +203,7 @@ public class SpecificationCache {
         }
 
         public void run() {
-            while (_cleanUpSpecification != null) {
+            while (_sweepThreadAlive) {
                 try {
                     Thread.sleep(1000);
                     synchronized(_repeaseSpecs) {
@@ -217,7 +239,7 @@ public class SpecificationCache {
 
         public void sweepFinish(ReferenceCache monitor, Object label) {
             synchronized(SpecificationCache.this) {
-                if (_specifications == null || _cleanUpSpecification == null) {
+                if (_specifications == null ||_sweepThreadAlive == false) {
                     return;
                 }
                 if (LOG.isDebugEnabled()) {

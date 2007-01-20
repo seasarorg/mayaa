@@ -69,6 +69,7 @@ public class MayaaServlet extends HttpServlet {
         ProviderUtil.getEngine().kill();
         SerializeThreadManager.destroy();
         JspProcessor.clear();
+        ProviderUtil.getEngine().destroy();
 
         LogFactory.releaseAll();
     }

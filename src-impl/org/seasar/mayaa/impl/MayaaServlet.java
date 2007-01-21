@@ -66,10 +66,9 @@ public class MayaaServlet extends HttpServlet {
     public void destroy() {
         ReferenceCache.finishThreads();
         AutoPageBuilder.INSTANCE.destroy();
-        ProviderUtil.getEngine().kill();
+        ProviderUtil.getEngine().destroy();
         SerializeThreadManager.destroy();
         JspProcessor.clear();
-        ProviderUtil.getEngine().destroy();
 
         LogFactory.releaseAll();
     }

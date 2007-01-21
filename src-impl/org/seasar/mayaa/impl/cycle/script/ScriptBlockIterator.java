@@ -21,6 +21,13 @@ import java.util.NoSuchElementException;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * テキストからスクリプトを順番に読み出すIterator。
+ * スクリプトブロック(デフォルトでは${})は実行可能なスクリプトとして、
+ * それ以外は静的なテキストとして扱います。
+ * "${aaa}bbb${ccc}${ddd}eee" というテキストの場合、next()を呼ぶたびに
+ * 実行可能なaaa、静的なbbb、実行可能なccc、実行可能なddd、静的なeeeの
+ * 順にScriptBlockを返します。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptBlockIterator implements Iterator {
@@ -30,6 +37,17 @@ public class ScriptBlockIterator implements Iterator {
     private int _offset;
     private boolean _onTemplate = true;
 
+    /**
+     * スクリプトを含むテキスト、スクリプトブロック開始記号、テンプレート上か
+     * どうかを引数にとるコンストラクタ。
+     * スクリプトブロック開始記号が"$"の場合、スクリプトブロックは"${}"になります。
+     * また、テキストがテンプレート上にある場合、スクリプトブロック内の
+     * エンティティ参照は解決後に処理されます。(&amp;lt;は&lt;として処理されます)
+     *
+     * @param text 元となるテキスト
+     * @param blockSign スクリプトブロック開始記号
+     * @param onTemplate テキストはテンプレート上のものか
+     */
     public ScriptBlockIterator(
             String text, String blockSign, boolean onTemplate) {
         if (StringUtil.isEmpty(text) || StringUtil.isEmpty(blockSign)) {
@@ -109,6 +127,14 @@ public class ScriptBlockIterator implements Iterator {
         return -1;
     }
 
+    /**
+     * 次のスクリプトブロックを取得します。
+     * 戻り値のScriptBlockは静的なテキストならScriptBlock#isLiteral()がtrueを
+     * 返します。
+     *
+     * @return ScriptBlockインスタンス
+     * @throws NoSuchElementException 次の要素が存在しない場合
+     */
     public Object next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -125,6 +151,7 @@ public class ScriptBlockIterator implements Iterator {
                 String text = _text.substring(_offset + blockStart.length(), close);
                 _offset = close + 1;
                 if (_onTemplate) {
+                    // テンプレート上の場合はエンティティ解決をしてからスクリプトに渡す
                     text = StringUtil.resolveEntity(text);
                 }
                 return new ScriptBlock(text, false, _blockSign);
@@ -144,6 +171,9 @@ public class ScriptBlockIterator implements Iterator {
         return _offset;
     }
 
+    /**
+     * @throws UnsupportedOperationException
+     */
     public void remove() {
         throw new UnsupportedOperationException();
     }

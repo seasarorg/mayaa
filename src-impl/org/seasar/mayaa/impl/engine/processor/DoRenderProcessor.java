@@ -21,28 +21,34 @@ import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
+ * コンポーネント、およびレイアウト共有時の本文となるプロセッサ。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DoRenderProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -4276639032963176260L;
+    private static final long serialVersionUID = -4923388726582458101L;
 
-    private static final String INSERT_PROCESSOR_STACK =
-        DoRenderProcessor.class.getName();
-
+    private transient String _stackKey;
     private boolean _replace = true;
     private String _name = "";
 
-    protected String getStackKey() {
-        return INSERT_PROCESSOR_STACK + ":" + hashCode();
-    }
-
+    /**
+     * InsertProcessorのスタックをリクエストスコープから取得します。
+     * もし無ければ作成して返します。
+     *
+     * @return InsertProcessorのスタック
+     */
     protected Stack getInsertProcessorStack() {
+        if (_stackKey == null) {
+            // スタックはインスタンスごとにひとつ
+            _stackKey = DoRenderProcessor.class.getName() + ":" + hashCode();
+        }
         RequestScope request = CycleUtil.getRequestScope();
-        Stack stack = (Stack) request.getAttribute(getStackKey());
+        Stack stack = (Stack) request.getAttribute(_stackKey);
         if (stack == null) {
             stack = new Stack();
-            request.setAttribute(getStackKey(), stack);
+            request.setAttribute(_stackKey, stack);
         }
         return stack;
     }

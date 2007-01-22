@@ -27,13 +27,9 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
-import org.seasar.mayaa.engine.Template;
-import org.seasar.mayaa.engine.TemplateRenderer;
 import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
-import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
-import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -50,8 +46,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class InsertProcessor
-        extends TemplateProcessorSupport implements CONST_IMPL,
-        InformalPropertyAcceptable, TemplateRenderer {
+        extends TemplateProcessorSupport
+        implements CONST_IMPL, InformalPropertyAcceptable {
 
     private static final long serialVersionUID = -1240398725406503403L;
     private static final String RENDERING_INSERT_CHAIN =
@@ -238,7 +234,8 @@ public class InsertProcessor
             ProcessStatus ret;
             getRenderingInsertChain().push(this);
             try {
-                ret = RenderUtil.renderPage(fireEvent, this,
+                ComponentRenderer renderer = new ComponentRenderer(this, _name);
+                ret = RenderUtil.renderPage(fireEvent, renderer,
                         getVariables(), renderPage, requestedSuffix, extension);
             } finally {
                 getRenderingInsertChain().pop();
@@ -275,71 +272,6 @@ public class InsertProcessor
         invokeAfterRenderComponent();
         popRenderingParams();
         return super.doEndProcess();
-    }
-
-    // TemplateRenderer implements ----------------------------------
-
-    protected DoRenderProcessor findDoRender(
-            ProcessorTreeWalker proc, String name) {
-        DoRenderProcessor doRender = null;
-        for (int i = 0; i < proc.getChildProcessorSize(); i++) {
-            ProcessorTreeWalker child = proc.getChildProcessor(i);
-            if (child instanceof DoRenderProcessor) {
-                doRender = (DoRenderProcessor) child;
-                if (StringUtil.isEmpty(name)
-                        || name.equals(doRender.getName())) {
-                    break;
-                }
-            }
-            doRender = findDoRender(child, name);
-            if (doRender != null) {
-                break;
-            }
-        }
-        return doRender;
-    }
-
-    protected DoRenderProcessor findDoRender(
-            Template[] templates, String name) {
-        synchronized (ProviderUtil.getEngine()) {
-            for (int i = templates.length - 1; 0 <= i; i--) {
-                DoRenderProcessor doRender = findDoRender(templates[i], name);
-                if (doRender != null) {
-                    return doRender;
-                }
-            }
-        }
-        return null;
-    }
-
-    protected TemplateProcessor getRenderRoot(DoRenderProcessor doRender) {
-        if (doRender.isReplace() == false) {
-            ProcessorTreeWalker duplecated = doRender.getParentProcessor();
-            if (duplecated == null
-                    || duplecated instanceof TemplateProcessor == false) {
-                throw new IllegalStateException();
-            }
-            return (TemplateProcessor) duplecated;
-        }
-        return doRender;
-    }
-
-    public ProcessStatus renderTemplate(
-            Page topLevelPage, Template[] templates) {
-        if (topLevelPage == null || templates == null
-                || templates.length == 0) {
-            throw new IllegalArgumentException();
-        }
-        DoRenderProcessor doRender = findDoRender(templates, _name);
-        if (doRender == null) {
-            throw new DoRenderNotFoundException(_name);
-        }
-        TemplateProcessor insertRoot = getRenderRoot(doRender);
-        doRender.pushInsertProcessor(this);
-        ProcessStatus ret =
-                RenderUtil.renderTemplateProcessor(topLevelPage, insertRoot);
-        doRender.popInsertProcessor();
-        return ret;
     }
 
     public void kill() {

@@ -51,15 +51,21 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         if (original == null || chain == null) {
             throw new IllegalArgumentException();
         }
+
+        // TODO テンプレートのprefix定義、Mayaaファイルのを反映させる
         Namespace namespace = SpecificationUtil.createNamespace();
         namespace.addPrefixMapping("m", URI_MAYAA);
         String xpathExpr = "/m:mayaa//*[string-length(@m:xpath) > 0]";
+
+        // mayaaファイル内のm:xpathを持つすべてのノードを対象とする
         for (Iterator it = XPathUtil.selectChildNodes(
                 original, xpathExpr, namespace, true); it.hasNext();) {
             SpecificationNode injected = (SpecificationNode) it.next();
             String mayaaPath = SpecificationUtil.getAttributeValue(
                     injected, QM_XPATH);
-            if (XPathUtil.matches(original, mayaaPath, injected)) {
+            // injectedをnamespaceとして渡すとfunctionのデフォルトnamesapceが
+            // URI_MAYAAになってしまうため、デフォルトnamespaceのないものを渡す
+            if (XPathUtil.matches(original, mayaaPath, namespace)) {
                 return injected.copyTo(getCopyToFilter());
             }
         }

@@ -22,10 +22,10 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
  */
 public class SerializeThreadManager {
 
-    protected static SerializeThread[] _serializeThreads = new SerializeThread[10];
+    static SerializeThread[] _serializeThreads = new SerializeThread[10];
 
     private static volatile boolean _terminated;
-    
+
     private SerializeThreadManager() {
         throw new UnsupportedOperationException();
     }
@@ -55,7 +55,7 @@ public class SerializeThreadManager {
             return _serializeThreads[fewIndex].add(spec);
         }
     }
-    
+
     public static void destroy() {
         _terminated = true;
         synchronized (_serializeThreads) {
@@ -79,7 +79,7 @@ public class SerializeThreadManager {
             _serializeThreads[index] = null;
         }
     }
-    
+
     static boolean isReleasedAll() {
         synchronized (_serializeThreads) {
             for (int i = 0; i < _serializeThreads.length; i++) {

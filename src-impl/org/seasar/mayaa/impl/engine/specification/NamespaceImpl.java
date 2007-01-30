@@ -440,7 +440,7 @@ public class NamespaceImpl implements Namespace {
 
     }
 
-    protected static Comparator _prefixMappingComparator = new Comparator() {
+    protected static final Comparator _prefixMappingComparator = new Comparator() {
 
         public int compare(Object o1, Object o2) {
             if (o1 instanceof PrefixMapping && o2 instanceof PrefixMapping) {

@@ -36,16 +36,14 @@ public abstract class AbstractScriptEnvironment
     private transient List _attributeScopes;
     private String _blockSign = "$";
 
-    public void addAttributeScope(AttributeScope attrs) {
+    public synchronized void addAttributeScope(AttributeScope attrs) {
         if (attrs == null) {
             throw new IllegalArgumentException();
         }
         if (_attributeScopes == null) {
             _attributeScopes = new ArrayList();
         }
-        synchronized (_attributeScopes) {
-            _attributeScopes.add(attrs);
-        }
+        _attributeScopes.add(attrs);
     }
 
     public Iterator iterateAttributeScope() {

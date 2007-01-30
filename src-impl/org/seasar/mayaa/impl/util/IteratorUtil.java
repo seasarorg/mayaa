@@ -96,7 +96,7 @@ public class IteratorUtil {
     private static Iterator toObjectIterator(boolean[] booleans) {
         Boolean[] objects = new Boolean[booleans.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Boolean(booleans[i]);
+            objects[i] = Boolean.valueOf(booleans[i]);
         }
         return Arrays.asList(objects).iterator();
     }

@@ -86,7 +86,7 @@ public class EngineImpl extends SpecificationImpl
     private String _mayaaExtension = ".mayaa";
     private String _mayaaExtensionName = "mayaa";
     /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
-    private boolean _destroyed = false;
+    private volatile boolean _destroyed = false;
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);

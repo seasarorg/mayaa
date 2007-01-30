@@ -32,21 +32,6 @@ public class ProcessorSerializeController implements ProcessorReferenceResolver 
 
     private List _processorListeners = new ArrayList();
     private Map _processors = new HashMap();
-    
-    public class ProcessorListener {
-        String _id;
-        ProcessorResolveListener _listener;
-
-        public ProcessorListener(String id, ProcessorResolveListener listener) {
-            _id = id;
-            _listener = listener;
-        }
-
-        public void release() {
-            _listener.release();
-            _listener = null;
-        }
-    }
 
     public void init() {
         _processorListeners = new ArrayList();
@@ -66,19 +51,34 @@ public class ProcessorSerializeController implements ProcessorReferenceResolver 
     public void processorLoaded(String uniqueID, ProcessorTreeWalker item) {
         _processors.put(uniqueID, item);
     }
-    
+
     public ProcessorTreeWalker getProcessor(String uniqueID) {
         return (ProcessorTreeWalker) _processors.get(uniqueID);
     }
-    
+
     public void registResolveProcessorListener(String uniqueID, ProcessorResolveListener listener) {
         _processorListeners.add(new ProcessorListener(uniqueID, listener));
     }
-    
+
     public void doNotify() {
         for (Iterator it = _processorListeners.iterator(); it.hasNext(); ) {
             ProcessorListener listener = (ProcessorListener) it.next();
             listener._listener.notify(listener._id, getProcessor(listener._id));
+        }
+    }
+
+    public static class ProcessorListener {
+        String _id;
+        ProcessorResolveListener _listener;
+
+        public ProcessorListener(String id, ProcessorResolveListener listener) {
+            _id = id;
+            _listener = listener;
+        }
+
+        public void release() {
+            _listener.release();
+            _listener = null;
         }
     }
 

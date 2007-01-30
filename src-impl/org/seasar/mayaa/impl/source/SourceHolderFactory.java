@@ -31,7 +31,7 @@ import org.seasar.mayaa.source.SourceHolder;
 public class SourceHolderFactory {
 
     private static List _sourceHolders;
-    private static boolean _immutable = false;
+    private static volatile boolean _immutable = false;
 
     private SourceHolderFactory() {
         // no instantiate

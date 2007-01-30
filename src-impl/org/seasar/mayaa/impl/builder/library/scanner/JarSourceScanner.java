@@ -178,7 +178,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
 
     // suppport class -----------------------------------------------
 
-    protected class AliasToSourceIterator implements Iterator {
+    protected static class AliasToSourceIterator implements Iterator {
 
         private Iterator _it;
 

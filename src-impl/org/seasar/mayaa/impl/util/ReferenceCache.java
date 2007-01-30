@@ -209,7 +209,7 @@ public class ReferenceCache extends ArrayList {
      * アイテムを返すイテレータ
      * @author Taro Kato (Gluegent, Inc.)
      */
-    protected class ReferenceCacheIterator implements Iterator {
+    protected static class ReferenceCacheIterator implements Iterator {
 
         private int _index;
         private Object _next;

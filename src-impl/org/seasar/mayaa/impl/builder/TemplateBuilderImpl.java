@@ -499,7 +499,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
-    protected class HtmlReaderPool extends XMLReaderPool {
+    protected static class HtmlReaderPool extends XMLReaderPool {
 
         private static final long serialVersionUID = -5203349759797583368L;
 

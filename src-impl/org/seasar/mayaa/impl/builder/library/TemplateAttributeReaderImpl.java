@@ -148,7 +148,7 @@ public class TemplateAttributeReaderImpl
                         || (test.indexOf('{') == -1 && test.indexOf('}') == -1));
     }
 
-    private class AttributeKey {
+    private static class AttributeKey {
         private String _tagName;
         private String _attributeName;
 

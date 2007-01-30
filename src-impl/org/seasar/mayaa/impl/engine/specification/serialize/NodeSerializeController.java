@@ -35,21 +35,6 @@ public class NodeSerializeController implements NodeReferenceResolver {
     private List _nodeListeners;
     private Map _nodes;
 
-    public class NodeListener {
-        String _id;
-        NodeResolveListener _listener;
-
-        public NodeListener(String id, NodeResolveListener listener) {
-            _id = id;
-            _listener = listener;
-        }
-
-        public void release() {
-            _listener.release();
-            _listener = null;
-        }
-    }
-
     public void init() {
         _nodeListeners = new ArrayList(20);
         _nodes = new HashMap(100);
@@ -101,4 +86,20 @@ public class NodeSerializeController implements NodeReferenceResolver {
     public static String makeKey(Specification item) {
         return item.getSystemID();
     }
+
+    public static class NodeListener {
+        String _id;
+        NodeResolveListener _listener;
+
+        public NodeListener(String id, NodeResolveListener listener) {
+            _id = id;
+            _listener = listener;
+        }
+
+        public void release() {
+            _listener.release();
+            _listener = null;
+        }
+    }
+
 }

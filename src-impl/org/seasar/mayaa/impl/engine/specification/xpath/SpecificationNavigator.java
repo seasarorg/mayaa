@@ -342,7 +342,7 @@ public class SpecificationNavigator extends DefaultNavigator
 
     // support class ------------------------------------------------
 
-    protected class QNameFilteredIterator extends AbstractScanningIterator {
+    protected static class QNameFilteredIterator extends AbstractScanningIterator {
 
         private QName _qName;
 

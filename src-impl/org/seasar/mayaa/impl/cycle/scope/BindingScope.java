@@ -94,7 +94,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     // support class ------------------------------------------------
 
-    private class BindingIterator implements Iterator {
+    private static class BindingIterator implements Iterator {
 
         private Iterator _it;
 

@@ -159,7 +159,7 @@ public class PageContextImpl extends PageContext {
     public HttpSession getSession() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         SessionScope session = cycle.getSessionScope();
-        
+
         Object obj = session.getUnderlyingContext();
         if (obj instanceof HttpSession) {
             return (HttpSession) obj;
@@ -246,7 +246,7 @@ public class PageContextImpl extends PageContext {
         if (scope != null) {
             return scope;
         }
-        return pageScope; 
+        return pageScope;
     }
 
     public Object findAttribute(String name) {
@@ -351,7 +351,7 @@ public class PageContextImpl extends PageContext {
         }
 
         public ServletContext getServletContext() {
-            return getServletContext();
+            return PageContextImpl.this.getServletContext();
         }
 
         public String getServletName() {

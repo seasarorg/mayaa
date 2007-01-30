@@ -113,8 +113,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     // support class ------------------------------------------------
 
-    protected class ProcessorPropertyWrapper
-            implements ProcessorProperty {
+    protected class ProcessorPropertyWrapper implements ProcessorProperty {
+
+        private static final long serialVersionUID = 8190328285510500572L;
 
         private PrefixAwareName _attrName;
         private ProcessorProperty _attrValue;

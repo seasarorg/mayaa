@@ -31,8 +31,8 @@ import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
-import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
@@ -188,7 +188,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             }
             // メモリリークを起こす可能性があるので参照を断つ
             PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
-                    attr.getQName(), attr.getPrefix()); 
+                    attr.getQName(), attr.getPrefix());
             acceptable.addInformalProperty(name, property);
         }
     }
@@ -214,10 +214,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     // support class ------------------------------------------------
 
-    protected class PropertySetRef implements Serializable {
+    protected static class PropertySetRef implements Serializable {
 
         private static final long serialVersionUID = -3425332447146558868L;
-        
+
         private String _name;
         private String _systemID;
         private int _lineNumber;
@@ -246,7 +246,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     }
 
-    protected class PropertySetIterator implements Iterator {
+    protected static class PropertySetIterator implements Iterator {
 
         private Iterator _it;
         private LibraryDefinition _library;

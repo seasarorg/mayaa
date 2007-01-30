@@ -242,7 +242,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 
     // support class ------------------------------------------------
 
-    private class LibraryDefinitionFilteredIterator
+    private static class LibraryDefinitionFilteredIterator
             extends AbstractScanningIterator {
 
         private URI _namespaceURI;

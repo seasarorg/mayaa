@@ -194,6 +194,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return result;
     }
 
+    static void setWrapFactory(WrapFactory wrap) {
+        _wrap = wrap;
+    }
+
     static WrapFactory getWrapFactory() {
         return _wrap;
     }
@@ -206,7 +210,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
-            _wrap = (WrapFactory) ObjectUtil.newInstance(clazz);
+            setWrapFactory((WrapFactory) ObjectUtil.newInstance(clazz));
         } else if ("blockSign".equals(name)) {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);

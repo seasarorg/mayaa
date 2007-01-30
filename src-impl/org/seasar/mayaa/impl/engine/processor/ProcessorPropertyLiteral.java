@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
@@ -26,7 +24,8 @@ import org.seasar.mayaa.impl.cycle.script.LiteralScript;
  * 値の式を文字列として処理するプロパティランタイム。
  * @author Hisayoshi Sasaki (Gluegent, Inc.)
  */
-public class ProcessorPropertyLiteral implements ProcessorProperty, Serializable {
+public class ProcessorPropertyLiteral implements ProcessorProperty {
+
     private static final long serialVersionUID = -5156693929626730452L;
 
     private PrefixAwareName _name;

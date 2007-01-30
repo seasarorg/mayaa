@@ -74,7 +74,7 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
 
     // support class -------------------------------------------------
 
-    protected class CheckXPathCopyToFilter implements CopyToFilter {
+    protected static class CheckXPathCopyToFilter implements CopyToFilter {
 
         public boolean accept(NodeObject test) {
             if (test instanceof NodeAttribute) {

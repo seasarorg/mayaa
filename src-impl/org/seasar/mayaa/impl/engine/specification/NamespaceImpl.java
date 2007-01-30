@@ -353,13 +353,15 @@ public class NamespaceImpl implements Namespace {
     }
 
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == NamespaceImpl.class) {
+        if (obj != null && obj.getClass().equals(NamespaceImpl.class)) {
             NamespaceImpl other = (NamespaceImpl)obj;
             String otherKey = other.getSerializeKey();
             return getSerializeKey().equals(otherKey);
         }
         return false;
     }
+
+    // TODO hashCodeを実装する
 
     private void writeObject(java.io.ObjectOutputStream out)
         throws IOException {
@@ -396,7 +398,7 @@ public class NamespaceImpl implements Namespace {
 
     // support class -------------------------------------------------
 
-    protected class AllNamespaceIterator implements Iterator {
+    protected static class AllNamespaceIterator implements Iterator {
 
         private Namespace _current;
         private Iterator _it;
@@ -474,6 +476,10 @@ public class NamespaceImpl implements Namespace {
 
         public boolean equals(Object obj) {
             return obj == this;
+        }
+
+        public int hashCode() {
+            return super.hashCode();
         }
 
     };

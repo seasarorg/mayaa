@@ -167,7 +167,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
 
     // support class ------------------------------------------------
 
-    protected class CheckIDCopyToFilter implements CopyToFilter {
+    protected static class CheckIDCopyToFilter implements CopyToFilter {
 
         public boolean accept(NodeObject test) {
             if (test instanceof NodeAttribute) {

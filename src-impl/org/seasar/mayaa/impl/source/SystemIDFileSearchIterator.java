@@ -80,7 +80,7 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
                 if (filters != null) {
                     return "[" + StringUtil.join(filters, ",") + "]";
                 }
-                return null;
+                return "";
             }
         });
     }
@@ -95,7 +95,7 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
         filePath = filePath.substring(rootPath.length());
         filePath = filePath.replace(File.separatorChar, '/');
         if (filePath.length() > 0 && filePath.startsWith("/")) {
-            filePath.substring(1);
+            filePath = filePath.substring(1);
         }
         return filePath;
     }

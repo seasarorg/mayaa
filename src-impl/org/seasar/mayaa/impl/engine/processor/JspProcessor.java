@@ -393,7 +393,7 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     protected void operateNestedVariables(NestedVariableOperator operator) {
-        if (_nestedVariableExists != Boolean.FALSE) {
+        if (Boolean.FALSE.equals(_nestedVariableExists) == false) {
             TLDScriptingVariableInfo variableInfo =
                 getTLDScriptingVariableInfo();
             if (variableInfo != null) {

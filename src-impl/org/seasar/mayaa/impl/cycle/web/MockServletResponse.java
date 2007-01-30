@@ -131,7 +131,7 @@ public class MockServletResponse implements ServletResponse {
         // do nothing.
     }
 
-    private class MockServletOutputStream extends ServletOutputStream {
+    private static class MockServletOutputStream extends ServletOutputStream {
 
         private ByteArrayOutputStream _buffer = new ByteArrayOutputStream(5120);
         private OutputStream _onCommitOutputStream;

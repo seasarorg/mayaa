@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class CycleUtil {
 
     private static CycleUtil _singleton = new CycleUtil();
-    private CycleFactory _factory;
+    private volatile CycleFactory _factory;
 
     private static StandardScope _standardScope = new StandardScope();
 

@@ -89,7 +89,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
      *
      * @author Koji Suga (Gluegent Inc.)
      */
-    private class TaglibLocationIterator implements Iterator {
+    private static class TaglibLocationIterator implements Iterator {
 
         private Iterator _it;
 

@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine.processor;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
@@ -22,7 +24,7 @@ import org.seasar.mayaa.engine.specification.PrefixAwareName;
  * プロセッサに設定するプロパティのランタイムオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ProcessorProperty {
+public interface ProcessorProperty extends Serializable {
 
     /**
      * プロセッサのプロパティ名。

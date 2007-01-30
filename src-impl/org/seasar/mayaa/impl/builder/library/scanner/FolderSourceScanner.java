@@ -220,7 +220,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     }
 
-    protected class FileToSourceIterator implements Iterator {
+    protected static class FileToSourceIterator implements Iterator {
 
         private ApplicationScope _applicationScope;
         private String _root;

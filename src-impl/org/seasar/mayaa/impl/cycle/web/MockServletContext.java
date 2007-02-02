@@ -219,7 +219,7 @@ public class MockServletContext implements ServletContext {
     public URL getResource(String path) throws MalformedURLException {
         File file = getFile(path);
         if (file != null && file.exists()) {
-            return file.toURL();
+            return file.toURI().toURL();
         }
         return IOUtil.getResource(path);
     }

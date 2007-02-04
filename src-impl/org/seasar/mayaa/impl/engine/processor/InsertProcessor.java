@@ -57,12 +57,12 @@ public class InsertProcessor
     static {
         CycleUtil.registVariableFactory(RENDERING_INSERT_CHAIN, new DefaultCycleLocalInstantiator() {
             public Object create(Object[] params) {
-                return new Stack();
+                return new Stack/*<InsertRenderingParams>*/();
             }
         });
         CycleUtil.registVariableFactory(INSERT_PARAMS, new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
-                return new Stack();
+                return new Stack/*<InsertRenderingParams>*/();
             }
         });
     }
@@ -166,8 +166,7 @@ public class InsertProcessor
     }
 
     protected InsertRenderingParams popRenderingParams() {
-        Stack stack = getRenderingParams();
-        return (InsertRenderingParams) stack.pop();
+        return (InsertRenderingParams) getRenderingParams().pop();
     }
 
     public Map getRenderingParameters() {

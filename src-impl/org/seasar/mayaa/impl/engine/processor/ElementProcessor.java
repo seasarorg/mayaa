@@ -316,7 +316,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected boolean needsCloseElement(QName qName) {
-        if (isHTML(qName)) {
+        if (isXHTML(qName)
+                && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+            return false;
+        } else if (isHTML(qName)) {
             HTMLElements.Element element =
                 HTMLElements.getElement(qName.getLocalName());
             return element.isEmpty() == false;
@@ -387,17 +390,16 @@ public class ElementProcessor extends AbstractAttributableProcessor
             }
         }
         QName qName = getName().getQName();
-        if (isHTML(qName) || getChildProcessorSize() > 0) {
+
+        if (isXHTML(qName)
+                && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+            buffer.append("/>");
+        } else if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
         } else {
-            if (isXHTML(qName)
-                    && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
-                buffer.append("/>");
-            } else {
-                buffer.append("></");
-                writeElementName(buffer);
-                buffer.append(">");
-            }
+            buffer.append("></");
+            writeElementName(buffer);
+            buffer.append(">");
         }
     }
 

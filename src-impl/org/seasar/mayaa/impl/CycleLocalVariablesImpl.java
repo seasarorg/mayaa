@@ -15,13 +15,17 @@
  */
 package org.seasar.mayaa.impl;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.cycle.CycleLocalVariables;
 import org.seasar.mayaa.impl.cycle.CycleThreadLocalFactory;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class CycleLocalVariablesImpl implements CycleLocalVariables {
+public class CycleLocalVariablesImpl implements CycleLocalVariables, Serializable {
+
+    private static final long serialVersionUID = 981360496015071116L;
 
     public Object getGlobalVariable(String key, Object[] params) {
         return CycleThreadLocalFactory.get(key, params);
@@ -33,7 +37,7 @@ public class CycleLocalVariablesImpl implements CycleLocalVariables {
 
     public void clearGlobalVariable(String key) {
         CycleThreadLocalFactory.clearLocalVariable(key);
-        
+
     }
 
     public void clearVariable(String key, Object value) {

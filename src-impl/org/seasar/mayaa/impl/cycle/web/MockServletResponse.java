@@ -27,6 +27,8 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -188,7 +190,8 @@ public class MockServletResponse implements ServletResponse {
                     }
                     _onCommitOutputStream.flush();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log log = LogFactory.getLog(MockServletResponse.class);
+                    log.info(e.getMessage(), e);
                 } finally {
                     IOUtil.close(_onCommitOutputStream);
                 }

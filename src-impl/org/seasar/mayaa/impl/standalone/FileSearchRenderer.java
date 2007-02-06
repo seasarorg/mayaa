@@ -260,7 +260,7 @@ public class FileSearchRenderer {
         try {
             return new FileOutputStream(filePath);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.info(e.getMessage());
             return null;
         }
     }

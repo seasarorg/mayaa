@@ -40,9 +40,12 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
     protected static final QName QM_XPATH =
         SpecificationUtil.createQName("xpath");
 
-    private CopyToFilter _xpathFilter = new CheckXPathCopyToFilter();
+    private transient CopyToFilter _xpathFilter = new CheckXPathCopyToFilter();
 
     protected CopyToFilter getCopyToFilter() {
+        if (_xpathFilter == null) {
+            _xpathFilter = new CheckXPathCopyToFilter();
+        }
         return _xpathFilter;
     }
 

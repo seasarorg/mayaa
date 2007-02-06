@@ -286,7 +286,7 @@ public class RenderUtil implements CONST_IMPL {
         List pageStack = fireEvent ? new LinkedList() : null;
         List templateStack = new LinkedList();
         do {
-            if (fireEvent) {
+            if (pageStack != null) { // fireEvent
                 // stack for afterRender event.
                 pageStack.add(0, page);
                 SpecificationUtil.startScope(variables);
@@ -311,7 +311,7 @@ public class RenderUtil implements CONST_IMPL {
             ret = renderer.renderTemplate(topLevelPage, templates);
             saveToCycle(page);
         }
-        if (fireEvent) {
+        if (pageStack != null) { // fireEvent
             for (int i = 0; i < pageStack.size(); i++) {
                 page = (Page) pageStack.get(i);
                 saveToCycle(page);

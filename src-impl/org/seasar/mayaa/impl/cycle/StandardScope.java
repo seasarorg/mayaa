@@ -1,12 +1,16 @@
 package org.seasar.mayaa.impl.cycle;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class StandardScope {
+public class StandardScope implements Serializable {
+
+    private static final long serialVersionUID = -291469372635600135L;
 
     private String[] _scopeNames = new String[] {
         ServiceCycle.SCOPE_PAGE,
@@ -41,8 +45,9 @@ public class StandardScope {
             throw new IllegalArgumentException();
         }
 
-        for (int i = 0; i < _scopeNames.length; i++) {
-            if (scopeName.equals(_scopeNames[i])) {
+        String[] scopeNames = _scopeNames;
+        for (int i = 0; i < scopeNames.length; i++) {
+            if (scopeName.equals(scopeNames[i])) {
                 return true;
             }
         }

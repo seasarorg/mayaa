@@ -236,8 +236,8 @@ public class MockServletContext implements ServletContext {
     public InputStream getResourceAsStream(String path) {
         try {
             return IOUtil.openStream(getResource(path));
-        } catch (MalformedURLException ignore) {
-            ignore.printStackTrace();
+        } catch (MalformedURLException e) {
+            log(e.getMessage(), e);
         }
         return null;
     }

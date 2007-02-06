@@ -46,7 +46,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     private static final Log LOG =
         LogFactory.getLog(EqualsIDInjectionResolver.class);
 
-    private CopyToFilter _idFilter = new CheckIDCopyToFilter();
+    private transient CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private List _additionalIds = new ArrayList();
     private boolean _reportResolvedID = true;
     private boolean _reportDuplicatedID = true;
@@ -56,6 +56,9 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     }
 
     protected CopyToFilter getCopyToFilter() {
+        if (_idFilter == null) {
+            _idFilter = new CheckIDCopyToFilter();
+        }
         return _idFilter;
     }
 

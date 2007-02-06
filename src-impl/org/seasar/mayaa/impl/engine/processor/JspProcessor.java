@@ -37,6 +37,8 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -610,7 +612,8 @@ public class JspProcessor extends TemplateProcessorSupport
             try {
                 _simpleTag.doTag();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log log = LogFactory.getLog(SimpleTagWrapper.class);
+                log.warn(e.getMessage(), e);
             }
             return Tag.SKIP_BODY;
         }

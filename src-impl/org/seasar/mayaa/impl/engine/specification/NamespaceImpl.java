@@ -417,8 +417,7 @@ public class NamespaceImpl implements Namespace {
                 if (ret) {
                     return true;
                 }
-                _current = _current.getParentSpace();
-                if (_current != null) {
+                if (_current != null && (_current = _current.getParentSpace()) != null) {
                     _it = _current.iteratePrefixMapping(false);
                 } else {
                     _it = null;

@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.builder.injection;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -27,7 +29,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DefaultInjectionChain
-        implements InjectionChain, CONST_IMPL {
+        implements InjectionChain, Serializable, CONST_IMPL {
+
+    private static final long serialVersionUID = 1L;
 
     private QName[] _specialNames = new QName[] {
             QM_CDATA,

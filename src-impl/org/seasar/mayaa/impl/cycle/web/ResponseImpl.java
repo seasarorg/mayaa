@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.cycle.web;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class ResponseImpl extends AbstractResponse {
     private static final long serialVersionUID = -4653384671998376182L;
 
     private HttpServletResponse _httpServletResponse;
-    private ResponseHeaderCache _headers = new ResponseHeaderCache();
+    private transient ResponseHeaderCache _headers = new ResponseHeaderCache();
     private int _status;
 
     protected void check() {
@@ -149,7 +150,15 @@ public class ResponseImpl extends AbstractResponse {
     }
 
     public String getCharacterEncoding() {
-        return _httpServletResponse.getCharacterEncoding(); 
+        return _httpServletResponse.getCharacterEncoding();
+    }
+
+
+    // for deserialize
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        _headers = new ResponseHeaderCache();
     }
 
 }

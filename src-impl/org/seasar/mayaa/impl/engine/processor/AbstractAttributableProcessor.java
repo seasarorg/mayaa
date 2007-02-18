@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.engine.Page;
@@ -41,24 +42,45 @@ public abstract class AbstractAttributableProcessor
     private boolean _childEvaluation;
     private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
                     _attributes;
+
     private static final String PROCESS_TIME_INFO_KEY =
-        AbstractAttributableProcessor.class.getName() + "#processtimeInfo";
+        AbstractAttributableProcessor.class.getName() + "#processTimeInfo";
     static {
         CycleUtil.registVariableFactory(PROCESS_TIME_INFO_KEY,
                 new DefaultCycleLocalInstantiator() {
                     public Object create(Object owner, Object[] params) {
-                        return new ProcesstimeInfo();
+                        return new Stack/*<ProcesstimeInfo>*/();
                     }
                 });
     }
 
-    protected void clearProcesstimeInfo() {
+    private void clearProcesstimeInfo() {
         CycleUtil.clearLocalVariable(PROCESS_TIME_INFO_KEY, this);
     }
 
-    protected ProcesstimeInfo getProcesstimeInfo() {
-        return (ProcesstimeInfo) CycleUtil.getLocalVariable(
+    protected void prepareProcesstimeInfo() {
+        Stack piStack = (Stack) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
+        if (piStack.size() == 0) {
+            piStack.push(new ProcesstimeInfo());
+        }
+    }
+
+    protected ProcesstimeInfo pushProcesstimeInfo() {
+        Stack piStack = (Stack) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null);
+        return (ProcesstimeInfo) piStack.push(new ProcesstimeInfo());
+    }
+
+    protected ProcesstimeInfo peekProcesstimeInfo() {
+        return (ProcesstimeInfo) ((Stack) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null)).peek();
+    }
+
+    protected ProcesstimeInfo popProcesstimeInfo() {
+        Stack piStack = (Stack) CycleUtil.getLocalVariable(
+                PROCESS_TIME_INFO_KEY, this, null);
+        return (ProcesstimeInfo) piStack.pop();
     }
 
     // MLD property
@@ -94,7 +116,8 @@ public abstract class AbstractAttributableProcessor
         if (prop == null) {
             throw new IllegalArgumentException();
         }
-        ProcesstimeInfo info = getProcesstimeInfo();
+        prepareProcesstimeInfo();
+        ProcesstimeInfo info = peekProcesstimeInfo();
         info.addProcesstimeProperty(prop);
     }
 
@@ -102,12 +125,14 @@ public abstract class AbstractAttributableProcessor
         if (prop == null) {
             throw new IllegalArgumentException();
         }
-        ProcesstimeInfo info = getProcesstimeInfo();
+        prepareProcesstimeInfo();
+        ProcesstimeInfo info = peekProcesstimeInfo();
         return info.hasProcesstimeProperty(prop);
     }
 
     public Iterator iterateProcesstimeProperties() {
-        ProcesstimeInfo info = getProcesstimeInfo();
+        prepareProcesstimeInfo();
+        ProcesstimeInfo info = peekProcesstimeInfo();
         return info.iterateProcesstimeProperties();
     }
 
@@ -117,8 +142,29 @@ public abstract class AbstractAttributableProcessor
 
     protected abstract void writeEndElement();
 
+    /**
+     * このメソッドをoverrideしないこと。
+     * 代わりに{@link processStart(Page)}をoverrideすること。
+     */
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        clearProcesstimeInfo();
+        prepareProcesstimeInfo();
+        if (_childEvaluation) {
+            pushProcesstimeInfo();
+        }
+
+        return processStart(topLevelPage);
+    }
+
+    /**
+     * 子クラスはdoStartProcessではなくこのメソッドをoverrideすること。
+     * ProcesstimeInfoを取得するには{@link peekProcesstimeInfo()}を使用します。
+     *
+     * @param topLevelPage 描画トップレベルのページ。
+     * @return 子プロセッサを処理する場合にはEVAL_BODY_INCLUDE、
+     * 子プロセッサの処理をスキップする場合にはSKIP_BODYを返す。
+     * ({@link #writeStartElement()}を呼ぶ)
+     */
+    protected ProcessStatus processStart(Page topLevelPage) {
         if (_childEvaluation) {
             return ProcessStatus.EVAL_BODY_BUFFERED;
         }
@@ -130,11 +176,13 @@ public abstract class AbstractAttributableProcessor
     }
 
     public void setBodyContent(CycleWriter body) {
-        if (body == null) {
-            throw new IllegalArgumentException();
+        if (_childEvaluation) {
+            if (body == null) {
+                throw new IllegalArgumentException();
+            }
+            ProcesstimeInfo info = peekProcesstimeInfo();
+            info.setBody(body);
         }
-        ProcesstimeInfo info = getProcesstimeInfo();
-        info.setBody(body);
     }
 
     public void doInitChildProcess() {
@@ -149,10 +197,31 @@ public abstract class AbstractAttributableProcessor
         return ProcessStatus.SKIP_BODY;
     }
 
+    /**
+     * このメソッドをoverrideしないこと。
+     * 代わりに{@link processEnd()}をoverrideすること。
+     */
     public ProcessStatus doEndProcess() {
-        ProcesstimeInfo info = getProcesstimeInfo();
+        try {
+            return processEnd();
+        } finally {
+            if (_childEvaluation) {
+                popProcesstimeInfo();
+            }
+        }
+    }
+
+    /**
+     * 子クラスはdoEndProcessではなくこのメソッドをoverrideすること。
+     * ProcesstimeInfoを取得するには{@link peekProcesstimeInfo()}を使用します。
+     *
+     * @return ページのこのタグ以降を処理する場合にはEVAL_PAGE、
+     * 以降の処理をスキップする場合にはSKIP_PAGE。
+     */
+    protected ProcessStatus processEnd() {
         if (_childEvaluation) {
             writeStartElement();
+            ProcesstimeInfo info = peekProcesstimeInfo();
             CycleWriter body = info.getBody();
             if (body != null) {
                 writeBody(body.getString());

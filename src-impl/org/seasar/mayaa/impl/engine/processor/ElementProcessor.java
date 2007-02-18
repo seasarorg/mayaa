@@ -443,17 +443,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
         write(buffer.toString());
     }
 
-    public ProcessStatus doStartProcess(Page topLevelPage) {
+    public ProcessStatus processStart(Page topLevelPage) {
         if (topLevelPage != null) {
             topLevelPage.registBeginRenderNotifier(this);
         }
         renderInit();
-        return super.doStartProcess(topLevelPage);
+        return super.processStart(topLevelPage);
     }
 
-    public ProcessStatus doEndProcess() {
+    public ProcessStatus processEnd() {
+        ProcessStatus result = super.processEnd();
         renderExit();
-        return super.doEndProcess();
+        return result;
     }
 
     protected void renderInit() {
@@ -467,6 +468,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
+        pushProcesstimeInfo();
         renderInit();
         try {
             if (getInjectedNode().getQName().equals(
@@ -536,11 +538,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
             }
             //optimizeNodes();
             clearChildProcessors();
-            clearProcesstimeInfo();
             return (ProcessorTreeWalker[]) list.toArray(
                     new ProcessorTreeWalker[list.size()]);
         } finally {
             renderExit();
+            popProcesstimeInfo();
         }
     }
 

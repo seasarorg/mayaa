@@ -114,12 +114,6 @@ public class RenderUtil implements CONST_IMPL {
         }
     }
 
-    private static void pushWriter(TemplateProcessor current, ServiceCycle cycle) {
-        ChildEvaluationProcessor processor = getEvaluation(current);
-        processor.setBodyContent(cycle.getResponse().pushWriter());
-        processor.doInitChildProcess();
-    }
-
     // main rendering method
     public static ProcessStatus renderTemplateProcessor(
             Page topLevelPage, TemplateProcessor current) {
@@ -143,7 +137,9 @@ public class RenderUtil implements CONST_IMPL {
             }
             if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
-                pushWriter(current, cycle);
+                ChildEvaluationProcessor processor = getEvaluation(current);
+                processor.setBodyContent(cycle.getResponse().pushWriter());
+                processor.doInitChildProcess();
             }
             if (startRet == EVAL_BODY_INCLUDE
                     || startRet == EVAL_BODY_BUFFERED) {
@@ -183,7 +179,9 @@ public class RenderUtil implements CONST_IMPL {
 
                                 if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                                     buffered = true;
-                                    pushWriter(current, cycle);
+                                    ChildEvaluationProcessor processor = getEvaluation(current);
+                                    processor.setBodyContent(cycle.getResponse().pushWriter());
+                                    processor.doInitChildProcess();
                                 }
                             }
                         }
@@ -210,9 +208,6 @@ public class RenderUtil implements CONST_IMPL {
             setCurrentProcessor(current);
             SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_PROCESSOR);
             setCurrentProcessor(null);
-        }
-        if (buffered) {
-            getEvaluation(current).setBodyContent(cycle.getResponse().getWriter());
         }
         return ret;
     }

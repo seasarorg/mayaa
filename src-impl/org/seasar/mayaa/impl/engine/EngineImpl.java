@@ -155,42 +155,48 @@ public class EngineImpl extends SpecificationImpl
         return throwable;
     }
 
-    public void handleError(Throwable t, boolean pageFlush) {
-        t = removeWrapperRuntimeException(t);
-        // client abort は出力しようがないので無視
-        if (t instanceof IOException) {
-            if (isClientAbortException((IOException)t)) {
-                return;
-            }
+    public void handleError(Throwable thrown, boolean pageFlush) {
+        Throwable throwable = removeWrapperRuntimeException(thrown);
+        if (isClientAbortException(throwable)) {
+            // client abort は出力しようがないので無視
+            return;
         }
-        if (t instanceof CyclicForwardException) {
-            // 循環forwardの可能性
-            throw (CyclicForwardException) t;
+        if (throwable instanceof CyclicForwardException) {
+            // 循環forwardはそのまま投げる
+            throw (CyclicForwardException) throwable;
         }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         try {
-            cycle.setHandledError(t);
-            getErrorHandler().doErrorHandle(t, pageFlush);
+            cycle.setHandledError(throwable);
+            getErrorHandler().doErrorHandle(throwable, pageFlush);
         } catch (RenderingTerminated ignore) {
             // do nothing.
         } catch (PageForwarded pf) {
             // return page service
             checkCyclicForward(cycle.getRequestScope());
             doPageService(cycle, null, pageFlush);
-        } catch (Throwable internal) {
+        } catch (Throwable internalThrown) {
+            Throwable internal = removeWrapperRuntimeException(internalThrown);
             if (internal instanceof PageNotFoundException) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info(t.getMessage());
+                    LOG.info(throwable.getMessage());
                 }
-            } else if (LOG.isFatalEnabled()) {
-                String fatalMsg = StringUtil.getMessage(
-                        EngineImpl.class, 0, internal.getMessage());
-                LOG.fatal(fatalMsg, internal);
+            } else {
+                if (isClientAbortException(internal)) {
+                    // client abort は出力しようがないので無視
+                    return;
+                }
+                if (LOG.isFatalEnabled()) {
+                    String fatalMsg = StringUtil.getMessage(
+                            EngineImpl.class, 0, internal.getMessage());
+                    LOG.fatal(fatalMsg, internal);
+                }
             }
-            if (t instanceof RuntimeException) {
-                throw (RuntimeException) t;
+
+            if (throwable instanceof RuntimeException) {
+                throw (RuntimeException) throwable;
             }
-            throw new RuntimeException(t);
+            throw new RuntimeException(throwable);
         } finally {
             cycle.setHandledError(null);
         }
@@ -455,13 +461,16 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    protected boolean isClientAbortException(IOException e) {
-        String simpleClassName = ObjectUtil.getSimpleClassName(e.getClass());
-        switch (simpleClassName.charAt(0)) {
-        case 'E':
-            return simpleClassName.equals("EOFException");
-        case 'C':
-            return simpleClassName.equals("ClientAbortException");
+    protected boolean isClientAbortException(Throwable t) {
+        if (t instanceof IOException) {
+            IOException e = (IOException) t;
+            String simpleClassName = ObjectUtil.getSimpleClassName(e.getClass());
+            switch (simpleClassName.charAt(0)) {
+            case 'E':
+                return simpleClassName.equals("EOFException");
+            case 'C':
+                return simpleClassName.equals("ClientAbortException");
+            }
         }
         return false;
     }

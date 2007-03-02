@@ -58,7 +58,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     private Date _buildTimestamp;
     private Date _builtSourceTime;
     private SourceDescriptor _source;
-    private NodeTreeWalkerImpl _delegateNodeTreeWalker;
+    private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
     private boolean _deprecated;
     private int _lastSequenceID;
@@ -91,8 +91,10 @@ public class SpecificationImpl extends ParameterAwareImpl
     protected NodeTreeWalker getNodeTreeWalker() {
         if (_delegateNodeTreeWalker == null) {
             synchronized (this) {
-                _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
-                _delegateNodeTreeWalker.setOwner(this);
+                if (_delegateNodeTreeWalker == null) {
+                    _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
+                    _delegateNodeTreeWalker.setOwner(this);
+                }
             }
         }
         return _delegateNodeTreeWalker;

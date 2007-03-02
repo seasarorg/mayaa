@@ -33,12 +33,15 @@ import org.seasar.mayaa.impl.util.ReferenceCache;
  */
 public class SpecificationCache {
 
+    static final Log LOG = LogFactory.getLog(SpecificationCache.class);
+
     protected static volatile TimeredSweepThread _cleanUpSpecification =
         new TimeredSweepThread();
     /** 終了処理後かどうか。終了処理後は追加処理をしない。 */
     protected static volatile boolean _sweepThreadAlive = true;
 
     protected int _surviveLimit;
+    //@GuardedBy(this)
     protected Map _specifications = new HashMap();
 
     protected ReferenceCache _gcChecker;
@@ -117,8 +120,7 @@ public class SpecificationCache {
                 // ここに到達する場合があるので。
                 postGabage(old);
             }
-            ReferSpecification refer =
-                new ReferSpecification(specification);
+            ReferSpecification refer = new ReferSpecification(specification);
             _specifications.put(specification.getSystemID(), refer);
         }
     }
@@ -134,8 +136,8 @@ public class SpecificationCache {
 
     private class ReferSpecification {
         private Specification _specification;
-        private int _survivingCount;
-        boolean _deprecated;
+        private volatile int _survivingCount;
+        volatile boolean _deprecated;
 
         public ReferSpecification(Specification specification) {
             if (specification == null) {
@@ -179,6 +181,7 @@ public class SpecificationCache {
      */
     private static class TimeredSweepThread extends Thread {
 
+        private static long DELAY = 30000; // 30 sec wait
         private Map _repeaseSpecs = new LinkedHashMap();
 
         public TimeredSweepThread() {
@@ -196,7 +199,7 @@ public class SpecificationCache {
         }
 
         protected void add(Specification releaseSpec) {
-            long timing = System.currentTimeMillis() + (30 * 1000); // 30 sec wait
+            long timing = System.currentTimeMillis() + DELAY;
             synchronized(_repeaseSpecs) {
                 _repeaseSpecs.put(releaseSpec, new Long(timing));
             }
@@ -206,17 +209,32 @@ public class SpecificationCache {
             while (_sweepThreadAlive) {
                 try {
                     Thread.sleep(1000);
+                    List killedspec = new ArrayList();
                     synchronized(_repeaseSpecs) {
                         for (Iterator it = _repeaseSpecs.entrySet().iterator()
                                 ; it.hasNext(); ) {
-                            Map.Entry entry = (Map.Entry)it.next();
-                            long timeup = ((Long)entry.getValue()).longValue();
+                            Map.Entry entry = (Map.Entry) it.next();
+                            long timeup = ((Long) entry.getValue()).longValue();
                             if (System.currentTimeMillis() > timeup) {
-                                Specification spec = (Specification) entry.getKey();
-                                spec.kill();
-                                it.remove();
+                                // まだ参照されているなら猶予する
+                                long renderingCount =
+                                    RenderUtil.getRenderingCount(entry.getKey());
+                                if (renderingCount > 0) {
+                                    entry.setValue(new Long(timeup + DELAY));
+                                    if (LOG.isTraceEnabled()) {
+                                        LOG.trace("delaying GC because rendering now: "
+                                                + entry.getKey() + ", " + renderingCount);
+                                    }
+                                } else {
+                                    killedspec.add(entry.getKey());
+                                    it.remove();
+                                }
                             }
                         }
+                    }
+                    for (Iterator it = killedspec.iterator(); it.hasNext();) {
+                        Specification spec = (Specification) it.next();
+                        spec.kill();
                     }
                 } catch (InterruptedException e) {
                     // no operation
@@ -226,7 +244,6 @@ public class SpecificationCache {
     }
 
     private class GCReceiver implements ReferenceCache.SweepListener {
-        private final Log LOG = LogFactory.getLog(SpecificationCache.class);
         private volatile int _receiveCount = 0;
 
         protected GCReceiver() {
@@ -238,7 +255,7 @@ public class SpecificationCache {
         }
 
         public void sweepFinish(ReferenceCache monitor, Object label) {
-            synchronized(SpecificationCache.this) {
+            synchronized (SpecificationCache.this) {
                 if (_specifications == null ||_sweepThreadAlive == false) {
                     return;
                 }
@@ -264,8 +281,8 @@ public class SpecificationCache {
                         ReferSpecification refer =
                             (ReferSpecification) it.next();
                         Specification spec = refer.getSpecification();
-                        _cleanUpSpecification.add(spec);
                         _specifications.remove(spec.getSystemID());
+                        _cleanUpSpecification.add(spec);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("remove " + label +"th time. "
                                     + spec.getSystemID() + " remove from cache");

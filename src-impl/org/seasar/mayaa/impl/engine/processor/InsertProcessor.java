@@ -201,6 +201,8 @@ public class InsertProcessor
         String requestedSuffix = _suffix;
         String extension = _extension;
         boolean fireEvent = true;
+
+        // layoutからcontentを呼ぶ場合
         if (renderPage == null) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
@@ -209,6 +211,7 @@ public class InsertProcessor
             extension = request.getExtension();
             fireEvent = false;
         }
+
         if (renderPage == null) {
             throw new IllegalStateException();
         }

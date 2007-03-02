@@ -53,7 +53,7 @@ public interface Page
      * @return テンプレート拡張子。
      */
     String getSuperExtension();
-    
+
     /**
      * ページの名前を取得する。/context/hello.htmlであれば、
      * 「/context/hello」を返す。
@@ -74,7 +74,7 @@ public interface Page
      * @return レンダリングするテンプレート。
      */
     Template getTemplate(String suffix, String extension);
-    
+
     /**
      * テンプレートレンダリングを行う。
      * @param requestedSuffix リクエストされたテンプレート接尾辞。
@@ -90,5 +90,5 @@ public interface Page
      * @return true=登録成功 / false=既に登録済み
      */
     boolean registBeginRenderNotifier(TemplateProcessor processor);
-    
+
 }

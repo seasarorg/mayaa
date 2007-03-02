@@ -39,7 +39,7 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
     public void setOwner(NodeTreeWalker owner) {
         _owner = owner;
     }
-    
+
     // NodeTreeWalker implemetns ------------------------------------
 
     public void setParentNode(NodeTreeWalker parentNode) {
@@ -113,15 +113,14 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
     public void kill() {
         _parent = null;
-        
+
         if (_childNodes != null) {
-            synchronized(_childNodes) {
-                for (Iterator it = iterateChildNode(); it.hasNext(); ) {
-                    NodeTreeWalker node = (NodeTreeWalker) it.next();
-                    node.kill();
-                }
-                _childNodes.clear();
+            for (Iterator it = iterateChildNode(); it.hasNext(); ) {
+                NodeTreeWalker node = (NodeTreeWalker) it.next();
+                node.kill();
             }
+            _childNodes.clear();
+            _childNodes = null;
         }
         _owner = null;
     }

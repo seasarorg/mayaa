@@ -235,11 +235,9 @@ public class TemplateProcessorSupport
             _injectedNode = null;
             _parent = null;
             if (_children != null) {
-                synchronized (_children) {
-                    for (Iterator it = _children.iterator(); it.hasNext(); ) {
-                        TemplateProcessor processor = (TemplateProcessor) it.next();
-                        processor.kill();
-                    }
+                for (Iterator it = _children.iterator(); it.hasNext(); ) {
+                    TemplateProcessor processor = (TemplateProcessor) it.next();
+                    processor.kill();
                 }
             }
             clearChildProcessors();

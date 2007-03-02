@@ -63,11 +63,9 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
     }
 
     public void kill() {
-        synchronized (this) {
-            _superPage = null;
-            _beginRenderListeners = null;
-            super.kill();
-        }
+        _superPage = null;
+        _beginRenderListeners = null;
+        super.kill();
     }
 
     protected void prepareSuper() {

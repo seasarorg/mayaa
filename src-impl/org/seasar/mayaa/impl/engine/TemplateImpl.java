@@ -152,15 +152,13 @@ public class TemplateImpl
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
     }
-    
+
     public void kill() {
-        synchronized (this) {
-            for (Iterator it = _childProcessors.iterator(); it.hasNext(); ) {
-                TemplateProcessor processor = (TemplateProcessor) it.next();
-                processor.kill();
-            }
-            super.kill();
+        for (Iterator it = _childProcessors.iterator(); it.hasNext(); ) {
+            TemplateProcessor processor = (TemplateProcessor) it.next();
+            processor.kill();
         }
+        super.kill();
     }
 
     protected void replaceProcessors(List processors) {
@@ -231,12 +229,12 @@ public class TemplateImpl
                 throw new IllegalArgumentException();
             }
             if (index < 0 || index > _childProcessors.size()) {
-                throw new IndexOutOfBoundsException(); 
+                throw new IndexOutOfBoundsException();
             }
             _childProcessors.add(index, child);
             child.setParentProcessor(this);
             for (index += 1; index < _childProcessors.size(); index++) {
-                child = (ProcessorTreeWalker)_childProcessors.get(index); 
+                child = (ProcessorTreeWalker)_childProcessors.get(index);
                 child.setParentProcessor(this);
             }
         }
@@ -261,7 +259,7 @@ public class TemplateImpl
     public ProcessorTreeWalker getChildProcessor(int index) {
         return (ProcessorTreeWalker) _childProcessors.get(index);
     }
-    
+
     // for serialize
     private static final String SERIALIZE_CONTROLLER_KEY =
         TemplateImpl.class.getName() + "#serializeController";
@@ -276,7 +274,7 @@ public class TemplateImpl
             }
         });
     }
-    
+
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         out.defaultWriteObject();
     }
@@ -284,28 +282,28 @@ public class TemplateImpl
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
-        
+
         if (_childProcessors != null) {
             for (int i = _childProcessors.size() - 1; i >= 0 ; i--) {
                 ProcessorTreeWalker child =
                     (ProcessorTreeWalker) _childProcessors.get(i);
                 child.setParentProcessor(this);
             }
-        }        
+        }
         nodeSerializer().specLoaded(this);
     }
-    
+
     protected void afterDeserialize() {
         processorSerializer().release();
     }
-    
+
     public static ProcessorSerializeController processorSerializer() {
         return (ProcessorSerializeController) CycleUtil.getGlobalVariable(
                 SERIALIZE_CONTROLLER_KEY, null);
     }
-    
+
     // ProcessorReferenceResolver implements ------------------------
-    
+
     public void registResolveProcessorListener(
             String uniqueID, ProcessorResolveListener listener) {
         processorSerializer().registResolveProcessorListener(uniqueID, listener);
@@ -324,5 +322,5 @@ public class TemplateImpl
     public boolean isOnTemplate() {
         return true;
     }
-    
+
 }

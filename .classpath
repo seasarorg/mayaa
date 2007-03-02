@@ -5,7 +5,7 @@
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.7.0.jar" sourcepath="srczip/commons-beanutils-src-1.7.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar" sourcepath="srczip/nekohtml-src-0.9.5.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.7.1.jar" sourcepath="srczip/Xerces-J-src.2.7.1.zip"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/jsp-2.0.jar" sourcepath="srczip/jsp-src-2.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.4.jar" sourcepath="srczip/servlet-src-2.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-collections-3.1.jar" sourcepath="srczip/commons-collections-src-3.1.zip"/>

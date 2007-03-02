@@ -49,7 +49,8 @@ public class InsertProcessor
         extends TemplateProcessorSupport
         implements CONST_IMPL, InformalPropertyAcceptable {
 
-    private static final long serialVersionUID = -1240398725406503403L;
+    private static final long serialVersionUID = -945900326182620192L;
+
     private static final String RENDERING_INSERT_CHAIN =
         InsertProcessor.class.getName() + "#renderingInsertChain";
     private static final String INSERT_PARAMS =
@@ -274,13 +275,6 @@ public class InsertProcessor
         invokeAfterRenderComponent();
         popRenderingParams();
         return super.doEndProcess();
-    }
-
-    public void kill() {
-        if (_attributes != null) {
-            _attributes.clear();
-        }
-        super.kill();
     }
 
     // for serialize

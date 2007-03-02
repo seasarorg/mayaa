@@ -50,13 +50,13 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ElementProcessor extends AbstractAttributableProcessor
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = 923306412062075314L;
+    private static final long serialVersionUID = -1041576023468766303L;
     private static final String SUFFIX_DUPLICATED = "_d";
     private static final Set XHTML_EMPTY_ELEMENTS;
     private static final String RENDERED_NS_STACK_KEY =
-        ElementProcessor.class.getName() + "#renderedNSStack";
+            ElementProcessor.class.getName() + "#renderedNSStack";
     private static final String CURRENT_NS_KEY =
-        ElementProcessor.class.getName() + "#currentNS";
+            ElementProcessor.class.getName() + "#currentNS";
     static {
         XHTML_EMPTY_ELEMENTS = new HashSet();
         XHTML_EMPTY_ELEMENTS.add("base");
@@ -544,11 +544,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
             renderExit();
             popProcesstimeInfo();
         }
-    }
-
-    public void kill() {
-        _name = null;
-        super.kill();
     }
 
     protected void optimizeNodes() {

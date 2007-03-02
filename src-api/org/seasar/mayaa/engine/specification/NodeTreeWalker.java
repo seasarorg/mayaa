@@ -49,7 +49,7 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
      * @param childNode
      */
     void insertChildNode(int index, NodeTreeWalker childNode);
-    
+
     /**
      * 子ノードを削除する。
      * @param childNode 子ノード。
@@ -61,7 +61,7 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
      * @return 子ノードの数
      */
     int getChildNodeSize();
-    
+
     /**
      * 指定インデックスの子ノードを返す。
      * @param index インデックス値。
@@ -78,6 +78,7 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
     /**
      * インスタンスを破棄対象とし、親ノードや子ノードなど
      * インスタンスが保持していた他のオブジェクトへの参照リンクを切る。
+     * @deprecated
      */
     void kill();
 

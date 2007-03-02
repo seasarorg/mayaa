@@ -51,7 +51,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class SpecificationImpl extends ParameterAwareImpl
         implements Specification, NodeReferenceResolver, CONST_IMPL {
 
-    private static final long serialVersionUID = 174451168836001746L;
+    private static final long serialVersionUID = -7503898036935182468L;
+
     private static final Log LOG =
         LogFactory.getLog(SpecificationImpl.class);
 
@@ -187,15 +188,6 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     // NodeTreeWalker implements ------------------------------------
 
-    public void kill() {
-        _deprecated = true;
-        if (_delegateNodeTreeWalker != null) {
-            _delegateNodeTreeWalker.kill();
-            _delegateNodeTreeWalker = null;
-        }
-        setTimestamp(null);
-    }
-
     public void clearChildNodes() {
         if (_delegateNodeTreeWalker != null) {
             _delegateNodeTreeWalker.clearChildNodes();
@@ -232,6 +224,10 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     public int getChildNodeSize() {
         return getNodeTreeWalker().getChildNodeSize();
+    }
+
+    public void kill() {
+        // TODO deprecated のため削除
     }
 
     // NodeReferenceResolverFinder implements --------------------------------------
@@ -283,7 +279,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         File cacheDir = new File(cachePath);
         cacheDir.mkdirs();
         return new File(cacheDir,
-                systemID.substring("/".length()).replace('/', '.') + ".ser");
+                systemID.substring("/".length()).replace('/', '`') + ".ser");
     }
 
     public void serialize() {

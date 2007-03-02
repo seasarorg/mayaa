@@ -35,7 +35,7 @@ import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
  */
 public class FormatNumberProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 7899970766673369995L;
+    private static final long serialVersionUID = 5513075315121041838L;
 
     private static Map _formatPools =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
@@ -102,12 +102,6 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
             }
             return pool;
         }
-    }
-
-    public void kill() {
-        _value = null;
-        _default = null;
-        super.kill();
     }
 
     // support class

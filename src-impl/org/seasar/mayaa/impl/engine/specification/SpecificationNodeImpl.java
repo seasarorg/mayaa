@@ -43,7 +43,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class SpecificationNodeImpl extends NamespaceImpl
         implements SpecificationNode, CONST_IMPL {
 
-    private static final long serialVersionUID = -6279723388151915362L;
+    private static final long serialVersionUID = 7084397580802643259L;
     private static final Log LOG = LogFactory.getLog(SpecificationNodeImpl.class);
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
 
@@ -134,9 +134,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     public int getSequenceID() {
-        if (_sequenceID < 0) {
-            LOG.info("already unloaded." + makeReleasedLabel());
-        }
         return _sequenceID;
     }
 
@@ -230,6 +227,10 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return copyTo(FILTER_ALL);
     }
 
+    public void kill() {
+        // TODO deprecated のため削除
+    }
+
     // NodeTreeWalker implemetns ------------------------------------
 
     public void setParentNode(NodeTreeWalker parent) {
@@ -262,20 +263,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     public int getChildNodeSize() {
         return getNodeTreeWalker().getChildNodeSize();
-    }
-
-    public void kill() {
-        if (LOG.isTraceEnabled()) {
-            makeReleasedLabel();
-        }
-        _sequenceID = -1;
-        if (_attributes != null) {
-            _attributes.clear();
-        }
-        if (_delegateNodeTreeWalker != null) {
-            _delegateNodeTreeWalker.kill();
-            _delegateNodeTreeWalker = null;
-        }
     }
 
     public void clearChildNodes() {

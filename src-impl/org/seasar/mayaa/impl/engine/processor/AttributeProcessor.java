@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class AttributeProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -8399232805371906530L;
+    private static final long serialVersionUID = 87560642282310502L;
 
     private PrefixAwareName _name;
     private ProcessorProperty _value;
@@ -103,12 +103,6 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         parent.addProcesstimeProperty(
                 new ProcessorPropertyWrapper(_name, _value, basePath));
         return ProcessStatus.SKIP_BODY;
-    }
-
-    public void kill() {
-        _name = null;
-        _value = null;
-        super.kill();
     }
 
     // support class ------------------------------------------------

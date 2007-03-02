@@ -29,7 +29,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class ForProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = -1762792311844341560L;
+    private static final long serialVersionUID = 4166588057004692415L;
     private static final int DEFAULT_MAX = 256;
     private static final String COUNTER_KEY = ForProcessor.class.getName() + "#counter";
     static {
@@ -89,11 +89,11 @@ public class ForProcessor extends TemplateProcessorSupport
         return ((Integer)CycleUtil.getLocalVariable(
                 COUNTER_KEY, this, null)).intValue();
     }
-    
+
     protected void setCounter(int counter) {
         CycleUtil.setLocalVariable(COUNTER_KEY, this, new Integer(counter));
     }
-    
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
         CycleUtil.clearLocalVariable(COUNTER_KEY, this);
         if (_init != null) {
@@ -109,13 +109,6 @@ public class ForProcessor extends TemplateProcessorSupport
         return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
     }
 
-    public void kill() {
-        _init = null;
-        _test = null;
-        _after = null;
-        super.kill();
-    }
-    
     // for serialize
 
     private void readObject(java.io.ObjectInputStream in)

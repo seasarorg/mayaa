@@ -27,7 +27,8 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class NodeTreeWalkerImpl implements NodeTreeWalker {
-    private static final long serialVersionUID = -1269833640801417204L;
+
+    private static final long serialVersionUID = 2482332186727952663L;
 
     private transient NodeTreeWalker _owner;
     private transient NodeTreeWalker _parent;
@@ -111,20 +112,6 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
         return _childNodes.iterator();
     }
 
-    public void kill() {
-        _parent = null;
-
-        if (_childNodes != null) {
-            for (Iterator it = iterateChildNode(); it.hasNext(); ) {
-                NodeTreeWalker node = (NodeTreeWalker) it.next();
-                node.kill();
-            }
-            _childNodes.clear();
-            _childNodes = null;
-        }
-        _owner = null;
-    }
-
     public void clearChildNodes() {
         if (_childNodes != null) {
             synchronized (_childNodes) {
@@ -132,6 +119,10 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
                 _childNodes = null;
             }
         }
+    }
+
+    public void kill() {
+        // TODO deprecated のため削除
     }
 
     // PositionAware implements -------------------------------------

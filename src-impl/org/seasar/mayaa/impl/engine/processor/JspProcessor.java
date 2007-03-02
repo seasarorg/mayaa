@@ -75,7 +75,8 @@ public class JspProcessor extends TemplateProcessorSupport
             TryCatchFinallyProcessor,
             CONST_IMPL {
 
-    private static final long serialVersionUID = -4416320364576454337L;
+    private static final long serialVersionUID = -5567131378936566428L;
+
     private static final PageContext _pageContext = new PageContextImpl();
 
     // TODO TagPoolの保持期間などパフォーマンスの調整
@@ -508,15 +509,6 @@ public class JspProcessor extends TemplateProcessorSupport
         } else {
             throw new IllegalStateException();
         }
-    }
-
-    public void kill() {
-        _tagClass = null;
-        if (_properties != null) {
-            _properties.clear();
-        }
-        _variableInfo = null;
-        super.kill();
     }
 
     // for serialize

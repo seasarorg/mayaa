@@ -41,7 +41,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
 
-    private static final long serialVersionUID = -5345416943673041700L;
+    private static final long serialVersionUID = -7151911061582725013L;
     static final Log LOG = LogFactory.getLog(PageImpl.class);
     private static final String CURRENT_PAGE_KEY = "__currentPage__";
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
@@ -60,12 +60,6 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
             pageName = "/" + pageName;
         }
         _pageName = pageName;
-    }
-
-    public void kill() {
-        _superPage = null;
-        _beginRenderListeners = null;
-        super.kill();
     }
 
     protected void prepareSuper() {
@@ -143,7 +137,6 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
                 if (template.getSource().exists()) {
                     return template;
                 }
-                template.kill();
                 return null;
             }
             return engine.createTemplateInstance(this, suffix, extension);
@@ -222,11 +215,6 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
 
     public static void setCurrentComponent(Page component) {
         CycleUtil.getRequestScope().setAttribute(CURRENT_COMPONENT_KEY, component);
-    }
-
-    protected void finalize() throws Throwable {
-        kill();
-        super.finalize();
     }
 
     // for serialize

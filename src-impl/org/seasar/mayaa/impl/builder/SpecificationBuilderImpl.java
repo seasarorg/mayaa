@@ -34,7 +34,7 @@ import org.xml.sax.XMLReader;
 public class SpecificationBuilderImpl extends ParameterAwareImpl
         implements SpecificationBuilder, CONST_IMPL {
 
-    private static final long serialVersionUID = 7852577574830768959L;
+    private static final long serialVersionUID = -1272395705148798946L;
 
     private boolean _outputMayaaWhitespace = false;
 
@@ -66,7 +66,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
         if (source.exists()) {
             SpecificationNodeHandler handler =
                 createContentHandler(specification);
-            
+
             XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
             XMLReader xmlReader =
                 pool.borrowXMLReader(handler, true, false, false);
@@ -78,7 +78,6 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
                 xmlReader.parse(input);
                 afterBuild(specification);
             } catch (Throwable t) {
-                specification.kill();
                 if (t instanceof RuntimeException) {
                     throw (RuntimeException) t;
                 }

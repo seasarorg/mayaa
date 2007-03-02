@@ -72,6 +72,18 @@ MayaaのWEBサイト：
 - (rev.2900) htmlタグやbodyタグのないテンプレートの場合、出力に<HTML>タグなどが
   自動的に追加されてしまう問題を修正しました。
 
+- (rev.2903) JIRA[MAYAA-21] Specification#kill()が呼ばれるタイミングでdeadlockが
+  発生する問題を修正しました。
+
+- (rev.2903) JIRA[MAYAA-22] GCが頻繁に発生する状況でIllegalStateExceptionが発生する
+  問題を修正しました。
+
+- (rev.2903) APIのTemplateProcessor#kill(), NodeTreeWalker#kill() をdeprecatedに
+  しました。同様の処理をおこないたい場合はObject#finalize()で実装してください。
+
+- (rev.2903) ビルド結果キャッシュのファイル名規則を変更しました。
+  ディレクトリの区切りを.(ピリオド)から`(バッククォート)にしました。
+
 
 -------------------------------------------------------------------
 変更点 1.1.5 -> 1.1.6 (2007/01/14)

@@ -19,7 +19,6 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +34,6 @@ public class SpecificationCache {
 
     static final Log LOG = LogFactory.getLog(SpecificationCache.class);
 
-    protected static volatile TimeredSweepThread _cleanUpSpecification =
-        new TimeredSweepThread();
     /** 終了処理後かどうか。終了処理後は追加処理をしない。 */
     protected static volatile boolean _sweepThreadAlive = true;
 
@@ -58,25 +55,12 @@ public class SpecificationCache {
 
     protected static void relaseThread() {
         _sweepThreadAlive = false;
-        _cleanUpSpecification = null;
     }
 
     protected void postNewGabage() {
         Object gabage = new Object();
         _gabage = new SoftReference(gabage);
         _gcChecker.add(gabage);
-    }
-
-    /**
-     * 掃除スレッドに投げます。
-     * 呼ぶ側でSpecificationCache.thisでsynchronizedして呼ぶようにします。
-     *
-     * @param releaseSpec
-     */
-    protected void postGabage(final Specification releaseSpec) {
-        if (_sweepThreadAlive) {
-            _cleanUpSpecification.post(releaseSpec);
-        }
     }
 
     public boolean contains(String systemID) {
@@ -98,9 +82,6 @@ public class SpecificationCache {
         }
         Specification result = refer.getSpecification();
         if (refer.isDeprecated()) {
-            synchronized(this) {
-                postGabage(result);
-            }
             return null;
         }
         return result;
@@ -116,9 +97,6 @@ public class SpecificationCache {
                 if (old == specification) {
                     return;
                 }
-                // ファイルシステムの違いによって大文字小文字が区別されない場合に
-                // ここに到達する場合があるので。
-                postGabage(old);
             }
             ReferSpecification refer = new ReferSpecification(specification);
             _specifications.put(specification.getSystemID(), refer);
@@ -172,77 +150,6 @@ public class SpecificationCache {
         }
     }
 
-    /**
-     * Specificationインスタンスの解放処理を独自スレッドで実行します。
-     * コンストラクタでデーモンスレッドとして動作を開始します。
-     * 解放したいSpecificationはpostメソッドで渡します。
-     *
-     * @author Taro Kato (Gluegent Inc.)
-     */
-    private static class TimeredSweepThread extends Thread {
-
-        private static long DELAY = 30000; // 30 sec wait
-        private Map _repeaseSpecs = new LinkedHashMap();
-
-        public TimeredSweepThread() {
-            setName("TimeredSweepThread");
-            setDaemon(true);
-            start();
-        }
-
-        public void post(final Specification releaseSpec) {
-            new Thread(new Runnable() {
-                public void run() {
-                    add(releaseSpec);
-                }
-            }).start();
-        }
-
-        protected void add(Specification releaseSpec) {
-            long timing = System.currentTimeMillis() + DELAY;
-            synchronized(_repeaseSpecs) {
-                _repeaseSpecs.put(releaseSpec, new Long(timing));
-            }
-        }
-
-        public void run() {
-            while (_sweepThreadAlive) {
-                try {
-                    Thread.sleep(1000);
-                    List killedspec = new ArrayList();
-                    synchronized(_repeaseSpecs) {
-                        for (Iterator it = _repeaseSpecs.entrySet().iterator()
-                                ; it.hasNext(); ) {
-                            Map.Entry entry = (Map.Entry) it.next();
-                            long timeup = ((Long) entry.getValue()).longValue();
-                            if (System.currentTimeMillis() > timeup) {
-                                // まだ参照されているなら猶予する
-                                long renderingCount =
-                                    RenderUtil.getRenderingCount(entry.getKey());
-                                if (renderingCount > 0) {
-                                    entry.setValue(new Long(timeup + DELAY));
-                                    if (LOG.isTraceEnabled()) {
-                                        LOG.trace("delaying GC because rendering now: "
-                                                + entry.getKey() + ", " + renderingCount);
-                                    }
-                                } else {
-                                    killedspec.add(entry.getKey());
-                                    it.remove();
-                                }
-                            }
-                        }
-                    }
-                    for (Iterator it = killedspec.iterator(); it.hasNext();) {
-                        Specification spec = (Specification) it.next();
-                        spec.kill();
-                    }
-                } catch (InterruptedException e) {
-                    // no operation
-                }
-            }
-        }
-    }
-
     private class GCReceiver implements ReferenceCache.SweepListener {
         private volatile int _receiveCount = 0;
 
@@ -282,7 +189,7 @@ public class SpecificationCache {
                             (ReferSpecification) it.next();
                         Specification spec = refer.getSpecification();
                         _specifications.remove(spec.getSystemID());
-                        _cleanUpSpecification.add(spec);
+
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("remove " + label +"th time. "
                                     + spec.getSystemID() + " remove from cache");

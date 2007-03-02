@@ -25,7 +25,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class IfProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -7463140786021700658L;
+    private static final long serialVersionUID = -4477824317504363546L;
 
     private ProcessorProperty _test;
 
@@ -45,8 +45,4 @@ public class IfProcessor extends TemplateProcessorSupport {
         return test ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
 
-    public void kill() {
-        _test = null;
-        super.kill();
-    }
 }

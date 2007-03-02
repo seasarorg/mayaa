@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +53,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class TemplateProcessorSupport
         implements TemplateProcessor, OptimizableProcessor {
 
-    private static final long serialVersionUID = -3521980479718620027L;
+    private static final long serialVersionUID = 8297043573746398769L;
     private static final Log LOG = LogFactory.getLog(TemplateProcessorSupport.class);
     private static final String PREFIX_UNIQUE_ID = "_m";
 
@@ -229,21 +228,6 @@ public class TemplateProcessorSupport
         }
     }
 
-    public void kill() {
-        synchronized (this) {
-            _originalNode = null;
-            _injectedNode = null;
-            _parent = null;
-            if (_children != null) {
-                for (Iterator it = _children.iterator(); it.hasNext(); ) {
-                    TemplateProcessor processor = (TemplateProcessor) it.next();
-                    processor.kill();
-                }
-            }
-            clearChildProcessors();
-        }
-    }
-
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
         return new ProcessorTreeWalker[] { this };
     }
@@ -262,6 +246,10 @@ public class TemplateProcessorSupport
             }
         }
         super.finalize();
+    }
+
+    public void kill() {
+        // TODO deprecated のため削除
     }
 
     // for serialize

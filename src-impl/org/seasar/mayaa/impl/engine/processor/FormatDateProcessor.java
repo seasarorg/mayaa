@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class FormatDateProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -3881431416799800307L;
+    private static final long serialVersionUID = -2331626109260967664L;
 
     private ProcessorProperty _value;
     private ProcessorProperty _default;
@@ -81,12 +81,6 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
             return (String) _default.getValue().execute(null);
         }
         return "";
-    }
-
-    public void kill() {
-        _value = null;
-        _default = null;
-        super.kill();
     }
 
 }

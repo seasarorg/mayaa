@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -293,104 +292,40 @@ public class RenderUtil implements CONST_IMPL {
         saveToCycle(page);
         List pageStack = new LinkedList();
         List templateStack = new LinkedList();
-        try {
-            do {
-                // stack for afterRender event.
-                enter(page);
-                pageStack.add(0, page);
-                if (fireEvent) {
-                    SpecificationUtil.startScope(variables);
-                    SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
-                }
-                Template template =
-                    getTemplate(requestedSuffix, page, suffix, extension);
-                if (template != null) {
-                    // LIFO access
-                    enter(template);
-                    templateStack.add(0, template);
-                }
-                suffix = page.getSuperSuffix();
-                extension = page.getSuperExtension();
-                page = page.getSuperPage();
-                variables = null;
-            } while(page != null);
-            ProcessStatus ret = null;
-            if (templateStack.size() > 0) {
-                Template[] templates = (Template[])
-                        templateStack.toArray(new Template[templateStack.size()]);
-                ret = renderer.renderTemplate(topLevelPage, templates);
-                saveToCycle(page);
-            }
+        do {
+            // stack for afterRender event.
+            pageStack.add(0, page);
             if (fireEvent) {
-                for (int i = 0; i < pageStack.size(); i++) {
-                    page = (Page) pageStack.get(i);
-                    saveToCycle(page);
-                    SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
-                    SpecificationUtil.endScope();
-                }
+                SpecificationUtil.startScope(variables);
+                SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
-            return ret;
-        } finally {
-            for (int i = 0; i < templateStack.size(); i++) {
-                leave(templateStack.get(i));
+            Template template =
+                getTemplate(requestedSuffix, page, suffix, extension);
+            if (template != null) {
+                // LIFO access
+                templateStack.add(0, template);
             }
+            suffix = page.getSuperSuffix();
+            extension = page.getSuperExtension();
+            page = page.getSuperPage();
+            variables = null;
+        } while(page != null);
+        ProcessStatus ret = null;
+        if (templateStack.size() > 0) {
+            Template[] templates = (Template[])
+                    templateStack.toArray(new Template[templateStack.size()]);
+            ret = renderer.renderTemplate(topLevelPage, templates);
+            saveToCycle(page);
+        }
+        if (fireEvent) {
             for (int i = 0; i < pageStack.size(); i++) {
-                leave(pageStack.get(i));
+                page = (Page) pageStack.get(i);
+                saveToCycle(page);
+                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+                SpecificationUtil.endScope();
             }
         }
-    }
-
-    private static Map _renderCount = new HashMap();
-
-    /**
-     * renderPageでの参照カウントを増やす。
-     *
-     * @param key renderPageでレンダリング中のオブジェクト
-     */
-    private static void enter(Object key) {
-        synchronized (_renderCount) {
-            Long count = (Long) _renderCount.get(key);
-            if (count == null) {
-                count = new Long(0);
-            }
-            _renderCount.put(key, new Long(count.longValue() + 1));
-        }
-    }
-
-    /**
-     * renderPageでの参照カウントを減らす。
-     *
-     * @param key renderPageでレンダリング中のオブジェクト
-     */
-    private static void leave(Object key) {
-        synchronized (_renderCount) {
-            Long count = (Long) _renderCount.get(key);
-            if (count != null) {
-                long next = count.longValue() - 1;
-                if (next > 0) {
-                    _renderCount.put(key, new Long(next));
-                } else {
-                    _renderCount.remove(key);
-                }
-            }
-        }
-    }
-
-    /**
-     * renderPageでのレンダリング中の数を返す。
-     *
-     * @param key 参照カウントを取得したオブジェクト
-     * @return レンダリング中の数
-     */
-    public static long getRenderingCount(Object key) {
-        long result = 0;
-        synchronized (_renderCount) {
-            Long count = (Long) _renderCount.get(key);
-            if (count != null) {
-                result = count.longValue();
-            }
-        }
-        return result;
+        return ret;
     }
 
 }

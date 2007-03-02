@@ -60,9 +60,10 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class EngineImpl extends SpecificationImpl
         implements Engine, CONST_IMPL {
 
+    private static final long serialVersionUID = 643873507172011552L;
+
     static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
-    private static final long serialVersionUID = 1428444571422324206L;
     public static final String PAGE_CLASS = "pageClass";
     public static final String TEMPLATE_CLASS = "templateClass";
     public static final String PAGE_SERIALIZE = "pageSerialize";
@@ -112,13 +113,11 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public Page getPage(String pageName) {
-        synchronized (this) {
-            Page page = findPageFromCache(pageName);
-            if (page == null) {
-                page = createPageInstance(pageName);
-            }
-            return page;
+        Page page = findPageFromCache(pageName);
+        if (page == null) {
+            page = createPageInstance(pageName);
         }
+        return page;
     }
 
     public boolean isPageRequested() {
@@ -287,16 +286,8 @@ public class EngineImpl extends SpecificationImpl
         throw new UnsupportedOperationException();
     }
 
-    public void kill() {
-        super.kill();
-        releaseDefaultSpecification();
-    }
-
     protected void releaseDefaultSpecification() {
-        if (_defaultSpecification != null) {
-            _defaultSpecification.kill();
-            _defaultSpecification = null;
-        }
+        _defaultSpecification = null;
     }
 
     public void insertChildNode(int index, NodeTreeWalker childNode) {
@@ -525,7 +516,6 @@ public class EngineImpl extends SpecificationImpl
                     }
                     return spec;
                 }
-                spec.kill();
             }
         }
         SourceDescriptor source =
@@ -550,7 +540,6 @@ public class EngineImpl extends SpecificationImpl
                 SpecificationUtil.endScope();
             }
         } catch(RuntimeException e) {
-            spec.kill();
             throw e;
         }
         if (registCache) {
@@ -619,7 +608,7 @@ public class EngineImpl extends SpecificationImpl
 
     public synchronized void destroy() {
         _destroyed = true;
-        kill();
+        releaseDefaultSpecification();
         if (_specCache != null) {
             _specCache.release();
         }

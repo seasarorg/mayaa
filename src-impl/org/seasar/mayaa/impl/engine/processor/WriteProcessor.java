@@ -29,8 +29,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class WriteProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -8069702863937020350L;
-
+    private static final long serialVersionUID = 9014904982423846249L;
     private boolean _forHTML;
     private boolean _forHyperText;
     private ProcessorProperty _value;
@@ -100,12 +99,4 @@ public class WriteProcessor extends TemplateProcessorSupport {
         return property != null && ObjectUtil.booleanValue(property.getValue().execute(null), false);
     }
 
-    public void kill() {
-        _value = null;
-        _default = null;
-        _escapeXml = null;
-        _escapeWhitespace = null;
-        _escapeEol = null;
-        super.kill();
-    }
 }

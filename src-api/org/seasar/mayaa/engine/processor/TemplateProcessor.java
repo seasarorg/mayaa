@@ -92,14 +92,16 @@ public interface TemplateProcessor extends ProcessorTreeWalker {
     /**
      * 本プロセッサのインスタンスを破棄対象とし、
      * 本プロセッサが保持していた他のオブジェクトへの参照リンクを切る。
+     * @deprecated
      */
     void kill();
 
     /**
      * ページに対して予め通知を受けるように登録していた場合に、
      * 呼び出される。
-     * 
+     *
      * @param topLevelPage 描画トップレベルのページ。
      */
     void notifyBeginRender(Page topLevelPage);
+
 }

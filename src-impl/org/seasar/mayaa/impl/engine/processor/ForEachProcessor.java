@@ -34,9 +34,10 @@ import org.seasar.mayaa.impl.util.IteratorUtil;
 public class ForEachProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = -1762792311844341560L;
+    private static final long serialVersionUID = 5143412585484588336L;
+
     private static final String PROCESS_TIME_INFO_KEY =
-        ForEachProcessor.class.getName() + "#processTimeInfo";
+            ForEachProcessor.class.getName() + "#processTimeInfo";
     static {
         CycleUtil.registVariableFactory(PROCESS_TIME_INFO_KEY,
                 new DefaultCycleLocalInstantiator() {
@@ -120,11 +121,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
             return ProcessStatus.SKIP_BODY;
         }
         return ProcessStatus.EVAL_BODY_AGAIN;
-    }
-
-    public void kill() {
-        _items = null;
-        super.kill();
     }
 
     // for serialize

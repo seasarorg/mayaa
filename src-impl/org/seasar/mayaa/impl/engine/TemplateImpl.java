@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
-import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -53,7 +51,7 @@ public class TemplateImpl
         extends SpecificationImpl
         implements Template, NodeReferenceResolver, ProcessorReferenceResolver, CONST_IMPL {
 
-    private static final long serialVersionUID = -5368325487192629078L;
+    private static final long serialVersionUID = 2126209350220642842L;
 
     private String _pageName;
     private String _suffix;
@@ -151,14 +149,6 @@ public class TemplateImpl
         ProcessStatus ret =
             RenderUtil.renderProcessorTree(topLevelPage, this);
         return ret;
-    }
-
-    public void kill() {
-        for (Iterator it = _childProcessors.iterator(); it.hasNext(); ) {
-            TemplateProcessor processor = (TemplateProcessor) it.next();
-            processor.kill();
-        }
-        super.kill();
     }
 
     protected void replaceProcessors(List processors) {

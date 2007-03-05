@@ -105,7 +105,7 @@
 
 	<processor name="null"
 			class="org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport">
-		<description>in order to grouping processor</description>
+		<description>remove element on build process</description>
 		<property name="evalBodyInclude" final="false"/>
 	</processor>
 

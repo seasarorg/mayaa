@@ -378,7 +378,6 @@ public class SpecificationNodeHandler
         if (StringUtil.hasValue(systemID)) {
             node.addAttribute(QM_SYSTEM_ID, systemID);
         }
-        appendCharactersBuffer("\r\n");
     }
 
     public void endDTD() {

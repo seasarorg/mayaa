@@ -254,10 +254,19 @@ public class FileSearchRenderer {
      */
     protected OutputStream createOutputStream(
             final MockHttpServletRequest request, final String systemID) {
-        final String filePath = _outputPath + systemID;
+        String preparedSystemID;
+        if (systemID.startsWith("/") == false) {
+            preparedSystemID = "/" + systemID;
+        } else {
+            preparedSystemID = systemID;
+        }
+        final String filePath =
+                _outputPath + preparedSystemID.replace('/', File.separatorChar);
+
         new File(filePath).getParentFile().mkdirs();
 
         try {
+            LOG.info("output: " + filePath);
             return new FileOutputStream(filePath);
         } catch (FileNotFoundException e) {
             LOG.info(e.getMessage());

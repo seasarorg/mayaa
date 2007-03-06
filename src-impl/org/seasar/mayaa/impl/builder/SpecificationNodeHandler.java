@@ -78,7 +78,7 @@ public class SpecificationNodeHandler
     private boolean _inCData;
 
     // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-    private boolean _beforeElement;// workaround for doctype
+    private boolean _afterDocType;// workaround for doctype
 
     public SpecificationNodeHandler(Specification specification) {
         if (specification == null) {
@@ -146,9 +146,6 @@ public class SpecificationNodeHandler
         _current = _specification;
         _internalNamespacePrefixMap = new HashMap();
         initNamespace();
-
-        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-        _beforeElement = true;// workaround for doctype
     }
 
     protected Map getCurrentInternalNamespacePrefixMap() {
@@ -246,12 +243,25 @@ public class SpecificationNodeHandler
             String localName, String qName, Attributes attributes) {
         // TODO doctype宣言後の改行をテンプレート通りにする
         // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
-        if (_beforeElement) {
-            _beforeElement = false;// workaround for doctype
-            if (_charactersBuffer.length() > 0 && _charactersBuffer.charAt(0) == '\n') {
-                if (localName.equals("html")) {
-                    _charactersBuffer.insert(0, '\r');
+        // また、xercesそのままの場合は改行文字が来ない
+        if (_afterDocType) {
+            _afterDocType = false;// workaround for doctype
+            int length = _charactersBuffer.length();
+            if (length > 0) {
+                int firstCharIndex;
+                for (firstCharIndex = 0; firstCharIndex < length; firstCharIndex++) {
+                    char currentChar = _charactersBuffer.charAt(firstCharIndex);
+                    if (currentChar != ' ' && currentChar != '\t') {
+                        break;
+                    }
                 }
+                if (_charactersBuffer.charAt(firstCharIndex) == '\n') {
+                    _charactersBuffer.insert(firstCharIndex, '\r');
+                } else if (_charactersBuffer.charAt(firstCharIndex) != '\r') {
+                    _charactersBuffer.insert(firstCharIndex, "\r\n");
+                }
+            } else {
+                _charactersBuffer.insert(0, "\r\n");
             }
         }// workaround
 
@@ -319,8 +329,7 @@ public class SpecificationNodeHandler
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-//これは要素内のスペースなので保存する必要は無い
-//        appendCharactersBuffer(buffer, start, length);
+        // no-op (whilte-spaces in element)
     }
 
     public void xmlDecl(String version, String encoding, String standalone) {
@@ -395,6 +404,9 @@ public class SpecificationNodeHandler
         if (StringUtil.hasValue(systemID)) {
             node.addAttribute(QM_SYSTEM_ID, systemID);
         }
+
+        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
+        _afterDocType = true;// workaround for doctype
     }
 
     public void endDTD() {

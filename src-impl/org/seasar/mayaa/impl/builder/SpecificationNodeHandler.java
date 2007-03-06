@@ -77,6 +77,9 @@ public class SpecificationNodeHandler
                 _internalNamespacePrefixMap;
     private boolean _inCData;
 
+    // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
+    private boolean _beforeElement;// workaround for doctype
+
     public SpecificationNodeHandler(Specification specification) {
         if (specification == null) {
             throw new IllegalArgumentException();
@@ -143,6 +146,9 @@ public class SpecificationNodeHandler
         _current = _specification;
         _internalNamespacePrefixMap = new HashMap();
         initNamespace();
+
+        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
+        _beforeElement = true;// workaround for doctype
     }
 
     protected Map getCurrentInternalNamespacePrefixMap() {
@@ -238,6 +244,17 @@ public class SpecificationNodeHandler
 
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
+        // TODO doctype宣言後の改行をテンプレート通りにする
+        // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
+        if (_beforeElement) {
+            _beforeElement = false;// workaround for doctype
+            if (_charactersBuffer.length() > 0 && _charactersBuffer.charAt(0) == '\n') {
+                if (localName.equals("html")) {
+                    _charactersBuffer.insert(0, '\r');
+                }
+            }
+        }// workaround
+
         addCharactersNode();
 
         Namespace elementNS = SpecificationUtil.createNamespace();

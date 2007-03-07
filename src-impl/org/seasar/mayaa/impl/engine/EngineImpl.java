@@ -76,7 +76,11 @@ public class EngineImpl extends SpecificationImpl
     private transient Specification _defaultSpecification;
     private transient ErrorHandler _errorHandler;
     private transient SpecificationCache _specCache;
-    private String _defaultSpecificationID = "";
+    /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
+    private volatile boolean _destroyed = false;
+
+    // parameters
+    private String _defaultSpecificationID = "/default.mayaa";
     private List _templatePathPatterns;
     private Class _pageClass = PageImpl.class;
     private Class _templateClass = TemplateImpl.class;
@@ -85,9 +89,11 @@ public class EngineImpl extends SpecificationImpl
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
     private String _mayaaExtension = ".mayaa";
+
+    // change on setParameter
     private String _mayaaExtensionName = "mayaa";
-    /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
-    private volatile boolean _destroyed = false;
+    private String _defaultPageName = "/default";
+    private boolean _defaultIsMayaa = false;
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
@@ -113,6 +119,14 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public Page getPage(String pageName) {
+        if (_defaultIsMayaa && _defaultPageName.equals(pageName)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(StringUtil.getMessage(EngineImpl.class, 2));
+            }
+            RequestScope request = CycleUtil.getRequestScope();
+            throw new PageNotFoundException(pageName, request.getExtension());
+        }
+
         Page page = findPageFromCache(pageName);
         if (page == null) {
             page = createPageInstance(pageName);
@@ -623,10 +637,20 @@ public class EngineImpl extends SpecificationImpl
 
     public void setParameter(String name, String value) {
         if (DEFAULT_SPECIFICATION.equals(name)) {
-            SourceDescriptor source = new DelaySourceDescriptor();
-            source.setSystemID(value);
-            setSource(source);
-            _defaultSpecificationID = value;
+            if (StringUtil.hasValue(value)) {
+                String systemID;
+                if (value.charAt(0) != '/') {
+                    systemID = "/" + value;
+                } else {
+                    systemID = value;
+                }
+                SourceDescriptor source = new DelaySourceDescriptor();
+                source.setSystemID(systemID);
+                setSource(source);
+                _defaultSpecificationID = systemID;
+
+                setupDefaultIsMayaa();
+            }
         } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
@@ -661,6 +685,8 @@ public class EngineImpl extends SpecificationImpl
                     _mayaaExtension = "." + value;
                     _mayaaExtensionName = value;
                 }
+
+                setupDefaultIsMayaa();
             }
         } else if (TEMPLATE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
@@ -682,6 +708,14 @@ public class EngineImpl extends SpecificationImpl
             _dumpEnabled = Boolean.valueOf(value).booleanValue();
         }
         super.setParameter(name, value);
+    }
+
+    private void setupDefaultIsMayaa() {
+        _defaultIsMayaa = _defaultSpecificationID.endsWith(_mayaaExtension);
+        if (_defaultIsMayaa) {
+            _defaultPageName = _defaultSpecificationID.substring(
+                    0, _defaultSpecificationID.lastIndexOf('.'));
+        }
     }
 
     public String getParameter(String name) {

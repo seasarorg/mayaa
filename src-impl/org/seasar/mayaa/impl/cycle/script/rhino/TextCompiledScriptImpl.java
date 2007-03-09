@@ -179,6 +179,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             // 行番号はスクリプト次第でずれてしまう。
             int offsetLine;
             String message;
+            String sourceName;
             if (e instanceof JavaScriptException
                     && ((JavaScriptException)e).getValue() instanceof IdScriptableObject) {
                 offsetLine = -1;
@@ -197,13 +198,18 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             if (e.lineSource() == null && message != null) {
                 String[] lines = message.split("\n");
                 offsetLine = (lines.length > offsetLine) ? offsetLine : _offsetLine;
-                if (lines.length > offsetLine) {
+                if (offsetLine >= 0 && lines.length > offsetLine) {
                     e.initLineSource(lines[offsetLine]);
+                    sourceName = _sourceName;
+                } else {
+                	sourceName = e.sourceName();
                 }
+            } else {
+            	sourceName = e.sourceName();
             }
             throw new OffsetLineRhinoException(
                     message,
-                    _sourceName, e.lineNumber(), e.lineSource(),
+                    sourceName, e.lineNumber(), e.lineSource(),
                     e.columnNumber(), offsetLine, e.getCause());
         } finally {
             Context.exit();

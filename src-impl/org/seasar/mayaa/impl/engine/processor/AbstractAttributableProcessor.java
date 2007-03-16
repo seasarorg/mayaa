@@ -147,11 +147,10 @@ public abstract class AbstractAttributableProcessor
      * 代わりに{@link processStart(Page)}をoverrideすること。
      */
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        prepareProcesstimeInfo();
         if (_childEvaluation) {
+            prepareProcesstimeInfo();
             pushProcesstimeInfo();
         }
-
         return processStart(topLevelPage);
     }
 

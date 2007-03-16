@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.MethodUtils;
@@ -254,6 +255,16 @@ public class ObjectUtil {
         Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
         BooleanConverter converter = new BooleanConverter(def);
         return ((Boolean) converter.convert(null, obj)).booleanValue();
+    }
+
+    public static boolean canBooleanConvert(Object obj) {
+    	BooleanConverter converter = new BooleanConverter();
+    	try {
+    		converter.convert(null, obj);
+    	} catch(ConversionException e) {
+    		return false;
+    	}
+    	return true;
     }
 
     public static Number numberValue(Object obj, Number defaultValue) {

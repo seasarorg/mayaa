@@ -71,9 +71,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
+    	/* 値なし属性もサポート(ただし非推奨のため、mayaa.mldのrequiredを外さない限りこの機能は無効。)
         if (_value == null) {
             throw new IllegalStateException();
         }
+        */
         AbstractAttributableProcessor parent = findParentAttributable();
 
         QName parentQName;
@@ -117,16 +119,17 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
         public ProcessorPropertyWrapper(
                 PrefixAwareName name, ProcessorProperty property, String basePath) {
-            if (name == null || property == null) {
+            if (name == null) {
                 throw new IllegalArgumentException();
             }
             _attrName = name;
             _attrValue = property;
-
-            if (_attrValue.getValue().isLiteral()) {
-                _script = new EscapedLiteralScript(_attrValue.getValue(), basePath);
-            } else {
-                _script = new EscapableScript(_attrValue.getValue(), basePath);
+            if (_attrValue != null) {
+	            if (_attrValue.getValue().isLiteral()) {
+	                _script = new EscapedLiteralScript(_attrValue.getValue(), basePath);
+	            } else {
+	                _script = new EscapableScript(_attrValue.getValue(), basePath);
+	            }
             }
         }
 
@@ -152,6 +155,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
 
         public String toString() {
+        	if (_script == null) {
+        		return getName().toString() + "=null";
+        	}
             return getName().toString() + "=\"" + _script + "\"";
         }
 

@@ -229,26 +229,29 @@ public class ProcessorDump extends ElementProcessor {
         temp.append(" ");
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
-        temp.append("=\"");
-        if (value instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript) value;
-            if (CycleUtil.isDraftWriting()) {
-                temp.append(script.getScriptText());
-            } else {
+        /* 2007.03.15 valueがnullの場合を許容する(値なしを作成可能に) */
+        if (value != null) {
+	        temp.append("=\"");
+	        if (value instanceof CompiledScript) {
+	            CompiledScript script = (CompiledScript) value;
+	            if (CycleUtil.isDraftWriting()) {
+	                temp.append(script.getScriptText());
+	            } else {
 try { // TODO 修正する [JIRA: MAYAA-5]
-                Object result = script.execute(null);
-                if (StringUtil.isEmpty(result)) {
-                    return;
-                }
-                temp.append(result);
+	                Object result = script.execute(null);
+	                if (StringUtil.isEmpty(result)) {
+	                    return;
+	                }
+	                temp.append(result);
 } catch (Throwable ignore) {
-    // no-op
+	    // no-op
 }
-            }
-        } else {
-            temp.append(value.toString());
+	            }
+	        } else {
+	            temp.append(value.toString());
+	        }
+	        temp.append("\"");
         }
-        temp.append("\"");
         buffer.append(temp.toString());
     }
 

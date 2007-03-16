@@ -200,7 +200,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
             throw new FinalProcessorPropertyException(
                     processorName, qName);
         }
-        if (value != null) {
+        if (StringUtil.hasValue(value)) {
             Class propertyClass = getPropertyClass(processorDef);
             if (propertyClass == null) {
                 // real property not found on the processor.

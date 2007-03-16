@@ -68,12 +68,18 @@ public class InsertProcessor
         });
     }
 
-    private String _path;
-    private String _name = "";
-    private String _pageName;
-    private String _suffix;
-    private String _extension;
-    private boolean _needAdjustPath = false;
+    class PathPart {
+    	String _path;
+    	String _pageName;
+    	String _suffix;
+    	String _extension;
+    	boolean _needAdjustPath;
+    }
+    
+    private ProcessorProperty _path;
+    private ProcessorProperty _name;
+    private transient PathPart _pathPart;
+    
     private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
                     _attributes;
 
@@ -81,30 +87,48 @@ public class InsertProcessor
      * 相対パスを解決、分解して拡張子などをあらかじめ取得する。
      */
     public void initialize() {
-        if (StringUtil.hasValue(_path)) {
-            Engine engine = ProviderUtil.getEngine();
-            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
-
-            String[] pagePath = StringUtil.parsePath(_path, suffixSeparator);
-
-            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-
-            _pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
-            _suffix = pagePath[1];
-            _extension = pagePath[2];
-            if (_path.startsWith("/") == false && _path.startsWith("./") == false) {
-                _needAdjustPath = true;
-            }
-        }
+    	if (_path != null && _path.getValue() != null) {
+	        if (_path.getValue().isLiteral()) {
+	        	_pathPart = parsePath(_path.getValue().getScriptText());
+	        }
+    	}
     }
+    
+    private PathPart parsePath(String path) {
+        Engine engine = ProviderUtil.getEngine();
+        String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
 
+        PathPart result = new PathPart();
+    	if (path != null) {
+    		String[] pagePath = StringUtil.parsePath(path, suffixSeparator);
+        
+	        String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+	        
+	        result._path = path;
+	        result._pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
+	        result._suffix = pagePath[1];
+	        result._extension = pagePath[2];
+	        if (path.startsWith("/") == false && path.startsWith("./") == false) {
+	        	result._needAdjustPath = true;
+	        }
+    	}
+    	return result; 
+    }
+    
     // MLD property, required
-    public void setPath(String path) {
+    public void setPath(ProcessorProperty path) {
+        if (path == null || path.getValue() == null) {
+            throw new IllegalArgumentException();
+        }
+        String pathScript = path.getValue().getScriptText();
+		if (StringUtil.isEmpty(pathScript)) {
+			throw new IllegalArgumentException();
+		}
         _path = path;
     }
 
     // MLD property
-    public void setName(String name) {
+    public void setName(ProcessorProperty name) {
         if (name != null) {
             _name = name;
         }
@@ -132,6 +156,34 @@ public class InsertProcessor
         }
         return _attributes;
     }
+    
+    private PathPart getPathPart() {
+        PathPart pathPart = _pathPart;
+        if (pathPart == null) {
+        	if (_path == null || StringUtil.isEmpty(_path.getValue().getScriptText())) {
+        		return new PathPart();
+        	}
+       		String path = StringUtil.valueOf(_path.getValue().execute(null));
+       		if (StringUtil.isEmpty(path)) {
+       			return new PathPart();
+       		}
+       		pathPart = parsePath(path);
+        }
+        return pathPart;
+    }
+    
+    private Page pathPartToPage(PathPart pathPart) {
+    	if (pathPart._pageName == null) {
+    		return null;
+    	}
+        if (pathPart._needAdjustPath) {
+            // "/" 始まりでも "./" 始まりでもない場合は相対パス解決をする
+            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+            return ProviderUtil.getEngine().getPage(
+                    StringUtil.adjustRelativePath(sourcePath, "./" + pathPart._pageName));
+        }
+        return ProviderUtil.getEngine().getPage(pathPart._pageName);
+    }
 
     /**
      * pathを指定されていない場合(レイアウト側)はnullを返す。
@@ -141,16 +193,7 @@ public class InsertProcessor
      * @return ページオブジェクト
      */
     protected Page getPage() {
-        if (StringUtil.isEmpty(_path)) {
-            return null;
-        }
-        if (_needAdjustPath) {
-            // "/" 始まりでも "./" 始まりでもない場合は相対パス解決をする
-            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-            return ProviderUtil.getEngine().getPage(
-                    StringUtil.adjustRelativePath(sourcePath, "./" + _pageName));
-        }
-        return ProviderUtil.getEngine().getPage(_pageName);
+    	return pathPartToPage(getPathPart());
     }
 
     protected Stack getRenderingParams() {
@@ -197,10 +240,9 @@ public class InsertProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        // レンダリング中にページが解放されないようにする。
-        Page renderPage = getPage();
-        String requestedSuffix = _suffix;
-        String extension = _extension;
+        PathPart pathPart = getPathPart();
+        Page renderPage = pathPartToPage(pathPart);
+        
         boolean fireEvent = true;
 
         // layoutからcontentを呼ぶ場合
@@ -208,8 +250,8 @@ public class InsertProcessor
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             renderPage = topLevelPage;
             RequestScope request = cycle.getRequestScope();
-            requestedSuffix = request.getRequestedSuffix();
-            extension = request.getExtension();
+            pathPart._suffix = request.getRequestedSuffix();
+            pathPart._extension = request.getExtension();
             fireEvent = false;
         }
 
@@ -237,9 +279,15 @@ public class InsertProcessor
             ProcessStatus ret;
             getRenderingInsertChain().push(this);
             try {
-                ComponentRenderer renderer = new ComponentRenderer(this, _name);
+            	String name;
+            	if (_name == null) {
+            		name = "";
+            	} else {
+            		name = StringUtil.valueOf(_name.getValue().execute(null));
+            	}
+                ComponentRenderer renderer = new ComponentRenderer(this, name);
                 ret = RenderUtil.renderPage(fireEvent, renderer,
-                        getVariables(), renderPage, requestedSuffix, extension);
+                        getVariables(), renderPage, pathPart._suffix, pathPart._extension);
             } finally {
                 getRenderingInsertChain().pop();
             }
@@ -247,7 +295,7 @@ public class InsertProcessor
                 Response response = CycleUtil.getResponse();
                 if (response.getWriter().isDirty() == false) {
                     throw new RenderNotCompletedException(
-                            renderPage.getPageName(), extension);
+                            renderPage.getPageName(), pathPart._extension);
                 }
             }
             if (ret == ProcessStatus.EVAL_PAGE) {

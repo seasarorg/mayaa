@@ -22,12 +22,10 @@ import java.util.regex.Pattern;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.ServiceCycle;
-import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.engine.processor.AbstractAttributableProcessor.ProcesstimeInfo;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -53,28 +51,28 @@ public class WriteProcessor extends AbstractAttributableProcessor {
         _forHyperText = _forHTML || isXHTML(originalQName);
         boolean needBodyText;
         if (_value == null) {
-        	needBodyText = (_injectedNode.getChildNodeSize() > 0);
+            needBodyText = (_injectedNode.getChildNodeSize() > 0);
         } else {
-        	if (_value.getValue().isLiteral()) {
-        		needBodyText = false;
-        	} else {
-        		// bodyTextを含むスクリプトか？
-        		needBodyText = isExistsBodyTextInScript(_value.getValue().getScriptText());
-        	}
+            if (_value.getValue().isLiteral()) {
+                needBodyText = false;
+            } else {
+                // bodyTextを含むスクリプトか？
+                needBodyText = isExistsBodyTextInScript(_value.getValue().getScriptText());
+            }
         }
         setChildEvaluation(needBodyText);
     }
-    
+
     protected boolean isExistsBodyTextInScript(String scriptText) {
-		String pattern = ".*("
-			+ "\\$\\{"+BODY_VARIABLE_NAME+"\\}|"
-			+ "\\$\\{"+BODY_VARIABLE_NAME+"[^a-zA-Z_$].*\\}|"
-			+ "\\$\\{.*[^a-zA-Z_$]"+BODY_VARIABLE_NAME+"\\}|"
-			+ "\\$\\{.*[^a-zA-Z_$]"+BODY_VARIABLE_NAME+"[^a-zA-Z_$].*\\}"
-			+ ")+.*";
+        String pattern = ".*("
+            + "\\$\\{"+BODY_VARIABLE_NAME+"\\}|"
+            + "\\$\\{"+BODY_VARIABLE_NAME+"[^a-zA-Z_$].*\\}|"
+            + "\\$\\{.*[^a-zA-Z_$]"+BODY_VARIABLE_NAME+"\\}|"
+            + "\\$\\{.*[^a-zA-Z_$]"+BODY_VARIABLE_NAME+"[^a-zA-Z_$].*\\}"
+            + ")+.*";
         Pattern p = Pattern.compile(pattern, Pattern.DOTALL | Pattern.MULTILINE);
         Matcher m = p.matcher(scriptText);
-		return m.matches();
+        return m.matches();
     }
 
     // MLD property, expectedClass=java.lang.String
@@ -87,46 +85,46 @@ public class WriteProcessor extends AbstractAttributableProcessor {
     }
 
     public void setEscapeXml(ProcessorProperty escapeXml) {
-    	checkBoolableProperty(escapeXml);
+        checkBoolableProperty(escapeXml);
         _escapeXml = escapeXml;
     }
 
     public void setEscapeWhitespace(ProcessorProperty escapeWhitespace) {
-    	checkBoolableProperty(escapeWhitespace);
+        checkBoolableProperty(escapeWhitespace);
         _escapeWhitespace = escapeWhitespace;
     }
 
     public void setEscapeEol(ProcessorProperty escapeEol) {
-    	checkBoolableProperty(escapeEol);
+        checkBoolableProperty(escapeEol);
         _escapeEol = escapeEol;
     }
 
     private void checkBoolableProperty(ProcessorProperty property) {
-    	if (property == null || property.getValue() == null) {
-    		throw new IllegalArgumentException("needs expression.");
-    	}
-    	if (property.getValue().isLiteral()) {
-    		if (!ObjectUtil.canBooleanConvert(property.getValue().getScriptText())) {
-    			throw new IllegalArgumentException("needs expression.");
-    		}
+        if (property == null || property.getValue() == null) {
+            throw new IllegalArgumentException("needs expression.");
+        }
+        if (property.getValue().isLiteral()) {
+            if (!ObjectUtil.canBooleanConvert(property.getValue().getScriptText())) {
+                throw new IllegalArgumentException("needs expression.");
+            }
         }
     }
-    
+
     private boolean toBoolean(ProcessorProperty property) {
         return property != null && ObjectUtil.booleanValue(property.getValue().execute(null), false);
     }
 
     private void writeValue(String literal) {
-    	Object result;
-    	if (literal != null) {
-    		result = literal;
-    	} else {
-    		if (_value == null) {
-    			result = "";
-    		} else {
-    			result = _value.getValue().execute(null);
-    		}
-    	}
+        Object result;
+        if (literal != null) {
+            result = literal;
+        } else {
+            if (_value == null) {
+                result = "";
+            } else {
+                result = _value.getValue().execute(null);
+            }
+        }
         String ret = null;
         boolean empty = StringUtil.isEmpty(result);
         if (empty && _default != null) {
@@ -150,51 +148,57 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             write(ret);
         }
     }
-    
-	protected ProcessStatus writeStartElement() {
-		if (isChildEvaluation()) {
-			ProcesstimeInfo info = peekProcesstimeInfo();
-			CycleWriter body = info.getBody();
-			String bodyText = body.getString();
-			body.clearBuffer();
-	    	if (_value != null) {
-		        Map variables = new HashMap();
-		        variables.put(BODY_VARIABLE_NAME, bodyText);
-		        SpecificationUtil.startScope(variables);
-		        try {
-		        	writeValue(null);
-		        } finally {
-		        	SpecificationUtil.endScope();
-		        }
-	    	} else {
-	    		if (StringUtil.hasValue(bodyText)) {
-	    			writeValue(bodyText);
-	    		} else {
-	    			writeValue("");
-	    		}
-	    	}
-			return null;
-		}
-		return ProcessStatus.SKIP_BODY;
-	}
-    
-	protected void writeEndElement() {
-		if (isChildEvaluation() == false) {
-			writeValue(null);
-		}
-	}
-	
-	protected void writeBody(String body) {
-		// no-op 
-	}
-	
-	/**
-	 * サイクルに出力する
-	 * @param value
-	 */
+
+    protected ProcessStatus writeStartElement() {
+        // TODO writeのスコープ変更についての対応を考える
+        SpecificationUtil.endScope();// workaround
+
+        if (isChildEvaluation()) {
+            ProcesstimeInfo info = peekProcesstimeInfo();
+            CycleWriter body = info.getBody();
+            String bodyText = body.getString();
+            body.clearBuffer();
+            if (_value != null) {
+                Map variables = new HashMap();
+                variables.put(BODY_VARIABLE_NAME, bodyText);
+                SpecificationUtil.startScope(variables);
+                try {
+                    writeValue(null);
+                } finally {
+                    SpecificationUtil.endScope();
+                }
+            } else {
+                if (StringUtil.hasValue(bodyText)) {
+                    writeValue(bodyText);
+                } else {
+                    writeValue("");
+                }
+            }
+            return null;
+        }
+        return ProcessStatus.SKIP_BODY;
+    }
+
+    protected void writeEndElement() {
+        if (isChildEvaluation() == false) {
+            writeValue(null);
+        }
+
+        // TODO writeのスコープ変更についての対応を考える
+        SpecificationUtil.startScope(null);// workaround
+    }
+
+    protected void writeBody(String body) {
+        // no-op
+    }
+
+    /**
+     * サイクルに出力する
+     * @param value
+     */
     protected void write(String value) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(value);
     }
-	
+
 }

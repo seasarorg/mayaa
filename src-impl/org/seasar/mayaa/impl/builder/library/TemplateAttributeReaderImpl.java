@@ -84,17 +84,19 @@ public class TemplateAttributeReaderImpl
                 for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
                     AttributeKey aliasKey = (AttributeKey) it.next();
                     if (aliasKey.match(key)) {
+                        QName attributeQName = getQName(original,
+                                (String) _aliasAttributes.get(aliasKey));
                         NodeAttribute attribute =
-                            original.getAttribute(getQName(original, (String) _aliasAttributes.get(aliasKey)));
+                            original.getAttribute(attributeQName);
                         if (attribute != null) {
-                            return attribute.getValue();
+                            return StringUtil.resolveEntity(attribute.getValue());
                         }
                     }
                 }
                 NodeAttribute attribute =
                     original.getAttribute(getQName(original, attributeName));
                 if (attribute != null) {
-                    return attribute.getValue();
+                    return StringUtil.resolveEntity(attribute.getValue());
                 }
             }
         }

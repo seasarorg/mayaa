@@ -25,6 +25,7 @@ import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
+import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -33,8 +34,10 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -131,11 +134,19 @@ public class EchoProcessor extends ElementProcessor
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(
                         prop.getName().getQName().getLocalName(),
-                        prop.getValue().execute(null));
+                        resolveEntity(prop.getValue()));
             }
             return attributeMap;
         }
         return null;
+    }
+
+    private Object resolveEntity(CompiledScript script) {
+        if (script instanceof LiteralScript &&
+                String.class.equals(script.getExpectedClass())) {
+            return StringUtil.resolveEntity((String) script.execute(null));
+        }
+        return script.execute(null);
     }
 
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {

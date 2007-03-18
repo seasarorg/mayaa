@@ -150,22 +150,26 @@ public class WriteProcessor extends AbstractAttributableProcessor {
     }
 
     protected ProcessStatus writeStartElement() {
-        // TODO writeのスコープ変更についての対応を考える
-        SpecificationUtil.endScope();// workaround
-
         if (isChildEvaluation()) {
             ProcesstimeInfo info = peekProcesstimeInfo();
             CycleWriter body = info.getBody();
             String bodyText = body.getString();
             body.clearBuffer();
             if (_value != null) {
-                Map variables = new HashMap();
-                variables.put(BODY_VARIABLE_NAME, bodyText);
-                SpecificationUtil.startScope(variables);
+                // TODO writeのスコープ変更についての対応を考える
+                SpecificationUtil.endScope();// workaround
                 try {
-                    writeValue(null);
+	                Map variables = new HashMap();
+	                variables.put(BODY_VARIABLE_NAME, bodyText);
+	                SpecificationUtil.startScope(variables);
+	                try {
+	                    writeValue(null);
+	                } finally {
+	                    SpecificationUtil.endScope();
+	                }
                 } finally {
-                    SpecificationUtil.endScope();
+                    // TODO writeのスコープ変更についての対応を考える
+                    SpecificationUtil.startScope(null);// workaround
                 }
             } else {
                 if (StringUtil.hasValue(bodyText)) {
@@ -175,17 +179,21 @@ public class WriteProcessor extends AbstractAttributableProcessor {
                 }
             }
             return null;
+        } else {
+            // TODO writeのスコープ変更についての対応を考える
+            SpecificationUtil.endScope();// workaround
+            try {
+            	writeValue(null);
+            } finally {
+                // TODO writeのスコープ変更についての対応を考える
+                SpecificationUtil.startScope(null);// workaround
+            }
+        	return ProcessStatus.SKIP_BODY;
         }
-        return ProcessStatus.SKIP_BODY;
     }
 
     protected void writeEndElement() {
-        if (isChildEvaluation() == false) {
-            writeValue(null);
-        }
-
-        // TODO writeのスコープ変更についての対応を考える
-        SpecificationUtil.startScope(null);// workaround
+    	// no-op
     }
 
     protected void writeBody(String body) {

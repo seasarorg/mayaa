@@ -296,22 +296,24 @@ public class ElementProcessor extends AbstractAttributableProcessor
         temp.append(" ");
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
-        temp.append("=\"");
-        if (value instanceof CompiledScript) {
-            CompiledScript script = (CompiledScript) value;
-            if (CycleUtil.isDraftWriting()) {
-                temp.append(script.getScriptText());
-            } else {
-                Object result = script.execute(null);
-                if (result == null) {
-                    return;
-                }
-                temp.append(result);
-            }
-        } else {
-            temp.append(value.toString());
+        if (value != null) {
+	        temp.append("=\"");
+	        if (value instanceof CompiledScript) {
+	            CompiledScript script = (CompiledScript) value;
+	            if (CycleUtil.isDraftWriting()) {
+	                temp.append(script.getScriptText());
+	            } else {
+	                Object result = script.execute(null);
+	                if (result == null) {
+	                    return;
+	                }
+	                temp.append(result);
+	            }
+	        } else {
+	            temp.append(value.toString());
+	        }
+	        temp.append("\"");
         }
-        temp.append("\"");
         buffer.append(temp.toString());
     }
 

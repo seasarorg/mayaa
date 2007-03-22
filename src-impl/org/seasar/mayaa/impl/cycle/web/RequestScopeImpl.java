@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 
+import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seasar.mayaa.cycle.scope.AttributeScope;
@@ -99,6 +100,27 @@ public class RequestScopeImpl extends AbstractRequestScope {
             _headerValues = new HeaderValuesScope(_httpServletRequest);
         }
         return _headerValues;
+    }
+
+    /**
+     * requestのattribute "javax.servlet.forward.servlet_path" の内容が
+     * nullではなく、{@link HttpServletRequest#getServletPath()}と異なっている
+     * ならば他からforwardされたと判断する。
+     *
+     * @return 他からforwardされたならtrue
+     * @see Servlet 2.4 spec 8.4.2 Forwarded Request Parameters
+     */
+    public boolean isForwarded() {
+        // other attributes
+        // "javax.servlet.forward.request_uri", "javax.servlet.forward.context_path",
+        // "javax.servlet.forward.servlet_path", "javax.servlet.forward.path_info",
+        // "javax.servlet.forward.query_string"
+
+        Object servletPath =
+            _httpServletRequest.getAttribute("javax.servlet.forward.servlet_path");
+        return (servletPath != null) &&
+                (servletPath instanceof String) &&
+                (servletPath.equals(_httpServletRequest.getServletPath()) == false);
     }
 
     // AttributeScope implements -------------------------------------

@@ -81,4 +81,10 @@ public interface RequestScope
      */
     AttributeScope getHeaderValues();
 
+    /**
+     * このリクエストは他からforwardされたものかを判定する。
+     * @return 他からforwardされたならtrue
+     */
+    boolean isForwarded();
+
 }

@@ -22,6 +22,9 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Undefined;
+import org.mozilla.javascript.UniqueTag;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -61,7 +64,15 @@ public class NativeServiceCycle extends NativeJavaObject {
         if (scope != null) {
             return scope.getAttribute(name);
         }
-        return super.get(name, start);
+        Object result = super.get(name, start);
+        if (start == this && result == UniqueTag.NOT_FOUND) {
+        	// 先回りしてチェック
+        	if (Scriptable.NOT_FOUND == ScriptableObject.getProperty(getParentScope(), name)) {
+            	// Nativeにも存在しないのでUndefinedを定義したものと同等とする
+        		result = Undefined.instance;
+        	}
+        }
+        return result;
     }
 
     protected void addAttributesTo(AttributeScope scope, Set set) {

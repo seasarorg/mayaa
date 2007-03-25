@@ -179,17 +179,17 @@ public class WriteProcessor extends AbstractAttributableProcessor {
                 }
             }
             return null;
-        } else {
-            // TODO writeのスコープ変更についての対応を考える
-            SpecificationUtil.endScope();// workaround
-            try {
-            	writeValue(null);
-            } finally {
-                // TODO writeのスコープ変更についての対応を考える
-                SpecificationUtil.startScope(null);// workaround
-            }
-        	return ProcessStatus.SKIP_BODY;
         }
+
+        // TODO writeのスコープ変更についての対応を考える
+        SpecificationUtil.endScope();// workaround
+        try {
+        	writeValue(null);
+        } finally {
+            // TODO writeのスコープ変更についての対応を考える
+            SpecificationUtil.startScope(null);// workaround
+        }
+    	return ProcessStatus.SKIP_BODY;
     }
 
     protected void writeEndElement() {

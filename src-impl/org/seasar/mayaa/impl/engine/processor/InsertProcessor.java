@@ -69,17 +69,17 @@ public class InsertProcessor
     }
 
     class PathPart {
-    	String _path;
+    	String _pathValue;
     	String _pageName;
     	String _suffix;
     	String _extension;
     	boolean _needAdjustPath;
     }
-    
+
     private ProcessorProperty _path;
     private ProcessorProperty _name;
     private transient PathPart _pathPart;
-    
+
     private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
                     _attributes;
 
@@ -93,7 +93,7 @@ public class InsertProcessor
 	        }
     	}
     }
-    
+
     private PathPart parsePath(String path) {
         Engine engine = ProviderUtil.getEngine();
         String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
@@ -101,10 +101,10 @@ public class InsertProcessor
         PathPart result = new PathPart();
     	if (path != null) {
     		String[] pagePath = StringUtil.parsePath(path, suffixSeparator);
-        
+
 	        String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-	        
-	        result._path = path;
+
+	        result._pathValue = path;
 	        result._pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
 	        result._suffix = pagePath[1];
 	        result._extension = pagePath[2];
@@ -112,9 +112,9 @@ public class InsertProcessor
 	        	result._needAdjustPath = true;
 	        }
     	}
-    	return result; 
+    	return result;
     }
-    
+
     // MLD property, required
     public void setPath(ProcessorProperty path) {
         if (path == null || path.getValue() == null) {
@@ -156,7 +156,7 @@ public class InsertProcessor
         }
         return _attributes;
     }
-    
+
     private PathPart getPathPart() {
         PathPart pathPart = _pathPart;
         if (pathPart == null) {
@@ -171,7 +171,7 @@ public class InsertProcessor
         }
         return pathPart;
     }
-    
+
     private Page pathPartToPage(PathPart pathPart) {
     	if (pathPart._pageName == null) {
     		return null;
@@ -242,7 +242,7 @@ public class InsertProcessor
     public ProcessStatus doStartProcess(Page topLevelPage) {
         PathPart pathPart = getPathPart();
         Page renderPage = pathPartToPage(pathPart);
-        
+
         boolean fireEvent = true;
 
         // layoutからcontentを呼ぶ場合

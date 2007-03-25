@@ -111,7 +111,8 @@ public class WriteProcessor extends AbstractAttributableProcessor {
     }
 
     private boolean toBoolean(ProcessorProperty property) {
-        return property != null && ObjectUtil.booleanValue(property.getValue().execute(null), false);
+        return property != null && ObjectUtil.booleanValue(
+                property.getValue().execute(null), false);
     }
 
     private void writeValue(String literal) {
@@ -156,20 +157,13 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             String bodyText = body.getString();
             body.clearBuffer();
             if (_value != null) {
-                // TODO writeのスコープ変更についての対応を考える
-                SpecificationUtil.endScope();// workaround
+                Map variables = new HashMap();
+                variables.put(BODY_VARIABLE_NAME, bodyText);
+                SpecificationUtil.startScope(variables);
                 try {
-	                Map variables = new HashMap();
-	                variables.put(BODY_VARIABLE_NAME, bodyText);
-	                SpecificationUtil.startScope(variables);
-	                try {
-	                    writeValue(null);
-	                } finally {
-	                    SpecificationUtil.endScope();
-	                }
+                    writeValue(null);
                 } finally {
-                    // TODO writeのスコープ変更についての対応を考える
-                    SpecificationUtil.startScope(null);// workaround
+                    SpecificationUtil.endScope();
                 }
             } else {
                 if (StringUtil.hasValue(bodyText)) {
@@ -181,19 +175,12 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             return null;
         }
 
-        // TODO writeのスコープ変更についての対応を考える
-        SpecificationUtil.endScope();// workaround
-        try {
-        	writeValue(null);
-        } finally {
-            // TODO writeのスコープ変更についての対応を考える
-            SpecificationUtil.startScope(null);// workaround
-        }
-    	return ProcessStatus.SKIP_BODY;
+        writeValue(null);
+        return ProcessStatus.SKIP_BODY;
     }
 
     protected void writeEndElement() {
-    	// no-op
+        // no-op
     }
 
     protected void writeBody(String body) {

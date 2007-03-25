@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.MayaaException;

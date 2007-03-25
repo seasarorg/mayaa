@@ -518,14 +518,14 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected Specification createSpecificationInstance(String systemID,
-            boolean registCache,
+            boolean registerCache,
             SpecificationGenerator generator) {
         Specification spec;
         if (isSpecificationSerialize()) {
             spec = deserialize(systemID);
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
-                    if (registCache) {
+                    if (registerCache) {
                         getCache().add(spec);
                     }
                     return spec;
@@ -556,7 +556,7 @@ public class EngineImpl extends SpecificationImpl
         } catch(RuntimeException e) {
             throw e;
         }
-        if (registCache) {
+        if (registerCache) {
             getCache().add(spec);
         }
         return spec;

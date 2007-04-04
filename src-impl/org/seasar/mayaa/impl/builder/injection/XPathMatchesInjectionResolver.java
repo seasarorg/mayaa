@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.builder.injection;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
@@ -24,14 +26,18 @@ import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
@@ -46,6 +52,27 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         return _xpathFilter;
     }
 
+    /**
+     * Mayaaファイル内のm:xpathを持つノードを集め、リストに入れます。
+     *
+     * @param node Mayaaのノードツリー
+     * @param specificationNodes m:xpathを持つノードのリスト
+     */
+    protected void getXPathNodes(
+            SpecificationNode node, List specificationNodes) {
+        if (node == null) {
+            throw new IllegalArgumentException();
+        }
+        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
+            if (StringUtil.hasValue(
+                    SpecificationUtil.getAttributeValue(child, QM_XPATH))) {
+                specificationNodes.add(child);
+            }
+            getXPathNodes(child, specificationNodes);
+        }
+    }
+
     public SpecificationNode getNode(
             SpecificationNode original, InjectionChain chain) {
         if (original == null || chain == null) {
@@ -55,11 +82,19 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         // TODO テンプレートのprefix定義、Mayaaファイルのを反映させる
         Namespace namespace = SpecificationUtil.createNamespace();
         namespace.addPrefixMapping("m", URI_MAYAA);
-        String xpathExpr = "/m:mayaa//*[string-length(@m:xpath) > 0]";
 
         // mayaaファイル内のm:xpathを持つすべてのノードを対象とする
-        for (Iterator it = XPathUtil.selectChildNodes(
-                original, xpathExpr, namespace, true); it.hasNext();) {
+        Specification spec = SpecificationUtil.findSpecification(original);
+        List injectNodes = new ArrayList();
+        while (spec != null) {
+            SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
+            if (mayaa != null) {
+                getXPathNodes(mayaa, injectNodes);
+            }
+            spec = EngineUtil.getParentSpecification(spec);
+        }
+
+        for (Iterator it = injectNodes.iterator(); it.hasNext();) {
             SpecificationNode injected = (SpecificationNode) it.next();
             String mayaaPath = SpecificationUtil.getAttributeValue(
                     injected, QM_XPATH);

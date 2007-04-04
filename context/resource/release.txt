@@ -99,6 +99,9 @@ MayaaのWEBサイト：
   参照順は 現在位置からpageまで、request、session、applicationです。
   StandardScopeを変更している場合はそれに準じます。
 
+- (rev.2966) XPathMatchesInjectionResolverがあるだけでビルドにかかる時間を
+  軽減しました。
+
 -------------------------------------------------------------------
 変更点 1.1.6 -> 1.1.7 (2007/03/08)
 

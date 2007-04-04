@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:beforeRender><![CDATA[
+		function println(value) {
+			java.lang.System.out.println(java.lang.String.valueOf(value));
+		}
+	]]></m:beforeRender>
+
+</m:mayaa>

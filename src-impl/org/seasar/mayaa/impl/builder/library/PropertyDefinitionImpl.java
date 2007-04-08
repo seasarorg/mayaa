@@ -186,15 +186,10 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 		QName qName = getQName(injected);
 		String value = getFinalValue();
 		NodeAttribute attribute = injected.getAttribute(qName);
-//		if(attribute == null) {
-//			attribute = original.getAttribute(getQName(original));
-//		}
 		if (value == null) {
 			value = getDefaultValue();
 			if (attribute != null) {
 				value = attribute.getValue();
-			} else if (value != null) {
-				attribute = new NodeAttributeImpl(qName, value);
 			}
 		} else if (attribute != null) {
 			String processorName = processorDef.getName();
@@ -223,7 +218,11 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 			if (converter == null) {
 				return value;
 			}
-			// expectedCheck
+            // converterがnullでなければattributeが必須
+            if (attribute == null) {
+                attribute = new NodeAttributeImpl(qName, value);
+            }
+            // expectedCheck
 			Object ret =
 					converter.convert(attribute, value, getExpectedClass());
 			if (ret instanceof ProcessorProperty) {

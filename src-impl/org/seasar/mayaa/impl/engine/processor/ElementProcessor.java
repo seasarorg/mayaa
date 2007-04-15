@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -51,6 +53,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         implements CONST_IMPL {
 
     private static final long serialVersionUID = -1041576023468766303L;
+    private static Log LOG = LogFactory.getLog(ElementProcessor.class);
     private static final String SUFFIX_DUPLICATED = "_d";
     private static final Set XHTML_EMPTY_ELEMENTS;
     private static final String RENDERED_NS_STACK_KEY =
@@ -188,11 +191,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
         }
 
         Namespace namespace = getInjectedNode().getParentSpace();
-        mapping = namespace.getMappingFromURI(namespaceURI, true);
-        if (mapping != null) {
-            currentNS.addPrefixMapping(
-                    mapping.getPrefix(), mapping.getNamespaceURI());
-            return;
+        if (namespace != null) {
+	        mapping = namespace.getMappingFromURI(namespaceURI, true);
+	        if (mapping != null) {
+	            currentNS.addPrefixMapping(
+	                    mapping.getPrefix(), mapping.getNamespaceURI());
+	            return;
+	        }
         }
         currentNS.addPrefixMapping(name.getPrefix(), namespaceURI);
     }

@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -53,7 +51,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
         implements CONST_IMPL {
 
     private static final long serialVersionUID = -1041576023468766303L;
-    private static Log LOG = LogFactory.getLog(ElementProcessor.class);
     private static final String SUFFIX_DUPLICATED = "_d";
     private static final Set XHTML_EMPTY_ELEMENTS;
     private static final String RENDERED_NS_STACK_KEY =
@@ -192,12 +189,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
         Namespace namespace = getInjectedNode().getParentSpace();
         if (namespace != null) {
-	        mapping = namespace.getMappingFromURI(namespaceURI, true);
-	        if (mapping != null) {
-	            currentNS.addPrefixMapping(
-	                    mapping.getPrefix(), mapping.getNamespaceURI());
-	            return;
-	        }
+            mapping = namespace.getMappingFromURI(namespaceURI, true);
+            if (mapping != null) {
+                currentNS.addPrefixMapping(
+                        mapping.getPrefix(), mapping.getNamespaceURI());
+                return;
+            }
         }
         currentNS.addPrefixMapping(name.getPrefix(), namespaceURI);
     }
@@ -302,22 +299,22 @@ public class ElementProcessor extends AbstractAttributableProcessor
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
         if (value != null) {
-	        temp.append("=\"");
-	        if (value instanceof CompiledScript) {
-	            CompiledScript script = (CompiledScript) value;
-	            if (CycleUtil.isDraftWriting()) {
-	                temp.append(script.getScriptText());
-	            } else {
-	                Object result = script.execute(null);
-	                if (result == null) {
-	                    return;
-	                }
-	                temp.append(result);
-	            }
-	        } else {
-	            temp.append(value.toString());
-	        }
-	        temp.append("\"");
+            temp.append("=\"");
+            if (value instanceof CompiledScript) {
+                CompiledScript script = (CompiledScript) value;
+                if (CycleUtil.isDraftWriting()) {
+                    temp.append(script.getScriptText());
+                } else {
+                    Object result = script.execute(null);
+                    if (result == null) {
+                        return;
+                    }
+                    temp.append(result);
+                }
+            } else {
+                temp.append(value.toString());
+            }
+            temp.append("\"");
         }
         buffer.append(temp.toString());
     }

@@ -96,11 +96,25 @@ public abstract class AbstractAttributableProcessor
         _attributes.add(attr);
     }
 
+    /**
+     * @deprecated 1.1.9 代わりに{@link #getInformalPropertyClass()}を使う
+     */
     public Class getPropertyClass() {
+        return getInformalPropertyClass();
+    }
+
+    /**
+     * @deprecated 1.1.9 代わりに{@link #getInformalPropertyClass()}を使う
+     */
+    public Class getExpectedClass() {
+        return getInformalExpectedClass();
+    }
+
+    public Class getInformalPropertyClass() {
         return ProcessorProperty.class;
     }
 
-    public Class getExpectedClass() {
+    public Class getInformalExpectedClass() {
         return Object.class;
     }
 

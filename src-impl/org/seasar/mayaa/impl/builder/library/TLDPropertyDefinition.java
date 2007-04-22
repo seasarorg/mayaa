@@ -22,6 +22,7 @@ import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
@@ -43,7 +44,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         LogFactory.getLog(TLDPropertyDefinition.class);
 
     private boolean _rtexprvalue;
-    
+
     protected PropertyConverter getConverterForProcessorProperty() {
         LibraryDefinition library = getPropertySet().getLibraryDefinition();
         PropertyConverter converter =
@@ -65,11 +66,12 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
     }
 
     public Object createProcessorProperty(ProcessorDefinition processorDef,
+            TemplateProcessor processor,
             SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {
             throw new IllegalArgumentException();
         }
-        Class propertyClass = getPropertyClass(processorDef);
+        Class propertyClass = getPropertyClass(processorDef, processor);
         if (propertyClass == null) {
             // real property not found on the tag.
             String processorName = processorDef.getName();

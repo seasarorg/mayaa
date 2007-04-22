@@ -30,6 +30,7 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.InformalPropertyAcceptable;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -47,7 +48,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class InsertProcessor
         extends TemplateProcessorSupport
-        implements CONST_IMPL, InformalPropertyAcceptable {
+        implements CONST_IMPL, InformalPropertyAcceptable, VirtualPropertyAcceptable {
 
     private static final long serialVersionUID = -945900326182620192L;
 
@@ -162,6 +163,29 @@ public class InsertProcessor
 
     public Class getInformalExpectedClass() {
         return Object.class;
+    }
+
+    /**
+     * VirtualPropertyもInformalPropertyとして扱います。
+     * @param name プロパティ名。
+     * @param property プロパティ値。
+     */
+    public void addVirtualProperty(PrefixAwareName name, Serializable attr) {
+        addInformalProperty(name, attr);
+    }
+
+    /**
+     * VirtualPropertyもInformalPropertyとして扱います。
+     */
+    public Class getVirtualPropertyClass() {
+        return getInformalPropertyClass();
+    }
+
+    /**
+     * VirtualPropertyもInformalPropertyとして扱います。
+     */
+    public Class getVirtualExpectedClass() {
+        return getInformalExpectedClass();
     }
 
     public List getInformalProperties() {

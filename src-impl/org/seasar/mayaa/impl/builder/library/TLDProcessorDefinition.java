@@ -93,7 +93,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
                 it.hasNext();) {
             PropertyDefinition property = (PropertyDefinition) it.next();
             Object prop =
-                property.createProcessorProperty(this, original, injected);
+                property.createProcessorProperty(this, processor, original, injected);
             if (prop != null) {
                 ProcessorProperty currentProp = (ProcessorProperty) prop;
                 JspProcessor jsp = (JspProcessor) processor;

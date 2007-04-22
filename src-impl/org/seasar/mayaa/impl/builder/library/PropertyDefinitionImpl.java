@@ -24,6 +24,7 @@ import org.seasar.mayaa.builder.library.PropertyDefinition;
 import org.seasar.mayaa.builder.library.PropertySet;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.processor.VirtualPropertyAcceptable;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
@@ -146,7 +147,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 	}
 
 	protected PropertyConverter getPropertyConverter(
-			ProcessorDefinition processorDef) {
+			ProcessorDefinition processorDef, TemplateProcessor processor) {
 		if (_propertyConverter != null) {
 			return _propertyConverter;
 		}
@@ -161,16 +162,23 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 			}
 			return converter;
 		}
-		Class propertyClass = getPropertyClass(processorDef);
+		Class propertyClass = getPropertyClass(processorDef, processor);
 		if (propertyClass != null) {
 			return library.getPropertyConverter(propertyClass);
 		}
 		return null;
 	}
 
-	protected Class getPropertyClass(ProcessorDefinition processorDef) {
+	protected Class getPropertyClass(
+            ProcessorDefinition processorDef, TemplateProcessor processor) {
 		Class processorClass = processorDef.getProcessorClass();
-		return ObjectUtil.getPropertyClass(processorClass, getImplName());
+        Class propertyClass = ObjectUtil.getPropertyClass(processorClass, getImplName());
+        if (propertyClass == null && processor instanceof VirtualPropertyAcceptable) {
+            VirtualPropertyAcceptable acceptable =
+                (VirtualPropertyAcceptable) processor;
+            propertyClass = acceptable.getVirtualPropertyClass();
+        }
+		return propertyClass;
 	}
 
 	protected QName getQName(SpecificationNode node) {
@@ -179,6 +187,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 	}
 
 	public Object createProcessorProperty(ProcessorDefinition processorDef,
+            TemplateProcessor processor,
 			SpecificationNode original, SpecificationNode injected) {
 		if (injected == null) {
 			throw new IllegalArgumentException();
@@ -196,12 +205,12 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 			throw new FinalProcessorPropertyException(processorName, qName);
 		}
 		if (StringUtil.hasValue(value)) {
-			Class propertyClass = getPropertyClass(processorDef);
+			Class propertyClass = getPropertyClass(processorDef, processor);
 			if (propertyClass == null) {
 				// real property not found on the processor.
-				Class processotClass = processorDef.getProcessorClass();
+				Class processorClass = processorDef.getProcessorClass();
 				if (VirtualPropertyAcceptable.class
-						.isAssignableFrom(processotClass) == false) {
+						.isAssignableFrom(processorClass) == false) {
 					if (LOG.isWarnEnabled()) {
 						LOG.warn(StringUtil.getMessage(
 								PropertyDefinitionImpl.class, 0, processorDef
@@ -210,7 +219,8 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 					return null;
 				}
 			}
-			PropertyConverter converter = getPropertyConverter(processorDef);
+			PropertyConverter converter =
+                getPropertyConverter(processorDef, processor);
 			if (converter == null && propertyClass != null) {
 				LibraryManager manager = ProviderUtil.getLibraryManager();
 				converter = manager.getPropertyConverter(propertyClass);

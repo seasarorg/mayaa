@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.engine.processor;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 
 /**
@@ -31,6 +33,18 @@ public interface VirtualPropertyAcceptable
      * @param name プロパティ名。
      * @param property プロパティ値。
      */
-    void addVirtualProperty(PrefixAwareName name, Object property);
+    void addVirtualProperty(PrefixAwareName name, Serializable property);
+
+    /**
+     * addVirtualProperty()に渡されるバーチャルプロパティに期待される型。
+     * @return バーチャルプロパティ型。
+     */
+    Class getVirtualPropertyClass();
+
+    /**
+     * バーチャルプロパティの予測される型を取得する。
+     * @return バーチャルプロパティの予測される型。
+     */
+    Class getVirtualExpectedClass();
 
 }

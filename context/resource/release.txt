@@ -61,6 +61,19 @@ MayaaのWEBサイト：
 - (rev.2946) デシリアライズ後のresolvePrefixで mayaa.seasar.orgのnamespaceの
   親参照でヌルが返ってくる場合にNullPointerExceptionが発生する問題に対応しました。
 
+- (rev.2983) InformalPropertyAcceptableに型指定メソッド名を変更しました。
+  古いメソッド名はdeprecatedとしました。
+
+- (rev.2984) VirtualPropertyAcceptable#addVirtualProperty()の第2引数を
+  java.lang.Objectからjava.io.Serializableに変更しました。
+  また、VirtualPropertyに型定義が必須となるよう変更しました。
+
+- (rev.2984) InsertProcessorでVirtualPropertyを使えるよう変更しました。
+  これにより、コンポーネントをMLDに定義する際にrequired指定などができるように
+  なりました。
+  ただし、VirtualPropertyもInformalPropertyとして扱います。
+
+
 -------------------------------------------------------------------
 変更点 1.1.7 -> 1.1.8 (2007/04/08)
 

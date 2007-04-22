@@ -114,7 +114,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertyDefinition property) {
         Object value =
-            property.createProcessorProperty(this, original, injected);
+            property.createProcessorProperty(this, processor, original, injected);
         if (value != null) {
             String propertyImplName = property.getImplName();
             Class processorClass = getProcessorClass();
@@ -128,9 +128,19 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             } else if (processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable) processor;
-                PrefixAwareName name =
-                    getPrefixAwareName(injected, property.getName());
-                acceptable.addVirtualProperty(name, value);
+// TODO                settingVirtualProperties(injected, acceptable);
+                if (value instanceof Serializable) {
+                    PrefixAwareName name =
+                        getPrefixAwareName(injected, property.getName());
+                    acceptable.addVirtualProperty(name, (Serializable) value);
+                } else {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn(StringUtil.getMessage(
+                                ProcessorDefinitionImpl.class, 3,
+                                processorClass.getName(), propertyImplName,
+                                value.getClass().getName()));
+                    }
+                }
             } else {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn(StringUtil.getMessage(
@@ -173,14 +183,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 continue;
             }
             LibraryDefinition library = getLibraryDefinition();
-            Class propertyClass = acceptable.getPropertyClass();
+            Class propertyClass = acceptable.getInformalPropertyClass();
             PropertyConverter converter =
                 library.getPropertyConverter(propertyClass);
             if (converter == null) {
                 throw new ConverterNotFoundException(
                         propertyClass.getName(), getSystemID(), getLineNumber());
             }
-            Class expectedClass = acceptable.getExpectedClass();
+            Class expectedClass = acceptable.getInformalExpectedClass();
             String value = attr.getValue();
             Serializable property = converter.convert(attr, value, expectedClass);
             if (property == null) {
@@ -192,7 +202,35 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             acceptable.addInformalProperty(name, property);
         }
     }
+/* TODO 消す
+    protected void settingVirtualProperties(SpecificationNode injected,
 
+            VirtualPropertyAcceptable acceptable) {
+        URI injectedNS = injected.getQName().getNamespaceURI();
+        NodeAttribute attr = (NodeAttribute) it.next();
+        if (contain(injectedNS, attr)) {
+            continue;
+        }
+        LibraryDefinition library = getLibraryDefinition();
+        Class propertyClass = acceptable.getInformalPropertyClass();
+        PropertyConverter converter =
+            library.getPropertyConverter(propertyClass);
+        if (converter == null) {
+            throw new ConverterNotFoundException(
+                    propertyClass.getName(), getSystemID(), getLineNumber());
+        }
+        Class expectedClass = acceptable.getInformalExpectedClass();
+        String value = attr.getValue();
+        Serializable property = converter.convert(attr, value, expectedClass);
+        if (property == null) {
+            throw new ConverterOperationException(converter, value);
+        }
+        // メモリリークを起こす可能性があるので参照を断つ
+        PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
+                attr.getQName(), attr.getPrefix());
+        acceptable.addInformalProperty(name, property);
+    }
+*/
     public TemplateProcessor createTemplateProcessor(
             SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {

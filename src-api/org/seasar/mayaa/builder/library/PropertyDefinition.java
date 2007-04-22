@@ -16,6 +16,7 @@
 package org.seasar.mayaa.builder.library;
 
 import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
@@ -79,11 +80,13 @@ public interface PropertyDefinition extends ParameterAware {
     /**
      * プロパティオブジェクトを生成する。
      * @param processorDef プロセッサ定義。
+     * @param processor プロセッサインスタンス。
      * @param original テンプレート上のオリジナルノード。
      * @param injected インジェクションするノード。
      * @return プロパティオブジェクト。
      */
     Object createProcessorProperty(ProcessorDefinition processorDef,
+            TemplateProcessor processor,
             SpecificationNode original, SpecificationNode injected);
 
 }

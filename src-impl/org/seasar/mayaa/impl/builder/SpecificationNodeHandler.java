@@ -93,6 +93,22 @@ public class SpecificationNodeHandler
         return _specification;
     }
 
+    protected NodeTreeWalker getCurrentNode() {
+        return _current;
+    }
+
+    protected void enterCData() {
+        _inCData = true;
+    }
+
+    protected void leaveCData() {
+        _inCData = false;
+    }
+
+    protected void setCurrentNode(NodeTreeWalker newCurrent) {
+        _current = newCurrent;
+    }
+
     public void setOutputMayaaWhitespace(boolean outputMayaaWhitespace) {
         _outputMayaaWhitespace = outputMayaaWhitespace;
     }
@@ -414,19 +430,11 @@ public class SpecificationNodeHandler
     }
 
     public void startCDATA() {
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_CDATA);
-
-        NodeTreeWalker parent = _current; // by kato
-        _current = node;
-        _current.setParentNode(parent);
-        _inCData = true;
+        enterCData();
     }
 
     public void endCDATA() {
-        addCharactersNode();
-        _current = _current.getParentNode();
-        _inCData = false;
+        leaveCData();
     }
 
     private String exceptionMessage(SAXParseException e) {

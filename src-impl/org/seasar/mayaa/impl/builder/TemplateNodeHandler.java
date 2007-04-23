@@ -85,4 +85,19 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         node.addAttribute(QM_TEXT, comment);
     }
 
+    public void startCDATA() {
+        addCharactersNode();
+        SpecificationNode node = addNode(QM_CDATA);
+
+        node.setParentNode(getCurrentNode());
+        setCurrentNode(node);
+        enterCData();
+    }
+
+    public void endCDATA() {
+        addCharactersNode();
+        setCurrentNode(getCurrentNode().getParentNode());
+        leaveCData();
+    }
+
 }

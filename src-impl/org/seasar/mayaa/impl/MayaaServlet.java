@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServlet;
@@ -75,12 +74,12 @@ public class MayaaServlet extends HttpServlet {
     }
 
     public void doGet(
-            HttpServletRequest request, HttpServletResponse response) throws IOException {
+            HttpServletRequest request, HttpServletResponse response) {
         doService(request, response);
     }
 
     public void doPost(
-            HttpServletRequest request, HttpServletResponse response) throws IOException {
+            HttpServletRequest request, HttpServletResponse response) {
         doService(request, response);
     }
 

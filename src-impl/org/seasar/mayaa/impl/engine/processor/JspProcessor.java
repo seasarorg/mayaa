@@ -610,7 +610,7 @@ public class JspProcessor extends TemplateProcessorSupport
             return Tag.SKIP_BODY;
         }
 
-        public int doEndTag() throws JspException {
+        public int doEndTag() {
             /* no-op */
             return Tag.EVAL_PAGE;
         }

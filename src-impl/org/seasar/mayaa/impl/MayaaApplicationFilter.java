@@ -35,7 +35,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class MayaaApplicationFilter implements Filter {
 
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // no operation
     }
 

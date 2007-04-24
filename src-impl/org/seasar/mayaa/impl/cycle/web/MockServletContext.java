@@ -32,7 +32,6 @@ import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import org.seasar.mayaa.impl.util.IOUtil;
 
@@ -282,7 +281,7 @@ public class MockServletContext implements ServletContext {
      * @see javax.servlet.ServletContext#getServlet(java.lang.String)
      * @deprecated
      */
-    public Servlet getServlet(String name) throws ServletException {
+    public Servlet getServlet(String name) {
         return null;
     }
 

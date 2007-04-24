@@ -173,7 +173,7 @@ public class MockServletResponse implements ServletResponse {
          *
          * @see java.io.OutputStream#flush()
          */
-        public void flush() throws IOException {
+        public void flush() {
             if (_onCommitOutputStream != null) {
                 try {
                     final int bufferSize = 1024;

@@ -45,6 +45,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static final long serialVersionUID = -4067264733660357274L;
     private static Scriptable _standardObjects;
+    
+    private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
     // singleton
     private static transient WrapFactory _wrap;
@@ -84,10 +86,20 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     protected static Scriptable getStandardObjects() {
         if (_standardObjects == null) {
             Context cx = Context.enter();
-            try {
-                _standardObjects = cx.initStandardObjects(null, true);
-            } finally {
-                Context.exit();
+            if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
+            	VirtualNativeObject root = new VirtualNativeObject();
+                try {
+                    _standardObjects = cx.initStandardObjects(root, true);
+                } finally {
+                    Context.exit();
+                    root.initEnd();
+                }
+            } else {
+                try {
+                    _standardObjects = cx.initStandardObjects(null, true);
+                } finally {
+                    Context.exit();
+                }
             }
         }
         return _standardObjects;

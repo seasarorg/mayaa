@@ -39,6 +39,8 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * Specificationに関わるユーティリティメソッドをまとめたクラスです。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
@@ -56,6 +58,14 @@ public class SpecificationUtil implements CONST_IMPL {
         // no instantiation.
     }
 
+    /**
+     * nodeの属性のうちqNameで表されるものの値を返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @param node 対象とするノード
+     * @param qName 属性名
+     * @return 属性値
+     */
     public static String getAttributeValue(
             SpecificationNode node, QName qName) {
         NodeAttribute nameAttr = node.getAttribute(qName);
@@ -65,6 +75,13 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    /**
+     * currentのparentを辿り、Specificationが見つかった場合それを返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @param current 対象とするノード
+     * @return Specification
+     */
     public static Specification findSpecification(NodeTreeWalker current) {
         while (current instanceof Specification == false) {
             current = current.getParentNode();
@@ -75,6 +92,13 @@ public class SpecificationUtil implements CONST_IMPL {
         return (Specification) current;
     }
 
+    /**
+     * ServiceCycleで現在処理中のノードからparentを辿り、Specificationが
+     * 見つかった場合それを返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @return Specification
+     */
     public static Specification findSpecification() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         NodeTreeWalker current = cycle.getOriginalNode();
@@ -85,6 +109,15 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    /**
+     * currentが持つm:mayaaノードを探し、もしあればm:mayaaノードの属性のうち
+     * qNameで表されるものの値を返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @param current 対象とするノード
+     * @param qName 属性名
+     * @return 属性値
+     */
     public static SpecificationNode getMayaaNode(NodeTreeWalker current) {
         Specification specification = findSpecification(current);
         for (Iterator it = specification.iterateChildNode(); it.hasNext();) {
@@ -96,6 +129,15 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    /**
+     * currentが持つm:mayaaノードを探し、もしあればm:mayaaノードの属性のうち
+     * qNameで表されるものの値を返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @param current 対象とするノード
+     * @param qName 属性名
+     * @return 属性値
+     */
     public static String getMayaaAttributeValue(
             NodeTreeWalker current, QName qName) {
         SpecificationNode mayaa = getMayaaNode(current);
@@ -108,8 +150,17 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    /**
+     * nodeの子要素である文字ノードをまとめた文字列を取得します。
+     * 文字ノード以外を含む場合、{@link IllegalChildNodeException} が発生します。
+     * CDATAはその子を文字ノードと見なします。
+     *
+     * @param node 文字ノードを子として持つノード
+     * @return 文字ノードをまとめた文字列
+     * @throws IllegalChildNodeException 文字ノード以外を含む場合
+     */
     public static String getNodeBodyText(SpecificationNode node) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer(256);
         for (Iterator it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             QName qName = child.getQName();
@@ -126,14 +177,23 @@ public class SpecificationUtil implements CONST_IMPL {
         return buffer.toString();
     }
 
+    /**
+     * スクリプト実行環境のスコープを初期化します。
+     */
     public static void initScope() {
         ProviderUtil.getScriptEnvironment().initScope();
     }
 
+    /**
+     * スクリプト実行環境の新規スコープを開始します。
+     */
     public static void startScope(Map variables) {
         ProviderUtil.getScriptEnvironment().startScope(variables);
     }
 
+    /**
+     * スクリプト実行環境の現在スコープを終了します。
+     */
     public static void endScope() {
         ProviderUtil.getScriptEnvironment().endScope();
     }

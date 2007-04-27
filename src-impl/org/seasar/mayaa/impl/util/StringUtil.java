@@ -543,4 +543,18 @@ public final class StringUtil {
         }
         return sb.toString();
     }
+
+    /**
+     * 配列の浅いコピーを作成して返します。
+     *
+     * @param src 元となる配列
+     * @return srcの浅いコピー
+     * @throws NullPointerException
+     */
+    public static String[] arraycopy(String[] src) {
+        String[] copy = new String[src.length];
+        System.arraycopy(src, 0, copy, 0, src.length);
+        return copy;
+    }
+
 }

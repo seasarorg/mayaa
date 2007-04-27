@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.util;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -258,13 +259,13 @@ public class ObjectUtil {
     }
 
     public static boolean canBooleanConvert(Object obj) {
-    	BooleanConverter converter = new BooleanConverter();
-    	try {
-    		converter.convert(null, obj);
-    	} catch(ConversionException e) {
-    		return false;
-    	}
-    	return true;
+        BooleanConverter converter = new BooleanConverter();
+        try {
+            converter.convert(null, obj);
+        } catch(ConversionException e) {
+            return false;
+        }
+        return true;
     }
 
     public static Number numberValue(Object obj, Number defaultValue) {
@@ -297,6 +298,20 @@ public class ObjectUtil {
             className = className.substring(pos + 1);
         }
         return className;
+    }
+
+    /**
+     * 配列の浅いコピーを作成して返します。
+     *
+     * @param src 元となる配列
+     * @param componentType 配列の要素の型
+     * @return srcの浅いコピー
+     * @throws NullPointerException
+     */
+    public static Object[] arraycopy(Object[] src, Class componentType) {
+        Object copy = Array.newInstance(componentType, src.length);
+        System.arraycopy(src, 0, copy, 0, src.length);
+        return (Object[]) copy;
     }
 
 }

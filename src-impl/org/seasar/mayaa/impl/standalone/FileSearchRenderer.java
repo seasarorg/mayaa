@@ -333,4 +333,65 @@ public class FileSearchRenderer {
         }
     }
 
+    /**
+     * @return the buildTimeSum
+     */
+    public long getBuildTimeSum() {
+        return _buildTimeSum;
+    }
+
+    /**
+     * @param buildTimeSum the buildTimeSum to set
+     */
+    public void setBuildTimeSum(long buildTimeSum) {
+        _buildTimeSum = buildTimeSum;
+    }
+
+    /**
+     * fileFiltersの浅いコピーを取得します。
+     *
+     * @return the fileFilters
+     */
+    public String[] getFileFilters() {
+        return StringUtil.arraycopy(_fileFilters);
+    }
+
+    /**
+     * fileFiltersに浅いコピーをセットします。
+     *
+     * @param fileFilters the fileFilters to set
+     * @throws NullPointerException
+     */
+    public void setFileFilters(String[] fileFilters) {
+        _fileFilters = StringUtil.arraycopy(fileFilters);
+    }
+
+    /**
+     * @return the outputPath
+     */
+    public String getOutputPath() {
+        return _outputPath;
+    }
+
+    /**
+     * @param outputPath the outputPath to set
+     */
+    public void setOutputPath(String outputPath) {
+        _outputPath = outputPath;
+    }
+
+    /**
+     * @return the servletContext
+     */
+    public MockServletContext getServletContext() {
+        return _servletContext;
+    }
+
+    /**
+     * @param servletContext the servletContext to set
+     */
+    public void setServletContext(MockServletContext servletContext) {
+        _servletContext = servletContext;
+    }
+
 }

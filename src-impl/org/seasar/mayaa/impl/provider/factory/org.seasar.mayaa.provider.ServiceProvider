@@ -105,6 +105,29 @@
         <parameter name="optimize" value="true"/>
     </templateBuilder>
 
+    <!--
+    <templateBuilder class="org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder">
+        <resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.RenderedSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InsertSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
+            <parameter name="reportUnresolvedID" value="true"/>
+            <parameter name="reportDuplicatedID" value="true"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/TR/html4}id"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
+        </resolver>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
+        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputMayaaWhitespace" value="false"/>
+        <parameter name="optimize" value="true"/>
+
+        <parameter name="defaultLayoutPageName" value="/defaultlayout.html"/>
+        <parameter name="generateMayaaNode" value="true"/>
+    </templateBuilder>
+    -->
+
     <pathAdjuster class="org.seasar.mayaa.impl.builder.PathAdjusterImpl">
         <parameter name="enabled" value="true"/>
     </pathAdjuster>

@@ -56,7 +56,12 @@ public abstract class FactoryFactory implements Serializable {
 
     private static void check() {
         if (_instance == null || _context == null) {
-            throw new IllegalStateException();
+            if (_instance == null) {
+                throw new IllegalStateException("instance is null");
+            }
+            if (_context == null) {
+                throw new IllegalStateException("context is null");
+            }
         }
     }
 

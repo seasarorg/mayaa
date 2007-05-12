@@ -38,6 +38,26 @@ public class EngineUtil implements CONST_IMPL {
         // no instantiation.
     }
 
+    private static String _mayaaExtensionName;
+
+    /**
+     * 高速化のため、Mayaaファイルの拡張子("."を含まない)を{@EngineUtil}内に
+     * キャッシュします。
+     *
+     * @return Mayaaファイルの拡張子("."を含まない)
+     */
+    public static String getMayaaExtensionName() {
+        if (_mayaaExtensionName == null) {
+            renewMayaaExtensionName();
+        }
+        return _mayaaExtensionName;
+    }
+
+    public static void renewMayaaExtensionName() {
+        _mayaaExtensionName =
+            getEngineSetting(MAYAA_EXTENSION, ".mayaa").substring(1);
+    }
+
     public static String getEngineSetting(
             String name, String defaultValue) {
         Engine engine = ProviderUtil.getEngine();

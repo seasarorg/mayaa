@@ -150,7 +150,7 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
         if (extension == null) {
             extension = "";
         }
-        if (QM_MAYAA.getLocalName().equals(extension)) {
+        if (EngineUtil.getMayaaExtensionName().equals(extension)) {
             return null;
         }
         Template template = getTemplateFromFixedSuffix(suffix, extension);

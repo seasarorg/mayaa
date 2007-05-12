@@ -61,7 +61,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     private SourceDescriptor _source;
     private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
-    private boolean _deprecated;
+    private boolean _deprecated = true;
     private int _lastSequenceID;
     private transient boolean _specificationSerialize;
 
@@ -115,7 +115,7 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     // Specification implements ------------------------------------
 
-        // TODO isDeprecatedの高速化
+    // TODO isDeprecatedの高速化
     public boolean isDeprecated() {
         if (_deprecated == false) {
             _deprecated = _hasSource != isSourceExists();
@@ -140,13 +140,13 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     public void build() {
         if (isDeprecated()) {
+            setTimestamp(new Date());
             _hasSource = isSourceExists();
             if (_hasSource) {
                 LOG.debug(getSystemID() + " build start.");
                 Date sourceTime = getSource().getTimestamp();
                 _lastSequenceID = 0;
                 getBuilder().build(this);
-                setTimestamp(new Date());
                 _builtSourceTime = sourceTime;
                 _deprecated = false;
                 if (isSpecificationSerialize()) {
@@ -155,7 +155,6 @@ public class SpecificationImpl extends ParameterAwareImpl
                 }
                 return;
             }
-            setTimestamp(new Date(0));
             _builtSourceTime = new Date(0);
             _deprecated = false;
         }

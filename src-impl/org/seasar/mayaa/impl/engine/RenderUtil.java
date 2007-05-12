@@ -249,7 +249,7 @@ public class RenderUtil implements CONST_IMPL {
 
     protected static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
-        if (QM_MAYAA.getLocalName().equals(extension)) {
+        if (EngineUtil.getMayaaExtensionName().equals(extension)) {
             SourceDescriptor source = page.getSource();
             if (source.exists() == false) {
                 String pageName = page.getPageName();

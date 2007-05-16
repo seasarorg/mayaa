@@ -51,26 +51,26 @@ public class ExecProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if (_src != null) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
+        SpecificationUtil.endScope();
+        try {
+            if (_src != null) {
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
 
-            String srcValue = StringUtil.valueOf(_src.getValue().execute(null));
-            String encValue = StringUtil.valueOf(_encoding.getValue().execute(null));
+                String srcValue = StringUtil.valueOf(_src.getValue().execute(null));
+                String encValue = StringUtil.valueOf(_encoding.getValue().execute(null));
 
-            if (StringUtil.isRelativePath(srcValue)) {
-                String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
-                srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
+                if (StringUtil.isRelativePath(srcValue)) {
+                    String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+                    srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
+                }
+
+                cycle.load(srcValue, encValue);
             }
-
-            cycle.load(srcValue, encValue);
-        }
-        if (_script != null) {
-            SpecificationUtil.endScope();
-            try {
+            if (_script != null) {
                 _script.getValue().execute(null);
-            } finally {
-                SpecificationUtil.startScope(getVariables());
             }
+        } finally {
+            SpecificationUtil.startScope(getVariables());
         }
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }

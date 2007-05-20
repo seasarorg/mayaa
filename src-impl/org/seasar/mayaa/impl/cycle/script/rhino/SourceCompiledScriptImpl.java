@@ -37,7 +37,7 @@ public class SourceCompiledScriptImpl
 
     private static final long serialVersionUID = 970613841877330176L;
 
-    private Script _rhinoScript;
+    private transient Script _rhinoScript;
     private Date _compiledTimestamp;
 
     public SourceCompiledScriptImpl(SourceDescriptor source, String encoding) {

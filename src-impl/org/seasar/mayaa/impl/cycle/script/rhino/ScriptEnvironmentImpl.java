@@ -151,10 +151,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             RhinoUtil.enter();
             try {
                 for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
-                    String name = it.next().toString();
-                    Object value = variables.get(name);
+                    Object key = it.next();
+                    Object value = variables.get(key);
                     Object variable = Context.javaToJS(value, pageScope);
-                    ScriptableObject.putProperty(pageScope, name, variable);
+                    ScriptableObject.putProperty(pageScope, key.toString(), variable);
                 }
             } finally {
                 Context.exit();

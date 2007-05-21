@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaMethod;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -36,7 +37,10 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
+ * pageスコープのRhino用実装。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class PageAttributeScope extends ScriptableObject
         implements AttributeScope, Wrapper {
@@ -175,6 +179,17 @@ public class PageAttributeScope extends ScriptableObject
             }
             return;
         }
+
+        if (attribute != null && attribute instanceof Number) {
+            // Javaからsetされたとき、Number型が強制的にDoubleにされてしまうのを防ぐ
+            Context cx = RhinoUtil.enter();
+            try {
+                attribute = cx.getWrapFactory().wrap(cx, this, attribute, Object.class);
+            } finally {
+                Context.exit();
+            }
+        }
+
         put(name, this, attribute);
     }
 

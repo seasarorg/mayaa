@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
@@ -36,13 +38,19 @@ import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * m:xpathに記述されたxpath式にマッチするノードをインジェクション対象とします。
+ *
+ * JIRA[MAYAA-28] position関数が正常動作しないバグあり。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
 public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         implements InjectionResolver, CONST_IMPL {
 
-    private static final long serialVersionUID = -5357509098529015227L;
+    private static final long serialVersionUID = -3738385077054952571L;
+    private static final Log LOG =
+        LogFactory.getLog(XPathMatchesInjectionResolver.class);
     protected static final QName QM_XPATH =
         SpecificationUtil.createQName("xpath");
 
@@ -65,9 +73,14 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
         }
         for (Iterator it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
-            if (StringUtil.hasValue(
-                    SpecificationUtil.getAttributeValue(child, QM_XPATH))) {
-                specificationNodes.add(child);
+            String xpath = SpecificationUtil.getAttributeValue(child, QM_XPATH);
+            if (StringUtil.hasValue(xpath)) {
+                if (QM_MAYAA.equals(node.getQName())) {
+                    specificationNodes.add(child);
+                } else {
+                    // m:mayaa直下でなければ警告し、利用しない
+                    logWarnning(xpath, child, 1);
+                }
             }
             getXPathNodes(child, specificationNodes);
         }
@@ -105,6 +118,17 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
             }
         }
         return chain.getNode(original);
+    }
+
+    protected void logWarnning(String xpath, SpecificationNode node, int number) {
+        if (LOG.isWarnEnabled()) {
+            String systemID = node.getSystemID();
+            String lineNumber = Integer.toString(node.getLineNumber());
+            String msg = StringUtil.getMessage(
+                    XPathMatchesInjectionResolver.class, number,
+                    xpath, systemID, lineNumber);
+            LOG.warn(msg);
+        }
     }
 
     // support class -------------------------------------------------

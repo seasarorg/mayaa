@@ -96,7 +96,12 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         for (Iterator it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             if (id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
-                specificationNodes.add(child);
+                if (QM_MAYAA.equals(node.getQName())) {
+                    specificationNodes.add(child);
+                } else {
+                    // m:mayaa直下でなければ警告し、利用しない
+                    logWarnning(id, child, 3);
+                }
             }
             getEqualsIDNodes(child, id, specificationNodes);
         }

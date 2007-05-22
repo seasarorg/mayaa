@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.builder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -77,7 +79,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private List _unmodifiableResolvers =
         Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
-    private InjectionChain _chain = new DefaultInjectionChain();
+    private transient InjectionChain _chain = new DefaultInjectionChain();
     private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
 
@@ -495,6 +497,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
+    }
+
+
+    // deserialization
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+
+        _chain = new DefaultInjectionChain();
     }
 
     // support class --------------------------------------------------

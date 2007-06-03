@@ -73,11 +73,11 @@ public final class StringUtil {
     }
 
     public static boolean hasValue(Object test) {
-        return !isEmpty(test);
+        return isEmpty(test) == false;
     }
 
     public static boolean hasValue(String test) {
-        return !isEmpty(test);
+        return isEmpty(test) == false;
     }
 
     /**

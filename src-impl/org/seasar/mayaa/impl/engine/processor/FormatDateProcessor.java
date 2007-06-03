@@ -25,9 +25,11 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.DateFormatPool;
-import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * {@link java.util.Date}を指定フォーマットで文字列に変換して出力するプロセッサ。
+ * 内部的には{@link SimpleDateFormat}。
+ *
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class FormatDateProcessor extends TemplateProcessorSupport {
@@ -67,7 +69,7 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
 
     private String format(ProcessorProperty property) {
         Object result = property.getValue().execute(null);
-        if (StringUtil.hasValue(result)) {
+        if (result != null) {
             if (result instanceof Date) {
                 DateFormat formatter = DateFormatPool.borrowFormat(_pattern);
                 String formattedValue = formatter.format(result);

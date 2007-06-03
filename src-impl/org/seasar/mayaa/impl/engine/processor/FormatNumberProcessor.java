@@ -27,10 +27,12 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
-import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 
 /**
+ * 数値を指定フォーマットで文字列に変換して出力するプロセッサ。
+ * 内部的には{@link DecimalFormat}。
+ *
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class FormatNumberProcessor extends TemplateProcessorSupport {
@@ -73,13 +75,15 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private String format(ProcessorProperty property) {
         Object result = property.getValue().execute(null);
-        if (StringUtil.hasValue(result)) {
-            if (result instanceof Number || result instanceof String) {
+        if (result != null) {
+            if (result instanceof String && ((String) result).length() > 0) {
+                result = ObjectUtil.numberValue(result, null);
+            }
+            if (result instanceof Number) {
                 NumberFormatPool pool = getFormatPool();
 
                 NumberFormat formatter = pool.borrowFormat();
-                String formattedValue =
-                    formatter.format(ObjectUtil.numberValue(result, null));
+                String formattedValue = formatter.format(result);
 
                 pool.returnFormat(formatter);
                 return formattedValue;

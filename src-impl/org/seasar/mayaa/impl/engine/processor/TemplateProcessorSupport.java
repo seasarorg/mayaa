@@ -58,6 +58,7 @@ public class TemplateProcessorSupport
     private static final String PREFIX_UNIQUE_ID = "_m";
 
     private transient ProcessorTreeWalker _parent;
+    // _childrenはビルド時のみ変更される。そのときはEngineのインスタンスでガードされる。
     private List/*<ProcessorTreeWalker>*/ _children;
     protected SpecificationNode _originalNode;
     protected transient SpecificationNode _injectedNode;
@@ -167,25 +168,21 @@ public class TemplateProcessorSupport
         insertProcessor(Integer.MAX_VALUE, child);
     }
 
-    public void insertProcessor(int index, ProcessorTreeWalker child) {
+    public synchronized void insertProcessor(int index, ProcessorTreeWalker child) {
         if (child == null) {
             throw new IllegalArgumentException("child is null");
         }
-        synchronized (this) {
-            if (_children == null) {
-                _children = new ArrayList();
-            }
+        if (_children == null) {
+            _children = new ArrayList();
         }
-        synchronized (_children) {
-            if (index == Integer.MAX_VALUE) {
-                index = _children.size();
-            }
-            _children.add(index, child);
+        if (index == Integer.MAX_VALUE) {
+            index = _children.size();
+        }
+        _children.add(index, child);
+        child.setParentProcessor(this);
+        for (index += 1; index < _children.size(); index++) {
+            child = (ProcessorTreeWalker)_children.get(index);
             child.setParentProcessor(this);
-            for (index += 1; index < _children.size(); index++) {
-                child = (ProcessorTreeWalker)_children.get(index);
-                child.setParentProcessor(this);
-            }
         }
     }
 
@@ -193,35 +190,27 @@ public class TemplateProcessorSupport
         if (_children == null) {
             return 0;
         }
-        synchronized (_children) {
-            return _children.size();
-        }
+        return _children.size();
     }
 
     public ProcessorTreeWalker getChildProcessor(int index) {
         if (index < 0 || index >= getChildProcessorSize()) {
             throw new IndexOutOfBoundsException();
         }
-        synchronized (_children) {
-            return (ProcessorTreeWalker) _children.get(index);
-        }
+        return (ProcessorTreeWalker) _children.get(index);
     }
 
-    public boolean removeProcessor(ProcessorTreeWalker child) {
+    public synchronized boolean removeProcessor(ProcessorTreeWalker child) {
         if (_children != null) {
-            synchronized (_children) {
-                return _children.remove(child);
-            }
+            return _children.remove(child);
         }
         return false;
     }
 
-    public void clearChildProcessors() {
+    public synchronized void clearChildProcessors() {
         if (_children != null) {
             try {
-                synchronized (this) {
-                    _children.clear();
-                }
+                _children.clear();
             } finally {
                 _children = null;
             }

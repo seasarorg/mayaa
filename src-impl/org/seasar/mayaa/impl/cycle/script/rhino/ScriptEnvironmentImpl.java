@@ -194,8 +194,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public Object convertFromScriptObject(Object scriptObject) {
         if (scriptObject != null && conversionRequires(scriptObject)) {
-            Object result = (scriptObject instanceof NativeArray) ? scriptObject
-                    : JavaAdapter.convertResult(scriptObject, Object.class);
+            Object result = JavaAdapter.convertResult(scriptObject, Object.class);
             if (result instanceof NativeArray) {
                 NativeArray jsArray = (NativeArray) result;
                 int length = (int) jsArray.getLength();

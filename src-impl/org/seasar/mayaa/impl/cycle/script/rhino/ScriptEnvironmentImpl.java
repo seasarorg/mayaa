@@ -193,19 +193,31 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public Object convertFromScriptObject(Object scriptObject) {
-        Object result = JavaAdapter.convertResult(scriptObject, Object.class);
-
-        if (result instanceof NativeArray) {
-            NativeArray jsArray = (NativeArray) result;
-            int length = (int) jsArray.getLength();
-            Object[] array = new Object[length];
-            for (int i = 0; i < length; i++) {
-                array[i] = jsArray.get(i, null);
+        if (scriptObject != null && conversionRequires(scriptObject)) {
+            Object result = (scriptObject instanceof NativeArray) ? scriptObject
+                    : JavaAdapter.convertResult(scriptObject, Object.class);
+            if (result instanceof NativeArray) {
+                NativeArray jsArray = (NativeArray) result;
+                int length = (int) jsArray.getLength();
+                Object[] array = new Object[length];
+                for (int i = 0; i < length; i++) {
+                    array[i] = jsArray.get(i, null);
+                }
+                result = array;
             }
-            result = array;
+            return result;
+        }
+        return scriptObject;
+    }
+
+    private boolean conversionRequires(Object scriptObject) {
+        // PageAttributeScopeは呼ばれる数が多い
+        if (scriptObject instanceof PageAttributeScope) {
+            return false;
         }
 
-        return result;
+        String className = scriptObject.getClass().getName();
+        return className.startsWith("org.mozilla.javascript.", 0);
     }
 
     static void setWrapFactory(WrapFactory wrap) {

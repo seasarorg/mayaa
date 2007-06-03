@@ -37,7 +37,11 @@ public class ProcessorPropertyLiteral implements ProcessorProperty {
             throw new IllegalArgumentException();
         }
         _name = name;
-        _compiled = new LiteralScript(value);
+        if (value.length() == 0) {
+            _compiled = LiteralScript.NULL_LITERAL_SCRIPT;
+        } else {
+            _compiled = new LiteralScript(value);
+        }
     }
 
     public PrefixAwareName getName() {

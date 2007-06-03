@@ -69,7 +69,7 @@ public abstract class AbstractScriptEnvironment
 
     public CompiledScript compile(String script, PositionAware position) {
         if (StringUtil.isEmpty(script)) {
-            return new LiteralScript("");
+            return LiteralScript.NULL_LITERAL_SCRIPT;
         }
         int offsetLine = 0;
         List list = new ArrayList();

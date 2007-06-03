@@ -20,11 +20,15 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * ただの文字列をスクリプトとして扱うためのクラス。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LiteralScript  implements CompiledScript {
+public class LiteralScript implements CompiledScript {
 
     private static final long serialVersionUID = -3791475287481727514L;
+
+    public static final LiteralScript NULL_LITERAL_SCRIPT = new LiteralScript("");
 
     private String _text;
     private Class _expectedClass = Object.class;
@@ -51,8 +55,11 @@ public class LiteralScript  implements CompiledScript {
         if (_expectedClass == Void.class) {
             return null;
         }
-        if (StringUtil.isEmpty(_text)) {
-            return "";
+        if (NULL_LITERAL_SCRIPT == this || StringUtil.isEmpty(_text)) {
+            return NULL_LITERAL_SCRIPT._text;
+        }
+        if (String.class.equals(_expectedClass) || Object.class.equals(_expectedClass)) {
+            return _text;
         }
         return ObjectUtil.convert(_expectedClass, _text);
     }

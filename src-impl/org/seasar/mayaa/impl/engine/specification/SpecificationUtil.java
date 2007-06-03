@@ -296,8 +296,6 @@ public class SpecificationUtil implements CONST_IMPL {
 
     protected static class EventScriptEnvironment {
 
-        private static final LiteralScript NULL_SCRIPT = new LiteralScript("");
-
         private WeakHashMap _mayaaScriptCache = new WeakHashMap();
 
         protected CompiledScript compile(String text, boolean fullScript) {
@@ -307,7 +305,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 }
                 return ScriptUtil.compile(text, Void.class);
             }
-            return NULL_SCRIPT;
+            return LiteralScript.NULL_LITERAL_SCRIPT;
         }
 
         protected CompiledScript findScriptFromCache(

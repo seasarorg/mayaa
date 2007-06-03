@@ -44,7 +44,7 @@ public class ScriptUtil {
             NodeTreeWalker node = cycle.getInjectedNode();
             compiled = environment.compile(text, node);
         } else {
-            compiled = new LiteralScript("");
+            compiled = LiteralScript.NULL_LITERAL_SCRIPT;
         }
         compiled.setExpectedClass(expectedClass);
         return compiled;
@@ -72,7 +72,7 @@ public class ScriptUtil {
             throw new UnbalancedBraceException(text, iterator.getOffset());
         }
     }
-    
+
     public static boolean isEmpty(Object scriptResult) {
         return scriptResult == null
                     || scriptResult instanceof Undefined;

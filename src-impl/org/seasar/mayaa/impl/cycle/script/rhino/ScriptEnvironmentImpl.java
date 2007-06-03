@@ -40,6 +40,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
+ * Rhino用のスクリプト環境。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {

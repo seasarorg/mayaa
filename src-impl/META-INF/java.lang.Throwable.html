@@ -5,14 +5,17 @@
 	<title>${ handledError.getClass().getName() }</title>
 	<script type="text/javascript"><!--
 		function swapVisibility(elementId, anchorElement) {
-			var style = document.getElementById(elementId).style;
-			if (style.display == 'none') {
-				style.display = 'block';
-				anchorElement.innerHTML = '[-]';
-			} else {
-				style.display = 'none';
-				anchorElement.innerHTML = '[+]';
-			}
+			var element = document.getElementById(elementId);
+			if (element) {
+				var style = element.style;
+				if (style.display == 'none') {
+					style.display = 'block';
+					anchorElement.innerHTML = '[-]';
+				} else {
+					style.display = 'none';
+					anchorElement.innerHTML = '[+]';
+				}
+			} else alert(elementId);
 		}
 		function hideFoldings() {
 			var i = 0;

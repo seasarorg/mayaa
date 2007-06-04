@@ -66,11 +66,11 @@ public class NativeServiceCycle extends NativeJavaObject {
         }
         Object result = super.get(name, start);
         if (start == this && result == UniqueTag.NOT_FOUND) {
-        	// 先回りしてチェック
-        	if (Scriptable.NOT_FOUND == ScriptableObject.getProperty(getParentScope(), name)) {
-            	// Nativeにも存在しないのでUndefinedを定義したものと同等とする
-        		result = Undefined.instance;
-        	}
+            // 先回りしてチェック
+            if (Scriptable.NOT_FOUND == ScriptableObject.getProperty(getParentScope(), name)) {
+                // Nativeにも存在しないのでUndefinedを定義したものと同等とする
+                result = Undefined.instance;
+            }
         }
         return result;
     }

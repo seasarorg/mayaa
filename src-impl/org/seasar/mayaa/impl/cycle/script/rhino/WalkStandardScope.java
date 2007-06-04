@@ -40,10 +40,12 @@ public class WalkStandardScope extends ParameterAwareImpl implements AttributeSc
 
     private static final long serialVersionUID = -2952128451664421957L;
 
+    public static final String SCOPE_NAME = "_";
+
     // AttributeScope implements -------------------------------------
 
     public String getScopeName() {
-        return "_";
+        return SCOPE_NAME;
     }
 
     public boolean hasAttribute(String name) {

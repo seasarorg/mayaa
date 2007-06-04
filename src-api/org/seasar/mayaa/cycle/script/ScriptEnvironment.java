@@ -90,4 +90,13 @@ public interface ScriptEnvironment extends ParameterAware {
      */
     Object convertFromScriptObject(Object scriptObject);
 
+    /**
+     * スクリプト内部表現オブジェクトから、Javaのオブジェクトに変換する。
+     * @param scriptObject スクリプト内部表現オブジェクト。
+     * @param expectedClass 変換後のクラス。
+     * @return Javaのオブジェクト。
+     * @since 1.1.11
+     */
+    Object convertFromScriptObject(Object scriptObject, Class expectedClass);
+
 }

@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -35,6 +34,7 @@ import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
+import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -62,7 +62,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        return new TextCompiledScriptImpl(text, position, offsetLine);
+        CompiledScript script = GetterScriptFactory.create(text, position, offsetLine);
+        if (script == null) {
+            script = new TextCompiledScriptImpl(text, position, offsetLine);
+        }
+        return script;
     }
 
     // ScriptEnvironment implements ----------------------------------
@@ -193,8 +197,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public Object convertFromScriptObject(Object scriptObject) {
-        if (scriptObject != null && conversionRequires(scriptObject)) {
-            Object result = JavaAdapter.convertResult(scriptObject, Object.class);
+        return convertFromScriptObject(scriptObject, Object.class);
+    }
+
+    public Object convertFromScriptObject(Object scriptObject, Class expectedClass) {
+        if (scriptObject != null && conversionRequires(scriptObject, expectedClass)) {
+            Object result = RhinoUtil.convertResult(null, expectedClass, scriptObject);
             if (result instanceof NativeArray) {
                 NativeArray jsArray = (NativeArray) result;
                 int length = (int) jsArray.getLength();
@@ -209,7 +217,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return scriptObject;
     }
 
-    private boolean conversionRequires(Object scriptObject) {
+    private boolean conversionRequires(Object scriptObject, Class expectedClass) {
         // PageAttributeScopeは呼ばれる数が多い
         if (scriptObject instanceof PageAttributeScope) {
             return false;

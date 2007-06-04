@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public class ParameterAwareImpl implements ParameterAware {
 
     private static final long serialVersionUID = 7520826050429074016L;
-    
+
     private transient Map _parameters;
     private String _systemID = "";
     private int _lineNumber;
@@ -71,7 +71,7 @@ public class ParameterAwareImpl implements ParameterAware {
     }
 
     // PositionAware implements ---------------------------------------
-    
+
     public void setSystemID(String systemID) {
         _systemID = StringUtil.preparePath(systemID);
     }
@@ -100,7 +100,7 @@ public class ParameterAwareImpl implements ParameterAware {
     }
 
     // for serialize
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(_parameters);

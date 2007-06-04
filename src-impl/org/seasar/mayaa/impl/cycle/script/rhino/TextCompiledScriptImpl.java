@@ -202,10 +202,10 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
                     e.initLineSource(lines[offsetLine]);
                     sourceName = _sourceName;
                 } else {
-                	sourceName = e.sourceName();
+                    sourceName = e.sourceName();
                 }
             } else {
-            	sourceName = e.sourceName();
+                sourceName = e.sourceName();
             }
             throw new OffsetLineRhinoException(
                     message,

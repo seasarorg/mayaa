@@ -215,8 +215,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             return false;
         }
 
-        String className = scriptObject.getClass().getName();
-        return className.startsWith("org.mozilla.javascript.", 0);
+        return (scriptObject instanceof Scriptable);
     }
 
     static void setWrapFactory(WrapFactory wrap) {

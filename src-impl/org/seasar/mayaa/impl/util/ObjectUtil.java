@@ -168,6 +168,22 @@ public class ObjectUtil {
         }
     }
 
+    /**
+     * 指定したクラスのプロパティ名の配列を取得します。
+     *
+     * @param beanClass プロパティ名の配列を取得するクラス
+     * @return プロパティ名の配列
+     */
+    public static String[] getPropertyNames(Class beanClass) {
+        PropertyDescriptor[] descriptors =
+            PropertyUtils.getPropertyDescriptors(beanClass);
+        String[] result = new String[descriptors.length];
+        for (int i = 0; i < descriptors.length; i++) {
+            result[i] = descriptors[i].getName();
+        }
+        return result;
+    }
+
     public static boolean hasProperty(Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);

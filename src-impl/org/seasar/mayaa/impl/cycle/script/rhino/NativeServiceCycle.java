@@ -55,6 +55,13 @@ public class NativeServiceCycle extends NativeJavaObject {
         return super.has(name, start);
     }
 
+    /**
+     * 親のhasメソッドを呼ぶためのメソッド。
+     */
+    public boolean hasMember(String name, Scriptable start) {
+        return super.has(name, start);
+    }
+
     public Object get(String name, Scriptable start) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (cycle.hasAttributeScope(name)) {

@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * 標準スコープから変数を取得するだけの処理をするスクリプト。
@@ -28,30 +29,31 @@ public class StandardGetterScript extends AbstractGetterScript {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String[] PROPERTY_NAMES =
+        ObjectUtil.getPropertyNames(AttributeScope.class);
+
     public StandardGetterScript(
-            String text, PositionAware position, int offsetLine, String attributeName) {
-        super(text, position, offsetLine, attributeName);
+            String text, PositionAware position, int offsetLine,
+            String attributeName, String propertyName) {
+        super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
     }
 
     /**
-     * 標準スコープから変数を取得します。
+     * 標準スコープのうち、指定属性を持つスコープを返します。
+     * 指定された属性名がスコープのプロパティを指している場合は、カレントの
+     * pageスコープを返します。
      *
-     * @return 変数の値を返します。見つからない場合はnullを返します。
+     * @return 指定属性を持つスコープまたはカレントのpageスコープ。
      */
-    protected Object getAttribute() {
-        // TODO _._ が存在しないことをチェック？
+    protected AttributeScope getScope() {
+        if (_beanPropertyName != null) {
+            return CycleUtil.getCurrentPageScope();
+        }
         AttributeScope scope = CycleUtil.findStandardAttributeScope(_attributeName);
         if (scope != null) {
-            return scope.getAttribute(_attributeName);
+            return scope;
         }
         return null;
-
-        /* TODO 見つからない場合の例外
-        throw new OffsetLineRhinoException(
-                message,
-                sourceName, e.lineNumber(), e.lineSource(),
-                e.columnNumber(), offsetLine, e.getCause());
-        */
     }
 
 }

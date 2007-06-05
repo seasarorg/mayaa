@@ -15,13 +15,19 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mozilla.javascript.NativeObject;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.rhino.NativeServiceCycle;
 import org.seasar.mayaa.impl.cycle.script.rhino.WalkStandardScope;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * スクリプトがGetterScriptだと解釈できるなら対応するGetterScriptを
@@ -34,9 +40,19 @@ public class GetterScriptFactory {
     /** GetterScriptとして解釈するパターン */
     protected static final Pattern GETTER_PATTERN =
         Pattern.compile("\\s*([a-zA-Z_][a-zA-Z0-9_]*)" +
-                "\\s*(\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
-                "\\[\\s*'\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*'\\s*\\]|" +
-                "\\[\\s*\"\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*\"\\s*\\])?[\\s;]*"
+                "(\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
+                "\\s*\\[\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\]|" +
+                "\\s*\\[\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\]|" +
+                "\\s*\\.\\s*getAttribute\\s*\\(\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\)|" +
+                "\\s*\\.\\s*getAttribute\\s*\\(\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\)" +
+                "\\s*)?" +
+                "(\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
+                "\\s*\\[\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\]|" +
+                "\\s*\\[\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\]|" +
+                "\\s*\\.\\s*getAttribute\\s*\\(\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\)|" +
+                "\\s*\\.\\s*getAttribute\\s*\\(\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\)" +
+                "\\s*)?" +
+                "[\\s;]*"
                 );
 
     /**
@@ -54,39 +70,63 @@ public class GetterScriptFactory {
         if (splited == null) {
             return null;
         }
-        return createGetterScript(script, position, offsetLine, splited[0], splited[1]);
+        return createGetterScript(script, position, offsetLine, splited[0], splited[1], splited[2]);
     }
 
     /**
-     * スクリプトをスコープと変数名に分割します。
+     * スクリプトをスコープと変数名、プロパティ名に分割します。
      *
-     * @param trimed
-     * @return [スコープ名, 変数名]のString配列。GetterScriptでない場合はnull。
+     * @param script
+     * @return [スコープ名, 変数名, プロパティ名]のString配列。GetterScriptでない場合はnull。
      */
-    protected static String[] splitScope(String trimed) {
-        Matcher matcher = GETTER_PATTERN.matcher(trimed);
+    protected static String[] splitScope(String script) {
+        Matcher matcher = GETTER_PATTERN.matcher(script);
         if (matcher.matches() == false) {
             return null;
         }
 
-        String[] result = new String[2];
+        String[] result = new String[3];
 
-        String part1 = matcher.group(1);
-        String part2 = matcher.group(2);
-        if (part2 == null) {
-            result[0] = WalkStandardScope.SCOPE_NAME;
-            result[1] = part1;
-        } else {
+        // 1, 3-7, 9-13 番目が名前
+        final int firstMatch = 1;
+        final int secondMatch = 2;
+        final int secondRangeStart = 3;
+        final int secondRangeEnd = 7;
+        final int thirdMatch = 8;
+        final int thirdRangeStart = 9;
+        final int thirdRangeEnd = 13;
+
+        String part1 = matcher.group(firstMatch);
+        if (isScopeName(part1)) {
             result[0] = part1;
-            result[1] = matcher.group(3);
-            if (result[1] == null) {
-                result[1] = matcher.group(4);
+            if (matcher.group(secondMatch) != null) {
+                result[1] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
             }
-            if (result[1] == null) {
-                result[1] = matcher.group(5);
+            if (matcher.group(thirdMatch) != null) {
+                result[2] = getFromRange(matcher, thirdRangeStart, thirdRangeEnd);
+            }
+        } else if (matcher.group(thirdMatch) == null) {
+            // TODO ServiceCycle, Rhino の予約語も除外
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            NativeServiceCycle nc = new NativeServiceCycle(new NativeObject(), cycle);
+            if (nc.hasMember(part1, nc) == false) {
+                result[0] = WalkStandardScope.SCOPE_NAME;
+                result[1] = part1;
+                if (matcher.group(secondMatch) != null) {
+                    result[2] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
+                }
             }
         }
 
+        return result;
+    }
+
+    private static String getFromRange(Matcher matcher, int start, int end) {
+        String result = null;
+        int index = start;
+        do {
+            result = matcher.group(index++);
+        } while (result == null && index <= end);
         return result;
     }
 
@@ -103,19 +143,56 @@ public class GetterScriptFactory {
      */
     protected static CompiledScript createGetterScript(
             String script, PositionAware position, int offsetLine,
-            String scopeName, String attributeName) {
+            String scopeName, String attributeName, String propertyName) {
+// TODO "this"をテストに追加
         if (WalkStandardScope.SCOPE_NAME.equals(scopeName)) {
-            return new StandardGetterScript(script, position, offsetLine, attributeName);
-        } else if (ServiceCycle.SCOPE_PAGE.equals(scopeName)) {
-            return new PageGetterScript(script, position, offsetLine, attributeName);
+            return new StandardGetterScript(
+                    script, position, offsetLine, attributeName, propertyName);
+        } else if (ServiceCycle.SCOPE_PAGE.equals(scopeName) || "this".equals(scopeName)) {
+            return new PageGetterScript(
+                    script, position, offsetLine, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_REQUEST.equals(scopeName)) {
-            return new RequestGetterScript(script, position, offsetLine, attributeName);
+            return new RequestGetterScript(
+                    script, position, offsetLine, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_SESSION.equals(scopeName)) {
-            return new SessionGetterScript(script, position, offsetLine, attributeName);
+            return new SessionGetterScript(
+                    script, position, offsetLine, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_APPLICATION.equals(scopeName)) {
-            return new ApplicationGetterScript(script, position, offsetLine, attributeName);
+            return new ApplicationGetterScript(
+                    script, position, offsetLine, attributeName, propertyName);
+        } else {
+            Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+            while (it.hasNext()) {
+                AttributeScope scope = (AttributeScope) it.next();
+                if (scope.getScopeName().equals(scopeName)) {
+                    return new AttributeScopeGetterScript(
+                            script, position, offsetLine,
+                            attributeName, propertyName, scopeName);
+                }
+            }
         }
         return null;
+    }
+
+    /**
+     * スコープとして認識するかどうかを判定します。
+     * ただしここで認識したスコープがすべて変換対象となるわけではありません。
+     *
+     * @param name 判定する名前
+     * @return スコープとして認識する名前であればtrue
+     */
+    protected static boolean isScopeName(String name) {
+        if (CycleUtil.getStandardScope().contains(name) || "this".equals(name)) {
+            return true;
+        }
+        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+        while (it.hasNext()) {
+            AttributeScope scope = (AttributeScope) it.next();
+            if (scope.getScopeName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -62,7 +62,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        CompiledScript script = GetterScriptFactory.create(text, position, offsetLine);
+        // TODO オプションで有効/無効を切り替える
+        boolean getterScriptEnabled = true;
+        CompiledScript script = null;
+        if (getterScriptEnabled) {
+            script = GetterScriptFactory.create(text, position, offsetLine);
+        }
         if (script == null) {
             script = new TextCompiledScriptImpl(text, position, offsetLine);
         }

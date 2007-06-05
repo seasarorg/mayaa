@@ -15,55 +15,50 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
+import java.util.Iterator;
+
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
- * pageスコープ(のカレント)から変数を取得するだけの処理をするスクリプト。
+ * 指定スコープから変数を取得するだけの処理をするスクリプト。
  *
  * @author Koji Suga (Gluegent Inc.)
  */
-public class PageGetterScript extends AbstractGetterScript {
+public class AttributeScopeGetterScript extends AbstractGetterScript {
 
     private static final long serialVersionUID = 1L;
 
     private static final String[] PROPERTY_NAMES =
         ObjectUtil.getPropertyNames(AttributeScope.class);
 
+    private final String _scopeName;
 
-    public PageGetterScript(
+    public AttributeScopeGetterScript(
             String text, PositionAware position, int offsetLine,
-            String attributeName, String propertyName) {
+            String attributeName, String propertyName, String scopeName) {
         super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
+        _scopeName = scopeName;
     }
 
     /**
-     * pageスコープ(のカレント)を返します。
+     * 指定スコープを返します。
      *
-     * @return pageスコープ(のカレント)。
+     * @return 指定スコープ。
      */
     protected AttributeScope getScope() {
-        return CycleUtil.getCurrentPageScope();
+        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+        while (it.hasNext()) {
+            AttributeScope scope = (AttributeScope) it.next();
+            if (scope.getScopeName().equals(_scopeName)) {
+                return scope;
+            }
+        }
+        throw new IllegalStateException(StringUtil.getMessage(
+                AttributeScopeGetterScript.class, 0, _scopeName));
     }
 
-    /**
-     * {@link #execute(Object[])}で呼び出され、スコープから属性値を取得します。
-     * 指定された属性名がスコープのプロパティを指している場合はプロパティの値を
-     * 返します。
-     *
-     * @return 属性値
-     */
-    protected Object getAttribute() {
-        if ("__parent__".equals(_attributeName)) {
-            AttributeScope scope = getScope();
-            if (scope == null) {
-                return null;
-            }
-            return ((PageAttributeScope) scope).getParentScope();
-        }
-        return super.getAttribute();
-    }
 }

@@ -16,7 +16,10 @@
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
 import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
+import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * sessionスコープから変数を取得するだけの処理をするスクリプト。
@@ -27,19 +30,22 @@ public class SessionGetterScript extends AbstractGetterScript {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String[] PROPERTY_NAMES =
+        ObjectUtil.getPropertyNames(SessionScope.class);
+
     public SessionGetterScript(
-            String text, PositionAware position, int offsetLine, String attributeName) {
-        super(text, position, offsetLine, attributeName);
+            String text, PositionAware position, int offsetLine,
+            String attributeName, String propertyName) {
+        super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
     }
 
     /**
-     * sessionスコープから変数を取得します。
+     * sessionスコープを返します。
      *
-     * @return 変数の値を返します。見つからない場合はnullを返します。
+     * @return sessionスコープ。
      */
-    protected Object getAttribute() {
-        // TODO _.session が存在しないことをチェック？
-        return CycleUtil.getServiceCycle().getSessionScope().getAttribute(_attributeName);
+    protected AttributeScope getScope() {
+        return CycleUtil.getServiceCycle().getSessionScope();
     }
 
 }

@@ -80,7 +80,7 @@ public class RhinoUtil {
         return ret;
     }
 
-    public static  void removeWrappedException(WrappedException e) {
+    public static void removeWrappedException(WrappedException e) {
         Throwable t = e.getWrappedException();
         if (t instanceof RuntimeException) {
             throw (RuntimeException) t;

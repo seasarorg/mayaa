@@ -16,7 +16,10 @@
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
 import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * applicationスコープから変数を取得するだけの処理をするスクリプト。
@@ -27,19 +30,22 @@ public class ApplicationGetterScript extends AbstractGetterScript {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String[] PROPERTY_NAMES =
+        ObjectUtil.getPropertyNames(ApplicationScope.class);
+
     public ApplicationGetterScript(
-            String text, PositionAware position, int offsetLine, String attributeName) {
-        super(text, position, offsetLine, attributeName);
+            String text, PositionAware position, int offsetLine,
+            String attributeName, String propertyName) {
+        super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
     }
 
     /**
-     * applicationスコープから変数を取得します。
+     * applicationスコープを返します。
      *
-     * @return 変数の値を返します。見つからない場合はnullを返します。
+     * @return applicationスコープ。
      */
-    protected Object getAttribute() {
-        // TODO _.application が存在しないことをチェック？
-        return CycleUtil.getServiceCycle().getApplicationScope().getAttribute(_attributeName);
+    protected AttributeScope getScope() {
+        return CycleUtil.getServiceCycle().getApplicationScope();
     }
 
 }

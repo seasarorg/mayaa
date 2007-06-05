@@ -6,6 +6,10 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * スコープ無指定で変数を参照した場合に、順に中身を見ていくスコープをまとめたクラス。
+ * 新しく追加したスコープはpageとrequestの間にはいります。
+ * 複数追加したとき、後から追加したものが優先になります。
+ *
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class StandardScope implements Serializable {
@@ -40,7 +44,13 @@ public class StandardScope implements Serializable {
         }
     }
 
-    protected boolean contains(String scopeName) {
+    /**
+     * 指定した名前を含むかどうか判定します。
+     *
+     * @param scopeName 判定したいスコープ名
+     * @return 含むならtrue
+     */
+    public boolean contains(String scopeName) {
         if (StringUtil.isEmpty(scopeName)) {
             throw new IllegalArgumentException();
         }

@@ -26,11 +26,15 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ObjectUtil {
+
+    private static final Log LOG = LogFactory.getLog(ObjectUtil.class);
 
     private ObjectUtil() {
         // no instantiation.
@@ -246,10 +250,16 @@ public class ObjectUtil {
             value = convert(propertyClass, value);
             PropertyUtils.setProperty(bean, propertyName, value);
         } catch (IllegalAccessException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 3,
+                    propertyName, getClassName(bean), getClassName(value)), e);
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 3,
+                    propertyName, getClassName(bean), getClassName(value)), e);
             throw new RuntimeException(e.getTargetException());
         } catch (NoSuchMethodException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 3,
+                    propertyName, getClassName(bean), getClassName(value)), e);
             throw new RuntimeException(e);
         }
     }
@@ -258,10 +268,16 @@ public class ObjectUtil {
         try {
             return PropertyUtils.getProperty(bean, propertyName);
         } catch (IllegalAccessException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 2,
+                    propertyName, getClassName(bean)), e);
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 2,
+                    propertyName, getClassName(bean)), e);
             throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
+            LOG.warn(StringUtil.getMessage(ObjectUtil.class, 2,
+                    propertyName, getClassName(bean)), e);
             throw new RuntimeException(e);
         }
     }
@@ -277,6 +293,10 @@ public class ObjectUtil {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getClassName(Object obj) {
+        return (obj != null) ? obj.getClass().getName() : "null";
     }
 
     /**

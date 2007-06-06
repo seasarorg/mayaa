@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.UniqueTag;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
@@ -27,9 +28,11 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
+import org.seasar.mayaa.impl.cycle.script.rhino.OffsetLineRhinoException;
 import org.seasar.mayaa.impl.cycle.script.rhino.RhinoUtil;
 import org.seasar.mayaa.impl.engine.specification.PrefixAwareNameImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * スコープから変数を取得するだけの処理をするスクリプトの抽象クラス。
@@ -90,40 +93,80 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
      *
      * @param args 引数。使用しない。
      * @return 変数の値を返します。見つからない場合はnullを返します。
+     * @throws OffsetLineRhinoException 属性がnullで、プロパティを取得しようとしたとき。
      */
     public Object execute(Object[] args) {
         Context cx = RhinoUtil.enter();
         try {
             Object result = getAttribute();
 
-            if (result != null && _propertyName != null) {
-                if (result instanceof NativeObject) {
-                    // Rhinoで作成したオブジェクトの場合
-                    NativeObject no = (NativeObject) result;
-                    result = no.get(_propertyName, no);
-                } else if (result instanceof AttributeScope) {
-// TODO __current__ とか __parent__ とかの場合
-                    // スコープの場合
-                    AttributeScope scope = (AttributeScope) result;
-                    result = scope.getAttribute(_propertyName);
-                } else {
-                    // それ以外はBeanかMapとしてのアクセス
-                    try {
-                        result = PropertyUtils.getProperty(result, _propertyName);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    } catch (InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
+            if (_propertyName != null) {
+                if (result == null) {
+                    String script = getText();
+                    String message = StringUtil.getMessage(
+                            AbstractGetterScript.class, 2, _propertyName, script);
+                    int[] position = extractLineSourcePosition(script, _propertyName);
+                    String lineSource = script.substring(position[0], position[1]);
+                    throw new OffsetLineRhinoException(
+                            message, _sourceName, _lineNumber, lineSource,
+                            lineSource.indexOf(_propertyName), _offsetLine, null);
                 }
+
+                result = readProperty(result);
             }
 
             return RhinoUtil.convertResult(cx, getExpectedClass(), result);
         } finally {
             Context.exit();
         }
+    }
+
+    /**
+     * attributeからpropertyを読み出して返します。
+     *
+     * @param attribute propertyを読み出す属性
+     * @return propertyの値、またはnull
+     */
+    private Object readProperty(Object attribute) {
+        Object property = null;
+        if (attribute instanceof NativeObject) {
+            // Rhinoで作成したオブジェクトの場合
+            NativeObject no = (NativeObject) attribute;
+            property = no.get(_propertyName, no);
+            if (attribute == UniqueTag.NOT_FOUND) {
+                property = null;
+            }
+        } else if (attribute instanceof AttributeScope) {
+// TODO __current__ とか __parent__ とかの場合
+            // スコープの場合
+            AttributeScope scope = (AttributeScope) attribute;
+            property = scope.getAttribute(_propertyName);
+        } else {
+            // それ以外はBeanかMapとしてのアクセス
+            try {
+                property = PropertyUtils.getProperty(attribute, _propertyName);
+            } catch (IllegalAccessException ignore) {
+                // undefined
+            } catch (InvocationTargetException ignore) {
+                // undefined
+            } catch (NoSuchMethodException ignore) {
+                // undefined
+            }
+        }
+        return property;
+    }
+
+    protected static int[] extractLineSourcePosition(String text, String propertyName) {
+        if (text.indexOf('\n') == -1) {
+            return new int[] { 0, text.length() };
+        }
+        int index = text.lastIndexOf(propertyName);
+        int head = text.lastIndexOf('\n', index);
+        int tail = text.indexOf('\n', index + propertyName.length());
+        if (tail == -1) {
+            tail = text.length();
+        }
+        return new int[] { head + 1, tail };
     }
 
     public String getAttributeName() {

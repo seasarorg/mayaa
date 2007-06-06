@@ -126,23 +126,6 @@ public class GetterScriptFactory {
     }
 
     /**
-     * 予約語かどうかを判定します。
-     * ここでいう予約語とは、ServiceCycleに対する呼び出しになるものか、
-     * あるいはRhinoの予約語です。
-     *
-     * @param word 判定する語
-     * @return 予約語ならtrue
-     */
-    private static boolean isReserved(String word) {
-        if ("java".equals(word) || "Packages".equals(word)) {
-            return true;
-        }
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        NativeServiceCycle nc = new NativeServiceCycle(new NativeObject(), cycle);
-        return nc.hasMember(word, nc);
-    }
-
-    /**
      * 対応するGetterScriptを生成して返します。
      * 対応していないスコープ名の場合はnullを返します。
      *
@@ -191,6 +174,31 @@ public class GetterScriptFactory {
         return null;
     }
 
+    /**
+     * 予約語かどうかを判定します。
+     * ここでいう予約語とは、ServiceCycleに対する呼び出しになるものか、
+     * あるいはRhinoの予約語です。
+     *
+     * @param word 判定する語
+     * @return 予約語ならtrue
+     */
+    protected static boolean isReserved(String word) {
+        if ("java".equals(word) || "Packages".equals(word)) {
+            return true;
+        }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        NativeServiceCycle nc = new NativeServiceCycle(new NativeObject(), cycle);
+        return nc.hasMember(word, nc);
+    }
+
+    /**
+     * Rhinoの特殊なプロパティのうち、Javaでエミュレートしづらいものが含まれている
+     * かどうかを判定します。
+     *
+     * @param attributeName 属性名
+     * @param propertyName プロパティ名
+     * @return 特殊な名前を含むならtrue
+     */
     protected static boolean containsRhinoKeywords(
             String attributeName, String propertyName) {
         return "__prototype__".equals(attributeName) || "__prototype__".equals(propertyName);

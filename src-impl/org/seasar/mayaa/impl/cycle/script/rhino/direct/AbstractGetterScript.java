@@ -128,14 +128,11 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
      * @return propertyの値、またはnull
      */
     private Object readProperty(Object attribute) {
-        Object property = null;
+        Object property = UniqueTag.NOT_FOUND;
         if (attribute instanceof NativeObject) {
             // Rhinoで作成したオブジェクトの場合
             NativeObject no = (NativeObject) attribute;
             property = no.get(_propertyName, no);
-            if (attribute == UniqueTag.NOT_FOUND) {
-                property = null;
-            }
         } else if (attribute instanceof AttributeScope) {
 // TODO __current__ とか __parent__ とかの場合
             // スコープの場合

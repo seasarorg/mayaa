@@ -105,16 +105,11 @@ public class GetterScriptFactory {
             if (matcher.group(thirdMatch) != null) {
                 result[2] = getFromRange(matcher, thirdRangeStart, thirdRangeEnd);
             }
-        } else if (matcher.group(thirdMatch) == null) {
-            // TODO ServiceCycle, Rhino の予約語も除外
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            NativeServiceCycle nc = new NativeServiceCycle(new NativeObject(), cycle);
-            if (nc.hasMember(part1, nc) == false) {
-                result[0] = WalkStandardScope.SCOPE_NAME;
-                result[1] = part1;
-                if (matcher.group(secondMatch) != null) {
-                    result[2] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
-                }
+        } else if (isReserved(part1) == false && matcher.group(thirdMatch) == null) {
+            result[0] = WalkStandardScope.SCOPE_NAME;
+            result[1] = part1;
+            if (matcher.group(secondMatch) != null) {
+                result[2] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
             }
         }
 
@@ -128,6 +123,23 @@ public class GetterScriptFactory {
             result = matcher.group(index++);
         } while (result == null && index <= end);
         return result;
+    }
+
+    /**
+     * 予約語かどうかを判定します。
+     * ここでいう予約語とは、ServiceCycleに対する呼び出しになるものか、
+     * あるいはRhinoの予約語です。
+     *
+     * @param word 判定する語
+     * @return 予約語ならtrue
+     */
+    private static boolean isReserved(String word) {
+        if ("java".equals(word) || "Packages".equals(word)) {
+            return true;
+        }
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        NativeServiceCycle nc = new NativeServiceCycle(new NativeObject(), cycle);
+        return nc.hasMember(word, nc);
     }
 
     /**
@@ -145,6 +157,11 @@ public class GetterScriptFactory {
             String script, PositionAware position, int offsetLine,
             String scopeName, String attributeName, String propertyName) {
 // TODO "this"をテストに追加
+
+        if (containsRhinoKeywords(attributeName, propertyName)) {
+            return null;
+        }
+
         if (WalkStandardScope.SCOPE_NAME.equals(scopeName)) {
             return new StandardGetterScript(
                     script, position, offsetLine, attributeName, propertyName);
@@ -172,6 +189,11 @@ public class GetterScriptFactory {
             }
         }
         return null;
+    }
+
+    protected static boolean containsRhinoKeywords(
+            String attributeName, String propertyName) {
+        return "__prototype__".equals(attributeName) || "__prototype__".equals(propertyName);
     }
 
     /**

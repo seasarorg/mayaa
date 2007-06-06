@@ -22,12 +22,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.converters.BooleanConverter;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -219,6 +217,19 @@ public class ObjectUtil {
     }
 
     public static Object convert(Class expectedClass, Object value) {
+        if (Object.class.equals(expectedClass) ||
+                (value != null && expectedClass.isAssignableFrom(value.getClass()))) {
+            return value;
+        }
+        if (String.class.equals(expectedClass)) {
+            return (value != null) ? value.toString() : null;
+        }
+        if (Boolean.class.equals(expectedClass) || Boolean.TYPE.equals(expectedClass)) {
+            if (value instanceof Boolean) {
+                return value;
+            }
+            return Boolean.valueOf(ObjectUtil.booleanValue(value, false));
+        }
         Converter converter = ConvertUtils.lookup(expectedClass);
         if (converter != null) {
             return converter.convert(expectedClass, value);
@@ -268,20 +279,55 @@ public class ObjectUtil {
         }
     }
 
+    /**
+     * objをbooleanに変換して返します。
+     * trueになる条件は、objがBoolean.TRUEであるか、またはtoString()したものが
+     * "true","yes","y","on","1"のいずれかであること(大文字小文字区別なし)です。
+     * falseになる条件は、objがBoolean.FALSEであるか、またはtoString()したものが
+     * "false","no","n","off","0"のいずれかであること(大文字小文字区別なし)です。
+     * 上記に該当しない場合、defaultValueを返します。
+     *
+     * @param obj 変換元のオブジェクト
+     * @param defaultValue 変換できない場合の値
+     * @return objをbooleanに変換した値、またはdefaultValue
+     */
     public static boolean booleanValue(Object obj, boolean defaultValue) {
-        Object def = defaultValue ? Boolean.TRUE : Boolean.FALSE;
-        BooleanConverter converter = new BooleanConverter(def);
-        return ((Boolean) converter.convert(null, obj)).booleanValue();
+        if (obj != null) {
+            if (obj instanceof Boolean) {
+                return ((Boolean) obj).booleanValue();
+            }
+
+            String stringValue = obj.toString().toLowerCase();
+            if (isTrueString(stringValue)) {
+                return true;
+            } else if (isFalseString(stringValue)) {
+                return false;
+            }
+        }
+        return defaultValue;
+    }
+
+    private static boolean isTrueString(String lowerCase) {
+        return lowerCase.equals("true") || lowerCase.equals("yes")
+                || lowerCase.equals("y") || lowerCase.equals("on")
+                || lowerCase.equals("1");
+    }
+
+    private static boolean isFalseString(String lowerCase) {
+        return lowerCase.equals("false") || lowerCase.equals("no")
+                || lowerCase.equals("n") || lowerCase.equals("off")
+                || lowerCase.equals("0");
     }
 
     public static boolean canBooleanConvert(Object obj) {
-        BooleanConverter converter = new BooleanConverter();
-        try {
-            converter.convert(null, obj);
-        } catch(ConversionException e) {
-            return false;
+        if (obj != null) {
+            if (obj instanceof Boolean) {
+                return true;
+            }
+            String stringValue = obj.toString().toLowerCase();
+            return (isTrueString(stringValue) || isFalseString(stringValue));
         }
-        return true;
+        return false;
     }
 
     public static Number numberValue(Object obj, Number defaultValue) {

@@ -43,6 +43,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
             URI namespaceURI, String localName) {
         String key = forQNameString(namespaceURI, localName);
         QName result;
+        // TODO パフォーマンスのためsynchronizedを不要にする
         synchronized (_cache) {
             // undeploy時に_cacheが消されたあとアクセスされる場合がある
             if (_cache == null) {

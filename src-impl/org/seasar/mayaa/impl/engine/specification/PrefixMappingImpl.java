@@ -39,6 +39,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
         }
         String key = forPrefixMappingString(prefix, namespaceURI);
         PrefixMapping result;
+        // TODO パフォーマンスのためsynchronizedを不要にする
         synchronized (_cache) {
             result = (PrefixMapping)_cache.get(key);
             if (result == null) {
@@ -47,7 +48,6 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
             }
         }
         return result;
-
     }
 
 
@@ -75,11 +75,12 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
 
     public static String forPrefixMappingString(
             String prefix, URI namespaceURI) {
-        StringBuffer buffer = new StringBuffer();
+        String uri = namespaceURI.toString();
+        StringBuffer buffer = new StringBuffer(uri.length() + 10);
         if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix);
         }
-        buffer.append(":").append(namespaceURI);
+        buffer.append(':').append(uri);
         return buffer.toString();
     }
 

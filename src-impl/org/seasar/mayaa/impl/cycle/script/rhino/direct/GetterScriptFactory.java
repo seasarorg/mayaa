@@ -32,11 +32,15 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 /**
  * スクリプトがGetterScriptだと解釈できるなら対応するGetterScriptを
  * 作成して返すFactory。
+ * GetterScriptと呼んでいるのは、attributeまたはpropertyの取得が連なっている
+ * だけのスクリプトのこと。
  *
  * @author Koji Suga (Gluegent Inc.)
  */
 public class GetterScriptFactory {
 
+    // TODO 多段階への対応
+    // getterとして解釈するパターンと、順番に抽出していくパターンを分ける。
     /** GetterScriptとして解釈するパターン */
     protected static final Pattern GETTER_PATTERN =
         Pattern.compile("\\s*([a-zA-Z_][a-zA-Z0-9_]*)" +
@@ -139,9 +143,7 @@ public class GetterScriptFactory {
     protected static CompiledScript createGetterScript(
             String script, PositionAware position, int offsetLine,
             String scopeName, String attributeName, String propertyName) {
-// TODO "this"をテストに追加
-
-        if (containsRhinoKeywords(attributeName, propertyName)) {
+        if (containsRhinoSpecialProperty(attributeName, propertyName)) {
             return null;
         }
 
@@ -194,14 +196,15 @@ public class GetterScriptFactory {
     /**
      * Rhinoの特殊なプロパティのうち、Javaでエミュレートしづらいものが含まれている
      * かどうかを判定します。
+     * __parent__はスコープの場合に限り対応可能。__proto__は対応不能。
      *
      * @param attributeName 属性名
      * @param propertyName プロパティ名
      * @return 特殊な名前を含むならtrue
      */
-    protected static boolean containsRhinoKeywords(
+    protected static boolean containsRhinoSpecialProperty(
             String attributeName, String propertyName) {
-        return "__prototype__".equals(attributeName) || "__prototype__".equals(propertyName);
+        return "__proto__".equals(attributeName) || "__proto__".equals(propertyName);
     }
 
     /**

@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = -102674132611191747L;
 
-    private static Map _cache =
+    private static volatile Map _cache =
         new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true);
 
     public static QName getInstance(String localName) {
@@ -41,19 +41,18 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
 
     public static synchronized QName getInstance(
             URI namespaceURI, String localName) {
+        // undeploy時に_cacheが消されたあとアクセスされる場合がある
+        if (_cache == null) {
+            return null;
+        }
+
         String key = forQNameString(namespaceURI, localName);
-        QName result;
-        // TODO パフォーマンスのためsynchronizedを不要にする
-        synchronized (_cache) {
-            // undeploy時に_cacheが消されたあとアクセスされる場合がある
-            if (_cache == null) {
-                return null;
-            }
-            result = (QName)_cache.get(key);
-            if (result == null) {
-                result = new QNameImpl(namespaceURI, localName);
-                _cache.put(key, result);
-            }
+
+        // TODO パフォーマンスのためsynchronizedをせずに重複登録を防ぐ。
+        QName result = (QName)_cache.get(key);
+        if (result == null) {
+            result = new QNameImpl(namespaceURI, localName);
+            _cache.put(key, result);
         }
         return result;
     }

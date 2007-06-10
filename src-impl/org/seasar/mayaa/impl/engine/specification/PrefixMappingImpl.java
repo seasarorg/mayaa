@@ -30,22 +30,25 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PrefixMappingImpl implements PrefixMapping, Serializable {
     private static final long serialVersionUID = -7627574345551562433L;
 
-    private static Map _cache =
+    private static volatile Map _cache =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
 
     public static PrefixMapping getInstance(String prefix, URI namespaceURI) {
         if (namespaceURI == null) {
             throw new IllegalArgumentException();
         }
+        // undeploy時に_cacheが消されたあとアクセスされる場合がある
+        if (_cache == null) {
+            return null;
+        }
+
         String key = forPrefixMappingString(prefix, namespaceURI);
-        PrefixMapping result;
-        // TODO パフォーマンスのためsynchronizedを不要にする
-        synchronized (_cache) {
-            result = (PrefixMapping)_cache.get(key);
-            if (result == null) {
-                result = new PrefixMappingImpl(prefix, namespaceURI);
-                _cache.put(key, result);
-            }
+
+        // TODO パフォーマンスのためsynchronizedをせずに重複登録を防ぐ。
+        PrefixMapping result = (PrefixMapping)_cache.get(key);
+        if (result == null) {
+            result = new PrefixMappingImpl(prefix, namespaceURI);
+            _cache.put(key, result);
         }
         return result;
     }

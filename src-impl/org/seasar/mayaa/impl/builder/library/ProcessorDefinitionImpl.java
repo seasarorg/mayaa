@@ -202,35 +202,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             acceptable.addInformalProperty(name, property);
         }
     }
-/* TODO 消す
-    protected void settingVirtualProperties(SpecificationNode injected,
 
-            VirtualPropertyAcceptable acceptable) {
-        URI injectedNS = injected.getQName().getNamespaceURI();
-        NodeAttribute attr = (NodeAttribute) it.next();
-        if (contain(injectedNS, attr)) {
-            continue;
-        }
-        LibraryDefinition library = getLibraryDefinition();
-        Class propertyClass = acceptable.getInformalPropertyClass();
-        PropertyConverter converter =
-            library.getPropertyConverter(propertyClass);
-        if (converter == null) {
-            throw new ConverterNotFoundException(
-                    propertyClass.getName(), getSystemID(), getLineNumber());
-        }
-        Class expectedClass = acceptable.getInformalExpectedClass();
-        String value = attr.getValue();
-        Serializable property = converter.convert(attr, value, expectedClass);
-        if (property == null) {
-            throw new ConverterOperationException(converter, value);
-        }
-        // メモリリークを起こす可能性があるので参照を断つ
-        PrefixAwareName name = SpecificationUtil.createPrefixAwareName(
-                attr.getQName(), attr.getPrefix());
-        acceptable.addInformalProperty(name, property);
-    }
-*/
     public TemplateProcessor createTemplateProcessor(
             SpecificationNode original, SpecificationNode injected) {
         if (injected == null) {

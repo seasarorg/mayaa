@@ -15,10 +15,8 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
@@ -157,13 +155,8 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
         } else {
             // それ以外はBeanとしてのアクセス
             try {
-                // TODO publicでないクラスでも取得できるようにする
-                property = PropertyUtils.getProperty(attribute, _propertyName);
-            } catch (IllegalAccessException ignore) {
-                // undefined
-            } catch (InvocationTargetException ignore) {
-                // undefined
-            } catch (NoSuchMethodException ignore) {
+                property = RhinoUtil.getSimpleProperty(attribute, _propertyName);
+            } catch (RuntimeException ignore) {
                 // undefined
             }
         }

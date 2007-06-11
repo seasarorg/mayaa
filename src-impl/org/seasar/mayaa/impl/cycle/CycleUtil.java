@@ -144,8 +144,7 @@ public class CycleUtil {
             AttributeScope scope = cycle.getAttributeScope(_standardScope.get(i));
             if (scope != null) {
                 if (scope instanceof PageAttributeScope) {
-                    scope = (AttributeScope)
-                            scope.getAttribute(PageAttributeScope.KEY_CURRENT);
+                    scope = getCurrentPageScope();
                     while (scope != null) {
                         if (scope.hasAttribute(name)) {
                             return scope;

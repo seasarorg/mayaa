@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.mozilla.javascript.Context;
@@ -86,9 +87,11 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
     }
 
     private boolean contains(String[] array, String test) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(test)) {
-                return true;
+        if (array != null) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[i].equals(test)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -145,13 +148,16 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
                 property = nativeProperty;
             }
         } else if (attribute instanceof AttributeScope) {
-// TODO __current__ とか __parent__ とかの場合
+            // TODO __current__ とか __parent__ とかの場合
             // スコープの場合
             AttributeScope scope = (AttributeScope) attribute;
             property = scope.getAttribute(_propertyName);
+        } else if (attribute instanceof Map) {
+            property = ((Map) attribute).get(_propertyName);
         } else {
-            // それ以外はBeanかMapとしてのアクセス
+            // それ以外はBeanとしてのアクセス
             try {
+                // TODO publicでないクラスでも取得できるようにする
                 property = PropertyUtils.getProperty(attribute, _propertyName);
             } catch (IllegalAccessException ignore) {
                 // undefined

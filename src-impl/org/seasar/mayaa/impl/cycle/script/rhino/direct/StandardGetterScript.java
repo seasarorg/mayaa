@@ -34,8 +34,8 @@ public class StandardGetterScript extends AbstractGetterScript {
 
     public StandardGetterScript(
             String text, PositionAware position, int offsetLine,
-            String attributeName, String propertyName) {
-        super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
+            String scopeName, String attributeName, String propertyName) {
+        super(text, position, offsetLine, scopeName, attributeName, propertyName, PROPERTY_NAMES);
     }
 
     /**

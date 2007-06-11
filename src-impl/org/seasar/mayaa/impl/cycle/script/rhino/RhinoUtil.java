@@ -67,7 +67,7 @@ public class RhinoUtil {
             ret = JavaAdapter.convertResult(jsRet, Object.class);
         } else if (expectedClass == Void.class
                 || expectedClass == void.class
-                || (jsRet == Undefined.instance)) {
+                || jsRet == Undefined.instance) {
             ret = null;
         } else {
             if (isNumber(expectedClass, jsRet)) {

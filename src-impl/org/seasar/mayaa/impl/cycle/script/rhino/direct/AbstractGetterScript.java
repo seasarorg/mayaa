@@ -20,12 +20,15 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.UniqueTag;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.AbstractTextCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ReadOnlyScriptBlockException;
 import org.seasar.mayaa.impl.cycle.script.rhino.OffsetLineRhinoException;
@@ -43,16 +46,20 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String[] SERVICE_CYCLE_PROPERTY_NAMES =
+        ObjectUtil.getPropertyNames(ServiceCycle.class);
+
     protected final String _sourceName;
     protected final int _lineNumber;
     protected final int _offsetLine;
 
+    protected final String _scopeName;
     protected final String _attributeName;
     protected final String _propertyName;
     protected final String _beanPropertyName;
 
     public AbstractGetterScript(
-            String text, PositionAware position, int offsetLine,
+            String text, PositionAware position, int offsetLine, String scopeName,
             String attributeName, String propertyName, String[] beanPropertyNames) {
         super(text);
         String sourceName = position.getSystemID();
@@ -71,6 +78,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
         _lineNumber = position.getLineNumber();
         _offsetLine = offsetLine;
 
+        _scopeName = scopeName;
         _attributeName = attributeName;
         _propertyName = propertyName;
         _beanPropertyName = (contains(beanPropertyNames, attributeName)) ?
@@ -104,7 +112,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
                 if (result == null) {
                     String script = getText();
                     String message = StringUtil.getMessage(
-                            AbstractGetterScript.class, 2, _propertyName, script);
+                            AbstractGetterScript.class, 0, _propertyName, script);
                     int[] position = extractLineSourcePosition(script, _propertyName);
                     String lineSource = script.substring(position[0], position[1]);
                     throw new OffsetLineRhinoException(
@@ -128,11 +136,14 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
      * @return propertyの値、またはnull
      */
     private Object readProperty(Object attribute) {
-        Object property = UniqueTag.NOT_FOUND;
+        Object property = Undefined.instance;
         if (attribute instanceof NativeObject) {
             // Rhinoで作成したオブジェクトの場合
-            NativeObject no = (NativeObject) attribute;
-            property = no.get(_propertyName, no);
+            NativeObject nativeObject = (NativeObject) attribute;
+            Object nativeProperty = nativeObject.get(_propertyName, nativeObject);
+            if (nativeProperty != Scriptable.NOT_FOUND) {
+                property = nativeProperty;
+            }
         } else if (attribute instanceof AttributeScope) {
 // TODO __current__ とか __parent__ とかの場合
             // スコープの場合
@@ -184,6 +195,14 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
     protected Object getAttribute() {
         AttributeScope scope = getScope();
         if (scope == null) {
+            if (_scopeName == null) {
+                for (int i = 0; i < SERVICE_CYCLE_PROPERTY_NAMES.length; i++) {
+                    if (SERVICE_CYCLE_PROPERTY_NAMES[i].equals(_attributeName)) {
+                        ServiceCycle cycle = CycleUtil.getServiceCycle();
+                        return ObjectUtil.getProperty(cycle, _attributeName);
+                    }
+                }
+            }
             return null;
         }
 

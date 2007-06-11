@@ -35,13 +35,10 @@ public class AttributeScopeGetterScript extends AbstractGetterScript {
     private static final String[] PROPERTY_NAMES =
         ObjectUtil.getPropertyNames(AttributeScope.class);
 
-    private final String _scopeName;
-
     public AttributeScopeGetterScript(
             String text, PositionAware position, int offsetLine,
-            String attributeName, String propertyName, String scopeName) {
-        super(text, position, offsetLine, attributeName, propertyName, PROPERTY_NAMES);
-        _scopeName = scopeName;
+            String scopeName, String attributeName, String propertyName) {
+        super(text, position, offsetLine, scopeName, attributeName, propertyName, PROPERTY_NAMES);
     }
 
     /**

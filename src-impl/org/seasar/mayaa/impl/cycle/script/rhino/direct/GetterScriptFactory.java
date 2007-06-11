@@ -110,7 +110,7 @@ public class GetterScriptFactory {
                 result[2] = getFromRange(matcher, thirdRangeStart, thirdRangeEnd);
             }
         } else if (isReserved(part1) == false && matcher.group(thirdMatch) == null) {
-            result[0] = WalkStandardScope.SCOPE_NAME;
+            result[0] = null;
             result[1] = part1;
             if (matcher.group(secondMatch) != null) {
                 result[2] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
@@ -147,21 +147,21 @@ public class GetterScriptFactory {
             return null;
         }
 
-        if (WalkStandardScope.SCOPE_NAME.equals(scopeName)) {
+        if (scopeName == null || WalkStandardScope.SCOPE_NAME.equals(scopeName)) {
             return new StandardGetterScript(
-                    script, position, offsetLine, attributeName, propertyName);
+                    script, position, offsetLine, scopeName, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_PAGE.equals(scopeName) || "this".equals(scopeName)) {
             return new PageGetterScript(
-                    script, position, offsetLine, attributeName, propertyName);
+                    script, position, offsetLine, scopeName, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_REQUEST.equals(scopeName)) {
             return new RequestGetterScript(
-                    script, position, offsetLine, attributeName, propertyName);
+                    script, position, offsetLine, scopeName, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_SESSION.equals(scopeName)) {
             return new SessionGetterScript(
-                    script, position, offsetLine, attributeName, propertyName);
+                    script, position, offsetLine, scopeName, attributeName, propertyName);
         } else if (ServiceCycle.SCOPE_APPLICATION.equals(scopeName)) {
             return new ApplicationGetterScript(
-                    script, position, offsetLine, attributeName, propertyName);
+                    script, position, offsetLine, scopeName, attributeName, propertyName);
         } else {
             Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
             while (it.hasNext()) {
@@ -169,7 +169,7 @@ public class GetterScriptFactory {
                 if (scope.getScopeName().equals(scopeName)) {
                     return new AttributeScopeGetterScript(
                             script, position, offsetLine,
-                            attributeName, propertyName, scopeName);
+                            scopeName, attributeName, propertyName);
                 }
             }
         }

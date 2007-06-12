@@ -175,12 +175,12 @@ public class RhinoUtil {
     public static Object getSimpleProperty(Object bean, String propertyName) {
         Throwable noSuchMethod;
         try {
-            return getByGetterMethod(bean, propertyName);
+            return getWithGetterMethod(bean, propertyName);
         } catch (NoSuchMethodException e) {
             // try field
             noSuchMethod = e;
         }
-        Object result = getByPublicField(bean, propertyName);
+        Object result = getFromPublicField(bean, propertyName);
         if (result != null) {
             return result;
         }
@@ -215,7 +215,7 @@ public class RhinoUtil {
      * @return プロパティの値。メソッドにアクセスできない場合はnull
      * @throws NoSuchMethodException getterメソッドが見つからない場合
      */
-    protected static Object getByGetterMethod(Object bean, String propertyName)
+    protected static Object getWithGetterMethod(Object bean, String propertyName)
             throws NoSuchMethodException {
         Class beanClass = bean.getClass();
         String baseName = capitalizePropertyName(propertyName);
@@ -265,7 +265,7 @@ public class RhinoUtil {
      * @param propertyName プロパティ名
      * @return フィールドの値。フィールドがなければnull
      */
-    protected static Object getByPublicField(Object bean, String propertyName) {
+    protected static Object getFromPublicField(Object bean, String propertyName) {
         try {
             // TODO Fieldキャッシュ
             Class beanClass = bean.getClass();

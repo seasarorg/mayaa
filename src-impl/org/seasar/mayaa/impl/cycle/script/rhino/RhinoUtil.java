@@ -19,8 +19,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,18 +34,31 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * Rhinoを利用する際に使うさまざまなメソッドを集めたユーティリティクラス。
+ *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Koji Suga (Gluegent Inc.)
  */
 public class RhinoUtil {
 
     private static final Log LOG = LogFactory.getLog(RhinoUtil.class);
 
-    private static final Class[] VOID_ARGS = new Class[0];
+    /** 引数無しメソッド取得に使う引数 */
+    private static final Class[] VOID_ARGS_CLASS = new Class[0];
 
     private RhinoUtil() {
         // no instantiation.
     }
 
+    /**
+     * カレントスレッドに関連付いたContextを取得します。
+     * 同時にScriptEnvironmentからWrapFactoryを取得してContextにセットします。
+     * Rhinoスクリプト実行前に、Context.enter()の代わりに利用します。
+     * これを実行したあとは、try {} finally {} を使って Context.exit() を
+     * 必ず実行する必要があります。
+     *
+     * @return カレントスレッドに関連付いたContext
+     */
     public static Context enter() {
         Context cx = Context.enter();
         WrapFactory factory = ScriptEnvironmentImpl.getWrapFactory();
@@ -57,11 +68,16 @@ public class RhinoUtil {
         return cx;
     }
 
+    /**
+     * 現在位置のスコープを取得します。
+     *
+     * @return 現在位置のスコープ
+     */
     public static Scriptable getScope() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrs = cycle.getPageScope();
         if (attrs instanceof PageAttributeScope) {
-            attrs = (AttributeScope)attrs.getAttribute(
+            attrs = (AttributeScope) attrs.getAttribute(
                     PageAttributeScope.KEY_CURRENT);
         }
         if (attrs instanceof Scriptable) {
@@ -70,6 +86,20 @@ public class RhinoUtil {
         throw new IllegalStateException("script scope does not get");
     }
 
+    /**
+     * Rhinoスクリプトの実行結果をJavaのオブジェクトに変換して返します。
+     * 特殊な変換をするのは3種類。
+     * <ul><li>booleanの場合、JavaScriptの仕様で「undefinedでない=true」
+     * という判定になるのを防ぐ</li>
+     * <li>戻り値の型がvoidの場合、実行結果がundefinedの場合にnullを返す</li>
+     * <li>戻り値の型が数値の場合、元の型を維持するようにする (RhinoはDoubleにしてしまう)</li>
+     * </ul>
+     *
+     * @param cx 現在スレッドのコンテキスト
+     * @param expectedClass 戻り値の型
+     * @param jsRet Rhinoスクリプト実行結果
+     * @return jsRetをJavaで利用するために変換したオブジェクト
+     */
     public static Object convertResult(
             Context cx, Class expectedClass, Object jsRet) {
         Object ret;
@@ -91,6 +121,13 @@ public class RhinoUtil {
         return ret;
     }
 
+    /**
+     * Rhinoスクリプト実行中に発生した例外を、wrapされていない元の例外にして
+     * 再度throwします。もしwrapされていた例外がRuntimeExceptionでない場合、
+     * RuntimeExceptionでwrapしてthrowします。
+     *
+     * @param e Rhinoスクリプト中で発生した例外
+     */
     public static void removeWrappedException(WrappedException e) {
         Throwable t = e.getWrappedException();
         if (t instanceof RuntimeException) {
@@ -99,21 +136,22 @@ public class RhinoUtil {
         throw new RuntimeException(t);
     }
 
+    /**
+     * Rhinoスクリプトの実行結果が数値の場合、無変換で返すかどうかを判定します。
+     * 戻り値の型がNumber, Objectの場合、および実行結果の型と同じ場合に無変換で
+     * 返すと判定します。
+     *
+     * @param expectedClass 戻り値の型
+     * @param jsRet Rhinoスクリプトの実行結果
+     * @return 無変換で返せる場合はtrue
+     */
     public static boolean isNumber(Class expectedClass, Object jsRet) {
         if (jsRet != null && expectedClass != null) {
             Class originalClass = jsRet.getClass();
-            if (originalClass.equals(Number.class) ||
-                    originalClass.equals(Byte.class) ||
-                    originalClass.equals(Short.class) ||
-                    originalClass.equals(Integer.class) ||
-                    originalClass.equals(Long.class) ||
-                    originalClass.equals(Float.class) ||
-                    originalClass.equals(Double.class) ||
-                    originalClass.equals(BigInteger.class) ||
-                    originalClass.equals(BigDecimal.class)) {
-                if (expectedClass == Object.class ||
-                        expectedClass == Number.class ||
-                        originalClass == expectedClass) {
+            if (Number.class.isAssignableFrom(originalClass)) {
+                if (Object.class.equals(expectedClass) ||
+                        Number.class.equals(expectedClass) ||
+                        originalClass.equals(expectedClass)) {
                     return true;
                 }
             }
@@ -183,14 +221,14 @@ public class RhinoUtil {
         String baseName = capitalizePropertyName(propertyName);
         Method getter = null;
         try {
-            getter = beanClass.getMethod("get" + baseName, VOID_ARGS);
+            getter = beanClass.getMethod("get" + baseName, VOID_ARGS_CLASS);
         } catch (NoSuchMethodException ignore) {
             // try boolean
         }
         if (getter == null) {
             try {
                 // TODO Methodキャッシュ
-                Method booleanGetter = beanClass.getMethod("is" + baseName, VOID_ARGS);
+                Method booleanGetter = beanClass.getMethod("is" + baseName, VOID_ARGS_CLASS);
                 if (booleanGetter != null) {
                     Class returnType = booleanGetter.getReturnType();
                     if (returnType.equals(Boolean.class) || returnType.equals(Boolean.TYPE)) {

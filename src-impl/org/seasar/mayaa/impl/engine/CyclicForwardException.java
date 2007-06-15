@@ -26,10 +26,6 @@ public class CyclicForwardException extends AbstractMessagedException {
 
     private String _pageName;
 
-    private CyclicForwardException() {
-        // pageName required
-    }
-
     public CyclicForwardException(String pageName) {
         _pageName = pageName;
     }

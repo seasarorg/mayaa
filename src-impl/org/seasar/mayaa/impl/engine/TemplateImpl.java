@@ -114,10 +114,13 @@ public class TemplateImpl
             return contentType;
         }
 
+        // default
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if (ret == null) {
-            ret = "text/html; charset=UTF-8";
+            ret = "text/html;charset=UTF-8";
+        } else if (ret.indexOf("charset") == -1) {
+            ret = ret + ";charset=UTF-8";
         }
         return ret;
     }

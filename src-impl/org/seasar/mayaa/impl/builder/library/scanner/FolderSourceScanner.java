@@ -82,7 +82,6 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 ApplicationFileSourceDescriptor appSource =
                     new ApplicationFileSourceDescriptor();
                 appScope = appSource.getApplicationScope();
-                appSource.setDenyWebInf(false);
                 _source = appSource;
             }
             _source.setRoot(getFolder());
@@ -263,7 +262,6 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 String systemID = getSystemID(file);
                 ApplicationFileSourceDescriptor source =
                     new ApplicationFileSourceDescriptor();
-                source.setDenyWebInf(false);
                 source.setRoot(_root);
                 source.setSystemID(systemID);
                 source.setFile(file);

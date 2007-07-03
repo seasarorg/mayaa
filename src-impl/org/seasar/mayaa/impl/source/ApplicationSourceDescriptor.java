@@ -158,9 +158,6 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
      * @see org.seasar.mayaa.impl.ParameterAwareImpl#setSystemID()
      */
     public void setSystemID(String systemID) {
-        if (systemID != null && systemID.indexOf(WEB_INF) != -1) {
-            throw new ForbiddenPathException(systemID);
-        }
         _fileSourceDescriptor.setSystemID(systemID);
     }
 

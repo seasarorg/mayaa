@@ -33,8 +33,6 @@ public class ApplicationFileSourceDescriptor
 
     private transient ApplicationScope _application;
 
-    private boolean _denyWebInf = true;
-
     public ApplicationFileSourceDescriptor() {
         super.setRoot("");
     }
@@ -54,17 +52,14 @@ public class ApplicationFileSourceDescriptor
         return _application;
     }
 
+    /**
+     * @deprecated WEB-INFはWebコンテナが排除するので意識する必要なし
+     */
     public void setDenyWebInf(boolean denyWebInf) {
-        _denyWebInf = denyWebInf;
+        // @deprecated
     }
 
     public void setSystemID(String systemID) {
-        if (_denyWebInf) {
-            if (systemID != null &&
-                    systemID.indexOf(ApplicationSourceDescriptor.WEB_INF) != -1) {
-                throw new ForbiddenPathException(systemID);
-            }
-        }
         super.setSystemID(systemID);
     }
 

@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,30 +36,26 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
  * 作成して返すFactory。
  * GetterScriptと呼んでいるのは、attributeまたはpropertyの取得が連なっている
  * だけのスクリプトのこと。
+ * TODO 完成させる
  *
  * @author Koji Suga (Gluegent Inc.)
  */
 public class GetterScriptFactory {
 
-    // TODO 多段階への対応
-    // getterとして解釈するパターンと、順番に抽出していくパターンを分ける。
     /** GetterScriptとして解釈するパターン */
-    protected static final Pattern GETTER_PATTERN =
+    protected static final Pattern GETTER_SCRIPT_PATTERN =
         Pattern.compile("\\s*([a-zA-Z_][a-zA-Z0-9_]*)" +
-                "(\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
+                "(\\s*\\.\\s*[a-zA-Z_][a-zA-Z0-9_]*|" +
+                "\\s*\\[\\s*'\\s*[a-zA-Z0-9_]*\\s*'\\s*\\]|" +
+                "\\s*\\[\\s*\"\\s*[a-zA-Z0-9_]*\\s*\"\\s*\\]" +
+                "\\s*)*[\\s;]*");
+
+    /** 個別getterのパターン */
+    protected static final Pattern GETTER_PATTERN =
+        Pattern.compile("\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
                 "\\s*\\[\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\]|" +
-                "\\s*\\[\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\]|" +
-                "\\s*\\.\\s*getAttribute\\s*\\(\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\)|" +
-                "\\s*\\.\\s*getAttribute\\s*\\(\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\)" +
-                "\\s*)?" +
-                "(\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)|" +
-                "\\s*\\[\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\]|" +
-                "\\s*\\[\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\]|" +
-                "\\s*\\.\\s*getAttribute\\s*\\(\\s*'\\s*([a-zA-Z0-9_]*)\\s*'\\s*\\)|" +
-                "\\s*\\.\\s*getAttribute\\s*\\(\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\)" +
-                "\\s*)?" +
-                "[\\s;]*"
-                );
+                "\\s*\\[\\s*\"\\s*([a-zA-Z0-9_]*)\\s*\"\\s*\\]" +
+                "\\s*");
 
     /**
      * 対応するGetterScriptを生成して返します。
@@ -74,7 +72,7 @@ public class GetterScriptFactory {
         if (splited == null) {
             return null;
         }
-        return createGetterScript(script, position, offsetLine, splited[0], splited[1], splited[2]);
+        return createGetterScript(script, position, offsetLine, splited);
     }
 
     /**
@@ -84,40 +82,29 @@ public class GetterScriptFactory {
      * @return [スコープ名, 変数名, プロパティ名]のString配列。GetterScriptでない場合はnull。
      */
     protected static String[] splitScope(String script) {
-        Matcher matcher = GETTER_PATTERN.matcher(script);
-        if (matcher.matches() == false) {
+        Matcher fullMatcher = GETTER_SCRIPT_PATTERN.matcher(script);
+        if (fullMatcher.matches() == false) {
             return null;
         }
 
-        String[] result = new String[3];
+        List result = new ArrayList();
 
-        // 1, 3-7, 9-13 番目が名前
-        final int firstMatch = 1;
-        final int secondMatch = 2;
-        final int secondRangeStart = 3;
-        final int secondRangeEnd = 7;
-        final int thirdMatch = 8;
-        final int thirdRangeStart = 9;
-        final int thirdRangeEnd = 13;
-
-        String part1 = matcher.group(firstMatch);
-        if (isScopeName(part1)) {
-            result[0] = part1;
-            if (matcher.group(secondMatch) != null) {
-                result[1] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
-            }
-            if (matcher.group(thirdMatch) != null) {
-                result[2] = getFromRange(matcher, thirdRangeStart, thirdRangeEnd);
-            }
-        } else if (isReserved(part1) == false && matcher.group(thirdMatch) == null) {
-            result[0] = null;
-            result[1] = part1;
-            if (matcher.group(secondMatch) != null) {
-                result[2] = getFromRange(matcher, secondRangeStart, secondRangeEnd);
-            }
+        String first = fullMatcher.group(1);
+        if (isScopeName(first)) {
+            result.add(first);
+        } else {
+            result.add(null);// standardScope
+            result.add(first);
         }
 
-        return result;
+        Matcher matcher = GETTER_PATTERN.matcher(script);
+        int nextIndex = 0;
+        while (matcher.find(nextIndex)) {
+            result.add(getFromRange(matcher, 1, 3));
+            nextIndex = matcher.end();
+        }
+
+        return (String[]) result.toArray(new String[result.size()]);
     }
 
     private static String getFromRange(Matcher matcher, int start, int end) {
@@ -141,8 +128,23 @@ public class GetterScriptFactory {
      * @return 対応するGetterScriptまたはnull
      */
     protected static CompiledScript createGetterScript(
-            String script, PositionAware position, int offsetLine,
-            String scopeName, String attributeName, String propertyName) {
+            String script, PositionAware position, int offsetLine, String[] params) {
+
+        // TODO 無限段対応
+        if (params.length > 3) {
+            return null;// 無限段対応までは上限が3段階
+        }
+
+        String scopeName = params[0];
+        String attributeName = null;
+        String propertyName = null;
+        if (params.length > 1) {
+            attributeName = params[1];
+        }
+        if (params.length > 2) {
+            propertyName = params[2];
+        }
+
         if (containsRhinoSpecialProperty(attributeName, propertyName)) {
             return null;
         }

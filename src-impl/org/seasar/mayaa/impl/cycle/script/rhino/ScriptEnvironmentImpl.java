@@ -53,6 +53,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     // singleton
     private static WrapFactory _wrap;
 
+    private boolean _useGetterScriptEmulation;
+
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
         if (scriptBlock == null) {
@@ -62,10 +64,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
             return new LiteralScript(text);
         }
-        // TODO オプションで有効/無効を切り替える
-        boolean getterScriptEnabled = true;
         CompiledScript script = null;
-        if (getterScriptEnabled) {
+        if (_useGetterScriptEmulation) {
             script = GetterScriptFactory.create(text, position, offsetLine);
         }
         if (script == null) {
@@ -253,6 +253,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);
+        } else if ("useGetterScriptEmulation".equals("name")) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _useGetterScriptEmulation = ObjectUtil.booleanValue(value, false);
         }
         super.setParameter(name, value);
     }

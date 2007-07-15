@@ -185,8 +185,6 @@ public class RhinoUtil {
             return result;
         }
 
-        LOG.warn(StringUtil.getMessage(RhinoUtil.class, 1,
-                propertyName, bean.getClass().getName()), noSuchMethod);
         throw new RuntimeException(noSuchMethod);
     }
 
@@ -228,10 +226,12 @@ public class RhinoUtil {
         if (getter == null) {
             try {
                 // TODO Methodキャッシュ
-                Method booleanGetter = beanClass.getMethod("is" + baseName, VOID_ARGS_CLASS);
+                Method booleanGetter =
+                    beanClass.getMethod("is" + baseName, VOID_ARGS_CLASS);
                 if (booleanGetter != null) {
                     Class returnType = booleanGetter.getReturnType();
-                    if (returnType.equals(Boolean.class) || returnType.equals(Boolean.TYPE)) {
+                    if (returnType.equals(Boolean.class)
+                            || returnType.equals(Boolean.TYPE)) {
                         getter = booleanGetter;
                     }
                 }
@@ -240,7 +240,8 @@ public class RhinoUtil {
             }
         }
         if (getter == null || Modifier.isPublic(getter.getModifiers()) == false) {
-            throw new NoSuchMethodException(beanClass.toString() + ".get" + baseName + "()");
+            throw new NoSuchMethodException(
+                    beanClass.toString() + ".get" + baseName + "()");
         }
 
         if (getter.isAccessible() == false) {
@@ -249,11 +250,11 @@ public class RhinoUtil {
         try {
             return getter.invoke(bean, null);
         } catch (IllegalAccessException e) {
-            LOG.warn(StringUtil.getMessage(RhinoUtil.class, 2,
-                    propertyName, beanClass.getName()), e);
+            LOG.debug(StringUtil.getMessage(RhinoUtil.class, 1,
+                    propertyName, beanClass.getName()));
         } catch (InvocationTargetException e) {
-            LOG.warn(StringUtil.getMessage(RhinoUtil.class, 2,
-                    propertyName, beanClass.getName()), e);
+            LOG.debug(StringUtil.getMessage(RhinoUtil.class, 1,
+                    propertyName, beanClass.getName()));
         }
         return null;
     }

@@ -17,6 +17,8 @@ package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
@@ -44,6 +46,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Log LOG = LogFactory.getLog(AbstractGetterScript.class);
 
     private static final String[] SERVICE_CYCLE_PROPERTY_NAMES =
         ObjectUtil.getPropertyNames(ServiceCycle.class);
@@ -113,7 +117,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
                 if (result == null) {
                     String script = getText();
                     String message = StringUtil.getMessage(
-                            AbstractGetterScript.class, 0, _propertyName, script);
+                            AbstractGetterScript.class, 1, _propertyName, script);
                     int[] position = extractLineSourcePosition(script, _propertyName);
                     String lineSource = script.substring(position[0], position[1]);
                     throw new OffsetLineRhinoException(
@@ -158,6 +162,8 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
                 property = RhinoUtil.getSimpleProperty(attribute, _propertyName);
             } catch (RuntimeException ignore) {
                 // undefined
+                LOG.debug(StringUtil.getMessage(AbstractGetterScript.class, 2,
+                        _propertyName, attribute.getClass().getName()));
             }
         }
         return property;
@@ -174,6 +180,10 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
             tail = text.length();
         }
         return new int[] { head + 1, tail };
+    }
+
+    public String getAttributeName(int index) {
+        return _attributeName;
     }
 
     public String getAttributeName() {

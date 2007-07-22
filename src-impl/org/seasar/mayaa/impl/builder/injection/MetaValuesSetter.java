@@ -67,6 +67,10 @@ public class MetaValuesSetter extends ParameterAwareImpl
         }
         if (StringUtil.hasValue(contentValue)) {
             if ("Content-Type".equalsIgnoreCase(equivValue)) {
+                // レスポンスヘッダに使うので必ずcharsetを付ける
+                if (contentValue.indexOf(";charset=") == -1) {
+                    contentValue = contentValue + ";charset=" + TEMPLATE_DEFAULT_CHARSET;
+                }
                 addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
             } else if ("Pragma".equalsIgnoreCase(equivValue)
                     || "Cache-Control".equalsIgnoreCase(equivValue)) {
@@ -83,6 +87,7 @@ public class MetaValuesSetter extends ParameterAwareImpl
         if (equiv != null) {
             NodeAttribute content = original.getAttribute(contentName);
             if (content != null) {
+                // TODO Windows-31JをShift_JISにしたりとかする？
                 setEquiv(original, equiv.getValue(), content.getValue());
             }
         }

@@ -29,6 +29,7 @@ import javax.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -37,7 +38,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MockServletResponse implements ServletResponse {
+public class MockServletResponse implements ServletResponse, CONST_IMPL {
 
     private boolean _commited;
     private String _contentType;
@@ -112,7 +113,7 @@ public class MockServletResponse implements ServletResponse {
 
     public String getCharacterEncoding() {
         if(StringUtil.isEmpty(_characterEncoding)) {
-            _characterEncoding = "UTF-8";
+            _characterEncoding = TEMPLATE_DEFAULT_CHARSET;
         }
         return _characterEncoding;
     }

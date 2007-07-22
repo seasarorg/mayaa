@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.script;
 
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -22,7 +23,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractSourceCompiledScript
-        extends AbstractCompiledScript {
+        extends AbstractCompiledScript implements CONST_IMPL {
 
     private SourceDescriptor _source;
     private String _encoding;
@@ -42,7 +43,7 @@ public abstract class AbstractSourceCompiledScript
 
     protected String getEncoding() {
         if (StringUtil.isEmpty(_encoding)) {
-            return System.getProperty("file.encoding", "UTF-8");
+            return System.getProperty("file.encoding", SCRIPT_DEFAULT_CHARSET);
         }
         return _encoding;
     }

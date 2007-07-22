@@ -19,11 +19,12 @@ import org.apache.xerces.parsers.AbstractSAXParser;
 import org.apache.xerces.xni.parser.XMLDocumentFilter;
 import org.cyberneko.html.HTMLConfiguration;
 import org.cyberneko.html.HTMLScanner;
+import org.seasar.mayaa.impl.CONST_IMPL;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateParser extends AbstractSAXParser {
+public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
 
     public TemplateParser(HTMLScanner scanner) {
         super(new TemplateParserConfiguration(scanner));
@@ -44,7 +45,7 @@ public class TemplateParser extends AbstractSAXParser {
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
             /* テンプレート上にエンコーディング指定がなければUTF-8と見なす */
-            setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, "utf-8");
+            setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, TEMPLATE_DEFAULT_CHARSET);
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             /* 元のテンプレート内容を忠実に再現させるオプション。
                ただし、</html>の後ろは無視される。false(デフォルト)の場合は、

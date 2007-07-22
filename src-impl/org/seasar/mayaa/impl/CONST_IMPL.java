@@ -33,6 +33,9 @@ public interface CONST_IMPL {
     String TEMPLATE_PATH_PATTERN = "templatePathPattern";
     String NOT_TEMPLATE_PATH_PATTERN = "notTemplatePathPattern";
 
+    String TEMPLATE_DEFAULT_CHARSET = "UTF-8";
+    String SCRIPT_DEFAULT_CHARSET = "UTF-8";
+
     URI URI_MAYAA = URIImpl.getInstance("http://mayaa.seasar.org");
     URI URI_HTML = URIImpl.getInstance("http://www.w3.org/TR/html4");
     URI URI_XHTML = URIImpl.getInstance("http://www.w3.org/1999/xhtml");

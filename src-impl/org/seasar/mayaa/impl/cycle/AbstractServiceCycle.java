@@ -27,6 +27,7 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotFoundException;
 import org.seasar.mayaa.impl.cycle.script.rhino.PageAttributeScope;
@@ -41,7 +42,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractServiceCycle
-        extends ParameterAwareImpl implements ServiceCycle {
+        extends ParameterAwareImpl implements ServiceCycle, CONST_IMPL {
 
     private static final ReferenceMap _scriptCache =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
@@ -52,7 +53,7 @@ public abstract class AbstractServiceCycle
     private Throwable _t;
 
     public void load(String systemID) {
-        load(systemID, "UTF-8");
+        load(systemID, SCRIPT_DEFAULT_CHARSET);
     }
 
     public void load(String systemID, String encoding) {

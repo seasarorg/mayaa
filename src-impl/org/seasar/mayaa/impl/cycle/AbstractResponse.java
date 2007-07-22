@@ -23,14 +23,15 @@ import java.util.Stack;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.Response;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractResponse implements Response {
+public abstract class AbstractResponse implements Response, CONST_IMPL {
 
-    private String _encoding = "UTF-8";
+    private String _encoding = TEMPLATE_DEFAULT_CHARSET;
     private Stack _stack;
     private boolean _flushed;
 
@@ -55,7 +56,7 @@ public abstract class AbstractResponse implements Response {
                 }
             }
         }
-        return "UTF-8";
+        return TEMPLATE_DEFAULT_CHARSET;
     }
 
     protected abstract void setContentTypeToUnderlyingObject(

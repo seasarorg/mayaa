@@ -118,9 +118,9 @@ public class TemplateImpl
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if (ret == null) {
-            ret = "text/html;charset=UTF-8";
+            ret = "text/html;charset=" + TEMPLATE_DEFAULT_CHARSET;
         } else if (ret.indexOf("charset") == -1) {
-            ret = ret + ";charset=UTF-8";
+            ret = ret + ";charset=" + TEMPLATE_DEFAULT_CHARSET;
         }
         return ret;
     }

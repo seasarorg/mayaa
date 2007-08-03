@@ -24,6 +24,7 @@ import java.util.Stack;
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -40,25 +41,6 @@ public abstract class AbstractResponse implements Response, CONST_IMPL {
         _stack.push(new CycleWriterImpl(null));
     }
 
-    private String parseCharacterEncoding(String contentType) {
-        if (StringUtil.hasValue(contentType)) {
-            String lower = contentType.toLowerCase();
-            int startPos = lower.indexOf("charset");
-            if (startPos > 0) {
-                startPos += 7; /*7 = "charset".length()*/
-                final int eqPos = contentType.indexOf("=", startPos);
-                if (eqPos > 0) {
-                    int endPos = contentType.indexOf(";", eqPos);
-                    if (endPos < 0) {
-                        endPos = contentType.length();
-                    }
-                    return contentType.substring(eqPos + 1, endPos).trim();
-                }
-            }
-        }
-        return TEMPLATE_DEFAULT_CHARSET;
-    }
-
     protected abstract void setContentTypeToUnderlyingObject(
             String contentType);
 
@@ -66,8 +48,9 @@ public abstract class AbstractResponse implements Response, CONST_IMPL {
         if (StringUtil.isEmpty(contentType)) {
             throw new IllegalArgumentException();
         }
-        _encoding = parseCharacterEncoding(contentType);
-        setContentTypeToUnderlyingObject(contentType);
+        _encoding = CharsetConverter.extractEncoding(contentType);
+        setContentTypeToUnderlyingObject(
+                CharsetConverter.convertContentType(contentType));
     }
 
     public CycleWriter getWriter() {

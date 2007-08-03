@@ -27,6 +27,7 @@
         <parameter name="autoBuild.contextPath" value="/"/>
         <parameter name="forwardLimit" value="10"/>
         <parameter name="dumpEnabled" value="false" />
+        <parameter name="convertCharset" value="false"/><!-- 1.1.12 -->
     </engine>
 
     <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">

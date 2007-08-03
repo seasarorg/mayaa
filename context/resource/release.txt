@@ -61,6 +61,11 @@ MayaaのWEBサイト：
 - (rev.3155) テンプレートのmetaタグでcontent-typeを指定し、かつcharsetを
   指定しない場合、レスポンスヘッダにはcharset=UTF-8付きで返すよう変更しました。
 
+- (rev.3158) JIRA[MAYAA-31]エンジン設定のengineのパラメータに"convertCharset"を
+  追加しました。デフォルトはfalseです。この値をtrueにすることで、テンプレートの
+  metaタグでcharset=Windows-31とした場合でもcharset=Shift_JISにして出力します。
+  また同様にHTTPレスポンスヘッダもcharset=Shift_JISになります。
+
 
 -------------------------------------------------------------------
 変更点 1.1.10 -> 1.1.11 (2007/07/15)

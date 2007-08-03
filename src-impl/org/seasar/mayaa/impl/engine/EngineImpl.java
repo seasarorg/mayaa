@@ -71,6 +71,7 @@ public class EngineImpl extends SpecificationImpl
     public static final String FORWARD_LIMIT = "forwardLimit";
     public static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
     public static final String DUMP_ENABLED = "dumpEnabled";
+    public static final String CONVERT_CHARSET = "convertCharset";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
     private transient Specification _defaultSpecification;
@@ -706,6 +707,8 @@ public class EngineImpl extends SpecificationImpl
             _requestedSuffixEnabled = Boolean.valueOf(value).booleanValue();
         } else if (DUMP_ENABLED.equals(name)) {
             _dumpEnabled = Boolean.valueOf(value).booleanValue();
+        } else if (CONVERT_CHARSET.equals(name)) {
+            CharsetConverter.setEnabled(Boolean.valueOf(value).booleanValue());
         }
         super.setParameter(name, value);
     }

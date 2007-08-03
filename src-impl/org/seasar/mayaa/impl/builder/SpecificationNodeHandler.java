@@ -33,6 +33,7 @@ import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
@@ -357,7 +358,8 @@ public class SpecificationNodeHandler
             buffer.append("version=\"").append(version).append("\" ");
         }
         if (StringUtil.hasValue(encoding)) {
-            buffer.append("encoding=\"").append(encoding).append("\" ");
+            buffer.append("encoding=\"").append(
+                    CharsetConverter.encodingToCharset(encoding)).append("\" ");
         }
         if (StringUtil.hasValue(standalone)) {
             buffer.append("standalone=\"").append(standalone).append("\" ");

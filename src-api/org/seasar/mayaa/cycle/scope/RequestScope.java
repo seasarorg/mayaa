@@ -84,6 +84,7 @@ public interface RequestScope
     /**
      * このリクエストは他からforwardされたものかを判定する。
      * @return 他からforwardされたならtrue
+     * @since 1.1.8
      */
     boolean isForwarded();
 

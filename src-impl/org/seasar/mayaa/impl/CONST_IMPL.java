@@ -79,5 +79,6 @@ public interface CONST_IMPL {
     QName QM_EXTENDS = QNameImpl.getInstance("extends");
     QName QM_TEXT = QNameImpl.getInstance("text");
     QName QM_INJECT = QNameImpl.getInstance("inject");
+    QName QM_CACHE_CONTROL = QNameImpl.getInstance("cacheControl");
 
 }

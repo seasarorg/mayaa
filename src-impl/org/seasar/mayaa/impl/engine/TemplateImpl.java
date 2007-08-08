@@ -108,6 +108,16 @@ public class TemplateImpl
         return null;
     }
 
+    /**
+     * m:mayaaタグのcontentType属性の値を取得します。
+     * 静的な文字列として処理します。
+     * topLevelPageに属性が無い場合は親mayaaを辿って探します。
+     * MayaaファイルにcontentType属性がなく、テンプレートにmetaタグでcontent-type
+     * が定義されている場合、ビルド時にMayaaのcontentType属性にコピーされます。
+     *
+     * @param topLevelPage
+     * @return contentType属性の値、またはnull
+     */
     protected String getContentType(Page topLevelPage) {
         String contentType = findMayaaAttribute(topLevelPage, QM_CONTENT_TYPE);
         if (contentType != null) {
@@ -125,6 +135,14 @@ public class TemplateImpl
         return ret;
     }
 
+    /**
+     * m:mayaaタグのnoCache属性の値を取得します。
+     * 静的な文字列として処理します。
+     * topLevelPageに属性が無い場合は親mayaaを辿って探します。
+     *
+     * @param topLevelPage
+     * @return noCache属性の値、またはnull
+     */
     protected boolean isNoCache(Page topLevelPage) {
         String noCache = findMayaaAttribute(topLevelPage, QM_NO_CACHE);
         if (noCache != null) {
@@ -134,15 +152,48 @@ public class TemplateImpl
         return false;
     }
 
+    /**
+     * m:mayaaタグのcacheControl属性の値を取得します。
+     * 静的な文字列として処理します。
+     * topLevelPageに属性が無い場合は親mayaaを辿って探します。
+     *
+     * @param topLevelPage
+     * @return cacheControl属性の値、またはnull
+     */
+    protected String getCacheControl(Page topLevelPage) {
+        return findMayaaAttribute(topLevelPage, QM_CACHE_CONTROL);
+    }
+
+    /**
+     * content-typeの設定、cache-controlの設定などレスポンスの前処理をします。
+     * noCache属性がセットされている場合、下記３つのヘッダが設定されます。
+     * <ul><li>Pragma: no-cache</li>
+     * <li>Cache-Control: no-cache</li>
+     * <li>Expires: Thu, 01 Dec 1994 16:00:00 GMT</li>
+     * </ul>
+     * cacheControl属性がセットされている場合、その値がCache-Controlヘッダの
+     * 値として設定されます。
+     * noCache属性とcacheControl属性の両方がセットされている場合、Cache-Control
+     * ヘッダの値はcacheControl属性の値が設定されます。
+     *
+     * @param topLevelPage
+     * @return cacheControl属性の値、またはnull
+     */
     protected void prepareCycle(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         Response response = cycle.getResponse();
         String contentType = getContentType(topLevelPage);
+        String cacheControl = getCacheControl(topLevelPage);
         response.setContentType(contentType);
         if (isNoCache(topLevelPage)) {
             response.addHeader("Pragma", "no-cache");
-            response.addHeader("Cache-Control", "no-cache");
+            if (cacheControl == null) {
+                response.addHeader("Cache-Control", "no-cache");
+            }
             response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
+        }
+        if (cacheControl != null) {
+            response.addHeader("Cache-Control", cacheControl);
         }
     }
 

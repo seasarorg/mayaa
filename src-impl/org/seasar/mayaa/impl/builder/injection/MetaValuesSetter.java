@@ -69,10 +69,15 @@ public class MetaValuesSetter extends ParameterAwareImpl
             if ("Content-Type".equalsIgnoreCase(equivValue)) {
                 // TemplateNodeHandlerで強制的にcharsetを付与済み
                 addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
-            } else if ("Pragma".equalsIgnoreCase(equivValue)
-                    || "Cache-Control".equalsIgnoreCase(equivValue)) {
+            } else if ("Pragma".equalsIgnoreCase(equivValue)) {
                 if ("no-cache".equalsIgnoreCase(contentValue)) {
                     addMayaaAttribute(original, QM_NO_CACHE, "true");
+                }
+            } else if ("Cache-Control".equalsIgnoreCase(equivValue)) {
+                if ("no-cache".equalsIgnoreCase(contentValue)) {
+                    addMayaaAttribute(original, QM_NO_CACHE, "true");
+                } else {
+                    addMayaaAttribute(original, QM_CACHE_CONTROL, contentValue);
                 }
             }
         }

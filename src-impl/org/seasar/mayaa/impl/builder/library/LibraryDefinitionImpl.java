@@ -88,7 +88,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         return _assignedURI.iterator();
     }
 
-    protected void warnAlreadyRegisted(
+    protected void warnAlreadyRegistered(
             PositionAware obj, String name, int index) {
         if (LOG.isWarnEnabled()) {
             String systemID = obj.getSystemID();
@@ -110,7 +110,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             _converters = new HashMap();
         }
         if (_converters.containsKey(name)) {
-            warnAlreadyRegisted(converter, name, 1);
+            warnAlreadyRegistered(converter, name, 1);
         } else {
             _converters.put(name, converter);
         }
@@ -159,7 +159,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             _propertySets = new HashMap();
         }
         if (_propertySets.containsKey(name)) {
-            warnAlreadyRegisted(propertySet, name, 2);
+            warnAlreadyRegistered(propertySet, name, 2);
         } else {
             _propertySets.put(name, propertySet);
         }
@@ -191,7 +191,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             _processors = new HashMap();
         }
         if (_processors.containsKey(name)) {
-            warnAlreadyRegisted(processor, name, 3);
+            warnAlreadyRegistered(processor, name, 3);
         } else {
             _processors.put(name, processor);
         }

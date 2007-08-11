@@ -128,7 +128,6 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             } else if (processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable) processor;
-// TODO                settingVirtualProperties(injected, acceptable);
                 if (value instanceof Serializable) {
                     PrefixAwareName name =
                         getPrefixAwareName(injected, property.getName());

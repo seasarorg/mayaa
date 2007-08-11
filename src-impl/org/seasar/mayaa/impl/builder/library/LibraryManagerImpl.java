@@ -62,7 +62,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         _converters = new HashMap();
     }
 
-    protected void warnAlreadyRegisted(
+    protected void warnAlreadyRegistered(
             PositionAware obj, String name, int index) {
         if (LOG.isWarnEnabled()) {
             String systemID = obj.getSystemID();
@@ -81,7 +81,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
             name = propertyConverter.getPropetyClass().getName();
         }
         if (_converters.containsKey(name)) {
-            warnAlreadyRegisted(propertyConverter, name, 1);
+            warnAlreadyRegistered(propertyConverter, name, 1);
         } else {
             _converters.put(name, propertyConverter);
         }
@@ -118,7 +118,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
         synchronized (_scanners) {
             if (_scanners.contains(scanner)) {
-                warnAlreadyRegisted(scanner, scanner.getClass().getName(), 1);
+                warnAlreadyRegistered(scanner, scanner.getClass().getName(), 1);
             } else {
                 _scanners.add(scanner);
             }
@@ -131,7 +131,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
         synchronized (_builders) {
             if (_builders.contains(builder)) {
-                warnAlreadyRegisted(builder, builder.getClass().getName(), 3);
+                warnAlreadyRegistered(builder, builder.getClass().getName(), 3);
             } else {
                 _builders.add(builder);
             }

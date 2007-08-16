@@ -397,7 +397,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
         if (isXHTML(qName)
                 && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
-            buffer.append("/>");
+            buffer.append(" />");
         } else if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");
         } else {

@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.cycle.script;
 
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,6 +27,7 @@ public abstract class AbstractTextCompiledScript
     private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
     private String _text;
+    private String _scriptText;
     private Class _expectedClass = Object.class;
     private Class[] _methodArgClasses;
 
@@ -34,6 +36,10 @@ public abstract class AbstractTextCompiledScript
             throw new IllegalArgumentException();
         }
         _text = text;
+
+        // ScriptUtil#getBlockSignedTextでは閉じ括弧の前に改行を入れるため、表示用には不適切
+        _scriptText =
+            ProviderUtil.getScriptEnvironment().getBlockSign() + "{" + text + "}";
     }
 
     protected String getText() {
@@ -71,7 +77,7 @@ public abstract class AbstractTextCompiledScript
     }
 
     public String getScriptText() {
-        return ScriptUtil.getBlockSignedText(_text);
+        return _scriptText;
     }
 
 }

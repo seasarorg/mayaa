@@ -220,9 +220,6 @@ public final class StringUtil {
             ret[0] = folder + file;
             ret[1] = "";
         }
-        if (ret[0].length() > 0 && ret[0].charAt(0) != '/') {
-            ret[0] = '/' + ret[0];
-        }
         return ret;
     }
 

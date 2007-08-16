@@ -39,7 +39,11 @@ public abstract class AbstractRequestScope
         String suffixSeparator = EngineUtil.getEngineSetting(
                 SUFFIX_SEPARATOR, "$");
         String[] parsed = StringUtil.parsePath(path, suffixSeparator);
-        _pageName = parsed[0];
+        if (false && parsed[0].charAt(0) != '/') {
+            _pageName = "/" + parsed[0];
+        } else {
+            _pageName = parsed[0];
+        }
         _requestedSuffix = parsed[1];
         _extension = parsed[2];
         ServiceCycle cycle = CycleUtil.getServiceCycle();

@@ -51,6 +51,8 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
     private transient String _superSuffix;
     private transient String _superExtension;
     private transient Map _beginRenderListeners;
+    private String _suffixScriptText;
+    private CompiledScript _suffixScript;
 
     public void initialize(String pageName) {
         if (StringUtil.isEmpty(pageName)) {
@@ -116,7 +118,12 @@ public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
         if (StringUtil.isEmpty(value)) {
             value = "";
         }
-        return ScriptUtil.compile(value, String.class);
+        if (_suffixScript != null && value.equals(_suffixScriptText)) {
+            return _suffixScript;
+        }
+        _suffixScript = ScriptUtil.compile(value, String.class);
+        _suffixScriptText = value;
+        return _suffixScript;
     }
 
     protected Template findTemplateFromCache(String systemID) {

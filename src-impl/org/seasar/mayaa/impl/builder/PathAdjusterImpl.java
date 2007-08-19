@@ -50,6 +50,11 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * <li>&lt;q cite="..."&gt;</li>
  * <li>&lt;script src="..."&gt;</li>
  * </ul>
+ * パラメータ
+ * <dl>
+ * <dt>enabled</dt><dd>trueならばパス置換が有効になります。デフォルトはtrueです。</dd>
+ * <dt>force</dt><dd>trueならば"./"で始まっていない相対パスも対象とします。デフォルトはfalseです。</dd>
+ * </dl>
  *
  * @author Koji Suga (Gluegent Inc.)
  */
@@ -62,6 +67,9 @@ public class PathAdjusterImpl
     private String[][] _adjustTarget;
 
     private boolean _enabled = true;
+
+    /** @since 1.1.13 */
+    private boolean _force = false;
 
     /**
      * デフォルトのコンストラクタ。
@@ -108,6 +116,8 @@ public class PathAdjusterImpl
     public void setParameter(String name, String value) {
         if ("enabled".equals(name)) {
             _enabled = Boolean.valueOf(value).booleanValue();
+        } else if ("force".equals(name)) {
+            _force = Boolean.valueOf(value).booleanValue();
         }
         super.setParameter(name, value);
     }
@@ -147,13 +157,41 @@ public class PathAdjusterImpl
 
     /**
      * "./"で始まるパスを解決して返します。
+     * パラメータでforceをtrueにセットされた場合、"./" で始まっていない相対パスも
+     * 調整の対象とします。
      *
      * @param base 対象タグのあるページのパス
      * @param path 解決対象のパス
      * @return 解決後のパス
      */
     public String adjustRelativePath(String base, String path) {
-        return StringUtil.adjustRelativePath(base, path);
+        if (path == null) {
+            return path;
+        }
+        String trimed = path.trim();
+        if (trimed.length() == 0) {
+            return path;
+        }
+        if (_force) {
+            return StringUtil.adjustRelativePath(base, forceRelativePath(trimed));
+        }
+        return StringUtil.adjustRelativePath(base, trimed);
+    }
+
+    /**
+     * "./" で始まっていない相対パスの場合、"./" を付けたパスにして返します。
+     * "/" で始まるパス、または ":" を含むパスの場合はそのまま返します。
+     * "#" で始まるパスもそのまま返します。
+     *
+     * @param path 調整するパス
+     * @return 相対パスならば"./"を先頭に付けたもの、それ以外はpathのまま
+     */
+    protected String forceRelativePath(String path) {
+        if (path.charAt(0) == '/' || path.charAt(0) == '#' ||
+                path.indexOf(':') != -1 || path.startsWith("./")) {
+            return path;
+        }
+        return "./" + path;
     }
 
 }

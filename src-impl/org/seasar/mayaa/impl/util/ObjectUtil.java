@@ -186,6 +186,13 @@ public class ObjectUtil {
         return result;
     }
 
+    /**
+     * 指定したクラスがプロパティを持つかどうかを返します。
+     *
+     * @param beanClass 対象のクラス
+     * @param propertyName 判定するプロパティ名
+     * @return プロパティを持つならtrue
+     */
     public static boolean hasProperty(Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
@@ -197,6 +204,13 @@ public class ObjectUtil {
         return false;
     }
 
+    /**
+     * プロパティの型を取得します。
+     *
+     * @param beanClass クラス情報
+     * @param propertyName プロパティ名
+     * @return beanClassあるプロパティの型
+     */
     public static Class getPropertyClass(Class beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
@@ -208,6 +222,13 @@ public class ObjectUtil {
         return null;
     }
 
+    /**
+     * プロパティの型を取得します。
+     *
+     * @param bean クラス情報を取得するためのオブジェクト
+     * @param propertyName プロパティ名
+     * @return beanのクラスにあるプロパティの型
+     */
     public static Class getPropertyClass(Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
@@ -220,6 +241,14 @@ public class ObjectUtil {
         }
     }
 
+    /**
+     * オブジェクトを指定したクラスのインスタンスに変換して返します。
+     * 変換の必要が無い場合はそのまま返します。
+     *
+     * @param expectedClass 戻り型として期待するクラス
+     * @param value 変換する値
+     * @return 変換後の値 (expectedClassのインスタンス)
+     */
     public static Object convert(Class expectedClass, Object value) {
         if (Object.class.equals(expectedClass) ||
                 (value != null && expectedClass.isAssignableFrom(value.getClass()))) {
@@ -241,6 +270,13 @@ public class ObjectUtil {
         return value;
     }
 
+    /**
+     * プロパティの値をセットします。
+     *
+     * @param bean 対象となるオブジェクト
+     * @param propertyName 値をセットするプロパティ名
+     * @param value セットする値
+     */
     public static void setProperty(Object bean, String propertyName, Object value) {
         try {
             Class propertyClass = getPropertyClass(bean, propertyName);
@@ -264,6 +300,13 @@ public class ObjectUtil {
         }
     }
 
+    /**
+     * プロパティの値を取得します。
+     *
+     * @param bean 対象となるオブジェクト
+     * @param propertyName 値を取得するプロパティ名
+     * @return プロパティの値
+     */
     public static Object getProperty(Object bean, String propertyName) {
         try {
             return PropertyUtils.getProperty(bean, propertyName);
@@ -282,6 +325,15 @@ public class ObjectUtil {
         }
     }
 
+    /**
+     * beanのmethodNameメソッドを実行します。
+     *
+     * @param bean メソッドを実行するオブジェクト
+     * @param methodName メソッド名
+     * @param args メソッドに渡す引数
+     * @param argClasses 引数の型
+     * @return メソッドの実行結果
+     */
     public static Object invoke(
             Object bean, String methodName, Object[] args, Class[] argClasses) {
         try {
@@ -339,6 +391,16 @@ public class ObjectUtil {
                 || lowerCase.equals("0");
     }
 
+    /**
+     * objをBooleanとして解釈できるかを返します。
+     * objがBooleanのインスタンスであるか、あるいはBooleanとして解釈できる
+     * 文字列になる場合にtrueを返します。(大文字小文字の区別をしません)
+     * Booleanとして解釈できる文字列は"true", "yes", "y", "on", "1",
+     * "false", "no", "n", "off", "0"です。
+     *
+     * @param obj Booleanとして解釈できるか判定するオブジェクト
+     * @return Booleanとして解釈できるならtrue
+     */
     public static boolean canBooleanConvert(Object obj) {
         if (obj != null) {
             if (obj instanceof Boolean) {
@@ -350,6 +412,19 @@ public class ObjectUtil {
         return false;
     }
 
+    /**
+     * objをNumberとして取得します。
+     * objがNumberの場合はそのまま、Stringの場合はBigDecimalまたはBigIntegerに
+     * 変換して返します。
+     * objがNumberでも数値として解釈できるStringでもない場合はdefaultValueを
+     * 返します。
+     *
+     * @param obj Numberとして取得するオブジェクト
+     * @param defaultValue objがNumberにできない場合に返す値
+     * @return objをNumberにしたもの、またはdefaultValue
+     * @throws IllegalArgumentException objをNumberにできず、かつdefaultValueが
+     * nullの場合
+     */
     public static Number numberValue(Object obj, Number defaultValue) {
         if (obj instanceof Number) {
             return (Number) obj;
@@ -373,6 +448,12 @@ public class ObjectUtil {
                 StringUtil.getMessage(ObjectUtil.class, 1, String.valueOf(obj)));
     }
 
+    /**
+     * パッケージ名を含まないクラス名を取得します。
+     *
+     * @param clazz 名称を取得するクラス
+     * @return clazzのパッケージを含まない名前
+     */
     public static String getSimpleClassName(Class clazz) {
         String className = clazz.getName();
         int pos = className.lastIndexOf('.');
@@ -394,6 +475,13 @@ public class ObjectUtil {
         Object copy = Array.newInstance(componentType, src.length);
         System.arraycopy(src, 0, copy, 0, src.length);
         return (Object[]) copy;
+    }
+
+    /**
+     * キャッシュを解放します。
+     */
+    public static void clearCaches() {
+        PropertyUtils.clearDescriptors();
     }
 
 }

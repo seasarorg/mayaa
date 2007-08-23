@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.DynaBean;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
@@ -45,6 +46,9 @@ public class WrapFactoryImpl extends WrapFactory implements Serializable {
         } else if (javaObject instanceof ServiceCycle) {
             ServiceCycle cycle = (ServiceCycle) javaObject;
             return new NativeServiceCycle(scope, cycle);
+        } else if (javaObject instanceof DynaBean) {
+            DynaBean dynaBean = (DynaBean) javaObject;
+            return new NativeDynaBean(scope, dynaBean);
         }
         return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);
     }

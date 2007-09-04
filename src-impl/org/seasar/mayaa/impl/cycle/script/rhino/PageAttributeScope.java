@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaMethod;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -179,17 +178,6 @@ public class PageAttributeScope extends ScriptableObject
             }
             return;
         }
-
-        if (attribute != null && attribute instanceof Number) {
-            // Javaからsetされたとき、Number型が強制的にDoubleにされてしまうのを防ぐ
-            Context cx = RhinoUtil.enter();
-            try {
-                attribute = cx.getWrapFactory().wrap(cx, this, attribute, Object.class);
-            } finally {
-                Context.exit();
-            }
-        }
-
         put(name, this, attribute);
     }
 

@@ -104,7 +104,11 @@ public class SpecificationNavigator extends DefaultNavigator
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
             if (StringUtil.isEmpty(namespaceURI)) {
-                namespaceURI = getNamespaceURI(node, namespacePrefix).getValue();
+                URI uri = getNamespaceURI(node, namespacePrefix);
+                if (uri == null) {
+                    return NullIterator.getInstance();
+                }
+                namespaceURI = uri.getValue();
             }
             QName qName = SpecificationUtil.createQName(
                     SpecificationUtil.createURI(namespaceURI), localName);

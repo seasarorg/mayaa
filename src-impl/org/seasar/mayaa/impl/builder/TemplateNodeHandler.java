@@ -142,6 +142,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         addCharactersNode();
         String comment = new String(buffer, start, length);
         SpecificationNode node = addNode(QM_COMMENT);
+        node.setDefaultNamespaceURI(node.getParentSpace().getDefaultNamespaceURI());
         node.addAttribute(QM_TEXT, comment);
     }
 

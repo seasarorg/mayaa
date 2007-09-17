@@ -282,7 +282,7 @@ public class JspProcessor extends TemplateProcessorSupport
      * @param customTag
      */
     private void setupDynamicAttributes(Tag customTag) {
-        Class custamTagClass = customTag.getClass();
+        Class custamTagClass = getTagClass(customTag);
         if ((DynamicAttributes.class.isAssignableFrom(custamTagClass)) == false) {
             String message =
                 StringUtil.getMessage(
@@ -314,15 +314,46 @@ public class JspProcessor extends TemplateProcessorSupport
                 CompiledScript script =
                     ScriptUtil.compile(attr.getValue(), Object.class);
                 Object execValue = script.execute(null);
-                ((DynamicAttributes) customTag).setDynamicAttribute(
-                        qName.getNamespaceURI().getValue(),
-                        qName.getLocalName(),
-                        execValue);
+
+                toDynamicAttributes(customTag).setDynamicAttribute(
+                             qName.getNamespaceURI().getValue(),
+                             qName.getLocalName(),
+                             execValue);
             } catch (JspException e) {
                 throw createJspRuntimeException(
                         getOriginalNode(), getInjectedNode(), e);
             }
         }
+    }
+
+    /**
+     * customTagのクラスオブジェクトを取得します。
+     * customTagがSimpleTagWrapperの場合、実体となるSimpleTagオブジェクトの
+     * クラスを取得します。
+     *
+     * @param customTag クラスオブジェクトを取得するカスタムタグインスタンス
+     * @return customTagのクラス
+     */
+    private Class getTagClass(Tag customTag) {
+        if (customTag instanceof SimpleTagWrapper) {
+            return ((SimpleTagWrapper) customTag).getSimpleTag().getClass();
+        }
+        return customTag.getClass();
+    }
+
+    /**
+     * customTagのDynamicAttributesを取得します。
+     * customTagがSimpleTagWrapperの場合、実体となるSimpleTagオブジェクトの
+     * DynamicAttributesを取得します。
+     *
+     * @param customTag DynamicAttributesを取得するカスタムタグインスタンス
+     * @return customTagのDynamicAttributes
+     */
+    private DynamicAttributes toDynamicAttributes(Tag customTag) {
+        if (customTag instanceof SimpleTagWrapper) {
+            return (DynamicAttributes) ((SimpleTagWrapper) customTag).getSimpleTag();
+        }
+        return (DynamicAttributes) customTag;
     }
 
     private RuntimeException createJspRuntimeException(

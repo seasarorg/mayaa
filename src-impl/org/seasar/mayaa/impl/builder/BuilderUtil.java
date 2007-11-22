@@ -20,6 +20,8 @@ import java.util.Iterator;
 import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.builder.library.LibraryManager;
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -98,6 +100,23 @@ public class BuilderUtil implements CONST_IMPL {
         return node;
     }
 
+    /**
+     * 現在ServiceCycleからmimeTypeを見て、HTMLならHTML用のデフォルトPrefixMappingを、
+     * それ以外ならXMLのデフォルトPrefixMappingを返します。
+     *
+     * @return 適切なデフォルトPrefixMapping
+     */
+    private static PrefixMapping getDefaultPrefixMapping() {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        String systemID = cycle.getOriginalNode().getSystemID();
+        ApplicationScope application = cycle.getApplicationScope();
+        String mimeType = application.getMimeType(systemID);
+        if (mimeType != null && (mimeType.indexOf("html") != -1)) {
+            return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+        }
+        return SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
+    }
+
     public static PrefixAwareName parseName(
             Namespace namespace, String qName) {
         String[] parsed = qName.split(":");
@@ -114,10 +133,8 @@ public class BuilderUtil implements CONST_IMPL {
                     mapping = SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
                 } else {
                     // HTA:Applicationのような無作法なものもあるので対応できるようにする。
-                    //throw new PrefixMappingNotFoundException(prefix);
-                    namespaceURI = URI_HTML;
-                    mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
-                    localName = qName;  // コロン付きの全てを要素名扱いとする。
+                    mapping = getDefaultPrefixMapping();
+                    localName = qName;  // プレフィクスも含めて要素名扱いとする。
                     prefix = "";
                 }
             }
@@ -128,14 +145,10 @@ public class BuilderUtil implements CONST_IMPL {
 
             if (namespaceURI == null) {
                 mapping = namespace.getMappingFromPrefix("", true);
-                if (mapping != null) {
-                    namespaceURI = mapping.getNamespaceURI();
-                } else {
-                    // デフォルトネームスペースは html とする
-                    //throw new PrefixMappingNotFoundException("");
-                    namespaceURI = URI_HTML;
-                    mapping = SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+                if (mapping == null) {
+                    mapping = getDefaultPrefixMapping();
                 }
+                namespaceURI = mapping.getNamespaceURI();
             }
         } else {
             throw new IllegalNameException(qName);

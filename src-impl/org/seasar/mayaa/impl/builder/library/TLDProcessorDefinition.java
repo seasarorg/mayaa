@@ -146,9 +146,11 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     protected boolean existsNestedVariable(
             TagExtraInfo tei, Hashtable seed) {
         VariableInfo[] dummy = tei.getVariableInfo(new DummyTagData(seed));
-        for (int i = 0; i < dummy.length; i++) {
-            if (dummy[i].getScope() == VariableInfo.NESTED) {
-                return true;
+        if (dummy != null) {
+            for (int i = 0; i < dummy.length; i++) {
+                if (dummy[i].getScope() == VariableInfo.NESTED) {
+                    return true;
+                }
             }
         }
         return false;

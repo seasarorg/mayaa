@@ -166,4 +166,12 @@
 		<property name="pattern" expectedClass="java.lang.String"/>
 	</processor>
 
+	<processor name="echoIf"
+			class="org.seasar.mayaa.impl.engine.processor.EchoIfProcessor">
+		<description>if "test" attribute is true, it behaves like m:echo</description>
+		<property name="test" required="true" expectedClass="boolean"/>
+		<property name="childEvaluation" final="true"/>
+		<property name="name" />
+	</processor>
+
 </library>

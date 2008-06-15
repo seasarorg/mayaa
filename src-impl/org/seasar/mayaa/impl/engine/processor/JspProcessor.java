@@ -588,6 +588,9 @@ public class JspProcessor extends TemplateProcessorSupport
 
     }
 
+    /**
+     * SimpleTagをTagとして扱うためのラッパー。
+     */
     public static class SimpleTagWrapper implements Tag {
 
         private SimpleTag _simpleTag;
@@ -628,7 +631,8 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void setParent(Tag parentTag) {
-            /* no-op */
+            System.out.println(parentTag.getClass());
+            _simpleTag.setParent(parentTag);
         }
 
         public int doStartTag() throws JspException {
@@ -642,7 +646,6 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public int doEndTag() {
-            /* no-op */
             return Tag.EVAL_PAGE;
         }
 

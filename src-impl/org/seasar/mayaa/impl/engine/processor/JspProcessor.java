@@ -631,7 +631,6 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void setParent(Tag parentTag) {
-            System.out.println(parentTag.getClass());
             _simpleTag.setParent(parentTag);
         }
 

@@ -143,50 +143,12 @@ public class RenderUtil implements CONST_IMPL {
             }
             if (startRet == EVAL_BODY_INCLUDE
                     || startRet == EVAL_BODY_BUFFERED) {
-                ProcessStatus afterRet;
-                do {
-                    for (int i = 0; i < current.getChildProcessorSize(); i++) {
-                        ProcessorTreeWalker child = current.getChildProcessor(i);
-                        if (child instanceof TemplateProcessor) {
-                            TemplateProcessor childProc =
-                                (TemplateProcessor) child;
-                            final ProcessStatus childRet =
-                                renderTemplateProcessor(topLevelPage, childProc);
-                            if (childRet == SKIP_PAGE) {
-                                return SKIP_PAGE;
-                            }
-                        } else {
-                            throw new IllegalStateException("child processor type error");
-                        }
-                    }
-                    afterRet = SKIP_BODY;
-                    saveToCycle(current);
-                    if (isIteration(current)) {
-                        if (buffered) {
-                            buffered = false;
-                            cycle.getResponse().popWriter();
-                        }
-                        afterRet = getIteration(current).doAfterChildProcess();
-                        ProcessorTreeWalker parent = current.getParentProcessor();
-                        if (parent instanceof TemplateProcessor) {
-                            TemplateProcessor parentProc =
-                                (TemplateProcessor) parent;
-                            if (afterRet == EVAL_BODY_AGAIN
-                                    && isDuplicated(parentProc)) {
-                                saveToCycle(parentProc);
-                                parentProc.doEndProcess();
-                                parentProc.doStartProcess(null);
-
-                                if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
-                                    buffered = true;
-                                    ChildEvaluationProcessor processor = getEvaluation(current);
-                                    processor.setBodyContent(cycle.getResponse().pushWriter());
-                                    processor.doInitChildProcess();
-                                }
-                            }
-                        }
-                    }
-                } while (afterRet == EVAL_BODY_AGAIN);
+                try {
+                    buffered = renderTemplateProcessorChildren(
+                            topLevelPage, current, buffered);
+                } catch (SkipPageException e) {
+                    return SKIP_PAGE;
+                }
             }
             saveToCycle(current);
             if (buffered) {
@@ -210,6 +172,75 @@ public class RenderUtil implements CONST_IMPL {
             setCurrentProcessor(null);
         }
         return ret;
+    }
+
+    /**
+     * ボディのレンダリング中に以後のレンダリングを中止する例外。
+     * @author Koji Suga (Gluegent Inc.)
+     */
+    private static class SkipPageException extends Exception {
+        private static final long serialVersionUID = -2166811321531507794L;
+        public SkipPageException() {
+            // no-op
+        }
+    }
+
+    /**
+     * プロセッサのボディをレンダリングする処理。
+     *
+     * @param topLevelPage レンダリングの起点となるページ
+     * @param current 現在のプロセッサ
+     * @param oldBuffered メソッド開始時のバッファするか否かフラグ
+     * @return バッファするか否か
+     */
+    public static boolean renderTemplateProcessorChildren(
+            Page topLevelPage, TemplateProcessor current,
+            boolean oldBuffered)
+            throws SkipPageException {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ProcessStatus afterRet;
+        boolean buffered = oldBuffered;
+        do {
+            for (int i = 0; i < current.getChildProcessorSize(); i++) {
+                ProcessorTreeWalker child = current.getChildProcessor(i);
+                if (child instanceof TemplateProcessor) {
+                    TemplateProcessor childProc = (TemplateProcessor) child;
+                    final ProcessStatus childRet =
+                        renderTemplateProcessor(topLevelPage, childProc);
+                    if (childRet == SKIP_PAGE) {
+                        throw new SkipPageException();
+                    }
+                } else {
+                    throw new IllegalStateException("child processor type error");
+                }
+            }
+            afterRet = SKIP_BODY;
+            saveToCycle(current);
+            if (isIteration(current)) {
+                if (buffered) {
+                    buffered = false;
+                    cycle.getResponse().popWriter();
+                }
+                afterRet = getIteration(current).doAfterChildProcess();
+                ProcessorTreeWalker parent = current.getParentProcessor();
+                if (parent instanceof TemplateProcessor) {
+                    TemplateProcessor parentProc = (TemplateProcessor) parent;
+                    if (afterRet == EVAL_BODY_AGAIN && isDuplicated(parentProc)) {
+                        saveToCycle(parentProc);
+                        parentProc.doEndProcess();
+                        parentProc.doStartProcess(null);
+
+                        if (oldBuffered) {
+                            buffered = true;
+                            ChildEvaluationProcessor processor = getEvaluation(current);
+                            processor.setBodyContent(cycle.getResponse().pushWriter());
+                            processor.doInitChildProcess();
+                        }
+                    }
+                }
+            }
+        } while (afterRet == EVAL_BODY_AGAIN);
+        return buffered;
     }
 
     private static final String CURRENT_PROCESSOR_KEY = "__currentProcessor__";

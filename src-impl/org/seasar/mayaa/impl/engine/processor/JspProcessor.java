@@ -557,12 +557,14 @@ public class JspProcessor extends TemplateProcessorSupport
         private static final long serialVersionUID = -4519484537723904500L;
 
         private Class _clazz;
+        private boolean _isSimpleTag;
 
         public TagPool(Class clazz) {
             if (isSupportClass(clazz) == false) {
                 throw new IllegalArgumentException();
             }
             _clazz = clazz;
+            _isSimpleTag = SimpleTag.class.isAssignableFrom(_clazz);
         }
 
         protected Object createObject() {
@@ -577,11 +579,15 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public Tag borrowTag() {
+            if (_isSimpleTag) {
+                // SimpleTagはプールしない
+                return new SimpleTagWrapper((SimpleTag) ObjectUtil.newInstance(_clazz));
+            }
             return (Tag) borrowObject();
         }
 
         public void returnTag(Tag tag) {
-            if (tag != null) {
+            if (tag != null && ((tag instanceof SimpleTagWrapper) == false)) {
                 returnObject(tag);
             }
         }
@@ -593,6 +599,7 @@ public class JspProcessor extends TemplateProcessorSupport
      */
     public static class SimpleTagWrapper implements Tag {
 
+        // TODO JspFragmentをセットするようにする
         private SimpleTag _simpleTag;
 
         private Tag _parent;

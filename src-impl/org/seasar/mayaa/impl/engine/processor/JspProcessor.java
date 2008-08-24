@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.processor;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,11 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.SimpleTag;
 import javax.servlet.jsp.tagext.Tag;
@@ -40,6 +43,7 @@ import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.CycleWriter;
+import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
@@ -59,6 +63,7 @@ import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.impl.engine.RenderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
@@ -236,7 +241,15 @@ public class JspProcessor extends TemplateProcessorSupport
         // javax.servlet.jsp.tagext.SimpleTag対応
         Object targetTag = customTag;
         if (customTag instanceof SimpleTagWrapper) {
-            targetTag = ((SimpleTagWrapper) customTag).getSimpleTag();
+            SimpleTagWrapper simpleTagWrapper = (SimpleTagWrapper) customTag;
+            SimpleTag simpleTag = simpleTagWrapper.getSimpleTag();
+            int childProcessorSize = getChildProcessorSize();
+            if (childProcessorSize > 0) {
+                // TODO SimpleTagのsetJspBodyが動作するよう実装する
+                simpleTag.setJspBody(
+                        new ProcessorFragment(simpleTagWrapper, this, topLevelPage));
+            }
+            targetTag = simpleTag;
         }
         for (Iterator it = iterateProperties(); it.hasNext();) {
             ProcessorProperty property = (ProcessorProperty) it.next();
@@ -599,10 +612,11 @@ public class JspProcessor extends TemplateProcessorSupport
      */
     public static class SimpleTagWrapper implements Tag {
 
-        // TODO JspFragmentをセットするようにする
         private SimpleTag _simpleTag;
 
         private Tag _parent;
+
+        private PageContext _context;
 
         private boolean _parentDetermined;
 
@@ -613,7 +627,7 @@ public class JspProcessor extends TemplateProcessorSupport
             this._simpleTag = simpleTag;
         }
 
-        public JspTag getSimpleTag() {
+        public SimpleTag getSimpleTag() {
             return _simpleTag;
         }
 
@@ -633,7 +647,12 @@ public class JspProcessor extends TemplateProcessorSupport
             return _parent;
         }
 
+        public PageContext getPageContext() {
+            return _context;
+        }
+
         public void setPageContext(PageContext context) {
+            _context = context;
             _simpleTag.setJspContext(context);
         }
 
@@ -659,6 +678,45 @@ public class JspProcessor extends TemplateProcessorSupport
             /* no-op */
         }
 
+    }
+
+    /**
+     * SimpleTagのsetJspBodyを実現するための、遅延ボディ処理クラス。
+     */
+    public static class ProcessorFragment extends JspFragment {
+
+        private SimpleTagWrapper _wrapper;
+        private JspProcessor _processor;
+        private Page _topLevelPage;
+
+        public ProcessorFragment(SimpleTagWrapper wrapper, JspProcessor processor, Page topLevelPage) {
+            _wrapper = wrapper;
+            _processor = processor;
+            _topLevelPage = topLevelPage;
+        }
+
+        /* (non-Javadoc)
+         * @see javax.servlet.jsp.tagext.JspFragment#getJspContext()
+         */
+        public JspContext getJspContext() {
+            return _wrapper.getPageContext();
+        }
+
+        /* (non-Javadoc)
+         * @see javax.servlet.jsp.tagext.JspFragment#invoke(java.io.Writer)
+         */
+        public void invoke(Writer out) throws JspException, IOException {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            CycleWriter writer = cycle.getResponse().pushWriter();
+            try {
+                RenderUtil.renderTemplateProcessorChildren(_topLevelPage, _processor, false);
+            } catch (org.seasar.mayaa.impl.engine.RenderUtil.SkipPageException e) {
+                throw new JspException(e);
+            }
+            cycle.getResponse().popWriter();
+            writer.writeOut(out);
+
+        }
     }
 
 }

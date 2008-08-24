@@ -178,10 +178,10 @@ public class RenderUtil implements CONST_IMPL {
      * ボディのレンダリング中に以後のレンダリングを中止する例外。
      * @author Koji Suga (Gluegent Inc.)
      */
-    private static class SkipPageException extends Exception {
+    public static class SkipPageException extends Exception {
         private static final long serialVersionUID = -2166811321531507794L;
-        public SkipPageException() {
-            // no-op
+        public SkipPageException(String message) {
+            super(message);
         }
     }
 
@@ -208,7 +208,10 @@ public class RenderUtil implements CONST_IMPL {
                     final ProcessStatus childRet =
                         renderTemplateProcessor(topLevelPage, childProc);
                     if (childRet == SKIP_PAGE) {
-                        throw new SkipPageException();
+                        // TODO SKIP_PAGE発生時のエラーメッセージを実装する
+                        String message = StringUtil.getMessage(
+                                SkipPageException.class, 0, childProc.getInjectedNode().toString());
+                        throw new SkipPageException(message);
                     }
                 } else {
                     throw new IllegalStateException("child processor type error");

@@ -180,8 +180,8 @@ public class RenderUtil implements CONST_IMPL {
      */
     public static class SkipPageException extends Exception {
         private static final long serialVersionUID = -2166811321531507794L;
-        public SkipPageException(String message) {
-            super(message);
+        public SkipPageException() {
+            super();
         }
     }
 
@@ -208,10 +208,7 @@ public class RenderUtil implements CONST_IMPL {
                     final ProcessStatus childRet =
                         renderTemplateProcessor(topLevelPage, childProc);
                     if (childRet == SKIP_PAGE) {
-                        // TODO SKIP_PAGE発生時のエラーメッセージを実装する
-                        String message = StringUtil.getMessage(
-                                SkipPageException.class, 0, childProc.getInjectedNode().toString());
-                        throw new SkipPageException(message);
+                        throw new SkipPageException();
                     }
                 } else {
                     throw new IllegalStateException("child processor type error");

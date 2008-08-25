@@ -245,7 +245,6 @@ public class JspProcessor extends TemplateProcessorSupport
             SimpleTag simpleTag = simpleTagWrapper.getSimpleTag();
             int childProcessorSize = getChildProcessorSize();
             if (childProcessorSize > 0) {
-                // TODO SimpleTagのsetJspBodyが動作するよう実装する
                 simpleTag.setJspBody(
                         new ProcessorFragment(simpleTagWrapper, this, topLevelPage));
             }
@@ -675,7 +674,8 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         public void release() {
-            /* no-op */
+            _parent = null;
+            _context = null;
         }
 
     }
@@ -711,6 +711,7 @@ public class JspProcessor extends TemplateProcessorSupport
             try {
                 RenderUtil.renderTemplateProcessorChildren(_topLevelPage, _processor, false);
             } catch (org.seasar.mayaa.impl.engine.RenderUtil.SkipPageException e) {
+                // TODO javax.servlet.jsp.SkipPageExceptionが使えるならこれを投げる
                 throw new JspException(e);
             }
             cycle.getResponse().popWriter();

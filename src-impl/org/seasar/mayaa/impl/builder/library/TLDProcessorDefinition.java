@@ -39,10 +39,15 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
     private static final long serialVersionUID = -646585734601397162L;
+    public static final String BODY_CONTENT_EMPTY = "empty";
+    public static final String BODY_CONTENT_JSP = "JSP";
+    public static final String BODY_CONTENT_SCRIPTLESS = "scriptless";
+    public static final String BODY_CONTENT_TAGDEPENDENT = "tagdependent";
 
     private Class _tagClass;
     private Class _teiClass;
     private boolean _dynamicAttribute;
+    private String _bodyContent = BODY_CONTENT_JSP;
 
     public void setProcessorClass(Class processorClass) {
         if (JspProcessor.isSupportClass(processorClass) == false) {
@@ -78,6 +83,23 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         this._dynamicAttribute = dynamicAttribute;
     }
 
+    public String getBodyContent() {
+        if (_bodyContent == null) {
+            throw new IllegalStateException();
+        }
+        return _bodyContent;
+    }
+
+    public void setBodyContent(String bodyContent) {
+        if ((BODY_CONTENT_EMPTY.equals(bodyContent) ||
+                BODY_CONTENT_JSP.equals(bodyContent) ||// for JSP 1.2
+                BODY_CONTENT_SCRIPTLESS.equals(bodyContent) ||
+                BODY_CONTENT_TAGDEPENDENT.equals(bodyContent)) == false) {
+            throw new IllegalArgumentException();
+        }
+        _bodyContent = bodyContent;
+    }
+
     protected TemplateProcessor newInstance() {
         JspProcessor processor = new JspProcessor();
         processor.setTagClass(getProcessorClass());
@@ -89,15 +111,15 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
             TemplateProcessor processor, PropertySet propertySet) {
         Hashtable tagDataSeed = new Hashtable();
 
+        JspProcessor jspProcessor = (JspProcessor) processor;
         for (Iterator it = propertySet.iteratePropertyDefinition();
                 it.hasNext();) {
             PropertyDefinition property = (PropertyDefinition) it.next();
             Object prop =
-                property.createProcessorProperty(this, processor, original, injected);
+                property.createProcessorProperty(this, jspProcessor, original, injected);
             if (prop != null) {
                 ProcessorProperty currentProp = (ProcessorProperty) prop;
-                JspProcessor jsp = (JspProcessor) processor;
-                jsp.addProcessorProperty(currentProp);
+                jspProcessor.addProcessorProperty(currentProp);
 
                 CompiledScript value = currentProp.getValue();
                 tagDataSeed.put(
@@ -107,8 +129,13 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         }
 
         if (getExtraInfoClass() != null) {
-            settingExtraInfo((JspProcessor) processor, tagDataSeed);
+            settingExtraInfo(jspProcessor, tagDataSeed);
         }
+
+        if (getBodyContent().equals(BODY_CONTENT_EMPTY)) {
+            jspProcessor.setForceBodySkip(true);
+        }
+        // TODO 他のbody-content対応
     }
 
     private Object prepareScript(CompiledScript script) {

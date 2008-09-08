@@ -113,6 +113,7 @@ public class JspProcessor extends TemplateProcessorSupport
     private Boolean _nestedVariableExists;
     private transient TLDScriptingVariableInfo _variableInfo =
             new TLDScriptingVariableInfo();
+    private boolean _forceBodySkip;
 
     public static void clear() {
         _tagPools.clear();
@@ -131,6 +132,10 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         _variableInfo = variableInfo;
         _nestedVariableExists = null;
+    }
+
+    public void setForceBodySkip(boolean forceBodySkip) {
+        _forceBodySkip = forceBodySkip;
     }
 
     public TLDScriptingVariableInfo getTLDScriptingVariableInfo() {
@@ -215,7 +220,9 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected ProcessStatus getProcessStatus(int status, boolean doStart) {
         if (status == Tag.EVAL_BODY_INCLUDE) {
-            return ProcessStatus.EVAL_BODY_INCLUDE;
+            return _forceBodySkip
+                    ? ProcessStatus.SKIP_BODY
+                    : ProcessStatus.EVAL_BODY_INCLUDE;
         } else if (status == Tag.SKIP_BODY) {
             return ProcessStatus.SKIP_BODY;
         } else if (status == Tag.EVAL_PAGE) {
@@ -225,7 +232,9 @@ public class JspProcessor extends TemplateProcessorSupport
         } else if (!doStart && status == IterationTag.EVAL_BODY_AGAIN) {
             return ProcessStatus.EVAL_BODY_AGAIN;
         } else if (doStart && status == BodyTag.EVAL_BODY_BUFFERED) {
-            return ProcessStatus.EVAL_BODY_BUFFERED;
+            return _forceBodySkip
+                    ? ProcessStatus.SKIP_BODY
+                    : ProcessStatus.EVAL_BODY_BUFFERED;
         }
         throw new IllegalArgumentException();
     }
@@ -282,8 +291,7 @@ public class JspProcessor extends TemplateProcessorSupport
         }
         try {
             pushNestedVariables();
-            final int result = customTag.doStartTag();
-            return getProcessStatus(result, true);
+            return getProcessStatus(customTag.doStartTag(), true);
         } catch (JspException e) {
             throw createJspRuntimeException(
                     getOriginalNode(), getInjectedNode(), e);

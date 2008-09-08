@@ -54,6 +54,16 @@ public class TagTagHandler extends TagHandler {
         putHandler(new TagClassSetter("tagclass", this));
         putHandler(new TeiClassSetter("tei-class", this));
         putHandler(new TeiClassSetter("teiclass", this));
+        putHandler(new TagHandler("body-content") {
+            protected void end(String body) {
+                setBodyContent(body);
+            }
+        });
+        putHandler(new TagHandler("bodycontent") {
+            protected void end(String body) {
+                setBodyContent(body);
+            }
+        });
         putHandler(new TagHandler("dynamic-attributes") {
             protected void end(String body) {
                 try {
@@ -79,6 +89,10 @@ public class TagTagHandler extends TagHandler {
 
     protected void setTeiClass(Class teiClass) {
         _processor.setExtraInfoClass(teiClass);
+    }
+
+    protected void setBodyContent(String bodyContent) {
+        _processor.setBodyContent(bodyContent);
     }
 
     protected void start(

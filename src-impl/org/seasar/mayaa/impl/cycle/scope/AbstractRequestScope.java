@@ -30,6 +30,8 @@ public abstract class AbstractRequestScope
         extends AbstractWritableAttributeScope
         implements RequestScope, CONST_IMPL {
 
+    private static final long serialVersionUID = 951877000090019212L;
+
     private String _pageName;
     private String _requestedSuffix;
     private String _extension;

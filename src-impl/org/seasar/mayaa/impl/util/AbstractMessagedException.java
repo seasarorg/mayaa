@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractMessagedException
         extends RuntimeException {
 
+    private static final long serialVersionUID = -287199613481216863L;
     private static final Log LOG =
         LogFactory.getLog(AbstractMessagedException.class);
 

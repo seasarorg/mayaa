@@ -25,6 +25,8 @@ import java.util.List;
  */
 public abstract class AbstractSoftReferencePool implements Serializable {
 
+    private static final long serialVersionUID = -4959957173402498504L;
+
     private List _pool;
 
     /**

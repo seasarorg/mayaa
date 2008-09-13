@@ -28,6 +28,7 @@ import org.seasar.mayaa.impl.util.AbstractMessagedException;
 public abstract class MayaaException
         extends AbstractMessagedException {
 
+    private static final long serialVersionUID = -233090042202542209L;
     private static final Log LOG =
         LogFactory.getLog(MayaaException.class);
 

@@ -39,6 +39,7 @@ public abstract class AbstractAttributableProcessor
         extends TemplateProcessorSupport
         implements ChildEvaluationProcessor, InformalPropertyAcceptable {
 
+    private static final long serialVersionUID = -1406205460425148574L;
     private boolean _childEvaluation;
     private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
                     _attributes;

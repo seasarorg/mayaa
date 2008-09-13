@@ -222,6 +222,8 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     protected abstract class ScriptWrapper implements CompiledScript {
 
+        private static final long serialVersionUID = -1582289477400400196L;
+
         private CompiledScript _script;
         private boolean _string;
 

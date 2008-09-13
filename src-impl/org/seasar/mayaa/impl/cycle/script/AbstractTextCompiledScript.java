@@ -24,6 +24,8 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 public abstract class AbstractTextCompiledScript
         implements CompiledScript {
 
+    private static final long serialVersionUID = 8741954417010320298L;
+
     private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
     private String _text;

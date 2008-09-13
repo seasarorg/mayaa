@@ -32,6 +32,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public abstract class AbstractResponse implements Response, CONST_IMPL {
 
+    private static final long serialVersionUID = -7175816678322765773L;
+
     private String _encoding = TEMPLATE_DEFAULT_CHARSET;
     private Stack _stack;
     private boolean _flushed;

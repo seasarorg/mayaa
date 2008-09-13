@@ -26,6 +26,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public abstract class AbstractWritableAttributeScope
         extends ParameterAwareImpl implements AttributeScope {
 
+    private static final long serialVersionUID = 3301556156255056131L;
+
     public boolean isAttributeWritable() {
         return true;
     }

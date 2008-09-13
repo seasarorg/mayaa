@@ -44,6 +44,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle, CONST_IMPL {
 
+    private static final long serialVersionUID = -4084527796306356704L;
+
     private static final ReferenceMap _scriptCache =
         new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
     private AttributeScope _page;

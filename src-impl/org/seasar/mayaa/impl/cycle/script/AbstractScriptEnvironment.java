@@ -33,6 +33,8 @@ import org.seasar.mayaa.impl.util.collection.NullIterator;
 public abstract class AbstractScriptEnvironment
         extends ParameterAwareImpl implements ScriptEnvironment {
 
+    private static final long serialVersionUID = -1647884867508562923L;
+
     private transient List _attributeScopes;
     private String _blockSign = "$";
 

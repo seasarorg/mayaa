@@ -28,6 +28,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public abstract class FactoryFactory implements Serializable {
 
+    private static final long serialVersionUID = 4985431947480350680L;
+
     private static FactoryFactory _instance;
     private static Object _context;
     private static Map _factories = new HashMap();

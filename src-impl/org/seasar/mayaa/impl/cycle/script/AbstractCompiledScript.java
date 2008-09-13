@@ -23,6 +23,7 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 public abstract class AbstractCompiledScript
         implements CompiledScript {
 
+    private static final long serialVersionUID = 643467147738117809L;
     private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
     private Class _expectedClass = Object.class;

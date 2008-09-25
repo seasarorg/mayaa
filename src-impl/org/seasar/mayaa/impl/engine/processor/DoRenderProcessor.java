@@ -87,9 +87,9 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return null;
     }
 
-    public void popInsertProcessor() {
+    public InsertProcessor popInsertProcessor() {
         Stack stack = getInsertProcessorStack();
-        stack.pop();
+        return (InsertProcessor) stack.pop();
     }
 
 }

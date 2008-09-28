@@ -44,10 +44,16 @@ public class AttributeProcessor extends TemplateProcessorSupport {
                 parent != null;
                 parent = parent.getParentProcessor()) {
             if (parent instanceof AbstractAttributableProcessor) {
+                if (parent instanceof ElementProcessor) {
+                    // duplicated ElementProcessor is not attributable.
+                    if (((ElementProcessor) parent).isDuplicated()) {
+                        continue;
+                    }
+                }
                 return (AbstractAttributableProcessor) parent;
             }
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("no attributable processor.");
     }
 
     // MLD property

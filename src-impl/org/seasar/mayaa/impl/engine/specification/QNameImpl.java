@@ -39,8 +39,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         return getInstance(URI_MAYAA, localName);
     }
 
-    public static synchronized QName getInstance(
-            URI namespaceURI, String localName) {
+    public static QName getInstance(URI namespaceURI, String localName) {
         // undeploy時に_cacheが消されたあとアクセスされる場合がある
         if (_cache == null) {
             return null;
@@ -48,7 +47,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
 
         String key = forQNameString(namespaceURI, localName);
 
-        // TODO パフォーマンスのためsynchronizedをせずに重複登録を防ぐ。
+        // 一時的に重複しても問題ないので速度を優先する。（synchronizeを外した）
         QName result = (QName)_cache.get(key);
         if (result == null) {
             result = new QNameImpl(namespaceURI, localName);
@@ -56,7 +55,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         }
         return result;
     }
-
+    
     private URI _namespaceURI;
     private String _localName;
 

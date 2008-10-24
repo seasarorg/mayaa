@@ -42,7 +42,9 @@ import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.TemplateImpl;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
+import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -242,7 +244,7 @@ public class TemplateProcessorSupport
     }
 
     // for serialize
-    private static final String DUPLICATE_ROOT_MARK = "<<root>>";
+    private static final String UNIQUENESS_MARK = "<<root>>";
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -250,15 +252,60 @@ public class TemplateProcessorSupport
         String uniqueID = getUniqueID();
         out.writeUTF(originalNodeID);
         out.writeUTF(uniqueID);
-        out.writeObject(_injectedNode.getQName());
+        out.writeUTF(_injectedNode.getQName().getNamespaceURI().getValue());
+        out.writeUTF(_injectedNode.getQName().getLocalName());
 
-        if (_injectedNode.getParentNode() != null) {
+        NodeSerializeController controller = SpecificationImpl.nodeSerializer(); 
+        if (controller.collectNode(_injectedNode)) {
+        	// オリジナルの保存
+        	out.writeUTF(UNIQUENESS_MARK);
+        	out.writeObject(_injectedNode);
+        } else {
+        	// 参照の保存
+        	out.writeUTF(NodeSerializeController.makeKey(_injectedNode));
+        }
+        /*
+        if (_injectedNode.getParentNode() != null && !(getParentProcessor() instanceof Template)) {
             String injectedNodeID = NodeSerializeController.makeKey(_injectedNode);
             out.writeUTF(injectedNodeID);
         } else {
             out.writeUTF(DUPLICATE_ROOT_MARK);
             out.writeObject(_injectedNode);
         }
+       	*/
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        String originalNodeID = in.readUTF();
+        String processorUniqueID = in.readUTF();
+        QName qName = QNameImpl.getInstance(URIImpl.getInstance(in.readUTF()), in.readUTF());
+        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        setProcessorDefinition(libraryManager.getProcessorDefinition(qName));
+
+        String injectedNodeID = in.readUTF();
+        NodeResolveListener listener = new TemplateProcessorSupportOriginalNodeListener(this);
+        findNodeResolver().registResolveNodeListener(originalNodeID, listener);
+
+        if (UNIQUENESS_MARK.equals(injectedNodeID)) {
+            _injectedNode = (SpecificationNode) in.readObject();
+        } else {
+            listener = new TemplateProcessorSupportInjectedNodeListener(this);
+            findNodeResolver().registResolveNodeListener(injectedNodeID, listener);
+        }
+
+        ProcessorReferenceResolver resolver = findProcessorResolver();
+        resolver.processorLoaded(processorUniqueID, this);
+
+        // readResolveはextendsした最終クラスでしか発生しないので、ここで解決
+        if (_children != null) {
+            for (int i = _children.size() - 1; i >= 0 ; i--) {
+                ProcessorTreeWalker child =
+                    (ProcessorTreeWalker) _children.get(i);
+                child.setParentProcessor(this);
+            }
+        }
+        LOG.debug("templateProcessorSupport loaded");
     }
 
     protected void nodeLoadAfter() {
@@ -319,42 +366,6 @@ public class TemplateProcessorSupport
         public void release() {
             _target = null;
         }
-    }
-
-    private void readObject(ObjectInputStream in)
-                throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        String originalNodeID = in.readUTF();
-        String processorUniqueID = in.readUTF();
-        QName qName = (QName)in.readObject();
-        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-        setProcessorDefinition(libraryManager.getProcessorDefinition(qName));
-
-        String injectedNodeID = in.readUTF();
-        NodeResolveListener listener =
-            new TemplateProcessorSupportOriginalNodeListener(this);
-        findNodeResolver().registResolveNodeListener(
-                originalNodeID, listener);
-
-        if (DUPLICATE_ROOT_MARK.equals(injectedNodeID)) {
-            _injectedNode = (SpecificationNode) in.readObject();
-        } else {
-            listener = new TemplateProcessorSupportInjectedNodeListener(this);
-            findNodeResolver().registResolveNodeListener(injectedNodeID, listener);
-        }
-
-        ProcessorReferenceResolver resolver = findProcessorResolver();
-        resolver.processorLoaded(processorUniqueID, this);
-
-        // readResolveはextendsした最終クラスでしか発生しないので、ここで解決
-        if (_children != null) {
-            for (int i = _children.size() - 1; i >= 0 ; i--) {
-                ProcessorTreeWalker child =
-                    (ProcessorTreeWalker) _children.get(i);
-                child.setParentProcessor(this);
-            }
-        }
-        LOG.debug("templateProcessorSupport loaded");
     }
 
     public ProcessorReferenceResolver findProcessorResolver() {

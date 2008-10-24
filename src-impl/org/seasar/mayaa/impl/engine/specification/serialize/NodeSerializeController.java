@@ -64,6 +64,27 @@ public class NodeSerializeController implements NodeReferenceResolver {
             }
         }
     }
+    
+    /**
+     * 存在しない場合は登録する。
+     * @param node 登録するノード
+     * @return 既に登録済みの場合はfalse。
+     */
+    public boolean collectNode(NodeTreeWalker node) {
+    	String uniqueID = null;
+    	if (node instanceof SpecificationNode) {
+    		uniqueID = makeKey((SpecificationNode)node);
+    	} else if (node instanceof Specification){
+    		uniqueID = makeKey((Specification)node);
+    	} else {
+    		throw new IllegalArgumentException();
+    	}
+    	if (_nodes.containsKey(uniqueID)) {
+    		return false;
+    	}
+    	_nodes.put(uniqueID, node);
+    	return true;
+    }
 
     public void registResolveNodeListener(String uniqueID, NodeResolveListener listener) {
         _nodeListeners.add(new NodeListener(uniqueID, listener));

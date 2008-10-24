@@ -55,6 +55,7 @@ import org.seasar.mayaa.impl.builder.parser.TemplateScanner;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
+import org.seasar.mayaa.impl.engine.processor.CommentProcessor;
 import org.seasar.mayaa.impl.engine.processor.DoBodyProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
@@ -250,7 +251,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         for (int i = 0; i < processor.getChildProcessorSize(); i++) {
             ProcessorTreeWalker child = processor.getChildProcessor(i);
-            if (child instanceof CharactersProcessor) {
+            if (child instanceof CommentProcessor) {
+            	return null;
+            } else if (child instanceof CharactersProcessor) {
                 CharactersProcessor charsProc = (CharactersProcessor) child;
                 CompiledScript script = charsProc.getText().getValue();
                 if (script.isLiteral()) {

@@ -117,4 +117,21 @@ public class NativeServiceCycle extends NativeJavaObject {
         return "serviceCycle";
     }
 
+    public void put(String name, Scriptable start, Object value) {
+        if (prototype == null || super.has(name, null)) {
+        	ServiceCycle cycle = CycleUtil.getServiceCycle();
+        	AttributeScope scope;
+            if (cycle.hasAttributeScope(name)) {
+            	scope = cycle.getAttributeScope(name);
+            } else {
+            	scope = CycleUtil.findStandardAttributeScope(name);
+            }
+            if (scope != null) {
+            	scope.setAttribute(name, value);
+            } else {
+            	super.put(name, start, value);
+            }
+        } else 
+            prototype.put(name, prototype, value);
+    }
 }

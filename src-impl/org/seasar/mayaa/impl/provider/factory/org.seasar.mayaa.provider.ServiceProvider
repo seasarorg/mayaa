@@ -104,6 +104,7 @@
         <parameter name="outputTemplateWhitespace" value="true"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
         <parameter name="optimize" value="true"/>
+        <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
     </templateBuilder>
 
     <!--
@@ -123,6 +124,7 @@
         <parameter name="outputTemplateWhitespace" value="true"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
         <parameter name="optimize" value="true"/>
+        <parameter name="defaultCharset" value="UTF-8"/>
 
         <parameter name="defaultLayoutPageName" value="/defaultlayout.html"/>
         <parameter name="generateMayaaNode" value="true"/>

@@ -26,8 +26,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
  */
 public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
 
-    public TemplateParser(HTMLScanner scanner) {
-        super(new TemplateParserConfiguration(scanner));
+    public TemplateParser(HTMLScanner scanner, String templateDefaultCharset) {
+        super(new TemplateParserConfiguration(scanner, templateDefaultCharset));
     }
 
     private static class TemplateParserConfiguration extends HTMLConfiguration {
@@ -39,13 +39,13 @@ public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
         protected static final String DOCUMENT_FRAGMENT =
             "http://cyberneko.org/html/features/balance-tags/document-fragment";
 
-        public TemplateParserConfiguration(HTMLScanner scanner) {
+        public TemplateParserConfiguration(HTMLScanner scanner, String templateDefaultCharset) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
             /* テンプレート上にエンコーディング指定がなければUTF-8と見なす */
-            setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, TEMPLATE_DEFAULT_CHARSET);
+            setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, templateDefaultCharset);
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             /* 元のテンプレート内容を忠実に再現させるオプション。
                ただし、</html>の後ろは無視される。false(デフォルト)の場合は、

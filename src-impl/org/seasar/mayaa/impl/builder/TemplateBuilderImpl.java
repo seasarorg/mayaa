@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -476,6 +477,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
         } else if ("optimize".equals(name)) {
             _optimize = ObjectUtil.booleanValue(value, true);
+        } else if ("defaultCharset".equals(name)) {
+            try {
+                "".getBytes(value);
+                _htmlReaderPool.setDefaultCharset(value);
+            } catch (UnsupportedEncodingException e) {
+                String message =
+                    StringUtil.getMessage(TemplateBuilderImpl.class, 0, value);
+                LOG.warn(message, e);
+            }
         }
         super.setParameter(name, value);
     }
@@ -516,9 +526,14 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     protected static class HtmlReaderPool extends XMLReaderPool {
 
         private static final long serialVersionUID = -5203349759797583368L;
+        private String _defaultCharset = TEMPLATE_DEFAULT_CHARSET;
+
+        protected void setDefaultCharset(String charset) {
+            _defaultCharset = charset;
+        }
 
         protected Object createObject() {
-            return new TemplateParser(new TemplateScanner());
+            return new TemplateParser(new TemplateScanner(), _defaultCharset);
         }
 
         protected boolean validateObject(Object object) {

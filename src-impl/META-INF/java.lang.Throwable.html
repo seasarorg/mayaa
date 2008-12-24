@@ -1,8 +1,22 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+${
+	response.setStatus(500);
+
+	if (application.debug == null) {
+    	if (handledError != null) {
+    		if (handledError instanceof Packages.org.seasar.mayaa.impl.engine.PageNotFoundException) {
+    			response.error(404, handledError.message);
+    		} else {
+    			handledError.printStackTrace();
+    			response.error(500, handledError.message);
+    		}
+    	}
+    	throwJava(new Packages.org.seasar.mayaa.impl.engine.RenderingTerminated());
+	}
+}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja" xmlns:m="http://mayaa.seasar.org">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-	<title>${ handledError.getClass().getName() }</title>
+	<title>${ Packages.org.seasar.mayaa.impl.util.StringUtil.escapeXml(handledError.getClass().getName()) }</title>
 	<script type="text/javascript"><!--
 		function swapVisibility(elementId, anchorElement) {
 			var element = document.getElementById(elementId);
@@ -26,9 +40,7 @@
 			}
 		}
 /* ${// server side
-	response.setStatus(500);
-
-	var isRhinoError = handledError instanceof Packages.org.seasar.mayaa.impl.cycle.script.rhino.OffsetLineRhinoException;;
+	var isRhinoError = handledError instanceof Packages.org.seasar.mayaa.impl.cycle.script.rhino.OffsetLineRhinoException;
 
 	function traceToString(current) {
 		return current.className + '.' + current.methodName + '(' +
@@ -41,10 +53,10 @@
 			msg = handledError.emphasizeDetails();
 		}
 		if (msg == null) {
-			msg = handledError.message;
+			msg = Packages.org.seasar.mayaa.impl.util.StringUtil.escapeXml(handledError.message);
 		}
 		if (msg == null) {
-			msg = handledError.getClass().getName();
+			msg = Packages.org.seasar.mayaa.impl.util.StringUtil.escapeXml(handledError.getClass().getName());
 		}
 		return msg;
 	}
@@ -58,6 +70,7 @@
 	];
 
 	var foldingCount = 0;
+	'';
 } */
 	//--></script>
 	<style type="text/css"><!--
@@ -133,9 +146,9 @@
 <div m:inject="m:if" m:test="${ isRhinoError }">
 	<h2>properties:</h2>
 	<div class="print">
-		sourceName: ${ handledError.sourceName() }<br/>
-		lineNumber: ${ handledError.lineNumber() }<br/>
-		lineSource: ${ handledError.lineSource() }<br/>
+		sourceName: <span m:inject="m:write" m:value="${ handledError.sourceName() }">sourceName</span><br/>
+		lineNumber: <span m:inject="m:write" m:value="${ handledError.lineNumber() }">lineNumber</span><br/>
+		lineSource: <span m:inject="m:write" m:value="${ handledError.lineSource() }">lineSource</span><br/>
 	</div>
 </div>
 
@@ -145,14 +158,14 @@
 	m:after="${ exception = exception.cause }">
 		${ var trace = exception.stackTrace; }
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
-		stackTrace: ${ exception.getClass().name }</h2>
+		stackTrace: <span m:inject="m:write" m:value="${ exception.getClass().name }">className</span></h2>
 	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }">attribute</span>
 		<div class="print">
-			<div class="message">${ exception.message }</div>
+			<div class="message"><span m:inject="m:write" m:value="${ exception.message }">error message in Exception</span></div>
 			<span m:inject="m:for"
 					m:init="${ var i = 0 }"
 					m:test="${ i &lt; trace.length }" m:after="${ i++ }">
-			${ traceToString(trace[i]) }<br/>
+			<span m:inject="m:write" m:value="${ traceToString(trace[i]) }">trace</span><br/>
 			</span>
 			<div m:rendered="false">
 			trace<br/>
@@ -170,7 +183,7 @@
 		m:var="currentScope">
 <div m:inject="m:if" m:test="${ var items = currentScope.scope.iterateAttributeNames(); items.hasNext() }">
 	<h2><span class="foldingAnchor" onclick="swapVisibility('folding${ foldingCount }', this)">[+]</span>
-		${ currentScope.name }</h2>
+		<span m:inject="m:write" m:value="${ currentScope.name }">name</span></h2>
 	<div m:inject="m:element" m:name="div"><span m:inject="m:attribute" m:name="id" m:value="folding${ foldingCount++ }">attribute</span>
 		<div class="print">
 			<div m:inject="m:forEach"

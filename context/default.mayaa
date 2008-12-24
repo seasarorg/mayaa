@@ -5,6 +5,8 @@
 		function println(value) {
 			java.lang.System.out.println(java.lang.String.valueOf(value));
 		}
+		// debug error page
+		application.debug = null;// "enabled";
 	]]></m:beforeRender>
 
 </m:mayaa>

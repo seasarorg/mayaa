@@ -42,9 +42,15 @@ public class J2EEEntities implements CONST_J2EE {
         _entityMap.put(SYSTEM_XML_SCHEMA, FILE_XML_SCHEMA);
         _entityMap.put(LOCATION_XML, FILE_XML);
         _entityMap.put(LOCATION_WEB_SERVICE, FILE_WEB_SERVICE);
-        _entityMap.put(LOCATION_WEB_SERVICE_CLIENT,
-                FILE_WEB_SERVICE_CLIENT);
+        _entityMap.put(LOCATION_WEB_SERVICE_CLIENT_11,
+                FILE_WEB_SERVICE_CLIENT_11);
         _entityMap.put(LOCATION_J2EE_14, FILE_J2EE_14);
+
+        _entityMap.put(LOCATION_J2EE_5, FILE_J2EE_5);
+        _entityMap.put(LOCATION_WEB_DTD_25, FILE_WEB_DTD_25);
+        _entityMap.put(LOCATION_JSP_TAGLIB_21, FILE_JSP_TAGLIB_21);
+        _entityMap.put(LOCATION_WEB_SERVICE_CLIENT_12,
+                FILE_WEB_SERVICE_CLIENT_12);
     }
 
     public static Map getEntityMap() {

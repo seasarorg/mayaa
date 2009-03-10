@@ -36,6 +36,10 @@ public interface CONST_J2EE {
         "http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd";
     String FILE_WEB_DTD_24 = "web-app_2_4.xsd";
 
+    String LOCATION_WEB_DTD_25 =
+        "http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd";
+    String FILE_WEB_DTD_25 = "web-app_2_5.xsd";
+
     String PUBLIC_JSP_TAGLIB_11 =
         "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN";
     String SYSTEM_JSP_TAGLIB_11 =
@@ -51,6 +55,10 @@ public interface CONST_J2EE {
     String LOCATION_JSP_TAGLIB_20 =
         "http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd";
     String FILE_JSP_TAGLIB_20 = "web-jsptaglibrary_2_0.xsd";
+
+    String LOCATION_JSP_TAGLIB_21 =
+        "http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd";
+    String FILE_JSP_TAGLIB_21 = "web-jsptaglibrary_2_1.xsd";
 
     String PUBLIC_DATATYPES = "datatypes";
     String SYSTEM_DATATYPES = "http://www.w3.org/2001/datatypes.dtd";
@@ -69,12 +77,20 @@ public interface CONST_J2EE {
         "http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd";
     String FILE_WEB_SERVICE = "j2ee_web_services_1_1.xsd";
 
-    String LOCATION_WEB_SERVICE_CLIENT =
+    String LOCATION_WEB_SERVICE_CLIENT_11 =
         "http://www.ibm.com/webservices/xsd/j2ee_web_services_client_1_1.xsd";
-    String FILE_WEB_SERVICE_CLIENT = "j2ee_web_services_client_1_1.xsd";
+    String FILE_WEB_SERVICE_CLIENT_11 = "j2ee_web_services_client_1_1.xsd";
+
+    String LOCATION_WEB_SERVICE_CLIENT_12 =
+        "http://java.sun.com/xml/ns/javaee/j2ee_web_services_client_1_2.xsd";
+    String FILE_WEB_SERVICE_CLIENT_12 = "javaee_web_services_client_1_2.xsd";
 
     String LOCATION_J2EE_14 =
         "http://java.sun.com/xml/ns/j2ee/j2ee_1_4.xsd";
     String FILE_J2EE_14 = "j2ee_1_4.xsd";
+
+    String LOCATION_J2EE_5 =
+        "http://java.sun.com/xml/ns/javaee/javaee_5.xsd";
+    String FILE_J2EE_5 = "javaee_5.xsd";
 
 }

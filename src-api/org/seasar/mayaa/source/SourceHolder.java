@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,13 @@ public interface SourceHolder {
     /**
      * systemIDのイテレータを返却する。
      * 階層構造もトレースし、/ で区切られたものを返却する。
-     * 
+     *
      * @param filters ピリオドと小文字の1つ以上の連続の場合は拡張子を、
      *                 それ以外は正規表現でファイル名のマッチしたものを返却する。
      * @return 存在するsystemIDイテレータ
      */
     Iterator iterator(String[] filters);
-    
+
     /**
      * ソースディスクリプタを保持する論理的な開始位置を設定する
      * @param root 格納開始位置
@@ -50,7 +50,7 @@ public interface SourceHolder {
 
     /**
      * ソースディスクリプタを生成する
-     * 
+     *
      * @param systemID
      *            システムID
      * @return ソースディスクリプタ

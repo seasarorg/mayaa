@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,20 @@ public interface CycleLocalVariables {
      * @return オブジェクト。登録キーの示す初期化オブジェクトが登録されていなければエラー。
      */
     Object getGlobalVariable(String key, Object[] params);
-    
+
     /**
      * サイクル期間内で有効なスレッドローカルなグローバルオブジェクトを無効化する。
      * @param key 登録キー。
      */
     void clearGlobalVariable(String key);
-    
+
     /**
      * サイクル期間内で有効なスレッドローカルなグローバルオブジェクトへの設定。
      * @param key 登録キー。
      * @param value 設定値。
      */
     void setGlobalVariable(String key, Object value);
-    
+
     /**
      * サイクル期間内で有効なスレッドローカルなオブジェクトの取得。
      * @param key 登録キー。
@@ -49,7 +49,7 @@ public interface CycleLocalVariables {
      * @return オブジェクト。登録キーの示す初期化オブジェクトが登録されていなければエラー。
      */
     Object getVariable(String key, Object owner, Object[] params);
-    
+
     /**
      * サイクル期間内で有効なスレッドローカルなオブジェクトを無効化する。
      * @param key 登録キー。

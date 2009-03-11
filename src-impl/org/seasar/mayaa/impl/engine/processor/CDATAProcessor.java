@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class CDATAProcessor extends TemplateProcessorSupport
         LiteralCharactersProcessor literalProcessor =
             new LiteralCharactersProcessor(CDATAIN);
         BuilderUtil.characterProcessorCopy(
-                this, literalProcessor,sequenceIDGenerator); 
+                this, literalProcessor,sequenceIDGenerator);
         results[0] = literalProcessor;
 
         for (int i = 0; i < getChildProcessorSize(); i++) {
@@ -69,7 +69,7 @@ public class CDATAProcessor extends TemplateProcessorSupport
                 this, literalProcessor, sequenceIDGenerator);
         results[results.length - 1] = literalProcessor;
         getParentProcessor().removeProcessor(this);
-        
+
         return results;
     }
 

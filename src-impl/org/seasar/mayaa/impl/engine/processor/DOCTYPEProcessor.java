@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DOCTYPEProcessor extends TemplateProcessorSupport 
+public class DOCTYPEProcessor extends TemplateProcessorSupport
             implements CONST_IMPL {
 
     private static final long serialVersionUID = 8518993579074245108L;

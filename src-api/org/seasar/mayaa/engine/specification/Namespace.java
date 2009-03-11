@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public interface Namespace extends NodeObject {
      * デフォルト名前空間URIを設定する。
      * 予め addPrefixMappingで追加されていなければならない。
      * nullを指定すると prefixMappingで prefixを "" として
-     * 登録したものがデフォルトになる。 
+     * 登録したものがデフォルトになる。
      * @param namespaceURI 名前空間URI。
      */
     void setDefaultNamespaceURI(URI namespaceURI);
@@ -60,7 +60,7 @@ public interface Namespace extends NodeObject {
     /**
      * 現在のスコープでPrefixが無指定の場合に選択される
      * デフォルト名前空間を返す。
-     * 
+     *
      * @return デフォルト名前空間。デフォルト名前空間がない場合にはnull
      */
     URI getDefaultNamespaceURI();

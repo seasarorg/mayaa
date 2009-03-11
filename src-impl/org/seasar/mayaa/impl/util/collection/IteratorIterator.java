@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class IteratorIterator implements Iterator {
     private List _iterators = new ArrayList();
     private Iterator _iteratorIterator;
     private Iterator _currentIterator;
-    
+
     protected void check(Object o) {
         if (o == null) {
             throw new IllegalArgumentException();
@@ -41,7 +41,7 @@ public class IteratorIterator implements Iterator {
             throw new IllegalStateException();
         }
     }
-    
+
     public void add(Collection collection) {
         check(collection);
         _iterators.add(collection);
@@ -51,7 +51,7 @@ public class IteratorIterator implements Iterator {
         check(enumeration);
         _iterators.add(enumeration);
     }
-    
+
     public void add(SourceScanner scanner) {
         check(scanner);
         _iterators.add(scanner);

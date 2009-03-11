@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class NodeSerializeController implements NodeReferenceResolver {
             }
         }
     }
-    
+
     /**
      * 存在しない場合は登録する。
      * @param node 登録するノード

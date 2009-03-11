@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class CommentProcessor extends CharactersProcessor implements CONST_IMPL 
         if (getOriginalNode().getQName().equals(QM_COMMENT) == false) {
             return new ProcessorTreeWalker[] { this };
         }
-        
+
         ProcessorTreeWalker[] results =
                 new ProcessorTreeWalker[2 + getChildProcessorSize()];
 

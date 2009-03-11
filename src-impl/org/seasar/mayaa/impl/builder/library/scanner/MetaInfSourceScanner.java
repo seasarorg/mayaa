@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
 
     private FolderSourceScanner _folderScanner = new FolderSourceScanner();
     private Set _ignores = new HashSet();
-    
+
     private String _jarScanFolder;
     private Set _jarScanIgnores = new HashSet();
     private Set _jarScanExtensions = new HashSet();
-    
+
     private void initJarScanOptions() {
         if (_jarScanFolder == null) {
             _jarScanFolder = "META-INF/";
@@ -53,7 +53,7 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
             _jarScanExtensions.add(".tld");
         }
     }
-    
+
     public Iterator scan() {
         initJarScanOptions();
         IteratorIterator itit = new IteratorIterator();

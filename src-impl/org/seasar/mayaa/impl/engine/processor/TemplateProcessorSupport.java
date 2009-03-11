@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,7 +255,7 @@ public class TemplateProcessorSupport
         out.writeUTF(_injectedNode.getQName().getNamespaceURI().getValue());
         out.writeUTF(_injectedNode.getQName().getLocalName());
 
-        NodeSerializeController controller = SpecificationImpl.nodeSerializer(); 
+        NodeSerializeController controller = SpecificationImpl.nodeSerializer();
         if (controller.collectNode(_injectedNode)) {
         	// オリジナルの保存
         	out.writeUTF(UNIQUENESS_MARK);

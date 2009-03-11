@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the Seasar Foundation and the Others.
+ * Copyright 2004-2009 the Seasar Foundation and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 public class VirtualNativeObject extends NativeObject {
 
     private static final long serialVersionUID = 4781599810286253299L;
-    
+
     private static final String GLOBAL_OBJECT = "__global__";
     private static final Log LOG = LogFactory.getLog(VirtualNativeObject.class);
 
@@ -54,7 +54,7 @@ public class VirtualNativeObject extends NativeObject {
         if (GLOBAL_OBJECT.equals(name)) return _copyGlobal;
         return _copyGlobal.get(name, start);
     }
-    
+
     public void put(int index, Scriptable start, Object value) {
     	_copyGlobal.put(index, start, value);
     }

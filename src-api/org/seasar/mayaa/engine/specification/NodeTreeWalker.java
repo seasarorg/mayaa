@@ -53,6 +53,7 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
     /**
      * 子ノードを削除する。
      * @param childNode 子ノード。
+     * @return 削除に成功したらtrue、そうでなければfalse。
      */
     boolean removeChildNode(NodeTreeWalker childNode);
 

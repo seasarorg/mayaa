@@ -32,7 +32,6 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
-import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -42,8 +41,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class EchoProcessor extends ElementProcessor
-        implements CONST_IMPL {
+public class EchoProcessor extends ElementProcessor {
 
     private static final long serialVersionUID = 3924111635172574833L;
 

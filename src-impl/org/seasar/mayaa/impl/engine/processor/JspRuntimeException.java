@@ -29,9 +29,6 @@ public class JspRuntimeException extends MayaaException {
     private String _injectedName;
     private int _injectedLineNumber;
 
-    /**
-     *
-     */
     public JspRuntimeException(
             String originalName, int originalLineNumber, String injectedName,
             int injectedLineNumber, Throwable cause) {

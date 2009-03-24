@@ -28,7 +28,6 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
-import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
@@ -39,7 +38,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class PageImpl extends SpecificationImpl implements Page, CONST_IMPL {
+public class PageImpl extends SpecificationImpl implements Page {
 
     private static final long serialVersionUID = -7151911061582725013L;
     static final Log LOG = LogFactory.getLog(PageImpl.class);

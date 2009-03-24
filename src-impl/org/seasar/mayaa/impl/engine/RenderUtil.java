@@ -192,6 +192,7 @@ public class RenderUtil implements CONST_IMPL {
      * @param current 現在のプロセッサ
      * @param oldBuffered メソッド開始時のバッファするか否かフラグ
      * @return バッファするか否か
+     * @throws SkipPageException
      */
     public static boolean renderTemplateProcessorChildren(
             Page topLevelPage, TemplateProcessor current,

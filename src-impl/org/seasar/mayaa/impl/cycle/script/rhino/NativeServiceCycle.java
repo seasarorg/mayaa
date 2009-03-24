@@ -55,7 +55,11 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
 
     /**
-     * 親のhasメソッドを呼ぶためのメソッド。
+     * Indicates whether or not a named property is defined in an object. Does not traverse the prototype chain.
+     * The property is specified by a String name as defined for the get method.
+     * @param name the name of the property
+     * @param start the object in which the lookup began
+     * @return true if and only if the named property is found in the object
      */
     public boolean hasMember(String name, Scriptable start) {
         return super.has(name, start);
@@ -131,7 +135,8 @@ public class NativeServiceCycle extends NativeJavaObject {
             } else {
             	super.put(name, start, value);
             }
-        } else
+        } else {
             prototype.put(name, prototype, value);
+        }
     }
 }

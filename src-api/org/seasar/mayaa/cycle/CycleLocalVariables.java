@@ -46,6 +46,7 @@ public interface CycleLocalVariables {
      * サイクル期間内で有効なスレッドローカルなオブジェクトの取得。
      * @param key 登録キー。
      * @param owner 所有者。
+     * @param params インスタンスを新規生成する場合のパラメータ。
      * @return オブジェクト。登録キーの示す初期化オブジェクトが登録されていなければエラー。
      */
     Object getVariable(String key, Object owner, Object[] params);
@@ -53,12 +54,14 @@ public interface CycleLocalVariables {
     /**
      * サイクル期間内で有効なスレッドローカルなオブジェクトを無効化する。
      * @param key 登録キー。
+     * @param owner 所有者。
      */
     void clearVariable(String key, Object owner);
 
     /**
      * サイクル期間内で有効なスレッドローカルなオブジェクトへの設定。
      * @param key 登録キー。
+     * @param owner 所有者。
      * @param value 設定値。
      */
     void setVariable(String key, Object owner, Object value);

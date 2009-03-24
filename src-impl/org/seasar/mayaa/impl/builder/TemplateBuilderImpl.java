@@ -48,7 +48,6 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.builder.parser.TemplateParser;
@@ -73,7 +72,7 @@ import org.xml.sax.XMLReader;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
-        implements TemplateBuilder, CONST_IMPL {
+        implements TemplateBuilder {
     private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
     private static final long serialVersionUID = -1031702086020145692L;
 
@@ -146,9 +145,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
 
         public int indexOf(Object elem) {
-            for (int i = 0; i < size(); i++)
-                if (get(i) == elem)
+            for (int i = 0; i < size(); i++) {
+                if (get(i) == elem) {
                     return i;
+                }
+            }
             return -1;
         }
     }

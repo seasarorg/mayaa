@@ -52,13 +52,6 @@ public class ApplicationFileSourceDescriptor
         return _application;
     }
 
-    /**
-     * @deprecated WEB-INFはWebコンテナが排除するので意識する必要なし
-     */
-    public void setDenyWebInf(boolean denyWebInf) {
-        // @deprecated
-    }
-
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
     }

@@ -174,9 +174,10 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param uri
-         * @param localName
-         * @return
+         * Look up the index of an attribute by Namespace name.
+         * @param uri The Namespace URI, or the empty string if the name has no Namespace URI.
+         * @param localName The attribute's local name.
+         * @return The index of the attribute, or -1 if it does not appear in the list.
          * @see org.xml.sax.Attributes#getIndex(java.lang.String, java.lang.String)
          */
         public int getIndex(String uri, String localName) {
@@ -184,8 +185,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param qName
-         * @return
+         * Look up the index of an attribute by XML 1.0 qualified name.
+         * @param qName The qualified (prefixed) name.
+         * @return The index of the attribute, or -1 if it does not appear in the list.
          * @see org.xml.sax.Attributes#getIndex(java.lang.String)
          */
         public int getIndex(String qName) {
@@ -193,7 +195,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @return
+         * Return the number of attributes in the list.
+         * Once you know the number of attributes, you can iterate through the list.
+         * @return The number of attributes in the list.
          * @see org.xml.sax.Attributes#getLength()
          */
         public int getLength() {
@@ -201,8 +205,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param index
-         * @return
+         * Look up an attribute's local name by index.
+         * @param index The attribute index (zero-based).
+         * @return The local name, or the empty string if Namespace processing is not being performed, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getLocalName(int)
          */
         public String getLocalName(int index) {
@@ -210,8 +215,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param index
-         * @return
+         * Look up an attribute's XML 1.0 qualified name by index.
+         * @param The attribute index (zero-based).
+         * @return The XML 1.0 qualified name, or the empty string if none is available, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getQName(int)
          */
         public String getQName(int index) {
@@ -219,8 +225,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param index
-         * @return
+         * @param The attribute index (zero-based).
+         * @return The attribute's type as a string, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getType(int)
          */
         public String getType(int index) {
@@ -228,9 +234,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param uri
-         * @param localName
-         * @return
+         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
+         * @param localName The local name of the attribute.
+         * @return The attribute type as a string, or null if the attribute is not in the list or if Namespace processing is not being performed.
          * @see org.xml.sax.Attributes#getType(java.lang.String, java.lang.String)
          */
         public String getType(String uri, String localName) {
@@ -238,8 +244,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param qName
-         * @return
+         * @param qName The XML 1.0 qualified name.
+         * @return The attribute type as a string, or null if the attribute is not in the list or if qualified names are not available.
          * @see org.xml.sax.Attributes#getType(java.lang.String)
          */
         public String getType(String qName) {
@@ -247,8 +253,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param index
-         * @return
+         * @param index The attribute index (zero-based).
+         * @return The Namespace URI, or the empty string if none is available, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getURI(int)
          */
         public String getURI(int index) {
@@ -256,8 +262,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param index
-         * @return
+         * @param index The attribute index (zero-based).
+         * @return The attribute's value as a string, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getValue(int)
          */
         public String getValue(int index) {
@@ -268,9 +274,9 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param uri
-         * @param localName
-         * @return
+         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
+         * @param localName The local name of the attribute.
+         * @return The attribute value as a string, or null if the attribute is not in the list.
          * @see org.xml.sax.Attributes#getValue(java.lang.String, java.lang.String)
          */
         public String getValue(String uri, String localName) {
@@ -281,8 +287,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param qName
-         * @return
+         * @param qName The XML 1.0 qualified name.
+         * @return The attribute value as a string, or null if the attribute is not in the list or if qualified names are not available.
          * @see org.xml.sax.Attributes#getValue(java.lang.String)
          */
         public String getValue(String qName) {

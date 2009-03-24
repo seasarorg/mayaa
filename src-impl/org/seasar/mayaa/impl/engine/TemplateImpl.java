@@ -31,10 +31,8 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
-import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
@@ -49,7 +47,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TemplateImpl
         extends SpecificationImpl
-        implements Template, NodeReferenceResolver, ProcessorReferenceResolver, CONST_IMPL {
+        implements Template, ProcessorReferenceResolver {
 
     private static final long serialVersionUID = 2126209350220642842L;
 
@@ -177,7 +175,6 @@ public class TemplateImpl
      * ヘッダの値はcacheControl属性の値が設定されます。
      *
      * @param topLevelPage
-     * @return cacheControl属性の値、またはnull
      */
     protected void prepareCycle(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();

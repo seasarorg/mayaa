@@ -186,6 +186,7 @@ public class SpecificationUtil implements CONST_IMPL {
 
     /**
      * スクリプト実行環境の新規スコープを開始します。
+     * @param variables 初期変数
      */
     public static void startScope(Map variables) {
         ProviderUtil.getScriptEnvironment().startScope(variables);

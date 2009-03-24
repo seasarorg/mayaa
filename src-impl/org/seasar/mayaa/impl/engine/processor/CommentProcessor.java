@@ -24,7 +24,6 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -32,7 +31,7 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CommentProcessor extends CharactersProcessor implements CONST_IMPL {
+public class CommentProcessor extends CharactersProcessor {
 
     private static final long serialVersionUID = -5176372123366627130L;
     private static final String COMMENTIN = "<!--";

@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
@@ -35,6 +37,7 @@ import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.source.PageSourceFactory;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
@@ -179,6 +182,9 @@ public class AutoPageBuilder implements Runnable {
             }
             reportTime(engine, diffMillis(engineBuildTime));
 
+            // prepare SourceHolderFactory
+            FactoryFactory.getFactory(PageSourceFactory.class);
+
             while (currentThread == _thread) {
                 _buildTimeSum = 0;
                 _renderTimeSum = 0;
@@ -187,6 +193,9 @@ public class AutoPageBuilder implements Runnable {
                     for (Iterator itSystemID = holder.iterator(_fileFilters);
                             itSystemID.hasNext();) {
                         String systemID = (String) itSystemID.next();
+                        if (systemID.startsWith("/") == false) {
+                            systemID = "/" + systemID;
+                        }
                         try {
                             buildPage(systemID);
                         } catch (Throwable e) {
@@ -228,7 +237,11 @@ public class AutoPageBuilder implements Runnable {
         CycleUtil.initialize(request, response);
         try {
             String pageName = CycleUtil.getRequestScope().getPageName();
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             Engine engine = ProviderUtil.getEngine();
+            engine.build();
+            cycle.setOriginalNode(engine);
+            cycle.setInjectedNode(engine);
             if (engine.isPageRequested()) {
                 long pageBuildTime = diffMillis(0);
                 Page page = engine.getPage(pageName);

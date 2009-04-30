@@ -97,6 +97,17 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     protected static Scriptable getStandardObjects() {
         if (_standardObjects == null) {
             Context cx = Context.enter();
+            try {
+                _standardObjects = cx.initStandardObjects(null, true);
+                if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
+                	ScriptableObject scope = (ScriptableObject)_standardObjects;
+                	scope.defineProperty("__global__", scope, 
+                			ScriptableObject.READONLY | ScriptableObject.DONTENUM);
+                }
+            } finally {
+                Context.exit();
+            }
+            /*
             if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
                 VirtualNativeObject root = new VirtualNativeObject();
                 try {
@@ -106,12 +117,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                     root.initEnd();
                 }
             } else {
-                try {
-                    _standardObjects = cx.initStandardObjects(null, true);
-                } finally {
-                    Context.exit();
-                }
             }
+            */
         }
         return _standardObjects;
     }

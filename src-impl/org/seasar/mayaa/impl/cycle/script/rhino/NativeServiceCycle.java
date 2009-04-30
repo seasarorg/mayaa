@@ -20,7 +20,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaObject;
+import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
@@ -79,7 +81,15 @@ public class NativeServiceCycle extends NativeJavaObject {
             // 先回りしてチェック
             if (Scriptable.NOT_FOUND == ScriptableObject.getProperty(getParentScope(), name)) {
                 // Nativeにも存在しないのでUndefinedを定義したものと同等とする
-                result = Undefined.instance;
+            	
+            	// TODO topLevelScopeからも先回りチェックして判断しないと、"java" や "Packages" が undefined になってしまう。
+            	Context cx = Context.getCurrentContext();	// 取得できる？
+            	if (ScriptRuntime.hasTopCall(cx)) {
+            		result = ScriptRuntime.name(cx, ScriptRuntime.getTopCallScope(cx), name);
+            	}
+            	if (result == Scriptable.NOT_FOUND) {
+            		result = Undefined.instance;
+            	}
             }
         }
         return result;

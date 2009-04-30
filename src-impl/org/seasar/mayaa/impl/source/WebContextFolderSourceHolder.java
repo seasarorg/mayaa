@@ -20,9 +20,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class WebContextFolderSourceHolder extends FileSourceDescriptorProvideSourceHolder {
+public class WebContextFolderSourceHolder extends SourceDescriptorProvideSourceHolder {
 
-    protected FileSourceDescriptor getSourceDescriptor() {
+    protected ChangeableRootSourceDescriptor getSourceDescriptor() {
         return new ApplicationFileSourceDescriptor();
     }
 

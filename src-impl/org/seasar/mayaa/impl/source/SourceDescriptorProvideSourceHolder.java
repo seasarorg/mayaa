@@ -24,9 +24,9 @@ import org.seasar.mayaa.source.SourceHolder;
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public abstract class FileSourceDescriptorProvideSourceHolder implements SourceHolder {
+public abstract class SourceDescriptorProvideSourceHolder implements SourceHolder {
 
-    protected abstract FileSourceDescriptor getSourceDescriptor();
+    protected abstract ChangeableRootSourceDescriptor getSourceDescriptor();
 
     private String _root = "";
 
@@ -39,7 +39,7 @@ public abstract class FileSourceDescriptorProvideSourceHolder implements SourceH
     }
 
     public SourceDescriptor getSourceDescriptor(String systemID) {
-        FileSourceDescriptor sourceDescriptor = getSourceDescriptor();
+    	ChangeableRootSourceDescriptor sourceDescriptor = getSourceDescriptor();
         sourceDescriptor.setRoot(getRoot());
         sourceDescriptor.setSystemID(systemID);
 

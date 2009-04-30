@@ -118,7 +118,11 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
 
         Class sourceHolderClass = null;
         if ("folder".equals(name)) {
-            sourceHolderClass = WebContextFolderSourceHolder.class;
+        	if (IS_SECURE_WEB && ("".equals(value) || "/".equals(value))) {
+        		sourceHolderClass = WebContextRootResourceHolder.class;
+        	} else {
+        		sourceHolderClass = WebContextFolderSourceHolder.class;
+        	}
         } else if ("absolutePath".equals(name)) {
             sourceHolderClass = AbsolutePathSourceHolder.class;
         } else {

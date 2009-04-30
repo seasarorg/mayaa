@@ -21,8 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.AccessControlException;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -32,9 +35,11 @@ import org.seasar.mayaa.source.WritableSourceDescriptor;
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class FileSourceDescriptor
-        extends ParameterAwareImpl implements WritableSourceDescriptor {
+        extends ParameterAwareImpl implements WritableSourceDescriptor, ChangeableRootSourceDescriptor {
 
     private static final long serialVersionUID = 9199082270985131347L;
+    private static final Log LOG =
+        LogFactory.getLog(FileSourceDescriptor.class);
 
     private static final Date NOTFOUND_TIMESTAMP = new Date(0);
 
@@ -82,8 +87,17 @@ public class FileSourceDescriptor
             String realPath = getRealPath();
             if (StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
-                 if (file.exists()) {
-                     _file = file;
+                 if (IS_SECURE_WEB) {
+                	 try {
+                		 if (file.exists()) {
+                			 _file = file;
+                		 }
+                	 } catch(AccessControlException e) {
+                		 // OKな場所とそうでない場所があるのでtryはする。
+                		 LOG.debug("access denied. " + file.toString());
+                	 }
+                 } else if (file.exists()) {
+            		 _file = file;
                  }
             }
         }

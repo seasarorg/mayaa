@@ -15,26 +15,25 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import java.io.File;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 
-import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
+ * Fileアクセスが許可されていないセキュアなWebサーバー環境で、ServletContext経由でファイルを
+ * 扱うようにするためのHolder
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class AbsolutePathSourceHolder
-        extends SourceDescriptorProvideSourceHolder {
+public class WebContextRootResourceHolder extends SourceDescriptorProvideSourceHolder {
 
     protected ChangeableRootSourceDescriptor getSourceDescriptor() {
-        return new FileSourceDescriptor();
+    	ApplicationResourceSourceDescriptor result =
+    		new ApplicationResourceSourceDescriptor();
+    	result.setApplicationScope(CycleUtil.getServiceCycle().getApplicationScope());
+        return result;
     }
 
-    public void setRoot(String root) {
-        if (StringUtil.isEmpty(root) ||
-                new File(root).isDirectory() == false) {
-            throw new IllegalArgumentException();
-        }
-        super.setRoot(root);
+    public void setRoot(String value) {
+        super.setRoot("");
     }
 
 }

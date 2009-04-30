@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,30 +33,24 @@ import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
- * ApplicationScopeを基準としたSourceDescriptor。
+ * セキュアなWebサーバー環境のために直接Fileを扱わずにContext経由で読み出すSourceDescriptor。
  *
- * @author Masataka Kurihara (Gluegent, Inc.)
- * @author Koji Suga (Gluegent Inc.)
+ * @author Taro KATO (Gluegent Inc.)
  */
-public class ApplicationSourceDescriptor extends ParameterAwareImpl
+public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
         implements ChangeableRootSourceDescriptor {
 
     private static final long serialVersionUID = -2775274363708858237L;
-    private static final Log LOG = LogFactory.getLog(ApplicationSourceDescriptor.class);
-
-    public static final String WEB_INF = "/WEB-INF";
+    static final Log LOG = LogFactory.getLog(ApplicationResourceSourceDescriptor.class);
 
     private transient ApplicationScope _application;
 
     /** Fileベースで取得できるかどうか */
-    private transient Boolean _useFile;
     private transient URL _url;
+    
+    private transient String _systemID;
 
-    private FileSourceDescriptor _fileSourceDescriptor;
-
-    public ApplicationSourceDescriptor() {
-        _fileSourceDescriptor = new FileSourceDescriptor();
-        _fileSourceDescriptor.setRoot("");
+    public ApplicationResourceSourceDescriptor() {
     }
 
     // use while building ServiceProvider.
@@ -74,82 +69,72 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     }
 
     public void setRoot(String root) {
-        _fileSourceDescriptor.setRoot(root);
+        // ignore
     }
 
     protected URL getURL() {
-        String path = _fileSourceDescriptor.getRealPath();
-        if (StringUtil.isEmpty(path)) {
-            path = "/";
-        }
-        // TODO ここにServletContextクラスが登場しないようにする
-        ServletContext context =
-            (ServletContext) getApplicationScope().getUnderlyingContext();
-        try {
-            return context.getResource(path);
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("invalid: " + path);
-        }
+    	if (_url == null) {
+            String path = _systemID;
+            if (StringUtil.isEmpty(path)) {
+                path = "/";
+            }
+            // TODO ここにServletContextクラスが登場しないようにする
+            ServletContext context =
+                (ServletContext) getApplicationScope().getUnderlyingContext();
+            try {
+            	// TODO GAE for Javaの場合、nullが返る場合がある。どうしたもんか...
+            	_url = context.getResource(path);
+            	if (_url == null) {
+            		LOG.debug("NG. getResource failed. - " + path);
+            	} else {
+            		LOG.debug("OK. getResource url succeed. - " + path);
+            	}
+                return _url; 
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException("invalid: " + path);
+            }
+    	}
+    	return _url;
     }
 
-    /**
-     * ファイルが見つからない場合、ServletContextからURLで探す。
-     * ServletContextから見つかった場合はそれを利用するようにする。
-     * それでも見つからなかった場合、存在しないリソースとして処理する。
-     *
-     * @return ファイルとして扱うならtrue
-     */
-    protected final boolean canUseFile() {
-        if (_useFile == null) {
-            _useFile = Boolean.TRUE;
-            if (_fileSourceDescriptor.exists() == false) {
-                _useFile = Boolean.FALSE;
-                URL url = getURL();
-                if (url != null) {
-                    _url = url;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(getSystemID() + " is read by URL (" +
-                                _url + ")");
-                    }
-                }
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(getSystemID() + " is read by FILE (" +
-                            _fileSourceDescriptor.getFile() + ")");
-                }
-            }
-        }
-        return _useFile.booleanValue();
-    }
 
     /* (non-Javadoc)
      * @see org.seasar.mayaa.source.SourceDescriptor#exists()
      */
     public boolean exists() {
-        if (canUseFile()) {
-            return _fileSourceDescriptor.exists();
+    	URL url = getURL();
+        if (url != null) {
+        	return true;
         }
-        return _url != null;
+        // GAE for Java 対応。_urlはnullなのでStreamで確認する。
+        ServletContext context =
+            (ServletContext) getApplicationScope().getUnderlyingContext();
+        InputStream resourceAsStream = context.getResourceAsStream(_systemID);
+        try {
+        	return resourceAsStream != null;
+        } finally {
+        	try {
+        		if (resourceAsStream != null) {
+        			resourceAsStream.close();
+        		}
+			} catch (IOException e) {
+				return false;
+			}
+        }
     }
 
     /* (non-Javadoc)
      * @see org.seasar.mayaa.source.SourceDescriptor#getInputStream()
      */
     public InputStream getInputStream() {
-        if (canUseFile()) {
-            return _fileSourceDescriptor.getInputStream();
-        }
-        return IOUtil.openStream(_url);
+        return IOUtil.openStream(getURL());
     }
 
     /* (non-Javadoc)
      * @see org.seasar.mayaa.source.SourceDescriptor#getTimestamp()
      */
     public Date getTimestamp() {
-        if (canUseFile()) {
-            return _fileSourceDescriptor.getTimestamp();
-        }
-        return new Date(IOUtil.getLastModified(_url));
+        return new Date(IOUtil.getLastModified(getURL()));
     }
 
 
@@ -157,14 +142,17 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
      * @see org.seasar.mayaa.impl.ParameterAwareImpl#setSystemID()
      */
     public void setSystemID(String systemID) {
-        _fileSourceDescriptor.setSystemID(systemID);
+    	if (!StringUtil.equals(_systemID, systemID)) {
+    		_systemID = systemID;
+    		_url = null;
+    	}
     }
 
     /* (non-Javadoc)
      * @see org.seasar.mayaa.impl.ParameterAwareImpl#getSystemID()
      */
     public String getSystemID() {
-        return _fileSourceDescriptor.getSystemID();
+        return _systemID;
     }
 
     // for serialize

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
@@ -103,7 +104,7 @@ public class AutoPageBuilder implements Runnable {
         Engine engine = ProviderUtil.getEngine();
         boolean autoBuild = ObjectUtil.booleanValue(
                 engine.getParameter(OPTION_AUTO_BUILD), false);
-        if (autoBuild) {
+        if (!ParameterAware.IS_SECURE_WEB && autoBuild) {
             _servletContext = servletConfig.getServletContext();
             _contextPath = prepareContextPath(contextPath, engine);
             _repeat = ObjectUtil.booleanValue(

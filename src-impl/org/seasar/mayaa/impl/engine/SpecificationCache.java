@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.util.ReferenceCache;
 
@@ -46,7 +47,7 @@ public class SpecificationCache {
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
-        if (surviveLimit > 0) {
+        if (surviveLimit > 0 && !ParameterAware.IS_SECURE_WEB) {
             _gcChecker = new ReferenceCache(Object.class,
                     ReferenceCache.SOFT, new GCReceiver());
             postNewGabage();

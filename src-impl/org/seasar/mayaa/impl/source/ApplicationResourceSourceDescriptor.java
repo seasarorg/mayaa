@@ -47,10 +47,11 @@ public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
 
     /** Fileベースで取得できるかどうか */
     private transient URL _url;
-    
+
     private transient String _systemID;
 
     public ApplicationResourceSourceDescriptor() {
+        // do nothing.
     }
 
     // use while building ServiceProvider.
@@ -89,7 +90,7 @@ public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
             	} else {
             		LOG.debug("OK. getResource url succeed. - " + path);
             	}
-                return _url; 
+                return _url;
             } catch (MalformedURLException e) {
                 throw new IllegalStateException("invalid: " + path);
             }

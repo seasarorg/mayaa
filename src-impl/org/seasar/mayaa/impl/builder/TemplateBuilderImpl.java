@@ -73,6 +73,11 @@ import org.xml.sax.XMLReader;
  */
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder {
+    public static final String DEFAULT_CHARSET = "defaultCharset";
+    public static final String REPLACE_SSI_INCLUDE = "replaceSSIInclude";
+    public static final String OPTIMIZE = "optimize";
+    public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
+
     private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
     private static final long serialVersionUID = -1031702086020145692L;
 
@@ -83,6 +88,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private transient InjectionChain _chain = new DefaultInjectionChain();
     private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
+    private boolean _isSSIIncludeReplacementEnabled = false;
 
     public void addInjectionResolver(InjectionResolver resolver) {
         if (resolver == null) {
@@ -117,7 +123,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         TemplateNodeHandler handler =
             new TemplateNodeHandler((Template) specification);
-        handler.setOutputTemplateWhitespace(_outputTemplateWhitespace);
+        handler.setOutputTemplateWhitespace(isOutputTemplateWhitespace());
+        handler.setSSIIncludeReplacementEnabled(isSSIIncludeReplacementEnabled());
         return handler;
     }
 
@@ -131,7 +138,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
         LOG.debug("built node tree from template. " + specification.getSystemID());
         doInjection((Template) specification);
-        if (_optimize) {
+        if (isOptimizeEnabled()) {
             nodeOptimize((Template) specification);
         }
         LOG.debug("built processor tree from node tree. " + specification.getSystemID());
@@ -345,10 +352,20 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return findConnectPoint(processor);
     }
 
+    /**
+     * ノードを最適化する。
+     * 親要素{@link parent}に子要素のリスト{@link collector}をすべて追加する。
+     * その際、静的部分と動的部分を分割可能なものがあれば分割し、一度分割したという
+     * マーキング的な意味合いで{@link divided}に追加する。
+     * @param idGenerator
+     * @param parent 親要素
+     * @param collector 子要素
+     * @param divided 静的部分と動的部分を分割し
+     */
     protected void optimizeProcessors(SequenceIDGenerator idGenerator,
-            ProcessorTreeWalker parent, List collecter, Set divided) {
+            ProcessorTreeWalker parent, List collector, Set divided) {
         List expands = new ArrayList();
-        Iterator it = collecter.iterator();
+        Iterator it = collector.iterator();
         while (it.hasNext()) {
             ProcessorTreeWalker processor = (ProcessorTreeWalker) it.next();
             if (processor == null) {
@@ -391,7 +408,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             child.setParentProcessor(parent);
             parent.addChildProcessor(child);
         }
-
     }
 
     protected ProcessorTreeWalker convertCharactersProcessor(
@@ -457,7 +473,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 stack.pop();
             }
         }
-        if (_optimize) {
+        if (isOptimizeEnabled()) {
             ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
             int count = parent.getChildProcessorSize();
             if (count > 0) {
@@ -471,14 +487,35 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
+    protected boolean isOutputTemplateWhitespace() {
+        return _outputTemplateWhitespace;
+    }
+    protected void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
+        _outputTemplateWhitespace = outputTemplateWhitespace;
+    }
+    protected boolean isSSIIncludeReplacementEnabled() {
+        return _isSSIIncludeReplacementEnabled;
+    }
+    protected void setSSIIncludeReplacementEnabled(boolean isSSIIncludeReplacementEnabled) {
+        _isSSIIncludeReplacementEnabled = isSSIIncludeReplacementEnabled;
+    }
+    protected boolean isOptimizeEnabled() {
+        return _optimize;
+    }
+    protected void setOptimizeEnabled(boolean optimize) {
+        _optimize = optimize;
+    }
+
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if ("outputTemplateWhitespace".equals(name)) {
-            _outputTemplateWhitespace = ObjectUtil.booleanValue(value, true);
-        } else if ("optimize".equals(name)) {
-            _optimize = ObjectUtil.booleanValue(value, true);
-        } else if ("defaultCharset".equals(name)) {
+        if (OUTPUT_TEMPLATE_WHITESPACE.equals(name)) {
+            setOutputTemplateWhitespace(ObjectUtil.booleanValue(value, true));
+        } else if (OPTIMIZE.equals(name)) {
+            setOptimizeEnabled(ObjectUtil.booleanValue(value, true));
+        } else if (REPLACE_SSI_INCLUDE.equals(name)) {
+            setSSIIncludeReplacementEnabled(ObjectUtil.booleanValue(value, false));
+        } else if (DEFAULT_CHARSET.equals(name)) {
             try {
                 "".getBytes(value);
                 _htmlReaderPool.setDefaultCharset(value);
@@ -503,7 +540,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         template.addChildNode(mayaa);
 
         Set divided = null;
-        if (_optimize) {
+        if (isOptimizeEnabled()) {
             divided = new HashSet();
         }
         walkParsedTree(template, stack, template, divided);

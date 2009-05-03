@@ -15,11 +15,18 @@
  */
 package org.seasar.mayaa.impl.builder;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 
@@ -29,6 +36,7 @@ import org.xml.sax.Attributes;
 public class TemplateNodeHandler extends SpecificationNodeHandler {
 
     private boolean _outputTemplateWhitespace = true;
+    private boolean _isSSIIncludeReplacementEnabled = false;
 
     public TemplateNodeHandler(Template specification) {
         super(specification);
@@ -40,6 +48,18 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
 
     public void setOutputTemplateWhitespace(boolean outputTemplateWhitespace) {
         _outputTemplateWhitespace = outputTemplateWhitespace;
+    }
+
+    public void setSSIIncludeReplacementEnabled(boolean isSSIIncludeReplacementEnabled) {
+        _isSSIIncludeReplacementEnabled = isSSIIncludeReplacementEnabled;
+    }
+
+    /**
+     * SSI includeの記述をm:insertへ置き換える処理が有効か。
+     * @return 有効なら{@code true}、そうでなければ{@code false}を返す。
+     */
+    protected boolean isSSIIncludeReplacementEnabled() {
+        return _isSSIIncludeReplacementEnabled;
     }
 
     protected void initNamespace() {
@@ -141,6 +161,18 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
     public void comment(char[] buffer, int start, int length) {
         addCharactersNode();
         String comment = new String(buffer, start, length);
+
+        if (isSSIIncludeReplacementEnabled()) {
+            String trimmed = comment.trim();
+            if (trimmed.startsWith(INCLUDE_PREFIX)) {
+                Matcher match = INCLUDE_PATTERN.matcher(trimmed);
+                if (match.find()) {
+                    includeToInsert(match.group(1));
+                    return;
+                }
+            }
+        }
+
         SpecificationNode node = addNode(QM_COMMENT);
         node.setDefaultNamespaceURI(node.getParentSpace().getDefaultNamespaceURI());
         node.addAttribute(QM_TEXT, comment);
@@ -159,6 +191,67 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         addCharactersNode();
         setCurrentNode(getCurrentNode().getParentNode());
         leaveCData();
+    }
+
+    /**
+     * &lt;!--#include virtual="/common/include.html?foo=bar&amp;amp;bar=baz#fragment" --&gt;
+     */
+    private static final String INCLUDE_PREFIX = "#include";
+    private static final Pattern INCLUDE_PATTERN =
+        Pattern.compile("#include\\s+virtual\\s*=\\s*\"([^\"]+)\"\\s*");
+    private static final Pattern AMPERSAND_PATTERN = Pattern.compile("(&amp;|&)");
+    protected static final String AUTO_INSERT_NAMESPACE = "autoinsertnamespace";
+
+    /**
+     * SSI includeの記述を m:insert に置き換える。virtual限定。
+     * <p>
+     * &lt;!--#include virtual="/common/include.html?foo=bar&amp;amp;bar=baz#fragment" --&gt;
+     * </p>
+     * @param virtualValue virtual属性の値
+     * @throws NullPointerException virtualValueがnullの場合に発生する。
+     */
+    protected void includeToInsert(String virtualValue) {
+        if (virtualValue == null) {
+            throw new IllegalArgumentException("virtualValue must not null.");
+        }
+        String[] parsed = StringUtil.parseURIQuery(virtualValue);
+
+        includeToInsert(parsed[0], parsed[1], parsed[2]);
+    }
+
+    protected void includeToInsert(String componentPath, String query, String componentName) {
+        URI namespace = URI_MAYAA;
+        NodeTreeWalker current = getCurrentNode();
+        if (current instanceof SpecificationNode) {
+            namespace = ((SpecificationNode) current).getDefaultNamespaceURI();
+        }
+        SpecificationNode newNode = addNode(QNameImpl.getInstance(namespace, "span"));
+        newNode.setDefaultNamespaceURI(newNode.getParentSpace().getDefaultNamespaceURI());
+
+        String mayaaPrefix = "mmmmmmmmmmmm";// 重複しないようにまず使われないものを。
+        newNode.addPrefixMapping(mayaaPrefix, URI_MAYAA);
+        newNode.addAttribute(QM_INJECT, mayaaPrefix + ":insert");
+        newNode.addAttribute(QNameImpl.getInstance("path"), componentPath);
+        if (StringUtil.hasValue(componentName)) {
+            newNode.addAttribute(QNameImpl.getInstance("name"), componentName);
+        }
+        if (StringUtil.hasValue(query)) {
+            URI parameterURI = URIImpl.getInstance(AUTO_INSERT_NAMESPACE);// 重複しないようにまず使われないものを。
+            String[] parameters = AMPERSAND_PATTERN.split(query);
+            for (int i = 0; i < parameters.length; i++) {
+                String name;
+                String value;
+                int eq = parameters[i].indexOf('=');
+                if (eq > 0) {
+                    name = parameters[i].substring(0, eq).trim();
+                    value = parameters[i].substring(eq + 1).trim();
+                } else {
+                    name = parameters[i].trim();
+                    value = "";
+                }
+                newNode.addAttribute(QNameImpl.getInstance(parameterURI, name), value);
+            }
+        }
     }
 
     protected static class ContentTypeConvertAttributes implements Attributes {

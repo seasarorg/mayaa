@@ -63,12 +63,17 @@ public final class StringUtil {
         return result;
     }
 
+    /**
+     * オブジェクトの文字列表現({@link Object#toString())を返す。
+     * ただし{@code null}なら{@code null}のまま返す。
+     * @param value 対象オブジェクト
+     * @return オブジェクトの文字列表現または{@code null}
+     */
     public static String valueOf(Object value) {
-        String result = null;
-        if (value != null) {
-            result = value.toString();
+        if (value == null) {
+            return null;
         }
-        return result;
+        return value.toString();
     }
 
     /**
@@ -201,6 +206,52 @@ public final class StringUtil {
         return buffer.toString();
     }
 
+    /**
+     * URLをパス、クエリー文字列、フラグメントの３つに分割し、配列で返す。
+     * <p>
+     * それぞれ存在しないところには空文字列が入る。
+     * (/foo/bar.html?query=value&amp;query2=value2#fragment → ["/foo/bar.html", "query=value&amp;query2=value2", "fragment"])
+     * (/foo/bar.html → ["/foo/bar.html", "", ""])
+     * </p>
+     * @param value 元URL
+     * @return パスを分割したもの。[0]:パス, [1]:クエリー文字列, [2]:フラグメント
+     */
+    public static String[] parseURIQuery(String value) {
+        String[] result = new String[3];
+        String path;
+
+        int fIndex = value.indexOf('#');
+        if (fIndex >= 0) {
+            path = value.substring(0, fIndex);
+            result[2] = value.substring(fIndex + 1);
+        } else {
+            path = value;
+            result[2] = "";
+        }
+
+        int qIndex = path.indexOf('?');
+        if (qIndex >= 0) {
+            result[0] = path.substring(0, qIndex);
+            result[1] = path.substring(qIndex + 1);
+        } else {
+            result[0] = path;
+            result[1] = "";
+        }
+
+        return result;
+    }
+
+    /**
+     * パスをフォルダおよびファイル、サフィックス、拡張子の３つに分割し、配列で返す。
+     * <p>
+     * それぞれ存在しないところには空文字列が入る。
+     * (/foo/bar$suffix.html → ["/foo/bar", "suffix", "html"])
+     * (/foo/bar → ["/foo/bar", "", ""])
+     * </p>
+     * @param path 元パス文字列
+     * @param suffixSeparator パスサフィックスのセパレータ
+     * @return パスを分割したもの。[0]:パス, [1]:サフィックス, [2]:拡張子
+     */
     public static String[] parsePath(String path, String suffixSeparator) {
         String[] ret = new String[3];
         int paramOffset = path.indexOf('?');
@@ -359,6 +410,16 @@ public final class StringUtil {
         return (openIndex >= 0 && closeIndex >= 0 && openIndex < closeIndex);
     }
 
+    /**
+     * システムプロパティを置換する。
+     * <p>
+     * "${user.home}"のような文字列があった場合、{@link System#getProperty(String)}を使って
+     * 値を取得して置換する。(この場合は"user.home"がキーとなる)
+     * </p>
+     * @param value 処理対象の文字列
+     * @return システムプロパティを置換した後の文字列。システムプロパティの記述がなければ元の文字列。
+     * @throws IllegalStateException システムプロパティが{@code null}の場合に発生する。
+     */
     public static String replaceSystemProperties(String value) {
         if (hasSystemProperties(value) == false) {
             return value;
@@ -416,12 +477,6 @@ public final class StringUtil {
                 new String[] { param0, param1, param2 });
     }
 
-//    public static String getMessage(Class clazz, int index,
-//            String param0, String param1, String param2, String param3) {
-//        return getMessage(clazz, index,
-//                new String[] { param0, param1, param2, param3 });
-//    }
-
     protected static String getMessage(
             Class clazz, int index, String[] params) {
         Package key = clazz.getPackage();
@@ -459,6 +514,11 @@ public final class StringUtil {
         return MessageFormat.format(message, params);
     }
 
+    /**
+     * XMLの特殊文字をエスケープして返す。(&amp;, &lt;, &gt;, &quot;)
+     * @param text エスケープ対象の文字列
+     * @return エスケープ後の文字列
+     */
     public static String escapeXml(String text) {
         if (text == null) {
             return "";
@@ -523,6 +583,12 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * プレフィクスがあればプレフィクスを返す。
+     * @param qName 処理対象の文字列。{@code null}を許容しない。
+     * @return プレフィクスまたは空文字列。
+     * @throws IllegalArgumentException {@code qName}が{@code null}の場合に発生する。
+     */
     public static String parsePrefix(String qName) {
         if (qName == null) {
             throw new IllegalArgumentException();

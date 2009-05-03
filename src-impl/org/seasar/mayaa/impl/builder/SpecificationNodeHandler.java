@@ -346,7 +346,7 @@ public class SpecificationNodeHandler
     }
 
     public void ignorableWhitespace(char[] buffer, int start, int length) {
-        // no-op (whilte-spaces in element)
+        // no-op (white-spaces in element)
     }
 
     public void xmlDecl(String version, String encoding, String standalone) {

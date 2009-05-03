@@ -83,7 +83,8 @@ public class NativeServiceCycle extends NativeJavaObject {
             	// topLevelScopeからも先回りチェックして判断しないと、"java" や "Packages" が undefined になってしまう。
             	Context cx = Context.getCurrentContext();
             	if (ScriptRuntime.hasTopCall(cx)) {
-            		result = ScriptRuntime.name(cx, ScriptRuntime.getTopCallScope(cx), name);
+            		ScriptableObject global = (ScriptableObject)ScriptRuntime.getTopCallScope(cx);
+            		result = ScriptableObject.getProperty(global, name);
             	}
             	if (result == Scriptable.NOT_FOUND) {
             		result = Undefined.instance;

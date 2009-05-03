@@ -78,7 +78,10 @@ public class ScriptUtil {
      * @return スクリプト的に空と見なせるなら{@code true}
      */
     public static boolean isEmpty(Object scriptResult) {
-        return ProviderUtil.getScriptEnvironment().isEmpty(scriptResult);
+        if (ProviderUtil.isInitialized()) {
+            return ProviderUtil.getScriptEnvironment().isEmpty(scriptResult);
+        }
+        return scriptResult == null;
     }
 
 }

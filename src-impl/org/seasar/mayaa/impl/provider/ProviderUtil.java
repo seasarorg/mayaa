@@ -41,6 +41,12 @@ public class ProviderUtil {
         return factory.getServiceProvider();
     }
 
+    public static boolean isInitialized() {
+        ProviderFactory factory =
+            (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
+        return factory != null && factory.isServiceProviderInitialized();
+    }
+
     public static LibraryManager getLibraryManager() {
         return getServiceProvider().getLibraryManager();
     }

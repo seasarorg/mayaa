@@ -29,4 +29,10 @@ public interface ProviderFactory extends UnifiedFactory {
      */
     ServiceProvider getServiceProvider();
 
+    /**
+     * サービスプロバイダが初期化されているか。
+     * @return サービスプロバイダが初期化されているなら{@code true}。
+     */
+    boolean isServiceProviderInitialized();
+
 }

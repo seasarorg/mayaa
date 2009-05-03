@@ -42,6 +42,10 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     private Class _serviceClass;
     private ServiceProvider _provider;
 
+    public boolean isServiceProviderInitialized() {
+        return _provider != null;
+    }
+
     protected ServiceProvider marshallServiceProvider(
             SourceDescriptor source, ServiceProvider beforeProvider) {
         if (source.exists()) {

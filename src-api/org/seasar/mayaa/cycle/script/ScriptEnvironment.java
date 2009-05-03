@@ -99,4 +99,11 @@ public interface ScriptEnvironment extends ParameterAware {
      */
     Object convertFromScriptObject(Object scriptObject, Class expectedClass);
 
+    /**
+     * スクリプトとして空と見なせることを判定する。
+     * @param scriptResult 判定するオブジェクト
+     * @return 空と見なせるなら{@code true}
+     */
+    boolean isEmpty(Object scriptResult);
+
 }

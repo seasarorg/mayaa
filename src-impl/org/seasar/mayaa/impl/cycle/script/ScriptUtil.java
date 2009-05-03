@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script;
 
-import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
@@ -73,9 +72,13 @@ public class ScriptUtil {
         }
     }
 
+    /**
+     * {@link ScriptEnvironment#isEmpty(Object)}への委譲。
+     * @param scriptResult 判定するオブジェクト
+     * @return スクリプト的に空と見なせるなら{@code true}
+     */
     public static boolean isEmpty(Object scriptResult) {
-        return scriptResult == null
-                    || scriptResult instanceof Undefined;
+        return ProviderUtil.getScriptEnvironment().isEmpty(scriptResult);
     }
 
 }

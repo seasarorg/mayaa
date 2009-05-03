@@ -22,6 +22,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Undefined;
 import org.mozilla.javascript.WrapFactory;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -101,7 +102,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 _standardObjects = cx.initStandardObjects(null, true);
                 if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
                 	ScriptableObject scope = (ScriptableObject)_standardObjects;
-                	scope.defineProperty("__global__", scope, 
+                	scope.defineProperty("__global__", scope,
                 			ScriptableObject.READONLY | ScriptableObject.DONTENUM);
                 }
             } finally {
@@ -210,6 +211,16 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public Object convertFromScriptObject(Object scriptObject) {
         return convertFromScriptObject(scriptObject, Object.class);
+    }
+
+    /**
+     * {@link Undefined}は空と見なす。
+     * @param scriptResult 判定するオブジェクト
+     * @return {@code scriptResult}がJavaの{@code null}か、{@link Undefined}オブジェクトなら{@code true}。
+     */
+    public boolean isEmpty(Object scriptResult) {
+        return scriptResult == null
+                    || scriptResult instanceof Undefined;
     }
 
     public Object convertFromScriptObject(Object scriptObject, Class expectedClass) {

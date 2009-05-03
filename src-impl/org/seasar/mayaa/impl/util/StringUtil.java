@@ -41,6 +41,15 @@ public final class StringUtil {
         // no instantiation.
     }
 
+    /**
+     * オブジェクトが空であることを判定する。
+     * <p>
+     * 文字列なら{@link isEmpty(String)}の結果と同じ。
+     *
+     * </p>
+     * @param test
+     * @return
+     */
     public static boolean isEmpty(Object test) {
         boolean result;
         if (test instanceof String) {

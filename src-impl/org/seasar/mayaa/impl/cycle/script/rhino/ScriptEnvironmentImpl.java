@@ -108,18 +108,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             } finally {
                 Context.exit();
             }
-            /*
-            if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
-                VirtualNativeObject root = new VirtualNativeObject();
-                try {
-                    _standardObjects = cx.initStandardObjects(root, true);
-                } finally {
-                    Context.exit();
-                    root.initEnd();
-                }
-            } else {
-            }
-            */
         }
         return _standardObjects;
     }

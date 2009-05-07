@@ -44,11 +44,11 @@ public final class StringUtil {
     /**
      * オブジェクトが空であることを判定する。
      * <p>
-     * 文字列なら{@link isEmpty(String)}の結果と同じ。
-     *
+     * 文字列なら{@link #isEmpty(String)}の結果と同じ。
+     * そうでなければ{@link ScriptUtil#isEmpty(Object)}の結果と同じ。
      * </p>
      * @param test
-     * @return
+     * @return オブジェクトが空と見なせるならtrue
      */
     public static boolean isEmpty(Object test) {
         boolean result;
@@ -64,7 +64,7 @@ public final class StringUtil {
     }
 
     /**
-     * オブジェクトの文字列表現({@link Object#toString())を返す。
+     * オブジェクトの文字列表現({@link Object#toString()}を返す。
      * ただし{@code null}なら{@code null}のまま返す。
      * @param value 対象オブジェクト
      * @return オブジェクトの文字列表現または{@code null}

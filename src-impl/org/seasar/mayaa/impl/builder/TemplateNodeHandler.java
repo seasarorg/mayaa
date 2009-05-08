@@ -167,7 +167,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
             if (trimmed.startsWith(INCLUDE_PREFIX)) {
                 Matcher match = INCLUDE_PATTERN.matcher(trimmed);
                 if (match.find()) {
-                    includeToInsert(match.group(1));
+                    includeToInsert(match.group(2));
                     return;
                 }
             }
@@ -198,7 +198,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
      */
     private static final String INCLUDE_PREFIX = "#include";
     private static final Pattern INCLUDE_PATTERN =
-        Pattern.compile("#include\\s+virtual\\s*=\\s*\"([^\"]+)\"\\s*");
+        Pattern.compile("#include\\s+(virtual|file)\\s*=\\s*\"([^\"]+)\"\\s*");
     private static final Pattern AMPERSAND_PATTERN = Pattern.compile("(&amp;|&)");
     protected static final String AUTO_INSERT_NAMESPACE = "autoinsertnamespace";
 

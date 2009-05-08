@@ -203,7 +203,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
     protected static final String AUTO_INSERT_NAMESPACE = "autoinsertnamespace";
 
     /**
-     * SSI includeの記述を m:insert に置き換える。virtual限定。
+     * SSI includeの記述を m:insert に置き換える。virtual, fileの両方に対応。
+     * ただし、本来fileでは上位階層を指定できないが、ここでは制限を意識しない。
      * <p>
      * &lt;!--#include virtual="/common/include.html?foo=bar&amp;amp;bar=baz#fragment" --&gt;
      * </p>

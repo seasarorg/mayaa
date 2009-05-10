@@ -23,7 +23,9 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
@@ -215,7 +217,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         if (virtualValue == null) {
             throw new IllegalArgumentException("virtualValue must not null.");
         }
-        String[] parsed = StringUtil.parseURIQuery(virtualValue);
+        String[] parsed = StringUtil.parseURIQuery(virtualValue, EngineUtil.getEngineSetting(CONST_IMPL.SUFFIX_SEPARATOR, "$"));
 
         includeToInsert(parsed[0], parsed[1], parsed[2]);
     }

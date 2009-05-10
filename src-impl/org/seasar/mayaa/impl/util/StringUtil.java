@@ -209,14 +209,16 @@ public final class StringUtil {
     /**
      * URLをパス、クエリー文字列、フラグメントの３つに分割し、配列で返す。
      * <p>
-     * それぞれ存在しないところには空文字列が入る。
+     * それぞれ存在しないところには空文字列が入る。また、テンプレートサフィックスは除去する。
      * (/foo/bar.html?query=value&amp;query2=value2#fragment → ["/foo/bar.html", "query=value&amp;query2=value2", "fragment"])
      * (/foo/bar.html → ["/foo/bar.html", "", ""])
+     * (/foo/bar$foo.html → ["/foo/bar.html", "", ""])
      * </p>
      * @param value 元URL
+     * @param suffixSeparator サフィックスの区切り文字
      * @return パスを分割したもの。[0]:パス, [1]:クエリー文字列, [2]:フラグメント
      */
-    public static String[] parseURIQuery(String value) {
+    public static String[] parseURIQuery(String value, String suffixSeparator) {
         String[] result = new String[3];
         String path;
 
@@ -236,6 +238,14 @@ public final class StringUtil {
         } else {
             result[0] = path;
             result[1] = "";
+        }
+
+        int suffixIndex = path.indexOf(suffixSeparator);
+        if (suffixIndex >= 0) {
+            result[0] = path.substring(0, suffixIndex) +
+                    path.substring(suffixIndex + suffixSeparator.length());
+        } else {
+            result[0] = path;
         }
 
         return result;

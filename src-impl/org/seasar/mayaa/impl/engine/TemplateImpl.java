@@ -231,15 +231,14 @@ public class TemplateImpl
         Date templateTime = getTimestamp();
         if (templateTime != null) {
             Page page = getPage();
+            // TODO .mayaaが無く、かつTemplateをdeserializeしたとき、pageTime(buildTimestamp)の方が
+            // Templateよりも新しいと判定されてしまうことを修正する。
             Date pageTime = page.getTimestamp();
-            if (pageTime == null) {
-                pageTime = new Date(0);
+            if (pageTime != null && pageTime.after(templateTime)) {
+                return true;
             }
             Date engineTime = ProviderUtil.getEngine().getTimestamp();
-            if (engineTime == null) {
-                engineTime = new Date(0);
-            }
-            if (pageTime.after(templateTime) || engineTime.after(templateTime) ) {
+            if (engineTime != null && engineTime.after(templateTime)) {
                 return true;
             }
         }

@@ -61,7 +61,7 @@ public class MayaaServlet extends HttpServlet {
      * AutoPageBuilderを初期化する。
      */
     protected void initAutoPageBuilder() {
-        AutoPageBuilder.INSTANCE.init(getServletConfig());
+        AutoPageBuilder.INSTANCE.init(getServletConfig(), getServletContext().getServletContextName());
     }
 
     public void destroy() {

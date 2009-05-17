@@ -104,7 +104,7 @@ public class AutoPageBuilder implements Runnable {
         Engine engine = ProviderUtil.getEngine();
         boolean autoBuild = ObjectUtil.booleanValue(
                 engine.getParameter(OPTION_AUTO_BUILD), false);
-        if (!ParameterAware.IS_SECURE_WEB && autoBuild) {
+        if (autoBuild && (ParameterAware.IS_SECURE_WEB == false)) {
             _servletContext = servletConfig.getServletContext();
             _contextPath = prepareContextPath(contextPath, engine);
             _repeat = ObjectUtil.booleanValue(

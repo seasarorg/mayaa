@@ -244,6 +244,10 @@ public final class StringUtil {
         if (suffixIndex >= 0) {
             result[0] = path.substring(0, suffixIndex) +
                     path.substring(suffixIndex + suffixSeparator.length());
+            // Apacheは$が変数用記号となるので\\でエスケープする必要あり。その場合のためにsuffix直前の\\を除去する。
+            if (suffixSeparator.equals("$") && path.charAt(suffixIndex - 1) == '\\') {
+                result[0] = result[0].substring(0, suffixIndex - 1) + result[0].substring(suffixIndex);
+            }
         } else {
             result[0] = path;
         }

@@ -255,6 +255,10 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public void build() {
+        build(true);
+    }
+
+    public void build(boolean rebuild) {
         synchronized(this) {
             if (_defaultSpecification != null) {
                 if (_defaultSpecification.isDeprecated() == false) {
@@ -520,6 +524,7 @@ public class EngineImpl extends SpecificationImpl
     protected Specification createSpecificationInstance(String systemID,
             boolean registerCache,
             SpecificationGenerator generator) {
+        boolean rebuild = false;
         Specification spec;
         if (isSpecificationSerialize()) {
             spec = deserialize(systemID);
@@ -530,6 +535,7 @@ public class EngineImpl extends SpecificationImpl
                     }
                     return spec;
                 }
+                rebuild = true;
             }
         }
         SourceDescriptor source =
@@ -549,7 +555,7 @@ public class EngineImpl extends SpecificationImpl
         try {
             SpecificationUtil.startScope(null);
             try {
-                spec.build();
+                spec.build(rebuild);
             } finally {
                 SpecificationUtil.endScope();
             }

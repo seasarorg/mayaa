@@ -215,9 +215,13 @@ public class TemplateImpl
     }
 
     public void build() {
+        build(true);
+    }
+
+    public void build(boolean rebuild) {
         CycleUtil.beginDraftWriting();
         try {
-            super.build();
+            super.build(rebuild);
         } finally {
             CycleUtil.endDraftWriting();
         }
@@ -230,10 +234,7 @@ public class TemplateImpl
     public boolean isDeprecated() {
         Date templateTime = getTimestamp();
         if (templateTime != null) {
-            Page page = getPage();
-            // TODO .mayaaが無く、かつTemplateをdeserializeしたとき、pageTime(buildTimestamp)の方が
-            // Templateよりも新しいと判定されてしまうことを修正する。
-            Date pageTime = page.getTimestamp();
+            Date pageTime = getPage().getTimestamp();
             if (pageTime != null && pageTime.after(templateTime)) {
                 return true;
             }

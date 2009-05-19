@@ -139,6 +139,10 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public void build() {
+        build(true);
+    }
+
+    public void build(boolean rebuild) {
         if (isDeprecated()) {
             setTimestamp(new Date());
             _hasSource = isSourceExists();
@@ -154,6 +158,10 @@ public class SpecificationImpl extends ParameterAwareImpl
                             this, CycleUtil.getServiceCycle().getApplicationScope().getUnderlyingContext());
                 }
                 return;
+            }
+            // rebuildの場合は存在したソースが無くなったことを意味するため、タイムスタンプを0にしない
+            if (rebuild == false) {
+                setTimestamp(new Date(0));
             }
             _builtSourceTime = new Date(0);
             _deprecated = false;

@@ -18,6 +18,8 @@ package org.seasar.mayaa.impl.builder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
@@ -36,6 +38,8 @@ import org.xml.sax.Attributes;
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class TemplateNodeHandler extends SpecificationNodeHandler {
+
+    private static final Log LOG = LogFactory.getLog(TemplateNodeHandler.class);
 
     private boolean _outputTemplateWhitespace = true;
     private boolean _isSSIIncludeReplacementEnabled = false;
@@ -169,6 +173,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
             if (trimmed.startsWith(INCLUDE_PREFIX)) {
                 Matcher match = INCLUDE_PATTERN.matcher(trimmed);
                 if (match.find()) {
+                    LOG.debug("replace SSI to m:insert. " + trimmed);
                     includeToInsert(match.group(2));
                     return;
                 }

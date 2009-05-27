@@ -59,6 +59,7 @@ import org.seasar.mayaa.impl.engine.processor.CommentProcessor;
 import org.seasar.mayaa.impl.engine.processor.DoBodyProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -132,11 +133,47 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return URI_MAYAA + "/template";
     }
 
+    /**
+     * SSI includeが有効なときに自動的にm:doRenderで囲むファイルの拡張子。
+     * デフォルト実装では".inc"。(ASPの慣習)
+     * @return 自動的にm:doRenderで全体を囲む処理をするファイルの拡張子。
+     */
+    protected String getIncludeExtension() {
+        return ".inc";
+    }
+
     protected void afterBuild(Specification specification) {
         if ((specification instanceof Template) == false) {
             throw new IllegalArgumentException();
         }
-        LOG.debug("built node tree from template. " + specification.getSystemID());
+
+        Template template = (Template) specification;
+        String systemID = specification.getSystemID();
+        /*
+         * SSI includeが有効なとき、{@link #getIncludeExtension()}の拡張子であれば
+         * divで囲んで自動的にm:doRenderになるようにする。ただしNekoHTMLParserの都合上、
+         * 最低限何かのタグで囲む必要がある。(ルートに文字列があっても無視される)
+         */
+        if (isSSIIncludeReplacementEnabled() && systemID.endsWith(getIncludeExtension())) {
+            int childCount = template.getChildNodeSize();
+            if (childCount > 0) {
+                LOG.debug("enclose " + systemID + " with m:doRender.(name=\"\")");
+
+                URI namespace = ((SpecificationNode)template.getChildNode(0)).getDefaultNamespaceURI();
+                QName qName = QNameImpl.getInstance(namespace, "div");
+                SpecificationNode root = SpecificationUtil.createSpecificationNode(
+                        qName, systemID, 0, true, specification.nextSequenceID());
+                root.addPrefixMapping("m", URI_MAYAA);
+                root.addAttribute(QM_INJECT, "m:doRender");
+                for (int i = 0; i < childCount; i++) {
+                    root.addChildNode(template.getChildNode(i));
+                }
+                template.clearChildNodes();
+                template.addChildNode(root);
+            }
+        }
+
+        LOG.debug("built node tree from template. " + systemID);
         doInjection((Template) specification);
         if (isOptimizeEnabled()) {
             nodeOptimize((Template) specification);

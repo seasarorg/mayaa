@@ -15,5 +15,11 @@
 		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
 
-</web-app>
+    <!-- auto doRender file extension.(SSI Include replacement)
+    <mime-mapping>
+        <extension>.inc</extension>
+        <mime-type>text/html</mime-type>
+    </mime-mapping>
+    -->
 
+</web-app>

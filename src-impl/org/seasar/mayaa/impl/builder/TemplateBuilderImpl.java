@@ -160,6 +160,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 LOG.debug("enclose " + systemID + " with m:doRender.(name=\"\")");
 
                 URI namespace = ((SpecificationNode)template.getChildNode(0)).getDefaultNamespaceURI();
+                if (namespace == null) {
+                    namespace = URI_XHTML;
+                }
                 QName qName = QNameImpl.getInstance(namespace, "div");
                 SpecificationNode root = SpecificationUtil.createSpecificationNode(
                         qName, systemID, 0, true, specification.nextSequenceID());

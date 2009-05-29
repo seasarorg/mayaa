@@ -272,6 +272,11 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                         //System.out.println(processor.getClass().getName());
                     }
                 }
+                // to repair for originalNode infinite loop
+                if (parent instanceof ElementProcessor
+                		&& ((ElementProcessor)parent).getOriginalNode() == node) {
+                	continue;
+                }
                 NodeAndChildren nodeAndChildren = new NodeAndChildren(node);
                 children.add(nodeAndChildren);
                 usingNodes.add(node);

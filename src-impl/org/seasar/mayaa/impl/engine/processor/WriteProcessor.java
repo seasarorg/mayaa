@@ -27,7 +27,6 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -85,34 +84,18 @@ public class WriteProcessor extends AbstractAttributableProcessor {
     }
 
     public void setEscapeXml(ProcessorProperty escapeXml) {
-        checkBoolableProperty(escapeXml);
+        ProcessorUtil.checkBoolableProperty(escapeXml);
         _escapeXml = escapeXml;
     }
 
     public void setEscapeWhitespace(ProcessorProperty escapeWhitespace) {
-        checkBoolableProperty(escapeWhitespace);
+        ProcessorUtil.checkBoolableProperty(escapeWhitespace);
         _escapeWhitespace = escapeWhitespace;
     }
 
     public void setEscapeEol(ProcessorProperty escapeEol) {
-        checkBoolableProperty(escapeEol);
+        ProcessorUtil.checkBoolableProperty(escapeEol);
         _escapeEol = escapeEol;
-    }
-
-    private void checkBoolableProperty(ProcessorProperty property) {
-        if (property == null || property.getValue() == null) {
-            throw new IllegalArgumentException("needs expression.");
-        }
-        if (property.getValue().isLiteral()) {
-            if (!ObjectUtil.canBooleanConvert(property.getValue().getScriptText())) {
-                throw new IllegalArgumentException("needs expression.");
-            }
-        }
-    }
-
-    private boolean toBoolean(ProcessorProperty property) {
-        return property != null && ObjectUtil.booleanValue(
-                property.getValue().execute(null), false);
     }
 
     private void writeValue(String literal) {
@@ -135,13 +118,13 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             }
         } else if (empty == false) {
             ret = String.valueOf(result);
-            if (toBoolean(_escapeXml)) {
+            if (ProcessorUtil.toBoolean(_escapeXml)) {
                 ret = StringUtil.escapeXml(ret);
             }
-            if (_forHyperText && toBoolean(_escapeEol)) {
+            if (_forHyperText && ProcessorUtil.toBoolean(_escapeEol)) {
                 ret = StringUtil.escapeEol(ret, _forHTML);
             }
-            if (toBoolean(_escapeWhitespace)) {
+            if (ProcessorUtil.toBoolean(_escapeWhitespace)) {
                 ret = StringUtil.escapeWhitespace(ret);
             }
         }

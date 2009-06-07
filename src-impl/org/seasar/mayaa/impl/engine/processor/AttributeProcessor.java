@@ -38,6 +38,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     private PrefixAwareName _name;
     private ProcessorProperty _value;
+    private ProcessorProperty _escapeAmp;
 
     protected AbstractAttributableProcessor findParentAttributable() {
         for (ProcessorTreeWalker parent = getParentProcessor();
@@ -74,6 +75,16 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             throw new IllegalArgumentException();
         }
         _value = value;
+    }
+
+    // MLD property
+    public void setEscapeAmp(ProcessorProperty escapeAmp) {
+        ProcessorUtil.checkBoolableProperty(escapeAmp);
+        _escapeAmp = escapeAmp;
+    }
+
+    boolean isEscapeAmp() {
+        return ProcessorUtil.toBoolean(_escapeAmp);
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
@@ -283,7 +294,10 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         }
 
         public String escape(String value) {
-            return StringUtil.escapeWhitespace(StringUtil.escapeXml(value));
+            if (isEscapeAmp()) {
+                return StringUtil.escapeWhitespace(StringUtil.escapeXml(value));
+            }
+            return StringUtil.escapeWhitespace(StringUtil.escapeXmlWithoutAmp(value));
         }
 
     }

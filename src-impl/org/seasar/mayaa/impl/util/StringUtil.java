@@ -552,6 +552,35 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * XMLの特殊文字を"&amp;"を除いてエスケープして返す。(&lt;, &gt;, &quot;)
+     * @param text エスケープ対象の文字列
+     * @return エスケープ後の文字列
+     */
+    public static String escapeXmlWithoutAmp(String text) {
+        if (text == null) {
+            return "";
+        }
+        char[] chars = text.toCharArray();
+        StringBuffer sb = new StringBuffer(chars.length + 50);
+
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '<': sb.append("&lt;"); break;
+                case '>': sb.append("&gt;"); break;
+                case '"': sb.append("&quot;"); break;
+                default: sb.append(chars[i]);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * XMLの空白文字を数値参照にエスケープして返す。(\r, \n, \t)
+     * @param text エスケープ対象の文字列
+     * @return エスケープ後の文字列
+     */
     public static String escapeWhitespace(String text) {
         if (text == null) {
             return "";
@@ -571,6 +600,11 @@ public final class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * 改行文字を&lt;br&gt;タグにして返す。
+     * @param text エスケープ対象の文字列
+     * @return エスケープ後の文字列
+     */
     public static String escapeEol(String text, boolean forHTML) {
         if (text == null) {
             return "";

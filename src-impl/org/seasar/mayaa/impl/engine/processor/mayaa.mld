@@ -53,7 +53,7 @@
 	<processor name="duplecatedElement"
 			class="org.seasar.mayaa.impl.engine.processor.ElementProcessor">
 		<description>
-			duplecated element on the template by m:replace="false"
+			duplicated element on the template by m:replace="false"
 		</description>
 		<property name="name" required="true"/>
 		<property name="duplicated" final="true"/>
@@ -71,6 +71,7 @@
 		<description>m:attribute injection</description>
 		<property name="name" required="true"/>
 		<property name="value" required="true" expectedClass="java.lang.String"/>
+        <property name="escapeAmp" expectedClass="boolean" default="true"/><!-- since 1.1.25 -->
 	</processor>
 
 	<processor name="doBody"

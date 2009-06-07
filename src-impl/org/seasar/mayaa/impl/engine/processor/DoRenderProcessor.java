@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.util.Stack;
 
 import org.seasar.mayaa.cycle.scope.RequestScope;
+import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 
 /**
@@ -71,6 +72,17 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
 
     public String getName() {
         return _name;
+    }
+
+    /**
+     * 親プロセッサとして、直上のInsertProcessorがあるならそれを返す。
+     */
+    public ProcessorTreeWalker getParentProcessor() {
+        InsertProcessor insert = peekInsertProcessor();
+        if (insert != null) {
+            return insert;
+        }
+        return super.getParentProcessor();
     }
 
     public void pushInsertProcessor(InsertProcessor proc) {

@@ -27,8 +27,10 @@ public class ProcessorUtil {
     }
 
     /**
-     * プロパティをbooleanにして返す。nullやbooleanと見なせない場合はfalseを返す。
+     * プロパティを{@code boolean}にして返す。{@code null}や{@code boolean}と
+     * 見なせない場合は{@code false}を返す。
      * @param property 判定するプロパティ。
+     * @return プロパティを{@code boolean}として解釈した値。
      * @see ObjectUtil#booleanValue(Object, boolean)
      */
     public static boolean toBoolean(ProcessorProperty property) {

@@ -603,6 +603,7 @@ public final class StringUtil {
     /**
      * 改行文字を&lt;br&gt;タグにして返す。
      * @param text エスケープ対象の文字列
+     * @param forHTML HTML用か否か(HTML用ならemptyなタグにはしない)
      * @return エスケープ後の文字列
      */
     public static String escapeEol(String text, boolean forHTML) {

@@ -93,14 +93,14 @@ public class CommentProcessor extends CharactersProcessor {
 
         for (int i = 0; i < getChildProcessorSize(); i++) {
             results[i + 1] = getChildProcessor(i);
-            results[i + 1].setParentProcessor(getParentProcessor());
+            results[i + 1].setParentProcessor(getStaticParentProcessor());
         }
 
         LiteralCharactersProcessor literal =
             new LiteralCharactersProcessor(COMMENTOUT);
         BuilderUtil.characterProcessorCopy(this, literal, sequenceIDGenerator);
         results[results.length - 1] = literal;
-        getParentProcessor().removeProcessor(this);
+        getStaticParentProcessor().removeProcessor(this);
         return results;
     }
 

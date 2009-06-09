@@ -87,7 +87,7 @@ public class EngineUtil implements CONST_IMPL {
 
     public static String getSourcePath(ProcessorTreeWalker proc) {
         for (ProcessorTreeWalker current = proc;
-                current != null; current = current.getParentProcessor()) {
+                current != null; current = current.getStaticParentProcessor()) {
             if (current instanceof Template) {
                 return ((Template) current).getSystemID();
             }
@@ -117,7 +117,7 @@ public class EngineUtil implements CONST_IMPL {
 
     public static Template getTemplate(ProcessorTreeWalker proc) {
         for (ProcessorTreeWalker current = proc;
-                current != null; current = current.getParentProcessor()) {
+                current != null; current = current.getStaticParentProcessor()) {
             if (current instanceof Template) {
                 return (Template) current;
             }

@@ -115,7 +115,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
         if (adjuster.isTargetAttribute(parentQName, attributeQName)) {
             String contextPath = CycleUtil.getRequestScope().getContextPath();
-            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+            String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
             basePath = contextPath + sourcePath;
         }
 

@@ -260,6 +260,10 @@ public class TemplateImpl
         return null;
     }
 
+    public ProcessorTreeWalker getStaticParentProcessor() {
+        return null;
+    }
+
     public void addChildProcessor(ProcessorTreeWalker child) {
         insertProcessor(_childProcessors.size(), child);
     }

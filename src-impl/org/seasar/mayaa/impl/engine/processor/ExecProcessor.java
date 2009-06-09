@@ -60,7 +60,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
                 String encValue = StringUtil.valueOf(_encoding.getValue().execute(null));
 
                 if (StringUtil.isRelativePath(srcValue)) {
-                    String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+                    String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
                     srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
                 }
 

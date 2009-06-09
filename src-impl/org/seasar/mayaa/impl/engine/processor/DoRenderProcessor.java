@@ -85,6 +85,10 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
         return super.getParentProcessor();
     }
 
+    public ProcessorTreeWalker getStaticParentProcessor() {
+        return super.getStaticParentProcessor();
+    }
+
     public void pushInsertProcessor(InsertProcessor proc) {
         Stack stack = getInsertProcessorStack();
         stack.push(proc);

@@ -69,6 +69,15 @@ public interface ProcessorTreeWalker
     ProcessorTreeWalker getParentProcessor();
 
     /**
+     * 静的な親ProcessorTreeWalkerを取得する。
+     * 基本的には{@link #getParentProcessor()}と同じ結果になるが、
+     * 動的な親の変更を考慮せず、静的な位置関係の親を取得する。
+     * @return 親ProcessorTreeWalker
+     * @since 1.1.26
+     */
+    ProcessorTreeWalker getStaticParentProcessor();
+
+    /**
      * 子ProcessorTreeWalkerの数を取得する。
      * @return 子ProcessorTreeWalkerの数
      */

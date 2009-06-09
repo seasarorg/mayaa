@@ -61,14 +61,14 @@ public class CDATAProcessor extends TemplateProcessorSupport
 
         for (int i = 0; i < getChildProcessorSize(); i++) {
             results[i + 1] = getChildProcessor(i);
-            results[i + 1].setParentProcessor(getParentProcessor());
+            results[i + 1].setParentProcessor(getStaticParentProcessor());
         }
 
         literalProcessor = new LiteralCharactersProcessor(CDATAOUT);
         BuilderUtil.characterProcessorCopy(
                 this, literalProcessor, sequenceIDGenerator);
         results[results.length - 1] = literalProcessor;
-        getParentProcessor().removeProcessor(this);
+        getStaticParentProcessor().removeProcessor(this);
 
         return results;
     }

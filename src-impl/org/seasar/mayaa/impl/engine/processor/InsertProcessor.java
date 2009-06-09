@@ -103,7 +103,7 @@ public class InsertProcessor
     	if (path != null) {
     		String[] pagePath = StringUtil.parsePath(path, suffixSeparator);
 
-	        String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+	        String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
 
 	        result._pathValue = path;
 	        result._pageName = StringUtil.adjustRelativePath(sourcePath, pagePath[0]);
@@ -216,7 +216,7 @@ public class InsertProcessor
     	}
         if (pathPart._needAdjustPath) {
             // "/" 始まりでも "./" 始まりでもない場合は相対パス解決をする
-            String sourcePath = EngineUtil.getSourcePath(getParentProcessor());
+            String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
             return ProviderUtil.getEngine().getPage(
                     StringUtil.adjustRelativePath(sourcePath, "./" + pathPart._pageName));
         }

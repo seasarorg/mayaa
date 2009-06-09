@@ -95,7 +95,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport
             new LiteralCharactersProcessor(sb.toString());
         BuilderUtil.characterProcessorCopy(
                 this, literal, sequenceIDGenerator);
-        getParentProcessor().removeProcessor(this);
+        getStaticParentProcessor().removeProcessor(this);
         return new ProcessorTreeWalker[] { literal };
     }
 

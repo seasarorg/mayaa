@@ -166,6 +166,10 @@ public class TemplateProcessorSupport
         return _parent;
     }
 
+    public ProcessorTreeWalker getStaticParentProcessor() {
+        return _parent;
+    }
+
     public void addChildProcessor(ProcessorTreeWalker child) {
         insertProcessor(Integer.MAX_VALUE, child);
     }

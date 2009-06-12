@@ -61,6 +61,9 @@ MayaaのWEBサイト：
  Strutsなどのフレームワークで発生した例外を対象とし、Mayaaのエラーページ処理に
  回せるようにします。web.xmlでMayaaApplicationFilterを設定し、パラメータ
  "handleException"に"true"を設定すると有効になります。
+- (rev.3459) MayaaServletにdebugオプションを追加し、デフォルトのエラーページ
+ java.lang.Throwable.htmlでデバッグ情報を出力する際のフラグをセットするように
+  しました。また、このフラグ名を"org.seasar.mayaa.debug"に変更しました。
 
 -------------------------------------------------------------------
 変更点 1.1.25 -> 1.1.26 (2009/06/09)

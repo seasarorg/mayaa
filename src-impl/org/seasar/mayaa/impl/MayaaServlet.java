@@ -55,6 +55,16 @@ public class MayaaServlet extends HttpServlet {
         LOG.info("prepareLibraries end");
         initAutoPageBuilder();
         LOG.info("init end");
+
+        /*
+         * debugモードならapplicationスコープにデバッグフラグをセットする。
+         */
+        if (getServletConfig() != null) {
+            String debugValue = getServletConfig().getInitParameter("debug");
+            if (ObjectUtil.booleanValue(debugValue, false)) {
+                getServletContext().setAttribute(CONST_IMPL.DEBUG, Boolean.TRUE);
+            }
+        }
     }
 
     /**

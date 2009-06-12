@@ -1,7 +1,7 @@
 ${
 	response.setStatus(500);
 
-	if (application.debug == null) {
+	if (application['org.seasar.mayaa.debug'] == null) {
     	if (handledError != null) {
     		if (handledError instanceof Packages.org.seasar.mayaa.impl.engine.PageNotFoundException) {
     			response.error(404, handledError.message);

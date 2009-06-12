@@ -24,19 +24,32 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * StrutsなどMayaa以外と組み合わせる上で必ず必要となる。
  * Mayaaへforwardするサーブレットには全て
  * このフィルタを適用する必要がある。
  * （より厳密にはforwardされるmayaaプロセスからcycleを参照している場合の意味）
+ * <p>
+ * パラメータ"handleException"に"true","yes","y","on","1"のいずれかをセットすると、
+ * 発生した例外をMayaaのエラー処理に回します。
+ * </p>
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class MayaaApplicationFilter implements Filter {
 
+    private static boolean _handleException;
+
     public void init(FilterConfig filterConfig) {
-        // no operation
+        _handleException =
+            ObjectUtil.booleanValue(
+                    filterConfig.getInitParameter("handleException"), false);
     }
 
     public void destroy() {
@@ -48,8 +61,60 @@ public class MayaaApplicationFilter implements Filter {
         CycleUtil.initialize(request, response);
         try {
             chain.doFilter(request, response);
+        } catch (IOException t) {
+            if (_handleException) {
+                doErrorHandle(t);
+            } else {
+                throw t;
+            }
+        } catch (ServletException t) {
+            if (_handleException) {
+                doErrorHandle(t);
+            } else {
+                throw t;
+            }
+        } catch (Throwable t) {
+            if (_handleException) {
+                doErrorHandle(t);
+            } else {
+                throw new ServletException(t);
+            }
         } finally {
             CycleUtil.cycleFinalize();
+        }
+    }
+
+    /**
+     * Mayaaのエラー処理に任せる
+     * @param throwable 対象とする例外
+     * @throws ServletException
+     */
+    protected void doErrorHandle(Throwable throwable) throws ServletException {
+        try {
+            Throwable handled = throwable;
+            if (throwable.getCause() != null) {
+                if (throwable instanceof ServletException) {
+                    handled = throwable.getCause();
+                }
+            }
+
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            cycle.getResponse().clearBuffer();
+
+            Engine engine = ProviderUtil.getEngine();
+            engine.build();
+
+            cycle.setOriginalNode(engine);
+            cycle.setInjectedNode(engine);
+
+            SpecificationUtil.initScope();
+            cycle.setHandledError(handled);
+            engine.getErrorHandler().doErrorHandle(handled, true);
+        } catch (Throwable t) {
+            if (t instanceof ServletException) {
+                throw (ServletException) t;
+            }
+            throw new ServletException(t);
         }
     }
 

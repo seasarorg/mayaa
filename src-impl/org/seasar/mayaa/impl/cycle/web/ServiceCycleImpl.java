@@ -114,4 +114,8 @@ public class ServiceCycleImpl extends AbstractServiceCycle {
         }
     }
 
+    public boolean isDebugMode() {
+        return EngineUtil.isDebugMode();
+    }
+
 }

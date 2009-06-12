@@ -205,4 +205,10 @@ public interface ServiceCycle
      */
     Throwable getHandledError();
 
+    /**
+     * デバッグモードかどうかを返す。
+     * @return デバッグモードなら{@code true}、そうでなければ{@code false}。
+     */
+    boolean isDebugMode();
+
 }

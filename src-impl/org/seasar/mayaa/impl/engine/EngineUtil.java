@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.engine;
 
+import org.seasar.mayaa.FactoryFactory;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
@@ -39,6 +41,18 @@ public class EngineUtil implements CONST_IMPL {
     }
 
     private static String _mayaaExtensionName;
+
+    /**
+     * 現在デバッグモードかどうかを返します。
+     * @return 現在がデバッグモードなら{@code true}、そうでなければ{@code false}。
+     */
+    public static boolean isDebugMode() {
+        ApplicationScope scope = FactoryFactory.getApplicationScope();
+        if (scope != null) {
+            return ObjectUtil.booleanValue(scope.getAttribute(DEBUG), false);
+        }
+        return false;
+    }
 
     /**
      * 高速化のため、Mayaaファイルの拡張子("."を含まない)を{@EngineUtil}内に

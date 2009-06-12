@@ -2,9 +2,12 @@
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
 
 	<m:write id="message"
-		value="Welcome to the Mayaa's ${isDebugMode()} template driven development!"/>
+		value="Welcome to the Mayaa's template driven development!"/>
 
 	<m:write id="version"
 		value="Java Runtime: ${java.lang.System.getProperty('java.version')}"/>
+
+	<m:write id="debug-mode"
+		value="debug mode = ${isDebugMode()}"/>
 
 </m:mayaa>

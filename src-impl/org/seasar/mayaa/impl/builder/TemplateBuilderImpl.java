@@ -157,12 +157,22 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         if (isSSIIncludeReplacementEnabled() && systemID.endsWith(getIncludeExtension())) {
             int childCount = template.getChildNodeSize();
             if (childCount > 0) {
-                LOG.debug("enclose " + systemID + " with m:doRender.(name=\"\")");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("enclose " + systemID + " with m:doRender.(name=\"\")");
+                }
+
+                // 強制的にデフォルト名前空間をmime-typeからセットする。
+                ApplicationScope application = CycleUtil.getServiceCycle().getApplicationScope();
+                String mimeType = application.getMimeType(systemID);
+                if (StringUtil.hasValue(mimeType)) {
+                    if (mimeType.indexOf("xhtml") >= 0) {
+                        setDefaultNamespaceURI(template, URI_XHTML);
+                    } else if (mimeType.indexOf("html") >= 0) {
+                        setDefaultNamespaceURI(template, URI_HTML);
+                    }
+                }
 
                 URI namespace = ((SpecificationNode)template.getChildNode(0)).getDefaultNamespaceURI();
-                if (namespace == null) {
-                    namespace = URI_XHTML;
-                }
                 QName qName = QNameImpl.getInstance(namespace, "div");
                 SpecificationNode root = SpecificationUtil.createSpecificationNode(
                         qName, systemID, 0, true, specification.nextSequenceID());
@@ -182,6 +192,47 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             nodeOptimize((Template) specification);
         }
         LOG.debug("built processor tree from node tree. " + specification.getSystemID());
+    }
+
+    /**
+     * {@code template}の先頭子ノードのデフォルト名前空間が{@code null}かまたはXMLの名前空間の場合、
+     * このテンプレート上でデフォルト名前空間がXML, HTML, XHTMLのいずれかであるものすべての
+     * デフォルト名前空間を{@code namespace}に変更する。
+     * @param template
+     * @param namespace
+     */
+    protected void setDefaultNamespaceURI(Template template, URI namespace) {
+        int size = template.getChildNodeSize();
+        if (size > 0) {
+            URI firstDefaultNS = ((SpecificationNode)template.getChildNode(0)).getDefaultNamespaceURI();
+            if (firstDefaultNS == null || firstDefaultNS.equals(URI_XML)) {
+                for (int i = 0; i < size; i++) {
+                    setDefaultNamespaceURIToNode((SpecificationNode)template.getChildNode(i), namespace);
+                }
+            }
+        }
+    }
+
+    /**
+     * parentNodeのdefault namespaceがXML, HTML, XHTMLのいずれかなら、強制的にパラメータのnamespaceを
+     * default namespaceにする。子ノードも同様に処理する。
+     * @param parentNode
+     * @param namespace
+     */
+    protected void setDefaultNamespaceURIToNode(SpecificationNode parentNode, URI namespace) {
+        if (parentNode.getDefaultNamespaceURI() == null ||
+                parentNode.getDefaultNamespaceURI().equals(URI_XML) ||
+                parentNode.getDefaultNamespaceURI().equals(URI_HTML) ||
+                parentNode.getDefaultNamespaceURI().equals(URI_XHTML)) {
+            parentNode.setDefaultNamespaceURI(namespace);
+        }
+        int size = parentNode.getChildNodeSize();
+        for (int i = 0; i < size; i++) {
+            SpecificationNode node = (SpecificationNode)parentNode.getChildNode(i);
+            if (node.getChildNodeSize() > 0) {
+                setDefaultNamespaceURIToNode(node, namespace);
+            }
+        }
     }
 
     private static class AbsoluteCompareList extends ArrayList {

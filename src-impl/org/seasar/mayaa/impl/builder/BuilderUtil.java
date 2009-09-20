@@ -112,15 +112,11 @@ public class BuilderUtil implements CONST_IMPL {
         ApplicationScope application = cycle.getApplicationScope();
         String mimeType = application.getMimeType(systemID);
         if (mimeType != null) {
-System.out.println("★mimeType " + mimeType);
             if (mimeType.indexOf("xhtml") != -1) {
-System.out.println("★xhtml");
                 return SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
             } else if (mimeType.indexOf("html") != -1) {
-System.out.println("★html");
                 return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
             }
-System.out.println("★xml");
         }
         return SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
 

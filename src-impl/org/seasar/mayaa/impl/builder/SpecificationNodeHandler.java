@@ -120,7 +120,13 @@ public class SpecificationNodeHandler
 
     protected void initNamespace() {
         _namespace = SpecificationUtil.createNamespace();
-        getCurrentInternalNamespacePrefixMap().put("", URI_HTML);
+        System.out.println("▼" + _specification.getSystemID());
+        URI defaultURI = BuilderUtil.getPrefixMapping(_specification.getSystemID()).getNamespaceURI();
+        if (defaultURI == URI_XML) {
+            defaultURI = URI_HTML;
+        }
+        getCurrentInternalNamespacePrefixMap().put("", defaultURI);
+System.out.println("■default: " + defaultURI);
         getCurrentInternalNamespacePrefixMap().put("xml", URI_XML);
     }
 

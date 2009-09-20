@@ -169,9 +169,12 @@ public class NamespaceImpl implements Namespace {
             return;
         }
         if (namespaceURI.equals(CONST_IMPL.URI_XHTML)) {
-            _defaultNamespaceMapping =
-                SpecificationUtil.createPrefixMapping("", CONST_IMPL.URI_XHTML);
-            _serializeKey = null;
+            if (SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING.equals(
+                    _defaultNamespaceMapping) == false) {
+                _defaultNamespaceMapping =
+                    SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
+                _serializeKey = null;
+            }
             return;
         }
 

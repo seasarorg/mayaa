@@ -101,20 +101,39 @@ public class BuilderUtil implements CONST_IMPL {
     }
 
     /**
+     * 指定したsystemIDからmimeTypeを見て、HTMLならHTML用のデフォルトPrefixMappingを、
+     * それ以外ならXMLのデフォルトPrefixMappingを返します。
+     *
+     * @param systemID mime-typeを調べるsystemID
+     * @return 適切なデフォルトPrefixMapping
+     */
+    static PrefixMapping getPrefixMapping(String systemID) {
+        ServiceCycle cycle = CycleUtil.getServiceCycle();
+        ApplicationScope application = cycle.getApplicationScope();
+        String mimeType = application.getMimeType(systemID);
+        if (mimeType != null) {
+System.out.println("★mimeType " + mimeType);
+            if (mimeType.indexOf("xhtml") != -1) {
+System.out.println("★xhtml");
+                return SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
+            } else if (mimeType.indexOf("html") != -1) {
+System.out.println("★html");
+                return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+            }
+System.out.println("★xml");
+        }
+        return SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
+
+    }
+
+    /**
      * 現在ServiceCycleからmimeTypeを見て、HTMLならHTML用のデフォルトPrefixMappingを、
      * それ以外ならXMLのデフォルトPrefixMappingを返します。
      *
      * @return 適切なデフォルトPrefixMapping
      */
-    private static PrefixMapping getDefaultPrefixMapping() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        String systemID = cycle.getOriginalNode().getSystemID();
-        ApplicationScope application = cycle.getApplicationScope();
-        String mimeType = application.getMimeType(systemID);
-        if (mimeType != null && (mimeType.indexOf("html") != -1)) {
-            return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
-        }
-        return SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
+    static PrefixMapping getDefaultPrefixMapping() {
+        return getPrefixMapping(CycleUtil.getServiceCycle().getOriginalNode().getSystemID());
     }
 
     public static PrefixAwareName parseName(

@@ -54,6 +54,9 @@ public class SpecificationUtil implements CONST_IMPL {
     public static final PrefixMapping HTML_DEFAULT_PREFIX_MAPPING =
         PrefixMappingImpl.getInstance("", CONST_IMPL.URI_HTML);
 
+    public static final PrefixMapping XHTML_DEFAULT_PREFIX_MAPPING =
+        PrefixMappingImpl.getInstance("", CONST_IMPL.URI_XHTML);
+
     private SpecificationUtil() {
         // no instantiation.
     }
@@ -366,6 +369,10 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static Namespace copyNamespace(Namespace original) {
         return NamespaceImpl.copyOf(original);
+    }
+
+    public static URI getDefaultTemplateNamespace(String systemID) {
+        return null;
     }
 
 }

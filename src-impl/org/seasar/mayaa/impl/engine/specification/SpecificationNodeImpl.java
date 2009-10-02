@@ -48,7 +48,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
 
     private int _sequenceID = -1;
-    private int _hashCode = 0;
+    private String _id = null;
     private Map/*<qName, NodeAttribute>*/ _attributes;
     private NodeTreeWalkerImpl _delegateNodeTreeWalker;
     // for PrefixAwareName
@@ -129,8 +129,8 @@ public class SpecificationNodeImpl extends NamespaceImpl
             throw new IllegalArgumentException("sequenceID");
         }
         _sequenceID = sequenceID;
-        _hashCode = (_qName.toString() + ":" + getSystemID() +
-                ":" + _sequenceID + ":" + super.hashCode()).hashCode();
+        _id = _qName.toString() + ":" + getSystemID() +
+                ":" + _sequenceID;
     }
 
     public int getSequenceID() {
@@ -356,17 +356,19 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
         return this;
     }
+    
+    public String getId() {
+    	return _id;
+    }
 
     public boolean equals(Object other) {
         if (other instanceof SpecificationNodeImpl) {
             SpecificationNodeImpl otherNode = (SpecificationNodeImpl) other;
-            return _hashCode == otherNode._hashCode;
+            if (getId() != null) {
+                return getId().equals(otherNode.getId());
+            }
         }
         return false;
-    }
-
-    public int hashCode() {
-        return _hashCode;
     }
 
     // support class --------------------------------------------------

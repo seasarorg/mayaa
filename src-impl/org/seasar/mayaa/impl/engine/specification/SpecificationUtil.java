@@ -300,6 +300,9 @@ public class SpecificationUtil implements CONST_IMPL {
 
     protected static class EventScriptEnvironment {
 
+		private static final String PREFIX_SCRIPT_TEXT = "S>";
+		private static final String PREFIX_MAYAA_NODE = "M>";
+		
         private WeakHashMap _mayaaScriptCache = new WeakHashMap();
 
         protected CompiledScript compile(String text, boolean fullScript) {
@@ -313,7 +316,7 @@ public class SpecificationUtil implements CONST_IMPL {
         }
 
         protected CompiledScript findScriptFromCache(
-                SpecificationNode mayaa, Object key) {
+                SpecificationNode mayaa, String key) {
             Map scriptMap = (Map) _mayaaScriptCache.get(mayaa);
             if (scriptMap != null) {
                 return (CompiledScript) scriptMap.get(key);
@@ -322,7 +325,7 @@ public class SpecificationUtil implements CONST_IMPL {
         }
 
         protected CompiledScript newScriptFromCache(
-                SpecificationNode mayaa, Object key,
+                SpecificationNode mayaa, String key,
                 String scriptText, boolean fullScript) {
 
             synchronized (_mayaaScriptCache) {
@@ -345,21 +348,22 @@ public class SpecificationUtil implements CONST_IMPL {
 
         public void execEventScript(
                 SpecificationNode mayaa, SpecificationNode child) {
-            CompiledScript script = findScriptFromCache(mayaa, child);
+        	String key = PREFIX_MAYAA_NODE + child.getId();
+            CompiledScript script = findScriptFromCache(mayaa, key);
             if (script == null) {
                 String bodyText = getNodeBodyText(child);
                 bodyText = ScriptUtil.getBlockSignedText(bodyText);
 
-                script = newScriptFromCache(mayaa, child, bodyText, true);
+                script = newScriptFromCache(mayaa, key, bodyText, true);
             }
             script.execute(null);
         }
 
         public void execEventAttributeScript(
                 SpecificationNode mayaa, String text) {
-            CompiledScript script = findScriptFromCache(mayaa, text);
+            String key = PREFIX_SCRIPT_TEXT + text;
+            CompiledScript script = findScriptFromCache(mayaa, key);
             if (script == null) {
-                String key = text;
                 script = newScriptFromCache(mayaa, key, text, false);
             }
             script.execute(null);

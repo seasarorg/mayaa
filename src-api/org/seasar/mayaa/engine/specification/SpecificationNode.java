@@ -24,7 +24,13 @@ import java.util.Iterator;
 public interface SpecificationNode
         extends NodeTreeWalker, Namespace, PrefixAwareName {
 
-    /**
+	/**
+	 * このノードのID
+	 * @return ID
+	 */
+	String getId();
+
+	/**
      * ビルド時に、スペック内でユニークに採番される値を設定する。
      * @param sequenceID スペック内のユニーク値。
      */

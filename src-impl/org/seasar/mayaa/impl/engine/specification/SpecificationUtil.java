@@ -308,7 +308,7 @@ public class SpecificationUtil implements CONST_IMPL {
             }
             return LiteralScript.NULL_LITERAL_SCRIPT;
         }
-        
+
         protected List getEventScripts(Specification spec, QName eventName) {
         	Map events = (Map)_mayaaScriptCache.get(spec);
         	if (events == null) {
@@ -320,7 +320,7 @@ public class SpecificationUtil implements CONST_IMPL {
         public boolean isCached(Specification spec, QName eventName) {
         	return getEventScripts(spec, eventName) != null;
         }
-        
+
         public boolean execEventScriptsAndCache(
         		Specification spec, QName eventName, List eventChilds) {
         	if (eventChilds == null) {
@@ -332,7 +332,7 @@ public class SpecificationUtil implements CONST_IMPL {
         		_mayaaScriptCache.put(spec, events);
         	}
         	List scripts = new ArrayList();
-        	
+
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             for (Iterator it = eventChilds.iterator(); it.hasNext();) {
                 SpecificationNode child = (SpecificationNode) it.next();
@@ -349,13 +349,13 @@ public class SpecificationUtil implements CONST_IMPL {
                 }
             }
             if (scripts.size() == 0) {
-            	events.put(eventName, Collections.emptyList());
+            	events.put(eventName, Collections.EMPTY_LIST);
             } else {
             	events.put(eventName, scripts);
             }
         	return true;
         }
-        
+
         public boolean execEventScripts(
         		Specification spec, QName eventName) {
         	List scripts = getEventScripts(spec, eventName);
@@ -373,7 +373,7 @@ public class SpecificationUtil implements CONST_IMPL {
             }
             return true;
         }
-        
+
     }
 
     public static Namespace copyNamespace(Namespace original) {

@@ -71,6 +71,7 @@ public class EngineImpl extends SpecificationImpl
     public static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
     public static final String DUMP_ENABLED = "dumpEnabled";
     public static final String CONVERT_CHARSET = "convertCharset";
+    public static final String NO_CACHE_VALUE = "noCacheValue";
     private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
     private transient Specification _defaultSpecification;
@@ -89,6 +90,7 @@ public class EngineImpl extends SpecificationImpl
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
     private String _mayaaExtension = ".mayaa";
+    private String _noCacheValue = "no-cache";
 
     // change on setParameter
     private String _mayaaExtensionName = "mayaa";
@@ -701,6 +703,8 @@ public class EngineImpl extends SpecificationImpl
                     _templateClass = templateClass;
                 }
             }
+        } else if (NO_CACHE_VALUE.equals(name)) {
+            _noCacheValue = value;
         } else if (PAGE_SERIALIZE.equals(name)) {
             setSpecificationSerialize(
                     Boolean.valueOf(value).booleanValue());
@@ -745,6 +749,8 @@ public class EngineImpl extends SpecificationImpl
             return _pageClass.getName();
         } else if (TEMPLATE_CLASS.equals(name)) {
             return _templateClass.getName();
+        } else if (NO_CACHE_VALUE.equals(name)) {
+            return _noCacheValue;
         } else if (PAGE_SERIALIZE.equals(name)) {
             return String.valueOf(isSpecificationSerialize());
         } else if (SURVIVE_LIMIT.equals(name)) {

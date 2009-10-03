@@ -185,7 +185,8 @@ public class TemplateImpl
         if (isNoCache(topLevelPage)) {
             response.addHeader("Pragma", "no-cache");
             if (cacheControl == null) {
-                response.addHeader("Cache-Control", "no-cache");
+                response.addHeader("Cache-Control",
+                        EngineUtil.getEngineSetting(EngineImpl.NO_CACHE_VALUE, "no-cache"));
             }
             response.addHeader("Expires", "Thu, 01 Dec 1994 16:00:00 GMT");
         }

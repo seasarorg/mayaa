@@ -26,6 +26,7 @@
         <parameter name="autoBuild.renderMate" value="false"/>
         <parameter name="autoBuild.contextPath" value="/"/>
         <parameter name="forwardLimit" value="10"/>
+        <parameter name="noCacheValue" value="no-cache"/><!-- since 1.1.27, for firefox "no-cache, no-store" -->
         <parameter name="dumpEnabled" value="false" />
         <parameter name="convertCharset" value="false"/><!-- since 1.1.12 -->
     </engine>

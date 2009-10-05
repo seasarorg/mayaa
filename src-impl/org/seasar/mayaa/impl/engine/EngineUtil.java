@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.impl.engine;
 
+import java.io.IOException;
+
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.Engine;
@@ -50,6 +52,20 @@ public class EngineUtil implements CONST_IMPL {
         ApplicationScope scope = FactoryFactory.getApplicationScope();
         if (scope != null) {
             return ObjectUtil.booleanValue(scope.getAttribute(DEBUG), false);
+        }
+        return false;
+    }
+
+    public static boolean isClientAbortException(Throwable t) {
+        if (t instanceof IOException) {
+            IOException e = (IOException) t;
+            String simpleClassName = ObjectUtil.getSimpleClassName(e.getClass());
+            switch (simpleClassName.charAt(0)) {
+            case 'E':
+                return simpleClassName.equals("EOFException");
+            case 'C':
+                return simpleClassName.equals("ClientAbortException");
+            }
         }
         return false;
     }

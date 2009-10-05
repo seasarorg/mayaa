@@ -27,6 +27,7 @@ import javax.servlet.ServletResponse;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -91,6 +92,10 @@ public class MayaaApplicationFilter implements Filter {
      */
     protected void doErrorHandle(Throwable throwable) throws ServletException {
         try {
+            if (EngineUtil.isClientAbortException(throwable)) {
+                // client abort は出力しようがないので無視
+                return;
+            }
             Throwable handled = throwable;
             if (throwable.getCause() != null) {
                 if (throwable instanceof ServletException) {

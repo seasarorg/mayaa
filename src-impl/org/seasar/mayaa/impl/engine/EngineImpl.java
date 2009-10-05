@@ -172,7 +172,7 @@ public class EngineImpl extends SpecificationImpl
 
     public void handleError(Throwable thrown, boolean pageFlush) {
         Throwable throwable = removeWrapperRuntimeException(thrown);
-        if (isClientAbortException(throwable)) {
+        if (EngineUtil.isClientAbortException(throwable)) {
             // client abort は出力しようがないので無視
             return;
         }
@@ -197,7 +197,7 @@ public class EngineImpl extends SpecificationImpl
                     LOG.info(throwable.getMessage());
                 }
             } else {
-                if (isClientAbortException(internal)) {
+                if (EngineUtil.isClientAbortException(internal)) {
                     // client abort は出力しようがないので無視
                     return;
                 }
@@ -457,7 +457,7 @@ public class EngineImpl extends SpecificationImpl
                 }
                 out.flush();
             } catch (IOException e) {
-                if (isClientAbortException(e)) {
+                if (EngineUtil.isClientAbortException(e)) {
                     stream = null;
                 } else {
                     throw new RuntimeException(e);
@@ -470,20 +470,6 @@ public class EngineImpl extends SpecificationImpl
         } else {
             cycle.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-    }
-
-    protected boolean isClientAbortException(Throwable t) {
-        if (t instanceof IOException) {
-            IOException e = (IOException) t;
-            String simpleClassName = ObjectUtil.getSimpleClassName(e.getClass());
-            switch (simpleClassName.charAt(0)) {
-            case 'E':
-                return simpleClassName.equals("EOFException");
-            case 'C':
-                return simpleClassName.equals("ClientAbortException");
-            }
-        }
-        return false;
     }
 
     public void doService(Map pageScopeValues, boolean pageFlush) {

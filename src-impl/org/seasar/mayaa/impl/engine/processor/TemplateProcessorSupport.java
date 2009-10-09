@@ -47,7 +47,6 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -231,20 +230,21 @@ public class TemplateProcessorSupport
         // no operation
     }
 
-    protected void finalize() throws Throwable {
-        if (LOG.isTraceEnabled()) {
-            String name = ObjectUtil.getSimpleClassName(getClass());
-            if (_definition != null) {
-                LOG.trace(name + " " + getProcessorDefinition().getName() + " unloaded.");
-            } else {
-                LOG.trace(name + " " + " unloaded.");
-            }
-        }
-        super.finalize();
-    }
+// デバッグのときだけ有効にすること。finalize()をオーバーライドするとFinalizerなどから特別扱いされる。
+//    protected void finalize() throws Throwable {
+//        if (LOG.isTraceEnabled()) {
+//            String name = ObjectUtil.getSimpleClassName(getClass());
+//            if (_definition != null) {
+//                LOG.trace(name + " " + getProcessorDefinition().getName() + " unloaded.");
+//            } else {
+//                LOG.trace(name + " " + " unloaded.");
+//            }
+//        }
+//        super.finalize();
+//    }
 
     public void kill() {
-        // TODO deprecated のため削除
+        // TODO deprecated のため削除予定
     }
 
     // for serialize

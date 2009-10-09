@@ -101,12 +101,13 @@ public class SpecificationImpl extends ParameterAwareImpl
         return _delegateNodeTreeWalker;
     }
 
-    protected void finalize() throws Throwable {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(toString() + " unloaded.");
-        }
-        super.finalize();
-    }
+//  デバッグのときだけ有効にすること。finalize()をオーバーライドするとFinalizerなどから特別扱いされる。
+//    protected void finalize() throws Throwable {
+//        if (LOG.isTraceEnabled()) {
+//            LOG.trace(toString() + " unloaded.");
+//        }
+//        super.finalize();
+//    }
 
     public String toString() {
         String className = ObjectUtil.getSimpleClassName(getClass());

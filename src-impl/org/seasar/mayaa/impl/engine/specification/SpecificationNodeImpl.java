@@ -64,6 +64,9 @@ public class SpecificationNodeImpl extends NamespaceImpl
             synchronized (this) {
                 _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
                 _delegateNodeTreeWalker.setOwner(this);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("_delegateNodeTreeWalker created.");
+                }
             }
         }
         return _delegateNodeTreeWalker;
@@ -98,12 +101,13 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return path.toString();
     }
 
-    protected void finalize() throws Throwable {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(makeReleasedLabel());
-        }
-        super.finalize();
-    }
+// デバッグのときだけ有効にすること。finalize()をオーバーライドするとFinalizerなどから特別扱いされる。
+//    protected void finalize() throws Throwable {
+//        if (LOG.isTraceEnabled()) {
+//            LOG.trace(makeReleasedLabel());
+//        }
+//        super.finalize();
+//    }
 
     // PrefixAwareName implements
 
@@ -228,7 +232,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     public void kill() {
-        // TODO deprecated のため削除
+        // TODO deprecated のため削除予定
     }
 
     // NodeTreeWalker implemetns ------------------------------------
@@ -356,7 +360,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
         return this;
     }
-    
+
     public String getId() {
     	return _id;
     }

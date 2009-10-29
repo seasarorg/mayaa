@@ -1,4 +1,4 @@
-Mayaa 1.1.27 リリースノート： 2009年--月--日
+Mayaa 1.1.27 リリースノート： 2009年10月30日
 
  このリリース ノートには、Mayaa0.1～1.1に関するシステム動作環境、インストールの手順、
 およびこれまでに判明している問題が記載されています。 これらの内容は、みなさまからの
@@ -55,20 +55,22 @@ MayaaのWEBサイト：
 
 
 -------------------------------------------------------------------
-変更点 1.1.26 -> 1.1.27 (2009/10/--)
+変更点 1.1.26 -> 1.1.27 (2009/10/30)
 
 - (rev.3458) MayaaApplicationFilterで例外ページの処理をできるようにしました。
  Strutsなどのフレームワークで発生した例外を対象とし、Mayaaのエラーページ処理に
  回せるようにします。web.xmlでMayaaApplicationFilterを設定し、パラメータ
  "handleException"に"true"を設定すると有効になります。
-- (rev.3459) MayaaServletにdebugオプションを追加し、デフォルトのエラーページ
- java.lang.Throwable.htmlでデバッグ情報を出力する際のフラグをセットするように
-  しました。また、このフラグ名を"org.seasar.mayaa.debug"に変更しました。
+- (rev.3459) MayaaServletにdebugオプションを追加し、debugがtrueの場合のみ、
+ デフォルトのエラーページjava.lang.Throwable.htmlでデバッグ情報を出力する
+ ようにしました。また、MayaaServletのパラメータにセットしない場合、システム
+ プロパティ"org.seasar.mayaa.debug"で同様の設定ができます。
 - (rev.3460) MayaaServletのdebugオプションが有効なときをデバッグモードとし、
  スクリプトで${isDebugMode()}とすることで参照できるようにしました。
 - (rev.3469) テンプレートのデフォルト名前空間をmime-typeから判断するようにしました。
  ("xhtml"を含むならXHTML、それ以外ならHTML。明示すればそちらを利用)
-- (rev.3471) JIRA[MAYAA-72] メモリリークが発生する問題を修正しました。
+- (rev.3471) JIRA[MAYAA-72] テンプレートファイル置き換え時に解放されない
+ オブジェクトが発生する問題を修正しました。
 - (rev.3474) JIRA[MAYAA-73] m:noCache="true"のときにレスポンスのCache-Control
  ヘッダの値をServiceProviderファイルで設定できるようにしました。互換性のため、
  デフォルト値はこれまでどおり"no-cache"ですが、firefoxで戻るボタンのときに

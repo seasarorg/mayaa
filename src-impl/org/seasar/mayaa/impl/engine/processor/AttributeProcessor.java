@@ -87,6 +87,26 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         return ProcessorUtil.toBoolean(_escapeAmp);
     }
 
+    /**
+     * 親プロセッサの{@link QName}を返す。ただし
+     * {@code parent}が{@link ElementProcessor}の場合にはそのnameを返す。
+     * @param parent 親プロセッサ
+     * @return 親プロセッサの{@link QName}。
+     */
+    protected QName getParentQName(AbstractAttributableProcessor parent) {
+        QName parentQName;
+        if (parent.getClass() == ElementProcessor.class) {
+            parentQName = ((ElementProcessor) parent).getName().getQName();
+        } else {
+            parentQName = parent.getOriginalNode().getQName();
+        }
+        return parentQName;
+    }
+
+    protected ProcessorProperty createProcessorProperty(PrefixAwareName name, ProcessorProperty value, String basePath) {
+        return new ProcessorPropertyWrapper(_name, _value, basePath);
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
     	/* 値なし属性もサポート(ただし非推奨のため、mayaa.mldのrequiredを外さない限りこの機能は無効。)
         if (_value == null) {
@@ -95,12 +115,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         */
         AbstractAttributableProcessor parent = findParentAttributable();
 
-        QName parentQName;
-        if (parent.getClass() == ElementProcessor.class) {
-            parentQName = ((ElementProcessor) parent).getName().getQName();
-        } else {
-            parentQName = parent.getOriginalNode().getQName();
-        }
+        QName parentQName = getParentQName(parent);
         QName attributeQName = getName().getQName();
         // 自動的にmayaaネームスペースを引き継いだだけであれば、親要素と同じにする。
         if (getName().getPrefix().equals("")
@@ -119,8 +134,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             basePath = contextPath + sourcePath;
         }
 
-        parent.addProcesstimeProperty(
-                new ProcessorPropertyWrapper(_name, _value, basePath));
+        parent.addProcesstimeProperty(createProcessorProperty(_name, _value, basePath));
         return ProcessStatus.SKIP_BODY;
     }
 

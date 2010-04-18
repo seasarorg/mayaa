@@ -23,6 +23,7 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
 
@@ -73,6 +74,10 @@ public class ProviderUtil {
 
     public static TemplateAttributeReader getTemplateAttributeReader() {
         return getServiceProvider().getTemplateAttributeReader();
+    }
+
+    public static ParentSpecificationResolver getParentSpecificationResolver() {
+        return getServiceProvider().getParentSpecificationResolver();
     }
 
 }

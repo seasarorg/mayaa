@@ -156,12 +156,7 @@ public class EngineUtil implements CONST_IMPL {
     }
 
     public static Specification getParentSpecification(Specification spec) {
-        if (spec instanceof Page) {
-            return ProviderUtil.getEngine();
-        } else if (spec instanceof Template) {
-            return ((Template) spec).getPage();
-        }
-        return null;
+        return ProviderUtil.getParentSpecificationResolver().getParentSpecification(spec);
     }
 
 }

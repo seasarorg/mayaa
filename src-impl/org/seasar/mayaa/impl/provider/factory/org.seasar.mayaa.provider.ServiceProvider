@@ -153,4 +153,7 @@
         <parameter name="enabled" value="false"/>
     </templateAttributeReader>
 
+    <parentSpecificationResolver class="org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl">
+    </parentSpecificationResolver>
+
 </provider>

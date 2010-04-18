@@ -40,6 +40,7 @@ public class ProviderTagHandler
         putHandler(new TemplateBuilderTagHandler(this, beforeProvider));
         putHandler(new PathAdjusterTagHandler(this, beforeProvider));
         putHandler(new TemplateAttributeReaderTagHandler(this, beforeProvider));
+        putHandler(new ParentSpecificationResolverTagHandler(this, beforeProvider));
     }
 
     protected void start(

@@ -25,6 +25,7 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 
 /**
  * アプリケーションスコープでのサービス提供オブジェクト。
@@ -115,5 +116,17 @@ public interface ServiceProvider extends ParameterAware, Serializable {
      * @return テンプレートの属性を取得するオブジェクト。
      */
     TemplateAttributeReader getTemplateAttributeReader();
+
+    /**
+     * Specificationの親を取得するオブジェクトを設定する。
+     * @param parentSpecificationResolver Specificationの親を取得するオブジェクト。
+     */
+    void setParentSpecificationResolver(ParentSpecificationResolver parentSpecificationResolver);
+
+    /**
+     * Specificationの親を取得するオブジェクトを取得する。
+     * @return Specificationの親を取得するオブジェクト。
+     */
+    ParentSpecificationResolver getParentSpecificationResolver();
 
 }

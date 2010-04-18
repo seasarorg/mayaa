@@ -5,7 +5,7 @@
 
 <!ELEMENT provider (description?, engine?, scriptEnvironment?, 
 		specificationBuilder?, libraryManager?, templateBuilder?,
-		pathAdjuster?, templateAttributeReader?, parameter*) >
+		pathAdjuster?, templateAttributeReader?, parentSpecificationResolver?, parameter*) >
 <!ATTLIST provider class CDATA #IMPLIED>
 
 <!ELEMENT description (#PCDATA)>
@@ -64,3 +64,6 @@
 <!ELEMENT templateAttributeReader (description?,
 		ignoreAttribute*, aliasAttribute*, parameter*)>
 <!ATTLIST templateAttributeReader class CDATA #IMPLIED>
+
+<!ELEMENT parentSpecificationResolver (description?, parameter*)>
+<!ATTLIST parentSpecificationResolver class CDATA #IMPLIED>

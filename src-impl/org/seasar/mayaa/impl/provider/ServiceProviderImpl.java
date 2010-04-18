@@ -22,6 +22,7 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.provider.ServiceProvider;
@@ -41,6 +42,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     private TemplateBuilder _templateBuilder;
     private PathAdjuster _pathAdjuster;
     private TemplateAttributeReader _templateAttributeReader;
+    private ParentSpecificationResolver _parentSpecificationResolver;
 
     public void setEngine(Engine engine) {
         if (engine == null) {
@@ -140,6 +142,20 @@ public class ServiceProviderImpl extends ParameterAwareImpl
             throw new IllegalStateException();
         }
         return _templateAttributeReader;
+    }
+
+    public void setParentSpecificationResolver(ParentSpecificationResolver parentSpecificationResolver) {
+        if (parentSpecificationResolver == null) {
+            throw new IllegalStateException();
+        }
+        _parentSpecificationResolver = parentSpecificationResolver;
+    }
+
+    public ParentSpecificationResolver getParentSpecificationResolver() {
+        if (_parentSpecificationResolver == null) {
+            throw new IllegalStateException();
+        }
+        return _parentSpecificationResolver;
     }
 
 }

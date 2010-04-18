@@ -59,6 +59,10 @@ MayaaのWEBサイト：
 
 - (rev.3491) JIRA[MAYAA-75] 動作中にdefault.mayaaのbeforeRenderを書き換えても
  反映されない問題を修正しました。
+- (rev.3494) JIRA[MAYAA-76] テンプレートに対する.mayaaファイル、および
+ 親mayaaファイルを探す処理を拡張可能にしました。
+ org.seasar.mayaa.provider.ServiceProviderファイルのparentSpecificationResolverを
+ 差し替えることで独自の処理に入れ換えられます。
 
 -------------------------------------------------------------------
 変更点 1.1.26 -> 1.1.27 (2009/10/30)

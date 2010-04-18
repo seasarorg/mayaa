@@ -361,7 +361,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(pageScopeValues);
                     try {
-                        SpecificationUtil.execEvent(this, QM_BEFORE_RENDER);
+                        SpecificationUtil.execEvent(_defaultSpecification, QM_BEFORE_RENDER);
                         RequestScope request = cycle.getRequestScope();
                         pageName = request.getPageName();
                         extension = request.getExtension();
@@ -373,7 +373,7 @@ public class EngineImpl extends SpecificationImpl
                         ret = page.doPageRender(requestedSuffix, extension);
 
                         saveToCycle();
-                        SpecificationUtil.execEvent(this, QM_AFTER_RENDER);
+                        SpecificationUtil.execEvent(_defaultSpecification, QM_AFTER_RENDER);
                     } finally {
                         SpecificationUtil.endScope();
                     }

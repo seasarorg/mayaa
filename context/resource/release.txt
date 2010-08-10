@@ -63,6 +63,7 @@ MayaaのWEBサイト：
  親mayaaファイルを探す処理を拡張可能にしました。
  org.seasar.mayaa.provider.ServiceProviderファイルのparentSpecificationResolverを
  差し替えることで独自の処理に入れ換えられます。
+- (rev.3496) XML/XHTMLの出力時のxml宣言で?の前の空白をtrimして出力するようにしました。
 
 -------------------------------------------------------------------
 変更点 1.1.26 -> 1.1.27 (2009/10/30)

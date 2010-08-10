@@ -369,7 +369,7 @@ public class SpecificationNodeHandler
             buffer.append("standalone=\"").append(standalone).append("\" ");
         }
         if (buffer.length() > 0) {
-            node.addAttribute(QM_DATA, buffer.toString());
+            node.addAttribute(QM_DATA, buffer.toString().trim());
         }
     }
 

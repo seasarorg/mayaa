@@ -32,13 +32,22 @@ public class CycleWriterImpl extends CycleWriter {
     private CycleWriter _enclosingWriter;
     private CharArrayWriter _buffer;
     private boolean _flushed;
+    private boolean _flushToWriteOut;
 
     /**
      * @param enclosingWriter 内部Writer
      */
     public CycleWriterImpl(CycleWriter enclosingWriter) {
+        this(enclosingWriter, true);
+    }
+
+    /**
+     * @param enclosingWriter 内部Writer
+     */
+    public CycleWriterImpl(CycleWriter enclosingWriter, boolean flushToWriteOut) {
         _enclosingWriter = enclosingWriter;
         _buffer = new CharArrayWriter(DEFAULT_BUFFER_SIZE);
+        _flushToWriteOut = flushToWriteOut;
     }
 
     public CycleWriter getEnclosingWriter() {
@@ -84,7 +93,9 @@ public class CycleWriterImpl extends CycleWriter {
     }
 
     public void flush() throws IOException {
-        writeOut(_enclosingWriter);
+    	if (_flushToWriteOut) {
+    		writeOut(_enclosingWriter);
+    	}
     }
 
     public void close() {

@@ -112,6 +112,12 @@ public interface Response extends Serializable, ContextAware  {
     CycleWriter pushWriter();
 
     /**
+     * バッファされたライタをスタックに積む。内容を取得するためのライタなのでflushを呼ばれてもflushしない。
+     * @return 積んだバッファされたライタ。
+     */
+    CycleWriter pushNoFlushWriter();
+
+    /**
      * スタック最上位のバッファライタを取り除く。
      * @return 取り除いたバッファライタ。
      */

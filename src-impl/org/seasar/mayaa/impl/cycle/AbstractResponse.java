@@ -70,6 +70,12 @@ public abstract class AbstractResponse implements Response, CONST_IMPL {
         return writer;
     }
 
+    public CycleWriter pushNoFlushWriter() {
+        CycleWriter writer = new CycleWriterImpl(getWriter(), false);
+        _stack.push(writer);
+        return writer;
+    }
+
     public CycleWriter popWriter() {
         if (_stack.size() > 1) {
             return (CycleWriter) _stack.pop();

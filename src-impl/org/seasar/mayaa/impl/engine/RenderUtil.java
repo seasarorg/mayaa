@@ -138,7 +138,7 @@ public class RenderUtil implements CONST_IMPL {
             if (startRet == EVAL_BODY_BUFFERED && isEvaluation(current)) {
                 buffered = true;
                 ChildEvaluationProcessor processor = getEvaluation(current);
-                processor.setBodyContent(cycle.getResponse().pushWriter());
+                processor.setBodyContent(cycle.getResponse().pushNoFlushWriter());
                 processor.doInitChildProcess();
             }
             if (startRet == EVAL_BODY_INCLUDE
@@ -234,7 +234,7 @@ public class RenderUtil implements CONST_IMPL {
                         if (oldBuffered) {
                             buffered = true;
                             ChildEvaluationProcessor processor = getEvaluation(current);
-                            processor.setBodyContent(cycle.getResponse().pushWriter());
+                            processor.setBodyContent(cycle.getResponse().pushNoFlushWriter());
                             processor.doInitChildProcess();
                         }
                     }

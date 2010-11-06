@@ -41,7 +41,7 @@ public abstract class AbstractRequestScope
         String suffixSeparator = EngineUtil.getEngineSetting(
                 SUFFIX_SEPARATOR, "$");
         String[] parsed = StringUtil.parsePath(path, suffixSeparator);
-        if (false && parsed[0].charAt(0) != '/') {
+        if (parsed[0] != null && parsed[0].length() > 0 && parsed[0].charAt(0) != '/') {
             _pageName = "/" + parsed[0];
         } else {
             _pageName = parsed[0];

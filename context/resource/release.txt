@@ -64,10 +64,7 @@ MayaaのWEBサイト：
  org.seasar.mayaa.provider.ServiceProviderファイルのparentSpecificationResolverを
  差し替えることで独自の処理に入れ換えられます。
 - (rev.3496) XML/XHTMLの出力時のxml宣言で?の前の空白をtrimして出力するようにしました。
-
-
-TODO
-- (rev.aaaa) JIRA[MAYAA-77] ボディを処理する必要のあるタグの場合に、
+- (rev.3500) JIRA[MAYAA-77] ボディを処理する必要のあるタグの場合に、
  子のプロセッサでflushすると親よりも先に子が出力されてしまう問題を
  修正しました。
 

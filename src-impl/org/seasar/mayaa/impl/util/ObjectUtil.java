@@ -265,7 +265,17 @@ public class ObjectUtil {
         }
         Converter converter = ConvertUtils.lookup(expectedClass);
         if (converter != null) {
-            return converter.convert(expectedClass, value);
+        	if (value != null) {
+        		return converter.convert(expectedClass, value);
+        	}
+        	if (expectedClass.isPrimitive() || Number.class.isAssignableFrom(expectedClass)) {
+        		if (BigInteger.class.isAssignableFrom(expectedClass)) {
+        			return BigInteger.ZERO;
+        		} else if (BigDecimal.class.isAssignableFrom(expectedClass)) {
+        			return BigDecimal.valueOf(0);
+        		}
+        		return converter.convert(expectedClass, value);
+        	}
         }
         return value;
     }

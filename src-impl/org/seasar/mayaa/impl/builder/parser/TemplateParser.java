@@ -48,11 +48,11 @@ public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
             setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, templateDefaultCharset);
             setProperty(TemplateScanner.FILTERS, new XMLDocumentFilter[] { starter });
             /* 元のテンプレート内容を忠実に再現させるオプション。
-               ただし、</html>の後ろは無視される。false(デフォルト)の場合は、
-               </body>と</html>の後につづくものをnekoがむりやり前に持ってくる */
+             * ただし、</html>の後ろは無視される。false(デフォルト)の場合は、
+             * </body>と</html>の後につづくものをnekoがむりやり前に持ってくる */
             setFeature(IGNORE_OUTSIDE_CONTENT, true);
             /* <html>や<body>が無い場合もそのままにするオプション。
-               これが無いと勝手に付与されてしまう。 */
+             * これが無いと勝手に付与されてしまう。 */
             setFeature(DOCUMENT_FRAGMENT, true);
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);

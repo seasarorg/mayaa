@@ -75,6 +75,7 @@ import org.xml.sax.XMLReader;
 public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder {
     public static final String DEFAULT_CHARSET = "defaultCharset";
+    public static final String BALANCE_TAG = "balanceTag";
     public static final String REPLACE_SSI_INCLUDE = "replaceSSIInclude";
     public static final String OPTIMIZE = "optimize";
     public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
@@ -620,6 +621,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                     StringUtil.getMessage(TemplateBuilderImpl.class, 0, value);
                 LOG.warn(message, e);
             }
+        } else if (BALANCE_TAG.equals(name)) {
+        	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, false));
         }
         super.setParameter(name, value);
     }
@@ -661,13 +664,18 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
         private static final long serialVersionUID = -5203349759797583368L;
         private String _defaultCharset = TEMPLATE_DEFAULT_CHARSET;
+        private boolean _balanceTag = true;
 
         protected void setDefaultCharset(String charset) {
             _defaultCharset = charset;
         }
 
+        protected void setBalanceTag(boolean balanceTag) {
+        	_balanceTag = balanceTag;
+        }
+
         protected Object createObject() {
-            return new TemplateParser(new TemplateScanner(), _defaultCharset);
+            return new TemplateParser(new TemplateScanner(), _defaultCharset, _balanceTag);
         }
 
         protected boolean validateObject(Object object) {

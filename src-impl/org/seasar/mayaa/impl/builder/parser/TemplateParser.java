@@ -26,8 +26,13 @@ import org.seasar.mayaa.impl.CONST_IMPL;
  */
 public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
 
-    public TemplateParser(HTMLScanner scanner, String templateDefaultCharset) {
-        super(new TemplateParserConfiguration(scanner, templateDefaultCharset));
+	/**
+	 * @param scanner
+	 * @param templateDefaultCharset テンプレートの文字コードが不明な場合に使用する文字コード。
+	 * @param balanceTag タグのバランスを修正するか。基本的にtrue。falseにする場合は必ずテンプレートのタグのバランスを取ること。
+	 */
+	public TemplateParser(HTMLScanner scanner, String templateDefaultCharset, boolean balanceTag) {
+        super(new TemplateParserConfiguration(scanner, templateDefaultCharset, balanceTag));
     }
 
     private static class TemplateParserConfiguration extends HTMLConfiguration {
@@ -38,8 +43,10 @@ public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
         /** Document fragment balancing only. copy from org.cyberneko.html.HTMLTagBalancer */
         protected static final String DOCUMENT_FRAGMENT =
             "http://cyberneko.org/html/features/balance-tags/document-fragment";
+        protected static final String BALANCE_TAGS =
+            "http://cyberneko.org/html/features/balance-tags";
 
-        public TemplateParserConfiguration(HTMLScanner scanner, String templateDefaultCharset) {
+        public TemplateParserConfiguration(HTMLScanner scanner, String templateDefaultCharset, boolean balanceTag) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
             setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
@@ -54,6 +61,11 @@ public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
             /* <html>や<body>が無い場合もそのままにするオプション。
              * これが無いと勝手に付与されてしまう。 */
             setFeature(DOCUMENT_FRAGMENT, true);
+            /* HTMLの省略可能な閉じタグなどを自動的に付与するオプション。
+             * これをfalseにするべきではないが、HTML5の場合にはaタグがblock要素になっているが
+             * NekoHTMLはinlineとして見てしまうため意図しない動きをするため、HTMLのバランスを
+             * 作成者側で保証することとしてfalseにする。 */
+            setFeature(BALANCE_TAGS, balanceTag);
             fDocumentScanner = scanner;
             fDocumentScanner.reset(this);
         }

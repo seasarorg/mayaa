@@ -622,7 +622,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 LOG.warn(message, e);
             }
         } else if (BALANCE_TAG.equals(name)) {
-        	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, false));
+        	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, true));
         }
         super.setParameter(name, value);
     }

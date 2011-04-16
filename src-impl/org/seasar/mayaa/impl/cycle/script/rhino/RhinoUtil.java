@@ -290,6 +290,14 @@ public class RhinoUtil {
         return null;
     }
 
+    /**
+     * Rhinoのバージョンを取得する。
+     * @return Rhinoのバージョン
+     */
+    public static String getRhinoVersion() {
+    	return Context.getCurrentContext().getImplementationVersion();
+    }
+
     /*
     public static class NativeEmpty extends NativeJavaObject {
 

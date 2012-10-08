@@ -26,6 +26,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.WrappedException;
 import org.seasar.mayaa.impl.cycle.script.AbstractSourceCompiledScript;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -33,7 +34,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SourceCompiledScriptImpl
-        extends AbstractSourceCompiledScript {
+extends AbstractSourceCompiledScript {
 
     private static final long serialVersionUID = 970613841877330176L;
 
@@ -43,6 +44,10 @@ public class SourceCompiledScriptImpl
     public SourceCompiledScriptImpl(SourceDescriptor source, String encoding) {
         super(source, encoding);
         _compiledTimestamp = new Date();
+    }
+
+    protected boolean needCheckTimestamp() {
+        return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
     }
 
     /**
@@ -58,7 +63,7 @@ public class SourceCompiledScriptImpl
         }
 
         if (_rhinoScript == null
-                || (source.getTimestamp().after(_compiledTimestamp))) {
+                || (needCheckTimestamp() && source.getTimestamp().after(_compiledTimestamp))) {
             if (source.exists() == false) {
                 throw new RuntimeException(
                         new FileNotFoundException(source.getSystemID()));

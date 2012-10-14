@@ -83,4 +83,5 @@ public interface CONST_IMPL {
     QName QM_INJECT = QNameImpl.getInstance("inject");
     QName QM_CACHE_CONTROL = QNameImpl.getInstance("cacheControl");
 
+    long NULL_DATE_MILLIS = 0;
 }

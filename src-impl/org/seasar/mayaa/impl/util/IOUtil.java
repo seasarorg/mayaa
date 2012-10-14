@@ -28,6 +28,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.impl.CONST_IMPL;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -204,7 +205,8 @@ public class IOUtil {
         if (file != null) {
             return file.lastModified();
         }
-        return System.currentTimeMillis();
+        // TODO ServletContext#getResource で file ではなく jndi の URL が来た場合の対応
+        return CONST_IMPL.NULL_DATE_MILLIS;
     }
 
     /**

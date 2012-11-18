@@ -195,7 +195,7 @@ public class IOUtil {
 
     /**
      * URLから最終更新時刻を取得する。
-     * fileにのみ対応。それ以外はシステム時刻を返す。
+     * fileにのみ対応。それ以外は{@link CONST_IMPL.NULL_DATE_MILLIS}を返す。
      *
      * @param url 読み込むURL
      * @return InputStream

@@ -44,11 +44,11 @@ public interface CONST_IMPL {
     URI URI_XML = URIImpl.getInstance("http://www.w3.org/XML/1998/namespace");
 
     String PUBLIC_FACTORY10 =
-        "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";
+            "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";
     String PUBLIC_MLD10 =
-        "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN";
+            "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN";
     String PUBLIC_PROVIDER10 =
-        "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN";
+            "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN";
 
     QName QH_ID = QNameImpl.getInstance(URI_HTML, "id");
     QName QX_ID = QNameImpl.getInstance(URI_XHTML, "id");
@@ -83,5 +83,6 @@ public interface CONST_IMPL {
     QName QM_INJECT = QNameImpl.getInstance("inject");
     QName QM_CACHE_CONTROL = QNameImpl.getInstance("cacheControl");
 
-    long NULL_DATE_MILLIS = 0;
+    long NOFILE_DATE_MILLIS = 0;
+    long NULL_DATE_MILLIS = 1;
 }

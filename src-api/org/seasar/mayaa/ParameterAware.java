@@ -23,11 +23,16 @@ import java.util.Iterator;
  */
 public interface ParameterAware extends PositionAware {
 
-	/**
-	 * Google App Engineのような、セキュアなWeb環境設定か否か
-	 */
-	boolean IS_SECURE_WEB = Boolean.getBoolean("org.seasar.mayaa.secure.web");
-	
+    /**
+     * IS_SECURE_WEBのキー。
+     */
+    String SECURE_WEB_KEY = "org.seasar.mayaa.secure.web";
+
+    /**
+     * Google App Engineのような、セキュアなWeb環境設定か否か
+     */
+    boolean IS_SECURE_WEB = Boolean.getBoolean(SECURE_WEB_KEY);
+
     /**
      * ユーザー設定の受け入れメソッド。
      * @param name 設定名。

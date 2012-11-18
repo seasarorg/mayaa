@@ -51,10 +51,10 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     private transient Boolean _useFile;
     private transient URL _url;
 
-    private FileSourceDescriptor _fileSourceDescriptor;
+    private ApplicationFileSourceDescriptor _fileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-        _fileSourceDescriptor = new FileSourceDescriptor();
+        _fileSourceDescriptor = new ApplicationFileSourceDescriptor();
         _fileSourceDescriptor.setRoot("");
     }
 

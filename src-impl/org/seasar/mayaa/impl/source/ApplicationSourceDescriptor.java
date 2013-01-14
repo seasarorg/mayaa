@@ -51,10 +51,16 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     private transient Boolean _useFile;
     private transient URL _url;
 
-    private ApplicationFileSourceDescriptor _fileSourceDescriptor;
+    private FileSourceDescriptor _fileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-        _fileSourceDescriptor = new ApplicationFileSourceDescriptor();
+    	if (IS_SECURE_WEB) {
+    		// getRealPathでアプリケーションルートからのパスを返す
+            _fileSourceDescriptor = new FileSourceDescriptor();
+    	} else {
+    		// getRealPathでファイルパスを返す
+            _fileSourceDescriptor = new ApplicationFileSourceDescriptor();
+    	}
         _fileSourceDescriptor.setRoot("");
     }
 

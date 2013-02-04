@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
@@ -33,7 +34,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = -102674132611191747L;
 
     private static volatile Map _cache =
-        new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true);
+        Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);

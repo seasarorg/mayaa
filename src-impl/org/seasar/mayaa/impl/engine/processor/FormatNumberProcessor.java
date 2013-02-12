@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
@@ -40,7 +41,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     private static final long serialVersionUID = 5513075315121041838L;
 
     private static Map _formatPools =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private ProcessorProperty _value;
     private ProcessorProperty _default;

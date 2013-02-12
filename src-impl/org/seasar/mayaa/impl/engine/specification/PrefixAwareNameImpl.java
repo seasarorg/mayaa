@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
@@ -31,7 +32,7 @@ public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
     private static final long serialVersionUID = -8898891078217203404L;
 
     private static Map _cache =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     public static PrefixAwareName getInstance(QName qName, String prefix) {
         String key = forPrefixAwareNameString(qName, prefix);

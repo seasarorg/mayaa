@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.processor;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,9 +85,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     private static final PageContext _pageContext = new PageContextImpl();
 
-    // TODO TagPoolの保持期間などパフォーマンスの調整
     private static final Map _tagPools =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private static final String LOADED_TAG_KEY =
         JspProcessor.class.getName() + "#loadedTag";

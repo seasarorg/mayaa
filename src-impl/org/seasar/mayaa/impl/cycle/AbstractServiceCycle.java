@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,8 +47,8 @@ public abstract class AbstractServiceCycle
 
     private static final long serialVersionUID = -4084527796306356704L;
 
-    private static final ReferenceMap _scriptCache =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+    private static final Map _scriptCache =
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;

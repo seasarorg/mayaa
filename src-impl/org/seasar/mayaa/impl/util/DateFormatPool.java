@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -31,7 +32,7 @@ import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 public class DateFormatPool {
 
     private static Map _formatPools =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private DateFormatPool() {
         throw new UnsupportedOperationException();

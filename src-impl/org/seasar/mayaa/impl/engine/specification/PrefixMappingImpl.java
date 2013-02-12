@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
@@ -31,7 +32,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
     private static final long serialVersionUID = -7627574345551562433L;
 
     private static volatile Map _cache =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     public static PrefixMapping getInstance(String prefix, URI namespaceURI) {
         if (namespaceURI == null) {
@@ -44,7 +45,6 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
 
         String key = forPrefixMappingString(prefix, namespaceURI);
 
-        // TODO パフォーマンスのためsynchronizedをせずに重複登録を防ぐ。
         PrefixMapping result = (PrefixMapping)_cache.get(key);
         if (result == null) {
             result = new PrefixMappingImpl(prefix, namespaceURI);

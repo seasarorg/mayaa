@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,7 +35,7 @@ import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 public final class StringUtil {
 
     private static Map _propFiles =
-        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true);
+            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
     private static final String[] ZERO = new String[0];
 
     private StringUtil() {

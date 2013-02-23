@@ -25,6 +25,7 @@ import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
@@ -108,18 +109,19 @@ public class BuilderUtil implements CONST_IMPL {
      * @return 適切なデフォルトPrefixMapping
      */
     static PrefixMapping getPrefixMapping(String systemID) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        ApplicationScope application = cycle.getApplicationScope();
-        String mimeType = application.getMimeType(systemID);
-        if (mimeType != null) {
-            if (mimeType.indexOf("xhtml") != -1) {
-                return SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
-            } else if (mimeType.indexOf("html") != -1) {
-                return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+        if (systemID != null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            ApplicationScope application = cycle.getApplicationScope();
+            String mimeType = application.getMimeType(systemID);
+            if (mimeType != null) {
+                if (mimeType.indexOf("xhtml") != -1) {
+                    return SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
+                } else if (mimeType.indexOf("html") != -1) {
+                    return SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
+                }
             }
         }
         return SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
-
     }
 
     /**
@@ -129,7 +131,8 @@ public class BuilderUtil implements CONST_IMPL {
      * @return 適切なデフォルトPrefixMapping
      */
     static PrefixMapping getDefaultPrefixMapping() {
-        return getPrefixMapping(CycleUtil.getServiceCycle().getOriginalNode().getSystemID());
+        NodeTreeWalker original = CycleUtil.getServiceCycle().getOriginalNode();
+        return getPrefixMapping(original == null ? null : original.getSystemID());
     }
 
     public static PrefixAwareName parseName(

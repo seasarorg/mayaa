@@ -28,6 +28,7 @@ import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.standalone.FileGenerator;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -54,7 +55,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     private FileSourceDescriptor _fileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-    	if (IS_SECURE_WEB) {
+    	if (IS_SECURE_WEB || FileGenerator.generating) {
     		// getRealPathでアプリケーションルートからのパスを返す
             _fileSourceDescriptor = new FileSourceDescriptor();
     	} else {

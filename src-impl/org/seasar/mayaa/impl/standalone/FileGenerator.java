@@ -69,12 +69,15 @@ import org.seasar.mayaa.impl.util.IteratorUtil;
  */
 public class FileGenerator {
 
+    public static boolean generating = false;
+
     /**
      * メインメソッド。
      *
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
+        generating = true;
         Argument argument;
         try {
             argument = parse(args);

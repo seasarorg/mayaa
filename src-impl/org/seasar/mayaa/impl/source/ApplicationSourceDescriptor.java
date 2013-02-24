@@ -28,7 +28,6 @@ import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.standalone.FileGenerator;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -53,16 +52,16 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     private transient URL _url;
 
     private FileSourceDescriptor _fileSourceDescriptor;
+    private ApplicationFileSourceDescriptor _applicationFileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-    	if (IS_SECURE_WEB || FileGenerator.generating) {
-    		// getRealPathでアプリケーションルートからのパスを返す
-            _fileSourceDescriptor = new FileSourceDescriptor();
-    	} else {
-    		// getRealPathでファイルパスを返す
-            _fileSourceDescriptor = new ApplicationFileSourceDescriptor();
-    	}
+        // getRealPathでアプリケーションルートからのパスを返す
+        _fileSourceDescriptor = new FileSourceDescriptor();
+        // getRealPathでファイルパスを返す
+        _applicationFileSourceDescriptor = new ApplicationFileSourceDescriptor();
+
         _fileSourceDescriptor.setRoot("");
+        _applicationFileSourceDescriptor.setRoot("");
     }
 
     // use while building ServiceProvider.
@@ -82,6 +81,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
 
     public void setRoot(String root) {
         _fileSourceDescriptor.setRoot(root);
+        _applicationFileSourceDescriptor.setRoot(root);
     }
 
     protected URL getURL() {
@@ -93,7 +93,11 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
         ServletContext context =
             (ServletContext) getApplicationScope().getUnderlyingContext();
         try {
-            return context.getResource(path);
+            URL url = context.getResource(path);
+            if (url != null && url.getProtocol().equals("jndi")) {
+                return context.getResource(_applicationFileSourceDescriptor.getRealPath());
+            }
+            return url;
         } catch (MalformedURLException e) {
             throw new IllegalStateException("invalid: " + path);
         }
@@ -165,6 +169,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
      */
     public void setSystemID(String systemID) {
         _fileSourceDescriptor.setSystemID(systemID);
+        _applicationFileSourceDescriptor.setSystemID(systemID);
     }
 
     /* (non-Javadoc)

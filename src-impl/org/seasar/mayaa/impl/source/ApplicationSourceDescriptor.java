@@ -52,16 +52,10 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
     private transient URL _url;
 
     private FileSourceDescriptor _fileSourceDescriptor;
-    private ApplicationFileSourceDescriptor _applicationFileSourceDescriptor;
 
     public ApplicationSourceDescriptor() {
-        // getRealPathでアプリケーションルートからのパスを返す
         _fileSourceDescriptor = new FileSourceDescriptor();
-        // getRealPathでファイルパスを返す
-        _applicationFileSourceDescriptor = new ApplicationFileSourceDescriptor();
-
         _fileSourceDescriptor.setRoot("");
-        _applicationFileSourceDescriptor.setRoot("");
     }
 
     // use while building ServiceProvider.
@@ -81,7 +75,6 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
 
     public void setRoot(String root) {
         _fileSourceDescriptor.setRoot(root);
-        _applicationFileSourceDescriptor.setRoot(root);
     }
 
     protected URL getURL() {
@@ -94,9 +87,6 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
             (ServletContext) getApplicationScope().getUnderlyingContext();
         try {
             URL url = context.getResource(path);
-            if (url != null && url.getProtocol().equals("jndi")) {
-                return context.getResource(_applicationFileSourceDescriptor.getRealPath());
-            }
             return url;
         } catch (MalformedURLException e) {
             throw new IllegalStateException("invalid: " + path);
@@ -169,7 +159,6 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
      */
     public void setSystemID(String systemID) {
         _fileSourceDescriptor.setSystemID(systemID);
-        _applicationFileSourceDescriptor.setSystemID(systemID);
     }
 
     /* (non-Javadoc)

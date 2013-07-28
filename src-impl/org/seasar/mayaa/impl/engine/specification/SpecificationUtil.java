@@ -299,7 +299,7 @@ public class SpecificationUtil implements CONST_IMPL {
     protected static class EventScriptEnvironment {
 
 		// WeakHashMap<Specification, Map<QName, List<CompiledScript>>>
-        private WeakHashMap _mayaaScriptCache = new WeakHashMap();
+        private Map _mayaaScriptCache = Collections.synchronizedMap(new WeakHashMap());
 
         protected CompiledScript compile(String text) {
             if (StringUtil.hasValue(text)) {

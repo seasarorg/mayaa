@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -30,7 +32,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Koji Suga (Gluegent Inc.)
  */
 public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
-        implements SourceDescriptor {
+        implements SourceDescriptor, CONST_IMPL {
 
     private static final long serialVersionUID = 1L;
 
@@ -69,12 +71,16 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     public boolean exists() {
         if (_url == null) {
             synchronized (this) {
-                if (_url == null) {
+                if (_url == null && needPrepareURL()) {
                     prepareURL();
                 }
             }
         }
         return _url != null;
+    }
+
+    protected boolean needPrepareURL() {
+        return (_timestamp == null || EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true));
     }
 
     protected void prepareURL() {

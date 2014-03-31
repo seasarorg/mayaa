@@ -267,6 +267,7 @@ public final class StringUtil {
      * @return パスを分割したもの。[0]:パス, [1]:サフィックス, [2]:拡張子
      */
     public static String[] parsePath(String path, String suffixSeparator) {
+        path = path.trim();
         String[] ret = new String[3];
         int paramOffset = path.indexOf('?');
         if (paramOffset >= 0) {

@@ -174,6 +174,11 @@ public abstract class AbstractServiceCycle
     }
 
     public void setPageScope(AttributeScope page) {
+        if (page == null) {
+            getAttributeScopeCacheMap().remove(ServiceCycle.SCOPE_PAGE);
+        } else {
+            getAttributeScopeCacheMap().put(ServiceCycle.SCOPE_PAGE, page);
+        }
         _page = page;
     }
 

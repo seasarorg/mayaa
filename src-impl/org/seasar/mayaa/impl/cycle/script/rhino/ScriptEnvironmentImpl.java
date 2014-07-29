@@ -38,6 +38,7 @@ import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -55,6 +56,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static WrapFactory _wrap;
 
     private boolean _useGetterScriptEmulation;
+    
+    private ScriptCache cache = new ScriptCache();
 
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
@@ -70,7 +73,19 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             script = GetterScriptFactory.create(text, position, offsetLine);
         }
         if (script == null) {
-            script = new TextCompiledScriptImpl(text, position, offsetLine);
+            synchronized (cache) {
+                if (cache.contains(scriptBlock, position, offsetLine)) {
+                    script = cache.get(scriptBlock, position, offsetLine);
+                }
+            }
+            if (script == null) {
+                script = new TextCompiledScriptImpl(text, position, offsetLine);
+                synchronized (cache) {
+                    if (!cache.contains(scriptBlock, position, offsetLine)) {
+                        cache.put(scriptBlock, position, offsetLine, script);
+                    }
+                }
+            }
         }
         return script;
     }
@@ -267,5 +282,61 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         }
         super.setParameter(name, value);
     }
+    
+    private static class ScriptCache {
+        
+        WeakValueHashMap map = new WeakValueHashMap();
+        
+        private static class Key {
+            private ScriptBlock scriptBlock;
+            private PositionAware position;
+            
+            public Key(ScriptBlock scriptBlock, PositionAware position) {
+                super();
+                this.scriptBlock = scriptBlock;
+                this.position = position;
+            }
 
+            public boolean equals(Object obj) {
+                if (!(obj instanceof Key)) {
+                    return false;
+                }
+                Key target = (Key) obj;
+                return
+                        equalsTwo(scriptBlock.getBlockSign(), target.scriptBlock.getBlockSign())
+                        && equalsTwo(scriptBlock.getBlockString(), target.scriptBlock.getBlockString())
+                        && equalsTwo(position.getSystemID(), target.position.getSystemID());
+            }
+            
+            public int hashCode() {
+                int hashCode = scriptBlock.getBlockSign().hashCode();
+                hashCode = hashCode * 31 + scriptBlock.getBlockString().hashCode();
+                hashCode = hashCode * 31 + position.getSystemID().hashCode();
+                return hashCode;
+            }
+            
+            private static boolean equalsTwo(Object lhs, Object rhs) {
+                if (lhs == null) {
+                    return rhs == null;
+                }
+                return lhs.equals(rhs);
+            }
+        }
+
+        public boolean contains(ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
+            Key key = new Key(scriptBlock, position);
+            return map.get(key) != null;
+        }
+
+        public void put(ScriptBlock scriptBlock, PositionAware position, int offsetLine, CompiledScript compile) {
+            Key key = new Key(scriptBlock, position);
+            map.put(key, compile);
+        }
+
+        public CompiledScript get(ScriptBlock scriptBlock, PositionAware position, int offsetLine) {
+            Key key = new Key(scriptBlock, position);
+            return (CompiledScript) map.get(key);
+        }
+        
+    }
 }

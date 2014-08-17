@@ -33,7 +33,6 @@
       <id>suga</id>
       <name>SUGA Koji</name>
       <email></email>
-      <url>http://suga.parfe.jp/td/</url>
       <organization>Gluegent Inc.</organization>
       <timezone>+9</timezone>
     </developer>
@@ -74,7 +73,7 @@
       <name>SASAKI Hisanobu</name>
       <email></email>
       <url></url>
-      <organization>Gluegent Inc.</organization>
+      <organization></organization>
       <timezone>+9</timezone>
     </developer>
     <developer>

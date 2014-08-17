@@ -38,6 +38,7 @@ import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -48,6 +49,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static final long serialVersionUID = -4067264733660357274L;
     private static Scriptable _standardObjects;
+    private static final WeakValueHashMap/*<String, CompiledScript>*/ scriptCache = new WeakValueHashMap(128);
 
     private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
@@ -62,15 +64,26 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
-        if (scriptBlock.isLiteral()) {
-            return new LiteralScript(text);
-        }
-        CompiledScript script = null;
-        if (_useGetterScriptEmulation) {
-            script = GetterScriptFactory.create(text, position, offsetLine);
-        }
+        String trimmed = text.trim();
+        CompiledScript script = (CompiledScript) scriptCache.get(trimmed);
         if (script == null) {
-            script = new TextCompiledScriptImpl(text, position, offsetLine);
+            synchronized (scriptCache) {
+                script = (CompiledScript) scriptCache.get(trimmed);
+                if (script == null) {
+                    if (scriptBlock.isLiteral()) {
+                        script = new LiteralScript(text);
+                    }
+                    if (script == null) {
+                        if (_useGetterScriptEmulation) {
+                            script = GetterScriptFactory.create(text, position, offsetLine);
+                        }
+                        if (script == null) {
+                            script = new TextCompiledScriptImpl(text, position, offsetLine);
+                        }
+                    }
+                    scriptCache.put(trimmed, script);
+                }
+            }
         }
         return script;
     }

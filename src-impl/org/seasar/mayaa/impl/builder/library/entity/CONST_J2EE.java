@@ -101,6 +101,10 @@ public interface CONST_J2EE {
         "http://java.sun.com/xml/ns/javaee/web-common_3_0.xsd";
     String FILE_WEB_COMMON_30 = "web-common_3_0.xsd";
 
+    String LOCATION_WEB_COMMON_31 =
+            "http://xmlns.jcp.org/xml/ns/javaee/web-common_3_1.xsd";
+    String FILE_WEB_COMMON_31 = "web-common_3_1.xsd";
+
     String LOCATION_WEB_SERVICE_13 =
         "http://java.sun.com/xml/ns/javaee/javaee_web_services_1_3.xsd";
     String FILE_WEB_SERVICE_13 = "javaee_web_services_1_3.xsd";
@@ -116,4 +120,8 @@ public interface CONST_J2EE {
     String LOCATION_WEB_DTD_30 =
         "http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd";
     String FILE_WEB_DTD_30 = "web-app_3_0.xsd";
+
+    String LOCATION_WEB_DTD_31 =
+            "http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd";
+    String FILE_WEB_DTD_31 = "web-app_3_1.xsd";
 }

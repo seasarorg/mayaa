@@ -209,8 +209,8 @@ public class ReferenceCache extends ArrayList {
             int index = indexOf(o);
             if (index >= 0) {
                 remove(index);
+                return true;
             }
-            return true;
         }
         return false;
     }

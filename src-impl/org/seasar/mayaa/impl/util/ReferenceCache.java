@@ -193,6 +193,28 @@ public class ReferenceCache extends ArrayList {
         return super.add(createReference(o));
     }
 
+    public int indexOf(Object o) {
+        if (o != null) {
+            for (int i = 0; i < size(); i++) {
+                if (((Reference) get(i)).get().equals(o)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean remove(Object o) {
+        if (o != null) {
+            int index = indexOf(o);
+            if (index >= 0) {
+                remove(index);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public Iterator iterator() {
         return new ReferenceCacheIterator(this);
     }

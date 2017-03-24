@@ -4,12 +4,18 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.seasar.mayaa</groupId>
+  <groupId>com.github.seasarorg.mayaa</groupId>
   <artifactId>mayaa</artifactId>
   <name>Mayaa</name>
   <version>1.1.33-SNAPSHOT</version>
-  <description>Web Template Engine</description>
+  <description>Mayaa is server side web template engine that is strongly aware of work sharing between programmers and designers based on HTML based templates.</description>
   <url>http://mayaa.seasar.org/</url>
+
+  <scm>
+    <connection>scm:git:git://github.com/seasarorg/mayaa.git</connection>
+    <developerConnection>scm:git:ssh://github.com:seasarorg/mayaa.git</developerConnection>
+    <url>http://github.com/seasarorg/mayaa/tree/master</url>
+  </scm>
 
   <issueManagement>
     <system>JIRA</system>
@@ -81,6 +87,13 @@
       <name>MATOBA Tatsunori</name>
       <email></email>
       <url>http://d.hatena.ne.jp/matobat/</url>
+      <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>susumuis</id>
+      <name>Susumu ISHIGAMI</name>
+      <email></email>
+      <url>http://www.susumuis.info/</url>
       <timezone>+9</timezone>
     </developer>
   </developers>
@@ -205,6 +218,42 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
     <extensions>
       <extension>
@@ -290,20 +339,16 @@
       <version>2.0</version>
       <scope>provided</scope>
     </dependency>
-  </dependencies>
+  </dependencies> 
 
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>maven.seasar.org</id>
-      <name>The Seasar Foundation Maven2 Repository</name>
-      <url>dav:https://www.seasar.org/maven/maven2</url>
-    </repository>
+   <distributionManagement>
     <snapshotRepository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>maven.seasar.org</id>
-      <name>The Seasar Foundation Maven2 Snapshot Repository</name>
-      <url>dav:https://www.seasar.org/maven/maven2-snapshot</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
 </project>

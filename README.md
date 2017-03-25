@@ -27,8 +27,12 @@ artifactId
 :   mayaa
 
 
-## 1.1.33 (2017-xx-xx)
+## 1.1.33 (2017-03-25)
 
+- MavenについてはMaven Central Repositoryへの公開に変更しました。
+    - https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mayaa%22
+    - groupId: com.github.seasarorg.mayaa
+    - artifactId: mayaa
 - ファイルが存在しない場合、タイムスタンプチェックが無効なときにチェックし続ける問題を修正しました。
 - Mayaaのforwardをしたさいにpageスコープのキャッシュが以前のままになっている問題を修正しました。
 - Servlet API 3.1に対応しました。

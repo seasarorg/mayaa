@@ -14,6 +14,14 @@ JavaVM
 
 ## Maven2からの利用
 
+groupId
+:   com.github.seasarorg.mayaa
+
+artifactId
+:   mayaa
+
+### 1.1.32以前のMaven2からの利用
+
 seasar.orgのMaven2レポジトリ
 :   http://maven.seasar.org/maven2/
 

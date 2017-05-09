@@ -64,11 +64,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
-        String trimmed = text.trim();
-        CompiledScript script = (CompiledScript) scriptCache.get(trimmed);
+        CompiledScript script = (CompiledScript) scriptCache.get(text);
         if (script == null) {
             synchronized (scriptCache) {
-                script = (CompiledScript) scriptCache.get(trimmed);
+                script = (CompiledScript) scriptCache.get(text);
                 if (script == null) {
                     if (scriptBlock.isLiteral()) {
                         script = new LiteralScript(text);
@@ -81,7 +80,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                             script = new TextCompiledScriptImpl(text, position, offsetLine);
                         }
                     }
-                    scriptCache.put(trimmed, script);
+                    scriptCache.put(text, script);
                 }
             }
         }

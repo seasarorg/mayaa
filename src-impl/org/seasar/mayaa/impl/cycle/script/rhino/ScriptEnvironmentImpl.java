@@ -49,7 +49,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static final long serialVersionUID = -4067264733660357274L;
     private static Scriptable _standardObjects;
-    private static final WeakValueHashMap/*<String, CompiledScript>*/ scriptCache = new WeakValueHashMap(128);
 
     private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
@@ -64,25 +63,15 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
-        CompiledScript script = (CompiledScript) scriptCache.get(text);
+        if (scriptBlock.isLiteral()) {
+            return new LiteralScript(text);
+        }
+        CompiledScript script = null;
+        if (_useGetterScriptEmulation) {
+            script = GetterScriptFactory.create(text, position, offsetLine);
+        }
         if (script == null) {
-            synchronized (scriptCache) {
-                script = (CompiledScript) scriptCache.get(text);
-                if (script == null) {
-                    if (scriptBlock.isLiteral()) {
-                        script = new LiteralScript(text);
-                    }
-                    if (script == null) {
-                        if (_useGetterScriptEmulation) {
-                            script = GetterScriptFactory.create(text, position, offsetLine);
-                        }
-                        if (script == null) {
-                            script = new TextCompiledScriptImpl(text, position, offsetLine);
-                        }
-                    }
-                    scriptCache.put(text, script);
-                }
-            }
+            script = new TextCompiledScriptImpl(text, position, offsetLine);
         }
         return script;
     }

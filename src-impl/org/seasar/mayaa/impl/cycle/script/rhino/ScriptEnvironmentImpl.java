@@ -64,28 +64,26 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             throw new IllegalArgumentException();
         }
         String text = scriptBlock.getBlockString();
-        String trimmed = text.trim();
-        CompiledScript script = (CompiledScript) scriptCache.get(trimmed);
-        if (script == null) {
-            synchronized (scriptCache) {
-                script = (CompiledScript) scriptCache.get(trimmed);
-                if (script == null) {
-                    if (scriptBlock.isLiteral()) {
-                        script = new LiteralScript(text);
-                    }
-                    if (script == null) {
-                        if (_useGetterScriptEmulation) {
-                            script = GetterScriptFactory.create(text, position, offsetLine);
-                        }
-                        if (script == null) {
-                            script = new TextCompiledScriptImpl(text, position, offsetLine);
-                        }
-                    }
-                    scriptCache.put(trimmed, script);
-                }
-            }
+        if (scriptBlock.isLiteral()) {
+	        return new LiteralScript(text);
+        } else {
+	        CompiledScript script = (CompiledScript) scriptCache.get(text);
+	        if (script == null) {
+	            synchronized (scriptCache) {
+	                script = (CompiledScript) scriptCache.get(text);
+	                if (script == null) {
+	                	if (_useGetterScriptEmulation) {
+	        		        script = GetterScriptFactory.create(text, position, offsetLine);
+	        		    }
+	        		    if (script == null) {
+	        		    	script = new TextCompiledScriptImpl(text, position, offsetLine);
+	        		    }
+	                    scriptCache.put(text, script);
+	                }
+	            }
+	        }
+	        return script;
         }
-        return script;
     }
 
     // ScriptEnvironment implements ----------------------------------

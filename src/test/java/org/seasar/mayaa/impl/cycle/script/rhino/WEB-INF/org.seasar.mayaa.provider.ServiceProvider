@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE provider
+    PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
+    "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
+<provider class="org.seasar.mayaa.impl.provider.ServiceProviderImpl">
+
+    <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
+        <scope class="org.seasar.mayaa.impl.cycle.scope.ParamScope"/>
+        <scope class="org.seasar.mayaa.impl.cycle.scope.HeaderScope"/>
+        <scope class="org.seasar.mayaa.impl.cycle.scope.BindingScope"/>
+
+        <parameter name="wrapFactory" value="org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl"/>
+        <parameter name="cacheSize" value="256"/><!-- since 1.1.35-SNAPSHOT -->
+    </scriptEnvironment>
+
+</provider>

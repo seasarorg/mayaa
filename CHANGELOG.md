@@ -2,25 +2,25 @@
 
 ## 未リリース
 ### Changes
-- [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。
+- [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。(未マージ)
 
 ### Fixes
-- [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合が発生する場合があるのを修正しました。
+- [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合が発生する場合があるのを修正しました。(予定)
 
-### Mayaa 1.1.34 : 2017-07-30
-#### Fixes
+## Mayaa 1.1.34 : 2017-07-30
+### Fixes
 - [#7](https://github.com/seasarorg/mayaa/issues/7) - mayaaファイルに ${} で書いた変数名がそのまま展開される場合がある不具合を修正しました。
 - [#5](https://github.com/seasarorg/mayaa/issues/5) - テンプレートに書かれたインデントが詰められる不具合を修正しました。
 
-### Mayaa 1.1.33 : 2017-03-25
-#### Changes
+## Mayaa 1.1.33 : 2017-03-25
+### Changes
 - MavenについてはMaven Central Repositoryへの公開に変更しました。
   https://search.maven.org/artifact/com.github.seasarorg.mayaa/mayaa
   - groupId: com.github.seasarorg.mayaa
   - artifactId: mayaa
 - [#2](https://github.com/seasarorg/mayaa/issues/2) - Servlet API 3.1に対応しました。
 
-#### Fixes
+### Fixes
 - ファイルが存在しない場合、タイムスタンプチェックが無効なときにチェックし続ける問題を修正しました。
 - Mayaaのforwardをしたさいにpageスコープのキャッシュが以前のままになっている問題を修正しました。
 - HttpSessionの無効判定を修正しました。

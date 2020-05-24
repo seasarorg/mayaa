@@ -37,7 +37,7 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
     }
 
     /**
-     * {@link ServletContext#getRealPath(String)}の代替実装。
+     * {@link ServletContext#getResource(String)}の代替実装。
      * テストクラスのパッケージからの相対パスとして取得する。
      * 
      * @param path 要求されているリソースのパス
@@ -117,7 +117,7 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
 
     //----- IMPLEMENTS OF ServletContext
     public String getRealPath(String contextRelatedPath) {
-        return "./" + contextRelatedPath;
+        throw new UnsupportedOperationException();
     }
 
     public String getMimeType(String systemID) {

@@ -243,7 +243,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
      * サポートしない。
      *
      * @param value 値
-     * @throws ReadOnlyScriptBlockException
+     * @throws ReadOnlyScriptBlockException 読み出し専用であるため常に発生
      */
     public void assignValue(Object value) {
         throw new ReadOnlyScriptBlockException(getScriptText());

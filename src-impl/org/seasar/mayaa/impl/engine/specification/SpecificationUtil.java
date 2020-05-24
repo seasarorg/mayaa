@@ -121,7 +121,6 @@ public class SpecificationUtil implements CONST_IMPL {
      * 見つからない場合はnullを返します。
      *
      * @param current 対象とするノード
-     * @param qName 属性名
      * @return 属性値
      */
     public static SpecificationNode getMayaaNode(NodeTreeWalker current) {

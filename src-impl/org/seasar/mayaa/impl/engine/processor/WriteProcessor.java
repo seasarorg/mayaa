@@ -172,7 +172,7 @@ public class WriteProcessor extends AbstractAttributableProcessor {
 
     /**
      * サイクルに出力する
-     * @param value
+     * @param value 出力する文字列
      */
     protected void write(String value) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();

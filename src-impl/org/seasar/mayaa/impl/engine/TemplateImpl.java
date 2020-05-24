@@ -113,7 +113,7 @@ public class TemplateImpl
      * MayaaファイルにcontentType属性がなく、テンプレートにmetaタグでcontent-type
      * が定義されている場合、ビルド時にMayaaのcontentType属性にコピーされます。
      *
-     * @param topLevelPage
+     * @param topLevelPage 最上位のページオブジェクト
      * @return contentType属性の値、またはnull
      */
     protected String getContentType(Page topLevelPage) {
@@ -138,7 +138,7 @@ public class TemplateImpl
      * 静的な文字列として処理します。
      * topLevelPageに属性が無い場合は親mayaaを辿って探します。
      *
-     * @param topLevelPage
+     * @param topLevelPage 最上位のページオブジェクト
      * @return noCache属性の値、またはnull
      */
     protected boolean isNoCache(Page topLevelPage) {
@@ -155,7 +155,7 @@ public class TemplateImpl
      * 静的な文字列として処理します。
      * topLevelPageに属性が無い場合は親mayaaを辿って探します。
      *
-     * @param topLevelPage
+     * @param topLevelPage 最上位のページオブジェクト
      * @return cacheControl属性の値、またはnull
      */
     protected String getCacheControl(Page topLevelPage) {
@@ -174,7 +174,7 @@ public class TemplateImpl
      * noCache属性とcacheControl属性の両方がセットされている場合、Cache-Control
      * ヘッダの値はcacheControl属性の値が設定されます。
      *
-     * @param topLevelPage
+     * @param topLevelPage 最上位のページオブジェクト
      */
     protected void prepareCycle(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();

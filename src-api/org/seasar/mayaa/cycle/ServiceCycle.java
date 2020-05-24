@@ -97,7 +97,7 @@ public interface ServiceCycle
      * 例外をthrow。
      * レンダリング中にJavaの例外をthrowしたい場合に利用する。
      * @param t 投げる例外。
-     * @throws Throwable
+     * @throws Throwable パラメータで指定した例外オブジェクトを必ずスローする
      */
     void throwJava(Throwable t) throws Throwable;
 

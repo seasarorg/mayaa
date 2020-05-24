@@ -194,7 +194,7 @@ public class MockServletContext implements ServletContext {
      * セキュリティ的な考慮はしていないため、コンテキストルートより上の
      * 階層へ辿ることもできるので注意してください。
      *
-     * @param RealPathを取得するパス
+     * @param path RealPathを取得するパス
      * @return ファイルとしての絶対パス
      * @see javax.servlet.ServletContext#getRealPath(java.lang.String)
      */
@@ -348,7 +348,6 @@ public class MockServletContext implements ServletContext {
      * その後、throwableのprintStackTrace()を実行する。
      *
      * @param message メッセージ
-     * @param Throwable 例外
      * @see javax.servlet.ServletContext#log(java.lang.String, java.lang.Throwable)
      */
     public void log(String message, Throwable throwable) {

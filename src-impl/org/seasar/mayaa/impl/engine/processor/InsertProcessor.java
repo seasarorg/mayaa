@@ -168,7 +168,7 @@ public class InsertProcessor
     /**
      * VirtualPropertyもInformalPropertyとして扱います。
      * @param name プロパティ名。
-     * @param property プロパティ値。
+     * @param attr プロパティ値。
      */
     public void addVirtualProperty(PrefixAwareName name, Serializable attr) {
         addInformalProperty(name, attr);

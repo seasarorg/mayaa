@@ -29,7 +29,7 @@ public interface SourceDescriptor extends Serializable, ParameterAware {
 
     /**
      * ソースSystemIDを設定する。
-     * @param systemID
+     * @param systemID 設定するソースを表すsystemID
      */
     void setSystemID(String systemID);
 

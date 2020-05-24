@@ -139,6 +139,17 @@
         </excludes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/java</directory>
+        <excludes>
+            <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -336,6 +347,13 @@
       <artifactId>jsp-api</artifactId>
       <version>2.0</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/junit/junit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
     </dependency>
   </dependencies> 
 

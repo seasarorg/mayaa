@@ -71,7 +71,7 @@ public class EngineUtil implements CONST_IMPL {
     }
 
     /**
-     * 高速化のため、Mayaaファイルの拡張子("."を含まない)を{@EngineUtil}内に
+     * 高速化のため、Mayaaファイルの拡張子("."を含まない)を{@link EngineUtil}内に
      * キャッシュします。
      *
      * @return Mayaaファイルの拡張子("."を含まない)

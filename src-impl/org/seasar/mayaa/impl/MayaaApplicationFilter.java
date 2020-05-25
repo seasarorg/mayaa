@@ -88,7 +88,7 @@ public class MayaaApplicationFilter implements Filter {
     /**
      * Mayaaのエラー処理に任せる
      * @param throwable 対象とする例外
-     * @throws ServletException
+     * @throws ServletException エラー処理の過程で例外が発生した場合。
      */
     protected void doErrorHandle(Throwable throwable) throws ServletException {
         try {

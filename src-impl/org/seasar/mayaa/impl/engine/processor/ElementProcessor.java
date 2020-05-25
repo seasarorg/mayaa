@@ -352,7 +352,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     /**
-     * "<"と要素名をbufferに書き出します。
+     * "&lt;"と要素名をbufferに書き出します。
      *
      * @param buffer 書き出す対象
      */
@@ -381,7 +381,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     /**
-     * 静的なattributeと">"をbufferに書き出します。
+     * 静的なattributeと"&gt;"をbufferに書き出します。
      *
      * @param buffer 書き出す対象
      */

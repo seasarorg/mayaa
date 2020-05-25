@@ -167,7 +167,7 @@ public class FileGenerator {
      * <li>propertyが指定されているならファイルが存在すること</li>
      * </ul>
      *
-     * @param argument
+     * @param argument コマンドライン引数
      */
     public static void validate(Argument argument) {
         if (argument.isHelp() || argument.isVersion()) {

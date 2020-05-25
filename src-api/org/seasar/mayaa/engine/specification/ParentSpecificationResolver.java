@@ -30,7 +30,8 @@ public interface ParentSpecificationResolver extends ParameterAware {
      * Mayaaファイルの場合はdefault.mayaaファイルの{@link Specification}を返す。
      * default.mayaaの親はないので{@code null}を返す。
      * </p>
-     * @param spec 親を探す起点となる{@link Specification}。見つからない場合は{@code null}。
+     * @param spec 親を探す起点となる{@link Specification}。
+     * @return 見つかった親の{@link Specification}。見つからない場合は{@code null}
      */
     Specification getParentSpecification(Specification spec);
 

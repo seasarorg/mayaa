@@ -48,7 +48,7 @@ public final class StringUtil {
      * 文字列なら{@link #isEmpty(String)}の結果と同じ。
      * そうでなければ{@link ScriptUtil#isEmpty(Object)}の結果と同じ。
      * </p>
-     * @param test
+     * @param test 判定対象のオブジェクト
      * @return オブジェクトが空と見なせるならtrue
      */
     public static boolean isEmpty(Object test) {
@@ -674,7 +674,6 @@ public final class StringUtil {
      *
      * @param src 元となる配列
      * @return srcの浅いコピー
-     * @throws NullPointerException
      */
     public static String[] arraycopy(String[] src) {
         String[] copy = new String[src.length];

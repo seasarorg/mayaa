@@ -89,11 +89,11 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
      * 返すようにする。
      * それ以外の場合はなにもしない。
      *
-     * @param namespaceURI
-     * @param localName
-     * @param qName
-     * @param attributes
-     * @return
+     * @param namespaceURI 名前空間URI
+     * @param localName 要素名
+     * @param qName QName
+     * @param attributes 属性リスト
+     * @return 変換された属性リストまたは変換されなかった場合は引数に指定した属性リスト
      */
     protected Attributes wrapContentTypeConverter(String namespaceURI,
             String localName, String qName, Attributes attributes) {
@@ -317,7 +317,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
 
         /**
          * Look up an attribute's XML 1.0 qualified name by index.
-         * @param The attribute index (zero-based).
+         * @param index The attribute index (zero-based).
          * @return The XML 1.0 qualified name, or the empty string if none is available, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getQName(int)
          */
@@ -326,7 +326,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         }
 
         /**
-         * @param The attribute index (zero-based).
+         * @param index The attribute index (zero-based).
          * @return The attribute's type as a string, or null if the index is out of range.
          * @see org.xml.sax.Attributes#getType(int)
          */

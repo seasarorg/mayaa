@@ -360,7 +360,6 @@ public class FileSearchRenderer {
      * fileFiltersに浅いコピーをセットします。
      *
      * @param fileFilters the fileFilters to set
-     * @throws NullPointerException
      */
     public void setFileFilters(String[] fileFilters) {
         _fileFilters = StringUtil.arraycopy(fileFilters);

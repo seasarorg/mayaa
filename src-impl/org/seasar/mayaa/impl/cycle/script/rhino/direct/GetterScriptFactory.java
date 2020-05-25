@@ -78,7 +78,7 @@ public class GetterScriptFactory {
     /**
      * スクリプトをスコープと変数名、プロパティ名に分割します。
      *
-     * @param script
+     * @param script スクリプト
      * @return [スコープ名, 変数名, プロパティ名]のString配列。GetterScriptでない場合はnull。
      */
     protected static String[] splitScope(String script) {
@@ -123,8 +123,7 @@ public class GetterScriptFactory {
      * @param script 対象とするScript
      * @param position スクリプトのソースを表す情報
      * @param offsetLine スクリプトの行番号
-     * @param scopeName 対象とするスコープ名
-     * @param attributeName 変数名
+     * @param params 変数名
      * @return 対応するGetterScriptまたはnull
      */
     protected static CompiledScript createGetterScript(

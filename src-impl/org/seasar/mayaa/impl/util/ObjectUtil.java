@@ -479,7 +479,6 @@ public class ObjectUtil {
      * @param src 元となる配列
      * @param componentType 配列の要素の型
      * @return srcの浅いコピー
-     * @throws NullPointerException
      */
     public static Object[] arraycopy(Object[] src, Class componentType) {
         Object copy = Array.newInstance(componentType, src.length);

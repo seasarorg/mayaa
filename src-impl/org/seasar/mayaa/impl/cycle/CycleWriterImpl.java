@@ -43,6 +43,7 @@ public class CycleWriterImpl extends CycleWriter {
 
     /**
      * @param enclosingWriter 内部Writer
+     * @param flushToWriteOut flush()が呼ばれた際に内部Writerに書き出しを行う場合はtrue
      */
     public CycleWriterImpl(CycleWriter enclosingWriter, boolean flushToWriteOut) {
         _enclosingWriter = enclosingWriter;

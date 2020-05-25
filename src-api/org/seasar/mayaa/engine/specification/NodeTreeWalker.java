@@ -45,8 +45,8 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
 
     /**
      * 子ノードの設定を指定位置に挿入する。
-     * @param index
-     * @param childNode
+     * @param index 挿入位置
+     * @param childNode 子ノード
      */
     void insertChildNode(int index, NodeTreeWalker childNode);
 

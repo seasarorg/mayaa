@@ -110,8 +110,8 @@ public class WeakValueHashMap extends AbstractMap {
 
     /**
      * Here we put the key, value pair into the HashMap using a SoftValue object.
-     * @param key
-     * @param value
+     * @param key Key
+     * @param value Value
      * @return Object
      */
     public Object put(Object key, Object value) {

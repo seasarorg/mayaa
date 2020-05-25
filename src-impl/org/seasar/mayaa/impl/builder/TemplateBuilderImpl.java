@@ -199,8 +199,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
      * {@code template}の先頭子ノードのデフォルト名前空間が{@code null}かまたはXMLの名前空間の場合、
      * このテンプレート上でデフォルト名前空間がXML, HTML, XHTMLのいずれかであるものすべての
      * デフォルト名前空間を{@code namespace}に変更する。
-     * @param template
-     * @param namespace
+     * @param template テンプレート
+     * @param namespace 名前空間URI
      */
     protected void setDefaultNamespaceURI(Template template, URI namespace) {
         int size = template.getChildNodeSize();
@@ -217,8 +217,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     /**
      * parentNodeのdefault namespaceがXML, HTML, XHTMLのいずれかなら、強制的にパラメータのnamespaceを
      * default namespaceにする。子ノードも同様に処理する。
-     * @param parentNode
-     * @param namespace
+     * @param parentNode ノード
+     * @param namespace 名前空間URI
      */
     protected void setDefaultNamespaceURIToNode(SpecificationNode parentNode, URI namespace) {
         if (parentNode.getDefaultNamespaceURI() == null ||
@@ -451,10 +451,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     /**
      * ノードを最適化する。
-     * 親要素{@link parent}に子要素のリスト{@link collector}をすべて追加する。
+     * 親要素{@code parent}に子要素のリスト{@code collector}をすべて追加する。
      * その際、静的部分と動的部分を分割可能なものがあれば分割し、一度分割したという
-     * マーキング的な意味合いで{@link divided}に追加する。
-     * @param idGenerator
+     * マーキング的な意味合いで{@code divided}に追加する。
+     * @param idGenerator IDを生成するジェネレータクラス
      * @param parent 親要素
      * @param collector 子要素
      * @param divided 静的部分と動的部分を分割し

@@ -61,6 +61,10 @@ public class PathRelativeAdjusterImpl extends PathAdjusterImpl {
     }
 
     /**
+     * 処理対象のタグ属性を引数に取るコンストラクタ。
+     * 形式は[[タグ名, 属性名], [タグ名, 属性名], ...]のString配列。
+     *
+     * @param adjustTarget 処理対象のタグ属性
      * @see PathAdjusterImpl#PathAdjusterImpl(String[][])
      */
     public PathRelativeAdjusterImpl(String[][] adjustTarget) {

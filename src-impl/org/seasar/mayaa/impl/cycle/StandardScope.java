@@ -26,7 +26,7 @@ public class StandardScope implements Serializable {
     /**
      * Inserting new scope name between PAGE and REQUEST.
      *
-     * @param newScopeName
+     * @param newScopeName 追加するスコープ名
      */
     protected void addScope(String newScopeName) {
         if (StringUtil.isEmpty(newScopeName)) {

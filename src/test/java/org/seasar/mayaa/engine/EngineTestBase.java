@@ -1,7 +1,7 @@
 package org.seasar.mayaa.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -9,12 +9,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
@@ -31,7 +30,7 @@ public class EngineTestBase {
     MockHttpServletResponse response;
     private Engine engine;
     
-    @BeforeEach
+    @Before
     public void init() throws SecurityException, IOException {
         // System.setProperty("java.util.logging.config.file", "logging.properties");
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("jul.properties")) {
@@ -96,7 +95,7 @@ public class EngineTestBase {
                 final String headerPair[] = line.split(":", 2);
                 if (headerPair.length == 2) {
                     final String value = response.getHeader(headerPair[0]);
-                    assertEquals(headerPair[1], value, "Response header is not match. " + headerPair[0]);
+                    assertEquals("Response header is not match. " + headerPair[0], headerPair[1], value);
                 }
             }
 

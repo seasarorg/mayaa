@@ -2,7 +2,8 @@ package org.seasar.mayaa.engine;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+
 
 public class EngineTest extends EngineTestBase {
 
@@ -17,6 +18,4 @@ public class EngineTest extends EngineTestBase {
         // Then
         verifyResponse("/it-case/engine/expected.html");
     }
-
-    
 }

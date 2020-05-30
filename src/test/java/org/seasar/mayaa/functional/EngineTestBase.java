@@ -1,9 +1,8 @@
-package org.seasar.mayaa.engine;
+package org.seasar.mayaa.functional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.logging.LogManager;
 
 import org.junit.Before;
-import org.mockito.MockitoAnnotations;
+import org.junit.BeforeClass;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -25,49 +24,69 @@ import org.springframework.mock.web.MockServletContext;
 
 public class EngineTestBase {
 
-    MockServletContext servletContext;
-    MockHttpServletRequest request;
-    MockHttpServletResponse response;
+    private MockServletContext servletContext;
     private Engine engine;
     
-    @Before
-    public void init() throws SecurityException, IOException {
+    @BeforeClass
+    public static void init() throws SecurityException, IOException {
         // System.setProperty("java.util.logging.config.file", "logging.properties");
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream("jul.properties")) {
+        try (InputStream in = EngineTestBase.class.getClassLoader().getResourceAsStream("jul.properties")) {
 
             // if (in == null) {
             //     System.err.println("logging.propertiesファイルがクラスパスに存在しません。");
             // }
             LogManager.getLogManager().readConfiguration(in);
         }
-        
-        // @Mockアノテーションのモックオブジェクトを初期化
-        MockitoAnnotations.initMocks(this);
-        
+    }
+
+    @Before
+    public void setup() throws SecurityException, IOException {
         servletContext = spy(new MockServletContext());
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
         
         FactoryFactory.setInstance(new FactoryFactoryImpl());
         FactoryFactory.setContext(servletContext);
-        
+
         engine = ProviderUtil.getEngine();
         // engine.setParameter(EngineImpl.DUMP_ENABLED, "true");
         // engine.setParameter(EngineImpl.PAGE_SERIALIZE, "true");
     }
 
     /**
-     * 指定したHTMLファイルに対してEngineの本体処理を呼び出す
+     * テスト実行に使用するリクエストオブジェクトを作成する
+     * 
      * @param path 処理するHTMLファイルへのパス（クラスパスルートからのパス）
-     * @param pageScopeAttribute あらかじめページスコープに定義済のものとして引き渡す属性のマップ
+     * @return リクエストオブジェクト（モック）
      */
-    void exec(final String path, final Map<String, Object> pageScopeAttribute) {
+    MockHttpServletRequest createRequest(final String path) {
+        MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServletPath(path);
-        
+        return request;
+    }
+
+    /**
+     * テストの実行に設定されているServletContextを取得する
+     * @return ServletContextオブジェクト
+     */
+    MockServletContext getServletContext() {
+        return servletContext;
+    }
+
+    /**
+     * 指定したHTMLファイルに対してEngineの本体処理を呼び出す
+     * 
+     * @param request モック化されたリクエストオブジェクト
+     * @param pageScopeAttribute あらかじめページスコープに定義済のものとして引き渡す属性のマップ
+     * @return レスポンスオブジェクト（モック）
+     */
+    MockHttpServletResponse exec(final MockHttpServletRequest request, final Map<String, Object> pageScopeAttribute) {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
         CycleUtil.initialize(request, response);
         engine.doService(pageScopeAttribute, true);
         
-        verify(servletContext).getRealPath(path);
+        //verify(servletContext).getRealPath(path);
+
+        return response;
     }
     
     /**
@@ -75,7 +94,7 @@ public class EngineTestBase {
      * @param expectedContentPath 機体結果の内容が保管されているファイルへのパス（クラスパスルートからのパス）
      * @throws IOException IOエラーが発生した場合
      */
-    void verifyResponse(final String expectedContentPath) throws IOException {
+    void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath) throws IOException {
 
         final URL url = getClass().getResource(expectedContentPath);
         if (url == null) {
@@ -119,6 +138,24 @@ public class EngineTestBase {
         // for (String headerName: response.getHeaderNames()) {
         // System.out.println(headerName + ":" + response.getHeader(headerName));
         // }
+    }
+
+    /**
+     * 第一引数に指定したファイルパスを処理した結果を第二引数の内容と比較する。
+     * 指定するパスはクラスパスルート( src/test/resources )をルートとする。  
+     * @param targetContentPath
+     * @param expectedContentPath
+     * @param pageScopeAttribute
+     */
+    void execAndVerify(final String targetContentPath, final String expectedContentPath, final Map<String, Object> pageScopeAttribute)
+            throws IOException {
+        final MockHttpServletRequest request = createRequest(targetContentPath);
+
+        // When
+        final MockHttpServletResponse response = exec(request, pageScopeAttribute);
+        
+        // Then
+        verifyResponse(response, expectedContentPath);
     }
 
 }

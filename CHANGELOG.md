@@ -1,8 +1,10 @@
 # 変更点
 
-## 未リリース
+## リリース未定
+
+## Mayaa 1.1.35 : 未リリース
 ### Changes
-- [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。(未マージ)
+- [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。
 
 ### Fixes
 - [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合が発生する場合があるのを修正しました。(予定)

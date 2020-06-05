@@ -19,6 +19,7 @@ import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -34,6 +35,7 @@ public class EngineTestBase {
             LogManager.getLogManager().readConfiguration(in);
         }
 
+        SourceHolderFactory.release();
         FactoryFactory.release();
         FactoryFactory.setInstance(new FactoryFactoryImpl());
     }

@@ -111,14 +111,6 @@
     <url>http://www.seasar.org/</url>
   </organization>
 
-  <profiles>
-    <profile>
-      <activation>
-        <jdk>1.4.2_18</jdk>
-      </activation>
-    </profile>
-  </profiles>
-
   <build>
     <sourceDirectory>src-api</sourceDirectory>
     <resources>
@@ -156,8 +148,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
             <encoding>UTF-8</encoding>
-            <source>1.4</source>
-            <target>1.4</target>
+            <source>1.7</source>
+            <target>1.7</target>
           </configuration>
         </plugin>
         <plugin>
@@ -196,6 +188,7 @@
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
+          <quiet>true</quiet>
         </configuration>
       </plugin>
       <plugin>

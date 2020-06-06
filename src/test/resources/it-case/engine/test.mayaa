@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:write m:id="message" value="Hello Mayaa!" />
+
+    <m:write m:id="attr_p0" value="${p0}" />
+
+</m:mayaa>

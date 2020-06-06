@@ -84,4 +84,17 @@ public class SourceHolderFactory {
         return _sourceHolders.iterator();
     }
 
+    
+    /**
+     * インスタンスを解放する。
+     * ユニットテスト時にファクトリクラス群を再初期化する必要があるためにstaticフィールドを初期状態にする。
+     */
+    public static synchronized void release() {
+        _immutable = false;
+        _sourceHolders = new ArrayList();
+        SourceHolder contentRoot = new WebContextFolderSourceHolder();
+        contentRoot.setRoot("/");
+        appendSourceHolder(contentRoot);
+    }
+
 }

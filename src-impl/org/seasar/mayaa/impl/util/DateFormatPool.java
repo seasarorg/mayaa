@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Locale.Category;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
@@ -39,7 +40,7 @@ public class DateFormatPool {
     }
 
     public static DateFormat borrowFormat(String formatPattern) {
-        return borrowFormat(formatPattern, Locale.getDefault());
+        return borrowFormat(formatPattern, Locale.getDefault(Category.FORMAT));
     }
 
     private static String makeKey(String formatPattern, Locale locale) {

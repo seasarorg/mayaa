@@ -15,128 +15,197 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.collections.map.AbstractReferenceMap;
 
 /**
- * see http://www.roseindia.net/javatutorials/implementing_softreference_based_hashmap.shtml
- * @author Heinz
- * @author Taro Kato (Gluegent, Inc.)
+ * オブジェクトキャッシュ用に指定した件数を強参照で保持して残りは弱参照で保持するマップ。
+ * 強参照で保持する件数を超えた場合はLRUで弱参照に移動させる。
+ * 
+ * @author Watanabe, Mitsutaka (Re-implemented)
  */
-public class WeakValueHashMap extends AbstractMap {
-    /** The internal HashMap that will hold the SoftReference. */
-    private final Map hash = new HashMap();
-    /** The number of "hard" references to hold internally. */
-    private final int HARD_SIZE;
-    /** The FIFO list of hard references, order of last access. */
-    private final LinkedList hardCache = new LinkedList();
-    /** Reference queue for cleared SoftReference objects. */
-    private final ReferenceQueue queue = new ReferenceQueue();
+public class WeakValueHashMap<K, V> {
 
-    public WeakValueHashMap() {
-        this(100);
+    /** 強参照で保持させるデフォルトの件数。 */
+    private static final int DEFAULT_HARD_SIZE = 128;
+
+    /** キャッシュレコードを強参照で保持するマップ。指定した件数を超える場合はLRUで破棄する。 */
+    private final LruHashMap _hardReferenceLruMap;
+
+    /**
+     * キャッシュレコードを弱参照で保持するマップ。LRUで追い出されたレコードを保持する。
+     * このマップに保持されているレコードが再び参照された場合は改めて強参照のマップに移動させる。
+     */
+    private final Map<K, CountedReference<V>> _weakReferenceMap;
+
+    /** 同期化オブジェクト */
+    private final Object _mutex = new Object();
+
+    private long _droppedCount = 0;
+    private long _pulledUpCount = 0;
+    private long _maxCountOfDroppedRecord = 0;
+
+    /**
+     * 参照カウンタ付きのキャッシュレコード保持
+     */
+    private static class CountedReference<V> {
+        private final V referent;
+        private int count = 0;
+
+        CountedReference(V referent) {
+            this.referent = referent;
+        }
+
+        V get() {
+            return referent;
+        }
+
+        int getCount() {
+            return count;
+        }
+
+        void countUp() {
+            ++count;
+        }
     }
 
-    public WeakValueHashMap(int hardSize) {
-        HARD_SIZE = hardSize;
-    }
+    private class LruHashMap extends LinkedHashMap<K, CountedReference<V>> {
 
-    public Object get(Object key) {
-        Object result = null;
-        // We get the SoftReference represented by that key
-        WeakValue soft_ref = (WeakValue) hash.get(key);
-        if (soft_ref != null) {
-            // From the SoftReference we get the value, which can be
-            // null if it was not in the map, or it was removed in
-            // the processQueue() method defined below
-            result = soft_ref.get();
-            if (result == null) {
-                // If the value has been garbage collected, remove the
-                // entry from the HashMap.
-                hash.remove(key);
-            } else {
-                // We now add this object to the beginning of the hard
-                // reference queue. One reference can occur more than
-                // once, because lookups of the FIFO queue are slow, so
-                // we don't want to search through it each time to remove
-                // duplicates.
-                hardCache.addFirst(result);
-                if (hardCache.size() > HARD_SIZE) {
-                    // Remove the last entry if list longer than HARD_SIZE
-                    hardCache.removeLast();
+        private static final long serialVersionUID = 8437986358875751211L;
+
+        private int maxSize;
+
+        public LruHashMap(int maxSize) {
+            super(maxSize, 0.90f, true);
+            this.maxSize = maxSize;
+        }
+
+        /**
+         * 強参照で保持するキャッシュサイズを設定する。現在保持している強参照のキャッシュレコードよりも
+         * 小さい値を指定した場合は内部的に removeEldestEntry を呼び出して弱参照マップへ移行させる。
+         * 
+         * @param maxSize 強参照で保持するキャッシュサイズ
+         */
+        public void setMaxSize(int maxSize) {
+            this.maxSize = maxSize;
+            if (size() > maxSize) {
+                synchronized (_mutex) {
+                    Iterator<Map.Entry<K, CountedReference<V>>> itr = entrySet().iterator();
+                    while (itr.hasNext()) {
+                        if (removeEldestEntry(itr.next())) {
+                            itr.remove();
+                        } else {
+                            break;
+                        }
+                    }
                 }
             }
         }
-        return result;
-    }
-
-    /**
-     * We define our own subclass of SoftReference which contains not only the value but also the key to make
-     * it easier to find the entry in the HashMap after it's been garbage collected.
-     */
-    private static class WeakValue extends WeakReference {
-        final Object key; // always make data member final
 
         /**
-         * Did you know that an outer class can access private data members and methods of an inner class? I
-         * didn't know that! I thought it was only the inner class who could access the outer class's private
-         * information. An outer class can also access private members of an inner class inside its inner
-         * class.
-         * @param k
-         * @param key
-         * @param q
+         * @return the maxSize
          */
-        protected WeakValue(Object k, Object key, ReferenceQueue q) {
-            super(k, q);
-            this.key = key;
+        public int getMaxSize() {
+            return maxSize;
+        }
+
+        /**
+         * LinkedHashMapの削除判定を行う。強参照で保持する件数を超える場合は、弱参照のマップへ移動させる。
+         * 呼び出し元で synchronized ブロックで囲まれているため個別に動機化は必要ない。
+         */
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, CountedReference<V>> eldest) {
+            if (size() > maxSize) {
+                synchronized (_mutex) {
+                    _weakReferenceMap.put(eldest.getKey(), eldest.getValue());
+                    ++_droppedCount;
+                    _maxCountOfDroppedRecord = Math.max(_maxCountOfDroppedRecord, eldest.getValue().getCount());
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public WeakValueHashMap() {
+        this(DEFAULT_HARD_SIZE);
+    }
+
+    public WeakValueHashMap(int hardSize) {
+        _weakReferenceMap = new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK, true);
+        _hardReferenceLruMap = new LruHashMap(hardSize);
+    }
+
+    public V get(K key) {
+        synchronized (_mutex) {
+            CountedReference<V> ref = _hardReferenceLruMap.get(key);
+            if (ref != null) {
+                ref.countUp();
+                return ref.get();
+            }
+
+            // assert(ref == null)
+            ref = _weakReferenceMap.get(key);
+            if (ref != null) {
+                ref.countUp();
+                ++_pulledUpCount;
+                _hardReferenceLruMap.put(key, ref);
+                _weakReferenceMap.remove(key);
+                return ref.get();
+            }
+
+            return null;
         }
     }
 
     /**
-     * Here we go through the ReferenceQueue and remove garbage collected SoftValue objects from the HashMap
-     * by looking them up using the SoftValue.key data member.
+     * putは比較的コストが高くても良いとする。
+     * 
+     * @param key
+     * @param value
      */
-    private void processQueue() {
-        WeakValue wv;
-        while ((wv = (WeakValue) queue.poll()) != null) {
-            hash.remove(wv.key); // we can access private data!
+    public void put(K key, V value) {
+        synchronized (_mutex) {
+            CountedReference<V> r = new CountedReference<V>(value);
+            _hardReferenceLruMap.put(key, r);
+            if (_weakReferenceMap.remove(key) != null) {
+                // 弱参照のマップに含まれていた場合はPullUpされたことになる。
+                // ただし値自体は変わっている可能性がある。
+                ++_pulledUpCount;
+            }
         }
-    }
-
-    /**
-     * Here we put the key, value pair into the HashMap using a SoftValue object.
-     * @param key Key
-     * @param value Value
-     * @return Object
-     */
-    public Object put(Object key, Object value) {
-        processQueue(); // throw out garbage collected values first
-        return hash.put(key, new WeakValue(value, key, queue));
-    }
-
-    public Object remove(Object key) {
-        processQueue(); // throw out garbage collected values first
-        return hash.remove(key);
-    }
-
-    public void clear() {
-        hardCache.clear();
-        processQueue(); // throw out garbage collected values
-        hash.clear();
     }
 
     public int size() {
-        processQueue(); // throw out garbage collected values first
-        return hash.size();
+        synchronized (_mutex) {
+            return _weakReferenceMap.size() + _hardReferenceLruMap.size();
+        }
     }
 
-    public Set entrySet() {
-        // no, no, you may NOT do that!!! GRRR
-        throw new UnsupportedOperationException();
+    public void setHardSize(int hardSize) {
+        synchronized (_mutex) {
+            _hardReferenceLruMap.setMaxSize(hardSize);
+        }
+    }
+
+    public int getHardSize() {
+        synchronized (_mutex) {
+            return _hardReferenceLruMap.getMaxSize();
+        }
+    }
+
+    public long getDroppedCount() {
+        return _droppedCount;
+    }
+
+    public long getPullUpCount() {
+        return _pulledUpCount;
+    }
+
+    public long getMaxCountOfDroppedRecord() {
+        return _maxCountOfDroppedRecord;
     }
 }

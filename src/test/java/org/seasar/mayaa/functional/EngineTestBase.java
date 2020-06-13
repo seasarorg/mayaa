@@ -1,3 +1,18 @@
+/*
+ * Copyright 2004-2012 the Seasar Foundation and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.seasar.mayaa.functional;
 
 import static org.junit.Assert.assertEquals;
@@ -71,7 +86,7 @@ public class EngineTestBase {
      * @param path 処理するHTMLファイルへのパス（クラスパスルートからのパス）
      * @return リクエストオブジェクト（モック）
      */
-    MockHttpServletRequest createRequest(final String path) {
+    protected MockHttpServletRequest createRequest(final String path) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServletPath(path);
         return request;
@@ -82,7 +97,7 @@ public class EngineTestBase {
      * 
      * @return ServletContextオブジェクト
      */
-    MockServletContext getServletContext() {
+    protected MockServletContext getServletContext() {
         return servletContext;
     }
 
@@ -93,7 +108,7 @@ public class EngineTestBase {
      * @param pageScopeAttribute あらかじめページスコープに定義済のものとして引き渡す属性のマップ
      * @return レスポンスオブジェクト（モック）
      */
-    MockHttpServletResponse exec(final MockHttpServletRequest request, final Map<String, Object> pageScopeAttribute) {
+    protected MockHttpServletResponse exec(final MockHttpServletRequest request, final Map<String, Object> pageScopeAttribute) {
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
         CycleUtil.initialize(request, response);
@@ -110,7 +125,7 @@ public class EngineTestBase {
      * @param expectedContentPath 機体結果の内容が保管されているファイルへのパス（クラスパスルートからのパス）
      * @throws IOException IOエラーが発生した場合
      */
-    void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath) throws IOException {
+    protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath) throws IOException {
 
         final URL url = getClass().getResource(expectedContentPath);
         if (url == null) {
@@ -164,7 +179,7 @@ public class EngineTestBase {
      * @param expectedContentPath
      * @param pageScopeAttribute
      */
-    void execAndVerify(final String targetContentPath, final String expectedContentPath,
+    protected void execAndVerify(final String targetContentPath, final String expectedContentPath,
             final Map<String, Object> pageScopeAttribute) throws IOException {
         final MockHttpServletRequest request = createRequest(targetContentPath);
 

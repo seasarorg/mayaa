@@ -18,11 +18,57 @@
   </scm>
 
   <issueManagement>
-    <system>JIRA</system>
-    <url><![CDATA[https://www.seasar.org/issues/browse/MAYAA]]></url>
+    <system>Github</system>
+    <url>https://github.com/seasarorg/mayaa/issues</url>
   </issueManagement>
 
   <inceptionYear>2004</inceptionYear>
+
+  <properties>
+    <!-- 普段はJUnitパフォーマンス計測用テスト、遅いテストは除外する -->
+    <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
+    <testArgLine></testArgLine>
+  </properties>
+
+  <profiles>
+    <profile>
+        <!-- JUnitにて低速なテストも含めて実行するためのプロファイル -->
+        <id>withSlowTest</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <excludedGroups>test.PerformanceTest.class</excludedGroups>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+        <properties>
+        </properties>
+      </profile>
+      <profile>
+        <!-- JUnitにてパフォーマンスの検証を行うためのプロファイル -->
+        <!-- 対象テストを test.PerformanceTest.class に限定し、Java Flight Recorder を有効にする -->
+        <id>withPerformanceTest</id>
+        <properties>
+          <testExcludedGroups></testExcludedGroups><!-- 除外テスト指定を空にする-->
+        </properties>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <groups>test.PerformanceTest.class</groups>
+                <argLine>-XX:+FlightRecorder -XX:StartFlightRecording=duration=60s,filename=target/performance-test.jfr</argLine>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+  </profiles>
 
   <mailingLists>
     <mailingList>
@@ -150,12 +196,21 @@
             <encoding>UTF-8</encoding>
             <source>1.7</source>
             <target>1.7</target>
+            <compilerArgument>-Xlint:deprecation</compilerArgument>
           </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <configuration>
             <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <excludedGroups>${testExcludedGroups}</excludedGroups>
+            <argLine>${testArgLine}</argLine>
           </configuration>
         </plugin>
       </plugins>

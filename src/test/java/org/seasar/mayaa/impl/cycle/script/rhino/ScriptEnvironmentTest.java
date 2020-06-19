@@ -16,39 +16,227 @@
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.seasar.mayaa.FactoryFactory;
-import org.seasar.mayaa.provider.ProviderFactory;
+import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+
+import test.PerformanceTest;
 
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.StubApplicationScopeSupport;
+import org.seasar.mayaa.impl.cycle.script.ComplexScript;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 public class ScriptEnvironmentTest {
+
+    ScriptEnvironmentImpl testee;
 
     @BeforeClass
     public static void init() {
         FactoryFactory.release();
+        FactoryFactory.setInstance(new FactoryFactoryImpl());
+    }
+
+    @Before
+    public void setup() {
+        // -- Given
+        // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
+        // scriptEnvironment cacheSize に 256 が設定されている
+        // FactoryFactory.setContext(new StubApplicationScopeSupport(this));
+        FactoryFactory.setContext(new MockServletContext());
+
+        // -- When
+        // ファクトリーを経由してScriptEnvironmentインスタンスを生成する
+        // ServiceProviderのインスタンスを取得することでScriptEnvironmentを作成する。
+        testee = (ScriptEnvironmentImpl) ProviderUtil.getScriptEnvironment();
+
     }
 
     @Test
     public void testキャッシュサイズの指定() {
-        //-- Given
+        // setupメソッドで実行することをいったんリセットして本メソッド内で実行
+        init();
+
+        // -- Given
         // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
-        //   scriptEnvironment cacheSize に 256 が設定されている
-        FactoryFactory.setInstance(new FactoryFactoryImpl());
+        // scriptEnvironment cacheSize に 256 が設定されている
         FactoryFactory.setContext(new StubApplicationScopeSupport(this));
 
-        //-- When
+        // -- When
         // ファクトリーを経由してScriptEnvironmentインスタンスを生成する
-        ProviderFactory providerFactory = (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
         // ServiceProviderのインスタンスを取得することでScriptEnvironmentを作成する。
-        ScriptEnvironmentImpl scriptEnvironmentImpl = (ScriptEnvironmentImpl) providerFactory.getServiceProvider()
-                .getScriptEnvironment();
+        testee = (ScriptEnvironmentImpl) ProviderUtil.getScriptEnvironment();
 
-        //-- Then
+        // -- Then
         // スクリプトのキャッシュ設定値が256に設定されている。
-        assertEquals(256, scriptEnvironmentImpl.getScriptCacheSize());
+        assertEquals(256, testee.getScriptCacheSize());
+    }
+
+    CompiledScript runScript(String script) {
+        final PositionAware position = new Position("/1", 1);
+
+        CompiledScript compiledScript = testee.compile(script, position);
+        // System.out.println(compiledScript);
+
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setPathInfo("/path/to/page.html");
+        CycleUtil.initialize(request, new MockHttpServletResponse());
+
+        testee.startScope(null);
+        Object result = compiledScript.execute(null);
+        // System.out.println(result);
+        testee.endScope();
+
+        return compiledScript;
+    }
+
+    @Test
+    public void コンパイルを行う_複数ブロック() {
+        final String script = "ABC    ${  var a = 0; a += 10 * 2 }  XYZ";
+        CompiledScript compiledScript = runScript(script);
+        assertThat(compiledScript, instanceOf(ComplexScript.class));
+    }
+
+
+    @Test
+    public void コンパイルを行う_関数定義() {
+        final String script = "${		function println(value) {"
+        + "                'run script' + value;"
+        + "            }"
+        + "            println('hello')}";
+
+        CompiledScript compiledScript = runScript(script);
+        assertThat(compiledScript, instanceOf(TextCompiledScriptImpl.class));
+    }
+
+    @Test
+    public void コンパイルを行う_Javaクラス参照() {
+        final String script = "${java.lang.Math.PI}";
+
+        CompiledScript compiledScript = runScript(script);
+        assertThat(compiledScript, instanceOf(TextCompiledScriptImpl.class));
+    }
+
+    @Test
+    public void コンパイルを行う_システムプロパティ参照() {
+        final String script = "Java Runtime: ${java.lang.System.getProperty('test.value')}";
+
+        System.setProperty("test.value", "TEST VALUE");
+        CompiledScript compiledScript = runScript(script);
+        assertThat(compiledScript, instanceOf(ComplexScript.class));
+    }
+
+    @Test
+    @Category(PerformanceTest.class)
+    public void 複数スレッドでコンパイルを行う() throws InterruptedException {
+        final String[] scripts = {
+            "ABC    ${  var a = 0; a += 10 * 2 }  XYZ",
+            "${		function println(value) {"
+            + "                java.lang.System.out.println(java.lang.String.valueOf(value));"
+            + "            }"
+            + "            println('run script')}",
+            "Java Runtime: ${java.lang.System.getProperty('java.version')}" 
+        };
+
+        final PositionAware position = new Position("/1", 1);
+
+        testee.setScriptCacheSize(1);
+
+        final int threadsCount = 100;
+        final Random random = new Random();
+        final CountDownLatch latch = new CountDownLatch(threadsCount);
+
+        Thread[] threads = new Thread[threadsCount];
+        for (int requestId = 0; requestId < threadsCount; requestId++) {
+            final int scriptIndex = random.nextInt(scripts.length);
+
+            threads[requestId] = new Thread() {
+                public void run() {
+                    try {
+                        // 一斉に動いた方がぶつかりやすいので待ち合わせる
+                        latch.countDown();
+                        latch.await();
+
+                        CompiledScript compiledScript = testee.compile(scripts[scriptIndex], position);
+                        assertEquals(scripts[scriptIndex], compiledScript.getScriptText());
+
+                        MockHttpServletRequest request = new MockHttpServletRequest();
+                        request.setPathInfo("/path/to/page.html");
+                        CycleUtil.initialize(request, new MockHttpServletResponse());
+                
+                        testee.startScope(null);
+                        compiledScript.execute(null);
+                        testee.endScope();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            threads[requestId].start();
+        }
+        // スレッドの終了を待ち合わせる
+        for (int requestId = 0; requestId < threadsCount; requestId++) {
+            threads[requestId].join();
+        }
+
+        System.out.println("End");
     }
 }
+
+class Position implements PositionAware {
+    private static final long serialVersionUID = 1L;
+
+    String systemId;
+    int lineNumber;
+
+    public Position(String systemId, int lineNumber) {
+        this.systemId = systemId;
+        this.lineNumber = lineNumber;
+    }
+    
+    @Override
+    public void setSystemID(String systemID) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setOnTemplate(boolean onTemplate) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isOnTemplate() {
+        return false;
+    }
+
+    @Override
+    public String getSystemID() {
+        return "/ScriptEnvironmentTest";
+    }
+
+    @Override
+    public int getLineNumber() {
+        return 10;
+    }
+};

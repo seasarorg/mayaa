@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:write m:id="env_value" value="Java Runtime: ${java.lang.System.getProperty('test.value')}" />
+</m:mayaa>

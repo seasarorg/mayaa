@@ -8,7 +8,7 @@
 - [#16](https://github.com/seasarorg/mayaa/issues/16) - Mayaa動作要件の最低JavaバージョンをJava7としました。
 
 ### Fixes
-- [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合が発生する場合があるのを修正しました。(予定)
+- [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合を解消するとともにキャッシュ保持数の制御を改善しました。
 
 ## Mayaa 1.1.34 : 2017-07-30
 ### Fixes

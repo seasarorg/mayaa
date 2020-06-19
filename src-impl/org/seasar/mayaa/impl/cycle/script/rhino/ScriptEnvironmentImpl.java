@@ -48,17 +48,15 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static final long serialVersionUID = -4067264733660357274L;
+    private static final int DEFAULT_HARD_SIZE = 128;
+
     private static Scriptable _standardObjects;
-    private static WeakValueHashMap/*<String, CompiledScript>*/ scriptCache;
+    private WeakValueHashMap<String, CompiledScript> scriptCache = new WeakValueHashMap<>(DEFAULT_HARD_SIZE);
 
     private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
     // singleton
     private static WrapFactory _wrap;
-    private static int _cacheSize = 128;
-    static {
-        setScriptCacheSize(_cacheSize);
-    }
 
     private boolean _useGetterScriptEmulation;
 
@@ -252,13 +250,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return (scriptObject instanceof Scriptable);
     }
 
-    static void setScriptCacheSize(int cacheSize) {
-        _cacheSize = cacheSize;
-        scriptCache = new WeakValueHashMap(cacheSize);
+    public void setScriptCacheSize(int cacheSize) {
+        scriptCache.setHardSize(cacheSize);
     }
 
-    static int getScriptCacheSize() {
-        return _cacheSize;
+    public int getScriptCacheSize() {
+        return scriptCache.getHardSize();
     }
 
     static void setWrapFactory(WrapFactory wrap) {

@@ -37,4 +37,11 @@ public class EngineTest extends EngineTestBase {
         execAndVerify("/it-case/html-transform/charset-html5/target.html", "/it-case/html-transform/charset-html5/expected.html", null);
     }
 
+
+    @Test
+    public void スクリプト実行_Javaクラス参照() throws IOException {
+        System.setProperty("test.value", "TEST VALUE");
+        execAndVerify("/it-case/script/java-bridge/target.html", "/it-case/script/java-bridge/expected.html", null);
+    }
+
 }

@@ -1,17 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src-api"/>
-	<classpathentry kind="src" path="src-impl"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/nekohtml-0.9.5.jar" sourcepath="srczip/nekohtml-src-0.9.5.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xercesImpl-2.7.1.jar" sourcepath="srczip/Xerces-J-src.2.7.1.zip"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/jsp-2.0.jar" sourcepath="srczip/jsp-src-2.0.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib-servlet/servlet-2.4.jar" sourcepath="srczip/servlet-src-2.3.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-collections-3.1.jar" sourcepath="srczip/commons-collections-src-3.1.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/xml-apis-1.3.03.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-logging-1.0.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/jaxen-1.1.1.jar" sourcepath="srczip/jaxen-src-1.1.1.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/rhino-1.7r2.jar" sourcepath="srczip/rhino-src-1.7r2.zip"/>
-	<classpathentry exported="true" kind="lib" path="context/WEB-INF/lib/commons-beanutils-core-1.8.3.jar" sourcepath="srczip/commons-beanutils-src-1.8.3.zip"/>
-	<classpathentry kind="output" path="context/WEB-INF/classes"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src-api">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src-impl">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="context/resource">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="target/generated-sources/annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="target/generated-test-sources/test-annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

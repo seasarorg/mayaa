@@ -189,7 +189,7 @@ public class PageAttributeScope extends ScriptableObject
         }
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         if (hasAttribute(name)) {
             return getAttribute(name);
         }
@@ -236,7 +236,7 @@ public class PageAttributeScope extends ScriptableObject
         return false;
     }
 
-    public Object getDefaultValue(Class typeHint) {
+    public Object getDefaultValue(Class<?> typeHint) {
         return toString();
     }
 

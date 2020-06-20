@@ -146,22 +146,22 @@ public class InsertProcessor
     /**
      * @deprecated 1.1.9 代わりに{@link #getInformalPropertyClass()}を使う
      */
-    public Class getPropertyClass() {
+    public Class<?> getPropertyClass() {
         return getInformalPropertyClass();
     }
 
     /**
      * @deprecated 1.1.9 代わりに{@link #getInformalPropertyClass()}を使う
      */
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return getInformalExpectedClass();
     }
 
-    public Class getInformalPropertyClass() {
+    public Class<?> getInformalPropertyClass() {
         return ProcessorProperty.class;
     }
 
-    public Class getInformalExpectedClass() {
+    public Class<?> getInformalExpectedClass() {
         return Object.class;
     }
 
@@ -177,14 +177,14 @@ public class InsertProcessor
     /**
      * VirtualPropertyもInformalPropertyとして扱います。
      */
-    public Class getVirtualPropertyClass() {
+    public Class<?> getVirtualPropertyClass() {
         return getInformalPropertyClass();
     }
 
     /**
      * VirtualPropertyもInformalPropertyとして扱います。
      */
-    public Class getVirtualExpectedClass() {
+    public Class<?> getVirtualExpectedClass() {
         return getInformalExpectedClass();
     }
 

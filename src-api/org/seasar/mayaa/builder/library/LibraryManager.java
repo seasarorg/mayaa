@@ -49,7 +49,7 @@ public interface LibraryManager extends ParameterAware {
      * @param propertyClass プロパティ型。
      * @return コンバータ。もしくはnull。
      */
-    PropertyConverter getPropertyConverter(Class propertyClass);
+    PropertyConverter getPropertyConverter(Class<?> propertyClass);
 
     /**
      * プロパティ型コンバータのイテレータ。

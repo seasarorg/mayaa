@@ -46,7 +46,7 @@ public class ParentSpecificationResolverTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
+        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
         _currentResolver = (ParentSpecificationResolver) MarshallUtil.marshall(
                 adjusterClass, ParentSpecificationResolver.class, _beforeResolver,
                 systemID, lineNumber);

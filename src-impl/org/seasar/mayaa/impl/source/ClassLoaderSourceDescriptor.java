@@ -40,16 +40,16 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     private static final Date NOTFOUND_TIMESTAMP = new Date(0);
 
     private String _root = "";
-    private Class _neighbor;
+    private Class<?> _neighbor;
     private URL _url;
     private File _file;
     private Date _timestamp;
 
-    public void setNeighborClass(Class neighbor) {
+    public void setNeighborClass(Class<?> neighbor) {
         _neighbor = neighbor;
     }
 
-    public Class getNeighborClass() {
+    public Class<?> getNeighborClass() {
         return _neighbor;
     }
 

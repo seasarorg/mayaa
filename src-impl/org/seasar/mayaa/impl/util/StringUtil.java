@@ -473,27 +473,27 @@ public final class StringUtil {
         return buffer.toString();
     }
 
-    public static String getMessage(Class clazz, int index) {
+    public static String getMessage(Class<?> clazz, int index) {
         return getMessage(clazz, index, ZERO);
     }
 
-    public static String getMessage(Class clazz, int index, String param0) {
+    public static String getMessage(Class<?> clazz, int index, String param0) {
         return getMessage(clazz, index, new String[] { param0 });
     }
 
-    public static String getMessage(Class clazz, int index,
+    public static String getMessage(Class<?> clazz, int index,
             String param0, String param1) {
         return getMessage(clazz, index, new String[] { param0, param1 });
     }
 
-    public static String getMessage(Class clazz, int index,
+    public static String getMessage(Class<?> clazz, int index,
             String param0, String param1, String param2) {
         return getMessage(clazz, index,
                 new String[] { param0, param1, param2 });
     }
 
     protected static String getMessage(
-            Class clazz, int index, String[] params) {
+            Class<?> clazz, int index, String[] params) {
         Package key = clazz.getPackage();
         Properties properties = (Properties) _propFiles.get(key);
         if (properties == null) {

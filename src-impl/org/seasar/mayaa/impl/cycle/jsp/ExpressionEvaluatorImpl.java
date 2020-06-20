@@ -36,7 +36,7 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
         return _instance;
     }
 
-    public Object evaluate(String expression, Class expectedClass,
+    public Object evaluate(String expression, @SuppressWarnings("rawtypes") Class expectedClass,
             VariableResolver vResolver, FunctionMapper fMapper)
             throws ELException {
         Expression exp = parseExpression(expression, expectedClass, fMapper);
@@ -44,7 +44,7 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
     }
 
     public Expression parseExpression(String expression,
-            Class expectedClass, FunctionMapper fMapper) {
+            @SuppressWarnings("rawtypes") Class expectedClass, FunctionMapper fMapper) {
         CompiledScript script = ScriptUtil.compile(expression, expectedClass);
         return new ExpressionImpl(script);
     }

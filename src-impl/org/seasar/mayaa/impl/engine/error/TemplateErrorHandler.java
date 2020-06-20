@@ -51,7 +51,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
         return _extension;
     }
 
-    protected String getPageName(Class throwableClass) {
+    protected String getPageName(Class<?> throwableClass) {
         if (throwableClass == null) {
             throw new IllegalArgumentException();
         }
@@ -68,7 +68,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
         if (isPageNotFound && LOG.isInfoEnabled()) {
             LOG.info(t.getMessage());
         }
-        for (Class throwableClass = t.getClass();
+        for (Class<?> throwableClass = t.getClass();
                 throwableClass != null;
                 throwableClass = throwableClass.getSuperclass()) {
             String pageName = getPageName(throwableClass);

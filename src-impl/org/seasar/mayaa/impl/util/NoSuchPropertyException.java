@@ -22,15 +22,15 @@ public class NoSuchPropertyException extends AbstractMessagedException {
 
     private static final long serialVersionUID = -803104025776369368L;
 
-    private Class _beanClass;
+    private Class<?> _beanClass;
     private String _propertyName;
 
-    public NoSuchPropertyException(Class beanClass, String propertyName) {
+    public NoSuchPropertyException(Class<?> beanClass, String propertyName) {
         _beanClass = beanClass;
         _propertyName = propertyName;
     }
 
-    public Class getBeanClass() {
+    public Class<?> getBeanClass() {
         return _beanClass;
     }
 

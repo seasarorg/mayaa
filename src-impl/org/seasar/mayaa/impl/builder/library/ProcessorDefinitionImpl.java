@@ -51,10 +51,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
 
-    private Class _processorClass;
+    private Class<?> _processorClass;
     private List _propertySetRefs;
 
-    public void setProcessorClass(Class processorClass) {
+    public void setProcessorClass(Class<?> processorClass) {
         if (processorClass == null
                 || TemplateProcessor.class.isAssignableFrom(
                         processorClass) == false) {
@@ -63,7 +63,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         _processorClass = processorClass;
     }
 
-    public Class getProcessorClass() {
+    public Class<?> getProcessorClass() {
         return _processorClass;
     }
 
@@ -117,7 +117,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             property.createProcessorProperty(this, processor, original, injected);
         if (value != null) {
             String propertyImplName = property.getImplName();
-            Class processorClass = getProcessorClass();
+            Class<?> processorClass = getProcessorClass();
             if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
                 // prefixが付いていない限りoriginalを引き継がせる
                 if (value instanceof PrefixAwareName) {
@@ -182,14 +182,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                 continue;
             }
             LibraryDefinition library = getLibraryDefinition();
-            Class propertyClass = acceptable.getInformalPropertyClass();
+            Class<?> propertyClass = acceptable.getInformalPropertyClass();
             PropertyConverter converter =
                 library.getPropertyConverter(propertyClass);
             if (converter == null) {
                 throw new ConverterNotFoundException(
                         propertyClass.getName(), getSystemID(), getLineNumber());
             }
-            Class expectedClass = acceptable.getInformalExpectedClass();
+            Class<?> expectedClass = acceptable.getInformalExpectedClass();
             String value = attr.getValue();
             Serializable property = converter.convert(attr, value, expectedClass);
             if (property == null) {

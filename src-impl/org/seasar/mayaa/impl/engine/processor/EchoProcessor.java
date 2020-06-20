@@ -105,7 +105,7 @@ public class EchoProcessor extends ElementProcessor {
         for (Iterator it = originalNode.iterateAttribute(); it.hasNext();) {
             NodeAttribute attribute = (NodeAttribute) it.next();
             String value = getAdjustedValue(adjuster, originalNode, attribute);
-            Class expectedClass = getExpectedClass();
+            Class<?> expectedClass = getExpectedClass();
             Serializable property = converter.convert(attribute, value, expectedClass);
             PrefixAwareName propName = SpecificationUtil.createPrefixAwareName(
                     attribute.getQName(), attribute.getPrefix());

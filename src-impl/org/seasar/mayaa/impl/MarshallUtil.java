@@ -51,7 +51,7 @@ public class MarshallUtil {
         }
     }
 
-    public static Object marshall(Class instanceClass, Class interfaceClass,
+    public static Object marshall(Class<?> instanceClass, Class<?> interfaceClass,
             Object beforeObject, String systemID, int lineNumber) {
         if (instanceClass == null) {
             if (beforeObject == null) {
@@ -75,7 +75,7 @@ public class MarshallUtil {
     }
 
     public static SourceDescriptor getDefaultSource(
-            String systemID, Class neighborClass) {
+            String systemID, Class<?> neighborClass) {
         if (StringUtil.isEmpty(systemID) || neighborClass == null) {
             throw new IllegalArgumentException();
         }

@@ -32,7 +32,7 @@ public class ScriptUtil {
         // no instantiation.
     }
 
-    public static CompiledScript compile(String text, Class expectedClass) {
+    public static CompiledScript compile(String text, Class<?> expectedClass) {
         if (expectedClass == null) {
             throw new IllegalArgumentException();
         }

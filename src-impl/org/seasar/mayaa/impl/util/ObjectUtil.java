@@ -76,7 +76,7 @@ public class ObjectUtil {
         return buffer.toString();
     }
 
-    protected static Class loadPrimitiveClass(String className) {
+    protected static Class<?> loadPrimitiveClass(String className) {
         if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
@@ -102,11 +102,11 @@ public class ObjectUtil {
         return null;
     }
 
-    public static Class loadClass(String className) {
+    public static Class<?> loadClass(String className) {
         if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
-        Class primitive = loadPrimitiveClass(className);
+        Class<?> primitive = loadPrimitiveClass(className);
         if (primitive != null) {
             return primitive;
         }
@@ -119,18 +119,18 @@ public class ObjectUtil {
         }
     }
 
-    public static Class loadClass(String className, Class expectedClass) {
+    public static Class<?> loadClass(String className, Class<?> expectedClass) {
         if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        Class clazz = loadClass(className);
+        Class<?> clazz = loadClass(className);
         if (expectedClass.isAssignableFrom(clazz)) {
             return clazz;
         }
         throw new IllegalClassTypeException(expectedClass, clazz);
     }
 
-    public static Object newInstance(Class clazz) {
+    public static Object newInstance(Class<?> clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException();
         }
@@ -143,7 +143,7 @@ public class ObjectUtil {
         }
     }
 
-    public static Constructor getConstructor(Class clazz, Class[] argTypes) {
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class[] argTypes) {
         if (clazz == null || argTypes == null) {
             throw new IllegalArgumentException();
         }
@@ -154,7 +154,7 @@ public class ObjectUtil {
         }
     }
 
-    public static Object newInstance(Constructor constructor, Object[] argValues) {
+    public static Object newInstance(Constructor<?> constructor, Object[] argValues) {
         if (constructor == null || argValues == null
                 || constructor.getParameterTypes().length != argValues.length) {
             throw new IllegalArgumentException();
@@ -176,7 +176,7 @@ public class ObjectUtil {
      * @param beanClass プロパティ名の配列を取得するクラス
      * @return プロパティ名の配列
      */
-    public static String[] getPropertyNames(Class beanClass) {
+    public static String[] getPropertyNames(Class<?> beanClass) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
         String[] result = new String[descriptors.length];
@@ -193,7 +193,7 @@ public class ObjectUtil {
      * @param propertyName 判定するプロパティ名
      * @return プロパティを持つならtrue
      */
-    public static boolean hasProperty(Class beanClass, String propertyName) {
+    public static boolean hasProperty(Class<?> beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
         for (int i = 0; i < descriptors.length; i++) {
@@ -211,7 +211,7 @@ public class ObjectUtil {
      * @param propertyName プロパティ名
      * @return beanClassあるプロパティの型
      */
-    public static Class getPropertyClass(Class beanClass, String propertyName) {
+    public static Class<?> getPropertyClass(Class<?> beanClass, String propertyName) {
         PropertyDescriptor[] descriptors =
             PropertyUtils.getPropertyDescriptors(beanClass);
         for (int i = 0; i < descriptors.length; i++) {
@@ -229,7 +229,7 @@ public class ObjectUtil {
      * @param propertyName プロパティ名
      * @return beanのクラスにあるプロパティの型
      */
-    public static Class getPropertyClass(Object bean, String propertyName) {
+    public static Class<?> getPropertyClass(Object bean, String propertyName) {
         try {
             return PropertyUtils.getPropertyType(bean, propertyName);
         } catch (IllegalAccessException e) {
@@ -249,7 +249,7 @@ public class ObjectUtil {
      * @param value 変換する値
      * @return 変換後の値 (expectedClassのインスタンス)
      */
-    public static Object convert(Class expectedClass, Object value) {
+    public static Object convert(Class<?> expectedClass, Object value) {
         if (Object.class.equals(expectedClass) ||
                 (value != null && expectedClass.isAssignableFrom(value.getClass()))) {
             return value;
@@ -289,7 +289,7 @@ public class ObjectUtil {
      */
     public static void setProperty(Object bean, String propertyName, Object value) {
         try {
-            Class propertyClass = getPropertyClass(bean, propertyName);
+            Class<?> propertyClass = getPropertyClass(bean, propertyName);
             if (propertyClass == null) {
                 throw new NoSuchPropertyException(bean.getClass(), propertyName);
             }
@@ -464,7 +464,7 @@ public class ObjectUtil {
      * @param clazz 名称を取得するクラス
      * @return clazzのパッケージを含まない名前
      */
-    public static String getSimpleClassName(Class clazz) {
+    public static String getSimpleClassName(Class<?> clazz) {
         String className = clazz.getName();
         int pos = className.lastIndexOf('.');
         if (pos != -1) {
@@ -480,7 +480,7 @@ public class ObjectUtil {
      * @param componentType 配列の要素の型
      * @return srcの浅いコピー
      */
-    public static Object[] arraycopy(Object[] src, Class componentType) {
+    public static Object[] arraycopy(Object[] src, Class<?> componentType) {
         Object copy = Array.newInstance(componentType, src.length);
         System.arraycopy(src, 0, copy, 0, src.length);
         return (Object[]) copy;

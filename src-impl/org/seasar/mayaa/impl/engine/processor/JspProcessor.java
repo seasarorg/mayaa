@@ -107,7 +107,7 @@ public class JspProcessor extends TemplateProcessorSupport
         });
     }
 
-    private Class _tagClass;
+    private Class<?> _tagClass;
     private List _properties;
     private String _attributesKey;
     private Boolean _nestedVariableExists;
@@ -119,7 +119,7 @@ public class JspProcessor extends TemplateProcessorSupport
         _tagPools.clear();
     }
 
-    public static boolean isSupportClass(Class test) {
+    public static boolean isSupportClass(Class<?> test) {
         return test != null &&
                 (Tag.class.isAssignableFrom(test)
                 || SimpleTag.class.isAssignableFrom(test));
@@ -143,7 +143,7 @@ public class JspProcessor extends TemplateProcessorSupport
     }
 
     // MLD method
-    public void setTagClass(Class tagClass) {
+    public void setTagClass(Class<?> tagClass) {
         if (isSupportClass(tagClass) == false) {
             throw new IllegalArgumentException();
         }
@@ -302,7 +302,7 @@ public class JspProcessor extends TemplateProcessorSupport
      * @param customTag
      */
     private void setupDynamicAttributes(Tag customTag) {
-        Class custamTagClass = getTagClass(customTag);
+        Class<?> custamTagClass = getTagClass(customTag);
         if ((DynamicAttributes.class.isAssignableFrom(custamTagClass)) == false) {
             String message =
                 StringUtil.getMessage(
@@ -354,7 +354,7 @@ public class JspProcessor extends TemplateProcessorSupport
      * @param customTag クラスオブジェクトを取得するカスタムタグインスタンス
      * @return customTagのクラス
      */
-    private Class getTagClass(Tag customTag) {
+    private Class<?> getTagClass(Tag customTag) {
         if (customTag instanceof SimpleTagWrapper) {
             return ((SimpleTagWrapper) customTag).getSimpleTag().getClass();
         }
@@ -576,10 +576,10 @@ public class JspProcessor extends TemplateProcessorSupport
 
         private static final long serialVersionUID = -4519484537723904500L;
 
-        private Class _clazz;
+        private Class<?> _clazz;
         private boolean _isSimpleTag;
 
-        public TagPool(Class clazz) {
+        public TagPool(Class<?> clazz) {
             if (isSupportClass(clazz) == false) {
                 throw new IllegalArgumentException();
             }

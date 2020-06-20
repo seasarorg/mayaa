@@ -30,7 +30,7 @@ public abstract class AbstractTextCompiledScript
 
     private String _text;
     private String _scriptText;
-    private Class _expectedClass = Object.class;
+    private Class<?> _expectedClass = Object.class;
     private Class[] _methodArgClasses;
 
     public AbstractTextCompiledScript(String text) {
@@ -48,14 +48,14 @@ public abstract class AbstractTextCompiledScript
         return _text;
     }
 
-    public void setExpectedClass(Class expectedClass) {
+    public void setExpectedClass(Class<?> expectedClass) {
         if (expectedClass == null) {
             expectedClass = Object.class;
         }
         _expectedClass = expectedClass;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return _expectedClass;
     }
 

@@ -46,7 +46,7 @@ public class PathAdjusterTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
+        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
         _currentAdjuster = (PathAdjuster) MarshallUtil.marshall(
                 adjusterClass, PathAdjuster.class, _beforeAdjuster,
                 systemID, lineNumber);

@@ -83,8 +83,8 @@ public class EngineImpl extends SpecificationImpl
     // parameters
     private String _defaultSpecificationID = "/default.mayaa";
     private List _templatePathPatterns;
-    private Class _pageClass = PageImpl.class;
-    private Class _templateClass = TemplateImpl.class;
+    private Class<?> _pageClass = PageImpl.class;
+    private Class<?> _templateClass = TemplateImpl.class;
     private int _surviveLimit = 5;
     private boolean _requestedSuffixEnabled = false;
     private boolean _dumpEnabled = false;
@@ -505,7 +505,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     private static interface SpecificationGenerator {
-        Class getInstantiator(SourceDescriptor source);
+        Class<?> getInstantiator(SourceDescriptor source);
         void initialize(Specification instance);
     }
 
@@ -528,7 +528,7 @@ public class EngineImpl extends SpecificationImpl
         }
         SourceDescriptor source =
             SourceUtil.getSourceDescriptor(systemID);
-        Class specClass = generator.getInstantiator(source);
+        Class<?> specClass = generator.getInstantiator(source);
         if (specClass == null) {
             return null;
         }
@@ -559,7 +559,7 @@ public class EngineImpl extends SpecificationImpl
     public Specification createDefaultSpecification(final String systemID) {
         return createSpecificationInstance(systemID, false,
                 new SpecificationGenerator() {
-                    public Class getInstantiator(SourceDescriptor source) {
+                    public Class<?> getInstantiator(SourceDescriptor source) {
                         return SpecificationImpl.class;
                     }
                     public void initialize(Specification instance) {
@@ -572,7 +572,7 @@ public class EngineImpl extends SpecificationImpl
         return (Page) createSpecificationInstance(
                 pageName + _mayaaExtension, true,
                 new SpecificationGenerator() {
-            public Class getInstantiator(SourceDescriptor source) {
+            public Class<?> getInstantiator(SourceDescriptor source) {
                 return getPageClass();
             }
             public void initialize(Specification instance) {
@@ -586,7 +586,7 @@ public class EngineImpl extends SpecificationImpl
         return (Template) createSpecificationInstance(
                 getTemplateID(page, suffix, extension), true,
                 new SpecificationGenerator() {
-            public Class getInstantiator(SourceDescriptor source) {
+            public Class<?> getInstantiator(SourceDescriptor source) {
                 if (source.exists() == false) {
                     return null;
                 }
@@ -665,7 +665,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } else if (PAGE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                Class pageClass = ObjectUtil.loadClass(value);
+                Class<?> pageClass = ObjectUtil.loadClass(value);
                 if (Page.class.isAssignableFrom(pageClass)) {
                     _pageClass = pageClass;
                 }
@@ -684,7 +684,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } else if (TEMPLATE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                Class templateClass = ObjectUtil.loadClass(value);
+                Class<?> templateClass = ObjectUtil.loadClass(value);
                 if (Template.class.isAssignableFrom(templateClass)) {
                     _templateClass = templateClass;
                 }
@@ -763,11 +763,11 @@ public class EngineImpl extends SpecificationImpl
         return sb.toString();
     }
 
-    protected Class getPageClass() {
+    protected Class<?> getPageClass() {
         return _pageClass;
     }
 
-    protected Class getTemplateClass() {
+    protected Class<?> getTemplateClass() {
         return _templateClass;
     }
 

@@ -39,12 +39,12 @@ public interface VirtualPropertyAcceptable
      * addVirtualProperty()に渡されるバーチャルプロパティに期待される型。
      * @return バーチャルプロパティ型。
      */
-    Class getVirtualPropertyClass();
+    Class<?> getVirtualPropertyClass();
 
     /**
      * バーチャルプロパティの予測される型を取得する。
      * @return バーチャルプロパティの予測される型。
      */
-    Class getVirtualExpectedClass();
+    Class<?> getVirtualExpectedClass();
 
 }

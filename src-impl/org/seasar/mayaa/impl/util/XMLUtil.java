@@ -81,8 +81,8 @@ public final class XMLUtil {
         return ObjectUtil.booleanValue(value, defaultValue);
     }
 
-    public static Class getClassValue(
-            Attributes attr, String localName, Class defaultValue) {
+    public static Class<?> getClassValue(
+            Attributes attr, String localName, Class<?> defaultValue) {
         String className = attr.getValue(localName);
         if (StringUtil.hasValue(className)) {
             return ObjectUtil.loadClass(className);
@@ -91,12 +91,12 @@ public final class XMLUtil {
     }
 
     public static Object getObjectValue(
-            Attributes attr, String localName, Class expectedClass) {
+            Attributes attr, String localName, Class<?> expectedClass) {
         if (attr == null || StringUtil.isEmpty(localName)
                 || expectedClass == null) {
             throw new IllegalArgumentException();
         }
-        Class clazz = getClassValue(attr, localName, null);
+        Class<?> clazz = getClassValue(attr, localName, null);
         if (clazz != null) {
             if (expectedClass.isAssignableFrom(clazz)) {
                 return ObjectUtil.newInstance(clazz);

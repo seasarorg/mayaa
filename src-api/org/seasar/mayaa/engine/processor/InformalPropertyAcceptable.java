@@ -40,25 +40,25 @@ public interface InformalPropertyAcceptable
      * @return インフォーマルプロパティ型。
      * @deprecated 1.1.9 代わりに{@link #getInformalPropertyClass()}を使用してください。
      */
-    Class getPropertyClass();
+    Class<?> getPropertyClass();
 
     /**
      * インフォーマルプロパティの予測される型を取得する。
      * @return インフォーマルプロパティの予測される型。
      * @deprecated 1.1.9 代わりに{@link #getInformalExpectedClass()}を使用してください。
      */
-    Class getExpectedClass();
+    Class<?> getExpectedClass();
 
     /**
      * addInformalProperty()に渡されるインフォーマルプロパティに期待される型。
      * @return インフォーマルプロパティ型。
      */
-    Class getInformalPropertyClass();
+    Class<?> getInformalPropertyClass();
 
     /**
      * インフォーマルプロパティの予測される型を取得する。
      * @return インフォーマルプロパティの予測される型。
      */
-    Class getInformalExpectedClass();
+    Class<?> getInformalExpectedClass();
 
 }

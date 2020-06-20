@@ -30,7 +30,7 @@ public interface PropertyConverter extends ParameterAware {
      * このコンバータが処理を行うプロパティの静的型を取得する。
      * @return プロパティ型。
      */
-    Class getPropetyClass();
+    Class<?> getPropetyClass();
 
     /**
      * プロパティの変換を行う。
@@ -39,6 +39,6 @@ public interface PropertyConverter extends ParameterAware {
      * @param expectedClass 動的値の場合に期待する動的型。
      * @return 変換値。
      */
-    Serializable convert(NodeAttribute attribute, String value, Class expectedClass);
+    Serializable convert(NodeAttribute attribute, String value, Class<?> expectedClass);
 
 }

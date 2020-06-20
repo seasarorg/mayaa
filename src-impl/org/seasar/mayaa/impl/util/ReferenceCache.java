@@ -80,7 +80,7 @@ public class ReferenceCache extends ArrayList {
     protected SweepListener _sweepBeginListener;
     protected ReferenceQueue _queue;
 
-    private Class _elementType;
+    private Class<?> _elementType;
     private int _referenceType;
     private String _name;
     protected Map _labelReferenceMap;
@@ -89,15 +89,15 @@ public class ReferenceCache extends ArrayList {
         this(Object.class, SOFT, null);
     }
 
-    public ReferenceCache(Class elementType) {
+    public ReferenceCache(Class<?> elementType) {
         this(elementType, SOFT, null);
     }
 
-    public ReferenceCache(Class elementType, int referenceType) {
+    public ReferenceCache(Class<?> elementType, int referenceType) {
         this(elementType, SOFT, null);
     }
 
-    public ReferenceCache(Class elementType,
+    public ReferenceCache(Class<?> elementType,
             int referenceType, SweepListener listener) {
         if (referenceType != SOFT && referenceType != WEAK) {
             throw new IllegalArgumentException();

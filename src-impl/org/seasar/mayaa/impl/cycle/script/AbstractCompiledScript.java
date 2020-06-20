@@ -26,17 +26,17 @@ public abstract class AbstractCompiledScript
     private static final long serialVersionUID = 643467147738117809L;
     private static final Class[] ZERO_ARGS_TYPE = new Class[0];
 
-    private Class _expectedClass = Object.class;
+    private Class<?> _expectedClass = Object.class;
     private Class[] _methodArgClasses;
 
-    public void setExpectedClass(Class expectedClass) {
+    public void setExpectedClass(Class<?> expectedClass) {
         if (expectedClass == null) {
             expectedClass = Object.class;
         }
         _expectedClass = expectedClass;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return _expectedClass;
     }
 

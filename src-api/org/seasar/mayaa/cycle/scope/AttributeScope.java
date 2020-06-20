@@ -80,6 +80,6 @@ public interface AttributeScope extends ParameterAware {
      * @param attributeClass 指定クラス型。
      * @return 指定オブジェクト。
      */
-    Object newAttribute(String name, Class attributeClass);
+    Object newAttribute(String name, Class<?> attributeClass);
 
 }

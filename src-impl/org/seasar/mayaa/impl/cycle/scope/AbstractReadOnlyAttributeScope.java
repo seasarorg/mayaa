@@ -38,7 +38,7 @@ public abstract class AbstractReadOnlyAttributeScope
         throw new ScopeNotWritableException(getScopeName());
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         throw new UnsupportedOperationException();
     }
 

@@ -116,7 +116,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
     }
 
-    public PropertyConverter getPropertyConverter(Class propertyClass) {
+    public PropertyConverter getPropertyConverter(Class<?> propertyClass) {
         if (propertyClass == null) {
             throw new IllegalArgumentException();
         }

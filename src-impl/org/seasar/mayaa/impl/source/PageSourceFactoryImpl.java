@@ -40,18 +40,18 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
     private static final Log LOG = LogFactory.getLog(PageSourceFactoryImpl.class);
 
     private Object _context;
-    private Class _serviceClass;
+    private Class<?> _serviceClass;
     private List _parameterNames;
     private List _parameterValues;
 
-    public void setServiceClass(Class serviceClass) {
+    public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
         _serviceClass = serviceClass;
     }
 
-    public Class getServiceClass() {
+    public Class<?> getServiceClass() {
         if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
@@ -62,7 +62,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        Class sourceClass = getServiceClass();
+        Class<?> sourceClass = getServiceClass();
         if (sourceClass == null) {
             throw new IllegalStateException("serviceClass is null");
         }
@@ -116,7 +116,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         _parameterNames.add(name);
         _parameterValues.add(value);
 
-        Class sourceHolderClass = null;
+        Class<?> sourceHolderClass = null;
         if ("folder".equals(name)) {
         	if (IS_SECURE_WEB && ("".equals(value) || "/".equals(value))) {
         		sourceHolderClass = WebContextRootResourceHolder.class;

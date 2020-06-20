@@ -101,7 +101,7 @@ public class RhinoUtil {
      * @return jsRetをJavaで利用するために変換したオブジェクト
      */
     public static Object convertResult(
-            Context cx, Class expectedClass, Object jsRet) {
+            Context cx, Class<?> expectedClass, Object jsRet) {
         Object ret;
         if (expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3
@@ -145,9 +145,9 @@ public class RhinoUtil {
      * @param jsRet Rhinoスクリプトの実行結果
      * @return 無変換で返せる場合はtrue
      */
-    public static boolean isNumber(Class expectedClass, Object jsRet) {
+    public static boolean isNumber(Class<?> expectedClass, Object jsRet) {
         if (jsRet != null && expectedClass != null) {
-            Class originalClass = jsRet.getClass();
+            Class<?> originalClass = jsRet.getClass();
             if (Number.class.isAssignableFrom(originalClass)) {
                 if (Object.class.equals(expectedClass) ||
                         Number.class.equals(expectedClass) ||
@@ -215,7 +215,7 @@ public class RhinoUtil {
      */
     protected static Object getWithGetterMethod(Object bean, String propertyName)
             throws NoSuchMethodException {
-        Class beanClass = bean.getClass();
+        Class<?> beanClass = bean.getClass();
         String baseName = capitalizePropertyName(propertyName);
         Method getter = null;
         try {
@@ -229,7 +229,7 @@ public class RhinoUtil {
                 Method booleanGetter =
                     beanClass.getMethod("is" + baseName, VOID_ARGS_CLASS);
                 if (booleanGetter != null) {
-                    Class returnType = booleanGetter.getReturnType();
+                    Class<?> returnType = booleanGetter.getReturnType();
                     if (returnType.equals(Boolean.class)
                             || returnType.equals(Boolean.TYPE)) {
                         getter = booleanGetter;
@@ -269,7 +269,7 @@ public class RhinoUtil {
     protected static Object getFromPublicField(Object bean, String propertyName) {
         try {
             // TODO Fieldキャッシュ
-            Class beanClass = bean.getClass();
+            Class<?> beanClass = bean.getClass();
             Field field = beanClass.getField(propertyName);
             if (Modifier.isPublic(field.getModifiers())) {
                 if (field.isAccessible() == false) {

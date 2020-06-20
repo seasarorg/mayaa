@@ -267,11 +267,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             return _string;
         }
 
-        public void setExpectedClass(Class expectedClass) {
+        public void setExpectedClass(Class<?> expectedClass) {
             _script.setExpectedClass(expectedClass);
         }
 
-        public Class getExpectedClass() {
+        public Class<?> getExpectedClass() {
             return _script.getExpectedClass();
         }
 

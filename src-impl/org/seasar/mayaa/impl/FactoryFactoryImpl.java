@@ -40,7 +40,7 @@ public class FactoryFactoryImpl extends FactoryFactory
     private static final long serialVersionUID = -1393736148065197812L;
     private static final Log LOG = LogFactory.getLog(FactoryFactoryImpl.class);
 
-    protected boolean checkInterface(Class clazz) {
+    protected boolean checkInterface(Class<?> clazz) {
         if (clazz != null && clazz.isInterface()
                 && UnifiedFactory.class.isAssignableFrom(clazz)) {
             return true;
@@ -49,7 +49,7 @@ public class FactoryFactoryImpl extends FactoryFactory
     }
 
     protected UnifiedFactory marshallFactory(
-            Class interfaceClass, Object context,
+            Class<?> interfaceClass, Object context,
             SourceDescriptor source, UnifiedFactory beforeFactory) {
         if (source == null) {
             throw new IllegalArgumentException();
@@ -85,7 +85,7 @@ public class FactoryFactoryImpl extends FactoryFactory
     }
 
     protected UnifiedFactory getFactory(
-            Class interfaceClass, Object context) {
+            Class<?> interfaceClass, Object context) {
         if (checkInterface(interfaceClass) == false || context == null) {
             throw new IllegalArgumentException();
         }

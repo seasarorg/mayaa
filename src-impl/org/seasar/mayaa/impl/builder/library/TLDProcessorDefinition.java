@@ -44,26 +44,26 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     public static final String BODY_CONTENT_SCRIPTLESS = "scriptless";
     public static final String BODY_CONTENT_TAGDEPENDENT = "tagdependent";
 
-    private Class _tagClass;
-    private Class _teiClass;
+    private Class<?> _tagClass;
+    private Class<?> _teiClass;
     private boolean _dynamicAttribute;
     private String _bodyContent = BODY_CONTENT_JSP;
 
-    public void setProcessorClass(Class processorClass) {
+    public void setProcessorClass(Class<?> processorClass) {
         if (JspProcessor.isSupportClass(processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = processorClass;
     }
 
-    public Class getProcessorClass() {
+    public Class<?> getProcessorClass() {
         if (_tagClass == null) {
             throw new IllegalStateException();
         }
         return _tagClass;
     }
 
-    public void setExtraInfoClass(Class teiClass) {
+    public void setExtraInfoClass(Class<?> teiClass) {
         if (teiClass == null
                 || TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
             throw new IllegalArgumentException();
@@ -71,7 +71,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         _teiClass = teiClass;
     }
 
-    public Class getExtraInfoClass() {
+    public Class<?> getExtraInfoClass() {
         return _teiClass;
     }
 

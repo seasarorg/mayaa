@@ -51,7 +51,7 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 	private String _name;
 	private String _implName;
 	private boolean _required;
-	private Class _expectedClass;
+	private Class<?> _expectedClass;
 	private String _defaultValue;
 	private String _finalValue;
 	private String _propertyConverterName;
@@ -104,11 +104,11 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 		return _required;
 	}
 
-	public void setExpectedClass(Class expectedClass) {
+	public void setExpectedClass(Class<?> expectedClass) {
 		_expectedClass = expectedClass;
 	}
 
-	public Class getExpectedClass() {
+	public Class<?> getExpectedClass() {
 		if (_expectedClass == null) {
 			return Object.class;
 		}
@@ -162,17 +162,17 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 			}
 			return converter;
 		}
-		Class propertyClass = getPropertyClass(processorDef, processor);
+		Class<?> propertyClass = getPropertyClass(processorDef, processor);
 		if (propertyClass != null) {
 			return library.getPropertyConverter(propertyClass);
 		}
 		return null;
 	}
 
-	protected Class getPropertyClass(
+	protected Class<?> getPropertyClass(
             ProcessorDefinition processorDef, TemplateProcessor processor) {
-		Class processorClass = processorDef.getProcessorClass();
-        Class propertyClass = ObjectUtil.getPropertyClass(processorClass, getImplName());
+		Class<?> processorClass = processorDef.getProcessorClass();
+        Class<?> propertyClass = ObjectUtil.getPropertyClass(processorClass, getImplName());
         if (propertyClass == null && processor instanceof VirtualPropertyAcceptable) {
             VirtualPropertyAcceptable acceptable =
                 (VirtualPropertyAcceptable) processor;
@@ -205,10 +205,10 @@ public class PropertyDefinitionImpl extends ParameterAwareImpl
 			throw new FinalProcessorPropertyException(processorName, qName);
 		}
 		if (StringUtil.hasValue(value)) {
-			Class propertyClass = getPropertyClass(processorDef, processor);
+			Class<?> propertyClass = getPropertyClass(processorDef, processor);
 			if (propertyClass == null) {
 				// real property not found on the processor.
-				Class processorClass = processorDef.getProcessorClass();
+				Class<?> processorClass = processorDef.getProcessorClass();
 				if (VirtualPropertyAcceptable.class
 						.isAssignableFrom(processorClass) == false) {
 					if (LOG.isWarnEnabled()) {

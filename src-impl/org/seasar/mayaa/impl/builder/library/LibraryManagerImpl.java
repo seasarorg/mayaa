@@ -94,13 +94,13 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         return (PropertyConverter) _converters.get(converterName);
     }
 
-    public PropertyConverter getPropertyConverter(Class propertyClass) {
+    public PropertyConverter getPropertyConverter(Class<?> propertyClass) {
         if (propertyClass == null) {
             throw new IllegalArgumentException();
         }
         for (Iterator it = _converters.values().iterator(); it.hasNext();) {
             PropertyConverter propertyConverter = (PropertyConverter) it.next();
-            Class converterClass = propertyConverter.getPropetyClass();
+            Class<?> converterClass = propertyConverter.getPropetyClass();
             if (propertyClass.isAssignableFrom(converterClass)) {
                 return propertyConverter;
             }

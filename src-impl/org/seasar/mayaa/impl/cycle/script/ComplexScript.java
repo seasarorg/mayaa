@@ -25,7 +25,7 @@ public class ComplexScript implements CompiledScript {
 
      private static final long serialVersionUID = -7356099026354564155L;
 
-    private Class _expectedClass = Object.class;
+    private Class<?> _expectedClass = Object.class;
     private CompiledScript[] _compiled;
 
     public ComplexScript(CompiledScript[] compiled) {
@@ -38,14 +38,14 @@ public class ComplexScript implements CompiledScript {
         }
     }
 
-    public void setExpectedClass(Class expectedClass) {
+    public void setExpectedClass(Class<?> expectedClass) {
         if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
         _expectedClass = expectedClass;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return _expectedClass;
     }
 

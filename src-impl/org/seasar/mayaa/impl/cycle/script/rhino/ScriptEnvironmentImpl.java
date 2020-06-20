@@ -224,7 +224,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                     || scriptResult instanceof Undefined;
     }
 
-    public Object convertFromScriptObject(Object scriptObject, Class expectedClass) {
+    public Object convertFromScriptObject(Object scriptObject, Class<?> expectedClass) {
         if (scriptObject != null && conversionRequires(scriptObject, expectedClass)) {
             Object result = RhinoUtil.convertResult(null, expectedClass, scriptObject);
             if (result instanceof NativeArray) {
@@ -241,7 +241,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return scriptObject;
     }
 
-    private boolean conversionRequires(Object scriptObject, Class expectedClass) {
+    private boolean conversionRequires(Object scriptObject, Class<?> expectedClass) {
         // PageAttributeScopeは呼ばれる数が多い
         if (scriptObject instanceof PageAttributeScope) {
             return false;
@@ -273,7 +273,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
-            Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
+            Class<?> clazz = ObjectUtil.loadClass(value, WrapFactory.class);
             setWrapFactory((WrapFactory) ObjectUtil.newInstance(clazz));
         } else if ("blockSign".equals(name)) {
             if (StringUtil.isEmpty(value)) {

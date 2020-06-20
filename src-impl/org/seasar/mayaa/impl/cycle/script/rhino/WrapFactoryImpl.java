@@ -34,7 +34,7 @@ public class WrapFactoryImpl extends WrapFactory implements Serializable {
     private static final long serialVersionUID = -8130663823197873722L;
 
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
-            Object javaObject, Class staticClass) {
+            Object javaObject, Class<?> staticClass) {
         if (javaObject instanceof Map) {
             return new NativeMap(scope, (Map) javaObject);
         } else if (javaObject instanceof List) {

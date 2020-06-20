@@ -48,7 +48,7 @@ public class TemplateAttributeReaderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class builderClass = XMLUtil.getClassValue(
+        Class<?> builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentReader = (TemplateAttributeReader) MarshallUtil.marshall(
                 builderClass, TemplateAttributeReader.class, _beforeReader,

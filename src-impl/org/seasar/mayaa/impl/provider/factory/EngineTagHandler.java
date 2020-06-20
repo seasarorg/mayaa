@@ -47,7 +47,7 @@ public class EngineTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class engineClass = XMLUtil.getClassValue(
+        Class<?> engineClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentEngine = (Engine) MarshallUtil.marshall(
                 engineClass, Engine.class, _beforeEngine,

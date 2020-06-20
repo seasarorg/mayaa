@@ -46,7 +46,7 @@ public class CycleFactoryImpl
 
     protected StandardScope _standardScope = new StandardScope();
     private Object _context;
-    private Class _serviceClass;
+    private Class<?> _serviceClass;
     private CycleLocalVariables _localVariables = new CycleLocalVariablesImpl();
 
     protected synchronized void initCurrentStrage() {
@@ -92,14 +92,14 @@ public class CycleFactoryImpl
         CycleThreadLocalFactory.cycleLocalInitialize();
     }
 
-    public void setServiceClass(Class serviceClass) {
+    public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
         _serviceClass = serviceClass;
     }
 
-    public Class getServiceClass() {
+    public Class<?> getServiceClass() {
         if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
@@ -111,7 +111,7 @@ public class CycleFactoryImpl
     }
 
     protected ServiceCycle defaultServiceCycle() {
-        Class serviceCycleClass = getServiceClass();
+        Class<?> serviceCycleClass = getServiceClass();
         if (serviceCycleClass == null) {
             throw new IllegalStateException();
         }

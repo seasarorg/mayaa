@@ -31,7 +31,7 @@ public class LiteralScript implements CompiledScript {
     public static final LiteralScript NULL_LITERAL_SCRIPT = new LiteralScript("");
 
     private String _text;
-    private Class _expectedClass = Object.class;
+    private Class<?> _expectedClass = Object.class;
 
     public LiteralScript(String text) {
         if (text == null) {
@@ -40,14 +40,14 @@ public class LiteralScript implements CompiledScript {
         _text = text;
     }
 
-    public void setExpectedClass(Class expectedClass) {
+    public void setExpectedClass(Class<?> expectedClass) {
         if (expectedClass == null) {
             throw new IllegalArgumentException();
         }
         _expectedClass = expectedClass;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return _expectedClass;
     }
 

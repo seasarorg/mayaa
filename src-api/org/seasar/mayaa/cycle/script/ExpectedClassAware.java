@@ -24,12 +24,12 @@ public interface ExpectedClassAware {
      * スクリプト実行結果への期待型の設定。
      * @param expectedClass 実行結果に期待するクラス型。
      */
-    void setExpectedClass(Class expectedClass);
+    void setExpectedClass(Class<?> expectedClass);
 
     /**
      * スクリプト実行結果への期待型の取得。
      * @return 実行結果に期待されるクラス型。
      */
-    Class getExpectedClass();
+    Class<?> getExpectedClass();
 
 }

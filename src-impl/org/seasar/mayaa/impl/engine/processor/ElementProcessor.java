@@ -171,7 +171,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return uniqueID;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return String.class;
     }
 

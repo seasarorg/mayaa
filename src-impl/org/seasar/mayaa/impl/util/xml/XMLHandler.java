@@ -40,7 +40,7 @@ public class XMLHandler extends DefaultHandler {
 
     private Map _entities;
 
-    private Class _neighborClass;
+    private Class<?> _neighborClass;
 
     protected void setRootHandler(TagHandler rootHandler) {
         if (rootHandler == null) {
@@ -57,14 +57,14 @@ public class XMLHandler extends DefaultHandler {
         return _log;
     }
 
-    protected void setNeighborClass(Class neighborClass) {
+    protected void setNeighborClass(Class<?> neighborClass) {
         if (neighborClass == null) {
             throw new IllegalArgumentException();
         }
         _neighborClass = neighborClass;
     }
 
-    protected Class getNeighborClass() {
+    protected Class<?> getNeighborClass() {
         return _neighborClass;
     }
 
@@ -106,7 +106,7 @@ public class XMLHandler extends DefaultHandler {
                 path = systemId.substring(pos);
             }
         }
-        Class neighborClass = getNeighborClass();
+        Class<?> neighborClass = getNeighborClass();
         if (neighborClass == null) {
             neighborClass = getClass();
         }

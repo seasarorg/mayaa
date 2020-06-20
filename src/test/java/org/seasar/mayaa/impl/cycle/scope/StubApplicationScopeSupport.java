@@ -73,7 +73,7 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
         throw new UnsupportedOperationException();
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         throw new UnsupportedOperationException();
     }
 

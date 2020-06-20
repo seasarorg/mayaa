@@ -64,7 +64,7 @@ public interface LibraryDefinition extends ParameterAware {
      * @param propertyClass コンバート対象型。
      * @return 指定型に対応したコンバータ、もしくはnull。
      */
-    PropertyConverter getPropertyConverter(Class propertyClass);
+    PropertyConverter getPropertyConverter(Class<?> propertyClass);
 
     /**
      * 登録プロパティセットのイテレータ。

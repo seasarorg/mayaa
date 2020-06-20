@@ -97,7 +97,7 @@ public interface ScriptEnvironment extends ParameterAware {
      * @return Javaのオブジェクト。
      * @since 1.1.11
      */
-    Object convertFromScriptObject(Object scriptObject, Class expectedClass);
+    Object convertFromScriptObject(Object scriptObject, Class<?> expectedClass);
 
     /**
      * スクリプトとして空と見なせることを判定する。

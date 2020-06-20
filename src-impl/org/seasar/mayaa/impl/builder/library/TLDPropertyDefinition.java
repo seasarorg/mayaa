@@ -71,7 +71,7 @@ public class TLDPropertyDefinition extends PropertyDefinitionImpl {
         if (injected == null) {
             throw new IllegalArgumentException();
         }
-        Class propertyClass = getPropertyClass(processorDef, processor);
+        Class<?> propertyClass = getPropertyClass(processorDef, processor);
         if (propertyClass == null) {
             // real property not found on the tag.
             String processorName = processorDef.getName();

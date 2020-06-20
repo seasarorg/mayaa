@@ -49,7 +49,7 @@ public class LibraryManagerTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class managerClass = XMLUtil.getClassValue(
+        Class<?> managerClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentManager = (LibraryManager) MarshallUtil.marshall(
                 managerClass, LibraryManager.class, _beforeManager,

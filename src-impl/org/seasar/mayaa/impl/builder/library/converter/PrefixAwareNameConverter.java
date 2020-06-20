@@ -31,12 +31,12 @@ public class PrefixAwareNameConverter
 
     private static final long serialVersionUID = 7617633992522264452L;
 
-    public Class getPropetyClass() {
+    public Class<?> getPropetyClass() {
         return PrefixAwareName.class;
     }
 
     public Serializable convert(
-            NodeAttribute attribute, String value, Class expectedClass) {
+            NodeAttribute attribute, String value, Class<?> expectedClass) {
         if (attribute == null || value == null) {
             throw new IllegalArgumentException();
         }

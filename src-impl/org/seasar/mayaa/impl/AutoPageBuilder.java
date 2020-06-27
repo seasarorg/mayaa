@@ -112,7 +112,7 @@ public class AutoPageBuilder implements Runnable {
                     REPEAT_DEFAULT);
             _wait = ObjectUtil.numberValue(
                     engine.getParameter(OPTION_AUTO_BUILD_WAIT),
-                    new Integer(WAIT_DEFAULT)).intValue() * 1000;
+                    Integer.valueOf(WAIT_DEFAULT)).intValue() * 1000;
             _renderMate = ObjectUtil.booleanValue(
                     engine.getParameter(OPTION_AUTO_BUILD_RENDER_MATE),
                     RENDER_MATE_DEFAULT);

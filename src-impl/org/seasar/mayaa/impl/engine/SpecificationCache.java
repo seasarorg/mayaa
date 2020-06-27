@@ -159,7 +159,7 @@ public class SpecificationCache {
         }
 
         public Object labeling(Object referent) {
-            return new Integer(++_receiveCount);
+            return Integer.valueOf(++_receiveCount);
         }
 
         public void sweepFinish(ReferenceCache monitor, Object label) {

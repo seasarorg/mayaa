@@ -64,7 +64,7 @@ public class NativeList extends NativeJavaObject {
         Object[] ids = super.getIds();
         Object[] ret = new Object[listSize + ids.length];
         for (int i = 0; i < listSize; i++) {
-            ret[i] = new Integer(i);
+            ret[i] = Integer.valueOf(i);
         }
         for (int i = 0; i < ids.length; i++) {
             ret[i + listSize] = ids[i];

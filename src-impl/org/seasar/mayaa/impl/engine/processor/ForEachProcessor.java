@@ -180,7 +180,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
 
         public Integer getNextIndex() {
-            return new Integer(++_index);
+            return Integer.valueOf(++_index);
         }
 
         public boolean hasNext() {

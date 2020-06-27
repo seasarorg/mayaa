@@ -91,7 +91,7 @@ public class IteratorUtil {
     private static Iterator<Byte> toObjectIterator(byte[] bytes) {
         Byte[] objects = new Byte[bytes.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Byte(bytes[i]);
+            objects[i] = Byte.valueOf(bytes[i]);
         }
         return Arrays.asList(objects).iterator();
     }
@@ -99,7 +99,7 @@ public class IteratorUtil {
     private static Iterator<Character> toObjectIterator(char[] chars) {
         Character[] objects = new Character[chars.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Character(chars[i]);
+            objects[i] = Character.valueOf(chars[i]);
         }
         return Arrays.asList(objects).iterator();
     }
@@ -107,15 +107,15 @@ public class IteratorUtil {
     private static Iterator<Short> toObjectIterator(short[] shorts) {
         Short[] objects = new Short[shorts.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Short(shorts[i]);
+            objects[i] = Short.valueOf(shorts[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
     private static Iterator<Integer> toObjectIterator(int[] ints) {
-        Integer[] objects = new Integer[ints.length];
+        Integer[] objects =new Integer[ints.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Integer(ints[i]);
+            objects[i] = Integer.valueOf(ints[i]);
         }
         return Arrays.asList(objects).iterator();
     }
@@ -123,7 +123,7 @@ public class IteratorUtil {
     private static Iterator<Long> toObjectIterator(long[] longs) {
         Long[] objects = new Long[longs.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Long(longs[i]);
+            objects[i] = Long.valueOf(longs[i]);
         }
         return Arrays.asList(objects).iterator();
     }
@@ -131,7 +131,7 @@ public class IteratorUtil {
     private static Iterator<Float> toObjectIterator(float[] floats) {
         Float[] objects = new Float[floats.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Float(floats[i]);
+            objects[i] = Float.valueOf(floats[i]);
         }
         return Arrays.asList(objects).iterator();
     }
@@ -139,7 +139,7 @@ public class IteratorUtil {
     private static Iterator<Double> toObjectIterator(double[] doubles) {
         Double[] objects = new Double[doubles.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Double(doubles[i]);
+            objects[i] = Double.valueOf(doubles[i]);
         }
         return Arrays.asList(objects).iterator();
     }

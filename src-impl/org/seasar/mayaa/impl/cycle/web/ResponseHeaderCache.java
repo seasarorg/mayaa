@@ -26,31 +26,31 @@ import java.util.Set;
  */
 public class ResponseHeaderCache {
 
-    private Map _cacheWriteHeaders = new LinkedHashMap();
+    private Map<String, List<Object>> _cacheWriteHeaders = new LinkedHashMap<>();
 
     public void setHeader(String name, String value) {
-        List list = getHeaders(name);
+        List<Object> list = getHeaders(name);
         if (list.size() > 0) {
             list.set(list.size()-1, value);
         }
     }
 
     public void addHeader(String name, String value) {
-        List list = getHeaders(name);
+        List<Object> list = getHeaders(name);
         list.add(value);
     }
 
-    public List getHeaders(String name) {
+    public List<Object> getHeaders(String name) {
         if (containsHeader(name)) {
-            return (List)_cacheWriteHeaders.get(name);
+            return _cacheWriteHeaders.get(name);
         }
 
-        List list = new ArrayList();
+        List<Object> list = new ArrayList<>();
         _cacheWriteHeaders.put(name, list);
         return list;
     }
 
-    public Set getHeaderNames() {
+    public Set<String> getHeaderNames() {
         return _cacheWriteHeaders.keySet();
     }
 

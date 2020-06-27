@@ -34,7 +34,8 @@ import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
  */
 public final class StringUtil {
 
-    private static Map _propFiles =
+    @SuppressWarnings("unchecked")
+    private static Map<Package, Properties> _propFiles =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
     private static final String[] ZERO = new String[0];
 
@@ -495,7 +496,7 @@ public final class StringUtil {
     protected static String getMessage(
             Class<?> clazz, int index, String[] params) {
         Package key = clazz.getPackage();
-        Properties properties = (Properties) _propFiles.get(key);
+        Properties properties = _propFiles.get(key);
         if (properties == null) {
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
@@ -526,7 +527,7 @@ public final class StringUtil {
         if (params == null) {
             params = ZERO;
         }
-        return MessageFormat.format(message, params);
+        return MessageFormat.format(message, (Object[]) params);
     }
 
     /**

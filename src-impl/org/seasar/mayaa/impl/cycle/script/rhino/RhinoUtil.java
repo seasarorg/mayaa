@@ -248,7 +248,7 @@ public class RhinoUtil {
             getter.setAccessible(true);
         }
         try {
-            return getter.invoke(bean, null);
+            return getter.invoke(bean);
         } catch (IllegalAccessException e) {
             LOG.debug(StringUtil.getMessage(RhinoUtil.class, 1,
                     propertyName, beanClass.getName()));

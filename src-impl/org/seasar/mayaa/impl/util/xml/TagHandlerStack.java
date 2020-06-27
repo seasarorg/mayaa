@@ -29,13 +29,13 @@ public class TagHandlerStack {
 
     private TagHandler _rootHandler;
 
-    private Stack _stack;
+    private Stack<TagHandler> _stack;
 
     public TagHandlerStack(TagHandler rootHandler) {
         if (rootHandler == null) {
             throw new IllegalArgumentException();
         }
-        _stack = new Stack();
+        _stack = new Stack<>();
         _rootName = rootHandler.getName();
         _rootHandler = rootHandler;
     }

@@ -33,7 +33,7 @@ public interface ProcessorTreeWalker
      * プロセッサ実行スコープに、登録スクリプト変数を提供する。
      * @return 登録変数のマップ。キーが変数名となる。
      */
-    Map getVariables();
+    Map<?,?> getVariables();
 
     /**
      * ノードの初期化を行う。このメソッドは、TemplateBuilder#buildの中で呼ばれる。

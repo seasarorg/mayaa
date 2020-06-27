@@ -38,7 +38,7 @@ public class XMLHandler extends DefaultHandler {
 
     private Locator _locator;
 
-    private Map _entities;
+    private Map<String, String> _entities;
 
     private Class<?> _neighborClass;
 
@@ -68,9 +68,9 @@ public class XMLHandler extends DefaultHandler {
         return _neighborClass;
     }
 
-    protected Map getEntityMap() {
+    protected Map<String, String> getEntityMap() {
         if (_entities == null) {
-            _entities = new HashMap();
+            _entities = new HashMap<>();
         }
         return _entities;
     }
@@ -95,7 +95,7 @@ public class XMLHandler extends DefaultHandler {
 
     public InputSource resolveEntity(String publicId, String systemId) {
         String path = systemId;
-        Map entities = getEntityMap();
+        Map<String, String> entities = getEntityMap();
         if (entities != null && entities.containsKey(publicId)) {
             path = (String) entities.get(publicId);
         } else if (entities != null && entities.containsKey(systemId)) {

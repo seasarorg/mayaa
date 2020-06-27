@@ -48,6 +48,7 @@ public class PageImpl extends SpecificationImpl implements Page {
     private transient Page _superPage;
     private transient String _superSuffix;
     private transient String _superExtension;
+
     private transient Map<TemplateProcessor, Boolean> _beginRenderListeners;
     private String _suffixScriptText;
     private CompiledScript _suffixScript;

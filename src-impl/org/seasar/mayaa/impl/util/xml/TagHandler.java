@@ -31,7 +31,7 @@ public class TagHandler {
         new AttributesImpl();
     private static final TagHandler NULL_HANDLER = new TagHandler("_null_");
 
-    private Map _children = new HashMap();
+    private Map<String, TagHandler> _children = new HashMap<>();
     private boolean _valid = true;
     private StringBuffer _buffer = new StringBuffer();
     private String _name;

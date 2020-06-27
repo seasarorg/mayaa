@@ -99,7 +99,7 @@ public class ScriptEnvironmentTest {
         CycleUtil.initialize(request, new MockHttpServletResponse());
 
         testee.startScope(null);
-        Object result = compiledScript.execute(null);
+        compiledScript.execute(null);
         // System.out.println(result);
         testee.endScope();
 

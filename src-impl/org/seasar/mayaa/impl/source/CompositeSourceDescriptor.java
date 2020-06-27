@@ -33,7 +33,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
 
     private static final long serialVersionUID = 7557914925525488748L;
 
-    private List _descriptors = new ArrayList();
+    private List<SourceDescriptor> _descriptors = new ArrayList<>();
     private SourceDescriptor _foundLast;
 
     public void addSourceDescriptor(SourceDescriptor source) {

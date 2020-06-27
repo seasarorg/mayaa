@@ -133,7 +133,7 @@ public class ResponseImpl extends AbstractResponse {
         return _httpServletResponse;
     }
 
-    public List getHeaders(String name) {
+    public List<Object> getHeaders(String name) {
         return _headers.getHeaders(name);
     }
 
@@ -141,7 +141,7 @@ public class ResponseImpl extends AbstractResponse {
         return _headers.containsHeader(name);
     }
 
-    public Set getHeaderNames() {
+    public Set<String> getHeaderNames() {
         return _headers.getHeaderNames();
     }
 

@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletRequest;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
@@ -32,7 +33,7 @@ public class SerializeThread extends Thread {
     private static final int RECYCLE_LIVE_COUNT = 600;   // x 100 msec => 1 min
     private int _index;
     private volatile int _liveCount;
-    private List _queue = new ArrayList();
+    private List<Specification> _queue = new ArrayList<>();
     private Object _requestContext;
     private Object _responseContext;
     private boolean _terminated;

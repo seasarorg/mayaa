@@ -27,7 +27,7 @@ public abstract class AbstractSoftReferencePool implements Serializable {
 
     private static final long serialVersionUID = -4959957173402498504L;
 
-    private List _pool;
+    private List<SoftReference<Object>> _pool;
 
     /**
      * 新たなインスタンスを生成して返します。
@@ -60,7 +60,7 @@ public abstract class AbstractSoftReferencePool implements Serializable {
      * @param initialCapacity 初期容量
      */
     public AbstractSoftReferencePool(int initialCapacity) {
-        _pool = new ArrayList(initialCapacity);
+        _pool = new ArrayList<>(initialCapacity);
     }
 
     protected Object borrowObject() {
@@ -70,7 +70,7 @@ public abstract class AbstractSoftReferencePool implements Serializable {
                 if (_pool.isEmpty()) {
                     obj = createObject();
                 } else {
-                    SoftReference ref = (SoftReference) _pool.remove(_pool.size() - 1);
+                    SoftReference<Object> ref = _pool.remove(_pool.size() - 1);
                     obj = ref.get();
                 }
             }
@@ -81,7 +81,7 @@ public abstract class AbstractSoftReferencePool implements Serializable {
     protected void returnObject(Object obj) {
         if (validateObject(obj)) {
             synchronized (_pool) {
-                _pool.add(new SoftReference(obj));
+                _pool.add(new SoftReference<>(obj));
             }
         }
     }

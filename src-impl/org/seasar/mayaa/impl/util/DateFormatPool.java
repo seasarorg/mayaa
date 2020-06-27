@@ -32,7 +32,8 @@ import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
  */
 public class DateFormatPool {
 
-    private static Map _formatPools =
+    @SuppressWarnings("unchecked")
+    private static Map<String, Pool> _formatPools =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private DateFormatPool() {
@@ -49,7 +50,7 @@ public class DateFormatPool {
 
     public static DateFormat borrowFormat(String formatPattern, Locale locale) {
         String key = makeKey(formatPattern, locale);
-        Pool pool = (Pool) _formatPools.get(key);
+        Pool pool = _formatPools.get(key);
         if (pool == null) {
             pool = new Pool(formatPattern, locale);
             _formatPools.put(key, pool);

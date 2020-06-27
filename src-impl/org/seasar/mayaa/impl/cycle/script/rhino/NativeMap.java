@@ -29,9 +29,9 @@ public class NativeMap extends NativeJavaObject {
 
     private static final long serialVersionUID = -3987211835989098780L;
 
-    private Map _map;
+    private Map<String, Object> _map;
 
-    public NativeMap(Scriptable scope, Map map) {
+    public NativeMap(Scriptable scope, Map<String, Object> map) {
         super(scope, map, Map.class);
         if (map == null) {
             throw new IllegalArgumentException();
@@ -58,7 +58,7 @@ public class NativeMap extends NativeJavaObject {
     }
 
     public Object[] getIds() {
-        Set set = new HashSet(_map.keySet());
+        Set<Object> set = new HashSet<Object>(_map.keySet());
         Object[] ids = super.getIds();
         for (int i = 0; i < ids.length; i++) {
             Object name = ids[i];

@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.engine;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +41,13 @@ public class SpecificationCache {
     //@GuardedBy(this)
     protected Map<String, ReferSpecification> _specifications = new HashMap<>();
 
-    protected ReferenceCache _gcChecker;
+    protected ReferenceCache<Object> _gcChecker;
     protected SoftReference<Object> _gabage;
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
         if (surviveLimit > 0 && !ParameterAware.IS_SECURE_WEB) {
-            _gcChecker = new ReferenceCache(Object.class,
+            _gcChecker = new ReferenceCache<>(Object.class,
                     ReferenceCache.SOFT, new GCReceiver());
             postNewGabage();
         }
@@ -162,7 +161,7 @@ public class SpecificationCache {
             return Integer.valueOf(++_receiveCount);
         }
 
-        public void sweepFinish(ReferenceCache monitor, Object label) {
+        public void sweepFinish(ReferenceCache<?> monitor, Object label) {
             synchronized (SpecificationCache.this) {
                 if (_specifications == null ||_sweepThreadAlive == false) {
                     return;

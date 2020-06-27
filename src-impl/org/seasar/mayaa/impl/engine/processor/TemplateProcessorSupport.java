@@ -60,7 +60,7 @@ public class TemplateProcessorSupport
 
     private transient ProcessorTreeWalker _parent;
     // _childrenはビルド時のみ変更される。そのときはEngineのインスタンスでガードされる。
-    private List/*<ProcessorTreeWalker>*/ _children;
+    private List<ProcessorTreeWalker> _children;
     protected SpecificationNode _originalNode;
     protected transient SpecificationNode _injectedNode;
     private boolean _evalBodyInclude = true;
@@ -150,7 +150,7 @@ public class TemplateProcessorSupport
 
     // ProcessorTreeWalker implements --------------------------------
 
-    public Map getVariables() {
+    public Map<?,?> getVariables() {
         return null;
     }
 
@@ -178,7 +178,7 @@ public class TemplateProcessorSupport
             throw new IllegalArgumentException("child is null");
         }
         if (_children == null) {
-            _children = new ArrayList();
+            _children = new ArrayList<>();
         }
         if (index == Integer.MAX_VALUE) {
             index = _children.size();

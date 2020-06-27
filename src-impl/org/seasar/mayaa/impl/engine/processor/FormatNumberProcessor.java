@@ -40,7 +40,8 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 5513075315121041838L;
 
-    private static Map _formatPools =
+    @SuppressWarnings("unchecked")
+    private static Map<String, NumberFormatPool> _formatPools =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private ProcessorProperty _value;
@@ -100,7 +101,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     protected NumberFormatPool getFormatPool() {
         synchronized (_formatPools) {
-            NumberFormatPool pool = (NumberFormatPool) _formatPools.get(_pattern);
+            NumberFormatPool pool = _formatPools.get(_pattern);
             if (pool == null) {
                 pool = new NumberFormatPool(_pattern);
                 _formatPools.put(_pattern, pool);

@@ -80,7 +80,7 @@ public class NativeDynaBean extends NativeJavaObject {
     public Object[] getIds() {
         DynaClass clazz = _bean.getDynaClass();
         DynaProperty[] props = clazz.getDynaProperties();
-        Set set = new HashSet();
+        Set<Object> set = new HashSet<>();
         for (int i = 0; i < props.length; i++) {
             set.add(props[i].getName());
         }

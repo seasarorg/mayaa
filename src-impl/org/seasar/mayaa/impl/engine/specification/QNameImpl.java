@@ -33,7 +33,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = -102674132611191747L;
 
-    private static volatile Map _cache =
+    @SuppressWarnings("unchecked")
+    private static volatile Map<String, QName> _cache =
         Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
 
     public static QName getInstance(String localName) {

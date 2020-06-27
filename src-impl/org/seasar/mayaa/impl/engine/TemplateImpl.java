@@ -54,7 +54,7 @@ public class TemplateImpl
     private String _pageName;
     private String _suffix;
     private String _extension;
-    private List _childProcessors = new ArrayList();
+    private List<ProcessorTreeWalker> _childProcessors = new ArrayList<>();
 
     public void initialize(Page page, String suffix, String extension) {
         if (page == null || suffix == null || extension == null) {
@@ -203,13 +203,13 @@ public class TemplateImpl
         return ret;
     }
 
-    protected void replaceProcessors(List processors) {
+    protected void replaceProcessors(List<ProcessorTreeWalker> processors) {
         synchronized (this) {
             clearChildProcessors();
             for (int i = 0; i < processors.size(); i++) {
                 Object item = processors.get(i);
                 if (item instanceof ProcessorTreeWalker) {
-                    addChildProcessor((ProcessorTreeWalker)processors.get(i));
+                    addChildProcessor(processors.get(i));
                 }
             }
         }
@@ -249,7 +249,7 @@ public class TemplateImpl
 
     // ProcessorTreeWalker implements --------------------------------
 
-    public Map getVariables() {
+    public Map<?,?> getVariables() {
         return null;
     }
 

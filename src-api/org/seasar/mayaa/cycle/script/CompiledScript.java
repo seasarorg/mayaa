@@ -48,14 +48,14 @@ public interface CompiledScript
      * 式言語様式のメソッドコールのための引数型を設定する。
      * @param methodArgClasses メソッド引数型配列。
      */
-    void setMethodArgClasses(Class[] methodArgClasses);
+    void setMethodArgClasses(Class<?>[] methodArgClasses);
 
     /**
      * JSF等の式言語様式実行ミドルウェア対応。
      * 式言語様式のメソッドコールのための引数型を取得する。
      * @return メソッド引数型配列。
      */
-    Class[] getMethodArgClasses();
+    Class<?>[] getMethodArgClasses();
 
     /**
      * JSF等の式言語様式実行ミドルウェア対応。

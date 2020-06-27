@@ -22,7 +22,9 @@ import java.util.NoSuchElementException;
  * Iterator用のNullObject。
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @deprecated 1.1.35 以降は廃止予定
  */
+@SuppressWarnings("rawtypes")
 public class NullIterator implements Iterator {
 
     private static final NullIterator NULL_ITERATOR = new NullIterator();

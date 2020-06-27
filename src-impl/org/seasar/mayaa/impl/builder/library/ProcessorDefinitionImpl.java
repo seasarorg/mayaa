@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder.library;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,7 +40,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -51,10 +51,10 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     private static final Log LOG =
         LogFactory.getLog(ProcessorDefinitionImpl.class);
 
-    private Class _processorClass;
-    private List _propertySetRefs;
+    private Class<?> _processorClass;
+    private List<PropertySetRef> _propertySetRefs;
 
-    public void setProcessorClass(Class processorClass) {
+    public void setProcessorClass(Class<?> processorClass) {
         if (processorClass == null
                 || TemplateProcessor.class.isAssignableFrom(
                         processorClass) == false) {
@@ -63,7 +63,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         _processorClass = processorClass;
     }
 
-    public Class getProcessorClass() {
+    public Class<?> getProcessorClass() {
         return _processorClass;
     }
 
@@ -73,25 +73,31 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             throw new IllegalArgumentException();
         }
         if (_propertySetRefs == null) {
-            _propertySetRefs = new ArrayList();
+            _propertySetRefs = new ArrayList<>();
         }
-        if (_propertySetRefs.contains(name)) {
-            if (LOG.isWarnEnabled()) {
-                String line = Integer.toString(lineNumber);
-                LOG.warn(StringUtil.getMessage(
-                        ProcessorDefinitionImpl.class, 1, name, systemID, line));
+
+        boolean alreadyDefined = false;
+        for (PropertySetRef ref :_propertySetRefs) {
+            if (name.equals(ref.getName())) {
+                alreadyDefined = true;
+                if (LOG.isWarnEnabled()) {
+                    String line = Integer.toString(lineNumber);
+                    LOG.warn(StringUtil.getMessage(
+                            ProcessorDefinitionImpl.class, 1, name, systemID, line));
+                }
             }
-        } else {
+        }
+        if (!alreadyDefined) {
             _propertySetRefs.add(
                     new PropertySetRef(name, systemID, lineNumber));
         }
     }
 
-    public Iterator iteratePropertySets() {
+    public Iterator<PropertySet> iteratePropertySets() {
         if (_propertySetRefs == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
-        Iterator it = _propertySetRefs.iterator();
+        Iterator<PropertySetRef> it = _propertySetRefs.iterator();
         return new PropertySetIterator(it, getLibraryDefinition());
     }
 
@@ -117,7 +123,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             property.createProcessorProperty(this, processor, original, injected);
         if (value != null) {
             String propertyImplName = property.getImplName();
-            Class processorClass = getProcessorClass();
+            Class<?> processorClass = getProcessorClass();
             if (ObjectUtil.hasProperty(processorClass, propertyImplName)) {
                 // prefixが付いていない限りoriginalを引き継がせる
                 if (value instanceof PrefixAwareName) {
@@ -167,8 +173,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingPropertySet(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertySet propertySet) {
-        for (Iterator it = propertySet.iteratePropertyDefinition(); it.hasNext();) {
-            PropertyDefinition property = (PropertyDefinition) it.next();
+        for (Iterator<PropertyDefinition> it = propertySet.iteratePropertyDefinition(); it.hasNext();) {
+            PropertyDefinition property = it.next();
             settingProperty(original, injected, processor, property);
         }
     }
@@ -176,20 +182,20 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingInformalProperties(SpecificationNode injected,
             InformalPropertyAcceptable acceptable) {
         URI injectedNS = injected.getQName().getNamespaceURI();
-        for (Iterator it = injected.iterateAttribute(); it.hasNext();) {
-            NodeAttribute attr = (NodeAttribute) it.next();
+        for (Iterator<NodeAttribute> it = injected.iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = it.next();
             if (contain(injectedNS, attr)) {
                 continue;
             }
             LibraryDefinition library = getLibraryDefinition();
-            Class propertyClass = acceptable.getInformalPropertyClass();
+            Class<?> propertyClass = acceptable.getInformalPropertyClass();
             PropertyConverter converter =
                 library.getPropertyConverter(propertyClass);
             if (converter == null) {
                 throw new ConverterNotFoundException(
                         propertyClass.getName(), getSystemID(), getLineNumber());
             }
-            Class expectedClass = acceptable.getInformalExpectedClass();
+            Class<?> expectedClass = acceptable.getInformalExpectedClass();
             String value = attr.getValue();
             Serializable property = converter.convert(attr, value, expectedClass);
             if (property == null) {
@@ -210,8 +216,8 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         TemplateProcessor processor = newInstance();
         processor.setProcessorDefinition(this);
         settingPropertySet(original, injected, processor, this);
-        for (Iterator it = iteratePropertySets(); it.hasNext();) {
-            PropertySet propertySet = (PropertySet) it.next();
+        for (Iterator<PropertySet> it = iteratePropertySets(); it.hasNext();) {
+            PropertySet propertySet = it.next();
             settingPropertySet(original, injected, processor, propertySet);
         }
         if (processor instanceof InformalPropertyAcceptable) {
@@ -255,12 +261,12 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     }
 
-    protected static class PropertySetIterator implements Iterator {
+    protected static class PropertySetIterator implements Iterator<PropertySet> {
 
-        private Iterator _it;
+        private Iterator<PropertySetRef> _it;
         private LibraryDefinition _library;
 
-        public PropertySetIterator(Iterator it, LibraryDefinition library) {
+        public PropertySetIterator(Iterator<PropertySetRef> it, LibraryDefinition library) {
             if (it == null || library == null) {
                 throw new IllegalArgumentException();
             }
@@ -272,7 +278,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             return _it.hasNext();
         }
 
-        public Object next() {
+        public PropertySet next() {
             PropertySetRef ref = (PropertySetRef) _it.next();
             PropertySet propertySet = _library.getPropertySet(ref.getName());
             if (propertySet == null) {

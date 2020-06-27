@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,13 +44,15 @@ public class ParamValuesScope
         return "paramValues";
     }
 
-    public Iterator iterateAttributeNames() {
-        return EnumerationIterator.getInstance(_request.getParameterNames());
+    public Iterator<String> iterateAttributeNames() {
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _request.getParameterNames();
+        return EnumerationIterator.getInstance(e);
     }
 
     public boolean hasAttribute(String name) {
-        for (Iterator it = iterateAttributeNames(); it.hasNext();) {
-            String paramName = (String) it.next();
+        for (Iterator<String> it = iterateAttributeNames(); it.hasNext();) {
+            String paramName = it.next();
             if (paramName.equals(name)) {
                 return true;
             }

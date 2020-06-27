@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
@@ -49,7 +48,8 @@ public class PageImpl extends SpecificationImpl implements Page {
     private transient Page _superPage;
     private transient String _superSuffix;
     private transient String _superExtension;
-    private transient Map _beginRenderListeners;
+
+    private transient Map<TemplateProcessor, Boolean> _beginRenderListeners;
     private String _suffixScriptText;
     private CompiledScript _suffixScript;
 
@@ -241,7 +241,7 @@ public class PageImpl extends SpecificationImpl implements Page {
         return templates[0].doTemplateRender(topLevelPage);
     }
 
-    protected Map getBeginRenderListeners() {
+    protected Map<TemplateProcessor, Boolean> getBeginRenderListeners() {
         synchronized(this) {
             if (_beginRenderListeners == null) {
                 _beginRenderListeners = new ReferenceMap(
@@ -261,9 +261,7 @@ public class PageImpl extends SpecificationImpl implements Page {
     }
 
     protected void notifyBeginRender() {
-        for (Iterator it = getBeginRenderListeners().keySet().iterator();
-                it.hasNext(); ) {
-            TemplateProcessor listener = (TemplateProcessor) it.next();
+        for (TemplateProcessor listener : getBeginRenderListeners().keySet()) {
             listener.notifyBeginRender(this);
         }
     }

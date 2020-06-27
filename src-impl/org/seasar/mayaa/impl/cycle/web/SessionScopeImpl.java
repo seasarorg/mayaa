@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -26,7 +27,6 @@ import org.seasar.mayaa.cycle.scope.SessionScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.scope.AbstractWritableAttributeScope;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.util.IteratorUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
 
@@ -73,13 +73,14 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         return ServiceCycle.SCOPE_SESSION;
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         check(false);
         if (_httpSession == null) {
-            return IteratorUtil.NULL_ITERATOR;
+            return Collections.emptyIterator();
         }
-        return EnumerationIterator.getInstance(
-                _httpSession.getAttributeNames());
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _httpSession.getAttributeNames();
+        return EnumerationIterator.getInstance(e);
     }
 
     public boolean hasAttribute(String name) {
@@ -90,7 +91,7 @@ public class SessionScopeImpl extends AbstractWritableAttributeScope
         if (_httpSession == null) {
             return false;
         }
-        for (Enumeration e = _httpSession.getAttributeNames();
+        for (Enumeration<?> e = _httpSession.getAttributeNames();
                 e.hasMoreElements();) {
             if (e.nextElement().equals(name)) {
                 return true;

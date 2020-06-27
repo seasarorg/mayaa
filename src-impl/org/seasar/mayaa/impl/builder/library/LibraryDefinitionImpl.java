@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.builder.library;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -46,10 +46,10 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         LogFactory.getLog(LibraryDefinitionImpl.class);
 
     private URI _namespaceURI;
-    private List _assignedURI = new ArrayList();
-    private Map _converters;
-    private Map _propertySets;
-    private Map _processors;
+    private List<URI> _assignedURI = new ArrayList<>();
+    private Map<String, PropertyConverter> _converters;
+    private Map<String, PropertySet> _propertySets;
+    private Map<String, ProcessorDefinition> _processors;
     private String _systemID;
 
     public void setSystemID(String systemID) {
@@ -84,7 +84,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
     }
 
-    public Iterator iterateAssignedURI() {
+    public Iterator<URI> iterateAssignedURI() {
         return _assignedURI.iterator();
     }
 
@@ -107,7 +107,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
             name = converter.getPropetyClass().getName();
         }
         if (_converters == null) {
-            _converters = new HashMap();
+            _converters = new HashMap<>();
         }
         if (_converters.containsKey(name)) {
             warnAlreadyRegistered(converter, name, 1);
@@ -116,13 +116,13 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
     }
 
-    public PropertyConverter getPropertyConverter(Class propertyClass) {
+    public PropertyConverter getPropertyConverter(Class<?> propertyClass) {
         if (propertyClass == null) {
             throw new IllegalArgumentException();
         }
         if (_converters != null) {
-            for (Iterator it = _converters.values().iterator(); it.hasNext();) {
-                PropertyConverter converter = (PropertyConverter) it.next();
+            for (Iterator<PropertyConverter> it = _converters.values().iterator(); it.hasNext();) {
+                PropertyConverter converter = it.next();
                 if (propertyClass.equals(converter.getPropetyClass())) {
                     return converter;
                 }
@@ -143,9 +143,9 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         return manager.getPropertyConverter(converterName);
     }
 
-    public Iterator iteratePropertyConverters() {
+    public Iterator<PropertyConverter> iteratePropertyConverters() {
         if (_converters == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _converters.values().iterator();
     }
@@ -156,7 +156,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
         String name = propertySet.getName();
         if (_propertySets == null) {
-            _propertySets = new HashMap();
+            _propertySets = new HashMap<>();
         }
         if (_propertySets.containsKey(name)) {
             warnAlreadyRegistered(propertySet, name, 2);
@@ -165,9 +165,9 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
     }
 
-    public Iterator iteratePropertySets() {
+    public Iterator<PropertySet> iteratePropertySets() {
         if (_propertySets == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _propertySets.values().iterator();
     }
@@ -188,7 +188,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
         String name = processor.getName();
         if (_processors == null) {
-            _processors = new HashMap();
+            _processors = new HashMap<>();
         }
         if (_processors.containsKey(name)) {
             warnAlreadyRegistered(processor, name, 3);
@@ -197,9 +197,9 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
     }
 
-    public Iterator iterateProcessorDefinitions() {
+    public Iterator<ProcessorDefinition> iterateProcessorDefinitions() {
         if (_processors == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _processors.values().iterator();
     }
@@ -222,15 +222,15 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         sb.append(", namespaceUrl = ");
         sb.append(_namespaceURI);
         sb.append(", assignedURI = (");
-        for (Iterator it = _assignedURI.iterator(); it.hasNext();) {
+        for (Iterator<URI> it = _assignedURI.iterator(); it.hasNext();) {
             sb.append(it.next());
             sb.append(", ");
         }
         sb.append("), ");
         if (_processors != null) {
             sb.append("processors = (");
-            for (Iterator it = _processors.keySet().iterator(); it.hasNext();) {
-                String key = (String) it.next();
+            for (Iterator<String> it = _processors.keySet().iterator(); it.hasNext();) {
+                String key = it.next();
                 ProcessorDefinition def = getProcessorDefinition(key);
                 sb.append(def.getName());
                 sb.append(" - ");
@@ -241,8 +241,8 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         }
         if (_propertySets != null) {
             sb.append("propertySets = (");
-            for (Iterator it = _propertySets.keySet().iterator(); it.hasNext();) {
-                String key = (String) it.next();
+            for (Iterator<String> it = _propertySets.keySet().iterator(); it.hasNext();) {
+                String key = it.next();
                 PropertySet prop = getPropertySet(key);
                 sb.append(prop.getName());
                 sb.append(" = ");

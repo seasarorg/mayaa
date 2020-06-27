@@ -23,9 +23,9 @@ import java.util.Map;
  */
 public class J2EEEntities implements CONST_J2EE {
 
-    private static Map _entityMap;
+    private static Map<String, String> _entityMap;
     static {
-        _entityMap = new HashMap();
+        _entityMap = new HashMap<>();
         _entityMap.put(PUBLIC_WEB_DTD_22, FILE_WEB_DTD_22);
         _entityMap.put(SYSTEM_WEB_DTD_22, FILE_WEB_DTD_22);
         _entityMap.put(PUBLIC_WEB_DTD_23, FILE_WEB_DTD_23);
@@ -62,7 +62,7 @@ public class J2EEEntities implements CONST_J2EE {
         _entityMap.put(LOCATION_WEB_DTD_31, FILE_WEB_DTD_31);
     }
 
-    public static Map getEntityMap() {
+    public static Map<String, String> getEntityMap() {
         return _entityMap;
     }
 

@@ -33,7 +33,7 @@ public class UnifiedFactoryHandler extends XMLHandler
     private FactoryTagHandler _rootHandler;
 
     public UnifiedFactoryHandler(
-            Class interfaceClass, UnifiedFactory beforeFactory) {
+            Class<?> interfaceClass, UnifiedFactory beforeFactory) {
         if (interfaceClass == null) {
             throw new IllegalArgumentException();
         }

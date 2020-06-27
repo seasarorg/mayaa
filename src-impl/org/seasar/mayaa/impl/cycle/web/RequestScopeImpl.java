@@ -72,11 +72,12 @@ public class RequestScopeImpl extends AbstractRequestScope {
     public Locale[] getLocales() {
         check();
         if (_locales == null) {
-            Enumeration locales = _httpServletRequest.getLocales();
+            @SuppressWarnings("unchecked")
+            Enumeration<Locale> locales = _httpServletRequest.getLocales();
             if (locales == null) {
                 _locales = new Locale[0];
             } else {
-                ArrayList list = new ArrayList();
+                ArrayList<Locale> list = new ArrayList<>();
                 while (locales.hasMoreElements()) {
                     list.add(locales.nextElement());
                 }
@@ -125,10 +126,11 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     // AttributeScope implements -------------------------------------
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         check();
-        return EnumerationIterator.getInstance(
-                _httpServletRequest.getAttributeNames());
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _httpServletRequest.getAttributeNames();
+        return EnumerationIterator.getInstance(e);
     }
 
     public boolean hasAttribute(String name) {
@@ -136,8 +138,9 @@ public class RequestScopeImpl extends AbstractRequestScope {
         if (StringUtil.isEmpty(name)) {
             return false;
         }
-        for (Enumeration e = _httpServletRequest.getAttributeNames();
-                e.hasMoreElements();) {
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _httpServletRequest.getAttributeNames();
+        while (e.hasMoreElements()) {
             if (e.nextElement().equals(name)) {
                 return true;
             }

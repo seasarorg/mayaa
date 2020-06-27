@@ -35,8 +35,8 @@ public class DelaySourceDescriptor extends ParameterAwareImpl
     public boolean exists() {
         if (_source == null) {
             _source = SourceUtil.getSourceDescriptor(getSystemID());
-            for (Iterator it = iterateParameterNames(); it.hasNext();) {
-                String name = (String) it.next();
+            for (Iterator<String> it = iterateParameterNames(); it.hasNext();) {
+                String name = it.next();
                 String value = getParameter(name);
                 _source.setParameter(name, value);
             }

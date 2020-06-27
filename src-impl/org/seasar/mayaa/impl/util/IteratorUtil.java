@@ -17,10 +17,10 @@ package org.seasar.mayaa.impl.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 
@@ -39,31 +39,18 @@ public class IteratorUtil {
         // no instantiation.
     }
 
-    public static final Iterator NULL_ITERATOR = new Iterator() {
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean hasNext() {
-            return false;
-        }
-
-        public Object next() {
-            throw new NoSuchElementException();
-        }
-    };
-
-    public static Iterator toIterator(Object o) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static Iterator<?> toIterator(Object o) {
         if (o instanceof AttributeScope) {
             return ((AttributeScope)o).iterateAttributeNames();
         } else if (o instanceof Collection) {
-            return ((Collection) o).iterator();
+            return ((Collection<?>) o).iterator();
         } else if (o instanceof Iterator) {
-            return (Iterator) o;
+            return (Iterator<?>) o;
         } else if (o instanceof Enumeration) {
-            return new EnumrationIterator((Enumeration) o);
+            return new EnumrationIterator<>((Enumeration) o, o.getClass());
         } else if (o instanceof Map) {
-            return ((Map) o).entrySet().iterator();
+            return ((Map<?, ?>) o).entrySet().iterator();
         } else if (o instanceof Object[]) {
             return toObjectIterator((Object[]) o);
         } else if (o instanceof boolean[]) {
@@ -86,14 +73,14 @@ public class IteratorUtil {
             return toObjectIterator(new Object[] { o });
         }
 
-        return NULL_ITERATOR;
+        return Collections.emptyIterator();
     }
 
-    private static Iterator toObjectIterator(Object[] objects) {
+    private static Iterator<Object> toObjectIterator(Object[] objects) {
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(boolean[] booleans) {
+    private static Iterator<Boolean> toObjectIterator(boolean[] booleans) {
         Boolean[] objects = new Boolean[booleans.length];
         for (int i = 0; i < objects.length; i++) {
             objects[i] = Boolean.valueOf(booleans[i]);
@@ -101,68 +88,68 @@ public class IteratorUtil {
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(byte[] bytes) {
+    private static Iterator<Byte> toObjectIterator(byte[] bytes) {
         Byte[] objects = new Byte[bytes.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Byte(bytes[i]);
+            objects[i] = Byte.valueOf(bytes[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(char[] chars) {
+    private static Iterator<Character> toObjectIterator(char[] chars) {
         Character[] objects = new Character[chars.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Character(chars[i]);
+            objects[i] = Character.valueOf(chars[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(short[] shorts) {
+    private static Iterator<Short> toObjectIterator(short[] shorts) {
         Short[] objects = new Short[shorts.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Short(shorts[i]);
+            objects[i] = Short.valueOf(shorts[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(int[] ints) {
-        Integer[] objects = new Integer[ints.length];
+    private static Iterator<Integer> toObjectIterator(int[] ints) {
+        Integer[] objects =new Integer[ints.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Integer(ints[i]);
+            objects[i] = Integer.valueOf(ints[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(long[] longs) {
+    private static Iterator<Long> toObjectIterator(long[] longs) {
         Long[] objects = new Long[longs.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Long(longs[i]);
+            objects[i] = Long.valueOf(longs[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(float[] floats) {
+    private static Iterator<Float> toObjectIterator(float[] floats) {
         Float[] objects = new Float[floats.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Float(floats[i]);
+            objects[i] = Float.valueOf(floats[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static Iterator toObjectIterator(double[] doubles) {
+    private static Iterator<Double> toObjectIterator(double[] doubles) {
         Double[] objects = new Double[doubles.length];
         for (int i = 0; i < objects.length; i++) {
-            objects[i] = new Double(doubles[i]);
+            objects[i] = Double.valueOf(doubles[i]);
         }
         return Arrays.asList(objects).iterator();
     }
 
-    private static class EnumrationIterator implements Iterator {
+    private static class EnumrationIterator<T> implements Iterator<T> {
 
-        private Enumeration _enumeration;
+        private Enumeration<T> _enumeration;
 
-        protected EnumrationIterator(Enumeration enumeration) {
-            _enumeration = enumeration;
+        protected EnumrationIterator(Enumeration<T> enumeration, Class<T> clazz) {
+            _enumeration = (Enumeration<T>) enumeration;
         }
 
         public void remove() {
@@ -173,7 +160,7 @@ public class IteratorUtil {
             return _enumeration.hasMoreElements();
         }
 
-        public Object next() {
+        public T next() {
             return _enumeration.nextElement();
         }
 

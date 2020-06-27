@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.engine;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,15 +39,15 @@ public class SpecificationCache {
 
     protected int _surviveLimit;
     //@GuardedBy(this)
-    protected Map _specifications = new HashMap();
+    protected Map<String, ReferSpecification> _specifications = new HashMap<>();
 
-    protected ReferenceCache _gcChecker;
-    protected SoftReference _gabage;
+    protected ReferenceCache<Object> _gcChecker;
+    protected SoftReference<Object> _gabage;
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
         if (surviveLimit > 0 && !ParameterAware.IS_SECURE_WEB) {
-            _gcChecker = new ReferenceCache(Object.class,
+            _gcChecker = new ReferenceCache<>(Object.class,
                     ReferenceCache.SOFT, new GCReceiver());
             postNewGabage();
         }
@@ -60,7 +59,7 @@ public class SpecificationCache {
 
     protected void postNewGabage() {
         Object gabage = new Object();
-        _gabage = new SoftReference(gabage);
+        _gabage = new SoftReference<>(gabage);
         _gcChecker.add(gabage);
     }
 
@@ -159,10 +158,10 @@ public class SpecificationCache {
         }
 
         public Object labeling(Object referent) {
-            return new Integer(++_receiveCount);
+            return Integer.valueOf(++_receiveCount);
         }
 
-        public void sweepFinish(ReferenceCache monitor, Object label) {
+        public void sweepFinish(ReferenceCache<?> monitor, Object label) {
             synchronized (SpecificationCache.this) {
                 if (_specifications == null ||_sweepThreadAlive == false) {
                     return;
@@ -172,22 +171,17 @@ public class SpecificationCache {
                             + " free:" + Runtime.getRuntime().freeMemory()
                             + " / total:" + Runtime.getRuntime().totalMemory());
                 }
-                List releaseItems = null;
-                for (Iterator it = _specifications.values().iterator()
-                        ; it.hasNext(); ) {
-                    ReferSpecification refer = (ReferSpecification) it.next();
+                List<ReferSpecification> releaseItems = null;
+                for (ReferSpecification refer : _specifications.values()) {
                     if (refer.requestRelease()) {
                         if (releaseItems == null) {
-                            releaseItems = new ArrayList();
+                            releaseItems = new ArrayList<>();
                         }
                         releaseItems.add(refer);
                     }
                 }
                 if (releaseItems != null) {
-                    for (Iterator it = releaseItems.iterator()
-                            ; it.hasNext(); ) {
-                        ReferSpecification refer =
-                            (ReferSpecification) it.next();
+                    for (ReferSpecification refer : releaseItems) {
                         Specification spec = refer.getSpecification();
                         _specifications.remove(spec.getSystemID());
 

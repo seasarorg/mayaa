@@ -112,7 +112,7 @@ public class AutoPageBuilder implements Runnable {
                     REPEAT_DEFAULT);
             _wait = ObjectUtil.numberValue(
                     engine.getParameter(OPTION_AUTO_BUILD_WAIT),
-                    new Integer(WAIT_DEFAULT)).intValue() * 1000;
+                    Integer.valueOf(WAIT_DEFAULT)).intValue() * 1000;
             _renderMate = ObjectUtil.booleanValue(
                     engine.getParameter(OPTION_AUTO_BUILD_RENDER_MATE),
                     RENDER_MATE_DEFAULT);
@@ -173,6 +173,7 @@ public class AutoPageBuilder implements Runnable {
         LOG.info(spec.getSystemID() + " build time: " + time + " msec.");
     }
 
+    @Override
     public void run() {
         Thread currentThread = Thread.currentThread();
         try {
@@ -189,9 +190,9 @@ public class AutoPageBuilder implements Runnable {
             while (currentThread == _thread) {
                 _buildTimeSum = 0;
                 _renderTimeSum = 0;
-                for (Iterator it = SourceHolderFactory.iterator(); it.hasNext();) {
-                    SourceHolder holder = (SourceHolder) it.next();
-                    for (Iterator itSystemID = holder.iterator(_fileFilters);
+                for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {
+                    SourceHolder holder = it.next();
+                    for (Iterator<String> itSystemID = holder.iterator(_fileFilters);
                             itSystemID.hasNext();) {
                         String systemID = (String) itSystemID.next();
                         if (systemID.startsWith("/") == false) {

@@ -267,11 +267,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             return _string;
         }
 
-        public void setExpectedClass(Class expectedClass) {
+        public void setExpectedClass(Class<?> expectedClass) {
             _script.setExpectedClass(expectedClass);
         }
 
-        public Class getExpectedClass() {
+        public Class<?> getExpectedClass() {
             return _script.getExpectedClass();
         }
 
@@ -279,11 +279,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             return _script.execute(args);
         }
 
-        public void setMethodArgClasses(Class[] methodArgClasses) {
+        public void setMethodArgClasses(Class<?>[] methodArgClasses) {
             _script.setMethodArgClasses(methodArgClasses);
         }
 
-        public Class[] getMethodArgClasses() {
+        public Class<?>[] getMethodArgClasses() {
             return _script.getMethodArgClasses();
         }
 

@@ -18,13 +18,13 @@ package org.seasar.mayaa.impl;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -33,7 +33,7 @@ public class ParameterAwareImpl implements ParameterAware {
 
     private static final long serialVersionUID = 7520826050429074016L;
 
-    private transient Map _parameters;
+    private transient Map<String, String> _parameters;
     private String _systemID = "";
     private int _lineNumber;
     private boolean _onTemplate;
@@ -48,7 +48,7 @@ public class ParameterAwareImpl implements ParameterAware {
             throw new IllegalParameterValueException(getClass(), name);
         }
         if (_parameters == null) {
-            _parameters = new HashMap();
+            _parameters = new HashMap<>();
         }
         _parameters.put(name, value);
     }
@@ -63,9 +63,9 @@ public class ParameterAwareImpl implements ParameterAware {
         return (String) _parameters.get(name);
     }
 
-    public Iterator iterateParameterNames() {
+    public Iterator<String> iterateParameterNames() {
         if (_parameters == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _parameters.keySet().iterator();
     }
@@ -108,13 +108,14 @@ public class ParameterAwareImpl implements ParameterAware {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        Map map = (Map) in.readObject();
+
+        @SuppressWarnings("unchecked")
+        Map<String,String> map = (Map<String, String>) in.readObject();
+
         if (map != null) {
-            for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) it.next();
+            for (Map.Entry<String,String> entry : map.entrySet()){
                 // for override method
-                setParameter((String) entry.getKey(),
-                        (String) entry.getValue());
+                setParameter(entry.getKey(), entry.getValue());
             }
         }
     }

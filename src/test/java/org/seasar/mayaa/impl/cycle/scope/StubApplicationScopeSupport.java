@@ -73,11 +73,11 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
         throw new UnsupportedOperationException();
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         throw new UnsupportedOperationException();
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         throw new UnsupportedOperationException();
     }
 
@@ -122,7 +122,7 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
         throw new UnsupportedOperationException();
     }
 
-    public Iterator iterateParameterNames() {
+    public Iterator<String> iterateParameterNames() {
         throw new UnsupportedOperationException();
     }
 
@@ -163,7 +163,7 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
         throw new UnsupportedOperationException();
     }
 
-    public Set getResourcePaths(String path) {
+    public Set<String> getResourcePaths(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -185,12 +185,12 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
     }
 
     @Deprecated
-    public Enumeration getServlets() {
+    public Enumeration<Servlet> getServlets() {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
-    public Enumeration getServletNames() {
+    public Enumeration<String> getServletNames() {
         throw new UnsupportedOperationException();
     }
 
@@ -216,11 +216,11 @@ public class StubApplicationScopeSupport extends AbstractWritableAttributeScope 
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration getInitParameterNames() {
+    public Enumeration<String> getInitParameterNames() {
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         throw new UnsupportedOperationException();
     }
 

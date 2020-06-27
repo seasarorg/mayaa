@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -161,9 +162,9 @@ public class ProcessorDump extends ElementProcessor {
         } else {
             SpecificationNode node = processor.getInjectedNode();
             URI namespace = node.getQName().getNamespaceURI();
-            for (Iterator it = processor.getInjectedNode().iterateAttribute();
+            for (Iterator<NodeAttribute> it = processor.getInjectedNode().iterateAttribute();
                     it.hasNext();) {
-                NodeAttribute prop = (NodeAttribute) it.next();
+                NodeAttribute prop = it.next();
                 QName propName = prop.getQName();
                 String prefix = "";
                 if (namespace.equals(propName.getNamespaceURI()) == false) {
@@ -180,18 +181,18 @@ public class ProcessorDump extends ElementProcessor {
     }
 
     protected void writeElementAttributes(StringBuffer sb, ElementProcessor processor) {
-        for (Iterator it = processor.iterateProcesstimeProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
+        for (Iterator<ProcessorProperty> it = processor.iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = it.next();
             appendAttributeString(sb, prop.getName(), prop.getValue());
         }
-        for (Iterator it = processor.iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral() == false) {
                 appendAttributeString(sb, prop.getName(), prop.getValue());
             }
         }
-        for (Iterator it = processor.iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral()) {

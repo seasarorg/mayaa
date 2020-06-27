@@ -125,7 +125,7 @@ public class SpecificationUtil implements CONST_IMPL {
      */
     public static SpecificationNode getMayaaNode(NodeTreeWalker current) {
         Specification specification = findSpecification(current);
-        for (Iterator it = specification.iterateChildNode(); it.hasNext();) {
+        for (Iterator<NodeTreeWalker> it = specification.iterateChildNode(); it.hasNext();) {
             SpecificationNode node = (SpecificationNode) it.next();
             if (node.getQName().equals(QM_MAYAA)) {
                 return node;
@@ -166,7 +166,7 @@ public class SpecificationUtil implements CONST_IMPL {
      */
     public static String getNodeBodyText(SpecificationNode node) {
         StringBuffer buffer = new StringBuffer(256);
-        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             QName qName = child.getQName();
             if (QM_CDATA.equals(qName)) {
@@ -193,7 +193,7 @@ public class SpecificationUtil implements CONST_IMPL {
      * スクリプト実行環境の新規スコープを開始します。
      * @param variables 初期変数
      */
-    public static void startScope(Map variables) {
+    public static void startScope(Map<?, ?> variables) {
         ProviderUtil.getScriptEnvironment().startScope(variables);
     }
 
@@ -213,8 +213,8 @@ public class SpecificationUtil implements CONST_IMPL {
         	if (_eventScripts.isCached(spec, eventName)) {
         		_eventScripts.execEventScripts(spec, eventName);
         	} else {
-        		List eventChilds = new ArrayList();
-	            for (Iterator it = mayaa.iterateChildNode(); it.hasNext();) {
+        		List<NodeTreeWalker> eventChilds = new ArrayList<>();
+	            for (Iterator<NodeTreeWalker> it = mayaa.iterateChildNode(); it.hasNext();) {
 	                SpecificationNode child = (SpecificationNode) it.next();
 	                if (eventName.equals(child.getQName())) {
 	                	eventChilds.add(child);
@@ -298,7 +298,8 @@ public class SpecificationUtil implements CONST_IMPL {
     protected static class EventScriptEnvironment {
 
 		// WeakHashMap<Specification, Map<QName, List<CompiledScript>>>
-        private Map _mayaaScriptCache = Collections.synchronizedMap(new WeakHashMap());
+        private Map<Specification, Map<QName, List<CompiledScript>>> _mayaaScriptCache
+             = Collections.synchronizedMap(new WeakHashMap<Specification, Map<QName, List<CompiledScript>>>());
 
         protected CompiledScript compile(String text) {
             if (StringUtil.hasValue(text)) {
@@ -308,12 +309,12 @@ public class SpecificationUtil implements CONST_IMPL {
             return LiteralScript.NULL_LITERAL_SCRIPT;
         }
 
-        protected List getEventScripts(Specification spec, QName eventName) {
-        	Map events = (Map)_mayaaScriptCache.get(spec);
+        protected List<CompiledScript> getEventScripts(Specification spec, QName eventName) {
+        	Map<QName, List<CompiledScript>> events = _mayaaScriptCache.get(spec);
         	if (events == null) {
         		return null;
         	}
-        	return (List)events.get(eventName);
+        	return events.get(eventName);
         }
 
         public boolean isCached(Specification spec, QName eventName) {
@@ -321,19 +322,19 @@ public class SpecificationUtil implements CONST_IMPL {
         }
 
         public boolean execEventScriptsAndCache(
-        		Specification spec, QName eventName, List eventChilds) {
+        		Specification spec, QName eventName, List<NodeTreeWalker> eventChilds) {
         	if (eventChilds == null) {
         		throw new NullPointerException();
         	}
-        	Map events = (Map)_mayaaScriptCache.get(spec);
+        	Map<QName, List<CompiledScript>> events = _mayaaScriptCache.get(spec);
         	if (events == null) {
-        		events = new HashMap();
+        		events = new HashMap<>();
         		_mayaaScriptCache.put(spec, events);
         	}
-        	List scripts = new ArrayList();
+        	List<CompiledScript> scripts = new ArrayList<>();
 
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            for (Iterator it = eventChilds.iterator(); it.hasNext();) {
+            for (Iterator<NodeTreeWalker> it = eventChilds.iterator(); it.hasNext();) {
                 SpecificationNode child = (SpecificationNode) it.next();
                 NodeTreeWalker save = cycle.getInjectedNode();
                 try {
@@ -348,7 +349,7 @@ public class SpecificationUtil implements CONST_IMPL {
                 }
             }
             if (scripts.size() == 0) {
-            	events.put(eventName, Collections.EMPTY_LIST);
+            	events.put(eventName, new ArrayList<CompiledScript>());
             } else {
             	events.put(eventName, scripts);
             }
@@ -357,15 +358,15 @@ public class SpecificationUtil implements CONST_IMPL {
 
         public boolean execEventScripts(
         		Specification spec, QName eventName) {
-        	List scripts = getEventScripts(spec, eventName);
+        	List<CompiledScript> scripts = getEventScripts(spec, eventName);
         	if (scripts == null) {
         		return false;
         	}
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            for (Iterator it = scripts.iterator(); it.hasNext();) {
+            for (CompiledScript script : scripts) {
                 NodeTreeWalker save = cycle.getInjectedNode();
                 try {
-                    ((CompiledScript) it.next()).execute(null);
+                    script.execute(null);
                 } finally {
                     cycle.setInjectedNode(save);
                 }

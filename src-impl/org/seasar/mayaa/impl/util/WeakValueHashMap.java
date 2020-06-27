@@ -39,7 +39,9 @@ public class WeakValueHashMap<K, V> {
      * キャッシュレコードを弱参照で保持するマップ。LRUで追い出されたレコードを保持する。
      * このマップに保持されているレコードが再び参照された場合は改めて強参照のマップに移動させる。
      */
-    private final Map<K, CountedReference<V>> _weakReferenceMap;
+    @SuppressWarnings("unchecked")
+    private final Map<K, CountedReference<V>> _weakReferenceMap = new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK, true);
+
 
     /** 同期化オブジェクト */
     private final Object _mutex = new Object();
@@ -135,7 +137,6 @@ public class WeakValueHashMap<K, V> {
     }
 
     public WeakValueHashMap(int hardSize) {
-        _weakReferenceMap = new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK, true);
         _hardReferenceLruMap = new LruHashMap(hardSize);
     }
 

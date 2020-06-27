@@ -19,7 +19,7 @@ package org.seasar.mayaa.engine.specification;
  *
  * @author Taro Kato (Gluegent, Inc.)
  */
-public interface URI extends NodeObject, Comparable {
+public interface URI extends NodeObject, Comparable<URI> {
 
     /**
      * URIの内容を返す

@@ -39,13 +39,13 @@ public class TemplateAttributeReaderImpl
 
     private static final long serialVersionUID = -7340519771743083660L;
 
-    private Set _ignoreAttributes;
-    private Map _aliasAttributes;
+    private Set<AttributeKey> _ignoreAttributes;
+    private Map<AttributeKey, String> _aliasAttributes;
     private boolean _enabled;
 
     public TemplateAttributeReaderImpl() {
-        _ignoreAttributes = new LinkedHashSet();
-        _aliasAttributes = new LinkedHashMap();
+        _ignoreAttributes = new LinkedHashSet<>();
+        _aliasAttributes = new LinkedHashMap<>();
         _enabled = false;
     }
 
@@ -81,8 +81,8 @@ public class TemplateAttributeReaderImpl
         if (_enabled) {
             AttributeKey key = qNameToKey(qName, attributeName);
             if (isTarget(key)) {
-                for (Iterator it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
-                    AttributeKey aliasKey = (AttributeKey) it.next();
+                for (Iterator<AttributeKey> it = _aliasAttributes.keySet().iterator(); it.hasNext(); ) {
+                    AttributeKey aliasKey = it.next();
                     if (aliasKey.match(key)) {
                         QName attributeQName = getQName(original,
                                 (String) _aliasAttributes.get(aliasKey));
@@ -104,8 +104,7 @@ public class TemplateAttributeReaderImpl
     }
 
     private boolean isTarget(AttributeKey key) {
-        for (Iterator it = _ignoreAttributes.iterator(); it.hasNext(); ) {
-            AttributeKey ignoreKey = (AttributeKey) it.next();
+        for (AttributeKey ignoreKey : _ignoreAttributes) {
             if (ignoreKey.match(key)) {
                 return false;
             }

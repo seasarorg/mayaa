@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.util.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -25,12 +26,21 @@ import java.util.NoSuchElementException;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 
 /**
+ * イテレータを返却するクラスやコレクションを複数格納して順番に操作するためのイテレータである。
+ * 下記のクラスに対応している。
+ * <ul>
+ * <li>{@code Collection}</li>
+ * <li>{@code Enumeration}</li>
+ * <li>{@code SourceScanner}</li>
+ * </ul>
+ * 
  * @author Taro Kato (Gluegent, Inc.)
  */
+@SuppressWarnings("rawtypes")
 public class IteratorIterator implements Iterator {
 
-    private List _iterators = new ArrayList();
-    private Iterator _iteratorIterator;
+    private List<Object> _iterators = new ArrayList<>();
+    private Iterator<?> _iteratorIterator;
     private Iterator _currentIterator;
 
     protected void check(Object o) {
@@ -73,7 +83,7 @@ public class IteratorIterator implements Iterator {
         if (_currentIterator == null
                 || _currentIterator.hasNext() == false) {
             _currentIterator = iteratorNext();
-            if (_currentIterator == NullIterator.getInstance()) {
+            if (_currentIterator == Collections.emptyIterator()) {
                 return false;
             }
             return hasNext();
@@ -88,18 +98,19 @@ public class IteratorIterator implements Iterator {
         return _currentIterator.next();
     }
 
-    public Iterator iteratorNext() {
+
+    Iterator iteratorNext() {
         if (_iteratorIterator == null) {
             _iteratorIterator = _iterators.iterator();
         }
         if (_iteratorIterator.hasNext() == false) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         Object o = _iteratorIterator.next();
         if (o instanceof Collection) {
             return ((Collection)o).iterator();
         } else if (o instanceof Enumeration) {
-            return EnumerationIterator.getInstance((Enumeration)o);
+            return EnumerationIterator.getInstance((Enumeration<?>)o);
         } else if (o instanceof SourceScanner) {
             return ((SourceScanner)o).scan();
         }

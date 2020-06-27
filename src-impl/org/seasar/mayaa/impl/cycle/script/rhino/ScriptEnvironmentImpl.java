@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
@@ -152,7 +151,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         CycleUtil.clearGlobalVariable(PARENT_SCRIPTABLE_KEY);
     }
 
-    public void startScope(Map variables) {
+    public void startScope(Map<?, ?> variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
@@ -170,11 +169,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (variables != null) {
             RhinoUtil.enter();
             try {
-                for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
-                    Object key = it.next();
-                    Object value = variables.get(key);
-                    Object variable = Context.javaToJS(value, pageScope);
-                    ScriptableObject.putProperty(pageScope, key.toString(), variable);
+                for (Map.Entry<?, ?> entry : variables.entrySet()) {
+                    Object variable = Context.javaToJS(entry.getValue(), pageScope);
+                    ScriptableObject.putProperty(pageScope, entry.getKey().toString(), variable);
                 }
             } finally {
                 Context.exit();
@@ -224,7 +221,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                     || scriptResult instanceof Undefined;
     }
 
-    public Object convertFromScriptObject(Object scriptObject, Class expectedClass) {
+    public Object convertFromScriptObject(Object scriptObject, Class<?> expectedClass) {
         if (scriptObject != null && conversionRequires(scriptObject, expectedClass)) {
             Object result = RhinoUtil.convertResult(null, expectedClass, scriptObject);
             if (result instanceof NativeArray) {
@@ -241,7 +238,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return scriptObject;
     }
 
-    private boolean conversionRequires(Object scriptObject, Class expectedClass) {
+    private boolean conversionRequires(Object scriptObject, Class<?> expectedClass) {
         // PageAttributeScopeは呼ばれる数が多い
         if (scriptObject instanceof PageAttributeScope) {
             return false;
@@ -273,7 +270,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);
             }
-            Class clazz = ObjectUtil.loadClass(value, WrapFactory.class);
+            Class<?> clazz = ObjectUtil.loadClass(value, WrapFactory.class);
             setWrapFactory((WrapFactory) ObjectUtil.newInstance(clazz));
         } else if ("blockSign".equals(name)) {
             if (StringUtil.isEmpty(value)) {

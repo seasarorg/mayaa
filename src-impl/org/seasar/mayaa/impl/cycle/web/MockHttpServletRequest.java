@@ -106,7 +106,7 @@ public class MockHttpServletRequest extends MockServletRequest
         return null;
     }
 
-    public Enumeration getHeaderNames() {
+    public Enumeration<String> getHeaderNames() {
         return null;
     }
 
@@ -114,7 +114,7 @@ public class MockHttpServletRequest extends MockServletRequest
         return null;
     }
 
-    public Enumeration getHeaders(String name) {
+    public Enumeration<Object> getHeaders(String name) {
         return null;
     }
 

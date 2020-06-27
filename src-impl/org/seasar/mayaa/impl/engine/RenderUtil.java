@@ -314,7 +314,7 @@ public class RenderUtil implements CONST_IMPL {
      * @return 後の処理を表すステータス
      */
     public static ProcessStatus renderPage(boolean fireEvent,
-            TemplateRenderer renderer, Map variables,
+            TemplateRenderer renderer, Map<?,?> variables,
             Page topLevelPage, String requestedSuffix, String extension) {
         if (renderer == null || topLevelPage == null) {
             throw new IllegalArgumentException();
@@ -322,8 +322,8 @@ public class RenderUtil implements CONST_IMPL {
         Page page = topLevelPage;
         String suffix = null;
         saveToCycle(page);
-        List pageStack = new LinkedList();
-        List templateStack = new LinkedList();
+        List<Page> pageStack = new LinkedList<>();
+        List<Template> templateStack = new LinkedList<>();
         do {
             // stack for afterRender event.
             pageStack.add(0, page);

@@ -46,7 +46,7 @@ public class ProcessorTagHandler
             Attributes attributes, String systemID, int lineNumber) {
         super.start(attributes, systemID, lineNumber);
         ProcessorDefinitionImpl processorDef = getProcessorDefinition();
-        Class processorClass =
+        Class<?> processorClass =
             XMLUtil.getClassValue(attributes, "class", null);
         if (processorClass == null) {
             throw new IllegalStateException();

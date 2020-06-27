@@ -51,6 +51,6 @@ public interface ParameterAware extends PositionAware {
      * 設定パラメータ名をイテレートする。
      * @return 設定パラメータ名イテレータ。
      */
-    Iterator iterateParameterNames();
+    Iterator<String> iterateParameterNames();
 
 }

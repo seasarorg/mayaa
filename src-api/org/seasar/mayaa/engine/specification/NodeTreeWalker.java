@@ -74,7 +74,7 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
      * 子ノードのイテレータを取得する。
      * @return 子ノード（<code>NodeTreeWalker</code>）を保持したイテレータ。
      */
-    Iterator iterateChildNode();
+    Iterator<NodeTreeWalker> iterateChildNode();
 
     /**
      * インスタンスを破棄対象とし、親ノードや子ノードなど

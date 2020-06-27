@@ -35,7 +35,7 @@ public interface AttributeScope extends ParameterAware {
      * このスコープに保存されている名前をイテレートする。
      * @return 名前（String）の入ったイテレータ。
      */
-    Iterator iterateAttributeNames();
+    Iterator<String> iterateAttributeNames();
 
     /**
      * このスコープ中に指定された名前に対応したオブジェクトがあるかをテストする。
@@ -80,6 +80,6 @@ public interface AttributeScope extends ParameterAware {
      * @param attributeClass 指定クラス型。
      * @return 指定オブジェクト。
      */
-    Object newAttribute(String name, Class attributeClass);
+    Object newAttribute(String name, Class<?> attributeClass);
 
 }

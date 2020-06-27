@@ -15,13 +15,13 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ScopeNotWritableException;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * 現在スコープから標準のスコープ探索順をたどって、見つかればそれを返します。
@@ -60,8 +60,8 @@ public class WalkStandardScope extends ParameterAwareImpl implements AttributeSc
         return null;
     }
 
-    public Iterator iterateAttributeNames() {
-        return NullIterator.getInstance();
+    public Iterator<String> iterateAttributeNames() {
+        return Collections.emptyIterator();
     }
 
     public boolean isAttributeWritable() {
@@ -76,7 +76,7 @@ public class WalkStandardScope extends ParameterAwareImpl implements AttributeSc
         throw new ScopeNotWritableException(getScopeName());
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         throw new UnsupportedOperationException();
     }
 

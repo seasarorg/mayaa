@@ -70,7 +70,7 @@ public class AttributeTagHandler extends TagHandler {
         putHandler(new TagHandler("type") {
             protected void end(String body) {
                 try {
-                    Class expectedClass = ObjectUtil.loadClass(body);
+                    Class<?> expectedClass = ObjectUtil.loadClass(body);
                     getProperty().setExpectedClass(expectedClass);
                 } catch (RuntimeException e) {
                     if (LOG.isErrorEnabled()) {

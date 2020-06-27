@@ -21,12 +21,12 @@ import java.util.NoSuchElementException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
+@Deprecated
+@SuppressWarnings("rawtypes")
 public class NullEnumeration implements Enumeration {
 
-    private static final NullEnumeration NULL_ENUMERATION = new NullEnumeration();
-
     public static final NullEnumeration getInstance() {
-        return NULL_ENUMERATION;
+        return null;
     }
 
     private NullEnumeration() {

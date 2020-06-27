@@ -241,12 +241,12 @@ public class IOUtil {
      * @param name リソースの名前
      * @return 解決したパス
      */
-    protected static String resolveName(Class neighbor, String name) {
+    protected static String resolveName(Class<?> neighbor, String name) {
         if (name == null) {
             return name;
         }
         if (name.startsWith("/") == false) {
-            Class c = neighbor;
+            Class<?> c = neighbor;
             while (c.isArray()) {
                 c = c.getComponentType();
             }
@@ -271,7 +271,7 @@ public class IOUtil {
      * @param neighbor リソースを探すための起点とするクラス
      * @return InputStream
      */
-    public static URL getResource(String name, Class neighbor) {
+    public static URL getResource(String name, Class<?> neighbor) {
         if (neighbor == null) {
             return getResource(name);
         }
@@ -288,7 +288,7 @@ public class IOUtil {
      * @param neighbor リソースを探すための起点とするクラス
      * @return InputStream
      */
-    public static InputStream getResourceAsStream(String name, Class neighbor) {
+    public static InputStream getResourceAsStream(String name, Class<?> neighbor) {
         return openStream(getResource(name, neighbor));
     }
 

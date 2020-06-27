@@ -33,12 +33,12 @@ public class ProcessorPropertyConverter
 
     private static final long serialVersionUID = -6093527316881781459L;
 
-    public Class getPropetyClass() {
+    public Class<?> getPropetyClass() {
         return ProcessorProperty.class;
     }
 
     public Serializable convert(
-            NodeAttribute attribute, String value, Class expectedClass) {
+            NodeAttribute attribute, String value, Class<?> expectedClass) {
         if (attribute == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }

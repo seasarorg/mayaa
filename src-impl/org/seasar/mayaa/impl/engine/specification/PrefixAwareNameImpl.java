@@ -31,14 +31,15 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
     private static final long serialVersionUID = -8898891078217203404L;
 
-    private static Map _cache =
+    @SuppressWarnings("unchecked")
+    private static Map<String, PrefixAwareName> _cache =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     public static PrefixAwareName getInstance(QName qName, String prefix) {
         String key = forPrefixAwareNameString(qName, prefix);
         PrefixAwareName result;
         synchronized (_cache) {
-            result = (PrefixAwareName)_cache.get(key);
+            result = _cache.get(key);
             if (result == null) {
                 result = new PrefixAwareNameImpl(qName, prefix);
                 _cache.put(key, result);

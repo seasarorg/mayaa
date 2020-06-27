@@ -138,10 +138,10 @@ public class ForEachProcessor extends TemplateProcessorSupport
      * @author Koji Suga (Gluegent Inc.)
      */
     private class IndexIteratorStack {
-        private Stack _stack;
+        private Stack<IndexedIterator> _stack;
 
         public IndexIteratorStack() {
-            _stack = new Stack();
+            _stack = new Stack<>();
         }
 
         public void pushOne() {
@@ -149,11 +149,11 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
 
         public IndexedIterator pop() {
-            return (IndexedIterator) _stack.pop();
+            return _stack.pop();
         }
 
         public IndexedIterator peek() {
-            return (IndexedIterator) _stack.peek();
+            return _stack.peek();
         }
     }
 
@@ -167,7 +167,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
      */
     private class IndexedIterator {
         private int _index;
-        private Iterator _iterator;
+        private Iterator<?> _iterator;
 
         public IndexedIterator() {
             if (_indexName != null) {
@@ -180,7 +180,7 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
 
         public Integer getNextIndex() {
-            return new Integer(++_index);
+            return Integer.valueOf(++_index);
         }
 
         public boolean hasNext() {

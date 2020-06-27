@@ -21,19 +21,19 @@ package org.seasar.mayaa.impl.util;
 public class IllegalClassTypeException extends AbstractMessagedException {
 
     private static final long serialVersionUID = -5744177696584258746L;
-    private Class _expectedClass;
-    private Class _value;
+    private Class<?> _expectedClass;
+    private Class<?> _value;
 
-    public IllegalClassTypeException(Class expectedClass, Class value) {
+    public IllegalClassTypeException(Class<?> expectedClass, Class<?> value) {
         _expectedClass = expectedClass;
         _value = value;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return _expectedClass;
     }
 
-    public Class getValue() {
+    public Class<?> getValue() {
         return _value;
     }
 

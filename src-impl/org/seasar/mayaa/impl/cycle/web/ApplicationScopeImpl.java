@@ -67,10 +67,11 @@ public class ApplicationScopeImpl
         return ServiceCycle.SCOPE_APPLICATION;
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         check();
-        return EnumerationIterator.getInstance(
-                _servletContext.getAttributeNames());
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _servletContext.getAttributeNames();
+        return EnumerationIterator.getInstance(e);
     }
 
     public boolean hasAttribute(String name) {
@@ -78,8 +79,10 @@ public class ApplicationScopeImpl
         if (StringUtil.isEmpty(name)) {
             return false;
         }
-        for (Enumeration e = _servletContext.getAttributeNames();
-                e.hasMoreElements();) {
+
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _servletContext.getAttributeNames();
+        while (e.hasMoreElements()) {
             if (e.nextElement().equals(name)) {
                 return true;
             }

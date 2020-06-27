@@ -32,7 +32,7 @@ public class TeiTagHandler extends TagHandler {
             LogFactory.getLog(TeiTagHandler.class);
 
     private TagTagHandler _parent;
-    private Class _teiClass;
+    private Class<?> _teiClass;
 
     public TeiTagHandler(TagTagHandler parent) {
         super("tei");
@@ -52,7 +52,7 @@ public class TeiTagHandler extends TagHandler {
         }
     }
 
-    protected void setTeiClass(Class teiClass) {
+    protected void setTeiClass(Class<?> teiClass) {
         _teiClass = teiClass;
     }
 
@@ -67,7 +67,7 @@ public class TeiTagHandler extends TagHandler {
 
         protected void end(String body) {
             try {
-                Class clazz = ObjectUtil.loadClass(body, Tag.class);
+                Class<?> clazz = ObjectUtil.loadClass(body, Tag.class);
                 setTeiClass(clazz);
             } catch (RuntimeException e) {
                 if (LOG.isErrorEnabled()) {

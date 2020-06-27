@@ -15,9 +15,10 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
@@ -44,26 +45,26 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     public static final String BODY_CONTENT_SCRIPTLESS = "scriptless";
     public static final String BODY_CONTENT_TAGDEPENDENT = "tagdependent";
 
-    private Class _tagClass;
-    private Class _teiClass;
+    private Class<?> _tagClass;
+    private Class<?> _teiClass;
     private boolean _dynamicAttribute;
     private String _bodyContent = BODY_CONTENT_JSP;
 
-    public void setProcessorClass(Class processorClass) {
+    public void setProcessorClass(Class<?> processorClass) {
         if (JspProcessor.isSupportClass(processorClass) == false) {
             throw new IllegalArgumentException();
         }
         _tagClass = processorClass;
     }
 
-    public Class getProcessorClass() {
+    public Class<?> getProcessorClass() {
         if (_tagClass == null) {
             throw new IllegalStateException();
         }
         return _tagClass;
     }
 
-    public void setExtraInfoClass(Class teiClass) {
+    public void setExtraInfoClass(Class<?> teiClass) {
         if (teiClass == null
                 || TagExtraInfo.class.isAssignableFrom(teiClass) == false) {
             throw new IllegalArgumentException();
@@ -71,7 +72,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         _teiClass = teiClass;
     }
 
-    public Class getExtraInfoClass() {
+    public Class<?> getExtraInfoClass() {
         return _teiClass;
     }
 
@@ -109,12 +110,12 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     protected void settingPropertySet(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertySet propertySet) {
-        Hashtable tagDataSeed = new Hashtable();
+        Map<String, Object> tagDataSeed = new HashMap<>();
 
         JspProcessor jspProcessor = (JspProcessor) processor;
-        for (Iterator it = propertySet.iteratePropertyDefinition();
+        for (Iterator<PropertyDefinition> it = propertySet.iteratePropertyDefinition();
                 it.hasNext();) {
-            PropertyDefinition property = (PropertyDefinition) it.next();
+            PropertyDefinition property = it.next();
             Object prop =
                 property.createProcessorProperty(this, jspProcessor, original, injected);
             if (prop != null) {
@@ -146,7 +147,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     protected void settingExtraInfo(
-            JspProcessor processor, Hashtable seed) {
+            JspProcessor processor, Map<String, Object> seed) {
         TagExtraInfo tei =
                 (TagExtraInfo) ObjectUtil.newInstance(getExtraInfoClass());
 
@@ -171,7 +172,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     protected boolean existsNestedVariable(
-            TagExtraInfo tei, Hashtable seed) {
+            TagExtraInfo tei, Map<String, Object> seed) {
         VariableInfo[] dummy = tei.getVariableInfo(new DummyTagData(seed));
         if (dummy != null) {
             for (int i = 0; i < dummy.length; i++) {
@@ -183,10 +184,9 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         return false;
     }
 
-    protected boolean existsDynamicName(Hashtable seed) {
-        Enumeration keys = seed.keys();
-        while (keys.hasMoreElements()) {
-            if (seed.get(keys.nextElement()) instanceof CompiledScript) {
+    protected boolean existsDynamicName(final Map<String, Object> seed) {
+        for (Map.Entry<String, Object> entry : seed.entrySet()) {
+            if (entry.getValue() instanceof CompiledScript) {
                 return true;
             }
         }
@@ -194,8 +194,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     protected static class DummyTagData extends TagData {
-        public DummyTagData(Hashtable seed) {
-            super(seed);
+        public DummyTagData(Map<String, Object> seed) {
+            super(new Hashtable<>(seed));
         }
 
         public Object getAttribute(String attName) {
@@ -208,8 +208,8 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
     }
 
     protected static class ScriptableTagData extends TagData {
-        public ScriptableTagData(Hashtable seed) {
-            super(seed);
+        public ScriptableTagData(Map<String, Object> seed) {
+            super(new Hashtable<>(seed));
         }
 
         public boolean isDynamicAttribute(String attName) {

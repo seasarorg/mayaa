@@ -26,7 +26,7 @@ import org.seasar.mayaa.impl.util.ReferenceCache;
 public class URIImpl implements URI {
     private static final long serialVersionUID = 7985133276316017754L;
 
-    private static ReferenceCache _cache = new ReferenceCache(URIImpl.class);
+    private static ReferenceCache<URIImpl> _cache = new ReferenceCache<>(URIImpl.class);
 
     public static URIImpl getInstance(String uri) {
         if (uri == null) {
@@ -36,7 +36,7 @@ public class URIImpl implements URI {
         if (_cache == null) {
             return null;
         }
-        for (Iterator it = _cache.iterator(); it.hasNext(); ) {
+        for (Iterator<?> it = _cache.iterator(); it.hasNext(); ) {
             URIImpl namespaceURI = (URIImpl)it.next();
             if (namespaceURI.equals(uri)) {
                 return namespaceURI;
@@ -99,7 +99,7 @@ public class URIImpl implements URI {
         return getInstance(_value);
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(URI o) {
         if (o instanceof URI) {
             URI other = (URI)o;
             if (getValue() == null) {

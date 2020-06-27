@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.seasar.mayaa.engine.specification.Namespace;
@@ -24,7 +25,6 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -123,11 +123,11 @@ public class NodeAttributeImpl implements NodeAttribute {
         return null;
     }
 
-    public Iterator iteratePrefixMapping(boolean all) {
+    public Iterator<PrefixMapping> iteratePrefixMapping(boolean all) {
         if (getNode() != null) {
             return getNode().iteratePrefixMapping(all);
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
     public boolean addedMapping() {

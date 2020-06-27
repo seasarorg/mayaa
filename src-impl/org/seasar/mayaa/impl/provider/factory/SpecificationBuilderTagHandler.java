@@ -46,7 +46,7 @@ public class SpecificationBuilderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class builderClass = XMLUtil.getClassValue(
+        Class<?> builderClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentBuilder = (SpecificationBuilder) MarshallUtil.marshall(
                 builderClass, SpecificationBuilder.class, _beforeBuilder,

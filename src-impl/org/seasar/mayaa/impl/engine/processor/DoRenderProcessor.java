@@ -40,15 +40,16 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
      *
      * @return InsertProcessorのスタック
      */
-    protected Stack getInsertProcessorStack() {
+    protected Stack<InsertProcessor> getInsertProcessorStack() {
         if (_stackKey == null) {
             // スタックはインスタンスごとにひとつ
             _stackKey = DoRenderProcessor.class.getName() + ":" + hashCode();
         }
         RequestScope request = CycleUtil.getRequestScope();
-        Stack stack = (Stack) request.getAttribute(_stackKey);
+        @SuppressWarnings("unchecked")
+        Stack<InsertProcessor> stack = (Stack<InsertProcessor>) request.getAttribute(_stackKey);
         if (stack == null) {
-            stack = new Stack();
+            stack = new Stack<>();
             request.setAttribute(_stackKey, stack);
         }
         return stack;
@@ -90,22 +91,22 @@ public class DoRenderProcessor extends TemplateProcessorSupport {
     }
 
     public void pushInsertProcessor(InsertProcessor proc) {
-        Stack stack = getInsertProcessorStack();
+        Stack<InsertProcessor> stack = getInsertProcessorStack();
         stack.push(proc);
     }
 
     public InsertProcessor peekInsertProcessor() {
-           Stack stack = getInsertProcessorStack();
+           Stack<InsertProcessor> stack = getInsertProcessorStack();
         if (stack.size() > 0) {
-               InsertProcessor proc = (InsertProcessor) stack.peek();
+               InsertProcessor proc = stack.peek();
             return proc;
         }
         return null;
     }
 
     public InsertProcessor popInsertProcessor() {
-        Stack stack = getInsertProcessorStack();
-        return (InsertProcessor) stack.pop();
+        Stack<InsertProcessor> stack = getInsertProcessorStack();
+        return stack.pop();
     }
 
 }

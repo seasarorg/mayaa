@@ -16,12 +16,12 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -32,7 +32,7 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
     private transient NodeTreeWalker _owner;
     private transient NodeTreeWalker _parent;
-    private List/*<NodeTreeWalker>*/ _childNodes;
+    private List<NodeTreeWalker> _childNodes;
     private String _systemID;
     private int _lineNumber;
     private boolean _onTemplate;
@@ -70,7 +70,7 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
         }
         synchronized (this) {
             if (_childNodes == null) {
-                _childNodes = new ArrayList();
+                _childNodes = new ArrayList<>();
             }
         }
         synchronized (_childNodes) {
@@ -105,9 +105,9 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
         return (NodeTreeWalker) _childNodes.get(index);
     }
 
-    public Iterator iterateChildNode() {
+    public Iterator<NodeTreeWalker> iterateChildNode() {
         if (_childNodes == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _childNodes.iterator();
     }

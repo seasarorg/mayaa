@@ -94,9 +94,9 @@ public class NativeServiceCycle extends NativeJavaObject {
         return result;
     }
 
-    protected void addAttributesTo(AttributeScope scope, Set set) {
-        for (Iterator it = scope.iterateAttributeNames(); it.hasNext();) {
-            Object attrName = it.next();
+    protected void addAttributesTo(AttributeScope scope, Set<String> set) {
+        for (Iterator<String> it = scope.iterateAttributeNames(); it.hasNext();) {
+            String attrName = it.next();
             if (set.contains(attrName) == false) {
                 set.add(attrName);
             }
@@ -104,9 +104,9 @@ public class NativeServiceCycle extends NativeJavaObject {
     }
 
     public Object[] getIds() {
-        Set set = new HashSet();
-        for (Iterator it = _cycle.iterateAttributeScope(); it.hasNext();) {
-            AttributeScope attrs = (AttributeScope) it.next();
+        Set<String> set = new HashSet<>();
+        for (Iterator<AttributeScope> it = _cycle.iterateAttributeScope(); it.hasNext();) {
+            AttributeScope attrs = it.next();
             String scopeName = attrs.getScopeName();
             if (set.contains(scopeName) == false) {
                 set.add(scopeName);
@@ -118,7 +118,7 @@ public class NativeServiceCycle extends NativeJavaObject {
         addAttributesTo(_cycle.getApplicationScope(), set);
         Object[] ids = super.getIds();
         for (int i = 0; i < ids.length; i++) {
-            Object name = ids[i];
+            String name = (String) ids[i];
             if (set.contains(name) == false) {
                 set.add(name);
             }

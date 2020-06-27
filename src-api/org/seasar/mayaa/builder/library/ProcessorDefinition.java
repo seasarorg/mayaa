@@ -30,13 +30,13 @@ public interface ProcessorDefinition extends PropertySet {
      * class属性で指定した、TemplateProcessorの実装クラス完全修飾名。
      * @return 実装クラス名。
      */
-    Class getProcessorClass();
+    Class<?> getProcessorClass();
 
     /**
      * 登録プロパティセットのイテレータ。
      * @return プロパティセットイテレータ。
      */
-    Iterator iteratePropertySets();
+    Iterator<PropertySet> iteratePropertySets();
 
     /**
      * 当該設定より、テンプレートプロセッサを生成する。

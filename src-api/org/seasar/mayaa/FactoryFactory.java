@@ -32,7 +32,7 @@ public abstract class FactoryFactory implements Serializable {
 
     private static FactoryFactory _instance;
     private static Object _context;
-    private static Map _factories = new HashMap();
+    private static Map<Class<?>, UnifiedFactory> _factories = new HashMap<>();
 
     /**
      * ファクトリの初期化。
@@ -94,7 +94,7 @@ public abstract class FactoryFactory implements Serializable {
      * @param interfaceClass 取得するファクトリのインターフェイス。
      * @return 指定インターフェイスに対応したファクトリ。
      */
-    public static UnifiedFactory getFactory(Class interfaceClass) {
+    public static UnifiedFactory getFactory(Class<?> interfaceClass) {
         check();
         UnifiedFactory factory = (UnifiedFactory) _factories.get(interfaceClass);
         if (factory == null) {
@@ -132,7 +132,7 @@ public abstract class FactoryFactory implements Serializable {
      * @return ファクトリ。
      */
     protected abstract UnifiedFactory getFactory(
-            Class interfaceClass, Object context);
+            Class<?> interfaceClass, Object context);
 
     /**
      * ブートストラップ用のソースディスクリプタを取得する。

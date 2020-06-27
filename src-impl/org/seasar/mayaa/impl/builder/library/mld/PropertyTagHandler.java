@@ -44,7 +44,7 @@ public class PropertyTagHandler
         String implName = attributes.getValue("implName");
         boolean required = XMLUtil.getBooleanValue(
                 attributes, "required", false);
-        Class expectedClass = XMLUtil.getClassValue(
+        Class<?> expectedClass = XMLUtil.getClassValue(
                 attributes, "expectedClass", Object.class);
         String finalValue = attributes.getValue("final");
         String defaultValue = attributes.getValue("default");

@@ -82,9 +82,9 @@ public class EngineImpl extends SpecificationImpl
 
     // parameters
     private String _defaultSpecificationID = "/default.mayaa";
-    private List _templatePathPatterns;
-    private Class _pageClass = PageImpl.class;
-    private Class _templateClass = TemplateImpl.class;
+    private List<PathPattern> _templatePathPatterns;
+    private Class<?> _pageClass = PageImpl.class;
+    private Class<?> _templateClass = TemplateImpl.class;
     private int _surviveLimit = 5;
     private boolean _requestedSuffixEnabled = false;
     private boolean _dumpEnabled = false;
@@ -147,9 +147,9 @@ public class EngineImpl extends SpecificationImpl
 
     private boolean validPath(String path, String mimeType) {
         if (_templatePathPatterns != null) {
-            for (Iterator it = _templatePathPatterns.iterator();
+            for (Iterator<PathPattern> it = _templatePathPatterns.iterator();
                     it.hasNext();) {
-                PathPattern pattern = (PathPattern) it.next();
+                PathPattern pattern = it.next();
                 if (pattern.matches(path)) {
                     return pattern.isTemplate();
                 }
@@ -223,19 +223,20 @@ public class EngineImpl extends SpecificationImpl
         }
 
         String key = CyclicForwardException.class.getName();
-        Map pathMap = (Map) request.getAttribute(key);
+        @SuppressWarnings("unchecked")
+        Map<String, Integer> pathMap = (Map<String, Integer>) request.getAttribute(key);
         if (pathMap == null) {
-            pathMap = new HashMap();
+            pathMap = new HashMap<>();
             request.setAttribute(key, pathMap);
         }
 
         String pageName = getRequestedPageName(request);
-        Integer count = (Integer) pathMap.get(pageName);
+        Integer count = pathMap.get(pageName);
         int countInt = (count != null) ? count.intValue() + 1 : 1;
         if (countInt > _forwardLimit) {
             throw new CyclicForwardException(pageName);
         }
-        pathMap.put(pageName, new Integer(countInt));
+        pathMap.put(pageName, Integer.valueOf(countInt));
     }
 
     protected String getRequestedPageName(RequestScope request) {
@@ -324,7 +325,7 @@ public class EngineImpl extends SpecificationImpl
         throw new UnsupportedOperationException();
     }
 
-    public Iterator iterateChildNode() {
+    public Iterator<NodeTreeWalker> iterateChildNode() {
         if (_defaultSpecification != null) {
             return _defaultSpecification.iterateChildNode();
         }
@@ -346,7 +347,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected void doPageService(
-            ServiceCycle cycle, Map pageScopeValues, boolean pageFlush) {
+            ServiceCycle cycle, Map<?,?> pageScopeValues, boolean pageFlush) {
         build();
         try {
             boolean service = true;
@@ -472,7 +473,7 @@ public class EngineImpl extends SpecificationImpl
         }
     }
 
-    public void doService(Map pageScopeValues, boolean pageFlush) {
+    public void doService(Map<?,?> pageScopeValues, boolean pageFlush) {
         if (_destroyed) {
             throw new IllegalStateException(StringUtil.getMessage(EngineImpl.class, 1));
         }
@@ -505,7 +506,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     private static interface SpecificationGenerator {
-        Class getInstantiator(SourceDescriptor source);
+        Class<?> getInstantiator(SourceDescriptor source);
         void initialize(Specification instance);
     }
 
@@ -528,7 +529,7 @@ public class EngineImpl extends SpecificationImpl
         }
         SourceDescriptor source =
             SourceUtil.getSourceDescriptor(systemID);
-        Class specClass = generator.getInstantiator(source);
+        Class<?> specClass = generator.getInstantiator(source);
         if (specClass == null) {
             return null;
         }
@@ -559,7 +560,7 @@ public class EngineImpl extends SpecificationImpl
     public Specification createDefaultSpecification(final String systemID) {
         return createSpecificationInstance(systemID, false,
                 new SpecificationGenerator() {
-                    public Class getInstantiator(SourceDescriptor source) {
+                    public Class<?> getInstantiator(SourceDescriptor source) {
                         return SpecificationImpl.class;
                     }
                     public void initialize(Specification instance) {
@@ -572,7 +573,7 @@ public class EngineImpl extends SpecificationImpl
         return (Page) createSpecificationInstance(
                 pageName + _mayaaExtension, true,
                 new SpecificationGenerator() {
-            public Class getInstantiator(SourceDescriptor source) {
+            public Class<?> getInstantiator(SourceDescriptor source) {
                 return getPageClass();
             }
             public void initialize(Specification instance) {
@@ -586,7 +587,7 @@ public class EngineImpl extends SpecificationImpl
         return (Template) createSpecificationInstance(
                 getTemplateID(page, suffix, extension), true,
                 new SpecificationGenerator() {
-            public Class getInstantiator(SourceDescriptor source) {
+            public Class<?> getInstantiator(SourceDescriptor source) {
                 if (source.exists() == false) {
                     return null;
                 }
@@ -648,7 +649,7 @@ public class EngineImpl extends SpecificationImpl
         } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
-                    _templatePathPatterns = new LinkedList();
+                    _templatePathPatterns = new LinkedList<>();
                 }
                 PathPattern pathPattern =
                     new PathPattern(Pattern.compile(value), true);
@@ -657,7 +658,7 @@ public class EngineImpl extends SpecificationImpl
         } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
-                    _templatePathPatterns = new LinkedList();
+                    _templatePathPatterns = new LinkedList<>();
                 }
                 PathPattern pathPattern =
                     new PathPattern(Pattern.compile(value), false);
@@ -665,7 +666,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } else if (PAGE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                Class pageClass = ObjectUtil.loadClass(value);
+                Class<?> pageClass = ObjectUtil.loadClass(value);
                 if (Page.class.isAssignableFrom(pageClass)) {
                     _pageClass = pageClass;
                 }
@@ -684,7 +685,7 @@ public class EngineImpl extends SpecificationImpl
             }
         } else if (TEMPLATE_CLASS.equals(name)) {
             if (StringUtil.hasValue(value)) {
-                Class templateClass = ObjectUtil.loadClass(value);
+                Class<?> templateClass = ObjectUtil.loadClass(value);
                 if (Template.class.isAssignableFrom(templateClass)) {
                     _templateClass = templateClass;
                 }
@@ -751,10 +752,9 @@ public class EngineImpl extends SpecificationImpl
         return super.getParameter(name);
     }
 
-    private String patternToString(List patterns, boolean result) {
+    private String patternToString(List<PathPattern> patterns, boolean result) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator it = patterns.iterator(); it.hasNext();) {
-            PathPattern pathPattern = (PathPattern) it.next();
+        for (PathPattern pathPattern : patterns) {
             if (pathPattern.isTemplate() == result) {
                 sb.append(pathPattern.getPattern());
                 sb.append("|");
@@ -763,11 +763,11 @@ public class EngineImpl extends SpecificationImpl
         return sb.toString();
     }
 
-    protected Class getPageClass() {
+    protected Class<?> getPageClass() {
         return _pageClass;
     }
 
-    protected Class getTemplateClass() {
+    protected Class<?> getTemplateClass() {
         return _templateClass;
     }
 

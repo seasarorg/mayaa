@@ -18,6 +18,7 @@ package org.seasar.mayaa.builder.library.scanner;
 import java.util.Iterator;
 
 import org.seasar.mayaa.ParameterAware;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * ライブラリ定義ソースの検索スキャナ。
@@ -29,6 +30,6 @@ public interface SourceScanner extends ParameterAware {
      * ライブラリ定義ソースをイテレートする。
      * @return ソース（SourceDescriptor）のイテレータ。
      */
-    Iterator scan();
+    Iterator<SourceDescriptor> scan();
 
 }

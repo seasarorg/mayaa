@@ -16,13 +16,12 @@
 package org.seasar.mayaa.impl.builder.library;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
-
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -50,15 +49,15 @@ public class TLDScriptingVariableInfo {
     }
 
     public VariableInfo findVariableInfo(String name) {
-        for (Iterator it = variableInfos(); it.hasNext(); ) {
-            VariableInfo info = (VariableInfo)it.next();
+        for (Iterator<VariableInfo> it = variableInfos(); it.hasNext(); ) {
+            VariableInfo info = it.next();
             if (name.equals(info.getVarName())) {
                 return info;
             }
         }
         return null;
     }
-    public Iterator variableInfos() {
+    public Iterator<VariableInfo> variableInfos() {
         VariableInfo[] variableInfos;
         if (_hasDynamicName) {
             variableInfos = _tei.getVariableInfo(_tagData);
@@ -67,7 +66,7 @@ public class TLDScriptingVariableInfo {
         }
 
         if (variableInfos == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return Arrays.asList(variableInfos).iterator();
     }

@@ -51,15 +51,15 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     private static final long serialVersionUID = -2346419518053103604L;
     private static final Log LOG = LogFactory.getLog(LibraryManagerImpl.class);
 
-    private List _scanners;
-    private List _builders;
-    private List _libraries;
-    private Map _converters;
+    private List<SourceScanner> _scanners;
+    private List<DefinitionBuilder> _builders;
+    private List<LibraryDefinition> _libraries;
+    private Map<String, PropertyConverter> _converters;
 
     public LibraryManagerImpl() {
-        _scanners = new ArrayList();
-        _builders = new ArrayList();
-        _converters = new HashMap();
+        _scanners = new ArrayList<>();
+        _builders = new ArrayList<>();
+        _converters = new HashMap<>();
     }
 
     protected void warnAlreadyRegistered(
@@ -94,13 +94,12 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         return (PropertyConverter) _converters.get(converterName);
     }
 
-    public PropertyConverter getPropertyConverter(Class propertyClass) {
+    public PropertyConverter getPropertyConverter(Class<?> propertyClass) {
         if (propertyClass == null) {
             throw new IllegalArgumentException();
         }
-        for (Iterator it = _converters.values().iterator(); it.hasNext();) {
-            PropertyConverter propertyConverter = (PropertyConverter) it.next();
-            Class converterClass = propertyConverter.getPropetyClass();
+        for (PropertyConverter propertyConverter : _converters.values()) {
+            Class<?> converterClass = propertyConverter.getPropetyClass();
             if (propertyClass.isAssignableFrom(converterClass)) {
                 return propertyConverter;
             }
@@ -108,7 +107,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         return null;
     }
 
-    public Iterator iteratePropertyConverters() {
+    public Iterator<PropertyConverter> iteratePropertyConverters() {
         return _converters.values().iterator();
     }
 
@@ -145,16 +144,15 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     protected void buildAll() {
-        _libraries = new ArrayList();
-        Set builtLibraries = new HashSet();
+        _libraries = new ArrayList<>();
+        Set<URI> builtLibraries = new HashSet<>();
         for (int i = 0; i < _scanners.size(); i++) {
             SourceScanner scanner = (SourceScanner) _scanners.get(i);
-            for (Iterator it = scanner.scan(); it.hasNext();) {
-                SourceDescriptor source = (SourceDescriptor) it.next();
+            for (Iterator<SourceDescriptor> it = scanner.scan(); it.hasNext();) {
+                SourceDescriptor source = it.next();
                 boolean built = false;
                 for (int k = 0; k < _builders.size(); k++) {
-                    DefinitionBuilder builder =
-                        (DefinitionBuilder) _builders.get(k);
+                    DefinitionBuilder builder = _builders.get(k);
                     LibraryDefinition library = builder.build(source);
                     if (library != null) {
                         if (builtLibraries.contains(
@@ -190,9 +188,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
 
         for (int j = 0; j < _libraries.size(); j++) {
-            LibraryDefinition library = (LibraryDefinition) _libraries.get(j);
-            for (Iterator it = library.iterateAssignedURI(); it.hasNext();) {
-                URI uri = (URI) it.next();
+            LibraryDefinition library = _libraries.get(j);
+            for (Iterator<URI> it = library.iterateAssignedURI(); it.hasNext();) {
+                URI uri = it.next();
                 if (realPath.equals(String.valueOf(uri))) {
                     URI assignedURI = SpecificationUtil.createURI(
                             source.getParameter(SourceAlias.ALIAS));
@@ -209,12 +207,12 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
     }
 
-    public Iterator iterateLibraryDefinition() {
+    public Iterator<LibraryDefinition> iterateLibraryDefinition() {
         prepareLibraries();
         return _libraries.iterator();
     }
 
-    public Iterator iterateLibraryDefinition(URI namespaceURI) {
+    public Iterator<LibraryDefinition> iterateLibraryDefinition(URI namespaceURI) {
         if (StringUtil.isEmpty(namespaceURI)) {
             throw new IllegalArgumentException();
         }
@@ -228,9 +226,9 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         }
         URI namespaceURI = qName.getNamespaceURI();
         String localName = qName.getLocalName();
-        for (Iterator it = iterateLibraryDefinition(namespaceURI);
+        for (Iterator<LibraryDefinition> it = iterateLibraryDefinition(namespaceURI);
                 it.hasNext();)  {
-            LibraryDefinition library = (LibraryDefinition) it.next();
+            LibraryDefinition library = it.next();
             ProcessorDefinition processor =
                 library.getProcessorDefinition(localName);
             if (processor != null) {
@@ -243,12 +241,12 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     // support class ------------------------------------------------
 
     private static class LibraryDefinitionFilteredIterator
-            extends AbstractScanningIterator {
+            extends AbstractScanningIterator<LibraryDefinition> {
 
         private URI _namespaceURI;
 
         public LibraryDefinitionFilteredIterator(
-                URI namespaceURI, Iterator iterator) {
+                URI namespaceURI, Iterator<LibraryDefinition> iterator) {
             super(iterator);
             if (StringUtil.isEmpty(namespaceURI)) {
                 throw new IllegalArgumentException();
@@ -264,7 +262,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
             if (_namespaceURI.equals(library.getNamespaceURI())) {
                 return true;
             }
-            for (Iterator it = library.iterateAssignedURI(); it.hasNext();) {
+            for (Iterator<URI> it = library.iterateAssignedURI(); it.hasNext();) {
                 if (_namespaceURI.equals(it.next())) {
                     return true;
                 }

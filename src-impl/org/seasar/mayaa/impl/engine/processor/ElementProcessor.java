@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,13 +53,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     private static final long serialVersionUID = -1041576023468766303L;
     private static final String SUFFIX_DUPLICATED = "_d";
-    private static final Set XHTML_EMPTY_ELEMENTS;
+    private static final Set<String> XHTML_EMPTY_ELEMENTS;
     private static final String RENDERED_NS_STACK_KEY =
             ElementProcessor.class.getName() + "#renderedNSStack";
     private static final String CURRENT_NS_KEY =
             ElementProcessor.class.getName() + "#currentNS";
     static {
-        XHTML_EMPTY_ELEMENTS = new HashSet();
+        XHTML_EMPTY_ELEMENTS = new HashSet<>();
         XHTML_EMPTY_ELEMENTS.add("base");
         XHTML_EMPTY_ELEMENTS.add("meta");
         XHTML_EMPTY_ELEMENTS.add("link");
@@ -83,7 +84,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         CycleUtil.registVariableFactory(RENDERED_NS_STACK_KEY,
                 new DefaultCycleLocalInstantiator() {
             public Object create(Object[] params) {
-                return new Stack();
+                return new Stack<>();
             }});
         CycleUtil.registVariableFactory(CURRENT_NS_KEY,
                 new DefaultCycleLocalInstantiator() {
@@ -91,8 +92,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 SpecificationNode originalNode = (SpecificationNode) params[0];
                 Namespace currentNS = SpecificationUtil.createNamespace();
                 currentNS.setParentSpace(originalNode.getParentSpace());
-                for (Iterator it = originalNode.iteratePrefixMapping(false); it.hasNext();) {
-                    PrefixMapping prefixMapping = (PrefixMapping) it.next();
+                for (Iterator<PrefixMapping> it = originalNode.iteratePrefixMapping(false); it.hasNext();) {
+                    PrefixMapping prefixMapping = it.next();
                     currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
                 }
                 currentNS.setDefaultNamespaceURI(originalNode.getDefaultNamespaceURI());
@@ -116,20 +117,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
         CycleUtil.clearGlobalVariable(RENDERED_NS_STACK_KEY);
     }
 
-    protected Stack getRenderedNS() {
-        return (Stack) CycleUtil.getGlobalVariable(RENDERED_NS_STACK_KEY, null);
+    @SuppressWarnings("unchecked")
+    protected Stack<List<PrefixMapping>> getRenderedNS() {
+        return (Stack<List<PrefixMapping>>) CycleUtil.getGlobalVariable(RENDERED_NS_STACK_KEY, null);
     }
 
     protected void addRendered(PrefixMapping mapping) {
-        ((List) getRenderedNS().peek()).add(mapping);
+        getRenderedNS().peek().add(mapping);
     }
 
     protected String alreadyRenderedPrefix(URI namespaceURI) {
-        Iterator iteratorRendered = getRenderedNS().iterator();
-        while (iteratorRendered.hasNext()) {
-            Iterator mappings = ((List) iteratorRendered.next()).iterator();
-            while (mappings.hasNext()) {
-                PrefixMapping mapping = (PrefixMapping) mappings.next();
+        for (List<PrefixMapping> rendered : getRenderedNS()) {
+            for (PrefixMapping mapping : rendered) {
                 if (mapping.getNamespaceURI().equals(namespaceURI)) {
                     return mapping.getPrefix();
                 }
@@ -171,7 +170,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return uniqueID;
     }
 
-    public Class getExpectedClass() {
+    public Class<?> getExpectedClass() {
         return String.class;
     }
 
@@ -205,11 +204,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
             currentNS = SpecificationUtil.copyNamespace(currentNS);
         }
         resolvePrefix(getName(), currentNS);
-        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
+        for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = it.next();
             resolvePrefix(prop.getName(), currentNS);
         }
-        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             resolvePrefix(prop.getName(), currentNS);
         }
@@ -264,9 +263,9 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (namespace == null) {
             throw new IllegalArgumentException();
         }
-        for (Iterator it = namespace.iteratePrefixMapping(false);
+        for (Iterator<PrefixMapping> it = namespace.iteratePrefixMapping(false);
                 it.hasNext();) {
-            appendPrefixMappingString(buffer, (PrefixMapping) it.next());
+            appendPrefixMappingString(buffer, it.next());
         }
     }
 
@@ -367,11 +366,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
      * @param buffer 書き出す対象
      */
     protected void writePart2(StringBuffer buffer) {
-        for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
+        for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
+            ProcessorProperty prop = it.next();
             appendAttributeString(buffer, prop.getName(), prop.getValue());
         }
-        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral() == false) {
@@ -386,7 +385,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      * @param buffer 書き出す対象
      */
     protected void writePart3(StringBuffer buffer) {
-        for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral()) {
@@ -463,7 +462,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     protected void renderInit() {
         clearCurrentNS();
-        getRenderedNS().push(new ArrayList());
+        getRenderedNS().push(new ArrayList<PrefixMapping>());
         resolvePrefixAll();
     }
 
@@ -486,7 +485,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 return new ProcessorTreeWalker[] { this };
             }
 
-            List list = new ArrayList();
+            List<ProcessorTreeWalker> list = new ArrayList<>();
             StringBuffer buffer = new StringBuffer();
             writePart1(buffer);
             if (buffer.toString().length() > 0) {
@@ -497,8 +496,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 list.add(part1);
             }
 
-            for (Iterator it = iterateProcesstimeProperties(); it.hasNext();) {
-                ProcessorProperty prop = (ProcessorProperty) it.next();
+            for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
+                ProcessorProperty prop = it.next();
                 buffer = new StringBuffer();
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
                 CharactersProcessor part2 =
@@ -506,7 +505,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
                 list.add(part2);
             }
-            for (Iterator it = iterateInformalProperties(); it.hasNext();) {
+            for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 if (hasProcesstimeProperty(prop) == false
                         && prop.getValue().isLiteral() == false) {
@@ -553,13 +552,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void optimizeNodes() {
         SpecificationNode originalNode = getOriginalNode();
         NodeTreeWalker originalParent = originalNode.getParentNode();
-        for (Iterator it = originalParent.iterateChildNode(); it.hasNext(); ) {
+        for (Iterator<NodeTreeWalker> it = originalParent.iterateChildNode(); it.hasNext(); ) {
             if (it.next() == originalNode) {
                 it.remove();
                 break;
             }
         }
-        for (Iterator it = getOriginalNode().iterateChildNode(); it.hasNext(); ) {
+        for (Iterator<NodeTreeWalker> it = getOriginalNode().iterateChildNode(); it.hasNext(); ) {
             NodeTreeWalker child = (NodeTreeWalker)it.next();
             child.setParentNode(originalParent);
             originalParent.addChildNode(child);

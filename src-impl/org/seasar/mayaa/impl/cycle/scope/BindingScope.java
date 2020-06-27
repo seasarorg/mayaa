@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.scope;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     protected ProcessorProperty getTargetAttribute(
             InsertProcessor processor, String name) {
-        for (Iterator it = processor.getInformalProperties().iterator();
+        for (Iterator<Serializable> it = processor.getInformalProperties().iterator();
                 it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (prop.getName().getQName().getLocalName().equals(name)) {
@@ -59,11 +60,12 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         return "binding";
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         InsertProcessor processor = InsertProcessor.getRenderingCurrent();
         if (processor != null) {
-            return new BindingIterator(
-                    processor.getInformalProperties().iterator());
+            @SuppressWarnings("unchecked")
+            Iterator<ProcessorProperty> it = (Iterator<ProcessorProperty>) processor.getInformalProperties();
+            return new BindingIterator(it);
         }
         return getParamScope().iterateAttributeNames();
     }
@@ -81,7 +83,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
         if (processor != null) {
             ProcessorProperty prop = getTargetAttribute(processor, name);
             if (prop != null) {
-                Map binding = processor.getRenderingParameters();
+                Map<String, Object> binding = processor.getRenderingParameters();
                 if (binding != null) {
                     return binding.get(name);
                 }
@@ -94,11 +96,11 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
 
     // support class ------------------------------------------------
 
-    private static class BindingIterator implements Iterator {
+    private static class BindingIterator implements Iterator<String> {
 
-        private Iterator _it;
+        private Iterator<ProcessorProperty> _it;
 
-        protected BindingIterator(Iterator it) {
+        protected BindingIterator(Iterator<ProcessorProperty> it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }
@@ -109,8 +111,8 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
             return _it.hasNext();
         }
 
-        public Object next() {
-            ProcessorProperty prop = (ProcessorProperty) _it.next();
+        public String next() {
+            ProcessorProperty prop = _it.next();
             return prop.getName().getQName().getLocalName();
         }
 

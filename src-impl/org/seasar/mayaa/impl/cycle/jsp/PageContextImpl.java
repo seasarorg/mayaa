@@ -311,7 +311,7 @@ public class PageContextImpl extends PageContext {
         setAttribute(name, value, PAGE_SCOPE);
     }
 
-    public Enumeration getAttributeNamesInScope(int scope) {
+    public Enumeration<String> getAttributeNamesInScope(int scope) {
         String scopeName = toServiceScope(scope);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope attrScope = cycle.getAttributeScope(scopeName);
@@ -346,7 +346,8 @@ public class PageContextImpl extends PageContext {
             return getServletContext().getInitParameter(name);
         }
 
-        public Enumeration getInitParameterNames() {
+        @SuppressWarnings("unchecked")
+        public Enumeration<String> getInitParameterNames() {
             return getServletContext().getInitParameterNames();
         }
 

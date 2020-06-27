@@ -46,13 +46,16 @@ public class HeaderValuesScope
         return "headerValues";
     }
 
-    public Iterator iterateAttributeNames() {
-        return EnumerationIterator.getInstance(_request.getHeaderNames());
+    public Iterator<String> iterateAttributeNames() {
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = _request.getHeaderNames();
+        return EnumerationIterator.getInstance(e);
     }
 
+    @Override
     public boolean hasAttribute(String name) {
-        for (Iterator it = iterateAttributeNames(); it.hasNext();) {
-            String headerName = (String) it.next();
+        for (Iterator<String> it = iterateAttributeNames(); it.hasNext();) {
+            String headerName = it.next();
             if (headerName.equals(name)) {
                 return true;
             }
@@ -60,10 +63,11 @@ public class HeaderValuesScope
         return false;
     }
 
+    @Override
     public Object getAttribute(String name) {
         if (hasAttribute(name)) {
-            Enumeration headers = _request.getHeaders(name);
-            List headerList = new ArrayList();
+            Enumeration<?> headers = _request.getHeaders(name);
+            List<Object> headerList = new ArrayList<>();
             while (headers.hasMoreElements()) {
                 headerList.add(headers.nextElement());
             }

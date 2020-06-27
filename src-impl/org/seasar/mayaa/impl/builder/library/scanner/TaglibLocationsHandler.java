@@ -40,7 +40,7 @@ public class TaglibLocationsHandler extends XMLHandler {
         getEntityMap().putAll(J2EEEntities.getEntityMap());
     }
 
-    public Iterator iterateTaglibLocations() {
+    public Iterator<SourceAlias> iterateTaglibLocations() {
         return _rootHandler.iterateTaglibLocation();
     }
 

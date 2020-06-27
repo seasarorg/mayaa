@@ -22,17 +22,17 @@ import java.util.Stack;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractScanningIterator implements Iterator {
+public abstract class AbstractScanningIterator<T> implements Iterator<T> {
 
-    private Stack _stack;
+    private Stack<Iterator<T>> _stack;
 
-    private Object _next;
+    private T _next;
 
-    public AbstractScanningIterator(Iterator iterator) {
+    public AbstractScanningIterator(Iterator<T> iterator) {
         if (iterator == null) {
             throw new IllegalArgumentException();
         }
-        _stack = new Stack();
+        _stack = new Stack<>();
         _stack.push(iterator);
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractScanningIterator implements Iterator {
         return true;
     }
 
-    protected Object getNextObject(Object next) {
+    protected <X> X getNextObject(X next) {
         return next;
     }
 
@@ -49,11 +49,13 @@ public abstract class AbstractScanningIterator implements Iterator {
             if (_next != null) {
                 return true;
             }
-            Iterator it = (Iterator) _stack.peek();
+            Iterator<T> it = _stack.peek();
             if (it.hasNext()) {
-                Object next = getNextObject(it.next());
+                T next = getNextObject(it.next());
                 if (next instanceof Iterator) {
-                    _stack.push(next);
+                    @SuppressWarnings("unchecked")
+                    Iterator<T> itr = (Iterator<T>) next;
+                    _stack.push(itr);
                 } else if (filter(next)) {
                     _next = next;
                 }
@@ -67,14 +69,14 @@ public abstract class AbstractScanningIterator implements Iterator {
         }
     }
 
-    public Object next() {
+    public T next() {
         if (_next == null) {
             hasNext();
         }
         if (_next == null) {
             throw new NoSuchElementException();
         }
-        Object ret = _next;
+        T ret = _next;
         _next = null;
         return ret;
     }

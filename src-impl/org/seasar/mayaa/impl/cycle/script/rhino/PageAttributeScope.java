@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +34,6 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * pageスコープのRhino用実装。
@@ -46,9 +46,9 @@ public class PageAttributeScope extends ScriptableObject
 
     public static final String KEY_CURRENT = "__current__";
     private static final long serialVersionUID = 7746385735022710670L;
-    private static Map _methodMap;
+    private static Map<String, NativeJavaMethod> _methodMap;
 
-    private static void setMethod(String name, Class[] args) {
+    private static void setMethod(String name, Class<?>[] args) {
         try {
             Method method = PageAttributeScope.class.getMethod(name, args);
             _methodMap.put(name, new NativeJavaMethod(method, name));
@@ -60,18 +60,18 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     static {
-        _methodMap = new HashMap();
-        Class[] nullArg = new Class[0];
+        _methodMap = new HashMap<>();
+        Class<?>[] nullArg = new Class[0];
         setMethod("getScopeName", nullArg);
         setMethod("iterateAttributeNames", nullArg);
         setMethod("isAttributeWritable", nullArg);
-        Class[] stringArg = new Class[] { String.class };
+        Class<?>[] stringArg = new Class<?>[] { String.class };
         setMethod("hasAttribute", stringArg);
         setMethod("getAttribute", stringArg);
         setMethod("removeAttribute", stringArg);
-        Class[] stringObjectArg = new Class[] { String.class, Object.class };
+        Class<?>[] stringObjectArg = new Class<?>[] { String.class, Object.class };
         setMethod("setAttribute", stringObjectArg);
-        Class[] stringClassArg = new Class[] { String.class, Class.class };
+        Class<?>[] stringClassArg = new Class<?>[] { String.class, Class.class };
         setMethod("newAttribute", stringClassArg);
     }
 
@@ -94,7 +94,7 @@ public class PageAttributeScope extends ScriptableObject
     }
 
     public Object[] getIds() {
-        Set set = new HashSet(_methodMap.keySet());
+        Set<Object> set = new HashSet<Object>(_methodMap.keySet());
         Object[] ids = super.getIds();
         for (int i = 0; i < ids.length; i++) {
             Object name = ids[i];
@@ -117,8 +117,8 @@ public class PageAttributeScope extends ScriptableObject
         return ServiceCycle.SCOPE_PAGE;
     }
 
-    public Iterator iterateAttributeNames() {
-        List list = new ArrayList();
+    public Iterator<String> iterateAttributeNames() {
+        List<String> list = new ArrayList<>();
         for (Scriptable scope = this;
                 scope instanceof PageAttributeScope;
                 scope = scope.getParentScope()) {
@@ -126,7 +126,7 @@ public class PageAttributeScope extends ScriptableObject
             for (int i = 0; i < ids.length; i++) {
                 if (ids[i] instanceof String
                         && list.contains(ids[i]) == false) {
-                    list.add(ids[i]);
+                    list.add((String) ids[i]);
                 }
             }
         }
@@ -189,7 +189,7 @@ public class PageAttributeScope extends ScriptableObject
         }
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         if (hasAttribute(name)) {
             return getAttribute(name);
         }
@@ -208,8 +208,8 @@ public class PageAttributeScope extends ScriptableObject
         return null;
     }
 
-    public Iterator iterateParameterNames() {
-        return NullIterator.getInstance();
+    public Iterator<String> iterateParameterNames() {
+        return Collections.emptyIterator();
     }
 
     public void setLineNumber(int lineNumber) {
@@ -236,7 +236,7 @@ public class PageAttributeScope extends ScriptableObject
         return false;
     }
 
-    public Object getDefaultValue(Class typeHint) {
+    public Object getDefaultValue(Class<?> typeHint) {
         return toString();
     }
 

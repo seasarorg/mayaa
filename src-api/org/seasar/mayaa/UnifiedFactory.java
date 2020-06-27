@@ -27,12 +27,12 @@ public interface UnifiedFactory
      * ファクトリの初期化。作成するサービス対象の実装クラスの設定。
      * @param serviceClass サービス対象実装クラス型。
      */
-    void setServiceClass(Class serviceClass);
+    void setServiceClass(Class<?> serviceClass);
 
     /**
      * 作成するサービス対象実装クラスの取得。
      * @return サービス対象実装クラス型。
      */
-    Class getServiceClass();
+    Class<?> getServiceClass();
 
 }

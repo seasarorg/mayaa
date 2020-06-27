@@ -83,11 +83,11 @@ public class TagTagHandler extends TagHandler {
         _processor.setName(name);
     }
 
-    protected void setProcessorClass(Class clazz) {
+    protected void setProcessorClass(Class<?> clazz) {
         _processor.setProcessorClass(clazz);
     }
 
-    protected void setTeiClass(Class teiClass) {
+    protected void setTeiClass(Class<?> teiClass) {
         _processor.setExtraInfoClass(teiClass);
     }
 
@@ -127,7 +127,7 @@ public class TagTagHandler extends TagHandler {
 
         protected void end(String body) {
             try {
-                Class tagClass = ObjectUtil.loadClass(body);
+                Class<?> tagClass = ObjectUtil.loadClass(body);
                 if (JspProcessor.isSupportClass(tagClass)) {
                     setProcessorClass(tagClass);
                 } else {
@@ -155,7 +155,7 @@ public class TagTagHandler extends TagHandler {
 
         protected void end(String body) {
             try {
-                Class clazz = ObjectUtil.loadClass(body, TagExtraInfo.class);
+                Class<?> clazz = ObjectUtil.loadClass(body, TagExtraInfo.class);
                 setTeiClass(clazz);
             } catch (RuntimeException e) {
                 if (LOG.isErrorEnabled()) {

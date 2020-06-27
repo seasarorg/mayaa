@@ -22,16 +22,16 @@ public class IllegalParameterValueException extends MayaaException {
 
     private static final long serialVersionUID = -943480597929966946L;
 
-    private Class _parameterized;
+    private Class<?> _parameterized;
     private String _parameterName;
 
     public IllegalParameterValueException(
-            Class parameterized, String parameterName) {
+            Class<?> parameterized, String parameterName) {
         _parameterized = parameterized;
         _parameterName = parameterName;
     }
 
-    public Class getParameterizedClass() {
+    public Class<?> getParameterizedClass() {
         return _parameterized;
     }
 

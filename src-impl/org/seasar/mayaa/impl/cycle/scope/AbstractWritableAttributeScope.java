@@ -32,7 +32,7 @@ public abstract class AbstractWritableAttributeScope
         return true;
     }
 
-    public Object newAttribute(String name, Class attributeClass) {
+    public Object newAttribute(String name, Class<?> attributeClass) {
         if (attributeClass == null) {
             throw new IllegalArgumentException();
         }

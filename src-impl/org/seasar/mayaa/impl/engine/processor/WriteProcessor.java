@@ -140,7 +140,7 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             String bodyText = body.getString();
             body.clearBuffer();
             if (_value != null) {
-                Map variables = new HashMap();
+                Map<String, String> variables = new HashMap<>();
                 variables.put(BODY_VARIABLE_NAME, bodyText);
                 SpecificationUtil.startScope(variables);
                 try {

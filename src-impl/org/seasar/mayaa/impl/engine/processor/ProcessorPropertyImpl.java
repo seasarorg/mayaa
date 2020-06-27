@@ -30,7 +30,7 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
     private CompiledScript _compiled;
 
     public ProcessorPropertyImpl(
-            PrefixAwareName name, String value, Class expectedClass) {
+            PrefixAwareName name, String value, Class<?> expectedClass) {
         if (name == null || expectedClass == null) {
             throw new IllegalArgumentException();
         }

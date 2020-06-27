@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.ReferenceCache;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -43,8 +43,8 @@ public class NamespaceImpl implements Namespace {
 
     private static final Log LOG = LogFactory.getLog(NamespaceImpl.class);
 
-    private static ReferenceCache/*<Namespace>*/ _cache =
-        new ReferenceCache(Namespace.class);
+    private static ReferenceCache<Namespace> _cache =
+        new ReferenceCache<>(Namespace.class);
 
     public static Namespace getInstance(Namespace namespace) {
         return getInstance(serialize(namespace));
@@ -53,7 +53,7 @@ public class NamespaceImpl implements Namespace {
     public static Namespace getInstance(String serializeKey) {
         synchronized(_cache) {
             // キャッシュされたシングルトンを返す
-            for (Iterator it = _cache.iterator(); it.hasNext(); ) {
+            for (Iterator<Namespace> it = _cache.iterator(); it.hasNext(); ) {
                 NamespaceImpl space = (NamespaceImpl) it.next();
                 if (space.getSerializeKey().equals(serializeKey)) {
                     return space;
@@ -78,7 +78,7 @@ public class NamespaceImpl implements Namespace {
         }
         NamespaceImpl result = new NamespaceImpl();
         result.setParentSpace(parent);
-        for (Iterator it = namespace.iteratePrefixMapping(false); it.hasNext(); ) {
+        for (Iterator<PrefixMapping> it = namespace.iteratePrefixMapping(false); it.hasNext(); ) {
             PrefixMapping mapping = (PrefixMapping) it.next();
             result.addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
         }
@@ -90,7 +90,7 @@ public class NamespaceImpl implements Namespace {
     }
 
     private transient Namespace _parentSpace;
-    private transient Set/*<PrefixMapping>*/ _mappings;
+    private transient Set<PrefixMapping> _mappings;
     private transient PrefixMapping _defaultNamespaceMapping;
     private String _serializeKey;
     private transient boolean _needDeserialize;
@@ -124,7 +124,7 @@ public class NamespaceImpl implements Namespace {
             if (_mappings == null) {
                 // テンプレートによってxmlnsの記述順が異なったとしても、
                 // 同一のものを保証するためにソートする
-                _mappings = new TreeSet(_prefixMappingComparator);
+                _mappings = new TreeSet<>(_prefixMappingComparator);
             }
             PrefixMapping mapping =
                 SpecificationUtil.createPrefixMapping(prefix, namespaceURI);
@@ -149,8 +149,8 @@ public class NamespaceImpl implements Namespace {
             }
             return;
         }
-        for (Iterator it = iteratePrefixMapping(true); it.hasNext();) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
+        for (Iterator<PrefixMapping> it = iteratePrefixMapping(true); it.hasNext();) {
+            PrefixMapping mapping = it.next();
             if (mapping.getNamespaceURI().equals(namespaceURI)) {
                 if (mapping.equals(_defaultNamespaceMapping) == false) {
                     _defaultNamespaceMapping = mapping;
@@ -218,8 +218,8 @@ public class NamespaceImpl implements Namespace {
                 }
             }
         }
-        for (Iterator it = iteratePrefixMapping(all); it.hasNext();) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
+        for (Iterator<PrefixMapping> it = iteratePrefixMapping(all); it.hasNext();) {
+            PrefixMapping mapping = it.next();
             String value = fromPrefix
                     ? mapping.getPrefix() : mapping.getNamespaceURI().getValue();
             if (test.equals(value)) {
@@ -247,7 +247,7 @@ public class NamespaceImpl implements Namespace {
         return getMapping(false, namespaceURI.getValue(), all);
     }
 
-    public Iterator iteratePrefixMapping(boolean all) {
+    public Iterator<PrefixMapping> iteratePrefixMapping(boolean all) {
         if (all && getParentSpace() != null) {
             return new AllNamespaceIterator(this);
         }
@@ -255,7 +255,7 @@ public class NamespaceImpl implements Namespace {
         if (_mappings != null) {
             return _mappings.iterator();
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
     public boolean addedMapping() {
@@ -283,7 +283,7 @@ public class NamespaceImpl implements Namespace {
             return impl._serializeKey;
         }
 
-        List spaces = new ArrayList();
+        List<Namespace> spaces = new ArrayList<>();
         Namespace parent = instance.getParentSpace();
         while (parent != null) {
             spaces.add(parent);
@@ -291,7 +291,7 @@ public class NamespaceImpl implements Namespace {
         }
         StringBuffer buffer = new StringBuffer();
         for (int i = spaces.size()-1; i >= 0; i--) {
-            Namespace current = (Namespace)spaces.get(i);
+            Namespace current = spaces.get(i);
             if (current instanceof NamespaceImpl) {
                 NamespaceImpl currentImpl = (NamespaceImpl) current;
                 buffer.append(currentImpl.namespaceToString());
@@ -334,7 +334,7 @@ public class NamespaceImpl implements Namespace {
                 line = line.substring("\t".length());
                 // パフォーマンス重視のためにaddPrefixMappingを呼ばない
                 if (current._mappings == null) {
-                    current._mappings = new TreeSet(_prefixMappingComparator);
+                    current._mappings = new TreeSet<>(_prefixMappingComparator);
                 }
                 current._mappings.add(SpecificationUtil.createPrefixMapping(line));
             }
@@ -345,7 +345,7 @@ public class NamespaceImpl implements Namespace {
     private String namespaceToString() {
         StringBuffer sb = new StringBuffer();
         sb.append("/").append(_defaultNamespaceMapping).append("\n");
-        for (Iterator it = iteratePrefixMapping(false); it.hasNext(); ) {
+        for (Iterator<PrefixMapping> it = iteratePrefixMapping(false); it.hasNext(); ) {
             sb.append("\t").append(it.next()).append("\n");
         }
         return sb.toString();
@@ -382,8 +382,8 @@ public class NamespaceImpl implements Namespace {
 
             _parentSpace = current._parentSpace;
             _defaultNamespaceMapping = current._defaultNamespaceMapping;
-            _mappings = new TreeSet(_prefixMappingComparator);
-            for (Iterator it = current.iteratePrefixMapping(false)
+            _mappings = new TreeSet<>(_prefixMappingComparator);
+            for (Iterator<PrefixMapping> it = current.iteratePrefixMapping(false)
                     ; it.hasNext(); ) {
                 _mappings.add(it.next());
             }
@@ -401,10 +401,10 @@ public class NamespaceImpl implements Namespace {
 
     // support class -------------------------------------------------
 
-    protected static class AllNamespaceIterator implements Iterator {
+    protected static class AllNamespaceIterator implements Iterator<PrefixMapping> {
 
         private Namespace _current;
-        private Iterator _it;
+        private Iterator<PrefixMapping> _it;
 
         public AllNamespaceIterator(Namespace current) {
             if (current == null) {
@@ -429,7 +429,7 @@ public class NamespaceImpl implements Namespace {
             return false;
         }
 
-        public Object next() {
+        public PrefixMapping next() {
             if (hasNext()) {
                 return _it.next();
             }
@@ -442,38 +442,33 @@ public class NamespaceImpl implements Namespace {
 
     }
 
-    protected static final Comparator _prefixMappingComparator = new Comparator() {
+    protected static final Comparator<PrefixMapping> _prefixMappingComparator = new Comparator<PrefixMapping>() {
 
-        public int compare(Object o1, Object o2) {
-            if (o1 instanceof PrefixMapping && o2 instanceof PrefixMapping) {
-                PrefixMapping mapping1 = (PrefixMapping)o1;
-                PrefixMapping mapping2 = (PrefixMapping)o2;
-                URI ns1 = mapping1.getNamespaceURI();
-                URI ns2 = mapping2.getNamespaceURI();
-                int result = 0;
-                if (ns1 == null) {
-                    if (ns2 != null) {
-                        result = -1;
-                    }
-                } else if (ns2 == null) {
-                    result = 1;
-                } else {
-                    result = ns1.compareTo(ns2);
+        public int compare(PrefixMapping mapping1, PrefixMapping mapping2) {
+            URI ns1 = mapping1.getNamespaceURI();
+            URI ns2 = mapping2.getNamespaceURI();
+            int result = 0;
+            if (ns1 == null) {
+                if (ns2 != null) {
+                    result = -1;
                 }
-                if (result == 0) {
-                    String prefix1 = mapping1.getPrefix();
-                    String prefix2 = mapping2.getPrefix();
-                    if (prefix1 == null) {
-                        prefix1 = "";
-                    }
-                    if (prefix2 == null) {
-                        prefix2 = "";
-                    }
-                    result = prefix1.compareTo(prefix2);
-                }
-                return result;
+            } else if (ns2 == null) {
+                result = 1;
+            } else {
+                result = ns1.compareTo(ns2);
             }
-            throw new IllegalStateException();
+            if (result == 0) {
+                String prefix1 = mapping1.getPrefix();
+                String prefix2 = mapping2.getPrefix();
+                if (prefix1 == null) {
+                    prefix1 = "";
+                }
+                if (prefix2 == null) {
+                    prefix2 = "";
+                }
+                result = prefix1.compareTo(prefix2);
+            }
+            return result;
         }
 
         public boolean equals(Object obj) {

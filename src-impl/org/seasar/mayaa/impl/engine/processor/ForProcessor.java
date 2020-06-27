@@ -36,7 +36,7 @@ public class ForProcessor extends TemplateProcessorSupport
         CycleUtil.registVariableFactory(COUNTER_KEY,
                 new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
-                return new Integer(0);
+                return Integer.valueOf(0);
             }
         });
     }
@@ -91,7 +91,7 @@ public class ForProcessor extends TemplateProcessorSupport
     }
 
     protected void setCounter(int counter) {
-        CycleUtil.setLocalVariable(COUNTER_KEY, this, new Integer(counter));
+        CycleUtil.setLocalVariable(COUNTER_KEY, this, Integer.valueOf(counter));
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {

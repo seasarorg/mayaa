@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -25,7 +26,6 @@ import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
-import org.seasar.mayaa.impl.util.IteratorUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -55,7 +55,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
      * @param source web.xmlのSourceDescriptor
      * @return SourceAliasのIterator
      */
-    protected Iterator scanWebXml(SourceDescriptor source) {
+    protected Iterator<SourceAlias> scanWebXml(SourceDescriptor source) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
@@ -64,7 +64,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
                 LOG.info(StringUtil.getMessage(
                         WebXMLTaglibSourceScanner.class, 0, source.getSystemID()));
             }
-            return IteratorUtil.NULL_ITERATOR;
+            return Collections.emptyIterator();
         }
         InputStream stream = source.getInputStream();
         try {
@@ -77,7 +77,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
         }
     }
 
-    public Iterator scan() {
+    public Iterator<SourceDescriptor> scan() {
         SourceDescriptor source = FactoryFactory.getBootstrapSource(
                 ApplicationSourceDescriptor.WEB_INF, "web.xml");
         return new TaglibLocationIterator(scanWebXml(source));
@@ -89,11 +89,11 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
      *
      * @author Koji Suga (Gluegent Inc.)
      */
-    private static class TaglibLocationIterator implements Iterator {
+    private static class TaglibLocationIterator implements Iterator<SourceDescriptor> {
 
-        private Iterator _it;
+        private Iterator<SourceAlias> _it;
 
-        protected TaglibLocationIterator(Iterator it) {
+        protected TaglibLocationIterator(Iterator<SourceAlias> it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }
@@ -104,7 +104,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
             return _it.hasNext();
         }
 
-        public Object next() {
+        public SourceDescriptor next() {
             SourceAlias alias = (SourceAlias) _it.next();
             String systemID = alias.getSystemID();
             if (systemID.startsWith("/WEB-INF/")) {

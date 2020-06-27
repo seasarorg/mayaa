@@ -193,8 +193,7 @@ public class CycleUtil {
     }
 
     /** ノードツリー最適化中か否かを保持するキー */
-    private static final ThreadLocal/*<Boolean>*/ IS_DRAFT_WRITING =
-        new ThreadLocal/*<Boolean>*/();
+    private static final ThreadLocal<Boolean> IS_DRAFT_WRITING = new ThreadLocal<Boolean>();
 
     /**
      * ノードツリー最適化中か。

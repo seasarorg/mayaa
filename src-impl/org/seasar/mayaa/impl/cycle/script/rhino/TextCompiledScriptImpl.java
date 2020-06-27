@@ -149,7 +149,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             Object func = ((Scriptable) host).get(_elStyleName, scope);
             return ((Function) func).call(cx, scope, (Scriptable) host, args);
         }
-        Class[] argClasses = getMethodArgClasses();
+        Class<?>[] argClasses = getMethodArgClasses();
         return ObjectUtil.invoke(host, _elStyleName, args, argClasses);
     }
 

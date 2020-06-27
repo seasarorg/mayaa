@@ -15,9 +15,9 @@
  */
 package org.seasar.mayaa.impl.source;
 
+import java.util.Collections;
 import java.util.Iterator;
 
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.source.SourceHolder;
 
@@ -46,11 +46,11 @@ public abstract class SourceDescriptorProvideSourceHolder implements SourceHolde
         return sourceDescriptor;
     }
 
-    public Iterator iterator(String[] filters) {
+    public Iterator<String> iterator(String[] filters) {
         FileSourceDescriptor root =
             (FileSourceDescriptor) getSourceDescriptor("");
         if (root.exists() == false) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return new SystemIDFileSearchIterator(root.getFile(), filters);
     }

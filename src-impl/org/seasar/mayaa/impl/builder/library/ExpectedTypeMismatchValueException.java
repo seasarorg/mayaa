@@ -29,9 +29,9 @@ public class ExpectedTypeMismatchValueException extends MayaaException {
 	private final URI _namespaceURI;
     private final String _processorName;
     private final String _propertyName;
-    private final Class _expectedClass;
+    private final Class<?> _expectedClass;
 
-    public ExpectedTypeMismatchValueException(String processorName, QName qName, Class expectedClass) {
+    public ExpectedTypeMismatchValueException(String processorName, QName qName, Class<?> expectedClass) {
         _processorName = processorName;
         _expectedClass = expectedClass;
         if (qName != null) {

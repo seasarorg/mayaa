@@ -15,34 +15,35 @@
  */
 package org.seasar.mayaa.impl.util.collection;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EnumerationIterator implements Iterator {
+public class EnumerationIterator<T> implements Iterator<T> {
 
-    private Enumeration _enumration;
+    private Enumeration<T> _enumration;
 
-    public static Iterator getInstance(Enumeration enumration) {
+    public static <T> Iterator<T> getInstance(Enumeration<T> enumration) {
         if (enumration == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         if (enumration instanceof IteratorEnumeration) {
-            return ((IteratorEnumeration) enumration).getInternalIterator();
+            return ((IteratorEnumeration<T>) enumration).getInternalIterator();
         }
-        return new EnumerationIterator(enumration);
+        return new EnumerationIterator<T>(enumration);
     }
 
-    private EnumerationIterator(Enumeration enumration) {
+    private EnumerationIterator(Enumeration<T> enumration) {
         if (enumration == null) {
             throw new IllegalArgumentException();
         }
-        _enumration = enumration;
+        _enumration = (Enumeration<T>) enumration;
     }
 
-    public Enumeration getInternalEnumeration() {
+    public Enumeration<T> getInternalEnumeration() {
         return _enumration;
     }
 
@@ -50,7 +51,7 @@ public class EnumerationIterator implements Iterator {
         return _enumration.hasMoreElements();
     }
 
-    public Object next() {
+    public T next() {
         return _enumration.nextElement();
     }
 

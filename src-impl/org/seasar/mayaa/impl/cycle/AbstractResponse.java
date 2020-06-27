@@ -35,11 +35,11 @@ public abstract class AbstractResponse implements Response, CONST_IMPL {
     private static final long serialVersionUID = -7175816678322765773L;
 
     private String _encoding = TEMPLATE_DEFAULT_CHARSET;
-    private Stack _stack;
+    private Stack<CycleWriter> _stack;
     private boolean _flushed;
 
     public AbstractResponse() {
-        _stack = new Stack();
+        _stack = new Stack<>();
         _stack.push(new CycleWriterImpl(null));
     }
 

@@ -47,6 +47,6 @@ public interface PropertySet extends ParameterAware {
      * オブジェクトのイテレート。
      * @return バインディング情報イテレーター。
      */
-    Iterator iteratePropertyDefinition();
+    Iterator<PropertyDefinition> iteratePropertyDefinition();
 
 }

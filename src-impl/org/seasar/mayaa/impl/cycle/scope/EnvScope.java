@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle.scope;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * 環境変数を取得する読み込み専用スコープ。
@@ -33,8 +35,12 @@ public class EnvScope extends AbstractReadOnlyAttributeScope {
         return "env";
     }
 
-    public Iterator iterateAttributeNames() {
-        return System.getProperties().keySet().iterator();
+    public Iterator<String> iterateAttributeNames() {
+        List<String> keys = new ArrayList<String>();
+        for (Object o : System.getProperties().keySet()) {
+            keys.add(o.toString());
+        }
+        return keys.iterator();
     }
 
     public boolean hasAttribute(String name) {

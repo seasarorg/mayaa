@@ -57,7 +57,7 @@ public interface PropertyDefinition extends ParameterAware {
      * デフォルトはjava.lang.Object。
      * @return 属性型。
      */
-    Class getExpectedClass();
+    Class<?> getExpectedClass();
 
     /**
      * MLDのdefault属性値。カスタマイズで渡すプロパティのデフォルト値。

@@ -27,9 +27,9 @@ import org.mozilla.javascript.Undefined;
 public class NativeList extends NativeJavaObject {
 
     private static final long serialVersionUID = -1963435161453782180L;
-    private List _list;
+    private List<Object> _list;
 
-    public NativeList(Scriptable scope, List list) {
+    public NativeList(Scriptable scope, List<Object> list) {
         super(scope, list, List.class);
         if (list == null) {
             throw new IllegalArgumentException();
@@ -64,7 +64,7 @@ public class NativeList extends NativeJavaObject {
         Object[] ids = super.getIds();
         Object[] ret = new Object[listSize + ids.length];
         for (int i = 0; i < listSize; i++) {
-            ret[i] = new Integer(i);
+            ret[i] = Integer.valueOf(i);
         }
         for (int i = 0; i < ids.length; i++) {
             ret[i + listSize] = ids[i];

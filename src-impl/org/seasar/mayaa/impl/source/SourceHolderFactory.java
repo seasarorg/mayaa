@@ -30,7 +30,7 @@ import org.seasar.mayaa.source.SourceHolder;
  */
 public class SourceHolderFactory {
 
-    private static List _sourceHolders;
+    private static List<SourceHolder> _sourceHolders;
     private static volatile boolean _immutable = false;
 
     private SourceHolderFactory() {
@@ -39,7 +39,7 @@ public class SourceHolderFactory {
 
     static {
         // for context root
-        _sourceHolders = new ArrayList();
+        _sourceHolders = new ArrayList<>();
         SourceHolder contentRoot = new WebContextFolderSourceHolder();
         contentRoot.setRoot("/");
         appendSourceHolder(contentRoot);
@@ -71,7 +71,7 @@ public class SourceHolderFactory {
      *
      * @return SourceHolderのIterator
      */
-    public static Iterator iterator() {
+    public static Iterator<SourceHolder> iterator() {
         if (_immutable == false) {
             // 2回目以降のsynchronizedを避けるために変更不可とする
             synchronized(_sourceHolders) {
@@ -91,7 +91,7 @@ public class SourceHolderFactory {
      */
     public static synchronized void release() {
         _immutable = false;
-        _sourceHolders = new ArrayList();
+        _sourceHolders = new ArrayList<>();
         SourceHolder contentRoot = new WebContextFolderSourceHolder();
         contentRoot.setRoot("/");
         appendSourceHolder(contentRoot);

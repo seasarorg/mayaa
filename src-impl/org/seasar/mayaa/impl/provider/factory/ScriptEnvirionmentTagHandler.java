@@ -47,7 +47,7 @@ public class ScriptEnvirionmentTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class environmentClass = XMLUtil.getClassValue(
+        Class<?> environmentClass = XMLUtil.getClassValue(
                 attributes, "class", null);
         _currentEnv = (ScriptEnvironment) MarshallUtil.marshall(
                 environmentClass, ScriptEnvironment.class, _beforeEnv,

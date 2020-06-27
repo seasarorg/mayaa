@@ -33,7 +33,7 @@ public class ParamScope extends AbstractReadOnlyAttributeScope {
         return "param";
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         AttributeScope values = CycleUtil.getRequestScope().getParamValues();
         return values.iterateAttributeNames();
     }

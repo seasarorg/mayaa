@@ -23,6 +23,7 @@ import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -32,10 +33,10 @@ public class DefaultSourceScanner extends ParameterAwareImpl
 
     private static final long serialVersionUID = 690422240376318319L;
 
-    private Set _sources;
+    private Set<SourceDescriptor> _sources;
 
     public DefaultSourceScanner() {
-        _sources = new HashSet();
+        _sources = new HashSet<>();
         ClassLoaderSourceDescriptor loader =
             new ClassLoaderSourceDescriptor();
         loader.setNeighborClass(TemplateProcessorSupport.class);
@@ -43,7 +44,7 @@ public class DefaultSourceScanner extends ParameterAwareImpl
         _sources.add(loader);
     }
 
-    public Iterator scan() {
+    public Iterator<SourceDescriptor> scan() {
         return _sources.iterator();
     }
 

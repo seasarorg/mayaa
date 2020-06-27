@@ -66,8 +66,8 @@ public class NativeAttributeScope extends NativeJavaObject {
     }
 
     public Object[] getIds() {
-        Set set = new HashSet();
-        for (Iterator it = _attrs.iterateAttributeNames(); it.hasNext();) {
+        Set<Object> set = new HashSet<>();
+        for (Iterator<String> it = _attrs.iterateAttributeNames(); it.hasNext();) {
             set.add(it.next());
         }
         Object[] ids = super.getIds();

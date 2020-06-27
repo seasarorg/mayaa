@@ -155,7 +155,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
             AttributeScope scope = (AttributeScope) attribute;
             property = scope.getAttribute(_propertyName);
         } else if (attribute instanceof Map) {
-            property = ((Map) attribute).get(_propertyName);
+            property = ((Map<?,?>) attribute).get(_propertyName);
         } else {
             // それ以外はBeanとしてのアクセス
             try {

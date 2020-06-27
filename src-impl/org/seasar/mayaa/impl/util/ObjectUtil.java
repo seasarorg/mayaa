@@ -143,7 +143,7 @@ public class ObjectUtil {
         }
     }
 
-    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class[] argTypes) {
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class<?>[] argTypes) {
         if (clazz == null || argTypes == null) {
             throw new IllegalArgumentException();
         }
@@ -345,7 +345,7 @@ public class ObjectUtil {
      * @return メソッドの実行結果
      */
     public static Object invoke(
-            Object bean, String methodName, Object[] args, Class[] argClasses) {
+            Object bean, String methodName, Object[] args, Class<?>[] argClasses) {
         try {
             return MethodUtils.invokeMethod(bean, methodName, args, argClasses);
         } catch (NoSuchMethodException e) {

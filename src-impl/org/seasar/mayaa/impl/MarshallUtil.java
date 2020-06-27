@@ -61,7 +61,7 @@ public class MarshallUtil {
         }
         if (beforeObject != null) {
             Constructor<?> constructor = ObjectUtil.getConstructor(
-                    instanceClass, new Class[] { interfaceClass });
+                    instanceClass, new Class<?>[] { interfaceClass });
             if (constructor != null) {
                 Object obj = ObjectUtil.newInstance(
                         constructor, new Object[] { beforeObject });

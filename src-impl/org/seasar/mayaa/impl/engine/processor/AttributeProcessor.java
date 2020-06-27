@@ -279,11 +279,11 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             return _script.execute(args);
         }
 
-        public void setMethodArgClasses(Class[] methodArgClasses) {
+        public void setMethodArgClasses(Class<?>[] methodArgClasses) {
             _script.setMethodArgClasses(methodArgClasses);
         }
 
-        public Class[] getMethodArgClasses() {
+        public Class<?>[] getMethodArgClasses() {
             return _script.getMethodArgClasses();
         }
 

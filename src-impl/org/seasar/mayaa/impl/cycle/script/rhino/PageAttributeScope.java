@@ -65,13 +65,13 @@ public class PageAttributeScope extends ScriptableObject
         setMethod("getScopeName", nullArg);
         setMethod("iterateAttributeNames", nullArg);
         setMethod("isAttributeWritable", nullArg);
-        Class<?>[] stringArg = new Class[] { String.class };
+        Class<?>[] stringArg = new Class<?>[] { String.class };
         setMethod("hasAttribute", stringArg);
         setMethod("getAttribute", stringArg);
         setMethod("removeAttribute", stringArg);
-        Class<?>[] stringObjectArg = new Class[] { String.class, Object.class };
+        Class<?>[] stringObjectArg = new Class<?>[] { String.class, Object.class };
         setMethod("setAttribute", stringObjectArg);
-        Class<?>[] stringClassArg = new Class[] { String.class, Class.class };
+        Class<?>[] stringClassArg = new Class<?>[] { String.class, Class.class };
         setMethod("newAttribute", stringClassArg);
     }
 

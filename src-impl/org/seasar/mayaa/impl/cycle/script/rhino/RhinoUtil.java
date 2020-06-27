@@ -44,7 +44,7 @@ public class RhinoUtil {
     private static final Log LOG = LogFactory.getLog(RhinoUtil.class);
 
     /** 引数無しメソッド取得に使う引数 */
-    private static final Class[] VOID_ARGS_CLASS = new Class[0];
+    private static final Class<?>[] VOID_ARGS_CLASS = new Class[0];
 
     private RhinoUtil() {
         // no instantiation.

@@ -63,11 +63,11 @@ public class ComplexScript implements CompiledScript {
         return ObjectUtil.convert(_expectedClass, buffer.toString());
     }
 
-    public void setMethodArgClasses(Class[] methodArgClasses) {
+    public void setMethodArgClasses(Class<?>[] methodArgClasses) {
         // do nothing.
     }
 
-    public Class[] getMethodArgClasses() {
+    public Class<?>[] getMethodArgClasses() {
         return null;
     }
 

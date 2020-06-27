@@ -64,11 +64,11 @@ public class LiteralScript implements CompiledScript {
         return ObjectUtil.convert(_expectedClass, _text);
     }
 
-    public void setMethodArgClasses(Class[] methodArgClasses) {
+    public void setMethodArgClasses(Class<?>[] methodArgClasses) {
         // do nothing.
     }
 
-    public Class[] getMethodArgClasses() {
+    public Class<?>[] getMethodArgClasses() {
         return null;
     }
 

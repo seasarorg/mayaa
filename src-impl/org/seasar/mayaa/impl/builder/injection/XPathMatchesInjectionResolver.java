@@ -27,6 +27,7 @@ import org.seasar.mayaa.engine.specification.CopyToFilter;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -67,11 +68,11 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
      * @param specificationNodes m:xpathを持つノードのリスト
      */
     protected void getXPathNodes(
-            SpecificationNode node, List specificationNodes) {
+            SpecificationNode node, List<SpecificationNode> specificationNodes) {
         if (node == null) {
             throw new IllegalArgumentException();
         }
-        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             String xpath = SpecificationUtil.getAttributeValue(child, QM_XPATH);
             if (StringUtil.hasValue(xpath)) {
@@ -98,7 +99,7 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
 
         // mayaaファイル内のm:xpathを持つすべてのノードを対象とする
         Specification spec = SpecificationUtil.findSpecification(original);
-        List injectNodes = new ArrayList();
+        List<SpecificationNode> injectNodes = new ArrayList<>();
         while (spec != null) {
             SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
             if (mayaa != null) {
@@ -107,8 +108,8 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
             spec = EngineUtil.getParentSpecification(spec);
         }
 
-        for (Iterator it = injectNodes.iterator(); it.hasNext();) {
-            SpecificationNode injected = (SpecificationNode) it.next();
+        for (Iterator<SpecificationNode> it = injectNodes.iterator(); it.hasNext();) {
+            SpecificationNode injected = it.next();
             String mayaaPath = SpecificationUtil.getAttributeValue(
                     injected, QM_XPATH);
             // injectedをnamespaceとして渡すとfunctionのデフォルトnamesapceが

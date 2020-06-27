@@ -32,9 +32,7 @@ import java.util.NoSuchElementException;
  *
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class ReferenceCache extends ArrayList {
-
-    private static final long serialVersionUID = -6808020476640514389L;
+public class ReferenceCache<T> {
 
     public static final int SOFT = 0;
     public static final int WEAK = 1;
@@ -73,32 +71,28 @@ public class ReferenceCache extends ArrayList {
          * @param monitor リファレンスキャッシュ
          * @param label オブジェクトに対応付けていたラベル
          */
-        void sweepFinish(ReferenceCache monitor, Object label);
+        void sweepFinish(ReferenceCache<?> monitor, Object label);
     }
 
+    private ArrayList<Reference<T>> _list = new ArrayList<>();
     protected volatile boolean _liveSweepMonitor;
     protected SweepListener _sweepBeginListener;
-    protected ReferenceQueue _queue;
+    protected ReferenceQueue<T> _queue;
 
-    private Class<?> _elementType;
+    private Class<T> _elementType;
     private int _referenceType;
     private String _name;
-    protected Map _labelReferenceMap;
+    protected Map<Reference<T>, Object> _labelReferenceMap;
 
-    public ReferenceCache() {
-        this(Object.class, SOFT, null);
-    }
-
-    public ReferenceCache(Class<?> elementType) {
+    public ReferenceCache(Class<T> elementType) {
         this(elementType, SOFT, null);
     }
 
-    public ReferenceCache(Class<?> elementType, int referenceType) {
+    public ReferenceCache(Class<T> elementType, int referenceType) {
         this(elementType, SOFT, null);
     }
 
-    public ReferenceCache(Class<?> elementType,
-            int referenceType, SweepListener listener) {
+    public ReferenceCache(Class<T> elementType, int referenceType, SweepListener listener) {
         if (referenceType != SOFT && referenceType != WEAK) {
             throw new IllegalArgumentException();
         }
@@ -111,8 +105,7 @@ public class ReferenceCache extends ArrayList {
     }
 
     private void check(Object element) {
-        if (element == null
-                || _elementType.isAssignableFrom(element.getClass()) == false) {
+        if (element == null || _elementType.isAssignableFrom(element.getClass()) == false) {
             throw new IllegalArgumentException();
         }
     }
@@ -130,13 +123,12 @@ public class ReferenceCache extends ArrayList {
             return;
         }
         ThreadGroup topThreadGroup;
-        for (topThreadGroup = Thread.currentThread().getThreadGroup()
-                ; topThreadGroup.getParent() != null
-                ; topThreadGroup = topThreadGroup.getParent()) {
+        for (topThreadGroup = Thread.currentThread().getThreadGroup(); topThreadGroup
+                .getParent() != null; topThreadGroup = topThreadGroup.getParent()) {
             /* no operation */
         }
-        _labelReferenceMap = new HashMap();
-        _queue = new ReferenceQueue();
+        _labelReferenceMap = new HashMap<>();
+        _queue = new ReferenceQueue<>();
 
         new Thread(topThreadGroup, "ReferenceCache Sweep Monitor") {
             {
@@ -144,18 +136,17 @@ public class ReferenceCache extends ArrayList {
                 setDaemon(true);
                 _liveSweepMonitor = true;
             }
+
             public void run() {
-                while(_liveSweepMonitor && _alive) {
-                     try {
-                        PhantomReference ref =
-                            (PhantomReference) _queue.remove(1);
+                while (_liveSweepMonitor && _alive) {
+                    try {
+                        Reference<?> ref = _queue.remove(1);
                         if (ref != null) {
                             Object label = _labelReferenceMap.get(ref);
                             _labelReferenceMap.remove(ref);
-                            _sweepBeginListener.sweepFinish(
-                                    ReferenceCache.this, label);
+                            _sweepBeginListener.sweepFinish(ReferenceCache.this, label);
                         }
-                    } catch(InterruptedException e) {
+                    } catch (InterruptedException e) {
                         // no operation
                     }
                 }
@@ -164,39 +155,39 @@ public class ReferenceCache extends ArrayList {
         }.start();
     }
 
-    protected Reference createReference(Object referent) {
+    protected Reference<T> createReference(T referent) {
         if (_sweepBeginListener != null) {
             sweepMonitorStart();
             Object labelObject = _sweepBeginListener.labeling(referent);
             if (labelObject == null || labelObject == referent) {
                 labelObject = referent.toString();
             }
-            PhantomReference ref = new PhantomReference(referent, _queue);
+            PhantomReference<T> ref = new PhantomReference<>(referent, _queue);
             _labelReferenceMap.put(ref, labelObject);
         }
-        switch(_referenceType) {
-        case SOFT:
-            return new SoftReference(referent);
-        case WEAK:
-            return new WeakReference(referent);
+        switch (_referenceType) {
+            case SOFT:
+                return new SoftReference<T>(referent);
+            case WEAK:
+                return new WeakReference<T>(referent);
         }
         throw new IllegalStateException();
     }
 
-    public void add(int index, Object element) {
+    public void add(int index, T element) {
         check(element);
-        super.add(index, createReference(element));
+        _list.add(index, createReference(element));
     }
 
-    public boolean add(Object o) {
+    public boolean add(T o) {
         check(o);
-        return super.add(createReference(o));
+        return _list.add(createReference(o));
     }
 
-    public int indexOf(Object o) {
+    public int indexOf(T o) {
         if (o != null) {
-            for (int i = 0; i < size(); i++) {
-                if (((Reference) get(i)).get().equals(o)) {
+            for (int i = 0; i < _list.size(); i++) {
+                if (((Reference<T>) _list.get(i)).get().equals(o)) {
                     return i;
                 }
             }
@@ -204,19 +195,29 @@ public class ReferenceCache extends ArrayList {
         return -1;
     }
 
-    public boolean remove(Object o) {
+    public boolean remove(T o) {
         if (o != null) {
             int index = indexOf(o);
             if (index >= 0) {
-                remove(index);
+                _list.remove(index);
                 return true;
             }
         }
         return false;
     }
 
-    public Iterator iterator() {
-        return new ReferenceCacheIterator(this);
+    public boolean contains(T o) {
+        if (o != null) {
+            int index = indexOf(o);
+            if (index >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Iterator<T> iterator() {
+        return new ReferenceCacheIterator<T>(_list);
     }
 
     protected void finalize() throws Throwable {
@@ -227,17 +228,17 @@ public class ReferenceCache extends ArrayList {
     // support class
 
     /**
-     * 解放されてヌルになったアイテムをパックしながら有効な
-     * アイテムを返すイテレータ
+     * 解放されてヌルになったアイテムをパックしながら有効な アイテムを返すイテレータ
+     * 
      * @author Taro Kato (Gluegent, Inc.)
      */
-    protected static class ReferenceCacheIterator implements Iterator {
+    protected static class ReferenceCacheIterator<T> implements Iterator<T> {
 
         private int _index;
-        private Object _next;
-        private List _list;
+        private T _next;
+        private List<Reference<T>> _list;
 
-        public ReferenceCacheIterator(List list) {
+        public ReferenceCacheIterator(List<Reference<T>> list) {
             if (list == null) {
                 throw new IllegalArgumentException();
             }
@@ -255,7 +256,7 @@ public class ReferenceCache extends ArrayList {
                     return false;
                 }
                 synchronized (_list) {
-                    Reference ref = (Reference) _list.get(_index);
+                    Reference<T> ref = _list.get(_index);
                     _next = ref.get();
                     if (_next == null) {
                         _list.remove(_index);
@@ -265,11 +266,11 @@ public class ReferenceCache extends ArrayList {
             return true;
         }
 
-        public Object next() {
+        public T next() {
             if (_next == null && hasNext() == false) {
                 throw new NoSuchElementException();
             }
-            Object ret = _next;
+            T ret = _next;
             _next = null;
             return ret;
         }

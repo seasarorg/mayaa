@@ -102,8 +102,8 @@ public class EchoProcessor extends ElementProcessor {
         }
         PropertyConverter converter = getConverterForProcessorProperty();
         PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
-        for (Iterator it = originalNode.iterateAttribute(); it.hasNext();) {
-            NodeAttribute attribute = (NodeAttribute) it.next();
+        for (Iterator<NodeAttribute> it = originalNode.iterateAttribute(); it.hasNext();) {
+            NodeAttribute attribute = it.next();
             String value = getAdjustedValue(adjuster, originalNode, attribute);
             Class<?> expectedClass = getExpectedClass();
             Serializable property = converter.convert(attribute, value, expectedClass);
@@ -124,10 +124,10 @@ public class EchoProcessor extends ElementProcessor {
     }
 
     // ProcessorTreeWalker implements --------------------------------
-    public Map getVariables() {
-        Iterator it = iterateInformalProperties();
+    public Map<String, Object> getVariables() {
+        Iterator<Serializable> it = iterateInformalProperties();
         if (it.hasNext()) {
-            Map attributeMap = new HashMap();
+            Map<String, Object> attributeMap = new HashMap<>();
             while (it.hasNext()) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(

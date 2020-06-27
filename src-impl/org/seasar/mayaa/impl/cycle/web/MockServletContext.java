@@ -21,12 +21,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
@@ -45,7 +44,7 @@ public class MockServletContext implements ServletContext {
 
     private String _contextPath;
     private String _contextRoot;
-    private Map _attributes = new HashMap(10);
+    private Map<String, Object> _attributes = new HashMap<>(10);
 
     /**
      * コンテキストパスとコンテキストルートを引数に取るコンストラクタ。
@@ -70,14 +69,14 @@ public class MockServletContext implements ServletContext {
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getAttributeNames()
      */
-    public Enumeration getAttributeNames() {
-        final Iterator keyIterator = _attributes.keySet().iterator();
-        return new Enumeration() {
+    public Enumeration<String> getAttributeNames() {
+        final Iterator<String> keyIterator = _attributes.keySet().iterator();
+        return new Enumeration<String>() {
             public boolean hasMoreElements() {
                 return keyIterator.hasNext();
             }
 
-            public Object nextElement() {
+            public String nextElement() {
                 return keyIterator.next();
             }
         };
@@ -127,8 +126,8 @@ public class MockServletContext implements ServletContext {
      * @return 要素を持たないEnumeration
      * @see javax.servlet.ServletContext#getInitParameterNames()
      */
-    public Enumeration getInitParameterNames() {
-        return NULL_ENUMERATION;
+    public Enumeration<String> getInitParameterNames() {
+        return Collections.emptyEnumeration();
     }
 
     /**
@@ -248,8 +247,8 @@ public class MockServletContext implements ServletContext {
      * @return 空のSet
      * @see javax.servlet.ServletContext#getResourcePaths(java.lang.String)
      */
-    public Set getResourcePaths(String path) {
-        return new HashSet();
+    public Set<String> getResourcePaths(String path) {
+        return Collections.emptySet();
     }
 
     /**
@@ -302,8 +301,8 @@ public class MockServletContext implements ServletContext {
      * @see javax.servlet.ServletContext#getServletNames()
      * @deprecated
      */
-    public Enumeration getServletNames() {
-        return NULL_ENUMERATION;
+    public Enumeration<String> getServletNames() {
+        return Collections.emptyEnumeration();
     }
 
     /**
@@ -313,8 +312,8 @@ public class MockServletContext implements ServletContext {
      * @see javax.servlet.ServletContext#getServlets()
      * @deprecated
      */
-    public Enumeration getServlets() {
-        return NULL_ENUMERATION;
+    public Enumeration<?> getServlets() {
+        return Collections.emptyEnumeration();
     }
 
     /**
@@ -356,18 +355,5 @@ public class MockServletContext implements ServletContext {
             throwable.printStackTrace();
         }
     }
-
-    /**
-     * 要素を持たないEnumeration。
-     */
-    private static final Enumeration NULL_ENUMERATION = new Enumeration() {
-        public boolean hasMoreElements() {
-            return false;
-        }
-
-        public Object nextElement() {
-            throw new NoSuchElementException();
-        }
-    };
 
 }

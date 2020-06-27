@@ -83,8 +83,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
     private static final long serialVersionUID = -1031702086020145692L;
 
-    private List _resolvers = new ArrayList();
-    private List _unmodifiableResolvers =
+    private List<InjectionResolver> _resolvers = new ArrayList<>();
+    private List<InjectionResolver> _unmodifiableResolvers =
         Collections.unmodifiableList(_resolvers);
     private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
     private transient InjectionChain _chain = new DefaultInjectionChain();
@@ -101,7 +101,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
-    protected List getInjectionResolvers() {
+    protected List<InjectionResolver> getInjectionResolvers() {
         return _unmodifiableResolvers;
     }
 
@@ -236,7 +236,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         }
     }
 
-    private static class AbsoluteCompareList extends ArrayList {
+    private static class AbsoluteCompareList<T> extends ArrayList<T> {
         private static final long serialVersionUID = 1L;
 
         protected AbsoluteCompareList() {
@@ -255,7 +255,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     private static class NodeAndChildren {
         public SpecificationNode _originalNode;
-        public List _list = new ArrayList();
+        public List<NodeAndChildren> _list = new ArrayList<>();
         public NodeAndChildren(SpecificationNode originalNode) {
             _originalNode = originalNode;
         }
@@ -263,8 +263,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected void nodeOptimize(Template template) {
         SequenceIDGenerator idGenerator = template;
-        List children = new ArrayList();
-        List usingNodes = new AbsoluteCompareList();
+        List<NodeAndChildren> children = new ArrayList<>();
+        List<SpecificationNode> usingNodes = new AbsoluteCompareList<>();
         walkTreeOptimizeNode(idGenerator, template, children, usingNodes);
 
         SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(template);
@@ -282,7 +282,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected void walkTreeNodeChainModify(SequenceIDGenerator idGenerator,
-            NodeTreeWalker parent, List children) {
+            NodeTreeWalker parent, List<NodeAndChildren> children) {
         parent.clearChildNodes();
         for (int i = 0; i < children.size(); i++) {
             NodeAndChildren nodeAndChildren = (NodeAndChildren) children.get(i);
@@ -296,7 +296,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected void walkTreeOptimizeNode(
             SequenceIDGenerator idGenerator, ProcessorTreeWalker parent,
-            List children, List usingNodes) {
+            List<NodeAndChildren> children, List<SpecificationNode> usingNodes) {
         for (int i = 0; i < parent.getChildProcessorSize(); i++) {
             ProcessorTreeWalker walker = parent.getChildProcessor(i);
             if (walker instanceof TemplateProcessor) {
@@ -401,8 +401,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected TemplateProcessor resolveInjectedNode(Template template,
-            Stack stack, SpecificationNode original, SpecificationNode injected,
-            Set divided) {
+            Stack<ProcessorTreeWalker> stack, SpecificationNode original, SpecificationNode injected,
+            Set<ProcessorTreeWalker> divided) {
         if (injected == null) {
             throw new IllegalArgumentException();
         }
@@ -426,7 +426,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
         parent.addChildProcessor(processor);
         processor.initialize();
-        Iterator it = injected.iterateChildNode();
+        Iterator<NodeTreeWalker> it = injected.iterateChildNode();
         if (it.hasNext() == false) {
             return processor;
         }
@@ -460,11 +460,9 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
      * @param divided 静的部分と動的部分を分割し
      */
     protected void optimizeProcessors(SequenceIDGenerator idGenerator,
-            ProcessorTreeWalker parent, List collector, Set divided) {
-        List expands = new ArrayList();
-        Iterator it = collector.iterator();
-        while (it.hasNext()) {
-            ProcessorTreeWalker processor = (ProcessorTreeWalker) it.next();
+            ProcessorTreeWalker parent, List<ProcessorTreeWalker> collector, Set<ProcessorTreeWalker> divided) {
+        List<ProcessorTreeWalker> expands = new ArrayList<>();
+        for (ProcessorTreeWalker processor : collector) {
             if (processor == null) {
                 throw new IllegalStateException("processor is null");
             }
@@ -481,7 +479,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
         }
 
-        List packs = new ArrayList();
+        List<ProcessorTreeWalker> packs = new ArrayList<>();
         for (int i = 0; i < expands.size(); i++) {
             ProcessorTreeWalker node = (ProcessorTreeWalker) expands.get(i);
             node = convertCharactersProcessor(node, idGenerator);
@@ -538,12 +536,12 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected void walkParsedTree(
-            Template template, Stack stack, NodeTreeWalker original,
-            Set divided) {
+            Template template, Stack<ProcessorTreeWalker> stack, NodeTreeWalker original,
+            Set<ProcessorTreeWalker> divided) {
         if (original == null) {
             throw new IllegalArgumentException();
         }
-        Iterator it = original.iterateChildNode();
+        Iterator<NodeTreeWalker> it = original.iterateChildNode();
         while (it.hasNext()) {
             SpecificationNode child;
             try {
@@ -574,7 +572,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             ProcessorTreeWalker parent = (ProcessorTreeWalker) stack.peek();
             int count = parent.getChildProcessorSize();
             if (count > 0) {
-                List childProcessors = new ArrayList();
+                List<ProcessorTreeWalker> childProcessors = new ArrayList<>();
                 for (int i = 0; i < count; i++) {
                     childProcessors.add(parent.getChildProcessor(i));
                 }
@@ -632,15 +630,15 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalArgumentException();
         }
         saveToCycle(template, template);
-        Stack stack = new Stack();
+        Stack<ProcessorTreeWalker> stack = new Stack<>();
         stack.push(template);
         SpecificationNode mayaa = SpecificationUtil.createSpecificationNode(
                 QM_MAYAA, template.getSystemID(), 0, true, 0);
         template.addChildNode(mayaa);
 
-        Set divided = null;
+        Set<ProcessorTreeWalker> divided = null;
         if (isOptimizeEnabled()) {
-            divided = new HashSet();
+            divided = new HashSet<>();
         }
         walkParsedTree(template, stack, template, divided);
         if (template.equals(stack.peek()) == false) {

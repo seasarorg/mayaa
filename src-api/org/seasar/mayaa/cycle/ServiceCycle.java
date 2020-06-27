@@ -155,7 +155,7 @@ public interface ServiceCycle
      * スコープをイテレートする。
      * @return スコープ（AttributeScope）のイテレータ。
      */
-    Iterator iterateAttributeScope();
+    Iterator<AttributeScope> iterateAttributeScope();
 
     /**
      * 現在処理中のテンプレート上ノード情報を設定する。

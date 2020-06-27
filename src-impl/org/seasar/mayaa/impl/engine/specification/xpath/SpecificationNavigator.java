@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.specification.xpath;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.jaxen.DefaultNavigator;
@@ -35,7 +36,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -69,6 +69,7 @@ public class SpecificationNavigator extends DefaultNavigator
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
     public Iterator getParentAxisIterator(Object obj) {
         Object parent = null;
         if (obj instanceof NodeAttribute) {
@@ -79,26 +80,26 @@ public class SpecificationNavigator extends DefaultNavigator
         if (parent != null) {
             return new SingleObjectIterator(parent);
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    public Iterator getNamespaceAxisIterator(Object obj) {
+    public Iterator<PrefixMapping> getNamespaceAxisIterator(Object obj) {
         if (obj instanceof Namespace) {
             Namespace namespace = (Namespace) obj;
             return namespace.iteratePrefixMapping(true);
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    public Iterator getAttributeAxisIterator(Object obj) {
+    public Iterator<NodeAttribute> getAttributeAxisIterator(Object obj) {
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
             return node.iterateAttribute();
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    public Iterator getAttributeAxisIterator(
+    public Iterator<NodeAttribute> getAttributeAxisIterator(
             Object obj, String localName, String namespacePrefix,
             String namespaceURI) {
         if (obj instanceof SpecificationNode) {
@@ -106,26 +107,26 @@ public class SpecificationNavigator extends DefaultNavigator
             if (StringUtil.isEmpty(namespaceURI)) {
                 URI uri = getNamespaceURI(node, namespacePrefix);
                 if (uri == null) {
-                    return NullIterator.getInstance();
+                    return Collections.emptyIterator();
                 }
                 namespaceURI = uri.getValue();
             }
             QName qName = SpecificationUtil.createQName(
                     SpecificationUtil.createURI(namespaceURI), localName);
-            return new QNameFilteredIterator(qName, node.iterateAttribute());
+            return new QNameFilteredIterator<>(qName, node.iterateAttribute());
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    public Iterator getChildAxisIterator(Object obj) {
+    public Iterator<NodeTreeWalker> getChildAxisIterator(Object obj) {
         if (obj instanceof NodeTreeWalker) {
             NodeTreeWalker node = (NodeTreeWalker) obj;
             return node.iterateChildNode();
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    public Iterator getChildAxisIterator(
+    public Iterator<NodeTreeWalker> getChildAxisIterator(
             Object obj, String localName, String namespacePrefix,
             String namespaceURI) {
         if (obj instanceof NodeTreeWalker) {
@@ -140,9 +141,9 @@ public class SpecificationNavigator extends DefaultNavigator
             }
             QName qName = SpecificationUtil.createQName(
                     SpecificationUtil.createURI(namespaceURI), localName);
-            return new QNameFilteredIterator(qName, node.iterateChildNode());
+            return new QNameFilteredIterator<>(qName, node.iterateChildNode());
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
     public Object getDocumentNode(Object obj) {
@@ -244,7 +245,7 @@ public class SpecificationNavigator extends DefaultNavigator
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
             StringBuffer buffer = new StringBuffer();
-            for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+            for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
                 SpecificationNode child = (SpecificationNode) it.next();
                 if (isText(child)) {
                     String value = getTextStringValue(child);
@@ -346,11 +347,11 @@ public class SpecificationNavigator extends DefaultNavigator
 
     // support class ------------------------------------------------
 
-    protected static class QNameFilteredIterator extends AbstractScanningIterator {
+    protected static class QNameFilteredIterator<T> extends AbstractScanningIterator<T> {
 
         private QName _qName;
 
-        public QNameFilteredIterator(QName qName, Iterator iterator) {
+        public QNameFilteredIterator(QName qName, Iterator<T> iterator) {
             super(iterator);
             if (qName == null) {
                 throw new IllegalArgumentException();

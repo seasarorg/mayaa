@@ -68,7 +68,7 @@ public interface SpecificationNode
      * 属性のイテレート。
      * @return 属性（<code>NodeAttribute</code>）のイテレータ。
      */
-    Iterator iterateAttribute();
+    Iterator<NodeAttribute> iterateAttribute();
 
     /**
      * 属性の削除。

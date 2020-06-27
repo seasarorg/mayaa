@@ -218,7 +218,7 @@ public class SpecificationImpl extends ParameterAwareImpl
         getNodeTreeWalker().insertChildNode(index, childNode);
     }
 
-    public Iterator iterateChildNode() {
+    public Iterator<NodeTreeWalker> iterateChildNode() {
         return getNodeTreeWalker().iterateChildNode();
     }
 
@@ -359,8 +359,8 @@ public class SpecificationImpl extends ParameterAwareImpl
         if (_delegateNodeTreeWalker != null) {
             _delegateNodeTreeWalker.setOwner(this);
         }
-        for (Iterator it = iterateChildNode(); it.hasNext(); ) {
-            NodeTreeWalker child = (NodeTreeWalker) it.next();
+        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext(); ) {
+            NodeTreeWalker child = it.next();
             child.setParentNode(this);
         }
         nodeSerializer().specLoaded(this);

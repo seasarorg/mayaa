@@ -119,9 +119,10 @@ public class FileGenerator {
     public static Argument parse(String[] args) {
         Argument argument = new Argument();
 
-        Iterator it = IteratorUtil.toIterator(args);
+        @SuppressWarnings("unchecked")
+        Iterator<String> it = (Iterator<String>) IteratorUtil.toIterator(args);
         while (it.hasNext()) {
-            String arg = (String) it.next();
+            String arg = it.next();
             if (arg.equals("-v") || arg.equals("--version")) {
                 argument.setVersion(true);
             } else if (arg.equals("-h") || arg.equals("--help")) {
@@ -130,27 +131,27 @@ public class FileGenerator {
                 if (it.hasNext() == false) {
                     throw new IllegalArgumentException("lack of argument \"base path\".");
                 }
-                argument.setBasePath((String) it.next());
+                argument.setBasePath(it.next());
             } else if (arg.equals("-o") || arg.equals("--output")) {
                 if (it.hasNext() == false) {
                     throw new IllegalArgumentException("lack of argument \"output path\".");
                 }
-                argument.setOutputPath((String) it.next());
+                argument.setOutputPath(it.next());
             } else if (arg.equals("-f") || arg.equals("--filters")) {
                 if (it.hasNext() == false) {
                     throw new IllegalArgumentException("lack of argument \"filters\".");
                 }
-                argument.setFilters((String) it.next());
+                argument.setFilters(it.next());
             } else if (arg.equals("-a") || arg.equals("--attributes")) {
                 if (it.hasNext() == false) {
                     throw new IllegalArgumentException("lack of argument \"attributes\".");
                 }
-                argument.setAttributes((String) it.next());
+                argument.setAttributes(it.next());
             } else if (arg.equals("-p") || arg.equals("--property")) {
                 if (it.hasNext() == false) {
                     throw new IllegalArgumentException("lack of argument \"property file path\".");
                 }
-                argument.setPropertyFilePath((String) it.next());
+                argument.setPropertyFilePath(it.next());
             }
         }
 
@@ -215,10 +216,10 @@ public class FileGenerator {
      * @param argument コマンドライン引数
      * @return 属性のMapまたはnull
      */
-    public static Map extractAttributes(Argument argument) {
-        Map result = null;
+    public static Map<Object, Object> extractAttributes(Argument argument) {
+        Map<Object, Object> result = null;
         if (argument.getAttributes() != null) {
-            result = new HashMap(10);
+            result = new HashMap<>(10);
 
             // name=value;name=value の形
             String[] attributes = argument.getAttributes().split(";");
@@ -234,7 +235,7 @@ public class FileGenerator {
         }
         if (argument.getPropertyFilePath() != null) {
             if (result == null) {
-                result = new HashMap(10);
+                result = new HashMap<>(10);
             }
             // propertiesファイルから読み出す
             FileInputStream is = null;
@@ -242,7 +243,7 @@ public class FileGenerator {
                 is = new FileInputStream(argument.getPropertyFilePath());
                 Properties prop = new Properties();
                 prop.load(is);
-                for (Iterator keys = prop.keySet().iterator(); keys.hasNext();) {
+                for (Iterator<Object> keys = prop.keySet().iterator(); keys.hasNext();) {
                     String key = (String) keys.next();
                     if (result.containsKey(key) == false) {
                         result.put(key, prop.getProperty(key).trim());

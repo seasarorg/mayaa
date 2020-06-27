@@ -70,8 +70,8 @@ public class BuilderUtil implements CONST_IMPL {
                 basePath = contextPath + sourcePath;
             }
 
-            for (Iterator it = original.iterateAttribute(); it.hasNext();) {
-                NodeAttribute attr = (NodeAttribute) it.next();
+            for (Iterator<NodeAttribute> it = original.iterateAttribute(); it.hasNext();) {
+                NodeAttribute attr = it.next();
                 String attrValue = attr.getValue();
                 if (needAdjust
                         && adjuster.isTargetAttribute(
@@ -89,8 +89,8 @@ public class BuilderUtil implements CONST_IMPL {
                 node.addAttribute(attr.getQName(), originalName, attrValue);
             }
 
-            for (Iterator it = original.iteratePrefixMapping(false); it.hasNext();) {
-                PrefixMapping prefixMapping = (PrefixMapping) it.next();
+            for (Iterator<PrefixMapping> it = original.iteratePrefixMapping(false); it.hasNext();) {
+                PrefixMapping prefixMapping = it.next();
                 node.addPrefixMapping(
                         prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
             }

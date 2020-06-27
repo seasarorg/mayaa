@@ -94,9 +94,9 @@ public class FactoryFactoryImpl extends FactoryFactory
                 systemID, UnifiedFactoryHandler.class);
         UnifiedFactory factory = marshallFactory(
                 interfaceClass, context, source, null);
-        Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
+        Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
-            source = (SourceDescriptor) it.next();
+            source = it.next();
             factory = marshallFactory(interfaceClass, context, source, factory);
         }
         source = getBootstrapSource(

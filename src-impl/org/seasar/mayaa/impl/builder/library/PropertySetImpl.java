@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.builder.library;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -44,8 +44,8 @@ public class PropertySetImpl extends ParameterAwareImpl
 
     private LibraryDefinition _library;
     private String _name;
-    private List _properties;
-    private Set _propertyNames;
+    private List<PropertyDefinition> _properties;
+    private Set<String> _propertyNames;
     private int _lineNumber;
 
     public void setLineNumber(int lineNumber) {
@@ -92,8 +92,8 @@ public class PropertySetImpl extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         if (_properties == null) {
-            _propertyNames = new HashSet();
-            _properties = new ArrayList();
+            _propertyNames = new HashSet<>();
+            _properties = new ArrayList<>();
         }
         String propName = property.getName();
         if (_propertyNames.add(propName)) {
@@ -120,9 +120,9 @@ public class PropertySetImpl extends ParameterAwareImpl
                 && namespaceURI.equals(attrNS);
     }
 
-    public Iterator iteratePropertyDefinition() {
+    public Iterator<PropertyDefinition> iteratePropertyDefinition() {
         if (_properties == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _properties.iterator();
     }

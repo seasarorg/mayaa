@@ -36,7 +36,7 @@ public interface ProcessorDefinition extends PropertySet {
      * 登録プロパティセットのイテレータ。
      * @return プロパティセットイテレータ。
      */
-    Iterator iteratePropertySets();
+    Iterator<PropertySet> iteratePropertySets();
 
     /**
      * 当該設定より、テンプレートプロセッサを生成する。

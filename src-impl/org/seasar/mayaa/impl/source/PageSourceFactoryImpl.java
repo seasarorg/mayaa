@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.source;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.source.PageSourceFactory;
 import org.seasar.mayaa.source.SourceHolder;
@@ -41,8 +41,8 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
 
     private Object _context;
     private Class<?> _serviceClass;
-    private List _parameterNames;
-    private List _parameterValues;
+    private List<String> _parameterNames;
+    private List<String> _parameterValues;
 
     public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass == null) {
@@ -108,10 +108,10 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
             LOG.info(name + ": "+ value);
         }
         if (_parameterNames == null) {
-            _parameterNames = new ArrayList();
+            _parameterNames = new ArrayList<>();
         }
         if (_parameterValues == null) {
-            _parameterValues = new ArrayList();
+            _parameterValues = new ArrayList<>();
         }
         _parameterNames.add(name);
         _parameterValues.add(value);
@@ -156,9 +156,9 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         return null;
     }
 
-    public Iterator iterateParameterNames() {
+    public Iterator<String> iterateParameterNames() {
         if (_parameterNames == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _parameterNames.iterator();
     }

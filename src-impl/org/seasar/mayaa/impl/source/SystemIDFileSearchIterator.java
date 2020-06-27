@@ -16,6 +16,7 @@
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Iterator;
 
 import org.seasar.mayaa.impl.util.FileSearchIterator;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -37,7 +38,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Taro Kato (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class SystemIDFileSearchIterator extends FileSearchIterator {
+public class SystemIDFileSearchIterator extends FileSearchIterator implements Iterator<String> {
 
     /**
      * filtersにnullを渡すと、".html"というフィルタが指定されたものとみなす。
@@ -85,8 +86,14 @@ public class SystemIDFileSearchIterator extends FileSearchIterator {
         });
     }
 
-    public Object next() {
-        return makeSystemID((File) super.next());
+    @Override
+    public boolean hasNext() {
+        return super.hasNextFile();
+    }
+
+    @Override
+    public String next() {
+        return makeSystemID((File) super.nextFile());
     }
 
     protected String makeSystemID(File current) {

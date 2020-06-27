@@ -42,7 +42,7 @@ public class CycleFactoryImpl
     private static final long serialVersionUID = 6930908159752133949L;
     private static final Log LOG = LogFactory.getLog(CycleFactoryImpl.class);
 
-    private static ThreadLocal _currentCycle = new ThreadLocal();
+    private static ThreadLocal<Object[]> _currentCycle = new ThreadLocal<>();
 
     protected StandardScope _standardScope = new StandardScope();
     private Object _context;
@@ -117,8 +117,8 @@ public class CycleFactoryImpl
         }
         ServiceCycle cycle =
             (ServiceCycle) ObjectUtil.newInstance(serviceCycleClass);
-        for (Iterator it = iterateParameterNames(); it.hasNext();) {
-            String key = (String) it.next();
+        for (Iterator<String> it = iterateParameterNames(); it.hasNext();) {
+            String key = it.next();
             String value = getParameter(key);
             cycle.setParameter(key, value);
         }
@@ -159,9 +159,9 @@ public class CycleFactoryImpl
         if (StringUtil.hasValue(scopeName)) {
             ScriptEnvironment scriptEnvironment =
                 ProviderUtil.getScriptEnvironment();
-            for (Iterator it = scriptEnvironment.iterateAttributeScope();
+            for (Iterator<AttributeScope> it = scriptEnvironment.iterateAttributeScope();
                     it.hasNext(); ) {
-                AttributeScope scope = (AttributeScope) it.next();
+                AttributeScope scope = it.next();
                 if (scopeName.equals(scope.getScopeName())) {
                     return true;
                 }

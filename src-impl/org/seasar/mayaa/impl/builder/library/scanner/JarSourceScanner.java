@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.builder.library.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +31,6 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
@@ -43,15 +43,15 @@ public class JarSourceScanner extends ParameterAwareImpl implements
 
     private String _root;
     private SourceDescriptor _descriptor;
-    private Set _folderFilters = new HashSet();
-    private Set _ignores = new HashSet();
-    private Set _extensions = new HashSet();
+    private Set<String> _folderFilters = new HashSet<>();
+    private Set<String> _ignores = new HashSet<>();
+    private Set<String> _extensions = new HashSet<>();
 
-    public Iterator scan() {
+    public Iterator<SourceDescriptor> scan() {
         if (_descriptor == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
-        Set aliases = new HashSet();
+        Set<SourceAlias> aliases = new HashSet<>();
         scanSource(_descriptor, aliases);
         return new AliasToSourceIterator(aliases.iterator());
     }
@@ -67,7 +67,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
         return null;
     }
 
-    protected void scanSource(SourceDescriptor source, Set aliases) {
+    protected void scanSource(SourceDescriptor source, Set<SourceAlias> aliases) {
         if (source == null || source.exists() == false) {
             throw new IllegalArgumentException();
         }
@@ -95,7 +95,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
     }
 
     protected void addAliases(
-            JarInputStream jar, String jarPath, Date timestamp, Set aliases)
+            JarInputStream jar, String jarPath, Date timestamp, Set<SourceAlias> aliases)
             throws IOException {
         JarEntry entry;
         while ((entry = jar.getNextJarEntry()) != null) {
@@ -110,8 +110,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
     protected boolean nameStartsWith(String entryName) {
         if (_folderFilters.size() > 0) {
             boolean ok = false;
-            for (Iterator it = _folderFilters.iterator(); it.hasNext(); ) {
-                String filter = (String) it.next();
+            for (String filter : _folderFilters) {
                 if (entryName.startsWith(filter)) {
                     ok = true;
                 }
@@ -121,8 +120,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
             }
         }
         if (_ignores.size() > 0) {
-            for (Iterator it = _ignores.iterator(); it.hasNext(); ) {
-                String filter = (String) it.next();
+            for (String filter : _ignores) {
                 if (entryName.startsWith(filter)) {
                     return false;
                 }
@@ -135,8 +133,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
         if (_extensions.size() == 0) {
             return true;        // all
         }
-        for (Iterator it = _extensions.iterator(); it.hasNext(); ) {
-            String filter = (String) it.next();
+        for (String filter : _extensions) {
             if (entryName.endsWith(filter)) {
                 return true;
             }
@@ -178,11 +175,11 @@ public class JarSourceScanner extends ParameterAwareImpl implements
 
     // suppport class -----------------------------------------------
 
-    protected static class AliasToSourceIterator implements Iterator {
+    protected static class AliasToSourceIterator implements Iterator<SourceDescriptor> {
 
-        private Iterator _it;
+        private Iterator<SourceAlias> _it;
 
-        public AliasToSourceIterator(Iterator it) {
+        public AliasToSourceIterator(Iterator<SourceAlias> it) {
             if (it == null) {
                 throw new IllegalArgumentException();
             }
@@ -193,8 +190,8 @@ public class JarSourceScanner extends ParameterAwareImpl implements
             return _it.hasNext();
         }
 
-        public Object next() {
-            SourceAlias alias = (SourceAlias) _it.next();
+        public SourceDescriptor next() {
+            SourceAlias alias = _it.next();
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());

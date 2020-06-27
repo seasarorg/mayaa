@@ -17,13 +17,12 @@ package org.seasar.mayaa.impl.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class FileSearchIterator implements Iterator, Runnable {
+public class FileSearchIterator implements Runnable {
 
     private File _root;
     private FilenameFilter _filenameFilter;
@@ -67,7 +66,7 @@ public class FileSearchIterator implements Iterator, Runnable {
         _stepFindThread = null;
     }
 
-    public boolean hasNext() {
+    public boolean hasNextFile() {
         if (_done && _current == null) {
             return false;
         }
@@ -96,9 +95,9 @@ public class FileSearchIterator implements Iterator, Runnable {
         return found;
     }
 
-    public Object next() {
+    public File nextFile() {
         if (_gotNext == false) {
-            if (hasNext() == false) {
+            if (hasNextFile() == false) {
                 throw new NoSuchElementException();
             }
         }
@@ -108,6 +107,7 @@ public class FileSearchIterator implements Iterator, Runnable {
 
     private Thread _internalCurrentThread;
 
+    @Override
     public void run() {
         try {
             _done = false;
@@ -159,10 +159,6 @@ public class FileSearchIterator implements Iterator, Runnable {
                 }
             }
         }
-    }
-
-    public void remove() {
-        throw new UnsupportedOperationException();
     }
 
     protected void finalize() throws Throwable {

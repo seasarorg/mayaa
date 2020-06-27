@@ -30,7 +30,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScriptBlockIterator implements Iterator {
+public class ScriptBlockIterator implements Iterator<ScriptBlock> {
 
     private String _text;
     private String _blockSign;
@@ -135,7 +135,7 @@ public class ScriptBlockIterator implements Iterator {
      * @return ScriptBlockインスタンス
      * @throws NoSuchElementException 次の要素が存在しない場合
      */
-    public Object next() {
+    public ScriptBlock next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }

@@ -17,8 +17,6 @@ package org.seasar.mayaa.source;
 
 import java.util.Iterator;
 
-import org.seasar.mayaa.source.SourceDescriptor;
-
 /**
  * ソースディスクリプタを格納しているロケーション
  * @author Taro Kato (Gluegent, Inc.)
@@ -33,7 +31,7 @@ public interface SourceHolder {
      *                 それ以外は正規表現でファイル名のマッチしたものを返却する。
      * @return 存在するsystemIDイテレータ
      */
-    Iterator iterator(String[] filters);
+    Iterator<String> iterator(String[] filters);
 
     /**
      * ソースディスクリプタを保持する論理的な開始位置を設定する

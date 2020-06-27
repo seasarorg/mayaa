@@ -66,7 +66,7 @@ public interface Engine extends ParameterAware, Specification {
      * @param pageScopeValues PAGEスコープのトップに含めるもの。
      * @param pageFlush テンプレート出力を自動でフラッシュするかどうか。
      */
-    void doService(Map pageScopeValues, boolean pageFlush);
+    void doService(Map<?,?> pageScopeValues, boolean pageFlush);
 
     /**
      * エラーハンドルページの表示。

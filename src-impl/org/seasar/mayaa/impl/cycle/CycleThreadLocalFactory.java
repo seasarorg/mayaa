@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.cycle;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.seasar.mayaa.cycle.CycleLocalInstantiator;
@@ -27,38 +26,36 @@ import org.seasar.mayaa.cycle.CycleLocalInstantiator;
  */
 public class CycleThreadLocalFactory {
 
-    private static ThreadLocal/*<Map>*/ _cycleLocalVariables = new ThreadLocal();
-    private static Map/*<String, Instantiator>*/ _instantiators = new HashMap();
+    private static ThreadLocal<Map<Object, Object>> _cycleLocalVariables = new ThreadLocal<Map<Object, Object>>() {
+        @Override
+        protected Map<Object, Object> initialValue() {
+            return new HashMap<>();
+        }
+    };
+    private static Map<String, CycleLocalInstantiator> _instantiators = new HashMap<>();
 
     private CycleThreadLocalFactory() {
         throw new UnsupportedOperationException();
     }
 
     protected static void cycleLocalInitialize() {
-        _cycleLocalVariables.set(new HashMap());
+        _cycleLocalVariables.set(new HashMap<>());
     }
 
-    protected static Map getThreadLocalMap() {
-        Map map = (Map) _cycleLocalVariables.get();
-        if (map == null) {
-            cycleLocalInitialize();
-            map = (Map) _cycleLocalVariables.get();
-        }
-        return map;
+    protected static Map<Object, Object> getThreadLocalMap() {
+        return _cycleLocalVariables.get();
     }
 
     public static void cycleLocalFinalize() {
-        Map map = (Map) _cycleLocalVariables.get();
+        Map<Object, Object> map = _cycleLocalVariables.get();
         if (map != null) {
-            for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) it.next();
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
                 Object value = entry.getValue();
                 Object key = entry.getKey();
                 if (key instanceof InstanceKey) {
                     key = ((InstanceKey)key).getKey();
                 }
-                CycleLocalInstantiator instantiator =
-                    (CycleLocalInstantiator) _instantiators.get(key);
+                CycleLocalInstantiator instantiator = _instantiators.get(key);
                 instantiator.destroy(value);
             }
             map.clear();
@@ -71,7 +68,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static void clearLocalVariable(Object key) {
-        Map map = getThreadLocalMap();
+        Map<Object, Object> map = getThreadLocalMap();
         Object instance = map.get(key);
         if (instance != null) {
             String strKey;
@@ -90,7 +87,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static Object get(Object key, Object[] params) {
-        Map localVariables = getThreadLocalMap();
+        Map<Object, Object> localVariables = getThreadLocalMap();
         Object result = localVariables.get(key);
         if (result == null) {
             String strKey;
@@ -117,7 +114,7 @@ public class CycleThreadLocalFactory {
     }
 
     public static void set(Object key, Object value) {
-        Map localVariables = getThreadLocalMap();
+        Map<Object, Object> localVariables = getThreadLocalMap();
         Object existValue = localVariables.get(key);
         if (existValue != null) {
             clearLocalVariable(key);

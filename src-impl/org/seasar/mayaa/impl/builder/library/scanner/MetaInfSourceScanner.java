@@ -35,11 +35,11 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
     private static final long serialVersionUID = -7285416169718204350L;
 
     private FolderSourceScanner _folderScanner = new FolderSourceScanner();
-    private Set _ignores = new HashSet();
+    private Set<String> _ignores = new HashSet<>();
 
     private String _jarScanFolder;
-    private Set _jarScanIgnores = new HashSet();
-    private Set _jarScanExtensions = new HashSet();
+    private Set<String> _jarScanIgnores = new HashSet<>();
+    private Set<String> _jarScanExtensions = new HashSet<>();
 
     private void initJarScanOptions() {
         if (_jarScanFolder == null) {
@@ -54,21 +54,26 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         }
     }
 
-    public Iterator scan() {
+    /**
+     * META-INF内の複数のJARファイルごとに生成される{@code SourceScanner}を集約することで
+     * JARに含まれる{@code SourceDescriptor}を横断して走査するためのイテレータを返す。
+     * 
+     * @see SourceScanner
+     */
+    @SuppressWarnings("unchecked")
+    public Iterator<SourceDescriptor> scan() {
         initJarScanOptions();
         IteratorIterator itit = new IteratorIterator();
-        for (Iterator it = _folderScanner.scan(); it.hasNext(); ) {
+        for (Iterator<SourceDescriptor> it = _folderScanner.scan(); it.hasNext(); ) {
             JarSourceScanner scanner = new JarSourceScanner();
-            scanner.setDescriptor((SourceDescriptor) it.next());
+            scanner.setDescriptor(it.next());
             scanner.setParameter("root", _folderScanner.getFolder());
             scanner.setParameter("folder", _jarScanFolder);
-            for (Iterator itIgnore = _jarScanIgnores.iterator()
-                    ; itIgnore.hasNext(); ) {
-                scanner.setParameter("ignore", (String) itIgnore.next());
+            for (String ignore : _jarScanIgnores) {
+                scanner.setParameter("ignore", ignore);
             }
-            for (Iterator itExtension = _jarScanExtensions.iterator()
-                    ; itExtension.hasNext(); ) {
-                scanner.setParameter("extension", (String) itExtension.next());
+            for (String extension : _jarScanExtensions) {
+                scanner.setParameter("extension", extension);
             }
             itit.add(scanner);
         }

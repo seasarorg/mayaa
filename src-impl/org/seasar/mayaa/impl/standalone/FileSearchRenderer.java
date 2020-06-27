@@ -186,10 +186,9 @@ public class FileSearchRenderer {
      *
      * @param attributes 属性のマップ
      */
-    public void addAttributes(final Map attributes) {
+    public void addAttributes(final Map<Object, Object> attributes) {
         if (attributes != null && attributes.size() > 0) {
-            for (Iterator keys = attributes.keySet().iterator(); keys.hasNext();) {
-                Object key = keys.next();
+            for (Object key : attributes.keySet()) {
                 if (key instanceof String) {
                     _servletContext.setAttribute((String) key, attributes.get(key));
                 }
@@ -208,11 +207,11 @@ public class FileSearchRenderer {
         reportTime(engine, diffMillis(engineBuildTime));
 
         _buildTimeSum = 0;
-        for (Iterator it = SourceHolderFactory.iterator(); it.hasNext();) {
-            SourceHolder holder = (SourceHolder) it.next();
-            for (Iterator itSystemID = holder.iterator(_fileFilters);
+        for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {
+            SourceHolder holder = it.next();
+            for (Iterator<String> itSystemID = holder.iterator(_fileFilters);
                     itSystemID.hasNext();) {
-                String systemID = (String) itSystemID.next();
+                String systemID = itSystemID.next();
                 try {
                     buildPage(systemID);
                 } catch (Throwable e) {

@@ -26,6 +26,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -47,7 +48,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         LogFactory.getLog(EqualsIDInjectionResolver.class);
 
     private static final CopyToFilter _idFilter = new CheckIDCopyToFilter();
-    private List _additionalIds = new ArrayList();
+    private List<QName> _additionalIds = new ArrayList<>();
     private boolean _reportResolvedID = true;
     private boolean _reportDuplicatedID = true;
 
@@ -68,8 +69,8 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     }
 
     protected NodeAttribute getAttribute(SpecificationNode node) {
-        for (Iterator it = _additionalIds.iterator(); it.hasNext();) {
-            NodeAttribute attr = node.getAttribute((QName) it.next());
+        for (Iterator<QName> it = _additionalIds.iterator(); it.hasNext();) {
+            NodeAttribute attr = node.getAttribute(it.next());
             if (attr != null) {
                 return attr;
             }
@@ -89,12 +90,13 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     }
 
     protected void getEqualsIDNodes(
-            SpecificationNode node, String id, List specificationNodes) {
+            SpecificationNode node, String id, List<SpecificationNode> specificationNodes) {
         if (node == null || StringUtil.isEmpty(id)) {
             throw new IllegalArgumentException();
         }
-        for (Iterator it = node.iterateChildNode(); it.hasNext();) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
+
             if (id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
                 if (QM_MAYAA.equals(node.getQName())) {
                     specificationNodes.add(child);
@@ -119,10 +121,10 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
             while (spec != null) {
                 SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
                 if (mayaa != null) {
-                    List injectNodes = new ArrayList();
+                    List<SpecificationNode> injectNodes = new ArrayList<>();
                     getEqualsIDNodes(mayaa, id, injectNodes);
                     if (injectNodes.size() > 0) {
-                        injected = (SpecificationNode) injectNodes.get(0);
+                        injected = injectNodes.get(0);
                         if (isReportDuplicatedID() && injectNodes.size() > 1) {
                             logWarnning(id, original, 2);
                         }

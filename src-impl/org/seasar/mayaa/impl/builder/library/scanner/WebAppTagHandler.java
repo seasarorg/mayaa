@@ -28,7 +28,7 @@ import org.xml.sax.Attributes;
  */
 public class WebAppTagHandler extends TagHandler {
 
-    private List _locations = new ArrayList();
+    private List<SourceAlias> _locations = new ArrayList<>();
 
     public WebAppTagHandler() {
         super("web-app");
@@ -97,7 +97,7 @@ public class WebAppTagHandler extends TagHandler {
         _locations.clear();
     }
 
-    public Iterator iterateTaglibLocation() {
+    public Iterator<SourceAlias> iterateTaglibLocation() {
         return _locations.iterator();
     }
 

@@ -24,13 +24,13 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScopeIterator implements Iterator {
+public class ScopeIterator implements Iterator<AttributeScope> {
 
     private ServiceCycle _cycle;
-    private Iterator _it;
+    private Iterator<AttributeScope> _it;
     private String _current;
 
-    public ScopeIterator(ServiceCycle cycle, Iterator it) {
+    public ScopeIterator(ServiceCycle cycle, Iterator<AttributeScope> it) {
         if (cycle == null || it == null) {
             throw new IllegalArgumentException();
         }
@@ -42,7 +42,7 @@ public class ScopeIterator implements Iterator {
         return ServiceCycle.SCOPE_APPLICATION.equals(_current) == false;
     }
 
-    public Object next() {
+    public AttributeScope next() {
         AttributeScope scope = null;
         if (_current == null) {
             AttributeScope page = _cycle.getPageScope();

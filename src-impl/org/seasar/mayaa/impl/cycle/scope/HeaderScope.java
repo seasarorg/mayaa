@@ -33,7 +33,7 @@ public class HeaderScope extends AbstractReadOnlyAttributeScope {
         return "header";
     }
 
-    public Iterator iterateAttributeNames() {
+    public Iterator<String> iterateAttributeNames() {
         AttributeScope values = CycleUtil.getRequestScope().getHeaderValues();
         return values.iterateAttributeNames();
     }

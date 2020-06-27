@@ -86,6 +86,6 @@ public interface Namespace extends NodeObject {
      * @param all 親スコープも検索する。
      * @return プレフィックスマッピング（<code>PrefixMapping</code>）のイテレータ。
      */
-    Iterator iteratePrefixMapping(boolean all);
+    Iterator<PrefixMapping> iteratePrefixMapping(boolean all);
 
 }

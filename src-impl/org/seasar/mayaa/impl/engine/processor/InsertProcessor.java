@@ -59,12 +59,12 @@ public class InsertProcessor
     static {
         CycleUtil.registVariableFactory(RENDERING_INSERT_CHAIN, new DefaultCycleLocalInstantiator() {
             public Object create(Object[] params) {
-                return new Stack/*<InsertRenderingParams>*/();
+                return new Stack<InsertRenderingParams>();
             }
         });
         CycleUtil.registVariableFactory(INSERT_PARAMS, new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
-                return new Stack/*<InsertRenderingParams>*/();
+                return new Stack<InsertRenderingParams>();
             }
         });
     }
@@ -81,8 +81,7 @@ public class InsertProcessor
     private ProcessorProperty _name;
     private transient PathPart _pathPart;
 
-    private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
-                    _attributes;
+    private List<Serializable> _attributes;
 
     /**
      * 相対パスを解決、分解して拡張子などをあらかじめ取得する。
@@ -138,7 +137,7 @@ public class InsertProcessor
     // MLD method
     public void addInformalProperty(PrefixAwareName name, Serializable attr) {
         if (_attributes == null) {
-            _attributes = new ArrayList();
+            _attributes = new ArrayList<>();
         }
         _attributes.add(attr);
     }
@@ -188,9 +187,9 @@ public class InsertProcessor
         return getInformalExpectedClass();
     }
 
-    public List getInformalProperties() {
+    public List<Serializable> getInformalProperties() {
         if (_attributes == null) {
-            _attributes = new ArrayList();
+            _attributes = new ArrayList<>();
         }
         return _attributes;
     }
@@ -234,8 +233,9 @@ public class InsertProcessor
     	return pathPartToPage(getPathPart());
     }
 
-    protected Stack getRenderingParams() {
-        return (Stack) CycleUtil.getLocalVariable(INSERT_PARAMS, this, null);
+    @SuppressWarnings("unchecked")
+    protected Stack<InsertRenderingParams> getRenderingParams() {
+        return (Stack<InsertRenderingParams>) CycleUtil.getLocalVariable(INSERT_PARAMS, this, null);
     }
 
     protected InsertRenderingParams pushRenderingParams() {
@@ -251,7 +251,7 @@ public class InsertProcessor
         return (InsertRenderingParams) getRenderingParams().pop();
     }
 
-    public Map getRenderingParameters() {
+    public Map<String, Object> getRenderingParameters() {
         InsertRenderingParams params = peekRenderingParams();
         if (params.isRendering()) {
             return params.getParams();
@@ -297,7 +297,7 @@ public class InsertProcessor
             throw new IllegalStateException();
         }
 
-        Map properties = new LinkedHashMap(getInformalProperties().size());
+        Map<String, Object> properties = new LinkedHashMap<>(getInformalProperties().size());
         for (int i = 0; i < getInformalProperties().size(); i++) {
             Object object = getInformalProperties().get(i);
             if (object instanceof ProcessorProperty) {
@@ -307,7 +307,7 @@ public class InsertProcessor
                         prop.getValue().execute(null));
             }
         }
-        Map params = pushRenderingParams().getParams();
+        Map<String, Object> params = pushRenderingParams().getParams();
         params.clear();
         params.putAll(properties);
         properties.clear();
@@ -346,8 +346,9 @@ public class InsertProcessor
         }
     }
 
-    protected static Stack getRenderingInsertChain() {
-        return (Stack) CycleUtil.getGlobalVariable(RENDERING_INSERT_CHAIN, null);
+    @SuppressWarnings("unchecked")
+    protected static Stack<InsertProcessor> getRenderingInsertChain() {
+        return (Stack<InsertProcessor>) CycleUtil.getGlobalVariable(RENDERING_INSERT_CHAIN, null);
     }
 
     public static InsertProcessor getRenderingCurrent() {

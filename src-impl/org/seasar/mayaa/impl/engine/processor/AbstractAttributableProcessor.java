@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -30,7 +31,6 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -41,8 +41,7 @@ public abstract class AbstractAttributableProcessor
 
     private static final long serialVersionUID = -1406205460425148574L;
     private boolean _childEvaluation;
-    private List/*<Serializable(ProcessorProperty or PrefixAwareName)>*/
-                    _attributes;
+    private List<Serializable> _attributes;
 
     private static final String PROCESS_TIME_INFO_KEY =
         AbstractAttributableProcessor.class.getName() + "#processTimeInfo";
@@ -50,7 +49,7 @@ public abstract class AbstractAttributableProcessor
         CycleUtil.registVariableFactory(PROCESS_TIME_INFO_KEY,
                 new DefaultCycleLocalInstantiator() {
                     public Object create(Object owner, Object[] params) {
-                        return new Stack/*<ProcesstimeInfo>*/();
+                        return new Stack<ProcesstimeInfo>();
                     }
                 });
     }
@@ -60,7 +59,8 @@ public abstract class AbstractAttributableProcessor
     }
 
     protected void prepareProcesstimeInfo() {
-        Stack piStack = (Stack) CycleUtil.getLocalVariable(
+        @SuppressWarnings("unchecked")
+        Stack<ProcesstimeInfo> piStack = (Stack<ProcesstimeInfo>) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
         if (piStack.size() == 0) {
             piStack.push(new ProcesstimeInfo());
@@ -68,20 +68,25 @@ public abstract class AbstractAttributableProcessor
     }
 
     protected ProcesstimeInfo pushProcesstimeInfo() {
-        Stack piStack = (Stack) CycleUtil.getLocalVariable(
+        @SuppressWarnings("unchecked")
+        Stack<ProcesstimeInfo> piStack = (Stack<ProcesstimeInfo>) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
-        return (ProcesstimeInfo) piStack.push(new ProcesstimeInfo());
+        return piStack.push(new ProcesstimeInfo());
     }
 
     protected ProcesstimeInfo peekProcesstimeInfo() {
-        return (ProcesstimeInfo) ((Stack) CycleUtil.getLocalVariable(
-                PROCESS_TIME_INFO_KEY, this, null)).peek();
+        @SuppressWarnings("unchecked")
+        Stack<ProcesstimeInfo> piStack = (Stack<ProcesstimeInfo>) CycleUtil.getLocalVariable(
+            PROCESS_TIME_INFO_KEY, this, null);
+
+        return piStack.peek();
     }
 
     protected ProcesstimeInfo popProcesstimeInfo() {
-        Stack piStack = (Stack) CycleUtil.getLocalVariable(
+        @SuppressWarnings("unchecked")
+        Stack<ProcesstimeInfo> piStack = (Stack<ProcesstimeInfo>) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
-        return (ProcesstimeInfo) piStack.pop();
+        return piStack.pop();
     }
 
     // MLD property
@@ -92,7 +97,7 @@ public abstract class AbstractAttributableProcessor
     // MLD method
     public void addInformalProperty(PrefixAwareName name, Serializable attr) {
         if (_attributes == null) {
-            _attributes = new ArrayList();
+            _attributes = new ArrayList<>();
         }
         _attributes.add(attr);
     }
@@ -119,9 +124,9 @@ public abstract class AbstractAttributableProcessor
         return Object.class;
     }
 
-    public Iterator iterateInformalProperties() {
+    public Iterator<Serializable> iterateInformalProperties() {
         if (_attributes == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _attributes.iterator();
     }
@@ -145,7 +150,7 @@ public abstract class AbstractAttributableProcessor
         return info.hasProcesstimeProperty(prop);
     }
 
-    public Iterator iterateProcesstimeProperties() {
+    public Iterator<ProcessorProperty> iterateProcesstimeProperties() {
         prepareProcesstimeInfo();
         ProcesstimeInfo info = peekProcesstimeInfo();
         return info.iterateProcesstimeProperties();
@@ -258,7 +263,7 @@ public abstract class AbstractAttributableProcessor
     protected static class ProcesstimeInfo {
 
         private CycleWriter _body;
-        private List _processtimeProperties;
+        private List<ProcessorProperty> _processtimeProperties;
 
         public void setBody(CycleWriter body) {
             if (body == null) {
@@ -286,16 +291,16 @@ public abstract class AbstractAttributableProcessor
                 throw new IllegalArgumentException();
             }
             if (_processtimeProperties == null) {
-                _processtimeProperties = new ArrayList();
+                _processtimeProperties = new ArrayList<>();
             }
             if (_processtimeProperties.contains(property) == false) {
                 _processtimeProperties.add(property);
             }
         }
 
-        public Iterator iterateProcesstimeProperties() {
+        public Iterator<ProcessorProperty> iterateProcesstimeProperties() {
             if (_processtimeProperties == null) {
-                return NullIterator.getInstance();
+                return Collections.emptyIterator();
             }
             return _processtimeProperties.iterator();
         }

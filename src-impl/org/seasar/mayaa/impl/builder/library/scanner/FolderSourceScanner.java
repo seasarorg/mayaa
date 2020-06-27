@@ -32,7 +32,7 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationFileSourceDescriptor;
 import org.seasar.mayaa.impl.source.FileSourceDescriptor;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -50,8 +50,8 @@ public class FolderSourceScanner extends ParameterAwareImpl
     private boolean _recursive = false;
     private boolean _absolute = false;
 
-    private Set _extensions = new HashSet();
-    private Set _unmodifiableExtensions =
+    private Set<String> _extensions = new HashSet<>();
+    private Set<String> _unmodifiableExtensions =
         Collections.unmodifiableSet(_extensions);
 
     public String getFolder() {
@@ -65,7 +65,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
         return _recursive;
     }
 
-    public Set getExtensions() {
+    public Set<String> getExtensions() {
         return _unmodifiableExtensions;
     }
 
@@ -73,7 +73,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
         return (String[]) _extensions.toArray(new String[_extensions.size()]);
     }
 
-    public Iterator scan() {
+    public Iterator<SourceDescriptor> scan() {
         ApplicationScope appScope = null;
         if (_source == null) {
             if (_absolute) {
@@ -90,10 +90,10 @@ public class FolderSourceScanner extends ParameterAwareImpl
             return new FileToSourceIterator(appScope,
                     _source.getRoot(), iterateFiles(_source.getFile()));
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
-    protected Iterator iterateFiles(File dir) {
+    protected Iterator<File> iterateFiles(File dir) {
         if (dir.exists()) {
             File[] files;
             if (dir.isDirectory()) {
@@ -103,7 +103,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
             }
             return new FileArrayIterator(files);
         }
-        return NullIterator.getInstance();
+        return Collections.emptyIterator();
     }
 
     protected FileFilter createExtensionFilter() {
@@ -127,7 +127,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
     }
 
     protected File[] listFiles(File dir) {
-        List sources = new ArrayList();
+        List<File> sources = new ArrayList<>();
         FileFilter filter = createExtensionFilter();
 
         if (_recursive) {
@@ -138,7 +138,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
         return (File[]) sources.toArray(new File[sources.size()]);
     }
 
-    protected void listFilesNonRecursive(List list, File dir, FileFilter filter) {
+    protected void listFilesNonRecursive(List<File> list, File dir, FileFilter filter) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(filter);
             for (int i = 0; i < files.length; i++) {
@@ -149,7 +149,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
         }
     }
 
-    protected void listFilesRecursive(List list, File dir, FileFilter filter) {
+    protected void listFilesRecursive(List<File> list, File dir, FileFilter filter) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(filter);
             for (int i = 0; i < files.length; i++) {
@@ -189,7 +189,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     // support class ------------------------------------------------
 
-    protected static class FileArrayIterator implements Iterator {
+    protected static class FileArrayIterator implements Iterator<File> {
 
         private File[] _files;
 
@@ -206,7 +206,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
             return _index < _files.length;
         }
 
-        public Object next() {
+        public File next() {
             if (hasNext() == false) {
                 throw new NoSuchElementException();
             }
@@ -219,14 +219,14 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     }
 
-    protected static class FileToSourceIterator implements Iterator {
+    protected static class FileToSourceIterator implements Iterator<SourceDescriptor> {
 
         private ApplicationScope _applicationScope;
         private String _root;
-        private Iterator _iterator;
+        private Iterator<File> _iterator;
 
         public FileToSourceIterator(ApplicationScope applicationScope,
-                String root, Iterator iterator) {
+                String root, Iterator<File> iterator) {
             if (iterator == null) {
                 throw new IllegalArgumentException();
             }
@@ -255,19 +255,15 @@ public class FolderSourceScanner extends ParameterAwareImpl
             return StringUtil.preparePath(path);
         }
 
-        public Object next() {
-            Object ret = _iterator.next();
-            if (ret instanceof File) {
-                File file = (File) ret;
-                String systemID = getSystemID(file);
-                ApplicationFileSourceDescriptor source =
-                    new ApplicationFileSourceDescriptor();
-                source.setRoot(_root);
-                source.setSystemID(systemID);
-                source.setFile(file);
-                return source;
-            }
-            throw new IllegalStateException();
+        public SourceDescriptor next() {
+            File file = _iterator.next();
+            String systemID = getSystemID(file);
+            ApplicationFileSourceDescriptor source =
+                new ApplicationFileSourceDescriptor();
+            source.setRoot(_root);
+            source.setSystemID(systemID);
+            source.setFile(file);
+            return source;
         }
 
         public void remove() {

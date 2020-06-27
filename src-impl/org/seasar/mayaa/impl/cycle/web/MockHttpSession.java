@@ -33,7 +33,7 @@ import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 public class MockHttpSession implements HttpSession {
 
     private ServletContext _servletContext;
-    private Map _attributes = new HashMap();
+    private Map<String, Object> _attributes = new HashMap<>();
     private int _interval = 60000;
 
     public MockHttpSession(ServletContext servletContext) {
@@ -47,7 +47,7 @@ public class MockHttpSession implements HttpSession {
         return _servletContext;
     }
 
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return IteratorEnumeration.getInstance(_attributes.keySet().iterator());
     }
 

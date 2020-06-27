@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.engine.specification.serialize;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,18 +29,17 @@ import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
  */
 public class ProcessorSerializeController implements ProcessorReferenceResolver {
 
-    private List _processorListeners = new ArrayList();
-    private Map _processors = new HashMap();
+    private List<ProcessorListener> _processorListeners = new ArrayList<>();
+    private Map<String, ProcessorTreeWalker> _processors = new HashMap<>();
 
     public void init() {
-        _processorListeners = new ArrayList();
-        _processors = new HashMap(20);
+        _processorListeners = new ArrayList<>();
+        _processors = new HashMap<>(20);
     }
 
     public void release() {
         doNotify();
-        for (Iterator it = _processorListeners.iterator(); it.hasNext(); ) {
-            ProcessorListener listener = (ProcessorListener)it.next();
+        for (ProcessorListener listener : _processorListeners) {
             listener.release();
         }
         _processorListeners.clear();
@@ -61,8 +59,7 @@ public class ProcessorSerializeController implements ProcessorReferenceResolver 
     }
 
     public void doNotify() {
-        for (Iterator it = _processorListeners.iterator(); it.hasNext(); ) {
-            ProcessorListener listener = (ProcessorListener) it.next();
+        for (ProcessorListener listener : _processorListeners) {
             listener._listener.notify(listener._id, getProcessor(listener._id));
         }
     }

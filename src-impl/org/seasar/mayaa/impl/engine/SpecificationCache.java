@@ -40,10 +40,10 @@ public class SpecificationCache {
 
     protected int _surviveLimit;
     //@GuardedBy(this)
-    protected Map _specifications = new HashMap();
+    protected Map<String, ReferSpecification> _specifications = new HashMap<>();
 
     protected ReferenceCache _gcChecker;
-    protected SoftReference _gabage;
+    protected SoftReference<Object> _gabage;
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
@@ -60,7 +60,7 @@ public class SpecificationCache {
 
     protected void postNewGabage() {
         Object gabage = new Object();
-        _gabage = new SoftReference(gabage);
+        _gabage = new SoftReference<>(gabage);
         _gcChecker.add(gabage);
     }
 
@@ -172,22 +172,17 @@ public class SpecificationCache {
                             + " free:" + Runtime.getRuntime().freeMemory()
                             + " / total:" + Runtime.getRuntime().totalMemory());
                 }
-                List releaseItems = null;
-                for (Iterator it = _specifications.values().iterator()
-                        ; it.hasNext(); ) {
-                    ReferSpecification refer = (ReferSpecification) it.next();
+                List<ReferSpecification> releaseItems = null;
+                for (ReferSpecification refer : _specifications.values()) {
                     if (refer.requestRelease()) {
                         if (releaseItems == null) {
-                            releaseItems = new ArrayList();
+                            releaseItems = new ArrayList<>();
                         }
                         releaseItems.add(refer);
                     }
                 }
                 if (releaseItems != null) {
-                    for (Iterator it = releaseItems.iterator()
-                            ; it.hasNext(); ) {
-                        ReferSpecification refer =
-                            (ReferSpecification) it.next();
+                    for (ReferSpecification refer : releaseItems) {
                         Specification spec = refer.getSpecification();
                         _specifications.remove(spec.getSystemID());
 

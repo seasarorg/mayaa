@@ -26,7 +26,7 @@ import org.seasar.mayaa.engine.Page;
 public class InsertRenderingParams {
 
     private boolean _rendering;
-    private LinkedHashMap _params;
+    private LinkedHashMap<String, Object> _params;
     private Page _stackComponent;
     private Page _currentComponent;
 
@@ -38,9 +38,9 @@ public class InsertRenderingParams {
         _rendering = rendering;
     }
 
-    public Map getParams() {
+    public Map<String, Object> getParams() {
         if (_params == null) {
-            _params = new LinkedHashMap();
+            _params = new LinkedHashMap<>();
         }
         return _params;
     }

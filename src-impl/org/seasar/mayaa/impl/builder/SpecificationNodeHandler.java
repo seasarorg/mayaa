@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.builder;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -74,8 +73,7 @@ public class SpecificationNodeHandler
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
     private int _inEntity;
-    private Map/*<NodeTreeWalker,Map<String(prefix),String(uri)>>*/
-                _internalNamespacePrefixMap;
+    private Map<NodeTreeWalker, Map<String, URI>> _internalNamespacePrefixMap;
     private boolean _inCData;
 
     // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
@@ -165,14 +163,14 @@ public class SpecificationNodeHandler
         initCharactersBuffer();
         _charactersStartLineNumber = -1;
         _current = _specification;
-        _internalNamespacePrefixMap = new HashMap();
+        _internalNamespacePrefixMap = new HashMap<>();
         initNamespace();
     }
 
-    protected Map getCurrentInternalNamespacePrefixMap() {
-        Map result = (Map)_internalNamespacePrefixMap.get(_current);
+    protected Map<String, URI> getCurrentInternalNamespacePrefixMap() {
+        Map<String, URI> result = (Map<String, URI>)_internalNamespacePrefixMap.get(_current);
         if (result == null) {
-            result = new HashMap();
+            result = new HashMap<>();
             _internalNamespacePrefixMap.put(_current, result);
         }
         return result;
@@ -289,10 +287,8 @@ public class SpecificationNodeHandler
         addCharactersNode();
 
         Namespace elementNS = SpecificationUtil.createNamespace();
-        Iterator it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            elementNS.addPrefixMapping((String)entry.getKey(), (URI)entry.getValue());
+        for (Map.Entry<String, URI> entry: getCurrentInternalNamespacePrefixMap().entrySet()) {
+            elementNS.addPrefixMapping(entry.getKey(), entry.getValue());
         }
         elementNS.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
 
@@ -304,10 +300,8 @@ public class SpecificationNodeHandler
         elementNS = SpecificationUtil.getFixedNamespace(elementNS);
 
         SpecificationNode node = addNode(nodeQName);
-        it = getCurrentInternalNamespacePrefixMap().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            node.addPrefixMapping((String)entry.getKey(), (URI)entry.getValue());
+        for (Map.Entry<String, URI> entry: getCurrentInternalNamespacePrefixMap().entrySet()) {
+            node.addPrefixMapping(entry.getKey(), entry.getValue());
         }
         node.setDefaultNamespaceURI(nodeURI);
 

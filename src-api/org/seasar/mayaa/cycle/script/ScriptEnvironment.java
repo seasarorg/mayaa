@@ -39,7 +39,7 @@ public interface ScriptEnvironment extends ParameterAware {
      * ユーザー定義スコープオブジェクトをイテレートする。
      * @return スコープオブジェクト（AttributeScope）のイテレータ。
      */
-    Iterator iterateAttributeScope();
+    Iterator<AttributeScope> iterateAttributeScope();
 
     /**
      * スクリプト文字列ブロックの開きクオートに前置される識別文字列の取得。
@@ -74,7 +74,7 @@ public interface ScriptEnvironment extends ParameterAware {
      * カレントServiceCycleのページスコープに、スクリプト変数をプッシュする。
      * @param variables カスタムスコープ変数。
      */
-    void startScope(Map variables);
+    void startScope(Map<?, ?> variables);
 
     /**
      * テンプレート描画時に、プロセッサのエンドイベントと同期するためのメソッド。

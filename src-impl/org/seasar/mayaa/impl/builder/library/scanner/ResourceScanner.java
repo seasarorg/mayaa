@@ -29,6 +29,7 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.source.FileSourceDescriptor;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.IteratorIterator;
+import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -39,10 +40,10 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
     private static final Log LOG = LogFactory.getLog(ResourceScanner.class);
 
     private String _root;
-    private List _classPath = new ArrayList();
-    private List _jars = new ArrayList();
-    private Set _extensions = new HashSet();
-    private Set _ignores = new HashSet();
+    private List<String> _classPath = new ArrayList<>();
+    private List<String> _jars = new ArrayList<>();
+    private Set<String> _extensions = new HashSet<>();
+    private Set<String> _ignores = new HashSet<>();
 
     public ResourceScanner() {
         String[] pathArray = System.getProperty(
@@ -60,10 +61,10 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
         }
     }
 
-    public Iterator scan() {
+    @SuppressWarnings("unchecked")
+    public Iterator<SourceDescriptor> scan() {
         IteratorIterator itit = new IteratorIterator();
-        for (Iterator it = _classPath.iterator(); it.hasNext(); ) {
-            String path = (String) it.next();
+        for (String path : _classPath) {
             if (StringUtil.isEmpty(path)) {
                 continue;
             }
@@ -82,18 +83,15 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             folderScanner.setParameter("folder", path);
             folderScanner.setParameter("recursive", "true");
             folderScanner.setParameter("absolute", "true");
-            for (Iterator extIterator = _extensions.iterator()
-                    ; extIterator.hasNext(); ) {
-                folderScanner.setParameter("extension",
-                        (String) extIterator.next());
+            for (String extension : _extensions) {
+                folderScanner.setParameter("extension", extension);
             }
             itit.add(folderScanner.scan());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("scan path: " + path);
             }
         }
-        for (Iterator it = _jars.iterator(); it.hasNext(); ) {
-            String path = (String) it.next();
+        for (String path : _jars) {
             if (StringUtil.isEmpty(path)) {
                 continue;
             }
@@ -110,20 +108,18 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             if (_root != null) {
                 jarScanner.setParameter("folder", _root);
             }
-            for (Iterator ignoreIterator = _ignores.iterator(); ignoreIterator.hasNext(); ) {
-                jarScanner.setParameter("ignore", (String) ignoreIterator.next());
+            for (String ignore : _ignores) {
+                jarScanner.setParameter("ignore", ignore);
             }
-            for (Iterator extIterator = _extensions.iterator()
-                    ; extIterator.hasNext(); ) {
-                jarScanner.setParameter("extension",
-                        (String) extIterator.next());
+            for (String extension : _extensions) {
+                jarScanner.setParameter("extension", extension);
             }
             itit.add(jarScanner);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("scan jar: " + jarFile.getAbsolutePath());
             }
         }
-        return itit;
+        return (Iterator<SourceDescriptor>) itit;
     }
 
     // Parameterizable implements ------------------------------------

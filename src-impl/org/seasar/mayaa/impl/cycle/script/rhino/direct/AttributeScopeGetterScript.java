@@ -47,9 +47,9 @@ public class AttributeScopeGetterScript extends AbstractGetterScript {
      * @return 指定スコープ。
      */
     protected AttributeScope getScope() {
-        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+        Iterator<AttributeScope> it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
         while (it.hasNext()) {
-            AttributeScope scope = (AttributeScope) it.next();
+            AttributeScope scope = it.next();
             if (scope.getScopeName().equals(_scopeName)) {
                 return scope;
             }

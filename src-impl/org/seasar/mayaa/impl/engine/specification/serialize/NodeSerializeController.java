@@ -32,18 +32,18 @@ import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
  */
 public class NodeSerializeController implements NodeReferenceResolver {
 
-    private List _nodeListeners;
-    private Map _nodes;
+    private List<NodeListener> _nodeListeners;
+    private Map<String, NodeTreeWalker> _nodes;
 
     public void init() {
-        _nodeListeners = new ArrayList(20);
-        _nodes = new HashMap(100);
+        _nodeListeners = new ArrayList<>(20);
+        _nodes = new HashMap<>(100);
     }
 
     public void release() {
         doNotify();
-        for (Iterator it = _nodeListeners.iterator(); it.hasNext(); ) {
-            NodeListener listener = (NodeListener)it.next();
+        for (Iterator<NodeListener> it = _nodeListeners.iterator(); it.hasNext(); ) {
+            NodeListener listener = it.next();
             listener.release();
         }
         _nodeListeners.clear();
@@ -55,8 +55,8 @@ public class NodeSerializeController implements NodeReferenceResolver {
     }
 
     public void doNotify() {
-        for (Iterator it = _nodeListeners.iterator(); it.hasNext(); ) {
-            NodeListener listener = (NodeListener) it.next();
+        for (Iterator<NodeListener> it = _nodeListeners.iterator(); it.hasNext(); ) {
+            NodeListener listener = it.next();
             NodeTreeWalker node = getNode(listener._id);
             listener._listener.notify(listener._id, node);
             if (node != null) {

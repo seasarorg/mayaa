@@ -22,15 +22,15 @@ import java.util.Stack;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class LIFOIterator implements Iterator {
+public class LIFOIterator<T> implements Iterator<T> {
 
-    private Stack _stack = new Stack();
+    private Stack<T> _stack = new Stack<>();
 
     public LIFOIterator() {
         // do nothing.
     }
 
-    public LIFOIterator(Iterator it) {
+    public LIFOIterator(Iterator<T> it) {
         if (it == null) {
             throw new IllegalArgumentException();
         }
@@ -39,7 +39,7 @@ public class LIFOIterator implements Iterator {
         }
     }
 
-    public LIFOIterator(Enumeration enumeration) {
+    public LIFOIterator(Enumeration<T> enumeration) {
         if (enumeration == null) {
             throw new IllegalArgumentException();
         }
@@ -48,7 +48,7 @@ public class LIFOIterator implements Iterator {
         }
     }
 
-    public void add(Object item) {
+    public void add(T item) {
         if (item == null) {
             throw new IllegalArgumentException();
         }
@@ -59,7 +59,7 @@ public class LIFOIterator implements Iterator {
         return _stack.size() > 0;
     }
 
-    public Object next() {
+    public T next() {
         return _stack.pop();
     }
 

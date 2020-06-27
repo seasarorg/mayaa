@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -49,7 +49,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     private int _sequenceID = -1;
     private String _id = null;
-    private Map/*<qName, NodeAttribute>*/ _attributes;
+    private Map<QName, NodeAttribute> _attributes;
     private NodeTreeWalkerImpl _delegateNodeTreeWalker;
     // for PrefixAwareName
     private QName _qName;
@@ -117,8 +117,8 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     public String getPrefix() {
         URI namespaceURI = getQName().getNamespaceURI();
-        for (Iterator it = iteratePrefixMapping(true); it.hasNext();) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
+        for (Iterator<PrefixMapping> it = iteratePrefixMapping(true); it.hasNext();) {
+            PrefixMapping mapping = it.next();
             if (namespaceURI.equals(mapping.getNamespaceURI())) {
                 return mapping.getPrefix();
             }
@@ -151,7 +151,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
         }
         synchronized (this) {
             if (_attributes == null) {
-                _attributes = new LinkedHashMap();
+                _attributes = new LinkedHashMap<>();
             }
         }
         synchronized (_attributes) {
@@ -178,9 +178,9 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return (NodeAttribute) _attributes.get(qName);
     }
 
-    public Iterator iterateAttribute() {
+    public Iterator<NodeAttribute> iterateAttribute() {
         if (_attributes == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _attributes.values().iterator();
     }
@@ -205,20 +205,20 @@ public class SpecificationNodeImpl extends NamespaceImpl
     public SpecificationNode copyTo(CopyToFilter filter) {
         SpecificationNode copy = SpecificationUtil.createSpecificationNode(
                 getQName(), getSystemID(), getLineNumber(), isOnTemplate(), getSequenceID());
-        for (Iterator it = iterateAttribute(); it.hasNext();) {
-            NodeAttribute attr = (NodeAttribute) it.next();
+        for (Iterator<NodeAttribute> it = iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = it.next();
             if (filter.accept(attr)) {
                 copy.addAttribute(attr.getQName(), attr.getValue());
             }
         }
-        for (Iterator it = iterateChildNode(); it.hasNext();) {
+        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext();) {
             SpecificationNode node = (SpecificationNode) it.next();
             if (filter.accept(node)) {
                 copy.addChildNode(node.copyTo(filter));
             }
         }
-        for (Iterator it = iteratePrefixMapping(false); it.hasNext();) {
-            PrefixMapping prefixMapping = (PrefixMapping)it.next();
+        for (Iterator<PrefixMapping> it = iteratePrefixMapping(false); it.hasNext();) {
+            PrefixMapping prefixMapping = it.next();
             copy.addPrefixMapping(
                     prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
         }
@@ -253,7 +253,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
         getNodeTreeWalker().insertChildNode(index, childNode);
     }
 
-    public Iterator iterateChildNode() {
+    public Iterator<NodeTreeWalker> iterateChildNode() {
         return getNodeTreeWalker().iterateChildNode();
     }
 
@@ -333,9 +333,9 @@ public class SpecificationNodeImpl extends NamespaceImpl
         String currentMappingInfo = in.readUTF();
         NamespaceImpl namespace = deserialize(currentMappingInfo);
         setDefaultNamespaceMapping(namespace.getDefaultNamespaceMapping());
-        for (Iterator it = namespace.iteratePrefixMapping(false)
+        for (Iterator<PrefixMapping> it = namespace.iteratePrefixMapping(false)
                 ; it.hasNext(); ) {
-            PrefixMapping mapping = (PrefixMapping) it.next();
+            PrefixMapping mapping = it.next();
             addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
         }
         // parent namespace
@@ -347,14 +347,14 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     private Object readResolve() {
-        for (Iterator it = iterateChildNode(); it.hasNext(); ) {
-            NodeTreeWalker child = (NodeTreeWalker) it.next();
+        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext(); ) {
+            NodeTreeWalker child = it.next();
             child.setParentNode(this);
             if (child instanceof Namespace) {
                 ((Namespace)child).setParentSpace(this);
             }
         }
-        for (Iterator it =  iterateAttribute(); it.hasNext(); ) {
+        for (Iterator<NodeAttribute> it =  iterateAttribute(); it.hasNext(); ) {
             NodeAttributeImpl attr = (NodeAttributeImpl) it.next();
             attr.setNode(this);
         }

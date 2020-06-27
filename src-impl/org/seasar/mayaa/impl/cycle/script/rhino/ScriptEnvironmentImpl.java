@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
@@ -152,7 +151,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         CycleUtil.clearGlobalVariable(PARENT_SCRIPTABLE_KEY);
     }
 
-    public void startScope(Map variables) {
+    public void startScope(Map<?, ?> variables) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         AttributeScope scope = cycle.getPageScope();
         Scriptable parent;
@@ -170,11 +169,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (variables != null) {
             RhinoUtil.enter();
             try {
-                for (Iterator it = variables.keySet().iterator(); it.hasNext();) {
-                    Object key = it.next();
-                    Object value = variables.get(key);
-                    Object variable = Context.javaToJS(value, pageScope);
-                    ScriptableObject.putProperty(pageScope, key.toString(), variable);
+                for (Map.Entry<?, ?> entry : variables.entrySet()) {
+                    Object variable = Context.javaToJS(entry.getValue(), pageScope);
+                    ScriptableObject.putProperty(pageScope, entry.getKey().toString(), variable);
                 }
             } finally {
                 Context.exit();

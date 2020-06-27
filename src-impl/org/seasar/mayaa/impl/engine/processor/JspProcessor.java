@@ -68,7 +68,6 @@ import org.seasar.mayaa.impl.engine.RenderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
@@ -85,7 +84,8 @@ public class JspProcessor extends TemplateProcessorSupport
 
     private static final PageContext _pageContext = new PageContextImpl();
 
-    private static final Map _tagPools =
+    @SuppressWarnings("unchecked")
+    private static final Map<String, TagPool> _tagPools =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
 
     private static final String LOADED_TAG_KEY =
@@ -102,13 +102,13 @@ public class JspProcessor extends TemplateProcessorSupport
         CycleUtil.registVariableFactory(
                 STOCK_VARIABLES_KEY, new DefaultCycleLocalInstantiator() {
             public Object create(Object owner, Object[] params) {
-                return new HashMap();
+                return new HashMap<>();
             }
         });
     }
 
     private Class<?> _tagClass;
-    private List _properties;
+    private List<ProcessorProperty> _properties;
     private String _attributesKey;
     private Boolean _nestedVariableExists;
     private transient TLDScriptingVariableInfo _variableInfo =
@@ -159,14 +159,14 @@ public class JspProcessor extends TemplateProcessorSupport
             throw new IllegalStateException();
         }
         if (_properties == null) {
-            _properties = new ArrayList();
+            _properties = new ArrayList<>();
         }
         _properties.add(property);
     }
 
-    protected Iterator iterateProperties() {
+    protected Iterator<ProcessorProperty> iterateProperties() {
         if (_properties == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _properties.iterator();
     }
@@ -174,8 +174,8 @@ public class JspProcessor extends TemplateProcessorSupport
     protected String getAttributesKey() {
         if (_attributesKey == null) {
             StringBuffer buffer = new StringBuffer();
-            for (Iterator it = iterateProperties(); it.hasNext();) {
-                ProcessorProperty property = (ProcessorProperty) it.next();
+            for (Iterator<ProcessorProperty> it = iterateProperties(); it.hasNext();) {
+                ProcessorProperty property = it.next();
                 String localName =
                     property.getName().getQName().getLocalName();
                 buffer.append("%").append(localName);
@@ -259,8 +259,8 @@ public class JspProcessor extends TemplateProcessorSupport
             }
             targetTag = simpleTag;
         }
-        for (Iterator it = iterateProperties(); it.hasNext();) {
-            ProcessorProperty property = (ProcessorProperty) it.next();
+        for (Iterator<ProcessorProperty> it = iterateProperties(); it.hasNext();) {
+            ProcessorProperty property = it.next();
             ObjectUtil.setProperty(targetTag,
                     property.getName().getQName().getLocalName(),
                     property.getValue().execute(null));
@@ -313,14 +313,14 @@ public class JspProcessor extends TemplateProcessorSupport
         }
 
         // 明示的に指定されている属性を列挙
-        Set definedQNames = new HashSet();
-        for (Iterator it = iterateProperties(); it.hasNext();) {
-            ProcessorProperty property = (ProcessorProperty) it.next();
+        Set<QName> definedQNames = new HashSet<>();
+        for (Iterator<ProcessorProperty> it = iterateProperties(); it.hasNext();) {
+            ProcessorProperty property = it.next();
             definedQNames.add(property.getName().getQName());
         }
 
-        for (Iterator it = getInjectedNode().iterateAttribute(); it.hasNext();) {
-            NodeAttribute attr = (NodeAttribute) it.next();
+        for (Iterator<NodeAttribute> it = getInjectedNode().iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = it.next();
             QName qName = attr.getQName();
 
             // 明示されている属性、ネームスペースがMayaaの属性は処理が決まっているため動的属性として扱わない
@@ -406,8 +406,9 @@ public class JspProcessor extends TemplateProcessorSupport
         CycleUtil.clearLocalVariable(STOCK_VARIABLES_KEY, this);
     }
 
-    protected Map getNestedVariablesMap() {
-        return (Map) CycleUtil.getLocalVariable(STOCK_VARIABLES_KEY, this, null);
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> getNestedVariablesMap() {
+        return (Map<String, Object>) CycleUtil.getLocalVariable(STOCK_VARIABLES_KEY, this, null);
     }
 
     protected void pushNestedVariables() {
@@ -431,7 +432,7 @@ public class JspProcessor extends TemplateProcessorSupport
             public void operate(AttributeScope pageScope,
                     VariableInfo info, boolean firstHit) {
                 String name = info.getVarName();
-                Map map = getNestedVariablesMap();
+                Map<String, Object> map = getNestedVariablesMap();
                 if (map.containsKey(name)) {
                     pageScope.setAttribute(name,
                             map.get(name));
@@ -454,9 +455,9 @@ public class JspProcessor extends TemplateProcessorSupport
                 AttributeScope pageScope =
                     CycleUtil.getServiceCycle().getPageScope();
                 boolean firstHit = true;
-                for (Iterator it = variableInfo.variableInfos();
+                for (Iterator<VariableInfo> it = variableInfo.variableInfos();
                         it.hasNext(); ) {
-                    VariableInfo info = (VariableInfo)it.next();
+                    VariableInfo info = it.next();
                     if (info.getScope() == VariableInfo.NESTED) {
                         _nestedVariableExists = Boolean.TRUE;
                         operator.operate(pageScope, info, firstHit);

@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.cycle.script;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.collection.NullIterator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -35,7 +35,7 @@ public abstract class AbstractScriptEnvironment
 
     private static final long serialVersionUID = -1647884867508562923L;
 
-    private transient List _attributeScopes;
+    private transient List<AttributeScope> _attributeScopes;
     private String _blockSign = "$";
 
     public synchronized void addAttributeScope(AttributeScope attrs) {
@@ -43,14 +43,14 @@ public abstract class AbstractScriptEnvironment
             throw new IllegalArgumentException();
         }
         if (_attributeScopes == null) {
-            _attributeScopes = new ArrayList();
+            _attributeScopes = new ArrayList<>();
         }
         _attributeScopes.add(attrs);
     }
 
-    public Iterator iterateAttributeScope() {
+    public Iterator<AttributeScope> iterateAttributeScope() {
         if (_attributeScopes == null) {
-            return NullIterator.getInstance();
+            return Collections.emptyIterator();
         }
         return _attributeScopes.iterator();
     }
@@ -74,10 +74,10 @@ public abstract class AbstractScriptEnvironment
             return LiteralScript.NULL_LITERAL_SCRIPT;
         }
         int offsetLine = 0;
-        List list = new ArrayList();
-        for (Iterator it = new ScriptBlockIterator(
+        List<CompiledScript> list = new ArrayList<>();
+        for (Iterator<ScriptBlock> it = new ScriptBlockIterator(
                 script, _blockSign, position.isOnTemplate()); it.hasNext();) {
-            ScriptBlock block = (ScriptBlock) it.next();
+            ScriptBlock block = it.next();
             list.add(compile(block, position, offsetLine));
             offsetLine += lineCount(block.getBlockString());
         }

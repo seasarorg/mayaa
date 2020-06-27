@@ -68,9 +68,9 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
         SourceDescriptor source = MarshallUtil.getDefaultSource(
                 systemID, ServiceProviderHandler.class);
         ServiceProvider provider = marshallServiceProvider(source, null);
-        Iterator it = MarshallUtil.iterateMetaInfSources(systemID);
+        Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
-            source = (SourceDescriptor) it.next();
+            source = it.next();
             provider = marshallServiceProvider(source, provider);
         }
         source = FactoryFactory.getBootstrapSource(

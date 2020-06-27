@@ -87,7 +87,7 @@ public class GetterScriptFactory {
             return null;
         }
 
-        List result = new ArrayList();
+        List<String> result = new ArrayList<>();
 
         String first = fullMatcher.group(1);
         if (isScopeName(first)) {
@@ -164,9 +164,9 @@ public class GetterScriptFactory {
             return new ApplicationGetterScript(
                     script, position, offsetLine, scopeName, attributeName, propertyName);
         } else {
-            Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+            Iterator<AttributeScope> it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
             while (it.hasNext()) {
-                AttributeScope scope = (AttributeScope) it.next();
+                AttributeScope scope = it.next();
                 if (scope.getScopeName().equals(scopeName)) {
                     return new AttributeScopeGetterScript(
                             script, position, offsetLine,
@@ -219,9 +219,9 @@ public class GetterScriptFactory {
         if (CycleUtil.getStandardScope().contains(name) || "this".equals(name)) {
             return true;
         }
-        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+        Iterator<AttributeScope> it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
         while (it.hasNext()) {
-            AttributeScope scope = (AttributeScope) it.next();
+            AttributeScope scope = it.next();
             if (scope.getScopeName().equals(name)) {
                 return true;
             }

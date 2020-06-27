@@ -44,7 +44,7 @@ public interface LibraryDefinition extends ParameterAware {
      * 当該ライブラリに追加アサインされた名前空間URIをイテレートする。
      * @return 追加アサインされた名前空間URIのイテレータ。
      */
-    Iterator iterateAssignedURI();
+    Iterator<URI> iterateAssignedURI();
 
     /**
      * 登録コンバータの取得。
@@ -57,7 +57,7 @@ public interface LibraryDefinition extends ParameterAware {
      * 登録コンバータのイテレータ。
      * @return コンバータイテレータ。
      */
-    Iterator iteratePropertyConverters();
+    Iterator<PropertyConverter> iteratePropertyConverters();
 
     /**
      * 登録コンバータの取得。
@@ -70,7 +70,7 @@ public interface LibraryDefinition extends ParameterAware {
      * 登録プロパティセットのイテレータ。
      * @return プロパティセットイテレータ。
      */
-    Iterator iteratePropertySets();
+    Iterator<PropertySet> iteratePropertySets();
 
     /**
      * 登録プロパティセットの取得。
@@ -83,7 +83,7 @@ public interface LibraryDefinition extends ParameterAware {
      * 子のprocessorノードのイテレータ。
      * @return ノードイテレータ。
      */
-    Iterator iterateProcessorDefinitions();
+    Iterator<ProcessorDefinition> iterateProcessorDefinitions();
 
     /**
      * 指定QNameで該当するProcessorDefinitionの取得。

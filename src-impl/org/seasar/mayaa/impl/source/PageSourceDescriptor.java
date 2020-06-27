@@ -30,9 +30,9 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor
 
     public boolean collectSourceDescriptor(
             SourceDescriptorObserver listener) throws Exception {
-        for (Iterator it = SourceHolderFactory.iterator();
+        for (Iterator<SourceHolder> it = SourceHolderFactory.iterator();
                 it.hasNext();) {
-            SourceHolder holder = (SourceHolder) it.next();
+            SourceHolder holder = it.next();
             if (listener.nextSourceDescriptor(
                     holder.getSourceDescriptor("")) == false) {
                 return false;

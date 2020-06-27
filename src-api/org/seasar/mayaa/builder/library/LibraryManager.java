@@ -55,7 +55,7 @@ public interface LibraryManager extends ParameterAware {
      * プロパティ型コンバータのイテレータ。
      * @return コンバータイテレータ。
      */
-    Iterator iteratePropertyConverters();
+    Iterator<PropertyConverter> iteratePropertyConverters();
 
     /**
      * ライブラリ定義ソーススキャナの追加。
@@ -78,14 +78,14 @@ public interface LibraryManager extends ParameterAware {
      * 全MLD設定（=<code>LibraryDefinition</code>）のイテレータ取得。
      * @return MLD設定のイテレータ。
      */
-    Iterator iterateLibraryDefinition();
+    Iterator<LibraryDefinition> iterateLibraryDefinition();
 
     /**
      * 指定URIで該当するMLD設定のイテレータ取得。
      * @param namespaceURI 取得したいMLDの名前空間URI。
      * @return MLD設定のイテレータ。
      */
-    Iterator iterateLibraryDefinition(URI namespaceURI);
+    Iterator<LibraryDefinition> iterateLibraryDefinition(URI namespaceURI);
 
     /**
      * QNameで該当するプロセッサ定義（=<code>ProcessorDefinition</code>）を検索する。

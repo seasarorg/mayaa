@@ -60,7 +60,7 @@ public class MarshallUtil {
             return beforeObject;
         }
         if (beforeObject != null) {
-            Constructor constructor = ObjectUtil.getConstructor(
+            Constructor<?> constructor = ObjectUtil.getConstructor(
                     instanceClass, new Class[] { interfaceClass });
             if (constructor != null) {
                 Object obj = ObjectUtil.newInstance(
@@ -86,7 +86,7 @@ public class MarshallUtil {
         return defaultSource;
     }
 
-    public static Iterator iterateMetaInfSources(String systemID) {
+    public static Iterator<SourceDescriptor> iterateMetaInfSources(String systemID) {
         if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
@@ -95,9 +95,9 @@ public class MarshallUtil {
         }
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            Enumeration resources = loader.getResources(systemID);
+            Enumeration<URL> resources = loader.getResources(systemID);
             return new URLSourceIterator(
-                    new LIFOIterator(resources), systemID);
+                    new LIFOIterator<URL>(resources), systemID);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,16 +105,16 @@ public class MarshallUtil {
 
     // support class ------------------------------------------------
 
-    protected static class URLSourceIterator implements Iterator {
+    protected static class URLSourceIterator implements Iterator<SourceDescriptor> {
 
-        private Iterator _it;
+        private Iterator<URL> _it;
         private String _systemID;
 
-        public URLSourceIterator(Iterator it, String systemID) {
+        public URLSourceIterator(Iterator<URL> it, String systemID) {
             if (it == null || StringUtil.isEmpty(systemID)) {
                 throw new IllegalArgumentException();
             }
-            LinkedHashSet urlSet = new LinkedHashSet();
+            LinkedHashSet<URL> urlSet = new LinkedHashSet<URL>();
             while (it.hasNext()) {
                 URL next = (URL) it.next();
                 urlSet.add(next);
@@ -127,7 +127,7 @@ public class MarshallUtil {
             return _it.hasNext();
         }
 
-        public Object next() {
+        public SourceDescriptor next() {
             URL url = (URL) _it.next();
             URLSourceDescriptor urlSource = new URLSourceDescriptor();
             urlSource.setURL(url);

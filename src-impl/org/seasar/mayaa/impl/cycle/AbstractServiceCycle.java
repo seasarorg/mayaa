@@ -47,7 +47,8 @@ public abstract class AbstractServiceCycle
 
     private static final long serialVersionUID = -4084527796306356704L;
 
-    private static final Map _scriptCache =
+    @SuppressWarnings("unchecked")
+    private static final Map<String, CompiledScript> _scriptCache =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
@@ -107,8 +108,8 @@ public abstract class AbstractServiceCycle
         return script;
     }
 
-    public Iterator iterateAttributeScope() {
-        Iterator it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
+    public Iterator<AttributeScope> iterateAttributeScope() {
+        Iterator<AttributeScope> it = ProviderUtil.getScriptEnvironment().iterateAttributeScope();
         return new ScopeIterator(this, it);
     }
 
@@ -117,13 +118,14 @@ public abstract class AbstractServiceCycle
         CycleUtil.registVariableFactory(ATTRIBUTE_SCOPE_CACHE_KEY,
                 new DefaultCycleLocalInstantiator() {
                     public Object create(Object[] params) {
-                        return new HashMap();
+                        return new HashMap<>();
                     }
                 });
     }
 
-    private Map getAttributeScopeCacheMap() {
-        return (Map) CycleUtil.getGlobalVariable(ATTRIBUTE_SCOPE_CACHE_KEY, null);
+    @SuppressWarnings("unchecked")
+    private Map<String, AttributeScope> getAttributeScopeCacheMap() {
+        return (Map<String, AttributeScope>) CycleUtil.getGlobalVariable(ATTRIBUTE_SCOPE_CACHE_KEY, null);
     }
 
     public AttributeScope findAttributeScope(String scopeName) {
@@ -136,8 +138,8 @@ public abstract class AbstractServiceCycle
                 && getAttributeScopeCacheMap().containsKey(scopeName)) {
             return (AttributeScope) getAttributeScopeCacheMap().get(scopeName);
         }
-        for (Iterator it = iterateAttributeScope(); it.hasNext();) {
-            AttributeScope scope = (AttributeScope) it.next();
+        for (Iterator<AttributeScope> it = iterateAttributeScope(); it.hasNext();) {
+            AttributeScope scope = it.next();
             if (scope.getScopeName().equals(scopeName)) {
                 if (currentPageScope) {
                     scope =

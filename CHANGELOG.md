@@ -4,6 +4,7 @@
 
 ## Mayaa 1.1.35 : 未リリース
 ### Changes
+- [#35](https://github.com/seasarorg/mayaa/pull/35) - Mayaaのバージョンを`${org.seasar.mayaa.impl.Version.MAYAA_VERSION}`で参照できるようにしました。
 - [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。
 - [#16](https://github.com/seasarorg/mayaa/issues/16) - Mayaa動作要件の最低JavaバージョンをJava7としました。
 

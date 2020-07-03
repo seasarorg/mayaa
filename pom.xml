@@ -28,6 +28,7 @@
     <!-- 普段はJUnitパフォーマンス計測用テスト、遅いテストは除外する -->
     <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
     <testArgLine></testArgLine>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <profiles>
@@ -251,6 +252,19 @@
                 <source>src-impl</source>
               </sources>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>filter-src</id>
+            <goals>
+              <goal>filter-sources</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

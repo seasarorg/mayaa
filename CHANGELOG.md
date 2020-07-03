@@ -7,6 +7,11 @@
 - [#35](https://github.com/seasarorg/mayaa/pull/35) - Mayaaのバージョンを`${org.seasar.mayaa.impl.Version.MAYAA_VERSION}`で参照できるようにしました。
 - [#15](https://github.com/seasarorg/mayaa/issues/15) - スクリプトのキャッシュの強制保持個数を指定できるようにしました。
 - [#16](https://github.com/seasarorg/mayaa/issues/16) - Mayaa動作要件の最低JavaバージョンをJava7としました。
+- 依存ライブラリをアップグレードしました。
+   * commons-beanutils:commons-beanutils:1.8.3 -> 1.9.4
+   * commons-collections:commons-collections:3.1 -> 3.2.2
+   * commons-logging:commons-logging:1.0.4 -> 1.2
+
 
 ### Fixes
 - [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合を解消するとともにキャッシュ保持数の制御を改善しました。

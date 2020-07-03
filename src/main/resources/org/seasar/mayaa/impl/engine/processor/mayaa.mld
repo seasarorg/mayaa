@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE library
+	PUBLIC "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN"
+	"http://mayaa.seasar.org/dtd/mld_1_0.dtd">
+<library uri="http://mayaa.seasar.org">
+
+	<description>The Mayaa core processors</description>
+
+	<processor name="processingInstruction"
+			class="org.seasar.mayaa.impl.engine.processor.ProcessingInstructionProcessor">
+		<description>PI on the template</description>
+		<property name="target" required="true"/>
+		<property name="data"/>
+	</processor>
+
+	<processor name="doctype"
+			class="org.seasar.mayaa.impl.engine.processor.DOCTYPEProcessor">
+		<description>DOCTYPE on the template</description>
+		<property name="name" required="true"/>
+		<property name="publicID"/>
+		<property name="systemID"/>
+	</processor>
+
+	<processor name="comment"
+			class="org.seasar.mayaa.impl.engine.processor.CommentProcessor">
+		<description>comment on the template</description>
+		<property name="text" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="characters"
+			class="org.seasar.mayaa.impl.engine.processor.CharactersProcessor">
+		<description>text on the template</description>
+		<property name="text" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="literals"
+			class="org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor">
+		<description>raw text on the template</description>
+		<property name="text" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="cdata"
+			class="org.seasar.mayaa.impl.engine.processor.CDATAProcessor">
+		<description>an CDATA on the template</description>
+	</processor>
+
+	<processor name="templateElement"
+			class="org.seasar.mayaa.impl.engine.processor.ElementProcessor">
+		<description>element on the template</description>
+		<property name="name" required="true"/>
+	</processor>
+
+	<processor name="duplecatedElement"
+			class="org.seasar.mayaa.impl.engine.processor.ElementProcessor">
+		<description>
+			duplicated element on the template by m:replace="false"
+		</description>
+		<property name="name" required="true"/>
+		<property name="duplicated" final="true"/>
+	</processor>
+
+	<processor name="element"
+			class="org.seasar.mayaa.impl.engine.processor.ElementProcessor">
+		<description>m:element injection</description>
+		<property name="name" required="true"/>
+		<property name="childEvaluation" final="true"/>
+	</processor>
+
+	<processor name="attribute"
+			class="org.seasar.mayaa.impl.engine.processor.AttributeProcessor">
+		<description>m:attribute injection</description>
+		<property name="name" required="true"/>
+		<property name="value" required="true" expectedClass="java.lang.String"/>
+        <property name="escapeAmp" expectedClass="boolean" default="true"/><!-- since 1.1.25 -->
+	</processor>
+
+	<processor name="doBody"
+			class="org.seasar.mayaa.impl.engine.processor.DoBodyProcessor">
+		<description>m:doBody injection</description>
+	</processor>
+
+	<processor name="insert"
+			class="org.seasar.mayaa.impl.engine.processor.InsertProcessor">
+		<description>m:insert injection</description>
+		<property name="path"/>
+		<property name="name"/>
+	</processor>
+
+	<processor name="doRender"
+			class="org.seasar.mayaa.impl.engine.processor.DoRenderProcessor">
+		<description>m:doRender injection</description>
+		<property name="replace" default="true"/>
+		<property name="name" default=""/>
+	</processor>
+
+	<processor name="doBase"
+			class="org.seasar.mayaa.impl.engine.processor.DoBaseProcessor">
+		<description>m:doBase injection</description>
+	</processor>
+
+	<processor name="with"
+			class="org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport">
+		<description>in order to grouping processor</description>
+		<property name="evalBodyInclude" final="true"/>
+	</processor>
+
+	<processor name="null"
+			class="org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport">
+		<description>remove element on build process</description>
+		<property name="evalBodyInclude" final="false"/>
+	</processor>
+
+	<processor name="exec"
+			class="org.seasar.mayaa.impl.engine.processor.ExecProcessor">
+		<property name="script" expectedClass="void"/>
+		<property name="src" expectedClass="java.lang.String"/>
+		<property name="encoding" expectedClass="java.lang.String" default="UTF-8"/>
+	</processor>
+
+	<processor name="write"
+			class="org.seasar.mayaa.impl.engine.processor.WriteProcessor">
+		<property name="value" expectedClass="java.lang.String"/>
+		<property name="default" expectedClass="java.lang.String"/>
+		<property name="escapeXml" expectedClass="boolean" default="true"/>
+		<property name="escapeWhitespace" expectedClass="boolean"/>
+		<property name="escapeEol" expectedClass="boolean" default="true"/>
+	</processor>
+
+	<processor name="for"
+			class="org.seasar.mayaa.impl.engine.processor.ForProcessor">
+		<property name="init" expectedClass="void"/>
+		<property name="test" required="true" expectedClass="boolean"/>
+		<property name="after" expectedClass="void"/>
+		<property name="max" default="256"/>
+	</processor>
+
+	<processor name="forEach"
+			class="org.seasar.mayaa.impl.engine.processor.ForEachProcessor">
+		<property name="items" required="true"/>
+		<property name="var" required="true" expectedClass="java.lang.String"/>
+		<property name="index" implName="indexName" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="if"
+			class="org.seasar.mayaa.impl.engine.processor.IfProcessor">
+		<property name="test" required="true" expectedClass="boolean"/>
+	</processor>
+
+	<processor name="echo"
+			class="org.seasar.mayaa.impl.engine.processor.EchoProcessor">
+		<description>m:echo injection</description>
+		<property name="childEvaluation" final="true"/>
+		<property name="name" />
+	</processor>
+
+	<processor name="formatNumber"
+			class="org.seasar.mayaa.impl.engine.processor.FormatNumberProcessor">
+		<property name="value" required="true" expectedClass="java.lang.Number"/>
+		<property name="default" expectedClass="java.lang.String"/>
+		<property name="pattern" expectedClass="java.lang.String"/>
+	</processor>
+
+	<processor name="formatDate"
+			class="org.seasar.mayaa.impl.engine.processor.FormatDateProcessor">
+		<property name="value" required="true" expectedClass="java.util.Date"/>
+		<property name="default" expectedClass="java.lang.String"/>
+		<property name="pattern" expectedClass="java.lang.String"/>
+	</processor>
+
+</library>

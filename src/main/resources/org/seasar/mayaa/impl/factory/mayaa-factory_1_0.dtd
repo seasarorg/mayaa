@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!NOTATION mayaa.conf_1_0 PUBLIC
+        "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN">
+
+<!ELEMENT factory (description?, parameter*) >
+<!ATTLIST factory class CDATA #IMPLIED>
+<!ATTLIST factory serviceClass CDATA #IMPLIED>
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT parameter (description?)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter value CDATA #REQUIRED>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE provider
+    PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
+    "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
+<provider class="org.seasar.mayaa.impl.provider.ServiceProviderImpl">
+
+    <engine class="org.seasar.mayaa.impl.engine.EngineImpl">
+        <errorHandler class="org.seasar.mayaa.impl.engine.error.TemplateErrorHandler">
+            <parameter name="folder" value="/"/>
+            <parameter name="extension" value="html"/>
+        </errorHandler>
+        <parameter name="pageClass" value="org.seasar.mayaa.impl.engine.PageImpl"/>
+        <parameter name="templateClass" value="org.seasar.mayaa.impl.engine.TemplateImpl"/>
+        <parameter name="defaultSpecification" value="/default.mayaa"/>
+        <parameter name="checkTimestamp" value="true"/>
+        <parameter name="suffixSeparator" value="$"/>
+        <parameter name="requestedSuffixEnabled" value="false" />
+        <parameter name="welcomeFileName" value="index.html"/>
+        <parameter name="requestCharacterEncoding" value="UTF-8"/>
+        <parameter name="pageSerialize" value="false"/>
+        <parameter name="surviveLimit" value="5"/>
+        <parameter name="autoBuild" value="false"/>
+        <parameter name="autoBuild.repeat" value="false"/>
+        <parameter name="autoBuild.wait" value="60"/><!-- seconds -->
+        <parameter name="autoBuild.fileNameFilters" value=".html"/><!-- .html;^(sample|howto).+\.htm$ -->
+        <parameter name="autoBuild.renderMate" value="false"/>
+        <parameter name="autoBuild.contextPath" value="/"/>
+        <parameter name="forwardLimit" value="10"/>
+        <parameter name="noCacheValue" value="no-cache"/><!-- since 1.1.27, for firefox "no-cache, no-store" -->
+        <parameter name="dumpEnabled" value="false" />
+        <parameter name="convertCharset" value="false"/><!-- since 1.1.12 -->
+    </engine>
+
+    <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
+        <scope class="org.seasar.mayaa.impl.cycle.scope.ParamScope"/>
+        <scope class="org.seasar.mayaa.impl.cycle.scope.HeaderScope"/>
+        <scope class="org.seasar.mayaa.impl.cycle.scope.BindingScope"/>
+
+        <!-- "_" = current - page - request - session - application -->
+        <scope class="org.seasar.mayaa.impl.cycle.script.rhino.WalkStandardScope"/>
+        <!-- extension: java.lang.System.getProperty()
+        <scope class="org.seasar.mayaa.impl.cycle.scope.EnvScope"/>
+        -->
+        <parameter name="wrapFactory" value="org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl"/>
+    </scriptEnvironment>
+
+    <specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
+        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputMayaaWhitespace" value="false"/>
+    </specificationBuilder>
+
+    <libraryManager class="org.seasar.mayaa.impl.builder.library.LibraryManagerImpl">
+        <converter name="ProcessorProperty" class="org.seasar.mayaa.impl.builder.library.converter.ProcessorPropertyConverter"/>
+        <converter name="PrefixAwareName" class="org.seasar.mayaa.impl.builder.library.converter.PrefixAwareNameConverter"/>
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner">
+            <parameter name="folder" value="/WEB-INF"/>
+            <parameter name="recursive" value="true"/>
+            <parameter name="extension" value=".tld"/>
+            <parameter name="extension" value=".mld"/>
+        </scanner>
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.MetaInfSourceScanner">
+            <parameter name="folder" value="/WEB-INF/lib"/>
+            <parameter name="extension" value=".jar"/>
+            <parameter name="ignore" value="commons-beanutils-"/>
+            <parameter name="ignore" value="commons-collections-"/>
+            <parameter name="ignore" value="commons-logging-"/>
+            <parameter name="ignore" value="nekohtml-"/>
+            <parameter name="ignore" value="jaxen-"/>
+            <parameter name="ignore" value="xml-apis-"/>
+            <parameter name="ignore" value="xercesImpl-"/>
+            <parameter name="ignore" value="rhino-"/>
+            <parameter name="jar.ignore" value="META-INF/MANIFEST.MF"/>
+            <parameter name="jar.extension" value=".mld"/>
+            <parameter name="jar.extension" value=".tld"/>
+        </scanner>
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.ResourceScanner">
+            <parameter name="root" value="META-INF/"/>
+            <parameter name="ignore" value="META-INF/MANIFEST.MF"/>
+            <parameter name="extension" value=".mld"/>
+            <parameter name="extension" value=".tld"/>
+        </scanner>
+
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>
+
+        <!-- after scan jars -->
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner"/>
+
+        <builder class="org.seasar.mayaa.impl.builder.library.MLDDefinitionBuilder"/>
+        <builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder"/>
+    </libraryManager>
+
+    <templateBuilder class="org.seasar.mayaa.impl.builder.TemplateBuilderImpl">
+        <resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.RenderedSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InsertSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
+            <parameter name="reportUnresolvedID" value="true"/>
+            <parameter name="reportDuplicatedID" value="true"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/TR/html4}id"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
+        </resolver>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
+        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputMayaaWhitespace" value="false"/>
+        <parameter name="optimize" value="true"/>
+        <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
+        <parameter name="replaceSSIInclude" value="false"/><!-- since 1.1.25 -->
+        <parameter name="balanceTag" value="true"/><!-- since 1.1.29 -->
+    </templateBuilder>
+
+    <!--
+    <templateBuilder class="org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder">
+        <resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.RenderedSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InsertSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
+            <parameter name="reportUnresolvedID" value="true"/>
+            <parameter name="reportDuplicatedID" value="true"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/TR/html4}id"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
+        </resolver>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
+        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputMayaaWhitespace" value="false"/>
+        <parameter name="optimize" value="true"/>
+        <parameter name="defaultCharset" value="UTF-8"/>
+        <parameter name="replaceSSIInclude" value="false"/>
+
+        <parameter name="defaultLayoutPageName" value="/defaultlayout.html"/>
+        <parameter name="generateMayaaNode" value="true"/>
+    </templateBuilder>
+    -->
+
+    <pathAdjuster class="org.seasar.mayaa.impl.builder.PathAdjusterImpl">
+        <parameter name="enabled" value="true"/>
+        <parameter name="force" value="false"/><!-- since 1.1.13 -->
+    </pathAdjuster>
+
+    <templateAttributeReader
+            class="org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl">
+        <!-- example
+        <ignoreAttribute
+                qName="{http://struts.apache.org/tags-html}errors"
+                attribute="id"/>
+        <aliasAttribute
+                qName="{http://struts.apache.org/tags-html}*"
+                attribute="styleId"
+                templateAttribute="id" />
+        -->
+        <parameter name="enabled" value="false"/>
+    </templateAttributeReader>
+
+    <parentSpecificationResolver class="org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl">
+    </parentSpecificationResolver>
+
+</provider>

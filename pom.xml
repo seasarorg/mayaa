@@ -160,24 +160,6 @@
 
   <build>
     <sourceDirectory>src-api</sourceDirectory>
-    <resources>
-      <resource>
-        <targetPath>META-INF/resource</targetPath>
-        <directory>context/resource</directory>
-      </resource>
-      <resource>
-        <directory>src-api</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <directory>src-impl</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <testResources>
       <testResource>
         <directory>src/test/java</directory>

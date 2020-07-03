@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE factory
+	PUBLIC "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN"
+    "http://mayaa.seasar.org/dtd/mayaa-factory_1_0.dtd">
+<factory class="org.seasar.mayaa.impl.provider.ProviderFactoryImpl"
+	serviceClass="org.seasar.mayaa.impl.provider.ServiceProviderImpl">
+</factory>

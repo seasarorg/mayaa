@@ -165,8 +165,8 @@ public class WeakValueHashMap<K, V> {
     /**
      * putは比較的コストが高くても良いとする。
      * 
-     * @param key
-     * @param value
+     * @param key キャッシュキー
+     * @param value 値
      */
     public void put(K key, V value) {
         synchronized (_mutex) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:for m:id="FOR:WITH_MAX" init="${var i = 2}" test="${i &lt; 5}" after="${i++}" max="1" />
+
+    <m:write m:id="INDEX_OF_LOOP" value="${i}" />
+</m:mayaa>

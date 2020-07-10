@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:beforeRender><![CDATA[
+        var val_int = 0;
+        var val_list = ['A','B','C'];
+        var val_list_empty = [];
+        var val_str = "STR";
+        var val_str_empty = "";
+    ]]>
+    </m:beforeRender>
+
+    <m:if m:id="IF:TRUE" m:test="${true}" />
+
+    <m:if m:id="IF:TRUE_NO_REPLACE" test="true" replace="false" />
+
+    <m:if m:id="IF:FALSE_NO_REPLACE" test="false" replace="false" />
+
+    <m:if m:id="IF:TRUE_CHILD_ELEMENT" test="true" >
+        <m:write value="子要素の値をプロセッサで出力" />
+    </m:if>
+
+    <m:if m:id="IF:FALSE_CHILD_ELEMENT" test="false" >
+        <m:write value="子要素の値をプロセッサで出力" />
+    </m:if>
+
+    <m:if m:id="IF:TRUE_OF_NON_ZERO_NUMBER" test="1" />
+
+    <m:if m:id="IF:TRUE_OF_COMPARE_OPERATOR" test="${1 == 1}" />
+
+    <m:if m:id="IF:FALSE_OF_ZERO_NUMBER" test="0" />
+
+    <m:if m:id="IF:FALSE_OF_EMPTY_STRING_VALUE" test="${val_str_empty}" />
+
+    <m:if m:id="IF:FALSE_OF_NON_EMPTY_STRING_VALUE" test="${val_str}" />
+
+    <m:if m:id="IF:TRUE_OF_EMPTY_STRING_VALUE_WITH_NOT_OP" test="${!val_str_empty}" />
+
+    <m:if m:id="IF:FALSE_OF_EMPTY_LIST" test="${val_list_empty}" />
+
+    <m:if m:id="IF:FALSE_OF_NON_EMPTY_LIST" test="${val_list}" />
+
+</m:mayaa>

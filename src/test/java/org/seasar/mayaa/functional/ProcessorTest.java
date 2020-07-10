@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.seasar.mayaa.impl.builder.library.ExpectedTypeMismatchValueException;
 import org.seasar.mayaa.impl.engine.processor.DoRenderNotFoundException;
 import org.seasar.mayaa.impl.engine.processor.TooManyLoopException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,4 +53,21 @@ public class ProcessorTest extends EngineTestBase {
 
     }
 
+    @Test
+    public void プロセッサifで子要素の出力制御を行う() throws IOException {
+        execAndVerify(BASE_PATH + "if/target.html", BASE_PATH + "if/expected.html", null);
+    }
+
+    @Test
+    public void プロセッサifのtestに文字列型の値を指定すると型指定例外をスロー() throws IOException {
+        try {
+            // When
+            final MockHttpServletRequest request = createRequest(BASE_PATH + "if/target_typemismatch.html");
+            exec(request, null);
+            fail("ExpectedTypeMismatchValueExceptionが発生するはず");
+        } catch (ExpectedTypeMismatchValueException e) {
+            ;
+        }
+
+    }
 }

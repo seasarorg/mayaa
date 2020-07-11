@@ -20,7 +20,6 @@ public class EngineTest extends EngineTestBase {
 
         // When
         MockHttpServletResponse response = exec(request, null);
-        printTree();
 
         // Then
         verifyResponse(response, "/it-case/engine/expected.html");

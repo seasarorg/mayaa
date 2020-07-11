@@ -74,8 +74,8 @@ public class EngineTestBase {
     }
 
     public void printTree() {
-        Page page = this.getPage();
-        Template template = page.getTemplate(null, null);
+        Page page = getPage();
+        Template template = page.getTemplate(null, "html");
         printTree(template);
     }
 
@@ -151,7 +151,10 @@ public class EngineTestBase {
     protected MockHttpServletResponse exec(final MockHttpServletRequest request, final Map<String, Object> pageScopeAttribute) {
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        requestedPageName = request.getServletPath().replaceAll("\\.\\d+$", "");
+        requestedPageName = request.getServletPath();
+        if (requestedPageName.lastIndexOf(".") != -1) {
+            requestedPageName = requestedPageName.substring(0, requestedPageName.lastIndexOf("."));
+        }
         CycleUtil.initialize(request, response);
         engine.doService(pageScopeAttribute, true);
 

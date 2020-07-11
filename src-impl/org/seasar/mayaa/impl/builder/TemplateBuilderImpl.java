@@ -479,6 +479,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
         }
 
+        // expandsとして展開された同階層のLiteralCharactersProcessorが連続している場合は結合する
         List<ProcessorTreeWalker> packs = new ArrayList<>();
         for (int i = 0; i < expands.size(); i++) {
             ProcessorTreeWalker node = (ProcessorTreeWalker) expands.get(i);

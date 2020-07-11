@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:cdata m:id="CDATA:" />
+
+    <m:write m:id="WRITE:TEXT" value="TEXT" />
+
+</m:mayaa>

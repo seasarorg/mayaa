@@ -1,0 +1,24 @@
+<html xmlns:m="http://mayaa.seasar.org">
+  <body>
+    <section id="1" m:comment="子要素は単純テキスト">
+      <div m:id="CDATA:">
+        var val_int = 0;
+      </div>
+    </section>
+    <section id="2" m:comment="子要素にプロセッサを含む">
+      <div m:id="CDATA:">
+        <p>子要素のテキスト1</p>
+        <p m:id="WRITE:TEXT">子要素のテキスト2</p>
+      </div>
+    </section>
+    <section id="3" m:comment="子要素にCDATAプロセッサを入れ子で含む">
+      <div m:id="CDATA:">
+        <p>子要素のテキスト1</p>
+        <div m:id="CDATA:">
+          <p>子要素のテキスト2</p>
+          <p m:id="WRITE:TEXT">子要素のテキスト2</p>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -159,7 +160,14 @@ public class EngineTestBase {
         engine.doService(pageScopeAttribute, true);
 
         // verify(servletContext).getRealPath(path);
-
+        if ("true".equals(engine.getParameter(EngineImpl.DUMP_ENABLED))) {
+            try {
+                final String content = response.getContentAsString();
+                System.out.println(content);
+            }
+            catch (UnsupportedEncodingException e) {
+            }
+        }
         return response;
     }
 

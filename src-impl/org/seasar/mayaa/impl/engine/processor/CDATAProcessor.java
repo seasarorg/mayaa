@@ -23,6 +23,7 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -34,15 +35,44 @@ public class CDATAProcessor extends TemplateProcessorSupport
     private static final String CDATAIN = "<![CDATA[";
     private static final String CDATAOUT = "]]>";
 
+    /**
+     * CDATAは入れ子で出力できないため、CDATAProcessorの呼び出しネストレベルをカウントするGlobalVariableを使用する。
+     * 閉じタグのバランスが取れていないとCDATAが閉じないため注意する。
+     * テンプレートに元々記載されている<![CDATA[ ]]> は検知できない（そもそもXMLパーサにより評価されないため期待通り）。
+     */
+    private static final String CDATA_IN_PROCESS_KEY = CDATAProcessor.class.getName() + "#nestLevel";
+    static {
+        CycleUtil.registVariableFactory(CDATA_IN_PROCESS_KEY,
+            new DefaultCycleLocalInstantiator() {
+                @Override
+                public Object create(Object[] params) {
+                    return Integer.valueOf(0);
+                }
+            }
+        );
+    }
+
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write(CDATAIN);
+        //　入れ子のレベルを確認する。
+        Integer nestLevel = (Integer) CycleUtil.getGlobalVariable(CDATA_IN_PROCESS_KEY, null);
+        if (nestLevel.intValue() == 0) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            cycle.getResponse().write(CDATAIN);
+        }
+        CycleUtil.setGlobalVariable(CDATA_IN_PROCESS_KEY, Integer.valueOf(nestLevel.intValue() + 1));
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doEndProcess() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.getResponse().write(CDATAOUT);
+        //　入れ子のレベルを確認する。
+        Integer nestLevel = (Integer) CycleUtil.getGlobalVariable(CDATA_IN_PROCESS_KEY, null);
+        CycleUtil.setGlobalVariable(CDATA_IN_PROCESS_KEY, Integer.valueOf(nestLevel.intValue() - 1));
+
+        if (nestLevel.intValue() <= 1 /* 1:最後のネストレベル */) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
+            cycle.getResponse().write(CDATAOUT);
+            CycleUtil.clearGlobalVariable(CDATA_IN_PROCESS_KEY);
+        }
         return ProcessStatus.EVAL_PAGE;
     }
 

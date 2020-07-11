@@ -70,4 +70,11 @@ public class ProcessorTest extends EngineTestBase {
         }
 
     }
+
+    @Test
+    public void プロセッサcdataで子要素をCDATAで囲む() throws IOException {
+        enableDump();
+        execAndVerify(BASE_PATH + "cdata/target.html", BASE_PATH + "cdata/expected.html", null);
+    }
+
 }

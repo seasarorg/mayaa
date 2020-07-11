@@ -1,0 +1,43 @@
+<html xmlns:m="http://mayaa.seasar.org">
+  <body>
+    <section id="1" m:comment="単純ケース">
+      <div m:id="IF:TRUE" class="with-style">真の場合</div>
+    </section>
+    <section id="2" m:comment="replaceなし（真の場合）">
+      <div m:id="IF:TRUE_NO_REPLACE" class="with-style">真の場合</div>
+    </section>
+    <section id="3" m:comment="replaceなし（偽の場合）">
+      <div m:id="IF:FALSE_NO_REPLACE" class="with-style">偽の場合</div>
+    </section>
+    <section id="4" m:comment="子要素の値をプロセッサで出力（真の場合）">
+      <div m:id="IF:TRUE_CHILD_ELEMENT">真の場合</div>
+    </section>
+    <section id="5" m:comment="子要素の値をプロセッサで出力（偽の場合）">
+      <div m:id="IF:FALSE_CHILD_ELEMENT">偽の場合、元々の子要素も出力されない</div>
+    </section>
+    <section id="6" m:comment="非ゼロの数値は真">
+      <div m:id="IF:TRUE_OF_NON_ZERO_NUMBER">真</div>
+    </section>
+    <section id="7" m:comment="比較演算子で真">
+      <div m:id="IF:TRUE_OF_COMPARE_OPERATOR">真</div>
+    </section>
+    <section id="8" m:comment="ゼロは偽">
+      <div m:id="IF:FALSE_OF_ZERO_NUMBER">偽</div>
+    </section>
+    <section id="9" m:comment="空の文字列は偽">
+      <div m:id="IF:FALSE_OF_EMPTY_STRING_VALUE">偽</div>
+    </section>
+    <section id="10" m:comment="空でない文字列も偽">
+      <div m:id="IF:FALSE_OF_NON_EMPTY_STRING_VALUE">偽</div>
+    </section>
+    <section id="11" m:comment="空の文字列に対するNOT演算子は真">
+      <div m:id="IF:TRUE_OF_EMPTY_STRING_VALUE_WITH_NOT_OP">真</div>
+    </section>
+    <section id="12" m:comment="空のリストは偽">
+      <div m:id="IF:FALSE_OF_EMPTY_LIST">偽</div>
+    </section>
+    <section id="13" m:comment="空でないリストも偽">
+      <div m:id="IF:FALSE_OF_NON_EMPTY_LIST">偽</div>
+    </section>
+  </body>
+</html>

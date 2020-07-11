@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.LogManager;
 
@@ -31,8 +32,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,6 +48,7 @@ public class EngineTestBase {
 
     private MockServletContext servletContext;
     private Engine engine;
+    private String requestedPageName;
 
     @BeforeClass
     public static void init() throws SecurityException, IOException {
@@ -53,6 +59,39 @@ public class EngineTestBase {
         SourceHolderFactory.release();
         FactoryFactory.release();
         FactoryFactory.setInstance(new FactoryFactoryImpl());
+    }
+
+    public void enableDump() {
+        engine.setParameter(EngineImpl.DUMP_ENABLED, "true");
+    }
+
+    public void disableDump() {
+        engine.setParameter(EngineImpl.DUMP_ENABLED, "false");
+    }
+
+    public Page getPage() {
+        return engine.getPage(requestedPageName);
+    }
+
+    public void printTree() {
+        Page page = getPage();
+        Template template = page.getTemplate(null, "html");
+        printTree(template);
+    }
+
+    public void printTree(NodeTreeWalker node) {
+        printTree(node, 0);
+    }
+
+    public void printTree(NodeTreeWalker node, int indent) {
+        String padding = "                    ";
+        for (Iterator<NodeTreeWalker> itr = node.iterateChildNode(); itr.hasNext();) {
+            NodeTreeWalker n = itr.next();
+            System.out.println(padding.substring(0, indent * 2) + n);
+            if (n.getChildNodeSize() > 0) {
+                printTree(n, indent + 1);
+            }
+        }
     }
 
     @Before
@@ -76,6 +115,7 @@ public class EngineTestBase {
         FactoryFactory.setContext(servletContext);
 
         engine = ProviderUtil.getEngine();
+        engine.setErrorHandler(null);
         // engine.setParameter(EngineImpl.DUMP_ENABLED, "true");
         // engine.setParameter(EngineImpl.PAGE_SERIALIZE, "true");
     }
@@ -111,6 +151,10 @@ public class EngineTestBase {
     protected MockHttpServletResponse exec(final MockHttpServletRequest request, final Map<String, Object> pageScopeAttribute) {
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
+        requestedPageName = request.getServletPath();
+        if (requestedPageName.lastIndexOf(".") != -1) {
+            requestedPageName = requestedPageName.substring(0, requestedPageName.lastIndexOf("."));
+        }
         CycleUtil.initialize(request, response);
         engine.doService(pageScopeAttribute, true);
 

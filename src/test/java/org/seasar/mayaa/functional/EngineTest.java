@@ -20,7 +20,7 @@ public class EngineTest extends EngineTestBase {
 
         // When
         MockHttpServletResponse response = exec(request, null);
-        
+
         // Then
         verifyResponse(response, "/it-case/engine/expected.html");
     }
@@ -33,7 +33,7 @@ public class EngineTest extends EngineTestBase {
     @Test
     @Ignore
     public void HTML5形式で指定したCharsetがレスポンスヘッダに設定される() throws IOException {
-        // Mayaaは <meta charset="XXX"> の形式の記述には対応していないので ＠Ignore する。
+        // Mayaaは <meta charset="XX"> の形式の記述には対応していないので ＠Ignore する。
         execAndVerify("/it-case/html-transform/charset-html5/target.html", "/it-case/html-transform/charset-html5/expected.html", null);
     }
 

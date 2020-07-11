@@ -1,0 +1,28 @@
+<html xmlns:m="http://mayaa.seasar.org">
+  <body>
+    <section id="1" m:comment="単純ケース">
+      <ul>
+        <li m:id="FOREACH:">リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+    <section id="2" m:comment="index参照">
+      <ul>
+        <li m:id="FOREACH:WITH_INDEX"><span m:id="INDEX_OF_LOOP"></span>.リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+    <section id="3" m:comment="replaceなし">
+      <ul>
+        <li m:id="FOREACH:NO_REPLACE">リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+    <section id="4" m:comment="ul生成パターン">
+      <ul m:id="FOREACH:WITHIN_ECHO">
+        <li>リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+    <section id="5" m:comment="itemsにnull">
+      <ul>
+        <li m:id="FOREACH:NULL_ITEMS"><span m:id="INDEX_OF_LOOP"></span>.リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+    <section id="6" m:comment="itemsに非コレクション">
+      <ul>
+        <li m:id="FOREACH:NO_COLLECTION"><span m:id="INDEX_OF_LOOP"></span>.リストの値：<span class="elm" m:id="ELEMENT_OF_LOOP"></span></li></ul>
+    </section>
+  </body>
+</html>

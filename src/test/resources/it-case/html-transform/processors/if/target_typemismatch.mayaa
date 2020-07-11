@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:if m:id="IF:FALSE_OF_EMPTY_STRING" test="’’" />
+
+</m:mayaa>

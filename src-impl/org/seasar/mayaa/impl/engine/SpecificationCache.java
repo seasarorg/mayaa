@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +44,8 @@ public class SpecificationCache {
 
     protected ReferenceCache<Object> _gcChecker;
     protected SoftReference<Object> _gabage;
+    protected AtomicLong hitCount = new AtomicLong();
+    protected AtomicLong missCount = new AtomicLong();
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
@@ -69,6 +72,18 @@ public class SpecificationCache {
         }
     }
 
+    public int size() {
+        return _specifications.size();
+    }
+
+    public long getHitCount() {
+        return hitCount.get();
+    }
+
+    public long getMissCount() {
+        return missCount.get();
+    }
+
     public Specification get(String systemID) {
         if (systemID == null) {
             throw new IllegalArgumentException();
@@ -78,12 +93,15 @@ public class SpecificationCache {
             refer = (ReferSpecification) _specifications.get(systemID);
         }
         if (refer == null) {
+            missCount.getAndIncrement();
             return null;
         }
         Specification result = refer.getSpecification();
         if (refer.isDeprecated()) {
+            missCount.getAndIncrement();
             return null;
         }
+        hitCount.getAndIncrement();
         return result;
     }
 

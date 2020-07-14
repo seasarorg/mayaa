@@ -35,6 +35,7 @@ import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
+import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.WeakValueHashMap;
@@ -58,6 +59,11 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static WrapFactory _wrap;
 
     private boolean _useGetterScriptEmulation;
+
+    public ScriptEnvironmentImpl() {
+        super();
+        CacheControllerRegistry.registerCacheController("CompiledScript", scriptCache);
+    }
 
     protected CompiledScript compile(
             ScriptBlock scriptBlock, PositionAware position, int offsetLine) {

@@ -65,6 +65,7 @@ import org.seasar.mayaa.impl.cycle.jsp.BodyContentImpl;
 import org.seasar.mayaa.impl.cycle.jsp.PageContextImpl;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.RenderUtil;
+import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
@@ -87,7 +88,10 @@ public class JspProcessor extends TemplateProcessorSupport
     @SuppressWarnings("unchecked")
     private static final Map<String, TagPool> _tagPools =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
-
+    static {
+        CacheControllerRegistry.registerCacheController("JspTagPool", _tagPools);
+    }
+        
     private static final String LOADED_TAG_KEY =
         JspProcessor.class.getName() + "#loadedTag";
     private static final String STOCK_VARIABLES_KEY =

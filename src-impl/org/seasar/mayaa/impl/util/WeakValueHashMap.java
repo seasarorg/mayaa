@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.util;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.collections.map.AbstractReferenceMap;
 
@@ -49,6 +50,8 @@ public class WeakValueHashMap<K, V> {
     private long _droppedCount = 0;
     private long _pulledUpCount = 0;
     private long _maxCountOfDroppedRecord = 0;
+    private long hitCount = 0;
+    private long missCount = 0;
 
     /**
      * 参照カウンタ付きのキャッシュレコード保持
@@ -140,11 +143,20 @@ public class WeakValueHashMap<K, V> {
         _hardReferenceLruMap = new LruHashMap(hardSize);
     }
 
+    public long getHitCount() {
+        return hitCount;
+    }
+
+    public long getMissCount() {
+        return missCount;
+    }
+
     public V get(K key) {
         synchronized (_mutex) {
             CountedReference<V> ref = _hardReferenceLruMap.get(key);
             if (ref != null) {
                 ref.countUp();
+                hitCount++;
                 return ref.get();
             }
 
@@ -155,9 +167,11 @@ public class WeakValueHashMap<K, V> {
                 ++_pulledUpCount;
                 _hardReferenceLruMap.put(key, ref);
                 _weakReferenceMap.remove(key);
+                hitCount++;
                 return ref.get();
             }
 
+            missCount++;
             return null;
         }
     }

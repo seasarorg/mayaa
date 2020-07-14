@@ -23,6 +23,7 @@ import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -34,6 +35,9 @@ public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
     @SuppressWarnings("unchecked")
     private static Map<String, PrefixAwareName> _cache =
             Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    static {
+        CacheControllerRegistry.registerCacheController("PrefixAwareName", _cache);
+    }
 
     public static PrefixAwareName getInstance(QName qName, String prefix) {
         String key = forPrefixAwareNameString(qName, prefix);

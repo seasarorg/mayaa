@@ -45,6 +45,8 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.CacheControllerRegistry;
+import org.seasar.mayaa.impl.management.EngineRegistory;
 import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.DateFormatPool;
@@ -99,6 +101,7 @@ public class EngineImpl extends SpecificationImpl
 
     public EngineImpl() {
         setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
+        EngineRegistory.registerEngine(this);
     }
 
     public void setErrorHandler(ErrorHandler errorHandler) {
@@ -501,6 +504,7 @@ public class EngineImpl extends SpecificationImpl
     protected SpecificationCache getCache() {
         if (_specCache == null) {
             _specCache = new SpecificationCache(_surviveLimit);
+            CacheControllerRegistry.registerCacheController("SpecificationCache", _specCache);
         }
         return _specCache;
     }

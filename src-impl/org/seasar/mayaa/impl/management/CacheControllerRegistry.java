@@ -15,22 +15,15 @@
  */
 package org.seasar.mayaa.impl.management;
 
-import java.lang.management.ManagementFactory;
 import java.util.Map;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import javax.management.StandardMBean;
 
 import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.impl.engine.SpecificationCache;
 import org.seasar.mayaa.impl.util.WeakValueHashMap;
-import org.seasar.mayaa.management.CacheControlMBean;
+import org.seasar.mayaa.management.CacheControlMXBean;
 
 /**
  * 
@@ -40,7 +33,7 @@ import org.seasar.mayaa.management.CacheControlMBean;
 public class CacheControllerRegistry {
 
     public static void registerCacheController(String controllerName, final Map<?,?> map) {
-        CacheControlMBean mbean = new CacheControlMBean(){
+        CacheControlMXBean mbean = new CacheControlMXBean(){
             @Override
             public String getClassName() {
                 return map.getClass().getName();
@@ -63,11 +56,11 @@ public class CacheControllerRegistry {
                 throw new UnsupportedOperationException("Collecting cache miss count is not supported");
             }
         };
-        register(controllerName, mbean);
+        JMXUtil.register(mbean, makeObjectName(controllerName));
     }
 
     public static void registerCacheController(String controllerName, final SpecificationCache specificationCache) {
-        CacheControlMBean mbean = new CacheControlMBean(){
+        CacheControlMXBean mbean = new CacheControlMXBean(){
             @Override
             public String getClassName() {
                 return specificationCache.getClass().getName();
@@ -91,11 +84,11 @@ public class CacheControllerRegistry {
                 return specificationCache.getMissCount();
             }
         };
-        register(controllerName, mbean);
+        JMXUtil.register(mbean, makeObjectName(controllerName));
     }
 
     public static void registerCacheController(String controllerName, final WeakValueHashMap<?,?> weakValueHashMap) {
-        CacheControlMBean mbean = new CacheControlMBean(){
+        CacheControlMXBean mbean = new CacheControlMXBean(){
             @Override
             public String getClassName() {
                 return weakValueHashMap.getClass().getName();
@@ -119,11 +112,11 @@ public class CacheControllerRegistry {
                 return weakValueHashMap.getMissCount();
             }
         };
-        register(controllerName, mbean);
+        JMXUtil.register(mbean, makeObjectName(controllerName));
     }
 
     public static void registerCacheController(String controllerName, final ReferenceMap referenceMap) {
-        CacheControlMBean mbean = new CacheControlMBean(){
+        CacheControlMXBean mbean = new CacheControlMXBean(){
             @Override
             public String getClassName() {
                 return referenceMap.getClass().getName();
@@ -146,34 +139,16 @@ public class CacheControllerRegistry {
                 throw new UnsupportedOperationException("Collecting cache miss count is not supported");
             }
         };
-        register(controllerName, mbean);
+        JMXUtil.register(mbean, makeObjectName(controllerName));
     }
 
-    protected static void register(String controllerName, CacheControlMBean cacheControlMBean) {
-        if (controllerName == null || controllerName.isEmpty() || cacheControlMBean == null) {
-            throw new IllegalArgumentException();
-        }
-        ObjectName objectName;
+    protected static ObjectName makeObjectName(String controllerName) {
         try {
-            String name = String.format(CacheControlMBean.JMX_OBJECT_NAME_FORMAT, controllerName);
-            objectName = new ObjectName(name);
+            String name = String.format(CacheControlMXBean.JMX_OBJECT_NAME_FORMAT, controllerName);
+            ObjectName objectName = new ObjectName(name);
+            return objectName;
         } catch (MalformedObjectNameException e) {
             throw new IllegalArgumentException("ObjectName is invalid");
-        }
-
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer(); // MBeanServer を取得
-
-            // 重複登録されるとInstanceAlreadyExistsExceptionが発生するので事前に削除しておく。
-            try {
-                mBeanServer.unregisterMBean(objectName);
-            } catch (InstanceNotFoundException e) {
-                // Ignore
-            }
-            mBeanServer.registerMBean(new StandardMBean(cacheControlMBean, CacheControlMBean.class), objectName);
-        } catch (MBeanRegistrationException | NotCompliantMBeanException e) {
-                    System.err.println(e);
-        } catch (InstanceAlreadyExistsException e) {
         }
     }
 

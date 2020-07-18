@@ -84,7 +84,30 @@ public class SpecificationCache {
         return missCount.get();
     }
 
+    private void countCacheHit(boolean hit) {
+        if (hit) {
+            if (hitCount.incrementAndGet() < 0) {
+                // オーバーフローしたら正の値に補正
+                hitCount.addAndGet(Long.MAX_VALUE);
+                missCount.set(0);
+            }    
+        }
+        else {
+            if (missCount.incrementAndGet() < 0) {
+                // オーバーフローしたら正の値に補正
+                missCount.addAndGet(Long.MAX_VALUE);
+                hitCount.set(0);
+            }
+        }
+    }
+
     public Specification get(String systemID) {
+        Specification spec = _get(systemID);
+        countCacheHit(spec != null);
+        return null;
+    }
+
+    private Specification _get(String systemID) {
         if (systemID == null) {
             throw new IllegalArgumentException();
         }
@@ -93,15 +116,12 @@ public class SpecificationCache {
             refer = (ReferSpecification) _specifications.get(systemID);
         }
         if (refer == null) {
-            missCount.getAndIncrement();
             return null;
         }
         Specification result = refer.getSpecification();
         if (refer.isDeprecated()) {
-            missCount.getAndIncrement();
             return null;
         }
-        hitCount.getAndIncrement();
         return result;
     }
 
@@ -110,7 +130,7 @@ public class SpecificationCache {
             throw new IllegalArgumentException();
         }
         synchronized(this) {
-            Specification old = get(specification.getSystemID());
+            Specification old = _get(specification.getSystemID());
             if (old != null) {
                 if (old == specification) {
                     return;

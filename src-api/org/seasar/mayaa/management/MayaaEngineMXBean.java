@@ -15,20 +15,25 @@
  */
 package org.seasar.mayaa.management;
 
+import javax.management.MXBean;
+
 /**
- * Mayaa内で使用されている各種キャッシュの状態の取得や操作を行うためのMBeanインタフェース．
- * ObjectNameは "org.seasar.mayaa:type=CacheControl,name=[キャッシュ名称]" である．
+ * MayaaのEngine全体の状態の取得や設定を変更するためのMBeanインタフェース．
+ * ObjectNameは "org.seasar.mayaa:type=MayaaEngine" である．
  * 
  * @since 1.1.35
  * @author Watanabe, Mitsutaka
  */
-public interface CacheControlMBean {
-    /** DOMAIN:type=TYPE,name=NAME */
-    static final String JMX_OBJECT_NAME_FORMAT = "org.seasar.mayaa:type=CacheControl,name=%s";
+@MXBean
+public interface MayaaEngineMXBean {
+    /** DOMAIN:type=TYPE */
+    static final String JMX_OBJECT_NAME_FORMAT = "org.seasar.mayaa:type=MayaaEngine";
 
-    long getMaxSize();
-    long getCurrentSize();
-    long getHitCount();
-    long getMissCount();
-    String getClassName();
+    String getVersion();
+
+    boolean isDebugEnabled();
+    void setDebugEnabled(boolean debugEnabled);
+
+    boolean isDumpEnabled();
+    void setDumpEnabled(boolean dumpEnabled);
 }

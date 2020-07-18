@@ -15,16 +15,8 @@
  */
 package org.seasar.mayaa.impl.management;
 
-import java.lang.management.ManagementFactory;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import javax.management.StandardMBean;
 
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
@@ -33,12 +25,12 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.Version;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.util.ObjectUtil;
-import org.seasar.mayaa.management.MayaaEngineMBean;
+import org.seasar.mayaa.management.MayaaEngineMXBean;
 
 public class EngineRegistory {
     
     public static void registerEngine(final Engine engine) {
-        MayaaEngineMBean mbean = new MayaaEngineMBean(){
+        MayaaEngineMXBean mbean = new MayaaEngineMXBean(){
             @Override
             public String getVersion() {
                 return Version.MAYAA_VERSION;
@@ -84,34 +76,16 @@ public class EngineRegistory {
                 }
             }
         };
-        register(mbean);
+        JMXUtil.register(mbean, makeObjectName());
     }
 
-    protected static void register(MayaaEngineMBean mbean) {
-        if (mbean == null) {
-            throw new IllegalArgumentException();
-        }
-        ObjectName objectName;
+    protected static ObjectName makeObjectName() {
         try {
-            String name = String.format(MayaaEngineMBean.JMX_OBJECT_NAME_FORMAT);
-            objectName = new ObjectName(name);
+            String name = String.format(MayaaEngineMXBean.JMX_OBJECT_NAME_FORMAT);
+            ObjectName objectName = new ObjectName(name);
+            return objectName;
         } catch (MalformedObjectNameException e) {
             throw new IllegalArgumentException("ObjectName is invalid");
-        }
-
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer(); // MBeanServer を取得
-
-            // 重複登録されるとInstanceAlreadyExistsExceptionが発生するので事前に削除しておく。
-            try {
-                mBeanServer.unregisterMBean(objectName);
-            } catch (InstanceNotFoundException e) {
-                // Ignore
-            }
-            mBeanServer.registerMBean(new StandardMBean(mbean, MayaaEngineMBean.class), objectName);
-        } catch (MBeanRegistrationException | NotCompliantMBeanException e) {
-                    System.err.println(e);
-        } catch (InstanceAlreadyExistsException e) {
         }
     }
 

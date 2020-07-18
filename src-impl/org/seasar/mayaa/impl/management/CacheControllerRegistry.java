@@ -39,8 +39,12 @@ public class CacheControllerRegistry {
                 return map.getClass().getName();
             }
             @Override
-            public long getMaxSize() {
-                throw new UnsupportedOperationException("Managing max cache size is not supported");
+            public int getRetainSize() {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
+            }
+            @Override
+            public void setRetainSize(int retainSize) {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
             }
             @Override
             public long getCurrentSize() {
@@ -66,8 +70,12 @@ public class CacheControllerRegistry {
                 return specificationCache.getClass().getName();
             }
             @Override
-            public long getMaxSize() {
-                throw new UnsupportedOperationException("Managing max cache size is not supported");
+            public int getRetainSize() {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
+            }
+            @Override
+            public void setRetainSize(int retainSize) {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
             }
             @Override
             public long getCurrentSize() {
@@ -94,8 +102,12 @@ public class CacheControllerRegistry {
                 return weakValueHashMap.getClass().getName();
             }
             @Override
-            public long getMaxSize() {
+            public int getRetainSize() {
                 return weakValueHashMap.getHardSize();
+            }
+            @Override
+            public void setRetainSize(int retainSize) {
+                weakValueHashMap.setHardSize(retainSize);
             }
             @Override
             public long getCurrentSize() {
@@ -122,8 +134,12 @@ public class CacheControllerRegistry {
                 return referenceMap.getClass().getName();
             }
             @Override
-            public long getMaxSize() {
-                throw new UnsupportedOperationException("Managing max cache size is not supported");
+            public int getRetainSize() {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
+            }
+            @Override
+            public void setRetainSize(int retainSize) {
+                throw new UnsupportedOperationException("Managing retain size is not supported");
             }
             @Override
             public long getCurrentSize() {

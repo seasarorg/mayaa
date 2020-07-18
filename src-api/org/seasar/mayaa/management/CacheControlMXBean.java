@@ -29,7 +29,8 @@ public interface CacheControlMXBean {
     /** DOMAIN:type=TYPE,name=NAME */
     static final String JMX_OBJECT_NAME_FORMAT = "org.seasar.mayaa:type=CacheControl,name=%s";
 
-    long getMaxSize();
+    int getRetainSize();
+    void setRetainSize(int retainSize);
     long getCurrentSize();
     long getHitCount();
     long getMissCount();

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:beforeRender><![CDATA[
+    var value = "SCRIPT STRING < > ' \" & ";
+    var valueWithEol = "SCRIPT\tSTRING < > ' \" & \nSECONDLINE";
+    ]]></m:beforeRender>
+
+    <m:write m:id="W:FIXED" value="FIXED STRING &lt; &gt; &apos; &quot; &amp; " />
+
+    <m:write m:id="W:SCRIPTED" value="${value}" />
+
+    <m:write m:id="W:FIXED_NON_ESCAPEXML" value="FIXED STRING &lt; &gt; &apos; &quot; &amp; " escapeXml="false" />
+
+    <m:write m:id="W:SCRIPTED_MULTILINE_WITH_ESCAPEWHITESPACE" value="${valueWithEol}" escapeWhitespace="true" escapeEol="false" />
+
+    <m:write m:id="W:SCRIPTED_MULTILINE_NON_ESCAPEWHITESPACE" value="${valueWithEol}" escapeWhitespace="false" escapeEol="false" />
+
+    <m:write m:id="W:FIXED_MULTILINE" value="FIXED STRING &lt; &gt; &apos; &quot; &amp; \nSECONDLINE" escapeEol="true"/>
+
+    <m:write m:id="W:FIXED_MULTILINE_NON_ESCAPEEOL" value="FIXED STRING &lt; &gt; &apos; &quot; &amp; \nSECONDLINE" escapeEol="false" />
+
+    <m:write m:id="W:SCRIPTED_MULTILINE" value="${valueWithEol}" />
+
+    <m:write m:id="W:SCRIPTED_MULTILINE_NON_ESCAPEEOL" value="${valueWithEol}" escapeEol="false" />
+
+    <m:write m:id="W:FIXED_CHILD" >
+    <m:if m:test="${true}">
+    FIXED_CHILED
+    </m:if>
+    </m:write>
+
+    <m:write m:id="W:FIXED_CHILD_WITH_VALUE" value="VALUE AT ATTRIBUTE" >
+    <m:if m:test="${true}">
+    FIXED_CHILED
+    </m:if>
+    </m:write>
+
+</m:mayaa>

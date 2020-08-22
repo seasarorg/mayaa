@@ -34,12 +34,18 @@ import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
+import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
+import org.seasar.mayaa.impl.util.StringUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -73,21 +79,121 @@ public class EngineTestBase {
         return engine.getPage(requestedPageName);
     }
 
-    public void printTree() {
+    /**
+     * Mavenかで実行されているかどうかを判定する。 pom.xml内でmaven-surefire-plugin経由で
+     * システムプロパティを設定している。
+     * 
+     * @return　Mavenのテストフェーズから実行されているときにtrue
+     */
+    boolean isRunUnderMaven() {
+        if (System.getProperty("inMaven") != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void printProcessorTree() {
+        if (!isRunUnderMaven()) {
+            return;
+        }
+
+        ProcessorDump dump = new ProcessorDump();
+        dump.setPrintContents(false);
+        dump.setIndentChar("~~");
+
+        Page page = getPage();
+        dump.printSource(page);
+    }
+
+
+    public void printPageTree() {
+        if (!isRunUnderMaven()) {
+            return;
+        }
+
+        Page page = getPage();
+        System.out.println("PAGE DUMP ==============");
+        printTree(page);
+    }
+
+    public void printTemplateTree() {
+        if (!isRunUnderMaven()) {
+            return;
+        }
+
         Page page = getPage();
         Template template = page.getTemplate(null, "html");
+        System.out.println("TEMPLATE DUMP ==============");
         printTree(template);
     }
 
+    public void printTree() {
+        printPageTree();
+        printTemplateTree();
+        printProcessorTree();
+    }
+
     public void printTree(NodeTreeWalker node) {
+        System.out.println(node.getSystemID());
         printTree(node, 0);
+    }
+
+    String toPrefixAwareString(SpecificationNode sn) {
+        QName qn = sn.getQName();
+
+        if (CONST_IMPL.URI_MAYAA.equals(qn.getNamespaceURI())) {
+            return "m:" + qn.getLocalName();
+        }
+        else if (CONST_IMPL.URI_HTML.equals(qn.getNamespaceURI())) {
+            return "html4:" + qn.getLocalName();
+        }
+        else if (!StringUtil.isEmpty(sn.getPrefix())) {
+            return sn.getPrefix() + ":" + qn.getLocalName();
+        }
+        else {
+            return qn.toString();
+        }
+    }
+
+    String toPrefixAwareString(NodeAttribute attr) {
+        QName qn = attr.getQName();
+
+        if (CONST_IMPL.URI_MAYAA.equals(qn.getNamespaceURI())) {
+            return "m:" + qn.getLocalName();
+        }
+        else if (CONST_IMPL.URI_HTML.equals(qn.getNamespaceURI())) {
+            return "html4:" + qn.getLocalName();
+        }
+        else if (!StringUtil.isEmpty(attr.getPrefix())) {
+            return attr.getPrefix() + ":" + qn.getLocalName();
+        }
+        else {
+            return qn.toString();
+        }
     }
 
     public void printTree(NodeTreeWalker node, int indent) {
         String padding = "                    ";
+
         for (Iterator<NodeTreeWalker> itr = node.iterateChildNode(); itr.hasNext();) {
             NodeTreeWalker n = itr.next();
-            System.out.println(padding.substring(0, indent * 2) + n);
+
+            SpecificationNode sn = (SpecificationNode) n;
+
+            System.out.print(padding.substring(0, indent * 2) + "/");
+            System.out.print(toPrefixAwareString(sn));
+            if (sn.iterateAttribute().hasNext()) {
+                for (Iterator<NodeAttribute> nodeItr = sn.iterateAttribute(); nodeItr.hasNext();){
+                    NodeAttribute attr = nodeItr.next();
+                    System.out.print(" " + toPrefixAwareString(attr) + "='" + attr.getValue() + "'");
+                }
+                System.out.println();
+            }
+            else {
+                System.out.println();
+            }
+
+
             if (n.getChildNodeSize() > 0) {
                 printTree(n, indent + 1);
             }
@@ -115,8 +221,10 @@ public class EngineTestBase {
         FactoryFactory.setContext(servletContext);
 
         engine = ProviderUtil.getEngine();
+        // デフォルトのエラーハンドラを無効化して内部の例外でJUnitを失敗させる。
         engine.setErrorHandler(null);
-        // engine.setParameter(EngineImpl.DUMP_ENABLED, "true");
+
+        disableDump();
         // engine.setParameter(EngineImpl.PAGE_SERIALIZE, "true");
     }
 
@@ -170,6 +278,10 @@ public class EngineTestBase {
      * @throws IOException IOエラーが発生した場合
      */
     protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath) throws IOException {
+        verifyResponse(response, expectedContentPath, null);
+    }
+
+    protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath, String message) throws IOException {
 
         final URL url = getClass().getResource(expectedContentPath);
         if (url == null) {
@@ -194,25 +306,16 @@ public class EngineTestBase {
             }
 
             // Process Body
-            final StringBuilder expectedBody = new StringBuilder();
-            while (line != null) {
-                expectedBody.append(line);
-                line = reader.readLine();
-                if (line != null) {
-                    expectedBody.append('\n');
-                }
-            }
-
             final String content = response.getContentAsString();
+            int lineIndex = 1;
+            for (String actualLine: content.split("\n")) {
+                String expectedLine = line;
+                assertEquals("body compare:" + lineIndex, expectedLine, actualLine); 
 
-            final String expected = expectedBody.toString().replace(' ', '.').replace('\n', '/');
-            final String actual = content.replace(' ', '.').replace('\n', '/');
-            assertEquals(expected, actual);
+                lineIndex++;
+                line = reader.readLine();
+            }
         }
-
-        // for (String headerName: response.getHeaderNames()) {
-        // System.out.println(headerName + ":" + response.getHeader(headerName));
-        // }
     }
 
     /**

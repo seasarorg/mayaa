@@ -70,4 +70,9 @@ public class ProcessorTest extends EngineTestBase {
         }
 
     }
+
+    @Test
+    public void プロセッサwriteで値を出力する() throws IOException {
+        execAndVerify(BASE_PATH + "write/target.html", BASE_PATH + "write/expected.html", null);
+    }
 }

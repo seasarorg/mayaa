@@ -80,24 +80,25 @@ public class ObjectUtil {
         if (StringUtil.isEmpty(className)) {
             throw new IllegalArgumentException();
         }
-        if ("short".equals(className)) {
-            return Short.TYPE;
-        } else if ("int".equals(className)) {
-            return Integer.TYPE;
-        } else if ("long".equals(className)) {
-            return Long.TYPE;
-        } else if ("float".equals(className)) {
-            return Float.TYPE;
-        } else if ("double".equals(className)) {
-            return Double.TYPE;
-        } else if ("byte".equals(className)) {
-            return Byte.TYPE;
-        } else if ("char".equals(className)) {
-            return Character.TYPE;
-        } else if ("boolean".equals(className)) {
-            return Boolean.TYPE;
-        } else if ("void".equals(className)) {
-            return Void.TYPE;
+        switch (className) {
+            case "short":
+                return Short.TYPE;
+            case "int":
+                return Integer.TYPE;
+            case "long":
+                return Long.TYPE;
+            case "float":
+                return Float.TYPE;
+            case "double":
+                return Double.TYPE;
+            case "byte":
+                return Byte.TYPE;
+            case "char":
+                return Character.TYPE;
+            case "boolean":
+                return Boolean.TYPE;
+            case "void":
+                return Void.TYPE;
         }
         return null;
     }
@@ -110,10 +111,11 @@ public class ObjectUtil {
         if (primitive != null) {
             return primitive;
         }
-        className = getClassSignature(className);
+
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            return loader.loadClass(className);
+            String binaryName = getClassSignature(className);
+            return Class.forName(binaryName, false, loader);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -135,10 +137,18 @@ public class ObjectUtil {
             throw new IllegalArgumentException();
         }
         try {
-            return clazz.newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (SecurityException e) {
             throw new RuntimeException(e);
         }
     }

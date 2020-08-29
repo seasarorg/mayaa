@@ -15,6 +15,8 @@
  */
 package org.seasar.mayaa.regressions.issue14;
 
+import static org.junit.Assert.fail;
+
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -23,14 +25,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
-import junit.framework.TestCase;
-
 /**
  * https://github.com/seasarorg/mayaa/issues/14 を元に {@code WeakValueHashMap} で {@link NoSuchElementException} が
  * 発生する問題の再現を確認するコードとしてJavaに焼き直したもの。
  * 再現するとJUnitとして失敗する。
  */
-public class Issue14ReproductionTest extends TestCase {
+public class Issue14ReproductionTest {
 
     static final int cacheSize = 3; // Mayaaの実装と同じ
 

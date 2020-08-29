@@ -24,7 +24,7 @@ import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.StringUtil;
+
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -66,7 +66,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     }
 
     private QNameImpl(URI namespaceURI, String localName) {
-        if (StringUtil.isEmpty(namespaceURI) || StringUtil.isEmpty(localName)) {
+        if (namespaceURI == null || namespaceURI.getValue().isEmpty() || localName == null || localName.isEmpty()) {
             throw new IllegalArgumentException();
         }
         _namespaceURI = namespaceURI;

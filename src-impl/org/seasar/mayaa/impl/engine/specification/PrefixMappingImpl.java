@@ -23,7 +23,6 @@ import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -59,7 +58,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
     private URI _namespaceURI;
 
     private PrefixMappingImpl(String prefix, URI namespaceURI) {
-        if (StringUtil.isEmpty(namespaceURI)) {
+        if (namespaceURI == null || namespaceURI.getValue().isEmpty()) {
             throw new IllegalArgumentException();
         }
         if (prefix == null) {
@@ -81,7 +80,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
             String prefix, URI namespaceURI) {
         String uri = namespaceURI.toString();
         StringBuffer buffer = new StringBuffer(uri.length() + 10);
-        if (StringUtil.hasValue(prefix)) {
+        if (prefix != null && !prefix.isEmpty()) {
             buffer.append(prefix);
         }
         buffer.append(':').append(uri);

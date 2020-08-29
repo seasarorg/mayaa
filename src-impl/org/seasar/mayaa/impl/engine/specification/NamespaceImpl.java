@@ -116,7 +116,7 @@ public class NamespaceImpl implements Namespace {
     }
 
     public void addPrefixMapping(String prefix, URI namespaceURI) {
-        if (prefix == null || StringUtil.isEmpty(namespaceURI)) {
+        if (prefix == null || namespaceURI == null || namespaceURI.getValue().isEmpty()) {
             throw new IllegalArgumentException();
         }
         synchronized (this) {
@@ -241,7 +241,7 @@ public class NamespaceImpl implements Namespace {
 
     public PrefixMapping getMappingFromURI(
             URI namespaceURI, boolean all) {
-        if (StringUtil.isEmpty(namespaceURI)) {
+        if (namespaceURI == null || namespaceURI.getValue().isEmpty()) {
             throw new IllegalArgumentException();
         }
         return getMapping(false, namespaceURI.getValue(), all);

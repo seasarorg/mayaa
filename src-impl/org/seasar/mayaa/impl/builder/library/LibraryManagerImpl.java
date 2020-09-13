@@ -213,7 +213,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
     }
 
     public Iterator<LibraryDefinition> iterateLibraryDefinition(URI namespaceURI) {
-        if (StringUtil.isEmpty(namespaceURI)) {
+        if (namespaceURI == null || StringUtil.isEmpty(namespaceURI.getValue())) {
             throw new IllegalArgumentException();
         }
         return new LibraryDefinitionFilteredIterator(
@@ -248,7 +248,7 @@ public class LibraryManagerImpl extends ParameterAwareImpl
         public LibraryDefinitionFilteredIterator(
                 URI namespaceURI, Iterator<LibraryDefinition> iterator) {
             super(iterator);
-            if (StringUtil.isEmpty(namespaceURI)) {
+            if (namespaceURI == null || StringUtil.isEmpty(namespaceURI.getValue())) {
                 throw new IllegalArgumentException();
             }
             _namespaceURI = namespaceURI;

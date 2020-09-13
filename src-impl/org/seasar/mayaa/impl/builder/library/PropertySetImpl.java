@@ -108,7 +108,7 @@ public class PropertySetImpl extends ParameterAwareImpl
     }
 
     protected boolean contain(URI namespaceURI, NodeAttribute attr) {
-        if (StringUtil.isEmpty(namespaceURI) || attr == null) {
+        if (namespaceURI == null || StringUtil.isEmpty(namespaceURI.getValue()) || attr == null) {
             throw new IllegalArgumentException();
         }
         if (_propertyNames == null) {

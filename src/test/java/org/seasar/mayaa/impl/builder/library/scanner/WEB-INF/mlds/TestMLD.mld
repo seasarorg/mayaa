@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE library
+	PUBLIC "-//The Seasar Foundation//DTD Mayaa Library Definition 1.0//EN"
+	"http://mayaa.seasar.org/dtd/mld_1_0.dtd">
+<library uri="URI_LIBRARY">
+	<processor name="NAME_PROCESSOR"
+		class="org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport">
+		<property name="NAME_PROPERTY1" required="true" expectedClass="java.lang.String"/>
+		<property name="NAME_PROPERTY2" default="${ greeting }"/>
+	</processor>
+</library>

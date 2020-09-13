@@ -109,7 +109,7 @@ public class BuilderUtil implements CONST_IMPL {
      * @return 適切なデフォルトPrefixMapping
      */
     static PrefixMapping getPrefixMapping(String systemID) {
-        if (systemID != null) {
+        if (systemID != null && !systemID.isEmpty()) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             ApplicationScope application = cycle.getApplicationScope();
             String mimeType = application.getMimeType(systemID);

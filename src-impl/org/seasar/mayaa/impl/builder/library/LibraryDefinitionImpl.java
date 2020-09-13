@@ -64,7 +64,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
     }
 
     public void setNamespaceURI(URI namespaceURI) {
-        if (StringUtil.isEmpty(namespaceURI)) {
+        if (namespaceURI == null || StringUtil.isEmpty(namespaceURI.getValue())) {
             throw new IllegalArgumentException();
         }
         _namespaceURI = namespaceURI;
@@ -75,7 +75,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
     }
 
     public void addAssignedURI(URI assignedURI) {
-        if (StringUtil.isEmpty(assignedURI)) {
+        if (assignedURI == null || StringUtil.isEmpty(assignedURI.getValue())) {
             throw new IllegalArgumentException();
         }
         if (assignedURI.equals(_namespaceURI) == false

@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.WebDriverRunner;
 import org.openqa.selenium.WebElement;
 
 public class WebDriverBase {
@@ -35,7 +34,7 @@ public class WebDriverBase {
 
     static void setUpSelenide() {
         // テスト対象アプリの起動
-        Configuration.browser = WebDriverRunner.SAFARI;
+        // Configuration.browser = WebDriverRunner.SAFARI;
         // Configuration.browser = WebDriverRunner.HTMLUNIT;
         Configuration.baseUrl = "http://localhost:8999";
         Configuration.reportsFolder = "target/selenide-reports";

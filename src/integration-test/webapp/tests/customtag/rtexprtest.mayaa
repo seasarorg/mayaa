@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+			
+	<mt:exprSupport m:id="expr1" m:replace="false" expr="${20 + 10}" />
+	<mt:exprSupport m:id="expr2" m:replace="false" expr="STRING" />
+	<mt:exprNotSupport m:id="expr3" m:replace="false" expr="${20 - 10}" />
+	<mt:exprNotSupport m:id="expr4" m:replace="false" expr="STRING" />
+</m:mayaa>

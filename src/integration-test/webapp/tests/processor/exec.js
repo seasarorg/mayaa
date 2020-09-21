@@ -1,0 +1,1 @@
+var message = 'テスト3';

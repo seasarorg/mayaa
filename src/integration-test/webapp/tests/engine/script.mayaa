@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+	xmlns:c="http://java.sun.com/jstl/core_rt">
+
+    <m:beforeRender><![CDATA[
+        if (true) {
+            page.script4 = 'script4Value';
+            // } not close
+        }
+        var numberKeys = Packages.org.seasar.mayaa.test.util.TestObjectFactory.createNumberKeys();
+        var numberMap = Packages.org.seasar.mayaa.test.util.TestObjectFactory.createNumberKeyMap();
+
+        // "new java.lang.Integer(5) + 1" ‚Æ‚¢‚¤ƒXƒNƒŠƒvƒg‚ÍRhino‚ÌŽž“_‚Å"51"‚É‚È‚é
+        page.setAttribute('five', new java.lang.Integer(5));
+        var six = five + 1;
+
+        page.setAttribute('two', new java.lang.Integer(2));
+        var seven = five + two;
+
+        request.eight = 1;
+        eight = 8;// rev.3380 (1.1.21) ‚Å‚ÌC³‚ª“®ì‚·‚é‚±‚Æ‚ðŠm”FB
+    ]]></m:beforeRender>
+
+    <m:echo m:id="numberList1">
+		<m:exec script="${ var listName = 'numberList1'; }" />
+        <m:for init="${ var i = 0 }" test="${ i &lt; numberKeys.size() }" after="${ i++ }">${var key = numberKeys.get(i);}<m:doBody /></m:for>
+    </m:echo>
+
+    <m:echo m:id="numberList2">
+		<m:exec script="${ var listName = 'numberList2'; }" />
+        <m:forEach items="${ numberKeys }" var="key" index="i"><m:doBody /></m:forEach>
+    </m:echo>
+
+    <m:echo m:id="numberKey">
+        <m:attribute name="id" value="${ listName }${ id }${ i }" />
+        <c:out value="${ key }" />
+    </m:echo>
+    <m:echo m:id="numberValue">
+        <m:attribute name="id" value="${ listName }${ id }${ i }" />
+        <!-- items‚ÅƒZƒbƒg‚·‚é‚Ænumber‚É‚È‚Á‚Ä‚µ‚Ü‚¤‚Ì‚ÅMap‚ÌƒL[‚É‚ÍŽg‚¦‚È‚¢
+        <c:out value="${ numberMap }" />/
+        <c:out value="${ key }" />/
+        <c:out value="${ typeof(key) }" />/
+        -->
+        <c:out value="${ numberMap.get(key) }" />
+    </m:echo>
+
+</m:mayaa>

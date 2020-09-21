@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:ignore id="message1" />
+    <m:ignore id="message2" />
+
+    <m:write id="message1" value="hello1" rendered="true" />
+    <m:write id="message2" value="hello2" rendered="false" />
+
+</m:mayaa>

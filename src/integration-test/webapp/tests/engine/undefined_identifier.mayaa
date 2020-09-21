@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:with id="sel">
+		${ var message = '一つ選択'; }
+		<m:echo>
+			<m:if test="${multiple!=undefined}">
+				${ message = '複数選択'; ''; }
+			</m:if>
+			<m:doBody />
+		</m:echo>
+		<div><m:write value="${message}"/></div>
+	</m:with>
+
+</m:mayaa>

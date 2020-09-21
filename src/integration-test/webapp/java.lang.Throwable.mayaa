@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:beforeRender><![CDATA[
+		if (handledError.cause) {
+			var wrappedName = handledError.cause.getClass().getName();
+			if (wrappedName == 'java.lang.StringIndexOutOfBoundsException') {
+				forward('./tests/engine/forward/forwarded.html');
+			}
+			if (wrappedName == 'java.lang.NumberFormatException') {
+				redirect('./tests/engine/forward/redirected.html?message=error_redirected&title=tests_1_18');
+			}
+		}
+	]]></m:beforeRender>
+
+</m:mayaa>

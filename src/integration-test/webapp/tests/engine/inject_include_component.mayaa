@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:doRender id="component_1" name="component_1" />
+
+    <m:doRender id="component_2" name="component_2" />
+
+    <m:write id="aaa" value="${binding.aaa}" />
+    <m:write id="bbb" value="${binding.bbb}" />
+
+	<m:ignore m:id="component" />
+	<m:ignore m:id="li1" />
+	<m:ignore m:id="li2" />
+
+</m:mayaa>

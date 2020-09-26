@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+			
+	<mt:dynamicSupport m:id="message1" m:replace="false" />
+	<mt:dynamicSupport m:id="message2" m:replace="false" dynamic="DYNAMIC" />
+	<mt:dynamicSupport m:id="message3" m:replace="false" dynamic="${20 + 10}" />
+	<mt:dynamicNotSupport m:id="message4" m:replace="false" />
+	<mt:dynamicNotSupport m:id="message5" m:replace="false" dynamic="DYNAMIC" />
+	<mt:dynamicNotSupport m:id="message6" m:replace="false" dynamic="${20 - 10}" />
+</m:mayaa>

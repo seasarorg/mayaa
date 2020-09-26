@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:insert id="box2" path="./binding_recursive_component.html" name="myBox" count="${ 10 }" />
+
+</m:mayaa>

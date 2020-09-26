@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:with id="test1" m:replace="false">
+    	<m:exec script="${ var message = 'テスト1'; }" />
+    	<m:write value="${ message }" />
+	</m:with>
+
+    <m:with id="test2" m:replace="false">
+    	<m:write value="${ message }" default="テスト2" />
+	</m:with>
+
+    <m:with id="test3" m:replace="false">
+    	<m:exec src="./exec.js" />
+    	<m:write value="${ message }" />
+	</m:with>
+
+    <m:with id="test4" m:replace="false">
+    	<m:exec script="${ var message = 'テスト4'; }">
+	    	<m:write value="${ message }" />
+		</m:exec>
+	</m:with>
+
+</m:mayaa>

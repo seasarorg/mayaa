@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:write id="test1" value="Test1st" />
+
+    <m:write id="test2" value="${ 'Test2nd' }" />
+
+    <m:write id="test3" value="${ 'Test3rd' }" default="false" />
+
+    <m:write id="test4" value="${ null }" default="&amp;Test4th" />
+
+    <m:write id="test5" value="${ param.undefined }" default="${ 'Test5th' }" />
+
+    <m:write id="test6" replace="false"
+            value="${ '&quot;&lt;b&gt;&amp;' }" escapeXml="false" />
+
+    <m:write id="test7" replace="false"
+            value="${ '&quot;&lt;b&gt;&amp;' }" />
+
+    <m:write id="test8" replace="false"
+            value="${ '&quot;&lt;b&gt;&amp;' }" escapeXml="${ 1 == 1 }" />
+
+    <m:write id="test9" replace="false"
+            value="${ '\n\r\r\n' }" />
+
+    <m:write id="test10" replace="false"
+            value="${ ' \t' }" escapeEol="false" />
+
+    <m:write id="test11" replace="false"
+            value="${ ' \t\r\n' }" escapeEol="false" escapeWhitespace="true" />
+
+    <m:write id="test12" replace="false" value="${ '' }" default="&amp;Test12th" />
+
+    <m:write id="test13" replace="false" value="${'123'+bodyText} and ${bodyText+'321'}" default="&amp;Test13th" />
+
+    <m:write id="test14" replace="false" default="&amp;Test14th" escapeEol="false">
+    	%{<m:doBody/>}
+    </m:write>
+
+    <m:write id="test15" replace="false" value="${ (new Number(bodyText))*2 }" default="&amp;Test15th">
+    	50
+    </m:write>
+
+    <m:write id="test16" replace="false" default="&amp;Test16th"/>
+
+    <m:write id="test17" replace="false" value="${bodyText.replace(/\s/g, '\n'); }"/>
+
+</m:mayaa>

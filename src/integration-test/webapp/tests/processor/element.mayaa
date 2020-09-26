@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var test = "\"&copy;<foo>'";
+    ]]></m:beforeRender>
+
+    <m:element id="test1" name="h1" />
+
+    <m:element id="test2" name="span">
+        <m:attribute name="id" value="test2" />
+        <m:attribute name="class" value="processing" />
+    </m:element>
+
+    <m:element id="test3" name="span">
+        <m:attribute name="id" value="test3" />
+        <m:attribute name="class" value="${test}" />
+    </m:element>
+
+    <m:element id="test4" name="span">
+        <m:attribute name="id" value="test4" />
+        <m:attribute name="class" value="${test}" escapeAmp="false" />
+    </m:element>
+
+</m:mayaa>

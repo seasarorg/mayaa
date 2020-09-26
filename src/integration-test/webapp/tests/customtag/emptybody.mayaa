@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+	xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+
+	<mt:bodycontentempty m:id="print" />
+
+	<m:ignore m:id="test1" />
+
+</m:mayaa>

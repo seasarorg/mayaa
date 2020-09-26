@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>tests</title>
+	<style>
+		li { margin-top: 6pt; }
+		body { font-family: monospace; }
+	</style>
+</head>
+
+<body>
+
+<h1>tests</h1>
+	<p><a href="../index.html">runtests</a></p>
+
+<h2>1. engine</h2>
+<ul>
+	<li>1-01.<a href="engine/inject_no.html">inject_no</a></li>
+	<li>1-02.<a href="engine/inject_mayaa.html">inject_mayaa</a></li>
+	<li>1-03.<a href="engine/inject_template.html">inject_template</a></li>
+	<li>1-04.<a href="engine/inject_xpath.html">inject_xpath</a></li>
+	<li>1-05.<a href="engine/replace.html">replace</a></li>
+	<li>1-06.<a href="engine/ignore_mayaa.html">ignore_mayaa</a></li>
+	<li>1-07.<a href="engine/xout.html">xhtml</a></li>
+	<li>1-08.<a href="engine/escape.html">escape html</a></li>
+	<li>1-09.<a href="engine/escape.xhtml">escape xhtml</a></li>
+	<li>1-10.<a href="engine/escape.xml">escape xml</a></li>
+	<li>1-11.<a href="engine/beforeRender.html">beforeRender</a></li>
+	<li>1-12.<a href="engine/template_attribute.html">template attribute</a></li>
+	<li>1-13.<a href="engine/script.html">script</a></li>
+	<li>1-14.<a href="engine/no_xml.html">forward</a></li>
+	<li>1-15.<a href="engine/forward/forward.html">forward</a></li>
+	<li>1-16.<a href="engine/forward/redirect.html">redirect</a></li>
+	<li>1-17.<a href="engine/forward/error_forward.html">error_forward</a></li>
+	<li>1-18.<a href="engine/forward/error_redirect.html">error_redirect</a></li>
+	<li>1-19.<a href="engine/required.html">required</a></li>
+	<li>1-20.<a href="engine/required_not_empty.html">required_not_empty</a></li>
+	<li>1-21.<a href="engine/undefined_identifier.html">undefined_identifier</a></li>
+	<li>1-22.<a href="engine/cdata.html">cdata</a></li>
+	<li>1-23.<a href="engine/forward/forward_to_webinf.html">forward to webinf</a></li>
+	<li>1-24.<a href="engine/charset_html.html">charset_html</a></li>
+	<li>1-25.<a href="engine/charset_xhtml.html">charset_xhtml</a></li>
+	<li>1-26.<a href="engine/inject_include.html">ssi include</a></li>
+</ul>
+
+<h2>2. component</h2>
+<ul>
+	<li>2-01.<a href="component/component1_client.html">component1_client</a></li>
+	<li>2-02.<a href="component/component1.html">component1</a></li>
+	<li>2-03.<a href="component/component2_client.html">component2_client</a></li>
+	<li>2-04.<a href="component/relative/component3_client.html">component3_client</a></li>
+	<li>2-05.<a href="component/recursive.html">recursive</a></li>
+	<li>2-06.<a href="component/binding.html">binding</a></li>
+	<li>2-07.<a href="component/binding_recursive.html">binding recursive</a></li>
+	<li>2-08.<a href="component/component123_client.html">component123_client</a></li>
+	<li>2-09.<a href="component/component3_client.html">find parent</a></li>
+	<li>2-10.<a href="component/component3.html">no parent</a></li>
+</ul>
+
+<h2>3. processor</h2>
+<ul>
+	<li>3-01.<a href="processor/write.html">write processor</a></li>
+	<li>3-02.<a href="processor/if.html">if processor</a></li>
+	<li>3-03.<a href="processor/for.html">for processor</a></li>
+	<li>3-04.<a href="processor/for_toomany.html">for processor too many loop</a></li>
+	<li>3-05.<a href="processor/forEach.html">forEach processor</a></li>
+	<li>3-06.<a href="processor/formatNumber.html">formatNumber processor</a></li>
+	<li>3-07.<a href="processor/formatDate.html">formatDate processor</a></li>
+	<li>3-08.<a href="processor/element.html">element processor</a></li>
+	<li>3-09.<a href="processor/echo.html">echo processor</a></li>
+	<li>3-10.<a href="processor/comment.html">comment processor</a></li>
+	<li>3-11.<a href="processor/forEachRecursive.html">forEach processor recursive</a></li>
+	<li>3-12.<a href="processor/exec.html">exec processor</a></li>
+</ul>
+
+<h2>4. customtag</h2>
+<ul>
+	<li>4-01.<a href="customtag/scopetest.html">scope test</a></li>
+	<li>4-02.<a href="customtag/eval_body_buffered.html">eval_body_buffered</a></li>
+	<li>4-03.<a href="customtag/simpletest.html">SimpleTag test</a></li>
+	<li>4-04.<a href="customtag/dynamic_attribute.html">DynamicAttribute support test</a> <a href="customtag/dynamic_attribute_wrong.html">error test</a></li>
+	<li>4-05.<a href="customtag/rtexprtest.html">rtexprvalue attribute support test</a></li>
+	<li>4-06.<a href="customtag/replace_injection_attribute.html">Replace injection attribute test</a></li>
+	<li>4-07.<a href="customtag/simple_dynamic_test.html">simple dynamic test</a></li>
+	<li>4-08.<a href="customtag/vinulltest.html">getVariableInfo null test</a></li>
+	<li>4-09.<a href="customtag/simplebodytest.html">SimpleTag body test</a></li>
+	<li>4-10.<a href="customtag/emptybody.html">body-content empty test</a></li>
+</ul>
+
+<h2>5. layout</h2>
+<ul>
+	<li>5-01.<a href="layout/basepage1.html">layout1</a></li>
+	<li>5-02.<a href="layout/relative/basepage2.html">layout2</a></li>
+	<li>5-03.<a href="layout/usecomponent.html">layout and component</a></li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:echo id="test1" />
+
+    <m:echo id="test2">
+        <m:attribute name="class" value="processing" />
+    </m:echo>
+
+    <m:echo id="test3">
+        <m:attribute name="class" value="processing2" />
+        <m:attribute name="id" value="${ null }" />
+    </m:echo>
+
+    <m:echo id="test4">
+        <m:attribute name="title" value="adjust test" />
+    </m:echo>
+
+</m:mayaa>

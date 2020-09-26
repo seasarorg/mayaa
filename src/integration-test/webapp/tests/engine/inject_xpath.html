@@ -1,0 +1,32 @@
+<!-- ルートノードの外にコメント書いてもxpathでマッチさせられない -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>tests_1_06</title>
+    <link rel="stylesheet" href="../base.css" type="text/css">
+</head>
+<body>
+
+<span class="message1">dummy</span>
+<span class="message2">dummy</span>
+
+<center>
+	<!-- コメントがあるときにNullPointerExceptionが出ていたことの動作確認用
+		JIRA[MAYAA-40] -->
+	<table>
+		<tr>
+			<td>column1</td>
+			<td>column2</td>
+			<td>
+				<table>
+					<tr><td>column3 table</td></tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<div>other</div>
+</center>
+
+</body>
+</html>

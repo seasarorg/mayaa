@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+
+	<m:write id="atbegin0"
+			value="${ page.begin_val }" default="nothing atbegin 0" />
+	<m:write id="nested0"
+			value="${ page.nested_val }" default="nothing nested 0" />
+	<m:write id="atend0"
+			value="${ page.end_val }" default="nothing atend 0" />
+
+	<m:write id="atbegin1"
+			value="${ page.begin_val }" default="nothing atbegin 1" />
+	<m:write id="nested1"
+			value="${ page.nested_val }" default="nothing nested 1" />
+	<m:write id="atend1"
+			value="${ page.end_val }" default="nothing atend 1" />
+
+	<m:write id="atbegin2"
+			value="${ page.begin_val }" default="nothing atbegin 2" />
+	<m:write id="nested2"
+			value="${ page.nested_val }" default="nothing nested 2" />
+	<m:write id="atend2"
+			value="${ page.end_val }" default="nothing atend 2" />
+
+	<mt:scope m:id="tag"
+		atbegin="${ 'begin_val' }" nested="${ 'nested' + '_val' }" atend="end_val" />
+
+</m:mayaa>

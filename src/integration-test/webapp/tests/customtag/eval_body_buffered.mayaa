@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+
+	<m:write m:id="text" value="original-body"/>
+	<mt:flush m:id="flush"/>
+	<mt:buffered m:id="tag"/>
+
+</m:mayaa>

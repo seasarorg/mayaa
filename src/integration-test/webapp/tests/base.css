@@ -1,0 +1,29 @@
+* {
+	margin: 0;
+	padding: 0;
+	text-indent: 0;
+}
+
+body {
+	text-align: center;
+	font-family: sans-serif;
+	color: #483d8b;
+	background: white;
+}
+body div {
+	text-align: left;
+	margin: 0 auto;
+}
+
+.main {
+	font-size: 100%;
+	padding: 8px;
+}
+
+div.box {
+	text-align: center;
+	border: dotted #aaf 2px;
+	background-color: #ffe;
+	padding: 10px;
+	margin: 2px;
+}

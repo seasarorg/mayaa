@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:beforeRender><![CDATA[
+		request.title = 'tests_1_17';
+		request.message = 'error_forwarded';
+		java.lang.String.valueOf(1).charAt(10);
+	]]></m:beforeRender>
+
+</m:mayaa>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:write m:id="message" m:value="hello" m:replace="false" />
+
+</m:mayaa>

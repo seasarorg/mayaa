@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var cal = Packages.java.util.Calendar.getInstance();
+        cal.set(cal.YEAR, 1999);
+        cal.set(cal.MONTH, 6);
+        cal.set(cal.DAY_OF_MONTH, 7);
+        cal.set(cal.HOUR_OF_DAY, 12);
+        cal.set(cal.MINUTE, 34);
+        cal.set(cal.SECOND, 56);
+        cal.set(cal.MILLISECOND, 0);
+    ]]></m:beforeRender>
+
+    <m:formatDate id="print"
+            pattern="yyyy/MM/dd HH:mm:ss"
+            value="${ cal.time }"
+            default="error" />
+
+    <m:formatDate id="printDef"
+            pattern="yyyy/MM/dd HH:mm:ss"
+            value="${ null }"
+            default="defValue" />
+
+</m:mayaa>

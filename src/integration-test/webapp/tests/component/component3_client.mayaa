@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test"
+		xmlns:c="http://java.sun.com/jstl/core_rt">
+
+	<c:if m:id="if" test="${ true }" />
+
+	<m:insert id="comp" path="/tests/component/component3.html" replace="false" />
+
+</m:mayaa>

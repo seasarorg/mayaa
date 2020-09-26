@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+
+	<m:doRender m:id="component1" name="component1">
+		<mt:simpleBodyTest simpleName="${ 'TestTagComponent1' }">
+			<m:doBase/>
+		</mt:simpleBodyTest>
+	</m:doRender>
+
+	<m:doRender m:id="component2" name="component2">
+		<mt:simpleBodyTest simpleName="${ 'TestTagComponent2' }">
+			<m:doBase/>
+		</mt:simpleBodyTest>
+	</m:doRender>
+
+</m:mayaa>

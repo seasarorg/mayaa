@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test">
+
+	<m:beforeRender><![CDATA[
+		page['SimpleTestTag'] = "hello ";
+	]]></m:beforeRender>
+
+	<m:echo m:id="tag">
+		<mt:vinull simpleName="${ 'TestTag' }" />
+	</m:echo>
+
+</m:mayaa>

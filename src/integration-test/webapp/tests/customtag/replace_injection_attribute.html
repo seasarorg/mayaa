@@ -1,0 +1,20 @@
+<html lang="ja"
+      xmlns:m="http://mayaa.seasar.org"
+      xmlns:c="http://java.sun.com/jstl/core_rt">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>tests_4_06</title>
+    <link rel="stylesheet" href="../base.css" type="text/css">
+</head>
+<body>
+
+<h1>injection replace test</h1>
+
+<body>
+	<p m:inject="c:out" c:value="${'good'}" m:replace="false">bad</p>
+	<p m:id="check" m:replace="false">bad</p>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org" xmlns:x="mynamespace">
+
+	<m:beforeRender>
+		<![CDATA[
+			var components = [
+				"/tests/component/component1.html",
+				"./component2.html",
+				"./component/component3.html"
+			];
+		]]>
+	</m:beforeRender>
+
+	<m:for id="comp" init="${ var i = 0 }" test="${ i &lt; components.length }" after="${ i++; }">
+		<p>
+		<h3>Component[<m:write value="${ i }"/>]: <m:write value="${ components[i] }"/></h3>
+	    <m:insert path="${ components[i] }" replace="false"
+    				        x:dynamicValue="${ new java.lang.Integer(256) }" />
+		</p>
+	</m:for>
+
+</m:mayaa>

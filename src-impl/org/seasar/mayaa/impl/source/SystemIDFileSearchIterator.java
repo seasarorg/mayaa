@@ -96,6 +96,11 @@ public class SystemIDFileSearchIterator extends FileSearchIterator implements It
         return makeSystemID((File) super.nextFile());
     }
 
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("remove");
+    }
+
     protected String makeSystemID(File current) {
         String rootPath = getRoot().getPath();
         String filePath = current.getPath();

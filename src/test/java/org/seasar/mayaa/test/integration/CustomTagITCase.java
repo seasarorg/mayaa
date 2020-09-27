@@ -47,9 +47,9 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyTitle("tests_4_03"),
                 verifyTextNotPresent("dummy"),
                 verifyText("//span[@id=\"hello1\"]", "hello TestTagc&lt;l&amp;a\"s&gt;s"), // innerHTMLとして取得すると &quot; は実体参照とならない
-                verifyText("//span[@id=\"hello2\"]", "[c&amp;lt;l&amp;amp;a&amp;quot;s&amp;gt;s]"), // FIXME:class属性をデフォルトスコープから取得すると実体参照を解釈しないようだが、期待している挙動か？
-                verifyText("//span[@id=\"hello3\"]", "[c&amp;lt;l&amp;amp;a&amp;quot;s&amp;gt;s]"),
-                verifyText("//span[@id=\"hello4\"]", "[c&amp;lt;l&amp;amp;a&amp;quot;s&amp;gt;s]"),
+                verifyText("//span[@id=\"hello2\"]", "[c&lt;l&amp;a\"s&gt;s]"),
+                verifyText("//span[@id=\"hello3\"]", "[c&lt;l&amp;a\"s&gt;s]"),
+                verifyText("//span[@id=\"hello4\"]", "[c&lt;l&amp;a\"s&gt;s]"),
                 verifyText("//span[@id=\"hello5\"]",
                 "hello TestTag parent:org.apache.taglibs.standard.tag.rt.core.IfTag")
             }

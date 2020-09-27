@@ -11,7 +11,7 @@ mvn test
 
 ## ユニットテストカバレッジ
 Mavenによって実行されたテストカバレッジをJacocoで計測している。`mvn test`実行後に
-生成されるレストレポートを確認できる。出力先は `target/site/jacoco-ut/index.html` である。
+生成されるテストレポートを確認できる。出力先は `target/site/jacoco-ut/index.html` である。
 
 ## インテグレーションテスト
 
@@ -29,9 +29,9 @@ mvn jetty:run
 ```
 ## インテグレーションテストカバレッジ
 Mavenによって実行されたテストカバレッジをJacocoで計測している。`mvn integration-test`実行後に
-生成されるレストレポートを確認できる。出力先は `target/site/jacoco-it/index.html` である。
+生成されるテストレポートを確認できる。出力先は `target/site/jacoco-it/index.html` である。
 
-またユニットテストとインテグレーションテストのテストカバレッジを合算し他レポートは
+またユニットテストとインテグレーションテストのテストカバレッジを合算したレポートは
 `target/site/jacoco-merged/index.html` に出力される。
 
 
@@ -46,7 +46,7 @@ Mavenによって実行されたテストカバレッジをJacocoで計測して
 HTML/Mayaa | src/integration-test/webapp
 
 
-クラインアントコードはWebDriverを使ったUIテストフレームワークである
+クライアントコードはWebDriverを使ったUIテストフレームワークである
 Selenideを用いてJUnit4のParameterizedテストとして記述している。
 
 パッケージ: org.seasar.mayaa.test.integration 
@@ -59,7 +59,7 @@ Selenideを用いてJUnit4のParameterizedテストとして記述している�
 それぞれ、シナリオ名、アクセス先URLのパス、検証コマンドの配列となっている。
 
 現行のテストデータはこれまで記述されてきたテストシナリオ( /src/integratin-test/webapp/tests.slp )をJUnitコードに移植している。
-過去はSelenium のブラウザ以内で実行するテストランナー用のHTMLを tests.slp から生成して実行していたが、今後は直接JUnitに記載すれば十分である。
+過去はSelenium のブラウザ内で実行するテストランナー用のHTMLを tests.slp から生成して実行していたが、今後は直接JUnitに記載すれば十分である。
 
 詳細は WebDriverBase.Commandクラスおよびその継承クラス、これらのクラスの生成
 メソッド(verifyTextメソッドなど)、runTestメソッドを参照のこと。
@@ -79,5 +79,16 @@ Selenideを用いてJUnit4のParameterizedテストとして記述している�
     }
 }
 ```
+
+なお、verifyText で検証する際は innerHTML をWebDriver経由で取得してテキスト比較をしている。
+innerHTML は子要素のノードが (&), (<), (>) を含む場合はそれぞれ実体参照に変換して取得するが、
+二重引用符などそれ以外の文字については実体参照に変換しない。
+参考: https://developer.mozilla.org/ja/docs/Web/API/Element/innerHTML
+
+そのため、元々のテストケースである tests.slp に記載されている期待値のテキストに
+含まれる &quot; についてはJUnit内では\"として文字列に含めている。
+
+元テキスト	JUnit内の記述
+[c&lt;l&amp;a&quot;s&gt;s]	"[c&lt;l&amp;a\"s&gt;s]"
 
 以上

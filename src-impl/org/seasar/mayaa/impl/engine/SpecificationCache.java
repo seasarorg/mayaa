@@ -85,17 +85,17 @@ public class SpecificationCache {
     }
 
     private void countCacheHit(boolean hit) {
+        // 閾値を超えたらリセット（厳密さは求めていないためhit/missの同期は特に行わない）
+        final long THRESHOLD = Long.MAX_VALUE;
         if (hit) {
-            if (hitCount.incrementAndGet() < 0) {
-                // オーバーフローしたら正の値に補正
-                hitCount.addAndGet(Long.MAX_VALUE);
+            if (hitCount.incrementAndGet() >= THRESHOLD) {
+                hitCount.set(0);
                 missCount.set(0);
             }    
         }
         else {
-            if (missCount.incrementAndGet() < 0) {
-                // オーバーフローしたら正の値に補正
-                missCount.addAndGet(Long.MAX_VALUE);
+            if (missCount.incrementAndGet() >= THRESHOLD) {
+                missCount.set(0);
                 hitCount.set(0);
             }
         }

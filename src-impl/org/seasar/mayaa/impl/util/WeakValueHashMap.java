@@ -53,6 +53,17 @@ public class WeakValueHashMap<K, V> {
     private long hitCount = 0;
     private long missCount = 0;
 
+    private void resetCountersIfNecessary() {
+        final long THRESHOLD = Long.MAX_VALUE;
+        if (hitCount >= THRESHOLD || missCount >= THRESHOLD) {
+            hitCount = 0;
+            missCount = 0;
+            _droppedCount = 0;
+            _pulledUpCount = 0;
+            _maxCountOfDroppedRecord = 0;
+        }
+    }
+
     /**
      * 参照カウンタ付きのキャッシュレコード保持
      */
@@ -153,6 +164,8 @@ public class WeakValueHashMap<K, V> {
 
     public V get(K key) {
         synchronized (_mutex) {
+            resetCountersIfNecessary();
+
             CountedReference<V> ref = _hardReferenceLruMap.get(key);
             if (ref != null) {
                 ref.countUp();
@@ -183,8 +196,8 @@ public class WeakValueHashMap<K, V> {
      * @param value 値
      */
     public void put(K key, V value) {
+        CountedReference<V> r = new CountedReference<V>(value);
         synchronized (_mutex) {
-            CountedReference<V> r = new CountedReference<V>(value);
             _hardReferenceLruMap.put(key, r);
             if (_weakReferenceMap.remove(key) != null) {
                 // 弱参照のマップに含まれていた場合はPullUpされたことになる。

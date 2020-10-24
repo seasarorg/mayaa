@@ -22,9 +22,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -184,10 +187,16 @@ public class IOUtil {
      * @param url 対象のURL
      * @return ファイルプロトコルならtrue
      */
+    @SuppressWarnings("deprecation")
     public static File getFile(URL url) {
         if (url != null) {
             if ("file".equalsIgnoreCase(url.getProtocol())) {
-                return new File(url.toString().substring(5));
+                try {
+                    return new File(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8.name()));
+                } catch (UnsupportedEncodingException e) {
+                    // UTF-8 で発生しないはずだが、フォールバックとしてデフォルトエンコーディングとする。
+                    return new File(URLDecoder.decode(url.getFile()));
+                }
             }
         }
         return null;

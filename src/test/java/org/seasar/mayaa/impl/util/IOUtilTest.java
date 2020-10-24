@@ -22,8 +22,10 @@ import static org.junit.Assert.assertNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.junit.After;
 import org.junit.Before;
@@ -113,7 +115,7 @@ public class IOUtilTest {
         assertNotNull(url);
 
         long fileLastModified = IOUtil.getLastModified(url);
-        File testFile = new File(url.toString().substring(5));
+        File testFile = new File(URLDecoder.decode(url.toString().substring(5), "UTF-8"));
         assertEquals(testFile.lastModified(), fileLastModified);
 
         URL urlInJar = getLoader().getResource("junit/framework/TestCase.class");
@@ -136,7 +138,7 @@ public class IOUtilTest {
         InputStream actualIS = null;
         try {
             expectedIS = IOUtil.openStream(expected);
-            actualIS = IOUtil.openStream(actual.toURL());
+            actualIS = new FileInputStream(actual);
             String expectedString = IOUtil.readStream(expectedIS, encoding);
             String actualString = IOUtil.readStream(actualIS, encoding);
             assertEquals(expectedString, actualString);
@@ -144,7 +146,7 @@ public class IOUtilTest {
             IOUtil.close(expectedIS);
             IOUtil.close(actualIS);
         }
-        assertEquals(expected, actual.toURL());
+        assertEquals(expected, actual.toURI().toURL());
     }
 
     /**

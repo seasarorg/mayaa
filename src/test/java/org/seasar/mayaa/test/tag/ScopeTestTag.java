@@ -56,9 +56,6 @@ public class ScopeTestTag extends TagSupport {
 
     protected void prepareIndex(StringBuffer handlers, String name)
             throws JspException {
-        if (false) {
-            throw new JspException();
-        }
     }
 
 }

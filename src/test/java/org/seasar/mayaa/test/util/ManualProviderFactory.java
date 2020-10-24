@@ -184,7 +184,7 @@ public class ManualProviderFactory extends FactoryFactory {
         return null;
     }
 
-    public Iterator iterateParameterNames() {
+    public Iterator<String> iterateParameterNames() {
         return Collections.emptyIterator();
     }
 

@@ -35,15 +35,15 @@ import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
  */
 public class MockServletRequest implements ServletRequest {
 
-    private Map _parameters = new HashMap();
-    private Map _attributes = new HashMap();
-    private List _locale;
+    private Map<String, Object> _parameters = new HashMap<>();
+    private Map<String, Object> _attributes = new HashMap<>();
+    private List<Locale> _locale;
 
-    public Map getParameterMap() {
+    public Map<String, Object> getParameterMap() {
         return _parameters;
     }
 
-    public Enumeration getParameterNames() {
+    public Enumeration<String> getParameterNames() {
         return IteratorEnumeration.getInstance(_parameters.keySet().iterator());
     }
 
@@ -81,7 +81,7 @@ public class MockServletRequest implements ServletRequest {
         }
     }
 
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return IteratorEnumeration.getInstance(_attributes.keySet().iterator());
     }
 
@@ -125,12 +125,12 @@ public class MockServletRequest implements ServletRequest {
             throw new IllegalArgumentException();
         }
         if(_locale == null) {
-            _locale = new ArrayList();
+            _locale = new ArrayList<>();
         }
         _locale.add(locale);
     }
 
-    public Enumeration getLocales() {
+    public Enumeration<Locale> getLocales() {
         return IteratorEnumeration.getInstance(_locale.iterator());
     }
 

@@ -60,8 +60,8 @@ public class WrapFactoryImplTest {
      */
     @Test
     public void testWrapAsJavaObjectContextScriptableObjectClass() {
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new HashMap(), null) instanceof NativeMap);
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ArrayList(), null) instanceof NativeList);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new HashMap<Object,Object>(), null) instanceof NativeMap);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ArrayList<Object>(), null) instanceof NativeList);
         assertTrue(
                 _factory.wrapAsJavaObject(_cx, _scope, new RequestScopeImpl(), null) instanceof NativeAttributeScope);
         assertFalse(_factory.wrapAsJavaObject(_cx, _scope, _scope, null) instanceof NativeAttributeScope);

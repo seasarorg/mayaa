@@ -29,8 +29,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -44,9 +42,9 @@ public class MockServletContext implements ServletContext {
     private static final Log LOG =
         LogFactory.getLog(MockServletContext.class);
 
-    private static Map _mimeTypes;
+    private static Map<String, String> _mimeTypes;
     static {
-        _mimeTypes = new HashMap();
+        _mimeTypes = new HashMap<>();
         _mimeTypes.put("htm", "text/html");
         _mimeTypes.put("html", "text/html");
         _mimeTypes.put("xhtml", "text/xhtml");
@@ -63,9 +61,9 @@ public class MockServletContext implements ServletContext {
 
     private Class<?> _test;
 
-    private Map _attributes;
+    private Map<String, Object> _attributes;
 
-    private Map _initParams;
+    private Map<String, String> _initParams;
 
     private File _baseDir;
 
@@ -88,7 +86,7 @@ public class MockServletContext implements ServletContext {
             contextName = packName;
         }
         _contextName = contextName;
-        _attributes = new HashMap();
+        _attributes = new HashMap<>();
     }
 
     private File getBaseDir() {
@@ -128,7 +126,7 @@ public class MockServletContext implements ServletContext {
             throw new IllegalArgumentException();
         }
         if (_initParams == null) {
-            _initParams = new HashMap();
+            _initParams = new HashMap<>();
         }
         _initParams.put(name, value);
     }
@@ -143,7 +141,7 @@ public class MockServletContext implements ServletContext {
         return (String) _initParams.get(name);
     }
 
-    public Enumeration getInitParameterNames() {
+    public Enumeration<String> getInitParameterNames() {
         return IteratorEnumeration.getInstance(_initParams.keySet().iterator());
     }
 
@@ -194,7 +192,7 @@ public class MockServletContext implements ServletContext {
         return null;
     }
 
-    public Set getResourcePaths(String path) {
+    public Set<String> getResourcePaths(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -234,11 +232,11 @@ public class MockServletContext implements ServletContext {
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration getServlets() {
+    public Enumeration<String> getServlets() {
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration getServletNames() {
+    public Enumeration<String> getServletNames() {
         throw new UnsupportedOperationException();
     }
 

@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import junit.framework.TestCase;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 

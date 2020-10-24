@@ -21,8 +21,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */

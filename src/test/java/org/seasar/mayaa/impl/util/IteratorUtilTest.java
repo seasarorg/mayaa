@@ -61,7 +61,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = new Object();
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertSame(array[0], ite.next());
         assertTrue(ite.hasNext());
@@ -80,6 +80,7 @@ public class IteratorUtilTest {
         map.put("1", "1val");
         map.put("2", "2val");
         map.put("3", "3val");
+        @SuppressWarnings("unchecked")
         Iterator<Map.Entry<?, ?>> ite = (Iterator<Entry<?, ?>>) IteratorUtil.toIterator(map);
         assertTrue(ite.hasNext());
         Map.Entry<?,?> entry1 = ite.next();
@@ -105,7 +106,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = i % 2 == 0;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Boolean) ite.next()).booleanValue());
         assertTrue(ite.hasNext());
@@ -124,7 +125,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = (byte) i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Byte) ite.next()).byteValue());
         assertTrue(ite.hasNext());
@@ -143,7 +144,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = (char) i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Character) ite.next()).charValue());
         assertTrue(ite.hasNext());
@@ -162,7 +163,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = (short) i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Short) ite.next()).shortValue());
         assertTrue(ite.hasNext());
@@ -181,7 +182,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Integer) ite.next()).intValue());
         assertTrue(ite.hasNext());
@@ -200,7 +201,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Long) ite.next()).longValue());
         assertTrue(ite.hasNext());
@@ -219,7 +220,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Float) ite.next()).floatValue(), 10);
         assertTrue(ite.hasNext());
@@ -238,7 +239,7 @@ public class IteratorUtilTest {
         for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
-        Iterator ite = IteratorUtil.toIterator(array);
+        Iterator<?> ite = IteratorUtil.toIterator(array);
         assertTrue(ite.hasNext());
         assertEquals(array[0], ((Double) ite.next()).doubleValue(), 10);
         assertTrue(ite.hasNext());

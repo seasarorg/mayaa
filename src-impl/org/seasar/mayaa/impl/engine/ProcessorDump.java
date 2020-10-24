@@ -134,11 +134,10 @@ public class ProcessorDump extends ElementProcessor {
 
             sb.append(end);
 
-            if (false) {// TODO original
-                sb.append("<!-- mayaa/original[");
-                sb.append(processor.getOriginalNode().getQName().getLocalName());
-                sb.append("] -->");
-            }
+            // TODO original
+            // sb.append("<!-- mayaa/original[");
+            // sb.append(processor.getOriginalNode().getQName().getLocalName());
+            // sb.append("] -->");
 
             print(sb.toString());
         }

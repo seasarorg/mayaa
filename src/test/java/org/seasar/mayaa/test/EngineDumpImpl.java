@@ -38,7 +38,7 @@ public class EngineDumpImpl extends EngineImpl {
     private static final Log LOG = LogFactory.getLog(EngineDumpImpl.class);
 
     protected void doPageService(
-            ServiceCycle cycle, Map pageScopeValues, boolean pageFlush) {
+            ServiceCycle cycle, Map<?, ?> pageScopeValues, boolean pageFlush) {
         super.doPageService(cycle, pageScopeValues, pageFlush);
 
         RequestScope request = cycle.getRequestScope();

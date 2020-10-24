@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import junit.framework.TestCase;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

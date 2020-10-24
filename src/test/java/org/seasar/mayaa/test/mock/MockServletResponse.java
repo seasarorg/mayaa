@@ -119,10 +119,6 @@ public class MockServletResponse implements ServletResponse {
             return _buffer.toByteArray();
         }
 
-        public int getBufferSize() {
-            return _buffer.size();
-        }
-
         public void reset() {
             _buffer.reset();
         }

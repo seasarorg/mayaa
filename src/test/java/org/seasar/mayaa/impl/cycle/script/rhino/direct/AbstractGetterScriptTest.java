@@ -218,6 +218,7 @@ public class AbstractGetterScriptTest {
             _name = name;
         }
 
+        @SuppressWarnings("unused") // JS内からの参照用
         public String getName() {
             return _name;
         }

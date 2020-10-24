@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
-import junit.framework.TestCase;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 

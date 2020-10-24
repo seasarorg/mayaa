@@ -36,14 +36,14 @@ public class NativeListTest {
 
     private Context _cx;
     private Scriptable _scope;
-    private List _list;
+    private List<Object> _list;
 
     @Before
     public void setUp() {
         _cx = Context.enter();
         _cx.setWrapFactory(new WrapFactoryImpl());
         _scope = _cx.initStandardObjects();
-        _list = new ArrayList();
+        _list = new ArrayList<>();
         Object obj = Context.javaToJS(_list, _scope);
         ScriptableObject.putProperty(_scope, "list", obj);
     }

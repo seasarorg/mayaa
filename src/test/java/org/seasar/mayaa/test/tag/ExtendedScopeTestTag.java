@@ -36,9 +36,6 @@ public class ExtendedScopeTestTag extends ScopeTestTag {
 
     protected void prepareIndex(StringBuffer handlers, String name)
             throws JspException {
-        if (false) {
-            throw new JspException();
-        }
         super.prepareIndex(handlers, name);
     }
 

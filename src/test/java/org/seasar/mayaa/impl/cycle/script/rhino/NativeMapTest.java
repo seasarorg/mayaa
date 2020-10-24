@@ -36,14 +36,14 @@ public class NativeMapTest {
 
     private Context _cx;
     private Scriptable _scope;
-    private Map _map;
+    private Map<String, String> _map;
 
     @Before
     public void setUp() {
         _cx = Context.enter();
         _cx.setWrapFactory(new WrapFactoryImpl());
         _scope = _cx.initStandardObjects();
-        _map = new HashMap();
+        _map = new HashMap<>();
         Object obj = Context.javaToJS(_map, _scope);
         ScriptableObject.putProperty(_scope, "map", obj);
     }

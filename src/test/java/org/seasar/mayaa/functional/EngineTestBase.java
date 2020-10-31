@@ -34,12 +34,14 @@ import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
+import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
@@ -200,6 +202,13 @@ public class EngineTestBase {
         }
     }
 
+    class NullErrorHandler extends ParameterAwareImpl implements ErrorHandler {
+        @Override
+        public void doErrorHandle(Throwable t, boolean pageFlush) {
+            throw new RuntimeException(t);
+        }
+    }
+
     @Before
     public void setup() throws SecurityException, IOException {
         final Object _testClassInstance = this;
@@ -222,7 +231,7 @@ public class EngineTestBase {
 
         engine = ProviderUtil.getEngine();
         // デフォルトのエラーハンドラを無効化して内部の例外でJUnitを失敗させる。
-        engine.setErrorHandler(null);
+        engine.setErrorHandler(new NullErrorHandler());
 
         disableDump();
         // engine.setParameter(EngineImpl.PAGE_SERIALIZE, "true");

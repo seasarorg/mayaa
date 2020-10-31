@@ -66,7 +66,7 @@ public class ManualProviderFactory extends FactoryFactory {
     private SourceDescriptor _bootstrapSource;
 
     public ManualProviderFactory(final Object targetTestCase) {
-        String basePath = targetTestCase.getClass().getPackageName().replace('.', '/');
+        String basePath = targetTestCase.getClass().getPackage().getName().replace('.', '/');
         SERVLET_CONTEXT = new MockServletContext(basePath);
         setContext(SERVLET_CONTEXT);
 

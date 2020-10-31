@@ -21,7 +21,6 @@ import java.io.PrintWriter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.seasar.mayaa.test.mock.MockHttpServletResponse;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

@@ -40,9 +40,9 @@ import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.seasar.mayaa.source.PageSourceFactory;
 import org.seasar.mayaa.source.SourceDescriptor;
-import org.seasar.mayaa.test.mock.MockHttpServletRequest;
-import org.seasar.mayaa.test.mock.MockHttpServletResponse;
-import org.seasar.mayaa.test.mock.MockServletContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -65,8 +65,9 @@ public class ManualProviderFactory extends FactoryFactory {
     protected CycleFactory _factory;
     private SourceDescriptor _bootstrapSource;
 
-    public ManualProviderFactory(Object targetTestCase) {
-        SERVLET_CONTEXT = new MockServletContext(targetTestCase.getClass());
+    public ManualProviderFactory(final Object targetTestCase) {
+        String basePath = targetTestCase.getClass().getPackageName().replace('.', '/');
+        SERVLET_CONTEXT = new MockServletContext(basePath);
         setContext(SERVLET_CONTEXT);
 
         PROVIDER = new ServiceProviderImpl();

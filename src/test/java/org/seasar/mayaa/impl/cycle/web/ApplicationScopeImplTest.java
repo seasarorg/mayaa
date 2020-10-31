@@ -22,8 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
-import org.seasar.mayaa.test.mock.MockServletContext;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -36,7 +36,7 @@ public class ApplicationScopeImplTest {
     public void setUp() {
         ManualProviderFactory.setUp(this);
         _application = new ApplicationScopeImpl();
-        _application.setUnderlyingContext(new MockServletContext(this.getClass()));
+        _application.setUnderlyingContext(new MockServletContext((String) null));
     }
 
     @After

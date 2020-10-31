@@ -283,8 +283,11 @@ public class SpecificationImpl extends ParameterAwareImpl
     protected static File getSerializedFile(String systemID) {
         ApplicationScope scope =
             CycleUtil.getServiceCycle().getApplicationScope();
-        String cachePath = scope.getRealPath("WEB-INF/.mayaaSpecCache");
-        File cacheDir = new File(cachePath);
+        String basePath = scope.getRealPath("WEB-INF");
+        if (basePath == null) {
+            throw new IllegalStateException("cannot resolve spec cache directory.");
+        }
+        File cacheDir = new File(basePath, ".mayaaSpecCache");
         cacheDir.mkdirs();
         return new File(cacheDir,
                 systemID.substring("/".length()).replace('/', '`') + ".ser");
@@ -308,6 +311,8 @@ public class SpecificationImpl extends ParameterAwareImpl
                 }
             } catch (IOException e) {
                 LOG.error("page serialize failed.", e);
+            } catch (IllegalStateException e) {
+                LOG.error("page serialize failed.", e);
             }
         }
     }
@@ -318,8 +323,13 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     public Specification deserialize(String systemID) {
         synchronized(this) {
-            File cacheFile = getSerializedFile(systemID);
-            if (cacheFile.exists() == false) {
+            File cacheFile = null;
+            try {
+                cacheFile = getSerializedFile(systemID);
+                if (cacheFile.exists() == false) {
+                    return null;
+                }
+            } catch (IllegalStateException e) {
                 return null;
             }
             Specification result;

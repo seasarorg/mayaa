@@ -38,7 +38,6 @@ import test.PerformanceTest;
 
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.cycle.scope.StubApplicationScopeSupport;
 import org.seasar.mayaa.impl.cycle.script.ComplexScript;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 
@@ -75,7 +74,7 @@ public class ScriptEnvironmentTest {
         // -- Given
         // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
         // scriptEnvironment cacheSize に 256 が設定されている
-        FactoryFactory.setContext(new StubApplicationScopeSupport(this));
+        FactoryFactory.setContext(new MockServletContext(this.getClass().getPackageName().replace('.', '/')));
 
         // -- When
         // ファクトリーを経由してScriptEnvironmentインスタンスを生成する

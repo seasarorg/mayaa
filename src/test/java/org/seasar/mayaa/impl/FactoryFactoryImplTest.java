@@ -29,7 +29,7 @@ import org.seasar.mayaa.impl.cycle.CycleFactoryImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.mayaa.source.SourceDescriptor;
-import org.seasar.mayaa.test.mock.MockServletContext;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -47,7 +47,7 @@ public class FactoryFactoryImplTest {
     @Test
     public void testGetBootstrapApplication() {
         FactoryFactoryImpl factory = new FactoryFactoryImpl();
-        ApplicationScope application = factory.getApplicationScope(new MockServletContext(this.getClass()));
+        ApplicationScope application = factory.getApplicationScope(new MockServletContext((String)null));
         assertNotNull(application);
     }
 
@@ -55,7 +55,7 @@ public class FactoryFactoryImplTest {
     public void testGetBootstrapSource() {
         FactoryFactoryImpl factory = new FactoryFactoryImpl();
         SourceDescriptor source = factory.getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, "/testID",
-                new MockServletContext(this.getClass()));
+                new MockServletContext((String)null));
         assertNotNull(source);
         assertEquals("/testID", source.getSystemID());
     }
@@ -68,7 +68,7 @@ public class FactoryFactoryImplTest {
         ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
         source.setSystemID("/test.factory");
         source.setNeighborClass(FactoryFactoryImpl.class);
-        UnifiedFactory current = factory.marshallFactory(CycleFactory.class, new MockServletContext(this.getClass()),
+        UnifiedFactory current = factory.marshallFactory(CycleFactory.class, new MockServletContext((String)null),
                 source, before);
         assertEquals(ServiceCycle.class, current.getServiceClass());
     }

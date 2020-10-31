@@ -21,8 +21,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.seasar.mayaa.test.mock.MockHttpServletRequest;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

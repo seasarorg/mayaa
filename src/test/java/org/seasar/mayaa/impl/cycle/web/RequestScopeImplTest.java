@@ -25,8 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.test.mock.MockHttpServletRequest;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -103,7 +103,7 @@ public class RequestScopeImplTest {
     @Test
     public void testGetLocale() {
         Locale locale = new Locale("ja_JP");
-        _httpServletRequest.addLocale(locale);
+        _httpServletRequest.addPreferredLocale(locale);
         assertEquals(locale, _request.getLocales()[0]);
     }
 

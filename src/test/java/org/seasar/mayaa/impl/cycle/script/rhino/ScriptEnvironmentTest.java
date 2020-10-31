@@ -74,7 +74,7 @@ public class ScriptEnvironmentTest {
         // -- Given
         // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
         // scriptEnvironment cacheSize に 256 が設定されている
-        FactoryFactory.setContext(new MockServletContext(this.getClass().getPackageName().replace('.', '/')));
+        FactoryFactory.setContext(new MockServletContext(this.getClass().getPackage().getName().replace('.', '/')));
 
         // -- When
         // ファクトリーを経由してScriptEnvironmentインスタンスを生成する

@@ -583,6 +583,7 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>3.2.18.RELEASE</version>
+      <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
     <dependency>
@@ -596,19 +597,21 @@
       <groupId>javax.activation</groupId>
       <artifactId>javax.activation-api</artifactId>
       <version>1.2.0</version>
+      <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.sun.activation/javax.activation -->
     <dependency>
       <groupId>com.sun.activation</groupId>
       <artifactId>javax.activation</artifactId>
       <version>1.2.0</version>
+      <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl-api -->
     <dependency>
-        <groupId>javax.servlet.jsp.jstl</groupId>
+      <groupId>javax.servlet.jsp.jstl</groupId>
         <artifactId>jstl-api</artifactId>
         <version>1.2</version>
-        <scope>test</scope>
+      <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl -->
     <dependency>

@@ -153,4 +153,24 @@ public class WebXmlAliasSourceScannerTest {
         assertEquals("3", 2, sources.size());
     }
 
+    @Test
+    public void testScan40() throws Exception {
+        ClassLoaderSourceDescriptor webinfSource =
+            new ClassLoaderSourceDescriptor();
+        webinfSource.setRoot(
+                "org/seasar/mayaa/impl/builder/library/scanner/WEB-INF40");
+        webinfSource.setSystemID("web.xml");
+        ManualProviderFactory.MOCK_INSTANCE.setBootstrapSource(webinfSource);
+
+        List<String> sources = new ArrayList<>();
+        for(Iterator<SourceDescriptor> it = scanner.scan(); it.hasNext(); ) {
+            SourceDescriptor source = (SourceDescriptor)it.next();
+            sources.add(source.getSystemID());
+        }
+
+        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
+        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+
+        assertEquals("3", 2, sources.size());
+    }
 }

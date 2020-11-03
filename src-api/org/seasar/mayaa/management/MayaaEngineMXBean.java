@@ -21,7 +21,7 @@ import javax.management.MXBean;
  * MayaaのEngine全体の状態の取得や設定を変更するためのMBeanインタフェース．
  * ObjectNameは "org.seasar.mayaa:type=MayaaEngine" である．
  * 
- * @since 1.1.35
+ * @since 1.2
  * @author Watanabe, Mitsutaka
  */
 @MXBean

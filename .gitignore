@@ -4,6 +4,7 @@
 target
 target.*
 /work
+/test-war/.env
 
 # General
 .DS_Store

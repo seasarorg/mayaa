@@ -21,7 +21,7 @@ import javax.management.MXBean;
  * Mayaa内で使用されている各種キャッシュの状態の取得や操作を行うためのMBeanインタフェース．
  * ObjectNameは "org.seasar.mayaa:type=CacheControl,name=[キャッシュ名称]" である．
  * 
- * @since 1.1.35
+ * @since 1.2
  * @author Watanabe, Mitsutaka
  */
 @MXBean

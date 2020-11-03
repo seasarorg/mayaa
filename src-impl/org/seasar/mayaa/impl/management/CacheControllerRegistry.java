@@ -27,7 +27,7 @@ import org.seasar.mayaa.management.CacheControlMXBean;
 
 /**
  * 
- * @since 1.1.35
+ * @since 1.2
  * @author Watanabe, Mitsutaka
  */
 public class CacheControllerRegistry {

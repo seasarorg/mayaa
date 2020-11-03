@@ -42,7 +42,7 @@
         <scope class="org.seasar.mayaa.impl.cycle.scope.EnvScope"/>
         -->
         <parameter name="wrapFactory" value="org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl"/>
-        <parameter name="cacheSize" value="256"/><!-- since 1.1.35-SNAPSHOT -->
+        <parameter name="cacheSize" value="256"/><!-- since 1.2-SNAPSHOT -->
     </scriptEnvironment>
 
     <specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">

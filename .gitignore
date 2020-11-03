@@ -1,7 +1,8 @@
 /.settings
 /.tomcatplugin
 /build.bat
-/target*
+target
+target.*
 /work
 
 # General

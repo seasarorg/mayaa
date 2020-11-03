@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:write id="message"
+		value="Welcome to the Mayaa's template driven development!"/>
+
+	<m:write id="javaVersion"
+		value="${java.lang.System.getProperty('java.version')}"/>
+
+	<m:write id="mayaaVersion"
+		value="${org.seasar.mayaa.impl.Version.MAYAA_VERSION}"/>
+
+	<m:write id="debug-mode"
+		value="debug mode = ${isDebugMode()}"/>
+
+	<m:write id="servletVersion"
+		value="${var sc=application.underlyingContext; sc.getMajorVersion()+'.'+sc.getMinorVersion()}"/>
+
+</m:mayaa>

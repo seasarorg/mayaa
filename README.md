@@ -5,14 +5,16 @@ http://mayaa.seasar.org/
 MayaaはHTMLをベースとしたテンプレートによるプログラマとデザイナの作業分担を強く意識したWEBフロントサービスエンジンです。
 
 ## システム動作仕様環境
- * Java バージョン1.7以降 
- * Servlet API 2.3 ~ 3.1
+ * Java7 以降 
+ * Servlet API 2.3 ~ 4.0 の web.xml
 
-1.1.32まではシステムの動作は以下の環境で確認されています。
-その他の環境については、適宜フィードバックをお願いいたします。
-
-* Java： J2SDK 1.4.2_18, 1.5.0_18, 1.6.0_20 (Windows)
-* コンテナ： Tomcat5.5.27, Tomcat6.0.26
+### 動作確認済み環境
+ * Wildfly 20.0.1Final + Java 11.0.8
+ * Wildfly 10.1.0Final + Java 1.8.0_191
+ * Wildfly 8.1.0.Final + Java 1.7.0_201
+ * Tomcat 8.5.59.0     + Java 1.8.0_272
+ * Tomcat 7.0.106      + Java 1.8.0_272
+ * Tomcat 6.0.53       + Java 1.7.0_131
 
 ## 利用方法
 Mayaa はバージョン1.1.33以降は [Maven Central Repository](https://search.maven.org/artifact/com.github.seasarorg.mayaa/mayaa) から配布されています。

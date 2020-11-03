@@ -1,0 +1,67 @@
+## All options defined here are available to all instances.
+#
+init_config:
+    is_jmx: true
+    collect_default_metrics: true
+    new_gc_metrics: true
+
+    ## Custom service check prefix. e.g. `my_prefix` to get a service check called `my_prefix.can_connect`.
+    ## If not set, the default service check used is the integration name.
+    # service_check_prefix: <SERVICE_CHECK_PREFIX>
+
+    ## @param conf - list of mappings - optional
+    ## Read http://docs.datadoghq.com/integrations/java/ to learn how to customize it
+    ## The default metrics to be collected are kept in metrics.yaml, but you can still
+    ## add your own metrics here.
+    # conf:
+    #   - include:
+    #       bean: <BEAN_NAME>
+    #       attribute:
+    #         MyAttribute:
+    #           alias: my.metric.name
+    #           metric_type: gauge
+    conf:
+      - include:
+          domain: org.seasar.mayaa
+          type: 
+            - CacheControl            
+          attribute:
+            HitCount:
+              metric_type: counter
+            MissCount:
+              metric_type: counter
+            CurrentSize:
+              metric_type: gauge
+
+    ## @param service - string - optional
+    ## Attach the tag `service:<SERVICE>` to every metric, event, and service check emitted by this integration.
+    # service: <SERVICE>
+
+## Every instance is scheduled independent of the others.
+instances:
+  - host: web
+    port: 9012
+    # user: <USER>
+    # password: <PASSWORD>
+    # name: <NAME>
+    # java_options: <JAVA_OPTIONS>
+
+    # rmi_registry_ssl: false
+    # rmi_connection_timeout: 20000
+    # rmi_client_timeout: 15000
+    ## Learn more about tagging at https://docs.datadoghq.com/tagging
+    # tags:
+    #   - <KEY_1>:<VALUE_1>
+    #   - <KEY_2>:<VALUE_2>
+    ## Overrides any `service` defined in the `init_config` section.
+    # service: <SERVICE>
+    # min_collection_interval: 15
+    # empty_default_hostname: false
+
+## Log Section
+## Discover Datadog log collection: https://docs.datadoghq.com/logs/log_collection/
+# logs:
+#   - type: file
+#     path: /var/log/tomcat/*.log
+#     source: tomcat
+#     service: <SERVICE_NAME>

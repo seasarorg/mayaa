@@ -1,0 +1,54 @@
+# mayaa-*.jar を使用したWARが各コンテナで期待通り起動し、動作に問題がないかを確認するためのDocker Composeファイル。
+# デバッグポート(8787ポート)とJMX(9012ポート)を有効化してある。.envファイルを作成して docker-compose up で動作する。
+# 対応しているコンテナは Tomcat と Wildfly であり、使用するコンテナを image 属性のコメントを切り替えて使用する
+# 各コンテナの軌道に使用する設定ファイルはそれぞれ ./tomcat/ ./wildfly/ に格納し、Dockerにボリュームとして
+# マウントしている。
+#
+# ◆準備
+# docker-compose.yaml と同じディレクトリに .env ファイルを作成して下記の値を設定する。
+#   変数名        | 説明
+#  --------------|----------------------------
+#   WARFILE      | 配置するWARファイルのパス
+#   JMX_HOSTNAME | java.rmi.server.hostname に指定する値(Datadogを使用する場合はweb,　使用しない場合は0.0.0.0)
+#   DD_API_KEY   | Datadogを用いる場合のAPIキー(使用しない場合はdd-agent配下をコメントアウトする)
+#
+# (.envファイルの例)
+# WARFILE=./target/mayaa-package-test-1.0.war
+# JMX_HOSTNAME=0.0.0.0
+# DD_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#
+version: '3'
+services:
+  web:
+    #  DOCKER IMAGE                      Java Runtime   Servlet
+    #image: jboss/wildfly:20.0.1.Final  #  11.0.8         4.0
+    #image: jboss/wildfly:19.1.0.Final  #  11.0.5         4.0
+    image: jboss/wildfly:10.1.0.Final  #  1.8.0_191      4.0
+    #image: jboss/wildfly:8.1.0.Final   #  1.7.0_201      3.1
+    #image: tomcat:8                    #  1.8.0_272      3.1
+    #image: tomcat:7                    #  1.8.0_272      3.0
+    #image: tomcat:6                    #  1.7.0_131      2.5
+    ports: 
+      - "8080:8080"   # service port
+      - "9012:9012"   # JMX port
+      - "8787:8787"   # debug port
+    environment:
+      - JMX_HOSTNAME
+    volumes: # 下記の記述はコンテナを切り替えてもコメントアウトする必要なし(互いに無影響)
+      - "./tomcat/setenv.sh:/usr/local/tomcat/bin/setenv.sh:ro"   # for Tomcat 
+      - "${WARFILE}:/usr/local/tomcat/webapps/ROOT.war"           # for Tomcat
+      - "./wildfly/standalone.conf:/opt/jboss/wildfly/bin/standalone.conf:ro"   # for Wildfly
+      - "${WARFILE}:/opt/jboss/wildfly/standalone/deployments/mayaa.war"        # for Wildfly
+  # dd-agent:
+  #   image: datadog/agent:latest-jmx
+  #   ports:
+  #     - "127.0.0.1:8126:8126/tcp"
+  #   volumes:
+  #     - "./datadog-agent-conf.d/:/conf.d:ro"
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #     - "/proc/:/host/proc/:ro"
+  #     - "/sys/fs/cgroup/:/host/sys/fs/cgroup:ro"
+  #   environment:
+  #     - DD_API_KEY=${DD_API_KEY}
+  #     - DD_APM_ENABLED=true
+  #     - DD_SERVICE=mayaa-starter

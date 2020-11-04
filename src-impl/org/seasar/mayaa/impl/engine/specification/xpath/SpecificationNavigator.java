@@ -244,7 +244,7 @@ public class SpecificationNavigator extends DefaultNavigator
     public String getElementStringValue(Object obj) {
         if (obj instanceof SpecificationNode) {
             SpecificationNode node = (SpecificationNode) obj;
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
                 SpecificationNode child = (SpecificationNode) it.next();
                 if (isText(child)) {

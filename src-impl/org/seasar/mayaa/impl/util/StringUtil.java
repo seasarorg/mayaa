@@ -173,7 +173,7 @@ public final class StringUtil {
      * @return 実体に置き換えた後の文字列
      */
     public static String resolveEntity(String blockString) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         int start = blockString.indexOf("&");
         if (start == -1) {
             return blockString;
@@ -377,7 +377,7 @@ public final class StringUtil {
 
         int depth = hostPath.length - (matchedDirs + 1);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(times("../", depth));
 
         for (int i = matchedDirs; linkPath.length > i; i++) {
@@ -403,7 +403,7 @@ public final class StringUtil {
         if (count <= 0 || isEmpty(unit)) {
             return "";
         }
-        StringBuffer sb = new StringBuffer(unit.length() * count);
+        StringBuilder sb = new StringBuilder(unit.length() * count);
         for (int i = 0; i < count; i++) {
             sb.append(unit);
         }
@@ -441,7 +441,7 @@ public final class StringUtil {
             return value;
         }
 
-        StringBuffer buffer = new StringBuffer(value.length() + 100);
+        StringBuilder buffer = new StringBuilder(value.length() + 100);
 
         int openIndex = value.indexOf(SP_OPEN);
         buffer.append(value.substring(0, openIndex));
@@ -516,7 +516,7 @@ public final class StringUtil {
             }
         }
         String className = ObjectUtil.getSimpleClassName(clazz);
-        StringBuffer propertyName = new StringBuffer(className);
+        StringBuilder propertyName = new StringBuilder(className);
         if (index > 0) {
             propertyName.append(".").append(index);
         }
@@ -540,7 +540,7 @@ public final class StringUtil {
             return "";
         }
         char[] chars = text.toCharArray();
-        StringBuffer sb = new StringBuffer(chars.length + 50);
+        StringBuilder sb = new StringBuilder(chars.length + 50);
 
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -565,7 +565,7 @@ public final class StringUtil {
             return "";
         }
         char[] chars = text.toCharArray();
-        StringBuffer sb = new StringBuffer(chars.length + 50);
+        StringBuilder sb = new StringBuilder(chars.length + 50);
 
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -589,7 +589,7 @@ public final class StringUtil {
             return "";
         }
         char[] chars = text.toCharArray();
-        StringBuffer sb = new StringBuffer(chars.length + 50);
+        StringBuilder sb = new StringBuilder(chars.length + 50);
 
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -616,7 +616,7 @@ public final class StringUtil {
         String br = (forHTML ? "<br>" : "<br />");
 
         char[] chars = text.toCharArray();
-        StringBuffer sb = new StringBuffer(chars.length + 50);
+        StringBuilder sb = new StringBuilder(chars.length + 50);
 
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -660,7 +660,7 @@ public final class StringUtil {
         if (items == null) {
             return String.valueOf(items);
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < items.length; i++) {
             if (i > 0) {
                 sb.append(delimiter);

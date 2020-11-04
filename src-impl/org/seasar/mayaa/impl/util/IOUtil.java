@@ -114,7 +114,7 @@ public class IOUtil {
         try {
             Reader reader = new InputStreamReader(is, encoding);
             try {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 char[] buffer = new char[1024];
                 int readSize = -1;
                 while ((readSize = reader.read(buffer)) > 0) {

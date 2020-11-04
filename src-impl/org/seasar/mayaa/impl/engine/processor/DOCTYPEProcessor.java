@@ -66,7 +66,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport
         return _systemID;
     }
 
-    private void writeData(StringBuffer docTypeDecl) {
+    private void writeData(StringBuilder docTypeDecl) {
         docTypeDecl.append("<!DOCTYPE ").append(_name);
         if (StringUtil.hasValue(_publicID)) {
             docTypeDecl.append(" PUBLIC \"").append(_publicID).append("\"");
@@ -78,7 +78,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        StringBuffer docTypeDecl = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        StringBuilder docTypeDecl = new StringBuilder(DEFAULT_BUFFER_SIZE);
         writeData(docTypeDecl);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(docTypeDecl.toString());
@@ -89,7 +89,7 @@ public class DOCTYPEProcessor extends TemplateProcessorSupport
         if (getOriginalNode().getQName().equals(QM_DOCTYPE) == false) {
             return new ProcessorTreeWalker[] { this };
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         writeData(sb);
         LiteralCharactersProcessor literal =
             new LiteralCharactersProcessor(sb.toString());

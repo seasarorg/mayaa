@@ -239,7 +239,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected boolean appendPrefixMappingString(
-            StringBuffer buffer, PrefixMapping mapping) {
+            StringBuilder buffer, PrefixMapping mapping) {
         String pre = mapping.getPrefix();
         URI uri = mapping.getNamespaceURI();
         if (URI_MAYAA.equals(uri)) {
@@ -259,7 +259,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected void appendPrefixMappingStrings(
-            StringBuffer buffer, Namespace namespace) {
+            StringBuilder buffer, Namespace namespace) {
         if (namespace == null) {
             throw new IllegalArgumentException();
         }
@@ -270,7 +270,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     protected void appendAttributeString(
-            StringBuffer buffer, PrefixAwareName propName, Object value) {
+            StringBuilder buffer, PrefixAwareName propName, Object value) {
         QName qName = propName.getQName();
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
@@ -293,7 +293,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrPrefix = attrPrefix + ":";
             }
         }
-        StringBuffer temp = new StringBuffer(32);
+        StringBuilder temp = new StringBuilder(32);
         temp.append(" ");
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
@@ -340,7 +340,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      *
      * @param buffer 書き出す対象
      */
-    protected void writeElementName(StringBuffer buffer) {
+    protected void writeElementName(StringBuilder buffer) {
         QName qName = getName().getQName();
         String prefix;
         prefix = getResolvedPrefix(getName());
@@ -355,7 +355,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      *
      * @param buffer 書き出す対象
      */
-    protected void writePart1(StringBuffer buffer) {
+    protected void writePart1(StringBuilder buffer) {
         buffer.append("<");
         writeElementName(buffer);
     }
@@ -365,7 +365,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      *
      * @param buffer 書き出す対象
      */
-    protected void writePart2(StringBuffer buffer) {
+    protected void writePart2(StringBuilder buffer) {
         for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = it.next();
             appendAttributeString(buffer, prop.getName(), prop.getValue());
@@ -384,7 +384,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      *
      * @param buffer 書き出す対象
      */
-    protected void writePart3(StringBuffer buffer) {
+    protected void writePart3(StringBuilder buffer) {
         for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
@@ -411,7 +411,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      *
      * @param buffer 書き出す対象
      */
-    protected void writePart4(StringBuffer buffer) {
+    protected void writePart4(StringBuilder buffer) {
         QName qName = getName().getQName();
         if (needsCloseElement(qName)) {
             buffer.append("</");
@@ -424,7 +424,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        StringBuffer buffer = new StringBuffer(128);
+        StringBuilder buffer = new StringBuilder(128);
         writePart1(buffer);
         appendPrefixMappingStrings(buffer, getCurrentNS());
         writePart2(buffer);
@@ -441,7 +441,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
-        StringBuffer buffer = new StringBuffer(16);
+        StringBuilder buffer = new StringBuilder(16);
         writePart4(buffer);
         write(buffer.toString());
     }
@@ -478,7 +478,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     QM_TEMPLATE_ELEMENT) == false) {
                 return new ProcessorTreeWalker[] { this };
             }
-            StringBuffer xmlnsDefs = new StringBuffer();
+            StringBuilder xmlnsDefs = new StringBuilder();
             appendPrefixMappingStrings(xmlnsDefs, getCurrentNS());
             if (xmlnsDefs.length() > 0) {
                 // ネームスペース宣言がコンポーネントに引き継がれなくなるので動的なものとする。
@@ -486,7 +486,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             }
 
             List<ProcessorTreeWalker> list = new ArrayList<>();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             writePart1(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part1 =
@@ -498,7 +498,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
             for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
                 ProcessorProperty prop = it.next();
-                buffer = new StringBuffer();
+                buffer = new StringBuilder();
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
                 CharactersProcessor part2 =
                         new CharactersProcessor(prop, buffer.toString());
@@ -509,7 +509,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 if (hasProcesstimeProperty(prop) == false
                         && prop.getValue().isLiteral() == false) {
-                    buffer = new StringBuffer();
+                    buffer = new StringBuilder();
                     appendAttributeString(buffer, prop.getName(), prop.getValue());
                     CharactersProcessor part2 =
                             new CharactersProcessor(prop, buffer.toString());
@@ -518,7 +518,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 }
             }
 
-            buffer = new StringBuffer();
+            buffer = new StringBuilder();
             writePart3(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part3 =
@@ -530,7 +530,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             for (int i = 0; i < size; i++) {
                 list.add(getChildProcessor(i));
             }
-            buffer = new StringBuffer();
+            buffer = new StringBuilder();
             writePart4(buffer);
             if (buffer.toString().length() > 0) {
                 LiteralCharactersProcessor part4 =

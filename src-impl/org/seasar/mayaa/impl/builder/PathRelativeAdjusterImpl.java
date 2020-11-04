@@ -85,7 +85,7 @@ public class PathRelativeAdjusterImpl extends PathAdjusterImpl {
         }
         // リンク先をリクエストされたパスからの相対にする
         String contextRelativePath = StringUtil.adjustRelativePath(base, path);
-        StringBuffer sb = new StringBuffer(200);
+        StringBuilder sb = new StringBuilder(200);
         sb.append("${Packages.org.seasar.mayaa.impl.util.StringUtil.adjustContextRelativePath(");
         sb.append("request.getContextPath() + request.getRequestedPath()");
         sb.append(", '");

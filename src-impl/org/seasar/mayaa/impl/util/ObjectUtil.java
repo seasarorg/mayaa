@@ -47,7 +47,7 @@ public class ObjectUtil {
         if (className.endsWith("[]") == false) {
             return className;
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while (className.endsWith("[]")) {
             buffer.append("[");
             className = className.substring(0, className.length() - 2);

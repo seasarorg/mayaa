@@ -79,7 +79,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
     public static String forPrefixMappingString(
             String prefix, URI namespaceURI) {
         String uri = namespaceURI.toString();
-        StringBuffer buffer = new StringBuffer(uri.length() + 10);
+        StringBuilder buffer = new StringBuilder(uri.length() + 10);
         if (prefix != null && !prefix.isEmpty()) {
             buffer.append(prefix);
         }

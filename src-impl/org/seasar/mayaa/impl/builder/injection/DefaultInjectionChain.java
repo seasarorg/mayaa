@@ -66,7 +66,7 @@ public class DefaultInjectionChain
         URI uri = qName.getNamespaceURI();
         SpecificationNode element =  BuilderUtil.createInjectedNode(
                 QM_TEMPLATE_ELEMENT, uri, original, false);
-        StringBuffer name = new StringBuffer();
+        StringBuilder name = new StringBuilder();
         String prefix = original.getPrefix();
         if (StringUtil.hasValue(prefix)) {
             name.append(prefix).append(":");

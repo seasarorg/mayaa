@@ -177,7 +177,7 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected String getAttributesKey() {
         if (_attributesKey == null) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (Iterator<ProcessorProperty> it = iterateProperties(); it.hasNext();) {
                 ProcessorProperty property = it.next();
                 String localName =

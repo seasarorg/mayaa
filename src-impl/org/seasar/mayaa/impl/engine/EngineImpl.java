@@ -243,7 +243,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected String getRequestedPageName(RequestScope request) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(request.getPageName());
         if (StringUtil.hasValue(request.getRequestedSuffix())) {
             sb.append(getSuffixSeparator());
@@ -604,7 +604,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public String getTemplateID(Page page, String suffix, String extension) {
-        StringBuffer name = new StringBuffer(page.getPageName());
+        StringBuilder name = new StringBuilder(page.getPageName());
         if (StringUtil.hasValue(suffix)) {
             String separator = getSuffixSeparator();
             name.append(separator).append(suffix);
@@ -757,7 +757,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     private String patternToString(List<PathPattern> patterns, boolean result) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (PathPattern pathPattern : patterns) {
             if (pathPattern.isTemplate() == result) {
                 sb.append(pathPattern.getPattern());

@@ -66,7 +66,7 @@ public class ReplaceSetter extends ParameterAwareImpl
             URI uri = qName.getNamespaceURI();
             SpecificationNode element = BuilderUtil.createInjectedNode(
                     QM_DUPLECATED, uri, original, false);
-            StringBuffer name = new StringBuffer();
+            StringBuilder name = new StringBuilder();
             String prefix = original.getPrefix();
             if (StringUtil.hasValue(prefix)) {
                 name.append(prefix).append(":");

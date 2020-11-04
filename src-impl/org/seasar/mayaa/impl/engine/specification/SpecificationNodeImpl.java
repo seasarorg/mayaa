@@ -88,7 +88,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     public String toString() {
-        StringBuffer path = new StringBuffer();
+        StringBuilder path = new StringBuilder();
 
         if (getParentNode() != null
                 && getParentNode() instanceof Specification == false) {

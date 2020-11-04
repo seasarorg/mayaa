@@ -142,7 +142,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
     }
 
     protected String removeIgnorableWhitespace(String characters) {
-        StringBuffer buffer = new StringBuffer(characters.length());
+        StringBuilder buffer = new StringBuilder(characters.length());
         String[] line = characters.split("\n");
         for (int i = 0; i < line.length; i++) {
             if (line[i].trim().length() > 0) {

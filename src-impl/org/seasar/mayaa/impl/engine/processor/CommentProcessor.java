@@ -37,7 +37,7 @@ public class CommentProcessor extends CharactersProcessor {
     private static final String COMMENTIN = "<!--";
     private static final String COMMENTOUT = "-->";
 
-    private void writePart1(StringBuffer buffer) {
+    private void writePart1(StringBuilder buffer) {
         buffer.append(COMMENTIN);
         if (getText() != null) {
             Object value;
@@ -52,20 +52,20 @@ public class CommentProcessor extends CharactersProcessor {
         }
     }
 
-    private void writePart2(StringBuffer buffer) {
+    private void writePart2(StringBuilder buffer) {
         buffer.append(COMMENTOUT);
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         writePart1(buffer);
         cycle.getResponse().write(buffer.toString());
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
     public ProcessStatus doEndProcess() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         writePart2(buffer);
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(buffer.toString());
@@ -84,7 +84,7 @@ public class CommentProcessor extends CharactersProcessor {
             setText(createVoidText());
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         writePart1(sb);
         CharactersProcessor characterProcessor =
             new CharactersProcessor(this, sb.toString());

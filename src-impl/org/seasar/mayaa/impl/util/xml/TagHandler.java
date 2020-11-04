@@ -33,7 +33,7 @@ public class TagHandler {
 
     private Map<String, TagHandler> _children = new HashMap<>();
     private boolean _valid = true;
-    private StringBuffer _buffer = new StringBuffer();
+    private StringBuilder _buffer = new StringBuilder();
     private String _name;
 
     public TagHandler(String name) {

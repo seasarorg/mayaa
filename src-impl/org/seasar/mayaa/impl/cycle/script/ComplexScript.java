@@ -50,7 +50,7 @@ public class ComplexScript implements CompiledScript {
     }
 
     public Object execute(Object[] args) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < _compiled.length; i++) {
             Object ret = _compiled[i].execute(null);
             if (ret != null) {
@@ -72,7 +72,7 @@ public class ComplexScript implements CompiledScript {
     }
 
     public String getScriptText() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < _compiled.length; i++) {
             buffer.append(_compiled[i].getScriptText());
         }

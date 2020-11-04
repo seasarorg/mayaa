@@ -54,7 +54,7 @@ public class ScopeTestTag extends TagSupport {
         _atend = atend;
     }
 
-    protected void prepareIndex(StringBuffer handlers, String name)
+    protected void prepareIndex(StringBuilder handlers, String name)
             throws JspException {
     }
 

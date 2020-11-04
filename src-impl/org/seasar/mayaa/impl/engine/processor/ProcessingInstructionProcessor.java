@@ -54,7 +54,7 @@ public class ProcessingInstructionProcessor
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        StringBuffer processingInstruction = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        StringBuilder processingInstruction = new StringBuilder(DEFAULT_BUFFER_SIZE);
         processingInstruction.append("<?").append(_target);
         if (StringUtil.hasValue(_data)) {
             processingInstruction.append(" ").append(_data);

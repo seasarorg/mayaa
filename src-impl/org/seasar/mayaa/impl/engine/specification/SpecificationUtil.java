@@ -165,7 +165,7 @@ public class SpecificationUtil implements CONST_IMPL {
      * @throws IllegalChildNodeException 文字ノード以外を含む場合
      */
     public static String getNodeBodyText(SpecificationNode node) {
-        StringBuffer buffer = new StringBuffer(256);
+        StringBuilder buffer = new StringBuilder(256);
         for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             QName qName = child.getQName();

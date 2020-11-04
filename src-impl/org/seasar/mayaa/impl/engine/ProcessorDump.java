@@ -110,7 +110,7 @@ public class ProcessorDump extends ElementProcessor {
 // TODO insert の場合
 // TODO echo の場合
         } else {
-            StringBuffer sb = new StringBuffer(128);
+            StringBuilder sb = new StringBuilder(128);
 
             for (int i = 0; i < indentCount; i++) {
                 sb.append(_indentChar);
@@ -155,7 +155,7 @@ public class ProcessorDump extends ElementProcessor {
         return processor.getInjectedNode();
     }
 
-    protected void writeAttributes(StringBuffer sb, TemplateProcessor processor) {
+    protected void writeAttributes(StringBuilder sb, TemplateProcessor processor) {
         if (processor instanceof ElementProcessor) {
             writeElementAttributes(sb, (ElementProcessor) processor);
         } else {
@@ -179,7 +179,7 @@ public class ProcessorDump extends ElementProcessor {
         }
     }
 
-    protected void writeElementAttributes(StringBuffer sb, ElementProcessor processor) {
+    protected void writeElementAttributes(StringBuilder sb, ElementProcessor processor) {
         for (Iterator<ProcessorProperty> it = processor.iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = it.next();
             appendAttributeString(sb, prop.getName(), prop.getValue());
@@ -201,7 +201,7 @@ public class ProcessorDump extends ElementProcessor {
     }
 
     protected void appendAttributeString(
-            StringBuffer buffer, PrefixAwareName propName, Object value) {
+            StringBuilder buffer, PrefixAwareName propName, Object value) {
         QName qName = propName.getQName();
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
@@ -225,7 +225,7 @@ public class ProcessorDump extends ElementProcessor {
                 attrPrefix = attrPrefix + ":";
             }
         }
-        StringBuffer temp = new StringBuffer();
+        StringBuilder temp = new StringBuilder();
         temp.append(" ");
         temp.append(attrPrefix);
         temp.append(qName.getLocalName());
@@ -256,7 +256,7 @@ try { // TODO 修正する [JIRA: MAYAA-5]
     }
 
     protected void writeProcessorAttributeString(
-            StringBuffer sb, String prefix, String localName, Object value) {
+            StringBuilder sb, String prefix, String localName, Object value) {
         sb.append(" ");
         sb.append(prefix);
         sb.append(localName);

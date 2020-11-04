@@ -47,7 +47,7 @@ public class OffsetLineRhinoException extends EvaluatorException {
     public String emphasizeDetails() {
         String message = super.details();
         String[] lines = message.split("\n");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
             if (i == _offsetLine) {
                 lines[i] = decorate(lines[i]);

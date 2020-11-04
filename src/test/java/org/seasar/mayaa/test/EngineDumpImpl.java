@@ -77,7 +77,7 @@ public class EngineDumpImpl extends EngineImpl {
 
     protected void printTag(
             int indent, TemplateProcessor processor, String start, String end) {
-        StringBuffer sb = new StringBuffer(128);
+        StringBuilder sb = new StringBuilder(128);
         for (int i = 0; i < indent; i++) {
             sb.append(' ');
         }

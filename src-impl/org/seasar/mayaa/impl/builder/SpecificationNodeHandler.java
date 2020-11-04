@@ -69,7 +69,7 @@ public class SpecificationNodeHandler
     private NodeTreeWalker _current;
     private Locator _locator;
     private Namespace _namespace;
-    private StringBuffer _charactersBuffer;
+    private StringBuilder _charactersBuffer;
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
     private int _inEntity;
@@ -140,7 +140,7 @@ public class SpecificationNodeHandler
     private static final int DEFAULT_BUFFER_SIZE = 128;
 
     protected void initCharactersBuffer() {
-        _charactersBuffer = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        _charactersBuffer = new StringBuilder(DEFAULT_BUFFER_SIZE);
         _charactersStartLineNumber = _locator.getLineNumber();
     }
 
@@ -227,7 +227,7 @@ public class SpecificationNodeHandler
     }
 
     private String removeIgnorableWhitespace(String characters) {
-        StringBuffer buffer = new StringBuffer(characters.length());
+        StringBuilder buffer = new StringBuilder(characters.length());
         String[] line = characters.split("\n");
         for (int i = 0; i < line.length; i++) {
             if (line[i].trim().length() > 0) {
@@ -351,7 +351,7 @@ public class SpecificationNodeHandler
         addCharactersNode();
         SpecificationNode node = addNode(QM_PI);
         node.addAttribute(QM_TARGET, "xml");
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (StringUtil.hasValue(version)) {
             buffer.append("version=\"").append(version).append("\" ");
         }

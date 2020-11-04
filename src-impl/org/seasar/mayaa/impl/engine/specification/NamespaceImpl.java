@@ -289,7 +289,7 @@ public class NamespaceImpl implements Namespace {
             spaces.add(parent);
             parent = parent.getParentSpace();
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = spaces.size()-1; i >= 0; i--) {
             Namespace current = spaces.get(i);
             if (current instanceof NamespaceImpl) {
@@ -343,7 +343,7 @@ public class NamespaceImpl implements Namespace {
     }
 
     private String namespaceToString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("/").append(_defaultNamespaceMapping).append("\n");
         for (Iterator<PrefixMapping> it = iteratePrefixMapping(false); it.hasNext(); ) {
             sb.append("\t").append(it.next()).append("\n");

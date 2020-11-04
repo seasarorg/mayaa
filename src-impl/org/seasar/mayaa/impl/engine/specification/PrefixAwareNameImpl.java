@@ -88,7 +88,7 @@ public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
     }
 
     public static String forPrefixAwareNameString(QName qName, String prefix) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }

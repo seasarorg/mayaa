@@ -104,7 +104,7 @@ public class SpecificationCache {
     public Specification get(String systemID) {
         Specification spec = _get(systemID);
         countCacheHit(spec != null);
-        return null;
+        return spec;
     }
 
     private Specification _get(String systemID) {

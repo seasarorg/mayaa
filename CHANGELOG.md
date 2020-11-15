@@ -1,8 +1,6 @@
 # 変更点
 
-## リリース未定
-
-## Mayaa 1.2 : 2020-11-01
+## Mayaa 1.2 : 2020-11-15
 
 ### Changes
 - [#16](https://github.com/seasarorg/mayaa/issues/16) - Mayaa動作要件の最低JavaバージョンをJava7としました。
@@ -18,6 +16,7 @@
 
 ### Fixes
 - [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合を解消するとともにキャッシュ保持数の制御を改善しました。
+  org.seasar.mayaa.provider.ServiceProvider 内の scriptEnvironment のパラメータ名 cacheSize にて最小の保持数を設定します。（デフォルト値128）
 - [#49](https://github.com/seasarorg/mayaa/pull/49) - URLエンコードされる文字を含むsystemIDのファイル実体が参照できない潜在的不具合に対応しました。
 
 ## Mayaa 1.1.34 : 2017-07-30

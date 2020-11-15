@@ -8,7 +8,7 @@ MayaaはHTMLをベースとしたテンプレートによるプログラマと�
 
 ## システム動作仕様環境
  * Java7 以降 
- * Servlet API 2.3 ~ 4.0 の web.xml
+ * Servlet API 2.4 ~ 4.0 の web.xml
 
 ### 動作確認済み環境
  * Wildfly 20.0.1Final + Java 11.0.8
@@ -43,7 +43,7 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
 ## 変更履歴
 最近の変更履歴は下記の通りです。過去の変更点については [CHANGELOG.md](./CHANGELOG.md) を参照ください。
 
-### Mayaa 1.2 : 2020-11-01
+### Mayaa 1.2 : 2020-11-15
 
 #### Changes
 - [#16](https://github.com/seasarorg/mayaa/issues/16) - Mayaa動作要件の最低JavaバージョンをJava7としました。
@@ -59,6 +59,7 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
 
 #### Fixes
 - [#14](https://github.com/seasarorg/mayaa/issues/14) - 複数スレッド下でスクリプトキャッシュの競合を解消するとともにキャッシュ保持数の制御を改善しました。
+  org.seasar.mayaa.provider.ServiceProvider 内の scriptEnvironment のパラメータ名 cacheSize にて最小の保持数を設定します。（デフォルト値128）
 - [#49](https://github.com/seasarorg/mayaa/pull/49) - URLエンコードされる文字を含むsystemIDのファイル実体が参照できない潜在的不具合に対応しました。
 
 ### Mayaa 1.1.34 : 2017-07-30

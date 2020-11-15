@@ -28,7 +28,6 @@
   <properties>
     <!-- 普段はJUnitパフォーマンス計測用テスト、遅いテストは除外する -->
     <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
-    <testArgLine></testArgLine>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -43,6 +42,7 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
                 <excludedGroups>test.PerformanceTest.class</excludedGroups>
+                <argLine>${jacocoArgs} -Xmx2048m</argLine>
               </configuration>
             </plugin>
           </plugins>
@@ -208,7 +208,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <excludedGroups>${testExcludedGroups}</excludedGroups>
-            <argLine>${testArgLine}</argLine>
+            <argLine>${jacocoArgs} -Xmx2048m</argLine>
             <systemPropertyVariables>
               <inMaven>1</inMaven>
             </systemPropertyVariables>
@@ -235,8 +235,18 @@
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
+          <source>1.7</source>
           <quiet>true</quiet>
         </configuration>
+        <executions>
+          <execution>
+            <id>javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -310,16 +320,13 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.2</version>
-        <configuration>
-          <propertyName>jacocoArgs</propertyName>
-          <append>true</append>
-        </configuration>
         <executions>
           <execution>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
             <configuration>
+              <propertyName>jacocoArgs</propertyName>
               <destFile>${project.build.directory}/jacoco-output/jacoco-ut.exec</destFile>
             </configuration>
           </execution>
@@ -342,12 +349,13 @@
               <goal>prepare-agent</goal>
             </goals>
             <configuration>
+              <propertyName>jacocoArgsIt</propertyName>
               <destFile>${project.build.directory}/jacoco-output/jacoco-it.exec</destFile>
             </configuration>
           </execution>
           <execution>
             <id>after-integration-test-execution</id>
-            <phase>post-integration-test</phase>
+            <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>
@@ -358,7 +366,7 @@
           </execution>
           <execution>
             <id>merge-unit-and-integration</id>
-            <phase>post-integration-test</phase>
+            <phase>verify</phase>
               <goals>
                 <goal>merge</goal>
               </goals>
@@ -376,7 +384,7 @@
           </execution>
           <execution>
             <id>create-merged-report</id>
-            <phase>post-integration-test</phase>
+            <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>
@@ -412,7 +420,7 @@
               <goal>run-forked</goal><!-- for jacoco coverage -->
             </goals>
             <configuration>
-              <jvmArgs>-Djetty.port=8999 ${jacocoArgs}</jvmArgs>
+              <jvmArgs>-Djetty.port=8999 ${jacocoArgsIt}</jvmArgs>
               <waitForChild>false</waitForChild>
             </configuration>
           </execution>
@@ -424,17 +432,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -607,12 +604,6 @@
         <groupId>org.apache.taglibs</groupId>
         <artifactId>taglibs-standard-impl</artifactId>
         <version>1.2.5</version>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>com.codeborne</groupId>
-        <artifactId>selenide</artifactId>
-        <version>5.1.0</version>
         <scope>test</scope>
     </dependency>
     <dependency>

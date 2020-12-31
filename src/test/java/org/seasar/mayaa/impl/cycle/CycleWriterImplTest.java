@@ -28,17 +28,19 @@ public class CycleWriterImplTest {
 
     @Test
     public void testGetBuffer() throws IOException {
-        CycleWriterImpl writer = new CycleWriterImpl(null);
-        writer.write("test string");
-        assertEquals("test string", writer.getString());
+        try (CycleWriterImpl writer = new CycleWriterImpl(null)) {
+            writer.write("test string");
+            assertEquals("test string", writer.getString());
+        }
     }
 
     @Test
     public void testClearBuffer() throws IOException {
-        CycleWriterImpl writer = new CycleWriterImpl(null);
-        writer.write("test string");
-        writer.clearBuffer();
-        assertEquals("", writer.getString());
+        try (CycleWriterImpl writer = new CycleWriterImpl(null)) {
+            writer.write("test string");
+            writer.clearBuffer();
+            assertEquals("", writer.getString());
+        }
     }
 
 }

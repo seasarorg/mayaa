@@ -8,7 +8,7 @@
   <artifactId>mayaa</artifactId>
   <name>Mayaa</name>
   <packaging>jar</packaging>
-  <version>1.2</version>
+  <version>1.2.1-SNAPSHOT</version>
   <description>Mayaa is server side web template engine that is strongly aware of work sharing between programmers and designers based on HTML based templates.</description>
   <url>http://mayaa.seasar.org/</url>
 
@@ -29,6 +29,8 @@
     <!-- 普段はJUnitパフォーマンス計測用テスト、遅いテストは除外する -->
     <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
   <profiles>
@@ -219,6 +221,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>source-jar</id>
@@ -231,6 +234,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
@@ -251,6 +255,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>add-source</id>
@@ -307,6 +312,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
         <configuration>
           <archive>
             <manifest>

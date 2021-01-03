@@ -213,6 +213,7 @@ public class RhinoUtil {
      * @return プロパティの値。メソッドにアクセスできない場合はnull
      * @throws NoSuchMethodException getterメソッドが見つからない場合
      */
+    @SuppressWarnings("deprecation") /* Method#isAccessible() is deprecated since Java9 */
     protected static Object getWithGetterMethod(Object bean, String propertyName)
             throws NoSuchMethodException {
         Class<?> beanClass = bean.getClass();
@@ -243,7 +244,7 @@ public class RhinoUtil {
             throw new NoSuchMethodException(
                     beanClass.toString() + ".get" + baseName + "()");
         }
-
+        
         if (getter.isAccessible() == false) {
             getter.setAccessible(true);
         }
@@ -266,6 +267,7 @@ public class RhinoUtil {
      * @param propertyName プロパティ名
      * @return フィールドの値。フィールドがなければnull
      */
+    @SuppressWarnings("deprecation") /* Field#isAccessible() is deprecated since Java9 */
     protected static Object getFromPublicField(Object bean, String propertyName) {
         try {
             // TODO Fieldキャッシュ

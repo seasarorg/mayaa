@@ -163,7 +163,6 @@ public class FileSearchIterator implements Runnable {
 
     protected void finalize() throws Throwable {
         stopThread();
-        super.finalize();
     }
 
 }

@@ -15,13 +15,12 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
 import org.junit.Before;
 import org.junit.BeforeClass;

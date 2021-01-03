@@ -222,7 +222,6 @@ public class ReferenceCache<T> {
 
     protected void finalize() throws Throwable {
         _liveSweepMonitor = false;
-        super.finalize();
     }
 
     // support class

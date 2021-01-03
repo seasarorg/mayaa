@@ -629,7 +629,6 @@ public class EngineImpl extends SpecificationImpl
 
     protected void finalize() throws Throwable {
         destroy();
-        super.finalize();
     }
 
     // Parameterizable implements ------------------------------------

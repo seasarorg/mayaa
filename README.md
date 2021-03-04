@@ -32,7 +32,7 @@ Mayaa はバージョン1.1.33以降は [Maven Central Repository](https://searc
 ## サポート & フィードバック方法
 
 Mayaa自体の問題や機能に関する提案や相談については
-[Mayaaリポジトリ(Github)のIssue機能](https://github.com/seasarorg/mayaa/issues)にてお願いします。
+[Mayaaリポジトリ(GitHub)のIssue機能](https://github.com/seasarorg/mayaa/issues)にてお願いします。
 
 利用に関するお問い合わせ & フィードバックは Mayaa-User ML（日本語）によって行います。
 MLへの参加は下記URLページより購読登録してください。

@@ -49,7 +49,7 @@ public class SpecificationCache {
 
     public SpecificationCache(int surviveLimit) {
         _surviveLimit = surviveLimit;
-        if (surviveLimit > 0 && !ParameterAware.IS_SECURE_WEB) {
+        if (surviveLimit > 0 && !EngineUtil.isInSecureWeb()) {
             _gcChecker = new ReferenceCache<>(Object.class,
                     ReferenceCache.SOFT, new GCReceiver());
             postNewGabage();

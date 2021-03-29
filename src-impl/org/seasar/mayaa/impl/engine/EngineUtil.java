@@ -45,6 +45,16 @@ public class EngineUtil implements CONST_IMPL {
     private static String _mayaaExtensionName;
 
     /**
+     * Google App Engineのような、セキュアなWeb環境設定か否かを返却する。
+     * 有効にする場合はシステムプロパティ org.seasar.mayaa.secure.web に true を設定する。
+     * 
+     * @return セキュアなWeb環境の設定がされている場合は true
+     */
+    public static boolean isInSecureWeb() {
+        return Boolean.getBoolean(CONST_IMPL.SECURE_WEB_KEY);
+    }
+
+    /**
      * 現在デバッグモードかどうかを返します。
      * @return 現在がデバッグモードなら{@code true}、そうでなければ{@code false}。
      */

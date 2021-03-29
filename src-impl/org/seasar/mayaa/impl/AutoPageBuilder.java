@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
-import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
@@ -33,6 +32,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletRequest;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
@@ -104,7 +104,7 @@ public class AutoPageBuilder implements Runnable {
         Engine engine = ProviderUtil.getEngine();
         boolean autoBuild = ObjectUtil.booleanValue(
                 engine.getParameter(OPTION_AUTO_BUILD), false);
-        if (autoBuild && (ParameterAware.IS_SECURE_WEB == false)) {
+        if (autoBuild && !EngineUtil.isInSecureWeb()) {
             _servletContext = servletConfig.getServletContext();
             _contextPath = prepareContextPath(contextPath, engine);
             _repeat = ObjectUtil.booleanValue(

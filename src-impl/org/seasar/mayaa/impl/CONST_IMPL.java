@@ -25,6 +25,11 @@ import org.seasar.mayaa.impl.engine.specification.URIImpl;
  */
 public interface CONST_IMPL {
 
+    /**
+     * IS_SECURE_WEBのキー。
+     */
+    String SECURE_WEB_KEY = "org.seasar.mayaa.secure.web";
+
     String DEBUG = "org.seasar.mayaa.debug";
 
     String CHECK_TIMESTAMP = "checkTimestamp";

@@ -74,7 +74,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     }
 
     public boolean isSpecificationSerialize() {
-        return _specificationSerialize && !IS_SECURE_WEB;
+        return _specificationSerialize && !EngineUtil.isInSecureWeb();
     }
 
     public void setSpecificationSerialize(boolean specificationSerialize) {

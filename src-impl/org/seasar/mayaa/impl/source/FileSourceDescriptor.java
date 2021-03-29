@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.WritableSourceDescriptor;
 
@@ -87,7 +88,7 @@ public class FileSourceDescriptor
             String realPath = getRealPath();
             if (StringUtil.hasValue(realPath)) {
                  File file = new File(realPath);
-                 if (IS_SECURE_WEB) {
+                 if (EngineUtil.isInSecureWeb()) {
                 	 try {
                 		 if (file.exists()) {
                 			 _file = file;

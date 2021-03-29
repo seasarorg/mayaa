@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -118,7 +119,7 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
 
         Class<?> sourceHolderClass = null;
         if ("folder".equals(name)) {
-        	if (IS_SECURE_WEB && ("".equals(value) || "/".equals(value))) {
+        	if (EngineUtil.isInSecureWeb() && ("".equals(value) || "/".equals(value))) {
         		sourceHolderClass = WebContextRootResourceHolder.class;
         	} else {
         		sourceHolderClass = WebContextFolderSourceHolder.class;

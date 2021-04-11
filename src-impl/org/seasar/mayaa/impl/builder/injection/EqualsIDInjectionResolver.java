@@ -31,7 +31,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -40,10 +40,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EqualsIDInjectionResolver extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = 3248707016394881768L;
     private static final Log LOG =
         LogFactory.getLog(EqualsIDInjectionResolver.class);
 
@@ -53,7 +52,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
     private boolean _reportDuplicatedID = true;
 
     public EqualsIDInjectionResolver() {
-        _additionalIds.add(QM_ID);
+        _additionalIds.add(CONST_IMPL.QM_ID);
     }
 
     protected CopyToFilter getCopyToFilter() {
@@ -97,8 +96,8 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
 
-            if (id.equals(SpecificationUtil.getAttributeValue(child, QM_ID))) {
-                if (QM_MAYAA.equals(node.getQName())) {
+            if (id.equals(SpecificationUtil.getAttributeValue(child, CONST_IMPL.QM_ID))) {
+                if (CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
                     specificationNodes.add(child);
                 } else {
                     // m:mayaa直下でなければ警告し、利用しない
@@ -134,7 +133,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
                 spec = EngineUtil.getParentSpecification(spec);
             }
             if (injected != null) {
-                if (QM_IGNORE.equals(injected.getQName())) {
+                if (CONST_IMPL.QM_IGNORE.equals(injected.getQName())) {
                     return chain.getNode(original);
                 }
                 return injected.copyTo(getCopyToFilter());
@@ -179,7 +178,7 @@ public class EqualsIDInjectionResolver extends ParameterAwareImpl
         public boolean accept(NodeObject test) {
             if (test instanceof NodeAttribute) {
                 NodeAttribute attr = (NodeAttribute) test;
-                return attr.getQName().equals(QM_ID) == false;
+                return attr.getQName().equals(CONST_IMPL.QM_ID) == false;
             }
             return true;
         }

@@ -20,8 +20,7 @@ import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
-import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -31,10 +30,9 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RenderedSetter extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class RenderedSetter extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = 1350199548908128291L;
     protected static final QName QM_NULL =
         SpecificationUtil.createQName("null");
     protected static final QName QM_RENDERED =

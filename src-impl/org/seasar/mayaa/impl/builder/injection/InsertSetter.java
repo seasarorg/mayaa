@@ -22,7 +22,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -33,10 +33,9 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InsertSetter extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class InsertSetter extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = -326245681584232257L;
     protected static final QName QM_INSERT =
         SpecificationUtil.createQName("insert");
     protected static final QName QM_PATH =
@@ -71,9 +70,9 @@ public class InsertSetter extends ParameterAwareImpl
                         QM_INSERT, uri, injected, false);
                 node.addAttribute(QM_PATH, path);
                 String compName = SpecificationUtil.getAttributeValue(
-                        injected, QM_NAME);
+                        injected, CONST_IMPL.QM_NAME);
                 if (StringUtil.hasValue(compName)) {
-                    node.addAttribute(QM_NAME, compName);
+                    node.addAttribute(CONST_IMPL.QM_NAME, compName);
                 }
                 return node;
             }

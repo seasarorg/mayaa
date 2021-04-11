@@ -21,7 +21,7 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -31,22 +31,21 @@ import org.seasar.mayaa.impl.util.StringUtil;
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MetaValuesSetter extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class MetaValuesSetter extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = 3263443313691061874L;
     protected static final QName QH_CONTENT =
-        SpecificationUtil.createQName(URI_HTML, "content");
+        SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "content");
     protected static final QName QH_HTTP_EQUIV =
-        SpecificationUtil.createQName(URI_HTML, "http-equiv");
+        SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "http-equiv");
     protected static final QName QH_META =
-        SpecificationUtil.createQName(URI_HTML, "meta");
+        SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "meta");
     protected static final QName QX_CONTENT =
-        SpecificationUtil.createQName(URI_XHTML, "content");
+        SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "content");
     protected static final QName QX_HTTP_EQUIV =
-        SpecificationUtil.createQName(URI_XHTML, "http-equiv");
+        SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "http-equiv");
     protected static final QName QX_META =
-        SpecificationUtil.createQName(URI_XHTML, "meta");
+        SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "meta");
 
     protected void addMayaaAttribute(
             SpecificationNode original, QName qName, String value) {
@@ -68,16 +67,16 @@ public class MetaValuesSetter extends ParameterAwareImpl
         if (StringUtil.hasValue(contentValue)) {
             if ("Content-Type".equalsIgnoreCase(equivValue)) {
                 // TemplateNodeHandlerで強制的にcharsetを付与済み
-                addMayaaAttribute(original, QM_CONTENT_TYPE, contentValue);
+                addMayaaAttribute(original, CONST_IMPL.QM_CONTENT_TYPE, contentValue);
             } else if ("Pragma".equalsIgnoreCase(equivValue)) {
                 if ("no-cache".equalsIgnoreCase(contentValue)) {
-                    addMayaaAttribute(original, QM_NO_CACHE, "true");
+                    addMayaaAttribute(original, CONST_IMPL.QM_NO_CACHE, "true");
                 }
             } else if ("Cache-Control".equalsIgnoreCase(equivValue)) {
                 if ("no-cache".equalsIgnoreCase(contentValue)) {
-                    addMayaaAttribute(original, QM_NO_CACHE, "true");
+                    addMayaaAttribute(original, CONST_IMPL.QM_NO_CACHE, "true");
                 } else {
-                    addMayaaAttribute(original, QM_CACHE_CONTROL, contentValue);
+                    addMayaaAttribute(original, CONST_IMPL.QM_CACHE_CONTROL, contentValue);
                 }
             }
         }

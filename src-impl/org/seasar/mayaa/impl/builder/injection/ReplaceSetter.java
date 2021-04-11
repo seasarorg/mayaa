@@ -22,7 +22,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -34,10 +34,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
  *
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ReplaceSetter extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class ReplaceSetter extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = 442671575099062287L;
     protected static final QName QM_REPLACE =
         SpecificationUtil.createQName("replace");
 
@@ -65,14 +64,14 @@ public class ReplaceSetter extends ParameterAwareImpl
             QName qName = original.getQName();
             URI uri = qName.getNamespaceURI();
             SpecificationNode element = BuilderUtil.createInjectedNode(
-                    QM_DUPLECATED, uri, original, false);
+                CONST_IMPL.QM_DUPLECATED, uri, original, false);
             StringBuilder name = new StringBuilder();
             String prefix = original.getPrefix();
             if (StringUtil.hasValue(prefix)) {
                 name.append(prefix).append(":");
             }
             name.append(qName.getLocalName());
-            element.addAttribute(QM_NAME, name.toString());
+            element.addAttribute(CONST_IMPL.QM_NAME, name.toString());
             element.addChildNode(injected);
             return element;
         }

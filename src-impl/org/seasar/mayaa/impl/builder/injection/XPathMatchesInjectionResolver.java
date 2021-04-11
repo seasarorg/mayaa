@@ -32,7 +32,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
@@ -46,10 +46,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class XPathMatchesInjectionResolver extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class XPathMatchesInjectionResolver extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = -3738385077054952571L;
     private static final Log LOG =
         LogFactory.getLog(XPathMatchesInjectionResolver.class);
     protected static final QName QM_XPATH =
@@ -76,7 +75,7 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
             SpecificationNode child = (SpecificationNode) it.next();
             String xpath = SpecificationUtil.getAttributeValue(child, QM_XPATH);
             if (StringUtil.hasValue(xpath)) {
-                if (QM_MAYAA.equals(node.getQName())) {
+                if (CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
                     specificationNodes.add(child);
                 } else {
                     // m:mayaa直下でなければ警告し、利用しない
@@ -95,7 +94,7 @@ public class XPathMatchesInjectionResolver extends ParameterAwareImpl
 
         // TODO テンプレートのprefix定義、Mayaaファイルのを反映させる
         Namespace namespace = SpecificationUtil.createNamespace();
-        namespace.addPrefixMapping("m", URI_MAYAA);
+        namespace.addPrefixMapping("m", CONST_IMPL.URI_MAYAA);
 
         // mayaaファイル内のm:xpathを持つすべてのノードを対象とする
         Specification spec = SpecificationUtil.findSpecification(original);

@@ -24,7 +24,7 @@ import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -32,10 +32,9 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InjectAttributeInjectionResolver extends ParameterAwareImpl
-        implements InjectionResolver, CONST_IMPL {
+public class InjectAttributeInjectionResolver extends NonSerializableParameterAwareImpl
+        implements InjectionResolver {
 
-    private static final long serialVersionUID = 2380780440814507007L;
     private static final Log LOG =
         LogFactory.getLog(InjectAttributeInjectionResolver.class);
 
@@ -45,15 +44,15 @@ public class InjectAttributeInjectionResolver extends ParameterAwareImpl
             throw new IllegalArgumentException();
         }
         String injectName =
-            SpecificationUtil.getAttributeValue(original, QM_INJECT);
+            SpecificationUtil.getAttributeValue(original, CONST_IMPL.QM_INJECT);
         if (StringUtil.hasValue(injectName)) {
             PrefixAwareName prefixAwareName =
                 BuilderUtil.parseName(original, injectName);
             QName qName = prefixAwareName.getQName();
-            if (QM_IGNORE.equals(qName) == false) {
+            if (CONST_IMPL.QM_IGNORE.equals(qName) == false) {
                 URI uri = qName.getNamespaceURI();
-                if (URI_HTML.equals(uri)
-                        || URI_XHTML.equals(uri) || URI_XML.equals(uri)) {
+                if (CONST_IMPL.URI_HTML.equals(uri)
+                        || CONST_IMPL.URI_XHTML.equals(uri) || CONST_IMPL.URI_XML.equals(uri)) {
                     LOG.error("inject=\""+ injectName +"\" is not processor");
                 }
                 return BuilderUtil.createInjectedNode(

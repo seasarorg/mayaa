@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.engine;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
@@ -28,7 +26,7 @@ import org.seasar.mayaa.engine.specification.Specification;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Page
-        extends Serializable, Specification, TemplateRenderer {
+        extends Specification, TemplateRenderer {
 
     /**
      * インスタンスをを初期化する。

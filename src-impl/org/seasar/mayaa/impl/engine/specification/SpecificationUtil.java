@@ -15,6 +15,12 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -47,6 +56,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class SpecificationUtil implements CONST_IMPL {
+
+    private static final Log LOG = LogFactory.getLog(SpecificationUtil.class);
 
     private static EventScriptEnvironment _eventScripts =
         new EventScriptEnvironment();
@@ -291,6 +302,85 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static URI createURI(String uri) {
         return URIImpl.getInstance(uri);
+    }
+
+    /**
+     * キャッシュ用にシリアライズするディレクトリのファイルオブジェクトを取得する。
+     * @return Fileオブジェクト
+     */
+    protected static File getSerializeDirectory() {
+        ApplicationScope scope =
+            CycleUtil.getServiceCycle().getApplicationScope();
+        String basePath = scope.getRealPath("WEB-INF");
+        if (basePath == null) {
+            throw new IllegalStateException("cannot resolve spec cache directory.");
+        }
+        File cacheDir = new File(basePath, ".mayaaSpecCache");
+        cacheDir.mkdirs();
+        return cacheDir;
+    }
+
+    /**
+     * システムIDからキャッシュ用にシリアライズするファイル名を生成する。
+     * @param systemID システムID
+     * @return シリアライズ用ファイル名
+     */
+    protected static String getSerializedFilename(String systemID) {
+        return systemID.substring("/".length()).replace('/', '`') + ".ser";
+    }
+
+    public static void serialize(Specification spec) {
+        File cacheDir = getSerializeDirectory();
+        serialize(spec, cacheDir);
+    }
+
+    public static void serialize(Specification spec, File cacheDir) {
+        try {
+            String filename = getSerializedFilename(spec.getSystemID());
+
+            synchronized(spec) {
+                File file = new File(cacheDir, filename);
+                try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file))){
+                    stream.writeObject(spec);
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("page serialize failed.", e);
+        } catch (IllegalStateException e) {
+            LOG.error("page serialize failed.", e);
+        }
+    }
+
+    public static Specification deserialize(String systemID) {
+        File cacheDir = getSerializeDirectory();
+        return deserialize(systemID, cacheDir);
+    }
+
+    public static Specification deserialize(String systemID, File cacheDir) {
+        File cacheFile = null;
+        try {
+            String filename = getSerializedFilename(systemID);
+            cacheFile = new File(cacheDir, filename);
+            if (cacheFile.exists() == false) {
+                return null;
+            }
+        } catch (IllegalStateException e) {
+            return null;
+        }
+
+
+        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(cacheFile))) {
+            Specification result = (Specification) stream.readObject();
+            return result;
+        } catch(Throwable e) {
+            String message = systemID + " specification deserialize failed.";
+            if (e.getMessage() != null) {
+                message += " " + e.getMessage();
+            }
+            LOG.info(message);
+            cacheFile.delete();
+            return null;
+        }
     }
 
     // script cache ----------------------------------------------

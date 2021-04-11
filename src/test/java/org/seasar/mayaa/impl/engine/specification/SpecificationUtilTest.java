@@ -16,15 +16,53 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.impl.engine.PageImpl;
+import org.seasar.mayaa.impl.engine.TemplateImpl;
+import org.seasar.mayaa.impl.source.SourceUtil;
+import org.seasar.mayaa.test.util.ManualProviderFactory;
 
 public class SpecificationUtilTest {
 
+    private PageImpl _page;
+    private TemplateImpl _template;
+
+    @Before
+    public void setUp() {
+        ManualProviderFactory.setUp(this);
+
+        _page = new PageImpl();
+
+        _page.setSource(SourceUtil.getSourceDescriptor("/page.mayaa"));
+        _page.initialize("/page");
+        _page.build();
+
+        _template = new TemplateImpl();
+        _template.setSource(SourceUtil.getSourceDescriptor("/page.html"));
+        _template.initialize(_page, "ja", "html");
+        _template.build();
+
+    }
+
     /*
-     * Test method for 'org.seasar.mayaa.impl.engine.specification.SpecificationUtil.parseQName(String)'
+     * Test method for
+     * 'org.seasar.mayaa.impl.engine.specification.SpecificationUtil.parseQName(
+     * String)'
      */
     @Test
     public void testParseQName() {
@@ -63,6 +101,38 @@ public class SpecificationUtilTest {
         } catch (IllegalArgumentException e) {
             assertEquals("bar}id", e.getMessage());
         }
+    }
+
+    @Test
+    public void testSerializeTemplate() throws URISyntaxException {
+        File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
+        assertFalse(_template.isDeprecated());
+
+        SpecificationUtil.serialize(_template, cacheDir);
+
+        Specification actual = SpecificationUtil.deserialize(_template.getSystemID(), cacheDir);
+
+        assertTrue("Instance must be of Page", actual instanceof Template);
+        assertEquals(_template, actual);
+
+        assertFalse(actual.isDeprecated());
+
+    }
+
+    @Test
+    public void testSerializePage() throws URISyntaxException {
+        File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
+        assertFalse(_page.isDeprecated());
+
+        SpecificationUtil.serialize(_page, cacheDir);
+
+        Specification actual = SpecificationUtil.deserialize(_page.getSystemID(), cacheDir);
+
+        assertTrue("Instance must be of Page", actual instanceof Page);
+        assertEquals(_page, actual);
+
+        assertFalse(actual.isDeprecated());
+
     }
 
 }

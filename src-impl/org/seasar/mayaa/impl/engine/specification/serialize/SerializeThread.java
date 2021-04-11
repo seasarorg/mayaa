@@ -25,6 +25,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletRequest;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -79,7 +80,7 @@ public class SerializeThread extends Thread {
                     _liveCount = RECYCLE_LIVE_COUNT;    // enlargement
                     synchronized(specification) {
                         try {
-                            specification.serialize();
+                            SpecificationUtil.serialize(specification);
                         } finally {
                             specification = null;
                         }

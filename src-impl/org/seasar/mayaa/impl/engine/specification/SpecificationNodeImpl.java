@@ -53,7 +53,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
     private NodeTreeWalkerImpl _delegateNodeTreeWalker;
     // for PrefixAwareName
     private QName _qName;
-    private transient String _finalizeLabel;
 
     public SpecificationNodeImpl(QName qName) {
         _qName = qName;
@@ -63,28 +62,12 @@ public class SpecificationNodeImpl extends NamespaceImpl
         if (_delegateNodeTreeWalker == null) {
             synchronized (this) {
                 _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
-                _delegateNodeTreeWalker.setOwner(this);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("_delegateNodeTreeWalker created.");
                 }
             }
         }
         return _delegateNodeTreeWalker;
-    }
-
-    protected String makeReleasedLabel() {
-        if (_finalizeLabel == null) {
-            try {
-                _finalizeLabel = toString();
-            } catch(Throwable e) {
-                _finalizeLabel = getNodeTreeWalker().getSystemID()
-                            + " <" + _qName + ">";
-            }
-        }
-        if (_finalizeLabel != null) {
-            return "node " + _finalizeLabel + "@" + hashCode() + " unloaded.";
-        }
-        return "";
     }
 
     public String toString() {
@@ -101,20 +84,13 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return path.toString();
     }
 
-// デバッグのときだけ有効にすること。finalize()をオーバーライドするとFinalizerなどから特別扱いされる。
-//    protected void finalize() throws Throwable {
-//        if (LOG.isTraceEnabled()) {
-//            LOG.trace(makeReleasedLabel());
-//        }
-//        super.finalize();
-//    }
-
     // PrefixAwareName implements
-
+    @Override
     public QName getQName() {
         return _qName;
     }
 
+    @Override
     public String getPrefix() {
         URI namespaceURI = getQName().getNamespaceURI();
         for (Iterator<PrefixMapping> it = iteratePrefixMapping(true); it.hasNext();) {
@@ -127,7 +103,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     // SpecificaitonNode implements ------------------------------------
-
+    @Override
     public void setSequenceID(int sequenceID) {
         if (sequenceID < 0) {
             throw new IllegalArgumentException("sequenceID");
@@ -137,14 +113,17 @@ public class SpecificationNodeImpl extends NamespaceImpl
                 ":" + _sequenceID;
     }
 
+    @Override
     public int getSequenceID() {
         return _sequenceID;
     }
 
+    @Override
     public void addAttribute(QName qName, String value) {
         addAttribute(qName, null, value);
     }
 
+    @Override
     public void addAttribute(QName qName, String originalName, String value) {
         if (qName == null || value == null) {
             throw new IllegalArgumentException();
@@ -326,9 +305,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
-        if (_delegateNodeTreeWalker != null) {
-            _delegateNodeTreeWalker.setOwner(this);
-        }
         // namespace
         String currentMappingInfo = in.readUTF();
         NamespaceImpl namespace = deserialize(currentMappingInfo);

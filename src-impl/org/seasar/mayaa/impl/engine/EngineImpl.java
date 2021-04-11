@@ -42,6 +42,7 @@ import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -365,7 +366,7 @@ public class EngineImpl extends SpecificationImpl
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(pageScopeValues);
                     try {
-                        SpecificationUtil.execEvent(_defaultSpecification, QM_BEFORE_RENDER);
+                        SpecificationUtil.execEvent(_defaultSpecification, CONST_IMPL.QM_BEFORE_RENDER);
                         RequestScope request = cycle.getRequestScope();
                         pageName = request.getPageName();
                         extension = request.getExtension();
@@ -377,7 +378,7 @@ public class EngineImpl extends SpecificationImpl
                         ret = page.doPageRender(requestedSuffix, extension);
 
                         saveToCycle();
-                        SpecificationUtil.execEvent(_defaultSpecification, QM_AFTER_RENDER);
+                        SpecificationUtil.execEvent(_defaultSpecification, CONST_IMPL.QM_AFTER_RENDER);
                     } finally {
                         SpecificationUtil.endScope();
                     }
@@ -520,7 +521,7 @@ public class EngineImpl extends SpecificationImpl
         boolean rebuild = false;
         Specification spec;
         if (isSpecificationSerialize()) {
-            spec = deserialize(systemID);
+            spec = SpecificationUtil.deserialize(systemID);
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
                     if (registerCache) {
@@ -616,7 +617,7 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected String getSuffixSeparator() {
-        return EngineUtil.getEngineSetting(SUFFIX_SEPARATOR, "$");
+        return EngineUtil.getEngineSetting(CONST_IMPL.SUFFIX_SEPARATOR, "$");
     }
 
     public synchronized void destroy() {
@@ -634,7 +635,7 @@ public class EngineImpl extends SpecificationImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if (DEFAULT_SPECIFICATION.equals(name)) {
+        if (CONST_IMPL.DEFAULT_SPECIFICATION.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 String systemID;
                 if (value.charAt(0) != '/') {
@@ -649,7 +650,7 @@ public class EngineImpl extends SpecificationImpl
 
                 setupDefaultIsMayaa();
             }
-        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList<>();
@@ -658,7 +659,7 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), true);
                 _templatePathPatterns.add(0, pathPattern);
             }
-        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList<>();
@@ -674,7 +675,7 @@ public class EngineImpl extends SpecificationImpl
                     _pageClass = pageClass;
                 }
             }
-        } else if (MAYAA_EXTENSION.equals(name)) {
+        } else if (CONST_IMPL.MAYAA_EXTENSION.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (value.startsWith(".")) {
                     _mayaaExtension = value;
@@ -721,19 +722,19 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public String getParameter(String name) {
-        if (DEFAULT_SPECIFICATION.equals(name)) {
+        if (CONST_IMPL.DEFAULT_SPECIFICATION.equals(name)) {
             return _defaultSpecificationID;
-        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
             return patternToString(_templatePathPatterns, true);
-        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
             return patternToString(_templatePathPatterns, false);
-        } else if (MAYAA_EXTENSION.equals(name)) {
+        } else if (CONST_IMPL.MAYAA_EXTENSION.equals(name)) {
             return _mayaaExtension;
         } else if (PAGE_CLASS.equals(name)) {
             return _pageClass.getName();

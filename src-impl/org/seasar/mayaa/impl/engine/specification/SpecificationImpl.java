@@ -15,24 +15,19 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.SpecificationBuilder;
-import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
-import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
-import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -42,14 +37,14 @@ import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeControl
 import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.NullSourceDescriptor;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationImpl extends ParameterAwareImpl
-        implements Specification, NodeReferenceResolver, CONST_IMPL {
+public class SpecificationImpl extends ParameterAwareImpl implements Specification {
 
     private static final long serialVersionUID = -7503898036935182468L;
 
@@ -58,7 +53,7 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     private Date _buildTimestamp;
     private Date _builtSourceTime;
-    private SourceDescriptor _source;
+    private transient SourceDescriptor _source;
     private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
     private boolean _deprecated = true;
@@ -66,7 +61,7 @@ public class SpecificationImpl extends ParameterAwareImpl
     private transient boolean _specificationSerialize;
 
     protected boolean needCheckTimestamp() {
-        return EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true);
+        return EngineUtil.getEngineSettingBoolean(CONST_IMPL.CHECK_TIMESTAMP, true);
     }
 
     protected boolean isSourceExists() {
@@ -94,7 +89,6 @@ public class SpecificationImpl extends ParameterAwareImpl
             synchronized (this) {
                 if (_delegateNodeTreeWalker == null) {
                     _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
-                    _delegateNodeTreeWalker.setOwner(this);
                 }
             }
         }
@@ -175,11 +169,12 @@ public class SpecificationImpl extends ParameterAwareImpl
 
     public void setSource(SourceDescriptor source) {
         _source = source;
+        super.setSystemID(source.getSystemID());
     }
 
     public SourceDescriptor getSource() {
         if (_source == null) {
-            _source = new NullSourceDescriptor();
+            _source = NullSourceDescriptor.getInstance();
         }
         return _source;
     }
@@ -234,10 +229,6 @@ public class SpecificationImpl extends ParameterAwareImpl
         return getNodeTreeWalker().getChildNodeSize();
     }
 
-    public void kill() {
-        // TODO deprecated のため削除
-    }
-
     // NodeReferenceResolverFinder implements --------------------------------------
 
     public NodeReferenceResolver findNodeResolver() {
@@ -279,123 +270,78 @@ public class SpecificationImpl extends ParameterAwareImpl
             });
     }
 
-
-    protected static File getSerializedFile(String systemID) {
-        ApplicationScope scope =
-            CycleUtil.getServiceCycle().getApplicationScope();
-        String basePath = scope.getRealPath("WEB-INF");
-        if (basePath == null) {
-            throw new IllegalStateException("cannot resolve spec cache directory.");
-        }
-        File cacheDir = new File(basePath, ".mayaaSpecCache");
-        cacheDir.mkdirs();
-        return new File(cacheDir,
-                systemID.substring("/".length()).replace('/', '`') + ".ser");
-    }
-
-    public void serialize() {
-        synchronized(this) {
-            try {
-                File outputFile = getSerializedFile(getSystemID());
-                ObjectOutputStream stream =
-                    new ObjectOutputStream(new FileOutputStream(outputFile));
-                try {
-                    nodeSerializer().init();
-                    try {
-                        stream.writeObject(this);
-                    } finally {
-                        nodeSerializer().release();
-                    }
-                } finally {
-                    stream.close();
-                }
-            } catch (IOException e) {
-                LOG.error("page serialize failed.", e);
-            } catch (IllegalStateException e) {
-                LOG.error("page serialize failed.", e);
-            }
-        }
+    public static NodeSerializeController nodeSerializer() {
+        return (NodeSerializeController) CycleUtil.getGlobalVariable(
+                SERIALIZE_CONTROLLER_KEY, null);
     }
 
     protected void afterDeserialize() {
         // no-op
     }
 
-    public Specification deserialize(String systemID) {
-        synchronized(this) {
-            File cacheFile = null;
-            try {
-                cacheFile = getSerializedFile(systemID);
-                if (cacheFile.exists() == false) {
-                    return null;
-                }
-            } catch (IllegalStateException e) {
-                return null;
-            }
-            Specification result;
-            try {
-                ObjectInputStream stream =
-                    new ObjectInputStream(new FileInputStream(cacheFile));
-                try {
-                    nodeSerializer().init();
-                    try {
-                        result = (Specification) stream.readObject();
-                        if (result instanceof SpecificationImpl) {
-                            ((SpecificationImpl) result).afterDeserialize();
-                        }
-                    } finally {
-                        nodeSerializer().release();
-                    }
-                } finally {
-                    stream.close();
-                }
-                return result;
-            } catch(Throwable e) {
-                String message =
-                    getSystemID() + " specification deserialize failed.";
-                if (e.getMessage() != null) {
-                    message += " " + e.getMessage();
-                }
-                LOG.info(message);
-                cacheFile.delete();
-                return null;
-            }
-        }
-    }
-
     private void readObject(ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (_delegateNodeTreeWalker != null) {
-            _delegateNodeTreeWalker.setOwner(this);
+        nodeSerializer().init();
+        try {
+            in.defaultReadObject();
+            for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext();) {
+                NodeTreeWalker child = it.next();
+                child.setParentNode(this);
+            }
+
+            // ソースと関連づいていた場合は現在のSourceDescriptorを取得して設定
+            if (_hasSource) {
+                SourceDescriptor sourceDescriptor = SourceUtil.getSourceDescriptor(super.getSystemID());
+                setSource(sourceDescriptor);
+            }
+            nodeSerializer().specLoaded(this);
+
+            afterDeserialize();
+        } finally {
+            nodeSerializer().release();
         }
-        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext(); ) {
-            NodeTreeWalker child = it.next();
-            child.setParentNode(this);
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        nodeSerializer().init();
+        try {
+            out.defaultWriteObject();
+        } finally {
+            nodeSerializer().release();
         }
-        nodeSerializer().specLoaded(this);
     }
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException {
-        out.defaultWriteObject();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_buildTimestamp, _builtSourceTime, _delegateNodeTreeWalker, _deprecated, _hasSource,
+                _lastSequenceID, _source, _specificationSerialize);
     }
 
-    public static NodeSerializeController nodeSerializer() {
-        return (NodeSerializeController) CycleUtil.getGlobalVariable(
-                SERIALIZE_CONTROLLER_KEY, null);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof SpecificationImpl))
+            return false;
+        SpecificationImpl other = (SpecificationImpl) obj;
+        return Objects.equals(_buildTimestamp, other._buildTimestamp)
+                && Objects.equals(_builtSourceTime, other._builtSourceTime)
+                && Objects.equals(_delegateNodeTreeWalker, other._delegateNodeTreeWalker)
+                && _hasSource == other._hasSource
+                && (_hasSource && Objects.nonNull(_source) && Objects.nonNull(other._source) && Objects.equals(_source.getSystemID(), other._source.getSystemID()))
+                && _lastSequenceID == other._lastSequenceID
+                && _specificationSerialize == other._specificationSerialize;
     }
-
-    // NodeReferenceResolver implements ----------------------------
-
-    public void registResolveNodeListener(
-            String uniqueID, NodeResolveListener listener) {
-        nodeSerializer().registResolveNodeListener(
-                uniqueID, listener);
-    }
-
-    public void nodeLoaded(SpecificationNode item) {
-        nodeSerializer().nodeLoaded(item);
-    }
-
 }

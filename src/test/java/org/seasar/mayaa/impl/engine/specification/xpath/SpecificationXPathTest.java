@@ -69,21 +69,25 @@ public class SpecificationXPathTest implements CONST_IMPL {
         _node1 = SpecificationUtil.createSpecificationNode(_qName1, "", 0, false, 0);
         _node1.addAttribute(QM_ID, "testID1");
         _specification.addChildNode(_node1);
+        _node1.setParentNode(_specification);
         _node1.addPrefixMapping("m", URI_MAYAA);
         // 2: qName2 & testID1
         _node2 = SpecificationUtil.createSpecificationNode(_qName2, "", 0, false, 1);
         _node2.addAttribute(QM_ID, "testID1");
         _specification.addChildNode(_node2);
+        _node2.setParentNode(_specification);
         _node2.addPrefixMapping("m", URI_MAYAA);
         // 3: qName1 & testID2
         _node3 = SpecificationUtil.createSpecificationNode(_qName1, "", 0, false, 2);
         _node3.addAttribute(QM_ID, "testID2");
         _specification.addChildNode(_node3);
+        _node3.setParentNode(_specification);
         _node3.addPrefixMapping("m", URI_MAYAA);
         // 4: qName2 & testID2
         _node4 = SpecificationUtil.createSpecificationNode(_qName2, "", 0, false, 3);
         _node4.addAttribute(QM_ID, "testID2");
         _specification.addChildNode(_node4);
+        _node4.setParentNode(_specification);
         _node4.addPrefixMapping("m", URI_MAYAA);
     }
 

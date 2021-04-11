@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.cycle.Response;
@@ -33,6 +34,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
@@ -117,7 +119,7 @@ public class TemplateImpl
      * @return contentType属性の値、またはnull
      */
     protected String getContentType(Page topLevelPage) {
-        String contentType = findMayaaAttribute(topLevelPage, QM_CONTENT_TYPE);
+        String contentType = findMayaaAttribute(topLevelPage, CONST_IMPL.QM_CONTENT_TYPE);
         if (contentType != null) {
             return contentType;
         }
@@ -126,9 +128,9 @@ public class TemplateImpl
         RequestScope request = CycleUtil.getRequestScope();
         String ret = request.getMimeType();
         if (ret == null) {
-            ret = "text/html;charset=" + TEMPLATE_DEFAULT_CHARSET;
+            ret = "text/html;charset=" + CONST_IMPL.TEMPLATE_DEFAULT_CHARSET;
         } else if (ret.indexOf("charset") == -1) {
-            ret = ret + ";charset=" + TEMPLATE_DEFAULT_CHARSET;
+            ret = ret + ";charset=" + CONST_IMPL.TEMPLATE_DEFAULT_CHARSET;
         }
         return ret;
     }
@@ -142,7 +144,7 @@ public class TemplateImpl
      * @return noCache属性の値、またはnull
      */
     protected boolean isNoCache(Page topLevelPage) {
-        String noCache = findMayaaAttribute(topLevelPage, QM_NO_CACHE);
+        String noCache = findMayaaAttribute(topLevelPage, CONST_IMPL.QM_NO_CACHE);
         if (noCache != null) {
             return ObjectUtil.booleanValue(noCache, false);
         }
@@ -159,7 +161,7 @@ public class TemplateImpl
      * @return cacheControl属性の値、またはnull
      */
     protected String getCacheControl(Page topLevelPage) {
-        return findMayaaAttribute(topLevelPage, QM_CACHE_CONTROL);
+        return findMayaaAttribute(topLevelPage, CONST_IMPL.QM_CACHE_CONTROL);
     }
 
     /**
@@ -367,6 +369,40 @@ public class TemplateImpl
 
     public boolean isOnTemplate() {
         return true;
+    }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(_childProcessors, _extension, _pageName, _suffix);
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof TemplateImpl))
+            return false;
+        TemplateImpl other = (TemplateImpl) obj;
+        return Objects.equals(_extension, other._extension)
+            && Objects.equals(_pageName, other._pageName)
+            && Objects.equals(_suffix, other._suffix)
+            && Objects.equals(_childProcessors.size(), other._childProcessors.size());
     }
 
 }

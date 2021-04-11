@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
@@ -27,6 +28,7 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
@@ -73,12 +75,12 @@ public class PageImpl extends SpecificationImpl implements Page {
             }
             // TODO mayaa以外からも取得できるようにする
             String extendsPath =
-                SpecificationUtil.getMayaaAttributeValue(this, QM_EXTENDS);
+                SpecificationUtil.getMayaaAttributeValue(this, CONST_IMPL.QM_EXTENDS);
             if (StringUtil.isEmpty(extendsPath)) {
                 return;
             }
             Engine engine = ProviderUtil.getEngine();
-            String suffixSeparator = engine.getParameter(SUFFIX_SEPARATOR);
+            String suffixSeparator = engine.getParameter(CONST_IMPL.SUFFIX_SEPARATOR);
             String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
 
             _superPage = engine.getPage(
@@ -109,10 +111,10 @@ public class PageImpl extends SpecificationImpl implements Page {
 
     public CompiledScript getSuffixScript() {
         String value = SpecificationUtil.getMayaaAttributeValue(
-                this, QM_TEMPLATE_SUFFIX);
+                this, CONST_IMPL.QM_TEMPLATE_SUFFIX);
         if (StringUtil.isEmpty(value)) {
             value = SpecificationUtil.getMayaaAttributeValue(
-                    ProviderUtil.getEngine(), QM_TEMPLATE_SUFFIX);
+                    ProviderUtil.getEngine(), CONST_IMPL.QM_TEMPLATE_SUFFIX);
         }
         if (StringUtil.isEmpty(value)) {
             value = "";
@@ -174,7 +176,7 @@ public class PageImpl extends SpecificationImpl implements Page {
         Page prevPage = getCurrentPage();
         setCurrentPage(this);
         Engine engine = ProviderUtil.getEngine();
-        SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_PAGE);
+        SpecificationUtil.execEvent(engine, CONST_IMPL.QM_BEFORE_RENDER_PAGE);
         try {
             Page component = this;
             Page superPage = component.getSuperPage();
@@ -183,7 +185,7 @@ public class PageImpl extends SpecificationImpl implements Page {
             }
             Page prevComponent = getCurrentComponent();
             setCurrentComponent(component);
-            SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_COMPONENT);
+            SpecificationUtil.execEvent(engine, CONST_IMPL.QM_BEFORE_RENDER_COMPONENT);
             try {
                 notifyBeginRender();
                 return RenderUtil.renderPage(true, this, null,
@@ -191,7 +193,7 @@ public class PageImpl extends SpecificationImpl implements Page {
             } finally {
                 setCurrentComponent(component);
                 try {
-                    SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_COMPONENT);
+                    SpecificationUtil.execEvent(engine, CONST_IMPL.QM_AFTER_RENDER_COMPONENT);
                 } finally {
                     setCurrentComponent(prevComponent);
                 }
@@ -199,7 +201,7 @@ public class PageImpl extends SpecificationImpl implements Page {
         } finally {
             setCurrentPage(this);
             try {
-                SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_PAGE);
+                SpecificationUtil.execEvent(engine, CONST_IMPL.QM_AFTER_RENDER_PAGE);
             } finally {
                 setCurrentPage(prevPage);
             }
@@ -264,6 +266,37 @@ public class PageImpl extends SpecificationImpl implements Page {
         for (TemplateProcessor listener : getBeginRenderListeners().keySet()) {
             listener.notifyBeginRender(this);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(_beginRenderListeners, _pageName, _suffixScript, _suffixScriptText, _superExtension,
+                _superPage, _superSuffix);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof PageImpl))
+            return false;
+        PageImpl other = (PageImpl) obj;
+        return Objects.equals(_beginRenderListeners, other._beginRenderListeners)
+                && Objects.equals(_pageName, other._pageName)
+                && Objects.equals(_suffixScript, other._suffixScript)
+                && Objects.equals(_suffixScriptText, other._suffixScriptText)
+                && Objects.equals(_superExtension, other._superExtension)
+                && Objects.equals(_superPage, other._superPage)
+                && Objects.equals(_superSuffix, other._superSuffix)
+                && super.equals(other);
     }
 
 }

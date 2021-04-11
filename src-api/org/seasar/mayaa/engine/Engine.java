@@ -17,7 +17,6 @@ package org.seasar.mayaa.engine;
 
 import java.util.Map;
 
-import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.specification.Specification;
 
@@ -26,7 +25,7 @@ import org.seasar.mayaa.engine.specification.Specification;
  * リクエストに対して、ステートレスに実装。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Engine extends ParameterAware, Specification {
+public interface Engine extends Specification {
 
     /**
      * エラーハンドラの設定。

@@ -16,16 +16,13 @@
 package org.seasar.mayaa.source;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Date;
-
-import org.seasar.mayaa.ParameterAware;
 
 /**
  * テンプレートファイルや設定XMLファイルのディスクリプタ。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface SourceDescriptor extends Serializable, ParameterAware {
+public interface SourceDescriptor {
 
     /**
      * ソースSystemIDを設定する。

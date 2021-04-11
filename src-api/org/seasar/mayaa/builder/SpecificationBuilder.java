@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.builder;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.Specification;
 
@@ -25,7 +23,7 @@ import org.seasar.mayaa.engine.specification.Specification;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface SpecificationBuilder
-        extends ParameterAware, Serializable {
+        extends ParameterAware {
 
     /**
      * ページ設定のビルドを行う。

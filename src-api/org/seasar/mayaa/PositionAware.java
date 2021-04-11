@@ -15,12 +15,10 @@
  */
 package org.seasar.mayaa;
 
-import java.io.Serializable;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PositionAware extends Serializable {
+public interface PositionAware {
 
     /**
      * ソースのSystemIDを設定する。

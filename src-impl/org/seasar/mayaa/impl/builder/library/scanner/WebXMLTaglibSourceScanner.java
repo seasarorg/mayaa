@@ -116,9 +116,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
                 source.setRoot(ApplicationSourceDescriptor.WEB_INF);
             }
             source.setSystemID(systemID);
-            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
-            source.setParameter(REAL_PATH, alias.getSystemID());
-            source.setParameter(ASSIGNED, "true");
+            source.setAlias(alias);
             return source;
         }
 

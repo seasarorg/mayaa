@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -37,8 +37,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class ApplicationSourceDescriptor extends ParameterAwareImpl
-        implements ChangeableRootSourceDescriptor {
+public class ApplicationSourceDescriptor extends ParameterAwareImpl implements ChangeableRootSourceDescriptor, HavingAliasSourceDescriptor {
 
     private static final long serialVersionUID = -2775274363708858237L;
     private static final Log LOG = LogFactory.getLog(ApplicationSourceDescriptor.class);
@@ -53,6 +52,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
 
     private FileSourceDescriptor _fileSourceDescriptor;
 
+    private SourceAlias _alias;
     public ApplicationSourceDescriptor() {
         _fileSourceDescriptor = new FileSourceDescriptor();
         _fileSourceDescriptor.setRoot("");
@@ -73,6 +73,16 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl
         return _application;
     }
 
+    @Override
+    public SourceAlias getAlias() {
+        return _alias;
+    }
+
+    public void setAlias(SourceAlias alias) {
+        _alias = alias;
+    }
+
+    @Override
     public void setRoot(String root) {
         _fileSourceDescriptor.setRoot(root);
     }

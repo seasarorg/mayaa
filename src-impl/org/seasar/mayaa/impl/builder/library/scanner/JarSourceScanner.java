@@ -195,7 +195,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());
-            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
+            source.setAlias(alias);
             source.setTimestamp(alias.getTimestamp());
             return source;
         }

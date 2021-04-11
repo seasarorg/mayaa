@@ -36,8 +36,8 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
-import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.source.HavingAliasSourceDescriptor;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractScanningIterator;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -180,20 +180,23 @@ public class LibraryManagerImpl extends ParameterAwareImpl
 
     // condition: already loaded "META-INF/taglib.tld"
     private void assignTaglibLocation(SourceDescriptor source) {
-        String realPath =
-            source.getParameter(WebXMLTaglibSourceScanner.REAL_PATH);
-        if (StringUtil.isEmpty(realPath)
-                || realPath.endsWith(".jar") == false) {
+        if (source instanceof HavingAliasSourceDescriptor) {
+            HavingAliasSourceDescriptor descriptor = (HavingAliasSourceDescriptor) source;
+            SourceAlias alias = descriptor.getAlias();
+            if (alias == null) {
             return;
         }
 
-        for (int j = 0; j < _libraries.size(); j++) {
-            LibraryDefinition library = _libraries.get(j);
+            String realPath = alias.getSystemID();
+            if (StringUtil.isEmpty(realPath) || realPath.endsWith(".jar") == false) {
+                return;
+            }
+
+            for (LibraryDefinition library: _libraries.values()) {
             for (Iterator<URI> it = library.iterateAssignedURI(); it.hasNext();) {
                 URI uri = it.next();
                 if (realPath.equals(String.valueOf(uri))) {
-                    URI assignedURI = SpecificationUtil.createURI(
-                            source.getParameter(SourceAlias.ALIAS));
+                        URI assignedURI = SpecificationUtil.createURI(alias.getAlias());
                     library.addAssignedURI(assignedURI);
                     if (LOG.isInfoEnabled()) {
                         LOG.info(StringUtil.getMessage(
@@ -204,6 +207,8 @@ public class LibraryManagerImpl extends ParameterAwareImpl
                     return;
                 }
             }
+        }
+    
         }
     }
 

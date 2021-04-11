@@ -18,16 +18,13 @@ package org.seasar.mayaa.impl.source;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NullSourceDescriptor extends ParameterAwareImpl
-        implements SourceDescriptor {
+public class NullSourceDescriptor implements SourceDescriptor {
 
-    private static final long serialVersionUID = -6864473214459610814L;
     private static final Date ZERO = new Date(0);
 
     private static NullSourceDescriptor _instance = new NullSourceDescriptor();
@@ -46,6 +43,16 @@ public class NullSourceDescriptor extends ParameterAwareImpl
 
     public Date getTimestamp() {
         return ZERO;
+    }
+
+    @Override
+    public void setSystemID(String systemID) {
+        // NOP
+    }
+
+    @Override
+    public String getSystemID() {
+        return "";
     }
 
 }

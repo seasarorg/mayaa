@@ -98,7 +98,6 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             File jarFile = new File(path).getAbsoluteFile();
             JarSourceScanner jarScanner = new JarSourceScanner();
             FileSourceDescriptor descriptor = new FileSourceDescriptor();
-            descriptor.setParameter("absolute", "true");
             descriptor.setFile(jarFile);
             descriptor.setSystemID(jarFile.getName());
             jarScanner.setDescriptor(descriptor);

@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.Date;
 
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
@@ -31,8 +30,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
-        implements ChangeableRootSourceDescriptor, HavingAliasSourceDescriptor, CONST_IMPL {
+public class ClassLoaderSourceDescriptor
+        implements ChangeableRootSourceDescriptor, HavingAliasSourceDescriptor {
 
     public static final String META_INF = "/META-INF";
     private static final Date NOTFOUND_TIMESTAMP = new Date(0);
@@ -44,6 +43,8 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     private Date _timestamp;
 
     private SourceAlias _alias;
+    private String _systemID = "";
+
     public void setNeighborClass(Class<?> neighbor) {
         _neighbor = neighbor;
     }
@@ -70,11 +71,16 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
         return _root;
     }
 
+    @Override
+    public String getSystemID() {
+        return _systemID;
+    }
+
     public void setSystemID(String systemID) {
         if (systemID != null && systemID.indexOf(META_INF) != -1) {
             throw new ForbiddenPathException(systemID);
         }
-        super.setSystemID(StringUtil.preparePath(systemID));
+        _systemID = StringUtil.preparePath(systemID);
     }
 
     public boolean exists() {
@@ -89,7 +95,7 @@ public class ClassLoaderSourceDescriptor extends ParameterAwareImpl
     }
 
     protected boolean needPrepareURL() {
-        return (_timestamp == null || EngineUtil.getEngineSettingBoolean(CHECK_TIMESTAMP, true));
+        return (_timestamp == null || EngineUtil.getEngineSettingBoolean(CONST_IMPL.CHECK_TIMESTAMP, true));
     }
 
     protected void prepareURL() {

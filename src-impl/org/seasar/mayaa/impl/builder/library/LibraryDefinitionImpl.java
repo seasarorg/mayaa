@@ -31,17 +31,16 @@ import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.PropertySet;
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryDefinitionImpl extends ParameterAwareImpl
+public class LibraryDefinitionImpl extends NonSerializableParameterAwareImpl
         implements LibraryDefinition {
 
-    private static final long serialVersionUID = -2112164511711535994L;
     private static final Log LOG =
         LogFactory.getLog(LibraryDefinitionImpl.class);
 
@@ -50,18 +49,6 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
     private Map<String, PropertyConverter> _converters;
     private Map<String, PropertySet> _propertySets;
     private Map<String, ProcessorDefinition> _processors;
-    private String _systemID;
-
-    public void setSystemID(String systemID) {
-        if (StringUtil.isEmpty(systemID)) {
-            throw new IllegalArgumentException();
-        }
-        _systemID = systemID;
-    }
-
-    public String getSystemID() {
-        return _systemID;
-    }
 
     public void setNamespaceURI(URI namespaceURI) {
         if (namespaceURI == null || StringUtil.isEmpty(namespaceURI.getValue())) {
@@ -131,6 +118,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         LibraryManager manager = ProviderUtil.getLibraryManager();
         return manager.getPropertyConverter(propertyClass);
     }
+
 
     public PropertyConverter getPropertyConverter(String converterName) {
         if (StringUtil.isEmpty(converterName)) {
@@ -218,7 +206,7 @@ public class LibraryDefinitionImpl extends ParameterAwareImpl
         StringBuilder sb = new StringBuilder();
         sb.append("LibraryDefinition: ");
         sb.append("systemID = ");
-        sb.append(_systemID);
+        sb.append(getSystemID());
         sb.append(", namespaceUrl = ");
         sb.append(_namespaceURI);
         sb.append(", assignedURI = (");

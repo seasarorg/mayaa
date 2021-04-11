@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -37,22 +36,22 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class ApplicationSourceDescriptor extends ParameterAwareImpl implements ChangeableRootSourceDescriptor, HavingAliasSourceDescriptor {
+public class ApplicationSourceDescriptor implements ChangeableRootSourceDescriptor, HavingAliasSourceDescriptor {
 
-    private static final long serialVersionUID = -2775274363708858237L;
     private static final Log LOG = LogFactory.getLog(ApplicationSourceDescriptor.class);
 
     public static final String WEB_INF = "/WEB-INF";
 
-    private transient ApplicationScope _application;
+    private ApplicationScope _application;
 
     /** Fileベースで取得できるかどうか */
-    private transient Boolean _useFile;
-    private transient URL _url;
+    private Boolean _useFile;
+    private URL _url;
 
     private FileSourceDescriptor _fileSourceDescriptor;
 
     private SourceAlias _alias;
+
     public ApplicationSourceDescriptor() {
         _fileSourceDescriptor = new FileSourceDescriptor();
         _fileSourceDescriptor.setRoot("");
@@ -133,9 +132,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl implements C
         return _useFile.booleanValue();
     }
 
-    /* (non-Javadoc)
-     * @see org.seasar.mayaa.source.SourceDescriptor#exists()
-     */
+    @Override
     public boolean exists() {
         if (canUseFile()) {
             return _fileSourceDescriptor.exists();
@@ -143,9 +140,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl implements C
         return _url != null;
     }
 
-    /* (non-Javadoc)
-     * @see org.seasar.mayaa.source.SourceDescriptor#getInputStream()
-     */
+    @Override
     public InputStream getInputStream() {
         if (canUseFile()) {
             return _fileSourceDescriptor.getInputStream();
@@ -153,9 +148,7 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl implements C
         return IOUtil.openStream(_url);
     }
 
-    /* (non-Javadoc)
-     * @see org.seasar.mayaa.source.SourceDescriptor#getTimestamp()
-     */
+    @Override
     public Date getTimestamp() {
         if (canUseFile()) {
             return _fileSourceDescriptor.getTimestamp();
@@ -164,26 +157,13 @@ public class ApplicationSourceDescriptor extends ParameterAwareImpl implements C
     }
 
 
-    /* (non-Javadoc)
-     * @see org.seasar.mayaa.impl.ParameterAwareImpl#setSystemID()
-     */
+    @Override
     public void setSystemID(String systemID) {
         _fileSourceDescriptor.setSystemID(systemID);
     }
 
-    /* (non-Javadoc)
-     * @see org.seasar.mayaa.impl.ParameterAwareImpl#getSystemID()
-     */
+    @Override
     public String getSystemID() {
         return _fileSourceDescriptor.getSystemID();
     }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        _application = CycleUtil.getServiceCycle().getApplicationScope();
-    }
-
 }

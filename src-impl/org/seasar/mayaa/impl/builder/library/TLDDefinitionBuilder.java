@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.DefinitionBuilder;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
 import org.seasar.mayaa.impl.builder.library.tld.TLDLibraryDefinitionHandler;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -34,10 +34,9 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TLDDefinitionBuilder extends ParameterAwareImpl
+public class TLDDefinitionBuilder extends NonSerializableParameterAwareImpl
         implements DefinitionBuilder {
 
-    private static final long serialVersionUID = 8241504208792699894L;
     private static final Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {

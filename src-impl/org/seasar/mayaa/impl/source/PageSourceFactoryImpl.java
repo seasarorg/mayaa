@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
@@ -41,18 +42,22 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
     private static final Log LOG = LogFactory.getLog(PageSourceFactoryImpl.class);
 
     private Object _context;
-    private Class<?> _serviceClass;
+    private Class<? extends SourceDescriptor> _serviceClass = PageSourceDescriptor.class;
     private List<String> _parameterNames;
     private List<String> _parameterValues;
 
+    @SuppressWarnings("unchecked")
     public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass == null) {
             throw new IllegalArgumentException();
         }
-        _serviceClass = serviceClass;
+        if (!SourceDescriptor.class.isAssignableFrom(serviceClass)) {
+            throw new IllegalArgumentException();
+        }
+        _serviceClass = (Class<? extends SourceDescriptor>) serviceClass;
     }
 
-    public Class<?> getServiceClass() {
+    public Class<? extends SourceDescriptor> getServiceClass() {
         if (_serviceClass == null) {
             throw new IllegalArgumentException();
         }
@@ -63,17 +68,17 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        Class<?> sourceClass = getServiceClass();
+        Class<? extends SourceDescriptor> sourceClass = getServiceClass();
         if (sourceClass == null) {
             throw new IllegalStateException("serviceClass is null");
         }
-        SourceDescriptor source =
-            (SourceDescriptor) ObjectUtil.newInstance(sourceClass);
-        if (_parameterNames != null) {
+        SourceDescriptor source = ObjectUtil.newInstance(sourceClass);
+        if (_parameterNames != null && source instanceof ParameterAware) {
+            ParameterAware parameterAwareSource = (ParameterAware) source;
             for (int i = 0; i < _parameterNames.size(); i++) {
                 String key = (String) _parameterNames.get(i);
                 String value = (String) _parameterValues.get(i);
-                source.setParameter(key, value);
+                parameterAwareSource.setParameter(key, value);
             }
         }
         source.setSystemID(systemID);

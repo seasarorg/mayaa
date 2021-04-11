@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.builder.library;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.ParameterAware;
@@ -22,7 +23,7 @@ import org.seasar.mayaa.ParameterAware;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface PropertySet extends ParameterAware {
+public interface PropertySet extends ParameterAware, Serializable {
 
     /**
      * 例外やログのメッセージ用途として、ファイル中での行番号を取得する。

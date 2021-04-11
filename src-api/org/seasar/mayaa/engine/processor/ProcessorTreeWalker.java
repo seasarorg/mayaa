@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.engine.processor;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFinder;
@@ -27,7 +26,7 @@ import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolve
  */
 public interface ProcessorTreeWalker
         extends ProcessorReferenceResolverFinder,
-                 NodeReferenceResolverFinder, Serializable {
+                 NodeReferenceResolverFinder {
 
     /**
      * プロセッサ実行スコープに、登録スクリプト変数を提供する。

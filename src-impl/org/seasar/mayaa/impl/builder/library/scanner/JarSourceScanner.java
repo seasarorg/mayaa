@@ -27,7 +27,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -36,10 +36,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class JarSourceScanner extends ParameterAwareImpl implements
+public class JarSourceScanner extends NonSerializableParameterAwareImpl implements
         SourceScanner {
-
-    private static final long serialVersionUID = 6023587474701789138L;
 
     private String _root;
     private SourceDescriptor _descriptor;
@@ -195,7 +193,7 @@ public class JarSourceScanner extends ParameterAwareImpl implements
             ClassLoaderSourceDescriptor source =
                 new ClassLoaderSourceDescriptor();
             source.setSystemID(alias.getSystemID());
-            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
+            source.setAlias(alias);
             source.setTimestamp(alias.getTimestamp());
             return source;
         }

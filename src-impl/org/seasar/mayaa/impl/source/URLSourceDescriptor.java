@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -30,13 +29,11 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class URLSourceDescriptor extends ParameterAwareImpl
-        implements SourceDescriptor {
-
-    private static final long serialVersionUID = 292763675133184838L;
+public class URLSourceDescriptor implements SourceDescriptor {
 
     private URL _url;
     private Date _timestamp;
+    private String _systemID = "";
 
     public void setURL(URL url) {
         if (url == null) {
@@ -66,6 +63,16 @@ public class URLSourceDescriptor extends ParameterAwareImpl
             return _timestamp;
         }
         return new Date(0);
+    }
+
+    @Override
+    public void setSystemID(String systemID) {
+        _systemID = systemID;
+    }
+
+    @Override
+    public String getSystemID() {
+        return _systemID;
     }
 
 }

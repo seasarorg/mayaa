@@ -22,23 +22,21 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.DefinitionBuilder;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
-import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.mayaa.impl.builder.library.tld.TLDLibraryDefinitionHandler;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.source.HavingAliasSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
-import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TLDDefinitionBuilder extends ParameterAwareImpl
+public class TLDDefinitionBuilder extends NonSerializableParameterAwareImpl
         implements DefinitionBuilder {
 
-    private static final long serialVersionUID = 8241504208792699894L;
     private static final Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
 
     public LibraryDefinition build(SourceDescriptor source) {
@@ -60,12 +58,13 @@ public class TLDDefinitionBuilder extends ParameterAwareImpl
                 IOUtil.close(stream);
             }
             LibraryDefinition library = handler.getLibraryDefinition();
-            boolean assigned = ObjectUtil.booleanValue(source.getParameter(
-                    WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if (assigned || "/META-INF/taglib.tld".equals(systemID)) {
-                URI assignedURI = SpecificationUtil.createURI(
-                        source.getParameter(SourceAlias.ALIAS));
-                library.addAssignedURI(assignedURI);
+            if (source instanceof HavingAliasSourceDescriptor) {
+                HavingAliasSourceDescriptor sourceWithAlias = (HavingAliasSourceDescriptor) source;
+                SourceAlias alias = sourceWithAlias.getAlias();
+                if (alias != null) {
+                    URI assignedURI = SpecificationUtil.createURI(alias.getAlias());
+                    library.addAssignedURI(assignedURI);    
+                }
             }
             return library;
         }

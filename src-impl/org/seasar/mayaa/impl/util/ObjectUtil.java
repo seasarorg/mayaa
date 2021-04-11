@@ -132,7 +132,7 @@ public class ObjectUtil {
         throw new IllegalClassTypeException(expectedClass, clazz);
     }
 
-    public static Object newInstance(Class<?> clazz) {
+    public static <T> T newInstance(Class<? extends T> clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException();
         }

@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.engine.specification;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.PositionAware;
@@ -23,7 +24,7 @@ import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFind
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFinder {
+public interface NodeTreeWalker extends PositionAware, Serializable, NodeReferenceResolverFinder {
 
     /**
      * 親ノードの設定をセットする。
@@ -75,13 +76,6 @@ public interface NodeTreeWalker extends PositionAware, NodeReferenceResolverFind
      * @return 子ノード（<code>NodeTreeWalker</code>）を保持したイテレータ。
      */
     Iterator<NodeTreeWalker> iterateChildNode();
-
-    /**
-     * インスタンスを破棄対象とし、親ノードや子ノードなど
-     * インスタンスが保持していた他のオブジェクトへの参照リンクを切る。
-     * @deprecated
-     */
-    void kill();
 
     /**
      * 子ノードをクリアする

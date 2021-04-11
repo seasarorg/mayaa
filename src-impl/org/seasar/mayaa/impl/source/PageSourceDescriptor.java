@@ -23,37 +23,44 @@ import org.seasar.mayaa.source.SourceHolder;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PageSourceDescriptor extends CompositeSourceDescriptor
-    implements SourceDescriptorObserver {
+public class PageSourceDescriptor extends CompositeSourceDescriptor implements SourceDescriptorObserver {
 
-    private static final long serialVersionUID = -6821253020265849514L;
-
-    public boolean collectSourceDescriptor(
+    /**
+     * 登録されているSourceHolderをセットする。systemIDに対して複数のファイル検索先が定義されている場合があるため。
+     * @param listener {@link SourceDescriptorObserver}のインスタンス
+     * @return 
+     * @throws Exception
+     */
+    protected boolean collectSourceDescriptor(
             SourceDescriptorObserver listener) throws Exception {
         for (Iterator<SourceHolder> it = SourceHolderFactory.iterator();
                 it.hasNext();) {
             SourceHolder holder = it.next();
-            if (listener.nextSourceDescriptor(
-                    holder.getSourceDescriptor("")) == false) {
+            SourceDescriptor source = holder.getSourceDescriptor(getSystemID());
+            if (listener.nextSourceDescriptor(source) == false) {
                 return false;
             }
         }
-        ClassLoaderSourceDescriptor loader =
-            new ClassLoaderSourceDescriptor();
+        ClassLoaderSourceDescriptor loader = new ClassLoaderSourceDescriptor();
         loader.setRoot(ClassLoaderSourceDescriptor.META_INF);
+        loader.setSystemID(getSystemID());
         if (listener.nextSourceDescriptor(loader) == false) {
             return false;
         }
         return true;
     }
 
+    /**
+     * 通知されたSourceDescriptorをCompositeSourceDescriptorの要素として追加する。
+     */
+    @Override
     public boolean nextSourceDescriptor(
-            SourceDescriptor sourceDescriptor) {
-        sourceDescriptor.setSystemID(getSystemID());
+        SourceDescriptor sourceDescriptor) {
         addSourceDescriptor(sourceDescriptor);
         return true;
     }
 
+    @Override
     public void setSystemID(String systemID) {
         super.setSystemID(systemID);
         try {
@@ -61,10 +68,6 @@ public class PageSourceDescriptor extends CompositeSourceDescriptor
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setParameter(String name, String value) {
-        super.setParameter(name, value);
     }
 
 }

@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class ParameterAwareImpl implements ParameterAware {
+public class ParameterAwareImpl implements ParameterAware, Serializable {
 
     private static final long serialVersionUID = 7520826050429074016L;
 

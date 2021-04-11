@@ -21,20 +21,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.source.WritableSourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class CompositeSourceDescriptor extends ParameterAwareImpl
-        implements WritableSourceDescriptor {
-
-    private static final long serialVersionUID = 7557914925525488748L;
+public class CompositeSourceDescriptor implements WritableSourceDescriptor {
 
     private List<SourceDescriptor> _descriptors = new ArrayList<>();
     private SourceDescriptor _foundLast;
+    private String _systemID = "";
 
     public void addSourceDescriptor(SourceDescriptor source) {
         if (source == null) {
@@ -60,16 +57,23 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
         return null;
     }
 
+    @Override
     public void setSystemID(String systemID) {
         _foundLast = null;
         _descriptors.clear();
-        super.setSystemID(systemID);
+        _systemID = systemID;
+    }
+
+    @Override
+    public String getSystemID() {
+        return _systemID;
     }
 
     public boolean exists() {
         return findDescriptor() != null;
     }
 
+    @Override
     public InputStream getInputStream() {
         SourceDescriptor descriptor = findDescriptor();
         if (descriptor != null) {
@@ -78,6 +82,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
         return null;
     }
 
+    @Override
     public Date getTimestamp() {
         SourceDescriptor descriptor = findDescriptor();
         if (descriptor != null) {
@@ -90,6 +95,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     /**
      * @see WritableSourceDescriptor#canWrite()
      */
+    @Override
     public boolean canWrite() {
         SourceDescriptor descriptor = findDescriptor();
         return (descriptor instanceof WritableSourceDescriptor) &&
@@ -99,6 +105,7 @@ public class CompositeSourceDescriptor extends ParameterAwareImpl
     /**
      * @see WritableSourceDescriptor#getOutputStream()
      */
+    @Override
     public OutputStream getOutputStream() {
         SourceDescriptor descriptor = findDescriptor();
         if (descriptor != null && (descriptor instanceof WritableSourceDescriptor)) {

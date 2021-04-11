@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.source;
 
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -28,8 +27,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class ApplicationFileSourceDescriptor
         extends FileSourceDescriptor  {
-
-    private static final long serialVersionUID = -2775274363708858237L;
 
     private transient ApplicationScope _application;
 
@@ -52,10 +49,8 @@ public class ApplicationFileSourceDescriptor
         return _application;
     }
 
-    public void setSystemID(String systemID) {
-        super.setSystemID(systemID);
-    }
 
+    @Override
     protected String getRealPath() {
         String path = super.getRealPath();
         if (StringUtil.isEmpty(path)) {
@@ -63,13 +58,4 @@ public class ApplicationFileSourceDescriptor
         }
         return getApplicationScope().getRealPath(path);
     }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        _application = CycleUtil.getServiceCycle().getApplicationScope();
-    }
-
 }

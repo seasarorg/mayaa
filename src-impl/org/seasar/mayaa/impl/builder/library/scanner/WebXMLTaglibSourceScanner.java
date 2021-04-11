@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -36,10 +36,9 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Koji Suga (Gluegent Inc.)
  */
-public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
+public class WebXMLTaglibSourceScanner extends NonSerializableParameterAwareImpl
         implements SourceScanner {
 
-    private static final long serialVersionUID = -4740935373481152275L;
     private static final Log LOG = LogFactory.getLog(WebXMLTaglibSourceScanner.class);
 
     public static final String ASSIGNED =
@@ -116,9 +115,7 @@ public class WebXMLTaglibSourceScanner extends ParameterAwareImpl
                 source.setRoot(ApplicationSourceDescriptor.WEB_INF);
             }
             source.setSystemID(systemID);
-            source.setParameter(SourceAlias.ALIAS, alias.getAlias());
-            source.setParameter(REAL_PATH, alias.getSystemID());
-            source.setParameter(ASSIGNED, "true");
+            source.setAlias(alias);
             return source;
         }
 

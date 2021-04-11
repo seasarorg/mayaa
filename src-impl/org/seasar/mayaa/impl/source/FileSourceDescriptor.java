@@ -26,7 +26,6 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -35,10 +34,8 @@ import org.seasar.mayaa.source.WritableSourceDescriptor;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class FileSourceDescriptor
-        extends ParameterAwareImpl implements WritableSourceDescriptor, ChangeableRootSourceDescriptor {
+public class FileSourceDescriptor implements WritableSourceDescriptor, ChangeableRootSourceDescriptor {
 
-    private static final long serialVersionUID = 9199082270985131347L;
     private static final Log LOG =
         LogFactory.getLog(FileSourceDescriptor.class);
 
@@ -47,6 +44,8 @@ public class FileSourceDescriptor
     private String _root = "/";
 
     private File _file;
+
+    private String _systemID = "";
 
     // use at InternalApplicationSourceScanner.FileToSourceIterator
     public void setFile(File file) {
@@ -76,9 +75,21 @@ public class FileSourceDescriptor
     }
 
     public void setSystemID(String systemID) {
-        super.setSystemID(StringUtil.preparePath(systemID));
+        _systemID = StringUtil.preparePath(systemID);
     }
 
+    @Override
+    public String getSystemID() {
+        return _systemID;
+    }
+
+    /**
+     * ファイル実体を表すパスを返却する。
+     * getRoot() で返却されるパス + systemID で設定されているパスを返却する。
+     * Rootとして設定されるパスが絶対パスか特定のディレクトリを基準とした相対パスになるかはSourceDescriptor実装依存となる。
+     * 
+     * @return ファイル実体を表すパス文字列
+     */
     protected String getRealPath() {
         return _root + getSystemID();
     }

@@ -23,23 +23,21 @@ import org.seasar.mayaa.builder.library.DefinitionBuilder;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.library.mld.LibraryDefinitionHandler;
 import org.seasar.mayaa.impl.builder.library.scanner.SourceAlias;
-import org.seasar.mayaa.impl.builder.library.scanner.WebXMLTaglibSourceScanner;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.source.HavingAliasSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
-import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MLDDefinitionBuilder extends ParameterAwareImpl
-        implements DefinitionBuilder, CONST_IMPL {
+public class MLDDefinitionBuilder extends NonSerializableParameterAwareImpl
+        implements DefinitionBuilder {
 
-    private static final long serialVersionUID = -2992197676369912663L;
     private static final Log LOG =
         LogFactory.getLog(MLDDefinitionBuilder.class);
 
@@ -52,7 +50,7 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
             LibraryDefinitionHandler handler = new LibraryDefinitionHandler();
             InputStream stream = source.getInputStream();
             try {
-                XMLUtil.parse(handler, stream, PUBLIC_MLD10,
+                XMLUtil.parse(handler, stream, CONST_IMPL.PUBLIC_MLD10,
                         systemID, true, true, false);
             } catch (Throwable t) {
                 if (LOG.isErrorEnabled()) {
@@ -63,12 +61,13 @@ public class MLDDefinitionBuilder extends ParameterAwareImpl
                 IOUtil.close(stream);
             }
             LibraryDefinition library = handler.getLibraryDefinition();
-            boolean assigned = ObjectUtil.booleanValue(source.getParameter(
-                    WebXMLTaglibSourceScanner.ASSIGNED), false);
-            if (assigned) {
-                URI assignedURI = SpecificationUtil.createURI(
-                        source.getParameter(SourceAlias.ALIAS));
-                library.addAssignedURI(assignedURI);
+            if (source instanceof HavingAliasSourceDescriptor) {
+                HavingAliasSourceDescriptor sourceWithAlias = (HavingAliasSourceDescriptor) source;
+                SourceAlias alias = sourceWithAlias.getAlias();
+                if (alias != null) {
+                    URI assignedURI = SpecificationUtil.createURI(alias.getAlias());
+                    library.addAssignedURI(assignedURI);    
+                }
             }
             return library;
         }

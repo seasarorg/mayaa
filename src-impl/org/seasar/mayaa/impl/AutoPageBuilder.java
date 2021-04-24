@@ -16,7 +16,13 @@
 package org.seasar.mayaa.impl;
 
 import java.util.Iterator;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +68,8 @@ public class AutoPageBuilder implements Runnable {
         OPTION_AUTO_BUILD + ".wait";
     private static final String OPTION_AUTO_BUILD_FILE_FILTERS =
         OPTION_AUTO_BUILD + ".fileNameFilters";
+    private static final String OPTION_AUTO_BUILD_FILE_EXCLUDE_FILTERS =
+        OPTION_AUTO_BUILD + ".fileNameExcludeFilters";
     private static final String OPTION_AUTO_BUILD_RENDER_MATE =
         OPTION_AUTO_BUILD + ".renderMate";
     private static final String OPTION_AUTO_BUILD_CONTEXT_PATH =
@@ -74,14 +82,17 @@ public class AutoPageBuilder implements Runnable {
     public static final AutoPageBuilder INSTANCE = new AutoPageBuilder();
 
     private AutoPageBuilder() {
-        // no operation
+        engine = ProviderUtil.getEngine();
     }
 
-    private Thread _thread;
+
+    final Engine engine;
+
     private boolean _repeat;
     private int _wait;
     private boolean _renderMate;
     private String[] _fileFilters;
+    private String[] _fileExcludeFilters;
     private ServletContext _servletContext;
     private String _contextPath;
     private long _buildTimeSum;
@@ -113,7 +124,7 @@ public class AutoPageBuilder implements Runnable {
                     REPEAT_DEFAULT);
             _wait = ObjectUtil.numberValue(
                     engine.getParameter(OPTION_AUTO_BUILD_WAIT),
-                    Integer.valueOf(WAIT_DEFAULT)).intValue() * 1000;
+                    Integer.valueOf(WAIT_DEFAULT)).intValue();
             _renderMate = ObjectUtil.booleanValue(
                     engine.getParameter(OPTION_AUTO_BUILD_RENDER_MATE),
                     RENDER_MATE_DEFAULT);
@@ -124,15 +135,38 @@ public class AutoPageBuilder implements Runnable {
             } else {
                 _fileFilters = new String[]{".html"};
             }
-            _thread = new Thread(this) {
-                {
-                    setDaemon(true);
-                    setName("mayaa.AutoPageBuilder");
-                    setPriority(Thread.MIN_PRIORITY);
-                    start();
-                }
-            };
+
+            String excludeFilters = engine.getParameter(OPTION_AUTO_BUILD_FILE_EXCLUDE_FILTERS);
+            if (excludeFilters != null) {
+                _fileExcludeFilters = excludeFilters.split(";");
+            } else {
+                _fileExcludeFilters = new String[0];
+            }
+
+            // ScheduledExecutorServiceを取得する。
+            ScheduledExecutorService executorService = scheduledExecutor();
+            if (_repeat) {
+                executorService.scheduleWithFixedDelay(this, 2, _wait, TimeUnit.SECONDS);
+            } else {
+                executorService.submit(this);
+            }
             LOG.info("mayaa.AutoPageBuilder start");
+        }
+    }
+
+    /**
+     * ScheduledExecutorServiceをアプリケーションコンテナまたはローカルから取得する。
+     * @return ScheduledExecutorServiceインスタンス
+     */
+    private ScheduledExecutorService scheduledExecutor() {
+        try {
+            final String NAME = "java:comp/DefaultManagedScheduledExecutorService";
+            final ManagedScheduledExecutorService managedScheduledExecutor = InitialContext.doLookup(NAME);
+            LOG.info("mayaa.ManagedScheduledExecutorService aquired");
+            return managedScheduledExecutor;
+        } catch (NamingException e) {
+            LOG.info("mayaa.ScheduledExecutorService aquired");
+            return Executors.newSingleThreadScheduledExecutor();
         }
     }
 
@@ -163,13 +197,6 @@ public class AutoPageBuilder implements Runnable {
         return contextPath;
     }
 
-    public void destroy() {
-        if (_thread != null) {
-            _thread = null;
-            LOG.info("mayaa.AutoPageBuilder end");
-        }
-    }
-
     protected void reportTime(Specification spec, long time) {
         LOG.info(spec.getSystemID() + " build time: " + time + " msec.");
     }
@@ -177,6 +204,13 @@ public class AutoPageBuilder implements Runnable {
     @Override
     public void run() {
         Thread currentThread = Thread.currentThread();
+        String previousName = currentThread.getName();
+        int previousPriority = currentThread.getPriority();
+
+        // スレッド名と優先度を変更する。
+        currentThread.setPriority(Thread.MIN_PRIORITY);
+        currentThread.setName("mayaa.AutoPageBuilder");
+
         try {
             long engineBuildTime = diffMillis(0);
             reportTime(SpecificationUtil.getDefaultSpecification(), diffMillis(engineBuildTime));
@@ -184,37 +218,33 @@ public class AutoPageBuilder implements Runnable {
             // prepare SourceHolderFactory
             FactoryFactory.getFactory(PageSourceFactory.class);
 
-            while (currentThread == _thread) {
-                _buildTimeSum = 0;
-                _renderTimeSum = 0;
-                for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {
-                    SourceHolder holder = it.next();
+            _buildTimeSum = 0;
+            _renderTimeSum = 0;
+            for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {
+                SourceHolder holder = it.next();
                     for (Iterator<String> itSystemID = holder.iterator(_fileFilters);
                             itSystemID.hasNext();) {
                         String systemID = (String) itSystemID.next();
-                        if (systemID.startsWith("/") == false) {
-                            systemID = "/" + systemID;
-                        }
-                        try {
-                            buildPage(systemID);
-                        } catch (Throwable e) {
-                            LOG.error("page load failed: " + systemID, e);
-                        }
-                        Thread.sleep(100);
+                    if (systemID.startsWith("/") == false) {
+                        systemID = "/" + systemID;
                     }
+                    try {
+                        buildPage(systemID);
+                    } catch (Throwable e) {
+                        LOG.error("page load failed: " + systemID, e);
+                    }
+                    Thread.sleep(100);
                 }
-                LOG.info("page all build time: " + _buildTimeSum + " msec.");
-                if (_renderMate) {
-                    LOG.info("page all render time: " + _renderTimeSum + " msec.");
-                }
-                if (_repeat == false) {
-                    break;
-                }
-                Thread.sleep(_wait);
             }
-
+            LOG.info("page all build time: " + _buildTimeSum + " msec.");
+            if (_renderMate) {
+                LOG.info("page all render time: " + _renderTimeSum + " msec.");
+            }
         } catch (InterruptedException ignore) {
             // no operation
+        } finally {
+            currentThread.setPriority(previousPriority);
+            currentThread.setName(previousName);    
         }
     }
 
@@ -237,9 +267,7 @@ public class AutoPageBuilder implements Runnable {
         try {
             String pageName = CycleUtil.getRequestScope().getPageName();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            Engine engine = ProviderUtil.getEngine();
             Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
-
             cycle.setOriginalNode(defaultSpec);
             cycle.setInjectedNode(defaultSpec);
             if (engine.isPageRequested()) {

@@ -113,7 +113,6 @@ public class AutoPageBuilder implements Runnable {
      * @param contextPath コンテキストパス
      */
     public void init(ServletConfig servletConfig, String contextPath) {
-        Engine engine = ProviderUtil.getEngine();
         boolean autoBuild = ObjectUtil.booleanValue(
                 engine.getParameter(OPTION_AUTO_BUILD), false);
         if (autoBuild && !EngineUtil.isInSecureWeb()) {
@@ -222,9 +221,8 @@ public class AutoPageBuilder implements Runnable {
             _renderTimeSum = 0;
             for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {
                 SourceHolder holder = it.next();
-                    for (Iterator<String> itSystemID = holder.iterator(_fileFilters);
-                            itSystemID.hasNext();) {
-                        String systemID = (String) itSystemID.next();
+                for (Iterator<String> itSystemID = holder.iterator(_fileFilters, _fileExcludeFilters); itSystemID.hasNext();) {
+                    String systemID = itSystemID.next();
                     if (systemID.startsWith("/") == false) {
                         systemID = "/" + systemID;
                     }

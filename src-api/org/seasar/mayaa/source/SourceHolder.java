@@ -34,6 +34,17 @@ public interface SourceHolder {
     Iterator<String> iterator(String[] filters);
 
     /**
+     * systemIDのイテレータを返却する。
+     * 階層構造もトレースし、/ で区切られたものを返却する。
+     *
+     * @param includeFilters ピリオドと小文字の1つ以上の連続の場合は拡張子を、
+     *                 返却対象に含めるsystemIDを表す正規表現(全体マッチ)文字列の配列。
+     * @param excludeFilters 返却対象から除外するsystemIDを表す正規表現(全体マッチ)文字列の配列
+     * @return 存在するsystemIDイテレータ
+     */
+    Iterator<String> iterator(String[] includeFilters, String[] excludeFilters);
+
+    /**
      * ソースディスクリプタを保持する論理的な開始位置を設定する
      * @param root 格納開始位置
      */

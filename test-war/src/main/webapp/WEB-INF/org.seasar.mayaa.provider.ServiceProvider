@@ -23,7 +23,8 @@
         <parameter name="autoBuild.repeat" value="false"/>
         <parameter name="autoBuild.wait" value="60"/><!-- seconds -->
         <parameter name="autoBuild.fileNameFilters" value=".html"/><!-- .html;^(sample|howto).+\.htm$ -->
-        <parameter name="autoBuild.renderMate" value="false"/>
+        <parameter name="autoBuild.fileNameExcludeFilters" value="^/test/.*;^/assets/.*"/><!-- since 1.2.1: semi-colon separated regexp absolute path from WebRoot -->
+        <parameter name="autoBuild.renderMate" value="true"/>
         <parameter name="autoBuild.contextPath" value="/"/>
         <parameter name="forwardLimit" value="10"/>
         <parameter name="noCacheValue" value="no-cache"/><!-- since 1.1.27, for firefox "no-cache, no-store" -->

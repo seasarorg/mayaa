@@ -52,6 +52,15 @@ public abstract class SourceDescriptorProvideSourceHolder implements SourceHolde
         if (root.exists() == false) {
             return Collections.emptyIterator();
         }
-        return new SystemIDFileSearchIterator(root.getFile(), filters);
+        return new SystemIDFileSearchIterator(root.getFile(), filters, null);
+    }
+
+    public Iterator<String> iterator(final String[] includeFilters, final String[] excludeFilters) {
+        FileSourceDescriptor root =
+            (FileSourceDescriptor) getSourceDescriptor("");
+        if (root.exists() == false) {
+            return Collections.emptyIterator();
+        }
+        return new SystemIDFileSearchIterator(root.getFile(), includeFilters, excludeFilters);
     }
 }

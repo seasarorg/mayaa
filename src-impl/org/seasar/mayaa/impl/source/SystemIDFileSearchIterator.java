@@ -12,11 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- */package org.seasar.mayaa.impl.source;
+ */
+package org.seasar.mayaa.impl.source;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.seasar.mayaa.impl.util.FileSearchIterator;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -44,42 +46,70 @@ public class SystemIDFileSearchIterator extends FileSearchIterator implements It
      * filtersにnullを渡すと、".html"というフィルタが指定されたものとみなす。
      *
      * @param rootDir 探索を開始するフォルダ
-     * @param filters フィルタ文字列の配列
+     * @param includeFilters 対象とするフィルタ文字列の配列
+     * @param excludeFilters 除外するフィルタ文字列の配列
      */
-    public SystemIDFileSearchIterator(File rootDir, final String[] filters) {
+    public SystemIDFileSearchIterator(final File rootDir, final String[] includeFilters, final String[] excludeFilters) {
         super(rootDir, new FilenameFilter() {
+            final String rootAbsolutePath = rootDir.getAbsolutePath().replace(File.separatorChar, '/');
+            Pattern filenamePattern;
+            Pattern filenameExcludePattern;
+            {
+                if (includeFilters != null && includeFilters.length > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < includeFilters.length; i++) {
+                        String filter = includeFilters[i].trim();
+                        // 拡張子のフィルタか？
+                        if (filter.matches("^\\.[a-zA-Z0-9]+")) {
+                            sb.append(".*").append(filter).append("$|");
+                        } else {
+                            sb.append(filter).append("|");
+                            // それ以外は正規表現とみなす
+                        }
+                    }
+                    sb.deleteCharAt(sb.length() - 1);
+                    filenamePattern = Pattern.compile(sb.toString());    
+                }
+                if (excludeFilters != null && excludeFilters.length > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < excludeFilters.length; i++) {
+                        String filter = excludeFilters[i].trim();
+                        // それ以外は正規表現とみなす
+                        sb.append(filter).append("|");
+                    }
+                    sb.deleteCharAt(sb.length() - 1);
+                    filenameExcludePattern = Pattern.compile(sb.toString());    
+                }
+            }
             public boolean accept(File dir, String name) {
-                File file = new File(dir.getPath() + File.separatorChar + name);
+                File file = new File(dir, name);
                 if (file.isHidden()) {
                     return false;
+                }
+                if (filenamePattern == null) {
+                    return name.toLowerCase().endsWith(".html");
+                }
+
+                String absolutePath = file.getAbsolutePath().replace(File.separatorChar, '/');
+                if (!absolutePath.startsWith(rootAbsolutePath)) {
+                    // rootDir配下でない場合はfalseを返す
+                    return false;
+                }
+                final String systemID = absolutePath.substring(rootAbsolutePath.length());
+                if (filenameExcludePattern != null && filenameExcludePattern.matcher(systemID).matches()) {
+                    return false;
+                }
+                if (filenamePattern.matcher(systemID).matches()) {
+                    return true;
                 }
                 if (file.isDirectory()) {
                     return true;
                 }
-                if (filters == null) {
-                    return name.toLowerCase().endsWith(".html");
-                }
-                for (int i = 0; i < filters.length; i++) {
-                    String filter = filters[i].trim();
-                    // 拡張子のフィルタか？
-                    if (filter.matches("^\\.[a-zA-Z0-9]+")) {
-                        if (name.toLowerCase().endsWith(filter.toLowerCase())) {
-                            return true;
-                        }
-                    } else {
-                        // それ以外は正規表現とみなす
-                        String absolutePath =
-                            file.getAbsolutePath().replace(File.separatorChar, '/');
-                        if (absolutePath.matches(filter)) {
-                            return true;
-                        }
-                    }
-                }
                 return false;
             }
             public String toString() {
-                if (filters != null) {
-                    return "[" + StringUtil.join(filters, ",") + "]";
+                if (includeFilters != null) {
+                    return "[" + StringUtil.join(includeFilters, ",") + "]";
                 }
                 return "";
             }

@@ -75,7 +75,6 @@ public class MayaaServlet extends HttpServlet {
 
     public void destroy() {
         ReferenceCache.finishThreads();
-        AutoPageBuilder.INSTANCE.destroy();
         ProviderUtil.getEngine().destroy();
         JspProcessor.clear();
         ObjectUtil.clearCaches();

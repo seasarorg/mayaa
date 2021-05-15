@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -139,6 +140,13 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public Specification findSpecificationFromCache(String systemID) {
         return getCache().get(systemID);
+    }
+
+    public void deprecateSpecification(String systemID) {
+        Specification spec = findSpecificationFromCache(systemID);
+        if (Objects.nonNull(spec)) {
+            spec.deprecate();
+        }
     }
 
     protected Page findPageFromCache(String pageName) {

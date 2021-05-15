@@ -123,6 +123,11 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
         return _deprecated;
     }
 
+    @Override
+    public void deprecate() {
+        _deprecated = true;
+    }
+
     public void build() {
         build(true);
     }

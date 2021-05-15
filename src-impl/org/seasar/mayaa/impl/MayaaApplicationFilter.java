@@ -26,6 +26,7 @@ import javax.servlet.ServletResponse;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Engine;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -107,10 +108,10 @@ public class MayaaApplicationFilter implements Filter {
             cycle.getResponse().clearBuffer();
 
             Engine engine = ProviderUtil.getEngine();
-            engine.build();
+            Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
 
-            cycle.setOriginalNode(engine);
-            cycle.setInjectedNode(engine);
+            cycle.setOriginalNode(defaultSpec);
+            cycle.setInjectedNode(defaultSpec);
 
             SpecificationUtil.initScope();
             cycle.setHandledError(handled);

@@ -474,4 +474,11 @@ public class SpecificationUtil implements CONST_IMPL {
         return null;
     }
 
+    /**
+     * デフォルトのSpecificationをソースビルドを行ってから返す。
+     * @return デフォルトのSpecification
+     */
+    public static Specification getDefaultSpecification() {
+        return (Specification) CycleUtil.getGlobalVariable(CONST_IMPL.DEFAULT_SPECIFICATION_KEY, null);
+    }
 }

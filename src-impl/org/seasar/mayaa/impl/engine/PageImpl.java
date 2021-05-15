@@ -28,6 +28,7 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
@@ -114,7 +115,7 @@ public class PageImpl extends SpecificationImpl implements Page {
                 this, CONST_IMPL.QM_TEMPLATE_SUFFIX);
         if (StringUtil.isEmpty(value)) {
             value = SpecificationUtil.getMayaaAttributeValue(
-                    ProviderUtil.getEngine(), CONST_IMPL.QM_TEMPLATE_SUFFIX);
+                SpecificationUtil.getDefaultSpecification(), CONST_IMPL.QM_TEMPLATE_SUFFIX);
         }
         if (StringUtil.isEmpty(value)) {
             value = "";
@@ -175,8 +176,8 @@ public class PageImpl extends SpecificationImpl implements Page {
             String requestedSuffix, String extension) {
         Page prevPage = getCurrentPage();
         setCurrentPage(this);
-        Engine engine = ProviderUtil.getEngine();
-        SpecificationUtil.execEvent(engine, CONST_IMPL.QM_BEFORE_RENDER_PAGE);
+        Specification defaultSpec = SpecificationUtil.getDefaultSpecification(); 
+        SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_BEFORE_RENDER_PAGE);
         try {
             Page component = this;
             Page superPage = component.getSuperPage();
@@ -185,7 +186,7 @@ public class PageImpl extends SpecificationImpl implements Page {
             }
             Page prevComponent = getCurrentComponent();
             setCurrentComponent(component);
-            SpecificationUtil.execEvent(engine, CONST_IMPL.QM_BEFORE_RENDER_COMPONENT);
+            SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_BEFORE_RENDER_COMPONENT);
             try {
                 notifyBeginRender();
                 return RenderUtil.renderPage(true, this, null,
@@ -193,7 +194,7 @@ public class PageImpl extends SpecificationImpl implements Page {
             } finally {
                 setCurrentComponent(component);
                 try {
-                    SpecificationUtil.execEvent(engine, CONST_IMPL.QM_AFTER_RENDER_COMPONENT);
+                    SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_AFTER_RENDER_COMPONENT);
                 } finally {
                     setCurrentComponent(prevComponent);
                 }
@@ -201,7 +202,7 @@ public class PageImpl extends SpecificationImpl implements Page {
         } finally {
             setCurrentPage(this);
             try {
-                SpecificationUtil.execEvent(engine, CONST_IMPL.QM_AFTER_RENDER_PAGE);
+                SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_AFTER_RENDER_PAGE);
             } finally {
                 setCurrentPage(prevPage);
             }

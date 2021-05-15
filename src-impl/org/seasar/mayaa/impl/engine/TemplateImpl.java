@@ -241,7 +241,7 @@ public class TemplateImpl
             if (pageTime != null && pageTime.after(templateTime)) {
                 return true;
             }
-            Date engineTime = ProviderUtil.getEngine().getTimestamp();
+            Date engineTime = SpecificationUtil.getDefaultSpecification().getTimestamp();
             if (engineTime != null && engineTime.after(templateTime)) {
                 return true;
             }

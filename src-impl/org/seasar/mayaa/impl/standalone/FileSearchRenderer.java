@@ -38,6 +38,7 @@ import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
 import org.seasar.mayaa.impl.cycle.web.MockServletContext;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.processor.JspProcessor;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
@@ -201,10 +202,9 @@ public class FileSearchRenderer {
      * ファイルを探し、filtersに適合するものを順番にレンダリングしていきます。
      */
     public void start() {
-        Engine engine = ProviderUtil.getEngine();
         long engineBuildTime = diffMillis(0);
-        engine.build();
-        reportTime(engine, diffMillis(engineBuildTime));
+        Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
+        reportTime(defaultSpec, diffMillis(engineBuildTime));
 
         _buildTimeSum = 0;
         for (Iterator<SourceHolder> it = SourceHolderFactory.iterator(); it.hasNext();) {

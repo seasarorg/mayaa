@@ -98,6 +98,15 @@ public class EngineRegistory {
                     throw new UnsupportedOperationException("Serializing spec is not supported");
                 }
             }
+
+            @Override
+            public void deprecateSpecification(String systemID) {
+                if (engine instanceof EngineImpl) {
+                    ((EngineImpl) engine).deprecateSpecification(systemID);
+                } else {
+                    throw new UnsupportedOperationException("Deprecating specification is not supported");
+                }
+            }
         };
         JMXUtil.register(mbean, makeObjectName());
     }

@@ -141,6 +141,13 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         return getCache().get(systemID);
     }
 
+    public void deprecateSpecification(String systemID) {
+        Specification spec = findSpecificationFromCache(systemID);
+        if (Objects.nonNull(spec)) {
+            spec.deprecate();
+        }
+    }
+
     protected Page findPageFromCache(String pageName) {
         return (Page) findSpecificationFromCache(pageName + _mayaaExtension);
     }

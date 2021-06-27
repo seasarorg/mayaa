@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -139,6 +140,27 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public Specification findSpecificationFromCache(String systemID) {
         return getCache().get(systemID);
+    }
+
+    /**
+     * 指定したSystemIDのSpecificationを無効化する。
+     */
+    public void deprecateSpecification(final String systemID, boolean withSerialized) {
+        final Specification spec = findSpecificationFromCache(systemID);
+        if (Objects.nonNull(spec)) {
+            spec.deprecate();
+        }
+        if (withSerialized) {
+            SpecificationUtil.purgeSerializedFile(systemID);
+        }
+
+        if (_defaultSpecificationID.equals(systemID)) {
+            // デフォルトのSpecificationなら直接的に無効化する
+            final Specification defaultSpec = _defaultSpecification.get();
+            if (defaultSpec != null) {
+                defaultSpec.deprecate();
+            }
+        }
     }
 
     protected Page findPageFromCache(String pageName) {

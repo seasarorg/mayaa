@@ -39,4 +39,6 @@ public interface MayaaEngineMXBean {
 
     boolean isSerializingEnabled();
     void setSerializingEnabled(boolean serializatingEnabled);
+
+    void deprecateSpecification(String systemID, boolean withSerialized);
 }

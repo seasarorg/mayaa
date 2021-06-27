@@ -56,6 +56,11 @@ public interface Specification
     boolean isDeprecated();
 
     /**
+     * スペック情報が廃止対象となるようにマークする。
+     */
+    void deprecate();
+
+    /**
      * ソースビルドを行う。
      * 常に再ビルドとして動作する。
      */

@@ -54,7 +54,6 @@ public class AbstractGetterScriptTest {
         ManualProviderFactory.SCRIPT_ENVIRONMENT.addAttributeScope(new BindingScope());
         ManualProviderFactory.SCRIPT_ENVIRONMENT.addAttributeScope(new WalkStandardScope());
         _position = new PositionAware() {
-            private static final long serialVersionUID = 1L;
 
             public void setSystemID(String systemID) {
                 // no-op

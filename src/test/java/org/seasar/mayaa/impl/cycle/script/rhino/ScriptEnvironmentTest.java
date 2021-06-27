@@ -198,7 +198,6 @@ public class ScriptEnvironmentTest {
 }
 
 class Position implements PositionAware {
-    private static final long serialVersionUID = 1L;
 
     String systemId;
     int lineNumber;

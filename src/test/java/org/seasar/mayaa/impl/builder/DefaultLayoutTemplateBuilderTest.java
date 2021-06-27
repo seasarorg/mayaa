@@ -54,9 +54,6 @@ public class DefaultLayoutTemplateBuilderTest {
     @Before
     public void setUp() {
         FactoryFactory.setInstance(new ManualProviderFactory(this) {
-            // TODO: そもそもFactoryクラス群はSerializableである必要があるのか？
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected PageSourceFactory getPageSourceFactory(Object context) {
                 // PageSourceFactoryおよびPageSourceDescriptorを差し替える。
@@ -198,7 +195,6 @@ public class DefaultLayoutTemplateBuilderTest {
 
     public static class MockSourceDescriptor extends FileSourceDescriptor {
 
-        private static final long serialVersionUID = 1L;
         private boolean _exist;
 
         public MockSourceDescriptor(boolean exist) {

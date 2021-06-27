@@ -147,6 +147,14 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         if (Objects.nonNull(spec)) {
             spec.deprecate();
         }
+
+        if (_defaultSpecificationID.equals(systemID)) {
+            // デフォルトのSpecificationなら直接的に無効化する
+            final Specification defaultSpec = _defaultSpecification.get();
+            if (defaultSpec != null) {
+                defaultSpec.deprecate();
+            }
+        }
     }
 
     protected Page findPageFromCache(String pageName) {

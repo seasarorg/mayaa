@@ -142,10 +142,16 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         return getCache().get(systemID);
     }
 
-    public void deprecateSpecification(String systemID) {
-        Specification spec = findSpecificationFromCache(systemID);
+    /**
+     * 指定したSystemIDのSpecificationを無効化する。
+     */
+    public void deprecateSpecification(final String systemID, boolean withSerialized) {
+        final Specification spec = findSpecificationFromCache(systemID);
         if (Objects.nonNull(spec)) {
             spec.deprecate();
+        }
+        if (withSerialized) {
+            SpecificationUtil.purgeSerializedFile(systemID);
         }
 
         if (_defaultSpecificationID.equals(systemID)) {

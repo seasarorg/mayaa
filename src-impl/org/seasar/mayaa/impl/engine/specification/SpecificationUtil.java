@@ -361,6 +361,20 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     /**
+     * システムID指定したシリアライズされたファイルを削除する。
+     * 存在していない場合も失敗しない。
+     * @param systemID システムID
+     */
+    public static void purgeSerializedFile(String systemID) {
+        File cacheDir = getSerializeDirectory();
+        String filename = getSerializedFilename(systemID);
+        File cacheFile = new File(cacheDir, filename);
+        if (cacheFile.exists()) {
+            cacheFile.delete();
+        }
+    }
+
+    /**
      * システムIDからキャッシュ用にシリアライズするファイル名を生成する。
      * @param systemID システムID
      * @return シリアライズ用ファイル名

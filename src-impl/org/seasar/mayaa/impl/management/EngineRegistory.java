@@ -100,9 +100,9 @@ public class EngineRegistory {
             }
 
             @Override
-            public void deprecateSpecification(String systemID) {
+            public void deprecateSpecification(String systemID, boolean withSerialized) {
                 if (engine instanceof EngineImpl) {
-                    ((EngineImpl) engine).deprecateSpecification(systemID);
+                    ((EngineImpl) engine).deprecateSpecification(systemID, withSerialized);
                 } else {
                     throw new UnsupportedOperationException("Deprecating specification is not supported");
                 }

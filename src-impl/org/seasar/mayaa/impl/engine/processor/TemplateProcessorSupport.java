@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,8 +62,13 @@ public class TemplateProcessorSupport
     private transient ProcessorTreeWalker _parent;
     // _childrenはビルド時のみ変更される。そのときはEngineのインスタンスでガードされる。
     private List<ProcessorTreeWalker> _children;
+
+    /** ファイルから読み込んだオリジナルのノードツリー */
     protected SpecificationNode _originalNode;
+
+    /** オリジナルのノードツリーに対してInjectionResolverで変換されたTemplateProcessorのツリー */
     protected transient SpecificationNode _injectedNode;
+
     private boolean _evalBodyInclude = true;
     private transient ProcessorDefinition _definition;
 
@@ -250,6 +256,10 @@ public class TemplateProcessorSupport
     // for serialize
     private static final String UNIQUENESS_MARK = "<<root>>";
 
+    /**
+     * Serializable用の読込みメソッド。
+     * プロセッサのインスタンス情報を書き込んだ後に参照先のノードのIDを書き込む。
+     */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         String originalNodeID = NodeSerializeController.makeKey(_originalNode);
@@ -279,18 +289,29 @@ public class TemplateProcessorSupport
        	*/
     }
 
+    /**
+     * Serializable用の読込みメソッド。
+     * プロセッサのインスタンス情報を読み込んだ後に参照先のノードの参照関係を復元する。
+     */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         String originalNodeID = in.readUTF();
         String processorUniqueID = in.readUTF();
-        QName qName = QNameImpl.getInstance(URIImpl.getInstance(in.readUTF()), in.readUTF());
-        LibraryManager libraryManager = ProviderUtil.getLibraryManager();
+        String processorNamespaceURI = in.readUTF();
+        String processorLocalName = in.readUTF();
+
+        // 本プロセッサの定義情報への参照を再設定
+        final QName qName = QNameImpl.getInstance(URIImpl.getInstance(processorNamespaceURI), processorLocalName);
+        final LibraryManager libraryManager = ProviderUtil.getLibraryManager();
         setProcessorDefinition(libraryManager.getProcessorDefinition(qName));
 
-        String injectedNodeID = in.readUTF();
+        // 本プロセッサが参照しているオリジナルノードがデシリアライズされた際に通知を受けるリスナを登録する。
+        // リスナが呼び出されるのは、NodeSerializerがでシリアライズ過程でcollectNodeメソッドで収集したノード群を
+        // デシリアライズ完了時に検査して、指定したノードIDのノードが含まれていたとき。
         NodeResolveListener listener = new TemplateProcessorSupportOriginalNodeListener(this);
         findNodeResolver().registResolveNodeListener(originalNodeID, listener);
 
+        String injectedNodeID = in.readUTF();
         if (UNIQUENESS_MARK.equals(injectedNodeID)) {
             _injectedNode = (SpecificationNode) in.readObject();
         } else {
@@ -378,6 +399,25 @@ public class TemplateProcessorSupport
 
     public NodeReferenceResolver findNodeResolver() {
         return SpecificationImpl.nodeSerializer();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TemplateProcessorSupport))
+            return false;
+        TemplateProcessorSupport other = (TemplateProcessorSupport) obj;
+        return Objects.deepEquals(_children, other._children)
+         && Objects.equals(_definition, other._definition)
+         && _evalBodyInclude == other._evalBodyInclude
+         && Objects.equals(_injectedNode, other._injectedNode)
+         && Objects.equals(_originalNode, other._originalNode)
+         && Objects.equals(_parent, other._parent);
     }
 
 }

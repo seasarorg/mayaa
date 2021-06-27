@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.util.ReferenceCache;
 

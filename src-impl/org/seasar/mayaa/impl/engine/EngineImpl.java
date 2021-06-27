@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,14 +41,16 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
-import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
+import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.SerializeExecutor;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.management.EngineRegistory;
-import org.seasar.mayaa.impl.source.DelaySourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.DateFormatPool;
 import org.seasar.mayaa.impl.util.IOUtil;
@@ -58,10 +61,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class EngineImpl extends SpecificationImpl
-        implements Engine {
-
-    private static final long serialVersionUID = 643873507172011552L;
+public class EngineImpl extends NonSerializableParameterAwareImpl implements Engine {
 
     static final Log LOG = LogFactory.getLog(EngineImpl.class);
 
@@ -74,11 +74,12 @@ public class EngineImpl extends SpecificationImpl
     public static final String DUMP_ENABLED = "dumpEnabled";
     public static final String CONVERT_CHARSET = "convertCharset";
     public static final String NO_CACHE_VALUE = "noCacheValue";
-    private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
-    private transient Specification _defaultSpecification;
+    private transient AtomicReference<Specification> _defaultSpecification = new AtomicReference<>(null);
+
     private transient ErrorHandler _errorHandler;
     private transient SpecificationCache _specCache;
+    private transient SerializeExecutor _serializeExecutor;
     /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
     private volatile boolean _destroyed = false;
 
@@ -100,8 +101,29 @@ public class EngineImpl extends SpecificationImpl
     private boolean _defaultIsMayaa = false;
 
     public EngineImpl() {
-        setSpecificationSerialize(DEFAULT_PAGE_SERIALIZE);
         EngineRegistory.registerEngine(this);
+        CycleUtil.registVariableFactory(CONST_IMPL.DEFAULT_SPECIFICATION_KEY, new DefaultCycleLocalInstantiator(){
+            /**
+             * デフォルトSpecificationをCycleに貼り付ける。
+             */
+            @Override
+            public Object create(Object[] params) {
+                Specification spec = _defaultSpecification.get();
+                if (spec != null && spec.isDeprecated() == false) {
+                    return spec;
+                }
+                // nullまたは無効になっている場合は(再)生成する。
+                synchronized (_defaultSpecification) {
+                    spec = _defaultSpecification.get();
+                    if (spec != null && spec.isDeprecated() == false) {
+                        return spec;
+                    }
+                    spec = createDefaultSpecification();
+                    _defaultSpecification.set(spec);
+                }
+                return spec;
+            }
+        });
     }
 
     public void setErrorHandler(ErrorHandler errorHandler) {
@@ -256,102 +278,13 @@ public class EngineImpl extends SpecificationImpl
 
     protected void saveToCycle() {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
-        cycle.setOriginalNode(this);
-        cycle.setInjectedNode(this);
-    }
-
-    public void build() {
-        build(true);
-    }
-
-    public void build(boolean rebuild) {
-        synchronized(this) {
-            if (_defaultSpecification != null) {
-                if (_defaultSpecification.isDeprecated() == false) {
-                    return;
-                }
-                releaseDefaultSpecification();
-            }
-            if (StringUtil.hasValue(_defaultSpecificationID)) {
-                _defaultSpecification =
-                    createDefaultSpecification(_defaultSpecificationID);
-            }
-        }
-    }
-
-    // NodeTreeWalker override
-
-    public void addChildNode(NodeTreeWalker childNode) {
-        if (_defaultSpecification != null) {
-            _defaultSpecification.addChildNode(childNode);
-            return;
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public NodeTreeWalker getChildNode(int index) {
-        if (_defaultSpecification != null) {
-            return _defaultSpecification.getChildNode(index);
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public int getChildNodeSize() {
-        if (_defaultSpecification != null) {
-            return _defaultSpecification.getChildNodeSize();
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public void clearChildNodes() {
-        if (_defaultSpecification != null) {
-            _defaultSpecification.clearChildNodes();
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    protected void releaseDefaultSpecification() {
-        _defaultSpecification = null;
-    }
-
-    public void insertChildNode(int index, NodeTreeWalker childNode) {
-        if (_defaultSpecification != null) {
-            _defaultSpecification.insertChildNode(index, childNode);
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean removeChildNode(NodeTreeWalker node) {
-        if (_defaultSpecification != null) {
-            _defaultSpecification.removeChildNode(node);
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public Iterator<NodeTreeWalker> iterateChildNode() {
-        if (_defaultSpecification != null) {
-            return _defaultSpecification.iterateChildNode();
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    public Date getTimestamp() {
-        if (_defaultSpecification != null) {
-            return _defaultSpecification.getTimestamp();
-        }
-        return null;
-    }
-
-    public boolean isDeprecated() {
-        if (_defaultSpecification != null) {
-            return _defaultSpecification.isDeprecated();
-        }
-        return false;
+        Specification spec = SpecificationUtil.getDefaultSpecification();
+        cycle.setOriginalNode(spec);
+        cycle.setInjectedNode(spec);
     }
 
     protected void doPageService(
             ServiceCycle cycle, Map<?,?> pageScopeValues, boolean pageFlush) {
-        build();
         try {
             boolean service = true;
             while (service) {
@@ -364,8 +297,9 @@ public class EngineImpl extends SpecificationImpl
                     saveToCycle();
                     SpecificationUtil.initScope();
                     SpecificationUtil.startScope(pageScopeValues);
+                    Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
                     try {
-                        SpecificationUtil.execEvent(_defaultSpecification, QM_BEFORE_RENDER);
+                        SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_BEFORE_RENDER);
                         RequestScope request = cycle.getRequestScope();
                         pageName = request.getPageName();
                         extension = request.getExtension();
@@ -377,7 +311,7 @@ public class EngineImpl extends SpecificationImpl
                         ret = page.doPageRender(requestedSuffix, extension);
 
                         saveToCycle();
-                        SpecificationUtil.execEvent(_defaultSpecification, QM_AFTER_RENDER);
+                        SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_AFTER_RENDER);
                     } finally {
                         SpecificationUtil.endScope();
                     }
@@ -519,8 +453,8 @@ public class EngineImpl extends SpecificationImpl
             SpecificationGenerator generator) {
         boolean rebuild = false;
         Specification spec;
-        if (isSpecificationSerialize()) {
-            spec = deserialize(systemID);
+        if (isSerializeEnabled()) {
+            spec = SpecificationUtil.deserialize(systemID);
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
                     if (registerCache) {
@@ -539,16 +473,19 @@ public class EngineImpl extends SpecificationImpl
         }
         spec = (Specification) ObjectUtil.newInstance(specClass);
         generator.initialize(spec);
-        if (spec instanceof SpecificationImpl) {
-            ((SpecificationImpl)spec).setSpecificationSerialize(
-                    isSpecificationSerialize());
-        }
         spec.setSource(source);
         spec.setSystemID(systemID);
         try {
             SpecificationUtil.startScope(null);
             try {
                 spec.build(rebuild);
+
+                if (spec.isDeprecated()) {
+                    return spec;
+                }
+                if (isSerializeEnabled()) {
+                    submitSerialize(spec);
+                }
             } finally {
                 SpecificationUtil.endScope();
             }
@@ -561,36 +498,33 @@ public class EngineImpl extends SpecificationImpl
         return spec;
     }
 
-    public Specification createDefaultSpecification(final String systemID) {
-        return createSpecificationInstance(systemID, false,
-                new SpecificationGenerator() {
-                    public Class<?> getInstantiator(SourceDescriptor source) {
-                        return SpecificationImpl.class;
-                    }
-                    public void initialize(Specification instance) {
-                        // no-op
-                    }
-                });
+    public Specification createDefaultSpecification() {
+        final SpecificationGenerator generator = new SpecificationGenerator() {
+                public Class<?> getInstantiator(SourceDescriptor source) {
+                    return SpecificationImpl.class;
+                }
+                public void initialize(Specification instance) {
+                    // no-op
+                }
+        };
+        Specification spec = createSpecificationInstance(_defaultSpecificationID, false, generator);
+        return spec;
     }
 
     public Page createPageInstance(final String pageName) {
-        return (Page) createSpecificationInstance(
-                pageName + _mayaaExtension, true,
-                new SpecificationGenerator() {
+        final SpecificationGenerator generator = new SpecificationGenerator() {
             public Class<?> getInstantiator(SourceDescriptor source) {
                 return getPageClass();
             }
             public void initialize(Specification instance) {
                 ((Page) instance).initialize(pageName);
             }
-        });
+        };
+        return (Page) createSpecificationInstance(pageName + _mayaaExtension, true, generator);
     }
 
-    public Template createTemplateInstance(
-            final Page page, final String suffix, final String extension) {
-        return (Template) createSpecificationInstance(
-                getTemplateID(page, suffix, extension), true,
-                new SpecificationGenerator() {
+    public Template createTemplateInstance(final Page page, final String suffix, final String extension) {
+        final SpecificationGenerator generator = new SpecificationGenerator() {
             public Class<?> getInstantiator(SourceDescriptor source) {
                 if (source.exists() == false) {
                     return null;
@@ -600,13 +534,15 @@ public class EngineImpl extends SpecificationImpl
             public void initialize(Specification instance) {
                 ((Template) instance).initialize(page, suffix, extension);
             }
-        });
+        };
+        final String templateId = getTemplateID(page, suffix, extension);
+        return (Template) createSpecificationInstance(templateId, true, generator);
     }
 
-    public String getTemplateID(Page page, String suffix, String extension) {
-        StringBuilder name = new StringBuilder(page.getPageName());
+    public String getTemplateID(final Page page, final String suffix, final String extension) {
+        final StringBuilder name = new StringBuilder(page.getPageName());
         if (StringUtil.hasValue(suffix)) {
-            String separator = getSuffixSeparator();
+            final String separator = getSuffixSeparator();
             name.append(separator).append(suffix);
         }
         if (StringUtil.hasValue(extension)) {
@@ -616,15 +552,15 @@ public class EngineImpl extends SpecificationImpl
     }
 
     protected String getSuffixSeparator() {
-        return EngineUtil.getEngineSetting(SUFFIX_SEPARATOR, "$");
+        return EngineUtil.getEngineSetting(CONST_IMPL.SUFFIX_SEPARATOR, "$");
     }
 
     public synchronized void destroy() {
         _destroyed = true;
-        releaseDefaultSpecification();
         if (_specCache != null) {
             _specCache.release();
         }
+        disableSerialize();
     }
 
     protected void finalize() throws Throwable {
@@ -634,7 +570,7 @@ public class EngineImpl extends SpecificationImpl
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
-        if (DEFAULT_SPECIFICATION.equals(name)) {
+        if (CONST_IMPL.DEFAULT_SPECIFICATION.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 String systemID;
                 if (value.charAt(0) != '/') {
@@ -642,14 +578,11 @@ public class EngineImpl extends SpecificationImpl
                 } else {
                     systemID = value;
                 }
-                SourceDescriptor source = new DelaySourceDescriptor();
-                source.setSystemID(systemID);
-                setSource(source);
                 _defaultSpecificationID = systemID;
 
                 setupDefaultIsMayaa();
             }
-        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList<>();
@@ -658,7 +591,7 @@ public class EngineImpl extends SpecificationImpl
                     new PathPattern(Pattern.compile(value), true);
                 _templatePathPatterns.add(0, pathPattern);
             }
-        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (_templatePathPatterns == null) {
                     _templatePathPatterns = new LinkedList<>();
@@ -674,7 +607,7 @@ public class EngineImpl extends SpecificationImpl
                     _pageClass = pageClass;
                 }
             }
-        } else if (MAYAA_EXTENSION.equals(name)) {
+        } else if (CONST_IMPL.MAYAA_EXTENSION.equals(name)) {
             if (StringUtil.hasValue(value)) {
                 if (value.startsWith(".")) {
                     _mayaaExtension = value;
@@ -696,8 +629,18 @@ public class EngineImpl extends SpecificationImpl
         } else if (NO_CACHE_VALUE.equals(name)) {
             _noCacheValue = value;
         } else if (PAGE_SERIALIZE.equals(name)) {
-            setSpecificationSerialize(
-                    Boolean.valueOf(value).booleanValue());
+            boolean booleanValue = Boolean.valueOf(value).booleanValue();
+            if (booleanValue) {
+                boolean result = enableSerialize();
+                if (!result) {
+                    // 準備に失敗した場合はシリアライズは有効にしない。
+                    value = "false"; // superの呼び出しに対して "false" を渡す
+                }
+            }
+            else {
+                // シリアライズを無効にした場合は後片付けをする。
+                disableSerialize();
+            }
         } else if (SURVIVE_LIMIT.equals(name)) {
             _surviveLimit = Integer.parseInt(value);
         } else if (FORWARD_LIMIT.equals(name)) {
@@ -712,6 +655,46 @@ public class EngineImpl extends SpecificationImpl
         super.setParameter(name, value);
     }
 
+    /**
+     * Specificationのシリアライズを行うかどうかを返却する。
+     * 
+     * @return 有効な場合は true
+     */
+    boolean isSerializeEnabled() {
+        return _serializeExecutor != null;
+    }
+
+    /**
+     * シリアライズ処理を実行する。
+     * @param spec シリアライズ対象のSpecification
+     */
+    void submitSerialize(final Specification spec) {
+        final SerializeExecutor executor = _serializeExecutor;
+        if (executor != null) {
+            executor.submit(spec);
+        }
+    }
+
+    /**
+     * シリアライズ処理を有効にする
+     * @return 有効化が成功したらtrue
+     */
+    synchronized boolean enableSerialize() {
+        final boolean result = SpecificationUtil.prepareSerialize();
+        if (result && _serializeExecutor == null) {
+            _serializeExecutor = new SerializeExecutor();
+        }
+        return result;
+    }
+
+    /**
+     * シリアライズ処理を無効にする
+     */
+    synchronized void disableSerialize() {
+        _serializeExecutor = null;
+        SpecificationUtil.cleanupSerialize();
+    }
+
     private void setupDefaultIsMayaa() {
         _defaultIsMayaa = _defaultSpecificationID.endsWith(_mayaaExtension);
         if (_defaultIsMayaa) {
@@ -721,19 +704,19 @@ public class EngineImpl extends SpecificationImpl
     }
 
     public String getParameter(String name) {
-        if (DEFAULT_SPECIFICATION.equals(name)) {
+        if (CONST_IMPL.DEFAULT_SPECIFICATION.equals(name)) {
             return _defaultSpecificationID;
-        } else if (TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
             return patternToString(_templatePathPatterns, true);
-        } else if (NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
+        } else if (CONST_IMPL.NOT_TEMPLATE_PATH_PATTERN.equals(name)) {
             if (_templatePathPatterns == null) {
                 return null;
             }
             return patternToString(_templatePathPatterns, false);
-        } else if (MAYAA_EXTENSION.equals(name)) {
+        } else if (CONST_IMPL.MAYAA_EXTENSION.equals(name)) {
             return _mayaaExtension;
         } else if (PAGE_CLASS.equals(name)) {
             return _pageClass.getName();
@@ -742,7 +725,7 @@ public class EngineImpl extends SpecificationImpl
         } else if (NO_CACHE_VALUE.equals(name)) {
             return _noCacheValue;
         } else if (PAGE_SERIALIZE.equals(name)) {
-            return String.valueOf(isSpecificationSerialize());
+            return String.valueOf(isSerializeEnabled());
         } else if (SURVIVE_LIMIT.equals(name)) {
             return String.valueOf(_surviveLimit);
         } else if (FORWARD_LIMIT.equals(name)) {

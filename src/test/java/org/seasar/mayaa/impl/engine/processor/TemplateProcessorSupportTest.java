@@ -19,22 +19,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import javax.servlet.ServletContext;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
+import org.seasar.mayaa.impl.FactoryFactoryImpl;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TemplateProcessorSupportTest {
 
+    private ServletContext _servletContext;
     private TemplateProcessorSupport _processor;
     private TemplateProcessorSupport _parent;
 
     @Before
     public void setUp() throws Exception {
-        _parent = new TemplateProcessorSupport();
-        _processor = new TemplateProcessorSupport();
+        _servletContext = new MockServletContext();
+        FactoryFactory.setInstance(new FactoryFactoryImpl());
+        FactoryFactory.setContext(_servletContext);
+
+        _parent = new TemplateProcessorSupportTestee();
+        _processor = new TemplateProcessorSupportTestee();
         _processor.setParentProcessor(_parent);
     }
 
@@ -42,7 +52,7 @@ public class TemplateProcessorSupportTest {
     public void testAddChild() throws Exception {
         // addChild(TemplateProcessor)にて追加した子プロセッサのリストが、
         // getChildren()で配列として取得できる。
-        TemplateProcessorSupport child = new TemplateProcessorSupport();
+        TemplateProcessorSupport child = new TemplateProcessorSupportTestee();
         _processor.addChildProcessor(child);
         assertEquals(1, _processor.getChildProcessorSize());
         assertEquals(child, _processor.getChildProcessor(0));
@@ -76,4 +86,10 @@ public class TemplateProcessorSupportTest {
         assertEquals(ProcessStatus.EVAL_PAGE, _processor.doEndProcess());
     }
 
+}
+
+class TemplateProcessorSupportTestee extends TemplateProcessorSupport {
+
+    private static final long serialVersionUID = -1303874983746243643L;
+    
 }

@@ -15,16 +15,18 @@
  */
 package org.seasar.mayaa.engine.processor;
 
+import java.io.Serializable;
+
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 /**
  * テンプレート中のHTMLタグを処理するクラス。
- * リクエストに対してステートレスなように実装しなければならない。
+ * リクエストに対してステートレスなように実装しなければならない。ビルド済みのTemplateをシリアライズするためにプロセッサもシリアライズが必要。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface TemplateProcessor extends ProcessorTreeWalker {
+public interface TemplateProcessor extends ProcessorTreeWalker, Serializable {
 
     /**
      * インスタンス生成処理の最後、プロパティをセットした後で呼ばれる。

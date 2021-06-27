@@ -21,21 +21,33 @@ import java.util.Iterator;
 
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.UnifiedFactory;
+import org.seasar.mayaa.builder.PathAdjuster;
+import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
+import org.seasar.mayaa.impl.builder.PathAdjusterImpl;
 import org.seasar.mayaa.impl.builder.SpecificationBuilderImpl;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
+import org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver;
+import org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver;
+import org.seasar.mayaa.impl.builder.library.LibraryManagerImpl;
+import org.seasar.mayaa.impl.builder.library.MLDDefinitionBuilder;
+import org.seasar.mayaa.impl.builder.library.converter.PrefixAwareNameConverter;
+import org.seasar.mayaa.impl.builder.library.converter.ProcessorPropertyConverter;
+import org.seasar.mayaa.impl.builder.library.scanner.ResourceScanner;
 import org.seasar.mayaa.impl.cycle.CycleFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.mayaa.impl.cycle.web.ServiceCycleImpl;
 import org.seasar.mayaa.impl.engine.EngineImpl;
+import org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl;
 import org.seasar.mayaa.impl.provider.ProviderFactoryImpl;
 import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.source.PageSourceDescriptor;
 import org.seasar.mayaa.impl.source.PageSourceFactoryImpl;
+import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.seasar.mayaa.source.PageSourceFactory;
@@ -61,6 +73,7 @@ public class ManualProviderFactory extends FactoryFactory {
     public static ScriptEnvironmentImpl SCRIPT_ENVIRONMENT;
     public static SpecificationBuilderImpl SPECIFICATION_BUILDER;
     public static TemplateBuilderImpl TEMPLATE_BUILDER;
+    public static LibraryManagerImpl LIBRARY_MANAGER;
 
     protected CycleFactory _factory;
     private SourceDescriptor _bootstrapSource;
@@ -81,6 +94,30 @@ public class ManualProviderFactory extends FactoryFactory {
         PROVIDER.setSpecificationBuilder(SPECIFICATION_BUILDER);
         TEMPLATE_BUILDER = new TemplateBuilderImpl();
         PROVIDER.setTemplateBuilder(TEMPLATE_BUILDER);
+
+        EqualsIDInjectionResolver equalsIDInjectionResolver = new EqualsIDInjectionResolver();
+        equalsIDInjectionResolver.setParameter("addAttribute", "{http://www.w3.org/TR/html4}id");
+
+        TEMPLATE_BUILDER.addInjectionResolver(equalsIDInjectionResolver);
+        TEMPLATE_BUILDER.addInjectionResolver(new InjectAttributeInjectionResolver());
+
+        PROVIDER.setParentSpecificationResolver(new ParentSpecificationResolverImpl());
+
+        SourceScanner scanner = new ResourceScanner();
+        scanner.setParameter("extension", ".mld");
+
+        LIBRARY_MANAGER = new LibraryManagerImpl();
+        LIBRARY_MANAGER.addSourceScanner(scanner);
+        LIBRARY_MANAGER.addDefinitionBuilder(new MLDDefinitionBuilder());
+        LIBRARY_MANAGER.addPropertyConverter("ProcessorProperty", new ProcessorPropertyConverter());
+        LIBRARY_MANAGER.addPropertyConverter("PrefixAwareName", new PrefixAwareNameConverter());
+
+        PROVIDER.setLibraryManager(LIBRARY_MANAGER);
+
+        PathAdjuster pathAdjuster = new PathAdjusterImpl();
+        pathAdjuster.setParameter("enabled", "true");
+        pathAdjuster.setParameter("force", "false");
+        PROVIDER.setPathAdjuster(new PathAdjusterImpl());
 
         HTTP_SERVLET_REQUEST =
             new MockHttpServletRequest(SERVLET_CONTEXT);
@@ -161,8 +198,10 @@ public class ManualProviderFactory extends FactoryFactory {
     }
 
     protected PageSourceFactory getPageSourceFactory(Object context) {
+        SourceHolderFactory.release();
         PageSourceFactoryImpl factory = new PageSourceFactoryImpl();
         factory.setServiceClass(PageSourceDescriptor.class);
+        factory.setParameter("folder", "/WEB-INF/page");
         return factory;   
     }
 

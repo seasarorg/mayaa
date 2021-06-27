@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl;
 
+import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
@@ -29,6 +30,9 @@ public interface CONST_IMPL {
      * IS_SECURE_WEBのキー。
      */
     String SECURE_WEB_KEY = "org.seasar.mayaa.secure.web";
+
+    /** デフォルトのSpecificationをGlobalVariableに保持する際のキー */
+    String DEFAULT_SPECIFICATION_KEY = Engine.class.getName() + "#default";
 
     String DEBUG = "org.seasar.mayaa.debug";
 

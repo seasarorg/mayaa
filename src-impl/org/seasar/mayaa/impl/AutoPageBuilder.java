@@ -33,6 +33,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletRequest;
 import org.seasar.mayaa.impl.cycle.web.MockHttpServletResponse;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
@@ -177,12 +178,8 @@ public class AutoPageBuilder implements Runnable {
     public void run() {
         Thread currentThread = Thread.currentThread();
         try {
-            Engine engine = ProviderUtil.getEngine();
             long engineBuildTime = diffMillis(0);
-            synchronized (engine) {
-                engine.build();
-            }
-            reportTime(engine, diffMillis(engineBuildTime));
+            reportTime(SpecificationUtil.getDefaultSpecification(), diffMillis(engineBuildTime));
 
             // prepare SourceHolderFactory
             FactoryFactory.getFactory(PageSourceFactory.class);
@@ -241,9 +238,10 @@ public class AutoPageBuilder implements Runnable {
             String pageName = CycleUtil.getRequestScope().getPageName();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             Engine engine = ProviderUtil.getEngine();
-            engine.build();
-            cycle.setOriginalNode(engine);
-            cycle.setInjectedNode(engine);
+            Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
+
+            cycle.setOriginalNode(defaultSpec);
+            cycle.setInjectedNode(defaultSpec);
             if (engine.isPageRequested()) {
                 long pageBuildTime = diffMillis(0);
                 Page page = engine.getPage(pageName);

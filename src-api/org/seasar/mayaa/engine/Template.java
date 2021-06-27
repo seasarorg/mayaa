@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.engine;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
@@ -28,7 +26,7 @@ import org.seasar.mayaa.engine.specification.Specification;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface Template
-        extends Specification, ProcessorTreeWalker, Serializable {
+        extends Specification, ProcessorTreeWalker {
 
     /**
      * テンプレートを初期化する。

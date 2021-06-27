@@ -265,13 +265,13 @@ public class InsertProcessor
         params.setStackComponent(PageImpl.getCurrentComponent());
         params.setCurrentComponent(component);
         PageImpl.setCurrentComponent(component);
-        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_BEFORE_RENDER_COMPONENT);
+        SpecificationUtil.execEvent(SpecificationUtil.getDefaultSpecification(), QM_BEFORE_RENDER_COMPONENT);
     }
 
     protected void invokeAfterRenderComponent() {
         InsertRenderingParams params = peekRenderingParams();
         PageImpl.setCurrentComponent(params.getCurrentComponent());
-        SpecificationUtil.execEvent(ProviderUtil.getEngine(), QM_AFTER_RENDER_COMPONENT);
+        SpecificationUtil.execEvent(SpecificationUtil.getDefaultSpecification(), QM_AFTER_RENDER_COMPONENT);
         PageImpl.setCurrentComponent(params.getStackComponent());
         params.setRendering(false);
         params.clear();

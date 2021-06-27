@@ -26,7 +26,7 @@ import org.seasar.mayaa.engine.specification.Specification;
  * リクエストに対して、ステートレスに実装。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Engine extends ParameterAware, Specification {
+public interface Engine extends ParameterAware {
 
     /**
      * エラーハンドラの設定。

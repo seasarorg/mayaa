@@ -38,7 +38,6 @@ public class TextCompiledScriptImplTest {
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
         ManualProviderFactory.SCRIPT_ENVIRONMENT.startScope(null);
         _position = new PositionAware() {
-            private static final long serialVersionUID = 1L;
 
             public void setSystemID(String systemID) {
                 // no-op

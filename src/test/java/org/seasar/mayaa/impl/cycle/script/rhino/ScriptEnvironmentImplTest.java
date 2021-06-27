@@ -47,7 +47,6 @@ public class ScriptEnvironmentImplTest {
         _scriptEnvironment.initScope();
         _scriptEnvironment.startScope(null);
         _position = new PositionAware() {
-            private static final long serialVersionUID = 1L;
 
             public void setSystemID(String systemID) {
                 // no-op

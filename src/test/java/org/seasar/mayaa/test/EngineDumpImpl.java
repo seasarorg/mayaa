@@ -33,8 +33,6 @@ import org.seasar.mayaa.impl.engine.PageNotFoundException;
  */
 public class EngineDumpImpl extends EngineImpl {
 
-    private static final long serialVersionUID = -1901417389019083666L;
-
     private static final Log LOG = LogFactory.getLog(EngineDumpImpl.class);
 
     protected void doPageService(

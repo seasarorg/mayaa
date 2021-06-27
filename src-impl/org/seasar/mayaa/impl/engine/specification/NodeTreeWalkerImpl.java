@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
@@ -30,16 +31,11 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
     private static final long serialVersionUID = 2482332186727952663L;
 
-    private transient NodeTreeWalker _owner;
     private transient NodeTreeWalker _parent;
     private List<NodeTreeWalker> _childNodes;
     private String _systemID;
     private int _lineNumber;
     private boolean _onTemplate;
-
-    public void setOwner(NodeTreeWalker owner) {
-        _owner = owner;
-    }
 
     // NodeTreeWalker implemetns ------------------------------------
 
@@ -78,7 +74,6 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
                 throw new IndexOutOfBoundsException();
             }
             _childNodes.add(index, childNode);
-            childNode.setParentNode(_owner);
         }
     }
 
@@ -158,5 +153,34 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
         return SpecificationImpl.nodeSerializer();
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(_childNodes, _lineNumber, _onTemplate, _parent, _systemID);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof NodeTreeWalkerImpl))
+            return false;
+        NodeTreeWalkerImpl other = (NodeTreeWalkerImpl) obj;
+        return _lineNumber == other._lineNumber
+            && _onTemplate == other._onTemplate
+            && Objects.equals(_parent, other._parent)
+            && Objects.equals(_systemID, other._systemID)
+            && Objects.equals(_childNodes, other._childNodes) 
+            ;
+    }
+
+    
 }
 

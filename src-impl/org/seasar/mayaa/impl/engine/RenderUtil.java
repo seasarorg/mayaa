@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
-import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.TemplateRenderer;
@@ -31,11 +30,11 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.processor.TryCatchFinallyProcessor;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -126,8 +125,8 @@ public class RenderUtil implements CONST_IMPL {
         boolean buffered = false;
 
         setCurrentProcessor(current);
-        Engine engine = ProviderUtil.getEngine();
-        SpecificationUtil.execEvent(engine, QM_BEFORE_RENDER_PROCESSOR);
+        Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
+        SpecificationUtil.execEvent(defaultSpec, QM_BEFORE_RENDER_PROCESSOR);
         try {
             SpecificationUtil.startScope(current.getVariables());
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
@@ -168,7 +167,7 @@ public class RenderUtil implements CONST_IMPL {
                 getTryCatchFinally(current).doFinallyProcess();
             }
             setCurrentProcessor(current);
-            SpecificationUtil.execEvent(engine, QM_AFTER_RENDER_PROCESSOR);
+            SpecificationUtil.execEvent(defaultSpec, QM_AFTER_RENDER_PROCESSOR);
             setCurrentProcessor(null);
         }
         return ret;

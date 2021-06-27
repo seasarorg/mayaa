@@ -22,9 +22,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,12 +45,12 @@ public class SpecificationUtilTest {
 
         _page = new PageImpl();
 
-        _page.setSource(SourceUtil.getSourceDescriptor("/page.mayaa"));
+        _page.setSource(SourceUtil.getSourceDescriptor("/tests/page.mayaa"));
         _page.initialize("/page");
         _page.build();
 
         _template = new TemplateImpl();
-        _template.setSource(SourceUtil.getSourceDescriptor("/page.html"));
+        _template.setSource(SourceUtil.getSourceDescriptor("/tests/page.html"));
         _template.initialize(_page, "ja", "html");
         _template.build();
 
@@ -106,9 +103,13 @@ public class SpecificationUtilTest {
     @Test
     public void testSerializeTemplate() throws URISyntaxException {
         File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
+        File expectedFile = new File(cacheDir, "tests#page.html.ser");
         assertFalse(_template.isDeprecated());
 
         SpecificationUtil.serialize(_template, cacheDir);
+
+        // シリアル化したファイルが存在する。
+        assertTrue(expectedFile.exists());
 
         Specification actual = SpecificationUtil.deserialize(_template.getSystemID(), cacheDir);
 
@@ -117,14 +118,19 @@ public class SpecificationUtilTest {
 
         assertFalse(actual.isDeprecated());
 
+        expectedFile.delete();
     }
 
     @Test
     public void testSerializePage() throws URISyntaxException {
         File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
+        File expectedFile = new File(cacheDir, "tests#page.mayaa.ser");
         assertFalse(_page.isDeprecated());
 
         SpecificationUtil.serialize(_page, cacheDir);
+
+        // シリアル化したファイルが存在する。
+        assertTrue(expectedFile.exists());
 
         Specification actual = SpecificationUtil.deserialize(_page.getSystemID(), cacheDir);
 
@@ -133,6 +139,7 @@ public class SpecificationUtilTest {
 
         assertFalse(actual.isDeprecated());
 
+        expectedFile.delete();
     }
 
 }

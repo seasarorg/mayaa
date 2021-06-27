@@ -553,6 +553,13 @@
       <version>2.0</version>
       <scope>provided</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.enterprise.concurrent/javax.enterprise.concurrent-api -->
+    <dependency>
+     <groupId>javax.enterprise.concurrent</groupId>
+      <artifactId>javax.enterprise.concurrent-api</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/junit/junit -->
     <dependency>
       <groupId>junit</groupId>

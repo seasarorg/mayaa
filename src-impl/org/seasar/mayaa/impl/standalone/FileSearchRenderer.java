@@ -39,7 +39,6 @@ import org.seasar.mayaa.impl.cycle.web.MockServletContext;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.processor.JspProcessor;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
@@ -225,7 +224,6 @@ public class FileSearchRenderer {
     public void destroy() {
         ReferenceCache.finishThreads();
         ProviderUtil.getEngine().destroy();
-        SerializeThreadManager.destroy();
         JspProcessor.clear();
 
         LogFactory.releaseAll();

@@ -48,6 +48,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.SerializeExecutor;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.management.EngineRegistory;
 import org.seasar.mayaa.impl.source.SourceUtil;
@@ -73,12 +74,12 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     public static final String DUMP_ENABLED = "dumpEnabled";
     public static final String CONVERT_CHARSET = "convertCharset";
     public static final String NO_CACHE_VALUE = "noCacheValue";
-    private static final boolean DEFAULT_PAGE_SERIALIZE = true;
 
     private transient AtomicReference<Specification> _defaultSpecification = new AtomicReference<>(null);
 
     private transient ErrorHandler _errorHandler;
     private transient SpecificationCache _specCache;
+    private transient SerializeExecutor _serializeExecutor;
     /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
     private volatile boolean _destroyed = false;
 
@@ -93,7 +94,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     private int _forwardLimit = 10;
     private String _mayaaExtension = ".mayaa";
     private String _noCacheValue = "no-cache";
-    private boolean _isSpecificationSerialize = DEFAULT_PAGE_SERIALIZE;
 
     // change on setParameter
     private String _mayaaExtensionName = "mayaa";
@@ -115,7 +115,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 // nullまたは無効になっている場合は(再)生成する。
                 synchronized (_defaultSpecification) {
                     spec = _defaultSpecification.get();
-                    if (spec != null) {
+                    if (spec != null && spec.isDeprecated() == false) {
                         return spec;
                     }
                     spec = createDefaultSpecification();
@@ -124,7 +124,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 return spec;
             }
         });
-
     }
 
     public void setErrorHandler(ErrorHandler errorHandler) {
@@ -454,7 +453,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             SpecificationGenerator generator) {
         boolean rebuild = false;
         Specification spec;
-        if (_isSpecificationSerialize) {
+        if (isSerializeEnable()) {
             spec = SpecificationUtil.deserialize(systemID);
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
@@ -474,16 +473,19 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         }
         spec = (Specification) ObjectUtil.newInstance(specClass);
         generator.initialize(spec);
-        if (spec instanceof SpecificationImpl) {
-            ((SpecificationImpl)spec).setSpecificationSerialize(
-                _isSpecificationSerialize);
-        }
         spec.setSource(source);
         spec.setSystemID(systemID);
         try {
             SpecificationUtil.startScope(null);
             try {
                 spec.build(rebuild);
+
+                if (spec.isDeprecated()) {
+                    return spec;
+                }
+                if (isSerializeEnable()) {
+                    submitSerialize(spec);
+                }
             } finally {
                 SpecificationUtil.endScope();
             }
@@ -558,6 +560,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         if (_specCache != null) {
             _specCache.release();
         }
+        disableSerialize();
     }
 
     protected void finalize() throws Throwable {
@@ -626,7 +629,18 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         } else if (NO_CACHE_VALUE.equals(name)) {
             _noCacheValue = value;
         } else if (PAGE_SERIALIZE.equals(name)) {
-            _isSpecificationSerialize = Boolean.valueOf(value).booleanValue();
+            boolean booleanValue = Boolean.valueOf(value).booleanValue();
+            if (booleanValue) {
+                boolean result = enableSerialize();
+                if (!result) {
+                    // 準備に失敗した場合はシリアライズは有効にしない。
+                    value = "false"; // superの呼び出しに対して "false" を渡す
+                }
+            }
+            else {
+                // シリアライズを無効にした場合は後片付けをする。
+                disableSerialize();
+            }
         } else if (SURVIVE_LIMIT.equals(name)) {
             _surviveLimit = Integer.parseInt(value);
         } else if (FORWARD_LIMIT.equals(name)) {
@@ -639,6 +653,46 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             CharsetConverter.setEnabled(Boolean.valueOf(value).booleanValue());
         }
         super.setParameter(name, value);
+    }
+
+    /**
+     * Specificationのシリアライズを行うかどうかを返却する。
+     * 
+     * @return 有効な場合は true
+     */
+    boolean isSerializeEnable() {
+        return _serializeExecutor != null;
+    }
+
+    /**
+     * シリアライズ処理を実行する。
+     * @param spec シリアライズ対象のSpecification
+     */
+    void submitSerialize(final Specification spec) {
+        final SerializeExecutor executor = _serializeExecutor;
+        if (executor != null) {
+            executor.submit(spec);
+        }
+    }
+
+    /**
+     * シリアライズ処理を有効にする
+     * @return 有効化が成功したらtrue
+     */
+    synchronized boolean enableSerialize() {
+        final boolean result = SpecificationUtil.prepareSerialize();
+        if (result && _serializeExecutor == null) {
+            _serializeExecutor = new SerializeExecutor();
+        }
+        return result;
+    }
+
+    /**
+     * シリアライズ処理を無効にする
+     */
+    synchronized void disableSerialize() {
+        _serializeExecutor = null;
+        SpecificationUtil.cleanupSerialize();
     }
 
     private void setupDefaultIsMayaa() {
@@ -671,7 +725,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         } else if (NO_CACHE_VALUE.equals(name)) {
             return _noCacheValue;
         } else if (PAGE_SERIALIZE.equals(name)) {
-            return String.valueOf(_isSpecificationSerialize);
+            return String.valueOf(isSerializeEnable());
         } else if (SURVIVE_LIMIT.equals(name)) {
             return String.valueOf(_surviveLimit);
         } else if (FORWARD_LIMIT.equals(name)) {

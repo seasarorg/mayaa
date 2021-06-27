@@ -17,10 +17,12 @@ package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,6 +74,8 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static final PrefixMapping XHTML_DEFAULT_PREFIX_MAPPING =
         PrefixMappingImpl.getInstance("", CONST_IMPL.URI_XHTML);
+
+    public static File _serializeDirFile;
 
     private SpecificationUtil() {
         // no instantiation.
@@ -305,19 +311,53 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     /**
+     * {@link Specification} のシリアライズを有効にするための準備を行う。
+     * シリアライズ後のファイル保管ディレクトリが作成できないなどの理由で失敗した場合はfalseを返す。
+     * @return シリアライズを有効にするための準備が整わないときに false を返す。
+     */
+    public static boolean prepareSerialize() {
+        try {
+            ApplicationScope scope = CycleUtil.getServiceCycle().getApplicationScope();
+            ServletContext context = (ServletContext) scope.getUnderlyingContext();
+            File baseDir = (File) context.getAttribute("javax.servlet.context.tempdir");
+            if (baseDir == null || !baseDir.exists()) {
+                return false; // cannot resolve spec cache directory.
+            }
+            File cacheDir = new File(baseDir, ".mayaaSpecCache");
+            if (cacheDir.exists() || cacheDir.mkdirs()) {
+                _serializeDirFile = cacheDir;
+            }
+            else {
+                LOG.error("Cannot mkdir serialize directory. " + cacheDir.getAbsolutePath());
+                return false;
+            }
+        } catch (SecurityException e) {
+            return false;
+        }
+
+        // すべて問題がなければ true
+        return true;
+    }
+
+    public static void cleanupSerialize() {
+        if (_serializeDirFile != null) {
+            try {
+                Files.deleteIfExists(_serializeDirFile.toPath());
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    /**
      * キャッシュ用にシリアライズするディレクトリのファイルオブジェクトを取得する。
      * @return Fileオブジェクト
      */
     protected static File getSerializeDirectory() {
-        ApplicationScope scope =
-            CycleUtil.getServiceCycle().getApplicationScope();
-        String basePath = scope.getRealPath("WEB-INF");
-        if (basePath == null) {
-            throw new IllegalStateException("cannot resolve spec cache directory.");
+        if (_serializeDirFile == null || !_serializeDirFile.exists()) {
+            prepareSerialize();
         }
-        File cacheDir = new File(basePath, ".mayaaSpecCache");
-        cacheDir.mkdirs();
-        return cacheDir;
+
+        return _serializeDirFile;
     }
 
     /**
@@ -326,7 +366,7 @@ public class SpecificationUtil implements CONST_IMPL {
      * @return シリアライズ用ファイル名
      */
     protected static String getSerializedFilename(String systemID) {
-        return systemID.substring("/".length()).replace('/', '`') + ".ser";
+        return systemID.substring("/".length()).replace('/', '#') + ".ser";
     }
 
     public static void serialize(Specification spec) {
@@ -344,6 +384,8 @@ public class SpecificationUtil implements CONST_IMPL {
                     stream.writeObject(spec);
                 }
             }
+        } catch (FileNotFoundException e) {
+            LOG.error("page serialize failed.", e);
         } catch (IOException e) {
             LOG.error("page serialize failed.", e);
         } catch (IllegalStateException e) {

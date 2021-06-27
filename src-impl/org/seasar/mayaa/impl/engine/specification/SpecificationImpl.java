@@ -34,7 +34,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
-import org.seasar.mayaa.impl.engine.specification.serialize.SerializeThreadManager;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.NullSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
@@ -58,7 +57,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     private boolean _hasSource;
     private boolean _deprecated = true;
     private int _lastSequenceID;
-    private transient boolean _specificationSerialize;
 
     protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CONST_IMPL.CHECK_TIMESTAMP, true);
@@ -66,14 +64,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
 
     protected boolean isSourceExists() {
         return getSource().exists();
-    }
-
-    public boolean isSpecificationSerialize() {
-        return _specificationSerialize && !EngineUtil.isInSecureWeb();
-    }
-
-    public void setSpecificationSerialize(boolean specificationSerialize) {
-        _specificationSerialize = specificationSerialize;
     }
 
     protected SpecificationBuilder getBuilder() {
@@ -148,10 +138,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
                 getBuilder().build(this);
                 _builtSourceTime = sourceTime;
                 _deprecated = false;
-                if (isSpecificationSerialize()) {
-                    SerializeThreadManager.serializeReserve(
-                            this, CycleUtil.getServiceCycle().getApplicationScope().getUnderlyingContext());
-                }
                 return;
             }
             // rebuildの場合は存在したソースが無くなったことを意味するため、タイムスタンプを0にしない
@@ -320,7 +306,7 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     @Override
     public int hashCode() {
         return Objects.hash(_buildTimestamp, _builtSourceTime, _delegateNodeTreeWalker, _deprecated, _hasSource,
-                _lastSequenceID, _source, _specificationSerialize);
+                _lastSequenceID, _source);
     }
 
     /*
@@ -341,7 +327,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
                 && Objects.equals(_delegateNodeTreeWalker, other._delegateNodeTreeWalker)
                 && _hasSource == other._hasSource
                 && (_hasSource && Objects.nonNull(_source) && Objects.nonNull(other._source) && Objects.equals(_source.getSystemID(), other._source.getSystemID()))
-                && _lastSequenceID == other._lastSequenceID
-                && _specificationSerialize == other._specificationSerialize;
+                && _lastSequenceID == other._lastSequenceID;
     }
 }

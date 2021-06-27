@@ -453,7 +453,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             SpecificationGenerator generator) {
         boolean rebuild = false;
         Specification spec;
-        if (isSerializeEnable()) {
+        if (isSerializeEnabled()) {
             spec = SpecificationUtil.deserialize(systemID);
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
@@ -483,7 +483,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 if (spec.isDeprecated()) {
                     return spec;
                 }
-                if (isSerializeEnable()) {
+                if (isSerializeEnabled()) {
                     submitSerialize(spec);
                 }
             } finally {
@@ -660,7 +660,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
      * 
      * @return 有効な場合は true
      */
-    boolean isSerializeEnable() {
+    boolean isSerializeEnabled() {
         return _serializeExecutor != null;
     }
 
@@ -725,7 +725,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         } else if (NO_CACHE_VALUE.equals(name)) {
             return _noCacheValue;
         } else if (PAGE_SERIALIZE.equals(name)) {
-            return String.valueOf(isSerializeEnable());
+            return String.valueOf(isSerializeEnabled());
         } else if (SURVIVE_LIMIT.equals(name)) {
             return String.valueOf(_surviveLimit);
         } else if (FORWARD_LIMIT.equals(name)) {

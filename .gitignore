@@ -2,7 +2,6 @@
 /.tomcatplugin
 /build.bat
 target
-target.*
 /work
 /test-war/.env
 

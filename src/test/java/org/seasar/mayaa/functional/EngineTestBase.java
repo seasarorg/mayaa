@@ -319,6 +319,7 @@ public class EngineTestBase {
             int lineIndex = 1;
             for (String actualLine: content.split("\n")) {
                 String expectedLine = line;
+                actualLine = actualLine.replaceAll("\r", "");
                 assertEquals("body compare:" + lineIndex, expectedLine, actualLine); 
 
                 lineIndex++;

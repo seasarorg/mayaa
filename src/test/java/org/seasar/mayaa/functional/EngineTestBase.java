@@ -77,6 +77,10 @@ public class EngineTestBase {
         engine.setParameter(EngineImpl.DUMP_ENABLED, "false");
     }
 
+    public boolean isDumpEnabled() {
+        return "true".equalsIgnoreCase(engine.getParameter(EngineImpl.DUMP_ENABLED));
+    }
+
     public Page getPage() {
         return engine.getPage(requestedPageName);
     }
@@ -316,6 +320,12 @@ public class EngineTestBase {
 
             // Process Body
             final String content = response.getContentAsString();
+
+            if (isDumpEnabled()) {
+                System.out.println("RESPONSE DUMP ==============");
+                System.out.println(content);    
+            }
+
             int lineIndex = 1;
             for (String actualLine: content.split("\n")) {
                 String expectedLine = line;

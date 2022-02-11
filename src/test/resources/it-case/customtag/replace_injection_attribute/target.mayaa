@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa
+	xmlns:m="http://mayaa.seasar.org"
+	xmlns:c="http://java.sun.com/jstl/core_rt">
+
+	<c:out m:id="check" value="good"/>
+
+</m:mayaa>

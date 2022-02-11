@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test"
+		xmlns:c="http://java.sun.com/jstl/core_rt">
+
+	<m:beforeRender><![CDATA[
+		page['SimpleTestTag'] = "hello ";
+//		var SimpleTestTag = "hello ";
+	]]></m:beforeRender>
+
+	<m:echo m:id="hello1">
+		<mt:simpleTest simpleName="${ 'TestTag' }" />
+	</m:echo>
+
+	<m:echo m:id="hello2">
+		[<m:write value="${ page.__parent__['class']; }"/>]
+	</m:echo>
+
+	<m:echo m:id="hello3">
+		<m:with>
+			[<m:write value="${ this.__parent__.__parent__['class']; }"/>]
+		</m:with>
+	</m:echo>
+
+	<m:echo m:id="hello4">
+		<m:with>
+			[<m:write value="${ _['class']; }"/>]
+		</m:with>
+	</m:echo>
+
+	<m:echo m:id="hello5">
+		<c:if test="${ true }"><m:doBody /></c:if>
+	</m:echo>
+
+	<mt:simpleTest m:id="hello6" simpleName="${ 'TestTag' }" />
+
+</m:mayaa>

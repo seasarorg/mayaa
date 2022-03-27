@@ -41,6 +41,11 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         return getInstance(URI_MAYAA, localName);
     }
 
+    public static QName getInstance(String namespaceURI, String localName) {
+        URI uri = URIImpl.getInstance(namespaceURI);
+        return getInstance(uri, localName);
+    }
+
     public static QName getInstance(URI namespaceURI, String localName) {
         // undeploy時に_cacheが消されたあとアクセスされる場合がある
         if (_cache == null) {

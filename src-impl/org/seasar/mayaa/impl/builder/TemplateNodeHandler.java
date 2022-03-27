@@ -15,32 +15,47 @@
  */
 package org.seasar.mayaa.impl.builder;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.cyberneko.html.HTMLEntities;
 import org.seasar.mayaa.engine.Template;
+import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.EntityResolver2;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class TemplateNodeHandler extends SpecificationNodeHandler {
+public class TemplateNodeHandler extends SpecificationNodeHandler implements EntityResolver2, LexicalHandler {
 
     private static final Log LOG = LogFactory.getLog(TemplateNodeHandler.class);
 
+    // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
+    private boolean _afterDocType;// workaround for doctype
+    private int _inEntity;
+    private boolean inDTD = false;
     private boolean _outputTemplateWhitespace = true;
     private boolean _isSSIIncludeReplacementEnabled = false;
 
@@ -66,12 +81,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
      */
     protected boolean isSSIIncludeReplacementEnabled() {
         return _isSSIIncludeReplacementEnabled;
-    }
-
-    protected void initNamespace() {
-        super.initNamespace();
-        getCurrentInternalNamespacePrefixMap().remove("");
-        getCurrentInternalNamespacePrefixMap().remove("xml");
     }
 
     protected SpecificationNode createChildNode(
@@ -138,6 +147,30 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
             String localName, String qName, Attributes attributes) {
         Attributes wrapedAttributes = wrapContentTypeConverter(
                 namespaceURI, localName, qName, attributes);
+
+        // TODO doctype宣言後の改行をテンプレート通りにする
+        // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
+        // また、xercesそのままの場合は改行文字が来ない
+        if (_afterDocType) {
+            _afterDocType = false;// workaround for doctype
+            int length = _charactersBuffer.length();
+            if (length > 0) {
+                int firstCharIndex;
+                for (firstCharIndex = 0; firstCharIndex < length; firstCharIndex++) {
+                    char currentChar = _charactersBuffer.charAt(firstCharIndex);
+                    if (currentChar != ' ' && currentChar != '\t') {
+                        break;
+                    }
+                }
+                if (_charactersBuffer.charAt(firstCharIndex) == '\n') {
+                    _charactersBuffer.insert(firstCharIndex, '\r');
+                } else if (_charactersBuffer.charAt(firstCharIndex) != '\r') {
+                    _charactersBuffer.insert(firstCharIndex, "\r\n");
+                }
+            } else {
+                _charactersBuffer.insert(0, "\r\n");
+            }
+        }// workaround
         super.startElement(namespaceURI, localName, qName, wrapedAttributes);
     }
 
@@ -159,12 +192,24 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         return buffer.toString();
     }
 
-    protected void processEntity(String name) {
-        String entityRef = "&" + name + ";";
-        appendCharactersBuffer(entityRef);
+    @Override
+    public void characters(char[] buffer, int start, int length) {
+        if (_inEntity == 0) {
+            appendCharactersBuffer(buffer, start, length);
+        }
     }
 
+    @Override
+    public void ignorableWhitespace(char[] buffer, int start, int length) {
+        appendCharactersBuffer(buffer, start, length);
+    }
+
+    @Override
     public void comment(char[] buffer, int start, int length) {
+        // パーサがDTD定義をコメントに埋め込んでくるためDTD処理中であれば除外する。
+        if (inDTD) {
+            return;
+        }
         addCharactersNode();
         String comment = new String(buffer, start, length);
 
@@ -185,6 +230,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         node.addAttribute(QM_TEXT, comment);
     }
 
+    @Override
     public void startCDATA() {
         addCharactersNode();
         SpecificationNode node = addNode(QM_CDATA);
@@ -194,6 +240,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
         enterCData();
     }
 
+    @Override
     public void endCDATA() {
         addCharactersNode();
         setCurrentNode(getCurrentNode().getParentNode());
@@ -399,6 +446,101 @@ public class TemplateNodeHandler extends SpecificationNodeHandler {
             return _original.getValue(qName);
         }
 
+    }
+
+    //- implementation of DTD Catalog.
+    // Java9 より標準の javax.xml.catalog.CatalogReader が提供されるので最低バージョンが上がるタイミングで標準半に置き換えたい。
+    @Override
+    public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException {
+        return null;
+    }
+
+    @Override
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        return this.resolveEntity(null, publicId, null, systemId);
+    }
+
+    @Override
+    /**
+     * xhtmlのパースの際にリモートのDTD定義を取得しに行こうとするためJAR内に格納したものを返す。
+     */
+    public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId)
+            throws SAXException, IOException {
+
+        String path = null;
+        switch (systemId) {
+            case "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd":
+            case "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd":
+            case "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd":
+                path = "/dtd/" + systemId.substring("http://www.w3.org/".length());
+                break;
+            case "xhtml-lat1.ent":
+            case "xhtml-symbol.ent":
+            case "xhtml-special.ent":
+                path = "/dtd/" + systemId;
+                break;
+            default:
+                break;
+        }
+        if (path != null) {
+            InputStream is = getClass().getResourceAsStream(path);
+            return new InputSource(is);
+        }
+        return null;
+    }
+
+    //- LexicalHander
+    @Override
+    public void startEntity(String name) {
+        if (inDTD) {
+            return;
+        }
+        if (HTMLEntities.get(name) != -1) {
+            String entityRef = "&" + name + ";";
+            appendCharactersBuffer(entityRef);    
+        }
+        ++_inEntity;
+    }
+
+    @Override
+    public void endEntity(String name) {
+        if (inDTD) {
+            return;
+        }
+        --_inEntity;
+    }
+
+    @Override
+    public void startDTD(String name, String publicID, String systemID) {
+        inDTD = true;
+        addCharactersNode();
+        SpecificationNode node = addNode(QM_DOCTYPE);
+        node.addAttribute(QM_NAME, name);
+        if (StringUtil.hasValue(publicID)) {
+            node.addAttribute(QM_PUBLIC_ID, publicID);
+        }
+        if (StringUtil.hasValue(systemID)) {
+            node.addAttribute(QM_SYSTEM_ID, systemID);
+        }
+
+        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
+        _afterDocType = true;// workaround for doctype
+    }
+
+    @Override
+    public void endDTD() {
+        inDTD = false;
+    }
+
+    @Override
+    Namespace getTopLevelNamespace() {
+        Specification spec = getSpecification();
+        PrefixMapping defaultMapping = BuilderUtil.getPrefixMapping(spec.getSystemID());
+        URI defaultURI = defaultMapping.getNamespaceURI();
+
+        Namespace _topLevelNamespace = new NamespaceImpl();
+        _topLevelNamespace.setDefaultNamespaceURI(defaultURI);
+        return _topLevelNamespace;
     }
 
 }

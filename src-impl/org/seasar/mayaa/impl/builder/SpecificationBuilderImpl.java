@@ -45,7 +45,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     protected SpecificationNodeHandler createContentHandler(
             Specification specification) {
         SpecificationNodeHandler handler =
-            new SpecificationNodeHandler(specification);
+            new PageNodeHandler(specification);
         handler.setOutputMayaaWhitespace(_outputMayaaWhitespace);
         return handler;
     }
@@ -58,6 +58,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
         // for TemplateBuilderImpl
     }
 
+    @Override
     public void build(Specification specification) {
         if (specification == null) {
             throw new IllegalArgumentException();
@@ -69,7 +70,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
 
             XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
             XMLReader xmlReader =
-                pool.borrowXMLReader(handler, true, false, false);
+                pool.borrowXMLReader(handler, true /* use namespace */, false /* do not validate */, false /* not use xml schema */);
             InputStream stream = source.getInputStream();
             InputSource input = new InputSource(stream);
             input.setPublicId(getPublicID());

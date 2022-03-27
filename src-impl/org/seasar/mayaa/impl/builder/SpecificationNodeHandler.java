@@ -18,8 +18,8 @@ package org.seasar.mayaa.impl.builder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EmptyStackException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Stack;
 
@@ -34,6 +34,7 @@ import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -173,7 +174,7 @@ public abstract class SpecificationNodeHandler
     @Override
     public void startPrefixMapping(String prefix, String uri) {
         if (_elementPrefixMappings == null) {
-            _elementPrefixMappings = new HashMap<>();
+            _elementPrefixMappings = new LinkedHashMap<>();
         }
         _elementPrefixMappings.put(prefix, PrefixMappingImpl.getInstance(prefix, URIImpl.getInstance(uri)));
     }
@@ -287,18 +288,20 @@ public abstract class SpecificationNodeHandler
             namespaceURI = parentNamespace.getDefaultNamespaceURI().getValue();
         }
 
-        elementNS.setParentSpace(parentNamespace);
-        elementNS.setDefaultNamespaceURI(URIImpl.getInstance(namespaceURI));
+        URI defaultURI = parentNamespace.getDefaultNamespaceURI();
         if (hasNodePrefixMapping()) {
             for (PrefixMapping mapping: getNodePrefixMapping()) {
                 elementNS.addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
                 // デフォルトの名前空間マッピングなら個別に設定
                 if (mapping.getPrefix().equals("")) {
-                    elementNS.setDefaultNamespaceURI(mapping.getNamespaceURI());
+                    defaultURI = mapping.getNamespaceURI();
                 }
             }
             clearNodePrefixMapping();
         }
+        elementNS.setParentSpace(parentNamespace);
+        elementNS.setDefaultNamespaceURI(defaultURI);
+
         pushNamespace(elementNS);
 
         QName nodeQName = QNameImpl.getInstance(namespaceURI, localName);
@@ -318,8 +321,7 @@ public abstract class SpecificationNodeHandler
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
             if (checkAttribute(attrName, attrValue)) {
-                PrefixAwareName parsedAttrName =
-                    BuilderUtil.parseName(elementNS, attrName);
+                PrefixAwareName parsedAttrName = BuilderUtil.parseName(node, attrName);
                 QName attrQName = parsedAttrName.getQName();
                 node.addAttribute(attrQName, attrName, attrValue);
             }

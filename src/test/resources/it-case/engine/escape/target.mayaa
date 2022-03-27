@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:ignore id="message1" />
+
+    <m:ignore id="message2" />
+
+    <m:write id="message3" value="&amp;lt;&amp;amp;amp;&amp;gt;" replace="false" escapeXml="false" />
+
+    <m:write id="message4" value="&lt;&amp;amp;&gt;" replace="false" />
+
+    <m:write id="message5" value="${ (1 &lt;= 1) &amp;&amp; (1 &gt;= 1) }" replace="false" />
+
+    <m:write id="message6" value="${ '&amp;lt;&amp;amp;amp;&amp;gt;' }" replace="false" escapeXml="false" />
+
+    <m:with id="message7" replace="false">&lt;b id=&quot;message7_2&quot;&gt;&amp;lt;&amp;amp;amp;&amp;gt;&lt;/b&gt;</m:with>
+
+</m:mayaa>

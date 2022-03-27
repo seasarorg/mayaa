@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var aaa = '111';
+    ]]></m:beforeRender>
+
+    <!-- no processor -->
+
+</m:mayaa>

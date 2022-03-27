@@ -48,6 +48,7 @@ import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.provider.ServiceProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -85,6 +86,13 @@ public class EngineTestBase {
         return engine.getPage(requestedPageName);
     }
 
+    public void setEngineParameter(String name, String value) {
+        engine.setParameter(name, value);
+    }
+
+    public ServiceProvider getServiceProvider() {
+        return (ServiceProvider) FactoryFactory.getFactory(ServiceProvider.class);
+    }
     /**
      * Mavenかで実行されているかどうかを判定する。 pom.xml内でmaven-surefire-plugin経由で
      * システムプロパティを設定している。

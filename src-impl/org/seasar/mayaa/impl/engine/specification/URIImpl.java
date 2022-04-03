@@ -27,10 +27,11 @@ public class URIImpl implements URI {
     private static final long serialVersionUID = 7985133276316017754L;
 
     private static ReferenceCache<URIImpl> _cache = new ReferenceCache<>(URIImpl.class);
+    public static URI NULL_NS_URI = new URIImpl("");
 
-    public static URIImpl getInstance(String uri) {
-        if (uri == null) {
-            throw new IllegalArgumentException();
+    public static URI getInstance(String uri) {
+        if (uri == null || uri.isEmpty()) {
+            return NULL_NS_URI;
         }
         // undeploy時に_cacheが消されたあとアクセスされる場合がある
         if (_cache == null) {

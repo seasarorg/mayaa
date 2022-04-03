@@ -201,25 +201,48 @@ public abstract class SpecificationNodeHandler
         _elementPrefixMappings = null;
     }
 
-    protected SpecificationNode addNode(QName qName) {
-        int lineNumber = _locator.getLineNumber();
-        return addNode(qName, lineNumber);
-    }
-
     protected SpecificationNode createChildNode(
-            QName qName, String systemID, int lineNumber, int sequenceID) {
+            QName qName, String systemID, int lineNumber, int sequenceID, String prefix) {
         return SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, false, sequenceID);
     }
 
-    protected SpecificationNode addNode(QName qName, int lineNumber) {
+    protected SpecificationNode addNode(QName qName, String prefix, int lineNumber) {
+        if (lineNumber == -1) {
+            lineNumber = _locator.getLineNumber();
+        }
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = createChildNode(
-                qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID());
+                qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID(), prefix);
 
         child.setParentSpace(_namespaceStack.peek());
         _current.addChildNode(child);
         return child;
+    }
+
+    protected SpecificationNode addNode(QName qName) {
+        return addNode(qName, null, -1);
+    }
+
+    protected SpecificationNode addNode(String qName, Namespace namespace) {
+        QName nodeQName;
+        String prefix = null;
+
+        URI namespaceURI = URIImpl.NULL_NS_URI;
+        int colonIndex = qName.indexOf(':');
+        if (colonIndex != -1) {
+            prefix = qName.substring(0, colonIndex);
+            String localName = qName.substring(colonIndex+1);
+            PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+            if (mapping != null) {
+                namespaceURI = mapping.getNamespaceURI();
+            }
+            nodeQName = QNameImpl.getInstance(namespaceURI, localName);
+        } else {
+            nodeQName = QNameImpl.getInstance(namespace.getDefaultNamespaceURI(), qName);
+        }
+
+        return addNode(nodeQName, prefix, -1);
     }
 
     protected boolean isRemoveWhitespace() {
@@ -235,7 +258,7 @@ public abstract class SpecificationNodeHandler
             }
             if (characters.length() > 0) {
                 SpecificationNode node =
-                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
+                    addNode(QM_CHARACTERS, null, _charactersStartLineNumber);
                 node.addAttribute(QM_TEXT, characters);
             }
             initCharactersBuffer();
@@ -284,10 +307,6 @@ public abstract class SpecificationNodeHandler
         Namespace parentNamespace = _namespaceStack.peek();
         Namespace elementNS = new NamespaceImpl();
 
-        if (StringUtil.isEmpty(namespaceURI)) {
-            namespaceURI = parentNamespace.getDefaultNamespaceURI().getValue();
-        }
-
         URI defaultURI = parentNamespace.getDefaultNamespaceURI();
         if (hasNodePrefixMapping()) {
             for (PrefixMapping mapping: getNodePrefixMapping()) {
@@ -304,8 +323,7 @@ public abstract class SpecificationNodeHandler
 
         pushNamespace(elementNS);
 
-        QName nodeQName = QNameImpl.getInstance(namespaceURI, localName);
-        SpecificationNode node = addNode(nodeQName);
+        SpecificationNode node = addNode(qName, elementNS);
 
         // 現ノードの名前空間設定をnodeオブジェクトへ反映
         node.setDefaultNamespaceURI(elementNS.getDefaultNamespaceURI());

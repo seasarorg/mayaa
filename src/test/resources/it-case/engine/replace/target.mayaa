@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+        xmlns:c="http://java.sun.com/jstl/core_rt">
+
+    <m:write id="message1" value="hello1" replace="false" />
+    <m:write id="message2_body" value="hello2" replace="true" />
+
+    <m:with m:id="error1" replace="false">
+        <c:catch var="exception">
+            <m:for init="${ i = 0 }" test="${ i &lt; 3 }" after="${ i++ }">
+                <m:attribute name="style" value="background:red;" />
+                <m:doBody/>
+            </m:for>
+        </c:catch>
+        <m:write value="${ exception.message }" />
+    </m:with>
+
+    <m:ignore m:id="message2" />
+
+</m:mayaa>

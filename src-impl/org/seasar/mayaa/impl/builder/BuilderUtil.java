@@ -23,7 +23,6 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
-import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;

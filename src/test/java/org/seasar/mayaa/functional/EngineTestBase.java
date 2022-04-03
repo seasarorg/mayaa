@@ -90,6 +90,10 @@ public class EngineTestBase {
         engine.setParameter(name, value);
     }
 
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        engine.setErrorHandler(errorHandler);
+    }
+
     public ServiceProvider getServiceProvider() {
         return (ServiceProvider) FactoryFactory.getFactory(ServiceProvider.class);
     }

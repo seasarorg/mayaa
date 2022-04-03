@@ -83,10 +83,14 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         return _isSSIIncludeReplacementEnabled;
     }
 
+    /**
+     * テンプレート由来のノードオブジェクトを生成する。
+     */
+    @Override
     protected SpecificationNode createChildNode(
-            QName qName, String systemID, int lineNumber, int sequenceID) {
+            QName qName, String systemID, int lineNumber, int sequenceID, String prefix) {
         return SpecificationUtil.createSpecificationNode(
-                qName, systemID, lineNumber, true, sequenceID);
+                qName, systemID, lineNumber, true, sequenceID, prefix);
     }
 
     protected boolean isRemoveWhitespace() {

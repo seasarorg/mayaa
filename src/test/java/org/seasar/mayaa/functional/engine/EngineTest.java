@@ -7,12 +7,13 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.library.NoRequiredPropertyException;
+import org.seasar.mayaa.impl.engine.error.TemplateErrorHandler;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 
 public class EngineTest extends EngineTestBase {
 
@@ -95,6 +96,49 @@ public class EngineTest extends EngineTestBase {
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
+    /**
+     * 処理内で例外が発生した時にErrorHandlerによってキャッチし、
+     * java.lang.Throwable.mayaa にてエラーページにフォワードさせる。
+     * @throws IOException
+     */
+    @Test
+    public void error_forward() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/engine/error_forward/";
+
+        ErrorHandler errorHandler = new TemplateErrorHandler();
+        errorHandler.setParameter("folder", DIR);
+        errorHandler.setParameter("extension", "html");
+        setErrorHandler(errorHandler);
+
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+
+    /**
+     * 処理内で例外が発生した時にErrorHandlerによってキャッチし、
+     * java.lang.Throwable.mayaa にてエラーページにリダイレクトさせる。
+     * @throws IOException
+     */
+    @Test
+    public void error_redirect() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/engine/error_redirect/";
+
+        ErrorHandler errorHandler = new TemplateErrorHandler();
+        errorHandler.setParameter("folder", DIR);
+        errorHandler.setParameter("extension", "html");
+        setErrorHandler(errorHandler);
+
+        MockHttpServletRequest request = createRequest(DIR + "target.html");
+
+        // When
+        MockHttpServletResponse response = exec(request, null);
+
+        assertEquals(302, response.getStatus());
+        assertEquals("/it-case/engine/error_redirect/redirected.html?message=error_redirected&title=tests_1_18", response.getHeader("Location"));
+    }
+    
     @Test
     public void escape_html() throws IOException {
         final String DIR = "/it-case/engine/escape/";
@@ -116,6 +160,13 @@ public class EngineTest extends EngineTestBase {
 
         final String DIR = "/it-case/engine/escape/";
         execAndVerify(DIR + "target.xml", DIR + "expected.xml", null);
+    }
+
+    @Test
+    public void forward() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/engine/forward/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
     @Test
@@ -143,6 +194,13 @@ public class EngineTest extends EngineTestBase {
     }
 
     @Test
+    public void inject_target_is_empty() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/engine/inject_target_is_empty/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+    @Test
     public void inject_template() throws IOException {
         final String DIR = "/it-case/engine/inject_template/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
@@ -151,6 +209,13 @@ public class EngineTest extends EngineTestBase {
     @Test
     public void inject_xpath() throws IOException {
         final String DIR = "/it-case/engine/inject_xpath/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+    @Test
+    public void no_xmlns() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/engine/no_xmlns/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
@@ -164,6 +229,12 @@ public class EngineTest extends EngineTestBase {
 
         assertEquals(302, response.getStatus());
         assertEquals("/it-case/engine/redirect/redirected.html?message=redirected&title=tests_1_16", response.getHeader("Location"));
+    }
+
+    @Test
+    public void replace() throws IOException {
+        final String DIR = "/it-case/engine/replace/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
     @Test
@@ -195,9 +266,27 @@ public class EngineTest extends EngineTestBase {
     }
 
     @Test
+    public void script() throws IOException {
+        final String DIR = "/it-case/engine/script/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+    @Test
+    public void template_attribute() throws IOException {
+        final String DIR = "/it-case/engine/template_attribute/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+    @Test
     public void undefined_identifier() throws IOException {
         enableDump();
         final String DIR = "/it-case/engine/undefined_identifier/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
+
+    @Test
+    public void xout() throws IOException {
+        final String DIR = "/it-case/engine/xout/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 

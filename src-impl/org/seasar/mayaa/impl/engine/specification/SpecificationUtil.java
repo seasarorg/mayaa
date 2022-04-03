@@ -306,6 +306,17 @@ public class SpecificationUtil implements CONST_IMPL {
         return node;
     }
 
+    public static SpecificationNode createSpecificationNode(
+            QName qName, String systemID, int lineNumber,
+            boolean onTemplate, int sequenceID, String prefix) {
+        SpecificationNodeImpl node = new SpecificationNodeImpl(qName, prefix);
+        node.setSequenceID(sequenceID);
+        node.setSystemID(systemID);
+        node.setLineNumber(lineNumber);
+        node.setOnTemplate(onTemplate);
+        return node;
+    }
+
     public static URI createURI(String uri) {
         return URIImpl.getInstance(uri);
     }

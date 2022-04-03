@@ -343,7 +343,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writeElementName(StringBuilder buffer) {
         QName qName = getName().getQName();
         String prefix;
-        prefix = getResolvedPrefix(getName());
+        prefix = getName().getPrefix();
         if (StringUtil.hasValue(prefix)) {
             buffer.append(prefix).append(":");
         }

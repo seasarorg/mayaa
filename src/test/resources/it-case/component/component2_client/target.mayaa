@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+        xmlns:x="mynamespace">
+
+    <m:insert id="comp" path="./component2.html" replace="false"
+            x:dynamicValue="${ new java.lang.Integer(256) }" />
+
+</m:mayaa>

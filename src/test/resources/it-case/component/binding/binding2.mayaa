@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:doRender id="box" name="box2" />
+
+    <m:write id="innerBox" value="${ binding.greeting }" />
+
+</m:mayaa>

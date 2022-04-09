@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:comment id="commentOut">
+        <m:write value="comment out by mayaa" />
+        <m:doBody />
+    </m:comment>
+
+</m:mayaa>

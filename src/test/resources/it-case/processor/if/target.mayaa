@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:if id="test1" test="true" />
+
+    <m:if id="test2" test="false" />
+
+    <m:if id="test3" test="${ 1 == 1 }" />
+
+    <m:if id="test4" test="${ 1 > 1 }" />
+
+    <m:if id="test5" test="${ new java.lang.Boolean(true) }" />
+
+    <m:if id="test6" test="${ new java.lang.Boolean(false) }" />
+
+</m:mayaa>

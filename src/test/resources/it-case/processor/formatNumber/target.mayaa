@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:formatNumber id="print"
+            pattern="##,##0.0000"
+            value="${ new java.math.BigDecimal('1234.560') }"
+            default="error" />
+
+    <m:formatDate id="printDef"
+            pattern="##,##0.0000"
+            value="${ null }"
+            default="defValue" />
+
+</m:mayaa>

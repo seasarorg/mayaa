@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var array = Packages.org.seasar.mayaa.test.util.TestObjectFactory.createArray();
+    ]]></m:beforeRender>
+
+    <m:forEach id="loop" items="${ array }" var="item" index="i" />
+
+    <m:write id="print" value="${ i }:${ item }" />
+
+</m:mayaa>

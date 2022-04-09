@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var myList = binding.compositeList;
+    ]]></m:beforeRender>
+
+    <m:doRender id="component" name="list" />
+
+    <m:element id="print" name="span">
+        ${ myList.name }
+    </m:element>
+
+    <m:if id="hasChild" test="${ myList.hasChild() }" />
+
+    <m:forEach id="childLoop" items="${ myList.children }" var="child" index="i" />
+
+    <m:insert id="child" path="./forEachRecursiveComponent.html" name="list"
+            compositeList="${ child }" />
+
+</m:mayaa>

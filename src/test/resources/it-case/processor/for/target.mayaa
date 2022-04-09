@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:for id="test1"
+            init="${ i = 0 }" test="${ i &lt; 3 }" after="${ i++ }">
+        test1_${ i }
+    </m:for>
+
+    <m:for id="test2"
+            init="${ i = 0 }" test="${ i &lt; 0 }" after="${ i++ }">
+        test2_${ i }
+    </m:for>
+
+    <m:for id="test3"
+            init="${ i = 0 }" test="${ i &lt; 3 }" after="${ i++ }" max="3">
+        test3_${ i }
+    </m:for>
+
+</m:mayaa>

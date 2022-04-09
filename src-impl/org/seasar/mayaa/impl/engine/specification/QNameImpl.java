@@ -16,13 +16,16 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
+import org.apache.commons.collections.ReferenceMap;
+import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 
 /**
@@ -32,7 +35,9 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 public class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = -102674132611191747L;
 
-    private static volatile Map<String, QName> _cache = new WeakHashMap<>();
+    @SuppressWarnings("unchecked")
+     private static volatile Map<String, QName> _cache =
+         Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);

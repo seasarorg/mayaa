@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.seasar.mayaa.functional.EngineTestBase;
 
 
-public class CustomTag extends EngineTestBase {
+public class CustomTagTest extends EngineTestBase {
 
     @Test
     public void dynamicAttribute() throws IOException {

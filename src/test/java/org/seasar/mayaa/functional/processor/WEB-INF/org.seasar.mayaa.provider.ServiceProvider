@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE provider
+    PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
+    "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
+<provider>
+
+    <engine>
+        <parameter name="pageSerialize" value="false"/>
+        <parameter name="surviveLimit" value="5"/>
+        <parameter name="dumpEnabled" value="false" />
+        <parameter name="convertCharset" value="true" />
+    </engine>
+
+    <templateBuilder>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.RenderedSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InsertSetter"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.InjectAttributeInjectionResolver"/>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver">
+            <parameter name="reportUnresolvedID" value="true"/>
+            <parameter name="reportDuplicatedID" value="true"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/TR/html4}id"/>
+            <parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
+        </resolver>
+        <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
+        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputMayaaWhitespace" value="false"/>
+        <parameter name="optimize" value="true"/>
+        <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
+        <parameter name="replaceSSIInclude" value="false"/><!-- since 1.1.25 -->
+        <parameter name="balanceTag" value="true"/><!-- since 1.1.29 -->
+    </templateBuilder>
+
+    <templateAttributeReader>
+        <ignoreAttribute
+                qName="{http://java.sun.com/jsp/jstl/core}out" attribute="escapeXml"/>
+        <aliasAttribute
+                qName="{http://java.sun.com/jsp/jstl/fmt}formatN*" attribute="patt*"
+                templateAttribute="formatPattern" />
+        <aliasAttribute
+                qName="{http://mayaa.seasar.org/test/mayaa-test}simpleTest*"
+                attribute="styleClass" templateAttribute="class" />
+        <parameter name="enabled" value="true"/>
+    </templateAttributeReader>
+
+</provider>

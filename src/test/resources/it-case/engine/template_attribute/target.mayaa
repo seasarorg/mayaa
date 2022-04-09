@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
+
+    <c:out m:id="message1" value="&lt;b&gt;hello&lt;/b&gt;" m:replace="false" />
+
+    <c:out m:id="message2" value="&lt;b&gt;hello&lt;/b&gt;" escapeXml="false" m:replace="false" />
+
+    <c:out m:id="message3" value="${ null }" m:replace="false" />
+
+    <c:out m:id="message4" value="${ null }" default="on Mayaa4" m:replace="false" />
+
+    <fmt:formatNumber m:id="message5" value="1.10" m:replace="false" />
+
+</m:mayaa>

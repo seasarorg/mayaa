@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+	<m:beforeRender><![CDATA[
+		var message1 = '<hello1>';
+	//]]></m:beforeRender>
+
+	<m:write id="message1" value="${ message1 }" replace="false" />
+	<m:write id="message2" replace="false">${
+		<![CDATA[
+			'<hello2>';
+		]]>
+	}</m:write>
+
+</m:mayaa>

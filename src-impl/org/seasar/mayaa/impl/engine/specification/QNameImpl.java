@@ -18,12 +18,14 @@ package org.seasar.mayaa.impl.engine.specification;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
+import org.apache.commons.collections.ReferenceMap;
 import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 
 /**
@@ -34,11 +36,16 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = -102674132611191747L;
 
     @SuppressWarnings("unchecked")
-    private static volatile Map<String, QName> _cache =
-        Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
+     private static volatile Map<String, QName> _cache =
+         Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);
+    }
+
+    public static QName getInstance(String namespaceURI, String localName) {
+        URI uri = URIImpl.getInstance(namespaceURI);
+        return getInstance(uri, localName);
     }
 
     public static QName getInstance(URI namespaceURI, String localName) {
@@ -50,7 +57,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         String key = forQNameString(namespaceURI, localName);
 
         // 一時的に重複しても問題ないので速度を優先する。（synchronizeを外した）
-        QName result = (QName)_cache.get(key);
+        QName result = _cache.get(key);
         if (result == null) {
             result = new QNameImpl(namespaceURI, localName);
             _cache.put(key, result);
@@ -66,7 +73,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     }
 
     private QNameImpl(URI namespaceURI, String localName) {
-        if (namespaceURI == null || namespaceURI.getValue().isEmpty() || localName == null || localName.isEmpty()) {
+        if (namespaceURI == null || localName == null || localName.isEmpty()) {
             throw new IllegalArgumentException();
         }
         _namespaceURI = namespaceURI;
@@ -104,21 +111,19 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
         return forQNameString(getNamespaceURI(), getLocalName());
     }
 
-    public boolean equals(Object test) {
-        if (test instanceof QName) {
-            QName qName = (QName) test;
-            URI uri = getNamespaceURI();
-            URI otherURI = qName.getNamespaceURI();
-            return (uri == otherURI || uri.getValue().equals(otherURI.getValue()))
-                && getLocalName().equals(qName.getLocalName());
-            // TODO 大文字小文字を区別すべきか否か検討
-            //  && getLocalName().equalsIgnoreCase(qName.getLocalName());
-        }
-        return false;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof QNameImpl))
+            return false;
+        QNameImpl other = (QNameImpl) obj;
+        return Objects.equals(_localName, other._localName) && Objects.equals(_namespaceURI, other._namespaceURI);
     }
 
+    @Override
     public int hashCode() {
-        return toString().hashCode();
+        return Objects.hash(_localName, _namespaceURI);
     }
 
     private Object readResolve() {

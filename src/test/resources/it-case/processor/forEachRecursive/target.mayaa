@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var compositeList = Packages.org.seasar.mayaa.test.util.TestObjectFactory.createCompositeList();
+    ]]></m:beforeRender>
+
+    <m:insert id="root" path="./forEachRecursiveComponent.html" name="list"
+            replace="false" compositeList="${ compositeList }" />
+
+</m:mayaa>

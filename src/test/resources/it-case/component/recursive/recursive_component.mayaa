@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        page.count -= 1;
+    ]]></m:beforeRender>
+
+    <m:doRender id="box" name="myBox" />
+
+    <m:echo id="frame" />
+
+    <m:echo id="innerBox">
+        <m:if test="${ page.count == 0 }">
+            <m:write value="end" />
+        </m:if>
+        <m:if test="${ page.count &gt; 0 }">
+            <m:insert path="./recursive_component.html" name="myBox" count="${ page.count - 1 }" />
+        </m:if>
+    </m:echo>
+
+</m:mayaa>

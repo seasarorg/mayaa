@@ -53,9 +53,15 @@ public class SpecificationNodeImpl extends NamespaceImpl
     private NodeTreeWalkerImpl _delegateNodeTreeWalker;
     // for PrefixAwareName
     private QName _qName;
+    private String _prefix;
 
     public SpecificationNodeImpl(QName qName) {
+        this(qName, null);
+    }
+
+    public SpecificationNodeImpl(QName qName, String prefix) {
         _qName = qName;
+        _prefix = prefix;
     }
 
     protected NodeTreeWalker getNodeTreeWalker() {
@@ -92,6 +98,9 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     @Override
     public String getPrefix() {
+        if (StringUtil.hasValue(_prefix)) {
+            return _prefix;
+        }
         URI namespaceURI = getQName().getNamespaceURI();
         for (Iterator<PrefixMapping> it = iteratePrefixMapping(true); it.hasNext();) {
             PrefixMapping mapping = it.next();

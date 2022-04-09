@@ -48,6 +48,7 @@ import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.provider.ServiceProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -77,10 +78,25 @@ public class EngineTestBase {
         engine.setParameter(EngineImpl.DUMP_ENABLED, "false");
     }
 
+    public boolean isDumpEnabled() {
+        return "true".equalsIgnoreCase(engine.getParameter(EngineImpl.DUMP_ENABLED));
+    }
+
     public Page getPage() {
         return engine.getPage(requestedPageName);
     }
 
+    public void setEngineParameter(String name, String value) {
+        engine.setParameter(name, value);
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        engine.setErrorHandler(errorHandler);
+    }
+
+    public ServiceProvider getServiceProvider() {
+        return (ServiceProvider) FactoryFactory.getFactory(ServiceProvider.class);
+    }
     /**
      * Mavenかで実行されているかどうかを判定する。 pom.xml内でmaven-surefire-plugin経由で
      * システムプロパティを設定している。
@@ -316,9 +332,16 @@ public class EngineTestBase {
 
             // Process Body
             final String content = response.getContentAsString();
+
+            if (isDumpEnabled()) {
+                System.out.println("RESPONSE DUMP ==============");
+                System.out.println(content);    
+            }
+
             int lineIndex = 1;
             for (String actualLine: content.split("\n")) {
                 String expectedLine = line;
+                actualLine = actualLine.replaceAll("\r", "");
                 assertEquals("body compare:" + lineIndex, expectedLine, actualLine); 
 
                 lineIndex++;

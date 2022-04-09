@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org"
+		xmlns:mt="http://mayaa.seasar.org/test/mayaa-test"
+		xmlns:c="http://java.sun.com/jstl/core_rt">
+
+	<m:beforeRender><![CDATA[
+		page['SimpleTestTag'] = "hello ";
+	]]></m:beforeRender>
+
+	<mt:simpleBodyTest m:id="hello1" simpleName="${ 'TestTag' }" />
+
+	<m:echo m:id="hello2">
+		<mt:simpleBodyTest simpleName="${ 'TestTag' }">
+			<m:doBody/>
+		</mt:simpleBodyTest>
+	</m:echo>
+
+	<mt:simpleBodyTest m:id="hello3" simpleName="${ 'TestTag' }" />
+	<m:write m:id="hello3body" value="child write" />
+
+	<m:insert m:id="hello4" path="../simplebodytest-component/target.html" name="component1" />
+	<m:write m:id="hello4body" value="doBase write" />
+
+	<mt:simpleBodyTest m:id="hello5" simpleName="${ 'TestTag' }">
+		<m:insert path="../simplebodytest-component/target.html" name="component2">
+			<m:doBody />
+		</m:insert>
+	</mt:simpleBodyTest>
+	<m:write m:id="hello5body" value="doBase write 2" />
+
+	<m:ignore m:id="test1" />
+	<m:ignore m:id="test3" />
+	<m:ignore m:id="test4" />
+	<m:ignore m:id="test5" />
+
+</m:mayaa>

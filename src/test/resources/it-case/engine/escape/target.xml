@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html xmlns:m="http://mayaa.seasar.org">
+
+<head>
+    <title>tests_1_10</title>
+    <link>not html close tag</link>
+</head>
+
+<body>
+    <h2>escape xml</h2>
+
+    <div class="box">
+        <span id="message1">&lt;&amp;amp;&gt;</span>
+        <span id="message2">${ (1 &lt;= 1) &amp;&amp; (1 &gt;= 1) }</span>
+        <span id="message3">dummy</span>
+        <span id="message4">dummy</span>
+        <span id="message5">dummy</span>
+        <span id="message6">dummy</span>
+        <span id="message7">dummy</span>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:write xpath="//span[@class='message1']" value="hello" replace="false" />
+
+    <m:with>
+        <!-- mayaa’¼‰º‚Å‚È‚¢‚½‚ßŽg‚í‚ê‚È‚¢ -->
+        <m:write xpath="//span[@class='message2']" value="hello" replace="false" />
+    </m:with>
+
+    <m:echo xpath="/html/body/center/table/tr/child::td[position()=1]">first</m:echo>
+
+    <m:echo xpath="/html/body/center/table/tr/td[2]">good</m:echo>
+
+    <m:echo xpath="/html/body/center/table/tr/td[3]/table/tr/td">deep</m:echo>
+
+    <m:echo xpath="/html/body/center/div">no array</m:echo>
+ 
+    <m:null m:xpath="//*[@class='dummy']" />
+ 
+</m:mayaa>

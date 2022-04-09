@@ -15,8 +15,13 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EmptyStackException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +30,7 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
+import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -33,24 +39,24 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
+import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
+import org.seasar.mayaa.impl.engine.specification.PrefixMappingImpl;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.ext.LexicalHandler;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationNodeHandler
-        implements EntityResolver, DTDHandler, ContentHandler,
-        ErrorHandler, LexicalHandler, AdditionalHandler, CONST_IMPL {
+public abstract class SpecificationNodeHandler
+        implements ContentHandler,
+        ErrorHandler, AdditionalHandler, CONST_IMPL {
 
     private static final Log LOG =
         LogFactory.getLog(SpecificationNodeHandler.class);
@@ -68,16 +74,19 @@ public class SpecificationNodeHandler
     private SequenceIDGenerator _sequenceIDGenerator;
     private NodeTreeWalker _current;
     private Locator _locator;
-    private Namespace _namespace;
-    private StringBuilder _charactersBuffer;
+    private Map<String, PrefixMapping> _elementPrefixMappings;
+    private Stack<Namespace> _namespaceStack = new Stack<>();
+    protected StringBuilder _charactersBuffer;
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
-    private int _inEntity;
-    private Map<NodeTreeWalker, Map<String, URI>> _internalNamespacePrefixMap;
     private boolean _inCData;
 
-    // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-    private boolean _afterDocType;// workaround for doctype
+    /**
+     * {@link Specification} をファイルから読み込む際の最上位の名前空間設定を返す。
+     * *.mayaaファイルの場合は {@link URI_MAYAA} をデフォルトとする。
+     * @return 
+     */
+    abstract Namespace getTopLevelNamespace();
 
     public SpecificationNodeHandler(Specification specification) {
         if (specification == null) {
@@ -116,23 +125,19 @@ public class SpecificationNodeHandler
         _locator = locator;
     }
 
-    protected void initNamespace() {
-        _namespace = SpecificationUtil.createNamespace();
-        URI defaultURI = BuilderUtil.getPrefixMapping(_specification.getSystemID()).getNamespaceURI();
-        if (defaultURI == URI_XML) {
-            defaultURI = URI_HTML;
-        }
-        getCurrentInternalNamespacePrefixMap().put("", defaultURI);
-        getCurrentInternalNamespacePrefixMap().put("xml", URI_XML);
+    private void initNamespace() {
+        Namespace ns = getTopLevelNamespace();
+        _namespaceStack.push(ns);
     }
 
     protected void pushNamespace(Namespace newNamespace) {
-        _namespace = newNamespace;
+        _namespaceStack.push(newNamespace);
     }
 
     protected void popNamespace() {
-        _namespace = _namespace.getParentSpace();
-        if (_namespace == null) {
+        try {
+            _namespaceStack.pop();
+        } catch (EmptyStackException e) {
             throw new IllegalStateException(getClass().getName());
         }
     }
@@ -163,47 +168,81 @@ public class SpecificationNodeHandler
         initCharactersBuffer();
         _charactersStartLineNumber = -1;
         _current = _specification;
-        _internalNamespacePrefixMap = new HashMap<>();
         initNamespace();
     }
 
-    protected Map<String, URI> getCurrentInternalNamespacePrefixMap() {
-        Map<String, URI> result = (Map<String, URI>)_internalNamespacePrefixMap.get(_current);
-        if (result == null) {
-            result = new HashMap<>();
-            _internalNamespacePrefixMap.put(_current, result);
-        }
-        return result;
-    }
-
+    @Override
     public void startPrefixMapping(String prefix, String uri) {
-        getCurrentInternalNamespacePrefixMap().put(prefix,
-                SpecificationUtil.createURI(uri));
+        if (_elementPrefixMappings == null) {
+            _elementPrefixMappings = new LinkedHashMap<>();
+        }
+        _elementPrefixMappings.put(prefix, PrefixMappingImpl.getInstance(prefix, URIImpl.getInstance(uri)));
     }
 
+    @Override
     public void endPrefixMapping(String prefix) {
-        getCurrentInternalNamespacePrefixMap().remove(prefix);
+        if (_elementPrefixMappings != null) {
+            _elementPrefixMappings.remove(prefix);
+        }
     }
 
-    protected SpecificationNode addNode(QName qName) {
-        int lineNumber = _locator.getLineNumber();
-        return addNode(qName, lineNumber);
+    private Collection<PrefixMapping> getNodePrefixMapping() {
+        if (_elementPrefixMappings != null) {
+            return _elementPrefixMappings.values();
+        }
+        return Collections.emptyList();
+    }
+
+    private boolean hasNodePrefixMapping() {
+        return _elementPrefixMappings != null;
+    }
+
+    private void clearNodePrefixMapping() {
+        _elementPrefixMappings = null;
     }
 
     protected SpecificationNode createChildNode(
-            QName qName, String systemID, int lineNumber, int sequenceID) {
+            QName qName, String systemID, int lineNumber, int sequenceID, String prefix) {
         return SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, false, sequenceID);
     }
 
-    protected SpecificationNode addNode(QName qName, int lineNumber) {
+    protected SpecificationNode addNode(QName qName, String prefix, int lineNumber) {
+        if (lineNumber == -1) {
+            lineNumber = _locator.getLineNumber();
+        }
         String systemID = StringUtil.removeFileProtocol(_locator.getSystemId());
         SpecificationNode child = createChildNode(
-                qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID());
+                qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID(), prefix);
 
-        child.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
+        child.setParentSpace(_namespaceStack.peek());
         _current.addChildNode(child);
         return child;
+    }
+
+    protected SpecificationNode addNode(QName qName) {
+        return addNode(qName, null, -1);
+    }
+
+    protected SpecificationNode addNode(String qName, Namespace namespace) {
+        QName nodeQName;
+        String prefix = null;
+
+        URI namespaceURI = URIImpl.NULL_NS_URI;
+        int colonIndex = qName.indexOf(':');
+        if (colonIndex != -1) {
+            prefix = qName.substring(0, colonIndex);
+            String localName = qName.substring(colonIndex+1);
+            PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+            if (mapping != null) {
+                namespaceURI = mapping.getNamespaceURI();
+            }
+            nodeQName = QNameImpl.getInstance(namespaceURI, localName);
+        } else {
+            nodeQName = QNameImpl.getInstance(namespace.getDefaultNamespaceURI(), qName);
+        }
+
+        return addNode(nodeQName, prefix, -1);
     }
 
     protected boolean isRemoveWhitespace() {
@@ -219,7 +258,7 @@ public class SpecificationNodeHandler
             }
             if (characters.length() > 0) {
                 SpecificationNode node =
-                    addNode(QM_CHARACTERS, _charactersStartLineNumber);
+                    addNode(QM_CHARACTERS, null, _charactersStartLineNumber);
                 node.addAttribute(QM_TEXT, characters);
             }
             initCharactersBuffer();
@@ -258,59 +297,49 @@ public class SpecificationNodeHandler
                 && qName.startsWith("xmlns:") == false);
     }
 
+    @Override
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
-        // TODO doctype宣言後の改行をテンプレート通りにする
-        // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
-        // また、xercesそのままの場合は改行文字が来ない
-        if (_afterDocType) {
-            _afterDocType = false;// workaround for doctype
-            int length = _charactersBuffer.length();
-            if (length > 0) {
-                int firstCharIndex;
-                for (firstCharIndex = 0; firstCharIndex < length; firstCharIndex++) {
-                    char currentChar = _charactersBuffer.charAt(firstCharIndex);
-                    if (currentChar != ' ' && currentChar != '\t') {
-                        break;
-                    }
-                }
-                if (_charactersBuffer.charAt(firstCharIndex) == '\n') {
-                    _charactersBuffer.insert(firstCharIndex, '\r');
-                } else if (_charactersBuffer.charAt(firstCharIndex) != '\r') {
-                    _charactersBuffer.insert(firstCharIndex, "\r\n");
-                }
-            } else {
-                _charactersBuffer.insert(0, "\r\n");
-            }
-        }// workaround
 
+        // エレメントが始まるまでの文字をテキストノードバッファに追加
         addCharactersNode();
 
-        Namespace elementNS = SpecificationUtil.createNamespace();
-        for (Map.Entry<String, URI> entry: getCurrentInternalNamespacePrefixMap().entrySet()) {
-            elementNS.addPrefixMapping(entry.getKey(), entry.getValue());
+        Namespace parentNamespace = _namespaceStack.peek();
+        Namespace elementNS = new NamespaceImpl();
+
+        URI defaultURI = parentNamespace.getDefaultNamespaceURI();
+        if (hasNodePrefixMapping()) {
+            for (PrefixMapping mapping: getNodePrefixMapping()) {
+                elementNS.addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
+                // デフォルトの名前空間マッピングなら個別に設定
+                if (mapping.getPrefix().equals("")) {
+                    defaultURI = mapping.getNamespaceURI();
+                }
+            }
+            clearNodePrefixMapping();
         }
-        elementNS.setParentSpace(SpecificationUtil.getFixedNamespace(_namespace));
+        elementNS.setParentSpace(parentNamespace);
+        elementNS.setDefaultNamespaceURI(defaultURI);
 
-        PrefixAwareName parsedName =
-            BuilderUtil.parseName(elementNS, qName);
-        QName nodeQName = parsedName.getQName();
-        URI nodeURI = nodeQName.getNamespaceURI();
-        elementNS.setDefaultNamespaceURI(nodeURI);
-        elementNS = SpecificationUtil.getFixedNamespace(elementNS);
+        pushNamespace(elementNS);
 
-        SpecificationNode node = addNode(nodeQName);
-        for (Map.Entry<String, URI> entry: getCurrentInternalNamespacePrefixMap().entrySet()) {
-            node.addPrefixMapping(entry.getKey(), entry.getValue());
+        SpecificationNode node = addNode(qName, elementNS);
+
+        // 現ノードの名前空間設定をnodeオブジェクトへ反映
+        node.setDefaultNamespaceURI(elementNS.getDefaultNamespaceURI());
+        node.setParentSpace(elementNS.getParentSpace());
+        Iterator<PrefixMapping> itr = elementNS.iteratePrefixMapping(false);
+        while (itr.hasNext()) {
+            PrefixMapping mapping = itr.next();
+            node.addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
         }
-        node.setDefaultNamespaceURI(nodeURI);
 
+        // 属性を格納
         for (int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
             if (checkAttribute(attrName, attrValue)) {
-                PrefixAwareName parsedAttrName =
-                    BuilderUtil.parseName(elementNS, attrName);
+                PrefixAwareName parsedAttrName = BuilderUtil.parseName(node, attrName);
                 QName attrQName = parsedAttrName.getQName();
                 node.addAttribute(attrQName, attrName, attrValue);
             }
@@ -319,9 +348,9 @@ public class SpecificationNodeHandler
         _current = node;
         _current.setParentNode(parent);
         saveToCycle(_current);
-        pushNamespace(elementNS);
     }
 
+    @Override
     public void endElement(String namespaceURI,
             String localName, String qName) {
         popNamespace();
@@ -330,23 +359,23 @@ public class SpecificationNodeHandler
         saveToCycle(_current);
     }
 
+    @Override
     public void endDocument() {
         saveToCycle(_specification);
-        _internalNamespacePrefixMap.clear();
-        _internalNamespacePrefixMap = null;
         _current = null;
     }
 
+    @Override
     public void characters(char[] buffer, int start, int length) {
-        if (_inEntity == 0) {
-            appendCharactersBuffer(buffer, start, length);
-        }
+        appendCharactersBuffer(buffer, start, length);
     }
 
+    @Override
     public void ignorableWhitespace(char[] buffer, int start, int length) {
         // no-op (white-spaces in element)
     }
 
+    @Override
     public void xmlDecl(String version, String encoding, String standalone) {
         addCharactersNode();
         SpecificationNode node = addNode(QM_PI);
@@ -367,6 +396,7 @@ public class SpecificationNodeHandler
         }
     }
 
+    @Override
     public void processingInstruction(String target, String data) {
         addCharactersNode();
         SpecificationNode node = addNode(QM_PI);
@@ -376,65 +406,9 @@ public class SpecificationNodeHandler
         }
     }
 
+    @Override
     public void skippedEntity(String name) {
         // do nothing.
-    }
-
-    public InputSource resolveEntity(String publicId, String systemId) {
-        return null;
-    }
-
-    protected void processEntity(String name) {
-        appendCharactersBuffer(StringUtil.resolveEntity('&' + name + ';'));
-    }
-
-    public void startEntity(String name) {
-        processEntity(name);
-        ++_inEntity;
-    }
-
-    public void endEntity(String name) {
-        --_inEntity;
-    }
-
-    public void comment(char[] buffer, int start, int length) {
-        // do nothing.
-    }
-
-    public void notationDecl(String name, String publicId, String systemId) {
-        // do nothing.
-    }
-
-    public void unparsedEntityDecl(
-            String name, String publicId, String systemId, String notationName) {
-        // do nothing.
-    }
-
-    public void startDTD(String name, String publicID, String systemID) {
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_DOCTYPE);
-        node.addAttribute(QM_NAME, name);
-        if (StringUtil.hasValue(publicID)) {
-            node.addAttribute(QM_PUBLIC_ID, publicID);
-        }
-        if (StringUtil.hasValue(systemID)) {
-            node.addAttribute(QM_SYSTEM_ID, systemID);
-        }
-
-        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-        _afterDocType = true;// workaround for doctype
-    }
-
-    public void endDTD() {
-        // do nothing.
-    }
-
-    public void startCDATA() {
-        enterCData();
-    }
-
-    public void endCDATA() {
-        leaveCData();
     }
 
     private String exceptionMessage(SAXParseException e) {
@@ -444,12 +418,14 @@ public class SpecificationNodeHandler
             ((e.getMessage() != null)?" - " + e.getMessage(): "");
     }
 
+    @Override
     public void warning(SAXParseException e) {
         if (LOG.isWarnEnabled()) {
             LOG.warn(exceptionMessage(e), e);
         }
     }
 
+    @Override
     public void fatalError(SAXParseException e) {
         if (LOG.isFatalEnabled()) {
             LOG.fatal(exceptionMessage(e), e);
@@ -457,6 +433,7 @@ public class SpecificationNodeHandler
         throw new RuntimeException(exceptionMessage(e), e);
     }
 
+    @Override
     public void error(SAXParseException e) {
         if (LOG.isErrorEnabled()) {
             LOG.error(exceptionMessage(e), e);

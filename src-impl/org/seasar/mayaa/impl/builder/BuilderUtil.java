@@ -23,7 +23,6 @@ import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
-import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
@@ -135,8 +134,7 @@ public class BuilderUtil implements CONST_IMPL {
         return getPrefixMapping(original == null ? null : original.getSystemID());
     }
 
-    public static PrefixAwareName parseName(
-            Namespace namespace, String qName) {
+    public static PrefixAwareName parseName(SpecificationNode node, String qName) {
         String[] parsed = qName.split(":");
         String prefix = null;
         String localName = null;
@@ -145,7 +143,7 @@ public class BuilderUtil implements CONST_IMPL {
         if (parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
-            mapping = namespace.getMappingFromPrefix(prefix, true);
+            mapping = node.getMappingFromPrefix(prefix, true);
             if (mapping == null) {
                 if ("xml".equals(prefix)) {
                     mapping = SpecificationUtil.XML_DEFAULT_PREFIX_MAPPING;
@@ -159,10 +157,10 @@ public class BuilderUtil implements CONST_IMPL {
             namespaceURI = mapping.getNamespaceURI();
         } else if (parsed.length == 1) {
             localName = parsed[0];
-            namespaceURI = namespace.getDefaultNamespaceURI();
+            namespaceURI = node.getQName().getNamespaceURI();
 
             if (namespaceURI == null) {
-                mapping = namespace.getMappingFromPrefix("", true);
+                mapping = node.getMappingFromPrefix("", true);
                 if (mapping == null) {
                     mapping = getDefaultPrefixMapping();
                 }

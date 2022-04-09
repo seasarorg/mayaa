@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org" m:extends="./../layout/layout_for_component.html">
+
+	<m:doRender id="content" name="contentBody" />
+
+	<m:insert id="componenta" path="comp/component1.html"/>
+	<m:insert id="componentb" path="/it-case/layout/usecomponent/comp/component1.html"/>
+	<m:insert id="componentc" path="./comp/component1.html"/>
+
+</m:mayaa>

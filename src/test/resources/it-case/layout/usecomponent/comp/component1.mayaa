@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:doRender id="centered" />
+
+    <m:insert id="componenta" path="component2.html" />
+    <m:insert id="componentb" path="./component2.html" />
+    <m:insert id="componentc" path="/it-case/layout/usecomponent/comp/component2.html" />
+</m:mayaa>

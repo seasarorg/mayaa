@@ -80,6 +80,7 @@ public abstract class SpecificationNodeHandler
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
     private boolean _inCData;
+    private SpecificationNode _xmlDeclNode = null;
 
     /**
      * {@link Specification} をファイルから読み込む際の最上位の名前空間設定を返す。
@@ -377,9 +378,12 @@ public abstract class SpecificationNodeHandler
 
     @Override
     public void xmlDecl(String version, String encoding, String standalone) {
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_PI);
-        node.addAttribute(QM_TARGET, "xml");
+        if (_xmlDeclNode == null) {
+            addCharactersNode();
+            _xmlDeclNode = addNode(QM_PI);
+        }
+        _xmlDeclNode.removeAttribute(QM_TARGET);
+        _xmlDeclNode.addAttribute(QM_TARGET, "xml");
         StringBuilder buffer = new StringBuilder();
         if (StringUtil.hasValue(version)) {
             buffer.append("version=\"").append(version).append("\" ");
@@ -391,8 +395,9 @@ public abstract class SpecificationNodeHandler
         if (StringUtil.hasValue(standalone)) {
             buffer.append("standalone=\"").append(standalone).append("\" ");
         }
+        _xmlDeclNode.removeAttribute(QM_DATA);
         if (buffer.length() > 0) {
-            node.addAttribute(QM_DATA, buffer.toString().trim());
+            _xmlDeclNode.addAttribute(QM_DATA, buffer.toString().trim());
         }
     }
 

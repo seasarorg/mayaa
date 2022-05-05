@@ -58,6 +58,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     private boolean inDTD = false;
     private boolean _outputTemplateWhitespace = true;
     private boolean _isSSIIncludeReplacementEnabled = false;
+    private SpecificationNode _dtdNode = null;
 
     public TemplateNodeHandler(Template specification) {
         super(specification);
@@ -517,14 +518,20 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     @Override
     public void startDTD(String name, String publicID, String systemID) {
         inDTD = true;
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_DOCTYPE);
-        node.addAttribute(QM_NAME, name);
-        if (StringUtil.hasValue(publicID)) {
-            node.addAttribute(QM_PUBLIC_ID, publicID);
+        if (_dtdNode == null) {
+            addCharactersNode();
+            _dtdNode = addNode(QM_DOCTYPE);
         }
+        _dtdNode.removeAttribute(QM_NAME);
+        _dtdNode.addAttribute(QM_NAME, name);
+
+        _dtdNode.removeAttribute(QM_PUBLIC_ID);
+        if (StringUtil.hasValue(publicID)) {
+            _dtdNode.addAttribute(QM_PUBLIC_ID, publicID);
+        }
+        _dtdNode.removeAttribute(QM_SYSTEM_ID);
         if (StringUtil.hasValue(systemID)) {
-            node.addAttribute(QM_SYSTEM_ID, systemID);
+            _dtdNode.addAttribute(QM_SYSTEM_ID, systemID);
         }
 
         // TODO doctype宣言後の改行をテンプレート通りにしたあと削除

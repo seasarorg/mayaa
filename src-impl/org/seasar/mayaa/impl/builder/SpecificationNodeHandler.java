@@ -37,6 +37,7 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
+import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
@@ -80,6 +81,8 @@ public abstract class SpecificationNodeHandler
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
     private boolean _inCData;
+
+    private String _encoding;
 
     /**
      * {@link Specification} をファイルから読み込む際の最上位の名前空間設定を返す。
@@ -377,6 +380,14 @@ public abstract class SpecificationNodeHandler
 
     @Override
     public void xmlDecl(String version, String encoding, String standalone) {
+        if (_encoding == null || _encoding.isEmpty()) {
+            if (!encoding.equals(CONST_IMPL.TEMPLATE_DEFAULT_CHARSET)) {
+                throw new ParserEncodingChangedException(encoding);
+            }
+        } else if (!encoding.equals(_encoding)) {
+            throw new ParserEncodingChangedException(encoding);
+        }
+
         addCharactersNode();
         SpecificationNode node = addNode(QM_PI);
         node.addAttribute(QM_TARGET, "xml");
@@ -440,5 +451,14 @@ public abstract class SpecificationNodeHandler
         }
         throw new RuntimeException(exceptionMessage(e), e);
     }
+
+    public String getSpecifiedEncoding() {
+        return _encoding;
+    }
+
+    public void setSpecifiedEncoding(String encoding) {
+        _encoding = encoding;
+    }
+
 
 }

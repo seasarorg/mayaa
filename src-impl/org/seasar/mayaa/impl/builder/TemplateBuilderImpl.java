@@ -49,9 +49,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
-import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.seasar.mayaa.impl.builder.parser.TemplateParser;
-import org.seasar.mayaa.impl.builder.parser.TemplateScanner;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
@@ -66,7 +64,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -119,12 +116,13 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected SpecificationNodeHandler createContentHandler(
-            Specification specification) {
+            Specification specification, String encoding) {
         if (specification instanceof Template == false) {
             throw new IllegalArgumentException();
         }
         TemplateNodeHandler handler =
             new TemplateNodeHandler((Template) specification);
+        handler.setSpecifiedEncoding(encoding);
         handler.setOutputTemplateWhitespace(isOutputTemplateWhitespace());
         handler.setSSIIncludeReplacementEnabled(isSSIIncludeReplacementEnabled());
         return handler;
@@ -613,7 +611,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         } else if (DEFAULT_CHARSET.equals(name)) {
             try {
                 "".getBytes(value);
-                _htmlReaderPool.setDefaultCharset(value);
             } catch (UnsupportedEncodingException e) {
                 String message =
                     StringUtil.getMessage(TemplateBuilderImpl.class, 0, value);
@@ -660,38 +657,27 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected static class HtmlReaderPool extends XMLReaderPool {
 
-        private static final long serialVersionUID = -5203349759797583368L;
-        private String _defaultCharset = TEMPLATE_DEFAULT_CHARSET;
         private boolean _balanceTag = true;
-
-        protected void setDefaultCharset(String charset) {
-            _defaultCharset = charset;
-        }
 
         protected void setBalanceTag(boolean balanceTag) {
         	_balanceTag = balanceTag;
         }
 
+        @Override
         protected Object createObject() {
-            return new TemplateParser(new TemplateScanner(), _defaultCharset, _balanceTag);
+            return new TemplateParser(_balanceTag);
         }
 
+        @Override
         protected boolean validateObject(Object object) {
             return object instanceof TemplateParser;
         }
 
+        @Override
         public XMLReader borrowXMLReader(ContentHandler handler,
-                boolean namespaces, boolean validation, boolean xmlSchema) {
-            XMLReader htmlReader = super.borrowXMLReader(
-                    handler, namespaces, validation, xmlSchema);
-            if (handler instanceof AdditionalHandler) {
-                try {
-                    htmlReader.setProperty(
-                            AdditionalHandler.ADDITIONAL_HANDLER, handler);
-                } catch (SAXException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+                boolean namespaces, boolean validation, boolean xmlSchema, boolean notifyEntity) {
+            XMLReader htmlReader = (XMLReader) borrowObject();
+            buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
             return htmlReader;
         }
 

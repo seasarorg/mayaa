@@ -50,14 +50,14 @@ public class TemplateBuilderImplTest {
         builder.setParameter(TemplateBuilderImpl.OUTPUT_TEMPLATE_WHITESPACE, "false");
         builder.setParameter(TemplateBuilderImpl.REPLACE_SSI_INCLUDE, "true");
         TemplateNodeHandler handler =
-            (TemplateNodeHandler)builder.createContentHandler(new TemplateImpl());
+            (TemplateNodeHandler)builder.createContentHandler(new TemplateImpl(), "UTF-8");
         assertTrue(handler.isRemoveWhitespace());
         assertTrue(handler.isSSIIncludeReplacementEnabled());
 
         builder.setParameter(TemplateBuilderImpl.OUTPUT_TEMPLATE_WHITESPACE, "true");
         builder.setParameter(TemplateBuilderImpl.REPLACE_SSI_INCLUDE, "false");
         TemplateNodeHandler handler2 =
-            (TemplateNodeHandler)builder.createContentHandler(new TemplateImpl());
+            (TemplateNodeHandler)builder.createContentHandler(new TemplateImpl(), "UTF-8");
         assertFalse(handler2.isRemoveWhitespace());
         assertFalse(handler2.isSSIIncludeReplacementEnabled());
     }

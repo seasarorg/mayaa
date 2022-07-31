@@ -74,6 +74,23 @@ public class CharsetConverter {
 
     /**
      * contentTypeからcharsetを抽出して返します。
+     * charsetが存在しない場合はnullを返します。
+     * また、必要ならばcharsetをencoding用に変換して返します。
+     *
+     * @param contentType charset表記を含むcontentType
+     * @return 抽出したcharsetをencodingとして使うための名前。
+     */
+    public static String extractEncodingExplict(String contentType) {
+        int[] index = getCharsetIndex(contentType);
+        if (index != null) {
+            String charset = contentType.substring(index[0], index[1]).trim();
+            return charsetToEncoding(charset);
+        }
+        return null;
+    }
+
+    /**
+     * contentTypeからcharsetを抽出して返します。
      * charsetが存在しない場合はデフォルトのUTF-8を返します。
      * また、必要ならばcharsetをencoding用に変換して返します。
      *
@@ -81,10 +98,9 @@ public class CharsetConverter {
      * @return 抽出したcharsetをencodingとして使うための名前。
      */
     public static String extractEncoding(String contentType) {
-        int[] index = getCharsetIndex(contentType);
-        if (index != null) {
-            String charset = contentType.substring(index[0], index[1]).trim();
-            return charsetToEncoding(charset);
+        String extractedEncoding = extractEncodingExplict(contentType);
+        if (extractedEncoding != null) {
+            return extractedEncoding;
         }
         return CONST_IMPL.TEMPLATE_DEFAULT_CHARSET;
     }

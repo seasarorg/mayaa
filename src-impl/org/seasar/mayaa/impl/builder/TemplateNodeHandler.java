@@ -32,6 +32,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
@@ -99,54 +100,40 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
     /**
      * metaタグのhttp-equiv="content-type" の場合、contentのcharsetを変換して
-     * 返すようにする。
+     * ノードの属性にセットする。
      * それ以外の場合はなにもしない。
      *
-     * @param namespaceURI 名前空間URI
-     * @param localName 要素名
-     * @param qName QName
-     * @param attributes 属性リスト
-     * @return 変換された属性リストまたは変換されなかった場合は引数に指定した属性リスト
+     * @param node 対象となるSpecificationNodeインスタンス
      */
-    protected Attributes wrapContentTypeConverter(String namespaceURI,
-            String localName, String qName, Attributes attributes) {
-        if (StringUtil.isEmpty(namespaceURI) || URI_HTML.equals(namespaceURI) ||
-                URI_XHTML.equals(namespaceURI)) {
-            if ("meta".equalsIgnoreCase(localName)) {
-                int contentTypeIndex = getContentTypeIndex(namespaceURI, attributes);
-                if (contentTypeIndex != -1) {
-                    String contentType = attributes.getValue(contentTypeIndex);
-                    contentType = CharsetConverter.convertContentType(contentType);
-                    return new ContentTypeConvertAttributes(
-                            attributes, contentTypeIndex, contentType);
+    final void convertContentType(final SpecificationNode node) {
+        if (URI_HTML.equals(node.getDefaultNamespaceURI())) {
+            convertContentType(node, QH_ATTR_HTTP_EQUIV, QH_ATTR_CONTENT);
+        } else if (URI_XHTML.equals(node.getDefaultNamespaceURI())) {
+            convertContentType(node, QX_ATTR_HTTP_EQUIV, QX_ATTR_CONTENT);
+        }
+    }
+    protected void convertContentType(final SpecificationNode node, final QName attrHttpEquiv, final QName attrContent) {
+        NodeAttribute na = node.getAttribute(attrHttpEquiv);
+        if (na != null && "content-type".equalsIgnoreCase(na.getValue())) {
+            na = node.getAttribute(attrContent);
+            if (na != null) {
+                String contentType = na.getValue();
+                String encoding = CharsetConverter.extractEncodingExplict(contentType);
+                String cunnrentEncoding = getSpecifiedEncoding();
+                if (cunnrentEncoding == null || cunnrentEncoding.isEmpty()) {
+                    if (encoding != null && !encoding.equals(CONST_IMPL.TEMPLATE_DEFAULT_CHARSET)) {
+                        throw new ParserEncodingChangedException(encoding);
+                    }
+                } else if (encoding != null && !encoding.equals(cunnrentEncoding)) {
+                    throw new ParserEncodingChangedException(encoding);
                 }
+                contentType = CharsetConverter.convertContentType(na.getValue());
+                node.removeAttribute(attrContent);
+                node.addAttribute(attrContent, contentType);
             }
         }
-        return attributes;
     }
-
-    protected int getContentTypeIndex(String namespaceURI, Attributes attributes) {
-        int httpEquivIndex =
-            getIndexIgnoreCase(namespaceURI, "http-equiv", attributes);
-        if (httpEquivIndex != -1 &&
-                "content-type".equalsIgnoreCase(attributes.getValue(httpEquivIndex))) {
-            return getIndexIgnoreCase(namespaceURI, "content", attributes);
-        }
-        return -1;
-    }
-
-    protected int getIndexIgnoreCase(
-            String namespaceURI, String localName, Attributes attributes) {
-        for (int i = 0; i < attributes.getLength(); i++) {
-            String uri = attributes.getURI(i);
-            if ((StringUtil.isEmpty(uri) || namespaceURI.equals(uri)) &&
-                    localName.equalsIgnoreCase(attributes.getLocalName(i))) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
+    @Override
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
         Attributes wrapedAttributes = wrapContentTypeConverter(

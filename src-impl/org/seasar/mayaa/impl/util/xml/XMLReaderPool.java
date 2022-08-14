@@ -31,14 +31,12 @@ import org.xml.sax.ext.LexicalHandler;
  */
 public class XMLReaderPool extends AbstractSoftReferencePool {
 
-    private static final long serialVersionUID = 1736077679163143852L;
-
     private static XMLReaderPool _xmlReaderPool;
 
     public static XMLReaderPool getPool() {
-//        if (_xmlReaderPool == null) {
+        if (_xmlReaderPool == null) {
             _xmlReaderPool = new XMLReaderPool();
-//        }
+        }
         return _xmlReaderPool;
     }
 
@@ -75,33 +73,52 @@ public class XMLReaderPool extends AbstractSoftReferencePool {
         }
     }
 
-    public XMLReader borrowXMLReader(
-            final ContentHandler handler, boolean namespaces,
-            boolean validation, boolean xmlSchema) {
-        XMLReader xmlReader = (XMLReader) borrowObject();
+    protected void buildReader(XMLReader xmlReader, final ContentHandler handler, boolean namespaces,
+    boolean validation, boolean xmlSchema, boolean notifyEntity) {
         setFeature(xmlReader, "http://xml.org/sax/features/namespaces", namespaces);
         setFeature(xmlReader, "http://xml.org/sax/features/validation", validation);
-        setFeature(xmlReader,
-                "http://apache.org/xml/features/validation/schema", xmlSchema);
+        setFeature(xmlReader, "http://apache.org/xml/features/validation/schema", xmlSchema);
+        setFeature(xmlReader, "http://apache.org/xml/features/scanner/notify-char-refs", notifyEntity);
+        setFeature(xmlReader, "http://apache.org/xml/features/scanner/notify-builtin-refs", notifyEntity);
 
         xmlReader.setContentHandler(handler);
         if (handler instanceof EntityResolver) {
             xmlReader.setEntityResolver((EntityResolver) handler);
-        }
-        if (handler instanceof ErrorHandler) {
-            xmlReader.setErrorHandler((ErrorHandler) handler);
-        }
-        if (handler instanceof DTDHandler) {
-            xmlReader.setDTDHandler((DTDHandler) handler);
-        }
-        if (handler instanceof LexicalHandler) {
-            setProperty(xmlReader,
-                    "http://xml.org/sax/properties/lexical-handler", handler);
-        }
-        if (handler instanceof AdditionalHandler) {
-            setProperty(xmlReader, AdditionalHandler.ADDITIONAL_HANDLER, handler);
+        } else {
+            xmlReader.setEntityResolver(null);
         }
 
+        if (handler instanceof ErrorHandler) {
+            xmlReader.setErrorHandler((ErrorHandler) handler);
+        } else {
+            xmlReader.setErrorHandler(null);            
+        }
+
+        if (handler instanceof DTDHandler) {
+            xmlReader.setDTDHandler((DTDHandler) handler);
+        } else {
+            xmlReader.setDTDHandler(null);
+        }
+
+        if (handler instanceof LexicalHandler) {
+            setProperty(xmlReader, "http://xml.org/sax/properties/lexical-handler", handler);
+        } else {
+            setProperty(xmlReader, "http://xml.org/sax/properties/lexical-handler", null);
+        }
+
+        if (handler instanceof AdditionalHandler) {
+            setProperty(xmlReader, AdditionalHandler.ADDITIONAL_HANDLER, handler);
+        } else {
+            setProperty(xmlReader, AdditionalHandler.ADDITIONAL_HANDLER, null);
+        }
+    }
+
+    public XMLReader borrowXMLReader(
+            final ContentHandler handler, boolean namespaces,
+            boolean validation, boolean xmlSchema, boolean notifyEntity) {
+
+        XMLReader xmlReader = (XMLReader) borrowObject();
+        buildReader(xmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
         return xmlReader;
     }
 

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import org.cyberneko.html.HTMLElements;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -42,7 +41,9 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
+import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.EscapableScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -293,29 +294,34 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrPrefix = attrPrefix + ":";
             }
         }
-        StringBuilder temp = new StringBuilder(32);
-        temp.append(" ");
-        temp.append(attrPrefix);
-        temp.append(qName.getLocalName());
+        String valueStr = null;
         if (value != null) {
-            temp.append("=\"");
             if (value instanceof CompiledScript) {
                 CompiledScript script = (CompiledScript) value;
                 if (CycleUtil.isDraftWriting()) {
-                    temp.append(script.getScriptText());
+                    // ノードツリー最適化中ならそのまま書き出す
+                    valueStr = script.getScriptText();
                 } else {
                     Object result = script.execute(null);
                     if (result == null) {
                         return;
                     }
-                    temp.append(result);
+                    valueStr = result.toString();
                 }
             } else {
-                temp.append(value.toString());
+                valueStr = value.toString();
             }
-            temp.append("\"");
         }
-        buffer.append(temp.toString());
+        if (valueStr != null) {
+            StringBuilder temp = new StringBuilder(32);
+            temp.append(" ");
+            temp.append(attrPrefix);
+            temp.append(qName.getLocalName());
+            if (!valueStr.isEmpty()) {
+                temp.append("=\"").append(valueStr).append("\"");
+            }
+            buffer.append(temp.toString());
+        }
     }
 
     protected boolean needsCloseElement(QName qName) {
@@ -323,9 +329,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
             return false;
         } else if (isHTML(qName)) {
-            HTMLElements.Element element =
-                HTMLElements.getElement(qName.getLocalName());
-            return element.isEmpty() == false;
+            if (HTMLKnowlege.isVoidElement(qName)) {
+                return false;
+            }
+            return true;
         }
         return getChildProcessorSize() > 0;
     }
@@ -488,7 +495,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             List<ProcessorTreeWalker> list = new ArrayList<>();
             StringBuilder buffer = new StringBuilder();
             writePart1(buffer);
-            if (buffer.toString().length() > 0) {
+            if (buffer.length() > 0) {
                 LiteralCharactersProcessor part1 =
                         new LiteralCharactersProcessor(buffer.toString());
                 BuilderUtil.characterProcessorCopy(

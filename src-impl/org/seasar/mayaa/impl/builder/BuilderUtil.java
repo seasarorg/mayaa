@@ -58,41 +58,40 @@ public class BuilderUtil implements CONST_IMPL {
         int sequenceID = original.getSequenceID();
         SpecificationNode node = SpecificationUtil.createSpecificationNode(
                 qName, systemID, lineNumber, onTemplate, sequenceID);
-        if (StringUtil.hasValue(uri)) {
-            PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
 
-            boolean needAdjust = adjuster.isTargetNode(original.getQName());
-            String basePath = null;
-            if (needAdjust) {
-                String contextPath = CycleUtil.getRequestScope().getContextPath();
-                String sourcePath = EngineUtil.getSourcePath(original);
-                basePath = contextPath + sourcePath;
-            }
+        PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
 
-            for (Iterator<NodeAttribute> it = original.iterateAttribute(); it.hasNext();) {
-                NodeAttribute attr = it.next();
-                String attrValue = attr.getValue();
-                if (needAdjust
-                        && adjuster.isTargetAttribute(
-                                original.getQName(), attr.getQName())) {
-                    attrValue =
-                        adjuster.adjustRelativePath(basePath, attrValue);
-                }
-                String originalName = null;
-                if (StringUtil.isEmpty(attr.getPrefix()) == false
-                        && attr.getQName().getLocalName().indexOf(':') < 0) {
-                    originalName =
-                        attr.getPrefix() + ":"
-                        + attr.getQName().getLocalName();
-                }
-                node.addAttribute(attr.getQName(), originalName, attrValue);
-            }
+        boolean needAdjust = adjuster.isTargetNode(original.getQName());
+        String basePath = null;
+        if (needAdjust) {
+            String contextPath = CycleUtil.getRequestScope().getContextPath();
+            String sourcePath = EngineUtil.getSourcePath(original);
+            basePath = contextPath + sourcePath;
+        }
 
-            for (Iterator<PrefixMapping> it = original.iteratePrefixMapping(false); it.hasNext();) {
-                PrefixMapping prefixMapping = it.next();
-                node.addPrefixMapping(
-                        prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
+        for (Iterator<NodeAttribute> it = original.iterateAttribute(); it.hasNext();) {
+            NodeAttribute attr = it.next();
+            String attrValue = attr.getValue();
+            if (needAdjust
+                    && adjuster.isTargetAttribute(
+                            original.getQName(), attr.getQName())) {
+                attrValue =
+                    adjuster.adjustRelativePath(basePath, attrValue);
             }
+            String originalName = null;
+            if (StringUtil.isEmpty(attr.getPrefix()) == false
+                    && attr.getQName().getLocalName().indexOf(':') < 0) {
+                originalName =
+                    attr.getPrefix() + ":"
+                    + attr.getQName().getLocalName();
+            }
+            node.addAttribute(attr.getQName(), originalName, attrValue);
+        }
+
+        for (Iterator<PrefixMapping> it = original.iteratePrefixMapping(false); it.hasNext();) {
+            PrefixMapping prefixMapping = it.next();
+            node.addPrefixMapping(
+                    prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
         }
         //node.setParentSpace(SpecificationUtil.getFixedNamespace(original.getParentSpace()));
         node.setParentSpace(original.getParentSpace());

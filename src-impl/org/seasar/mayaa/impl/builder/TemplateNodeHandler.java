@@ -22,10 +22,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.cyberneko.html.HTMLEntities;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
@@ -39,6 +40,7 @@ import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -54,11 +56,19 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     private static final Log LOG = LogFactory.getLog(TemplateNodeHandler.class);
 
     // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-    private boolean _afterDocType;// workaround for doctype
     private int _inEntity;
     private boolean inDTD = false;
     private boolean _outputTemplateWhitespace = true;
     private boolean _isSSIIncludeReplacementEnabled = false;
+    private SpecificationNode _lastVoidElement;
+    private SpecificationNode _dtdNode = null;
+
+    private static final QName QH_ATTR_HTTP_EQUIV = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "http-equiv");
+    private static final QName QH_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "content");
+    private static final QName QX_ATTR_HTTP_EQUIV = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "http-equiv");
+    private static final QName QX_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "content");
+
+    protected int _columnNumberBeforeFirstElement = -1;
 
     public TemplateNodeHandler(Template specification) {
         super(specification);
@@ -136,33 +146,37 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     @Override
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
-        Attributes wrapedAttributes = wrapContentTypeConverter(
-                namespaceURI, localName, qName, attributes);
 
-        // TODO doctype宣言後の改行をテンプレート通りにする
-        // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
-        // また、xercesそのままの場合は改行文字が来ない
-        if (_afterDocType) {
-            _afterDocType = false;// workaround for doctype
-            int length = _charactersBuffer.length();
-            if (length > 0) {
-                int firstCharIndex;
-                for (firstCharIndex = 0; firstCharIndex < length; firstCharIndex++) {
-                    char currentChar = _charactersBuffer.charAt(firstCharIndex);
-                    if (currentChar != ' ' && currentChar != '\t') {
-                        break;
-                    }
-                }
-                if (_charactersBuffer.charAt(firstCharIndex) == '\n') {
-                    _charactersBuffer.insert(firstCharIndex, '\r');
-                } else if (_charactersBuffer.charAt(firstCharIndex) != '\r') {
-                    _charactersBuffer.insert(firstCharIndex, "\r\n");
-                }
-            } else {
-                _charactersBuffer.insert(0, "\r\n");
+        // エレメントが始まればDTD処理のフェーズは終了
+        inDTD = false;
+
+        super.startElement(namespaceURI, localName, qName, attributes);
+        if (qName.equalsIgnoreCase("meta")) {
+            convertContentType((SpecificationNode) getCurrentNode());
+        }
+
+        _lastVoidElement = null;
+        NodeTreeWalker node = getCurrentNode();
+        if (node instanceof SpecificationNode) {
+            SpecificationNode sn = (SpecificationNode) node;
+            if (HTMLKnowlege.isVoidElement(sn.getQName())) {
+                super.endElement(namespaceURI, localName, qName);
+                _lastVoidElement = sn;
             }
-        }// workaround
-        super.startElement(namespaceURI, localName, qName, wrapedAttributes);
+        }
+    }
+
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName) {
+        if (_lastVoidElement instanceof SpecificationNode) {
+            PrefixAwareName name = BuilderUtil.parseName(_lastVoidElement, qName);
+            QName qn = _lastVoidElement.getQName();
+            _lastVoidElement = null;
+            if (name.getQName().equals(qn)) {
+                return;
+            }
+        }
+        super.endElement(namespaceURI, localName, qName);
     }
 
     protected String removeIgnorableWhitespace(String characters) {
@@ -186,7 +200,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     @Override
     public void characters(char[] buffer, int start, int length) {
         if (_inEntity == 0) {
-            appendCharactersBuffer(buffer, start, length);
+            super.characters(buffer, start, length);
         }
     }
 
@@ -300,145 +314,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         }
     }
 
-    protected static class ContentTypeConvertAttributes implements Attributes {
-        private Attributes _original;
-        private int _targetIndex;
-        private String _newValue;
-
-        public ContentTypeConvertAttributes(Attributes original,
-                int targetIndex, String newValue) {
-            _original = original;
-            _targetIndex = targetIndex;
-            _newValue = newValue;
-        }
-
-        /**
-         * Look up the index of an attribute by Namespace name.
-         * @param uri The Namespace URI, or the empty string if the name has no Namespace URI.
-         * @param localName The attribute's local name.
-         * @return The index of the attribute, or -1 if it does not appear in the list.
-         * @see org.xml.sax.Attributes#getIndex(java.lang.String, java.lang.String)
-         */
-        public int getIndex(String uri, String localName) {
-            return _original.getIndex(uri, localName);
-        }
-
-        /**
-         * Look up the index of an attribute by XML 1.0 qualified name.
-         * @param qName The qualified (prefixed) name.
-         * @return The index of the attribute, or -1 if it does not appear in the list.
-         * @see org.xml.sax.Attributes#getIndex(java.lang.String)
-         */
-        public int getIndex(String qName) {
-            return _original.getIndex(qName);
-        }
-
-        /**
-         * Return the number of attributes in the list.
-         * Once you know the number of attributes, you can iterate through the list.
-         * @return The number of attributes in the list.
-         * @see org.xml.sax.Attributes#getLength()
-         */
-        public int getLength() {
-            return _original.getLength();
-        }
-
-        /**
-         * Look up an attribute's local name by index.
-         * @param index The attribute index (zero-based).
-         * @return The local name, or the empty string if Namespace processing is not being performed, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getLocalName(int)
-         */
-        public String getLocalName(int index) {
-            return _original.getLocalName(index);
-        }
-
-        /**
-         * Look up an attribute's XML 1.0 qualified name by index.
-         * @param index The attribute index (zero-based).
-         * @return The XML 1.0 qualified name, or the empty string if none is available, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getQName(int)
-         */
-        public String getQName(int index) {
-            return _original.getQName(index);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The attribute's type as a string, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getType(int)
-         */
-        public String getType(int index) {
-            return _original.getType(index);
-        }
-
-        /**
-         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
-         * @param localName The local name of the attribute.
-         * @return The attribute type as a string, or null if the attribute is not in the list or if Namespace processing is not being performed.
-         * @see org.xml.sax.Attributes#getType(java.lang.String, java.lang.String)
-         */
-        public String getType(String uri, String localName) {
-            return _original.getType(uri, localName);
-        }
-
-        /**
-         * @param qName The XML 1.0 qualified name.
-         * @return The attribute type as a string, or null if the attribute is not in the list or if qualified names are not available.
-         * @see org.xml.sax.Attributes#getType(java.lang.String)
-         */
-        public String getType(String qName) {
-            return _original.getType(qName);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The Namespace URI, or the empty string if none is available, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getURI(int)
-         */
-        public String getURI(int index) {
-            return _original.getURI(index);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The attribute's value as a string, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getValue(int)
-         */
-        public String getValue(int index) {
-            if (_targetIndex == index) {
-                return _newValue;
-            }
-            return _original.getValue(index);
-        }
-
-        /**
-         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
-         * @param localName The local name of the attribute.
-         * @return The attribute value as a string, or null if the attribute is not in the list.
-         * @see org.xml.sax.Attributes#getValue(java.lang.String, java.lang.String)
-         */
-        public String getValue(String uri, String localName) {
-            if (getIndex(uri, localName) == _targetIndex) {
-                return _newValue;
-            }
-            return _original.getValue(uri, localName);
-        }
-
-        /**
-         * @param qName The XML 1.0 qualified name.
-         * @return The attribute value as a string, or null if the attribute is not in the list or if qualified names are not available.
-         * @see org.xml.sax.Attributes#getValue(java.lang.String)
-         */
-        public String getValue(String qName) {
-            if (getIndex(qName) == _targetIndex) {
-                return _newValue;
-            }
-            return _original.getValue(qName);
-        }
-
-    }
-
     //- implementation of DTD Catalog.
     // Java9 より標準の javax.xml.catalog.CatalogReader が提供されるので最低バージョンが上がるタイミングで標準半に置き換えたい。
     @Override
@@ -486,10 +361,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         if (inDTD) {
             return;
         }
-        if (HTMLEntities.get(name) != -1) {
-            String entityRef = "&" + name + ";";
-            appendCharactersBuffer(entityRef);    
-        }
+        String entityRef = "&" + name + ";";
+        appendCharactersBuffer(entityRef);
         ++_inEntity;
     }
 
@@ -504,18 +377,21 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     @Override
     public void startDTD(String name, String publicID, String systemID) {
         inDTD = true;
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_DOCTYPE);
-        node.addAttribute(QM_NAME, name);
-        if (StringUtil.hasValue(publicID)) {
-            node.addAttribute(QM_PUBLIC_ID, publicID);
+        if (_dtdNode == null) {
+            addCharactersNode();
+            _dtdNode = addNode(QM_DOCTYPE);
         }
-        if (StringUtil.hasValue(systemID)) {
-            node.addAttribute(QM_SYSTEM_ID, systemID);
-        }
+        _dtdNode.removeAttribute(QM_NAME);
+        _dtdNode.addAttribute(QM_NAME, name);
 
-        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-        _afterDocType = true;// workaround for doctype
+        _dtdNode.removeAttribute(QM_PUBLIC_ID);
+        if (StringUtil.hasValue(publicID)) {
+            _dtdNode.addAttribute(QM_PUBLIC_ID, publicID);
+        }
+        _dtdNode.removeAttribute(QM_SYSTEM_ID);
+        if (StringUtil.hasValue(systemID)) {
+            _dtdNode.addAttribute(QM_SYSTEM_ID, systemID);
+        }
     }
 
     @Override
@@ -531,7 +407,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
         Namespace _topLevelNamespace = new NamespaceImpl();
         _topLevelNamespace.setDefaultNamespaceURI(defaultURI);
+        _topLevelNamespace.addPrefixMapping("m", CONST_IMPL.URI_MAYAA);
         return _topLevelNamespace;
     }
 
-}
+ }

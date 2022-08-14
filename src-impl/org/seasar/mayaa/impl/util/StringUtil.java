@@ -25,8 +25,8 @@ import java.util.Properties;
 
 import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
-import org.cyberneko.html.HTMLEntities;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 
 /**
@@ -187,8 +187,8 @@ public final class StringUtil {
                 break;
             }
             entity = blockString.substring(start + 1, end);
-            int value = HTMLEntities.get(entity);
-            if (value != -1) {
+            Character value = HTMLKnowlege.convertHTMLEntitiy(entity);
+            if (value != null) {
                 buffer.append((char) value);
             } else {
                 buffer.append(blockString.substring(start, end + 1));

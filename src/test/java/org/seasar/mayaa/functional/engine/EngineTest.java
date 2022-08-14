@@ -32,19 +32,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 public class EngineTest extends EngineTestBase {
 
-    /** 
-     * <ul>
-     * <li>DOCTYPE宣言をそのまま出力する</li>
-     * <li>HTML内の文字実体参照はそのまま出力する</li>
-     * </il>
-     */
-    @Test
-    public void HTMLをパースして変更がない部分はそのまま出力する() throws IOException {
-        // enableDump();
-        final String DIR = "/it-case/html-transform/through/";
-        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
-    }
-
     @Test
     public void beforeRender() throws IOException {
         enableDump();
@@ -165,8 +152,8 @@ public class EngineTest extends EngineTestBase {
         // getServiceProvider().getTemplateBuilder();
         setEngineParameter(CONST_IMPL.TEMPLATE_PATH_PATTERN, ".*\\.(html|xml|xhtml|mayaa)");
 
-        final String DIR = "/it-case/engine/escape/";
-        execAndVerify(DIR + "target.xhtml", DIR + "expected.xhtml", null);
+        final String DIR = "/it-case/engine/escape_xhtml/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
     @Test

@@ -41,7 +41,7 @@ public final class XMLUtil {
         }
         XMLReaderPool pool = XMLReaderPool.getPool();
         XMLReader xmlReader = pool.borrowXMLReader(
-                handler, namespace, validation, xmlSchema);
+                handler, namespace, validation, xmlSchema, false);
         InputSource input = new InputSource(stream);
         input.setPublicId(publicID);
         input.setSystemId(systemID);

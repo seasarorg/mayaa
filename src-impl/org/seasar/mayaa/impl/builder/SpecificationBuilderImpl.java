@@ -87,7 +87,7 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
 
         XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
         XMLReader xmlReader =
-        pool.borrowXMLReader(handler, true /* use namespace */, false /* do not validate */, false /* not use xml schema */, true);
+        pool.borrowXMLReader(handler, false /* use namespace */, false /* do not validate */, false /* not use xml schema */, true);
 
         try (
             InputStream stream = source.getInputStream();

@@ -111,7 +111,7 @@ public class EngineTestBase {
     }
 
     public void printProcessorTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 
@@ -125,7 +125,7 @@ public class EngineTestBase {
 
 
     public void printPageTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 
@@ -135,7 +135,7 @@ public class EngineTestBase {
     }
 
     public void printTemplateTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 

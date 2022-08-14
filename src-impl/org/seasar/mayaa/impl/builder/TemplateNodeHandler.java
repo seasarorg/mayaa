@@ -40,7 +40,7 @@ import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
-import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -159,7 +159,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         NodeTreeWalker node = getCurrentNode();
         if (node instanceof SpecificationNode) {
             SpecificationNode sn = (SpecificationNode) node;
-            if (HTMLKnowlege.isVoidElement(sn.getQName())) {
+            if (HTMLKnowledge.isVoidElement(sn.getQName())) {
                 super.endElement(namespaceURI, localName, qName);
                 _lastVoidElement = sn;
             }

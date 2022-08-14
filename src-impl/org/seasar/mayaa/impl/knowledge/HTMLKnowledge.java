@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
 
-public class HTMLKnowlege {
+public class HTMLKnowledge {
   /**
    * HTMLの void elements を表すQNameの一覧
    * https://html.spec.whatwg.org/multipage/syntax.html#elements-2

@@ -41,9 +41,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
-import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.EscapableScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -329,7 +328,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
             return false;
         } else if (isHTML(qName)) {
-            if (HTMLKnowlege.isVoidElement(qName)) {
+            if (HTMLKnowledge.isVoidElement(qName)) {
                 return false;
             }
             return true;

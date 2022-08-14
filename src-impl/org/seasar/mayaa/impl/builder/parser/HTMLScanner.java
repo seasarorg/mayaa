@@ -48,7 +48,7 @@ import org.apache.xerces.xni.parser.XMLConfigurationException;
 import org.apache.xerces.xni.parser.XMLDTDScanner;
 import org.apache.xerces.xni.parser.XMLDocumentScanner;
 import org.apache.xerces.xni.parser.XMLInputSource;
-import org.seasar.mayaa.impl.knowledge.HTMLKnowlege;
+import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 
 /**
  * 
@@ -978,7 +978,7 @@ public class HTMLScanner extends XMLScanner implements XMLDocumentScanner, XMLEn
                     }
                     fSeenBody = true;
                 }
-                if (HTMLKnowlege.isVoidElementLocalPart(rawname)) {
+                if (HTMLKnowledge.isVoidElementLocalPart(rawname)) {
                     empty = true;
                 }
                 // -- Mayaa Specific Code END

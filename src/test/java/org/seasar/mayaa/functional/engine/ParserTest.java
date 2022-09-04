@@ -45,6 +45,14 @@ public class ParserTest extends EngineTestBase {
     }
 
     @Test
+    public void CDATA() throws IOException {
+        enableDump();
+        final String DIR = "/it-case/parser/cdata/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+        printPageTree();
+    }
+
+    @Test
     public void 引用符で囲まれない属性値は空白まで解釈する() throws IOException {
         final String DIR = "/it-case/parser/non-quotation-attr/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);

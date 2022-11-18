@@ -49,6 +49,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
+import org.seasar.mayaa.impl.builder.parser.HtmlTemplateParser;
 import org.seasar.mayaa.impl.builder.parser.TemplateParser;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
@@ -73,6 +74,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder {
     public static final String DEFAULT_CHARSET = "defaultCharset";
     public static final String BALANCE_TAG = "balanceTag";
+    public static final String INSERT_IMPLIED_TAG = "insertImpliedTag";
+    public static final String USE_NEW_PARSER = "useNewParser";
     public static final String REPLACE_SSI_INCLUDE = "replaceSSIInclude";
     public static final String OPTIMIZE = "optimize";
     public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
@@ -618,6 +621,10 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
         } else if (BALANCE_TAG.equals(name)) {
         	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, true));
+        } else if (INSERT_IMPLIED_TAG.equals(name)) {
+        	_htmlReaderPool.setInsertImpliedTag(ObjectUtil.booleanValue(value, true));
+        } else if (USE_NEW_PARSER.equals(name)) {
+        	_htmlReaderPool.setUseNewParser(ObjectUtil.booleanValue(value, true));
         }
         super.setParameter(name, value);
     }
@@ -655,17 +662,33 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
-    protected static class HtmlReaderPool extends XMLReaderPool {
+    protected class HtmlReaderPool extends XMLReaderPool {
 
         private boolean _balanceTag = true;
+        private boolean _useNewParser = false;
+        private boolean _insertImpliedTag = false;
 
         protected void setBalanceTag(boolean balanceTag) {
         	_balanceTag = balanceTag;
         }
 
+        public void setUseNewParser(boolean useNewParser) {
+            _useNewParser = useNewParser;
+        }
+
+        public void setInsertImpliedTag(boolean insertImpliedTag) {
+            _insertImpliedTag = insertImpliedTag;
+        }
+
         @Override
         protected Object createObject() {
-            return new TemplateParser(_balanceTag);
+            if (_useNewParser) {
+                HtmlTemplateParser parser = new HtmlTemplateParser(_balanceTag, _insertImpliedTag);
+                parser.setInsertImpliedTag(_insertImpliedTag);
+                return parser;
+            } else {
+                return new TemplateParser(_balanceTag);
+            }
         }
 
         @Override

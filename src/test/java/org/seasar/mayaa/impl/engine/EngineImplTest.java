@@ -15,12 +15,12 @@
  */
 package org.seasar.mayaa.impl.engine;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
@@ -30,13 +30,13 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
  */
 public class EngineImplTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }
@@ -51,27 +51,27 @@ public class EngineImplTest {
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.xml");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("1", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "1");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.html");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("2", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "2");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.xhtml");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("3", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "3");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.mayaa");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("4", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "4");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.txt");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertFalse("5", engine.isPageRequested());
+        assertFalse(engine.isPageRequested(), "5");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/docs/test.html");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertFalse("6", engine.isPageRequested());
+        assertFalse(engine.isPageRequested(), "6");
     }
 
     @Test
@@ -82,15 +82,15 @@ public class EngineImplTest {
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.xml");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("1", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "1");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.txt");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertFalse("2", engine.isPageRequested());
+        assertFalse(engine.isPageRequested(), "2");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/docs/test.html");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("3", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "3");
     }
 
     @Test
@@ -101,15 +101,15 @@ public class EngineImplTest {
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.xml");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("1", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "1");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/test.txt");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertTrue("2", engine.isPageRequested());
+        assertTrue(engine.isPageRequested(), "2");
 
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/docs/test.html");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
-        assertFalse("3", engine.isPageRequested());
+        assertFalse(engine.isPageRequested(), "3");
     }
 
 }

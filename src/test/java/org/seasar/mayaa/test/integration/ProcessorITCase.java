@@ -1,14 +1,12 @@
 package org.seasar.mayaa.test.integration;
 
 import java.util.Arrays;
+import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class ProcessorITCase extends WebDriverBase {
     //@formatter:off
     final static Object[][] data = new Object[][] {
@@ -166,22 +164,19 @@ public class ProcessorITCase extends WebDriverBase {
     };
     //@formatter:on
 
-    @Parameters(name = "{0}: path={1}")
-    public static Iterable<Object[]> data() throws Throwable {
-        return Arrays.asList(data);
-    }
-
-    public ProcessorITCase(String title, String path, Command[] commands) {
-        super(title, path, commands);
-    }
-
-    @BeforeClass
+    static List<Object[]> test() throws Throwable {
+    @BeforeAll
     public static void setUpClass() {
         setUpSelenide();
     }
 
-    @Test
-    public void test() {
-        runTest();
+    @ParameterizedTest(name = "{0}: path={1}")
+    @MethodSource
+    public void test(String title, String path, Command[] commands) {
+        runTest(title, path, commands);
+    }
+
+    static List<Object[]> test() {
+        return Arrays.asList(data);
     }
 }

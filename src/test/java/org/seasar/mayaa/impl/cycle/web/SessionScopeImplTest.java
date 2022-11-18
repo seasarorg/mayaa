@@ -15,12 +15,12 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -32,7 +32,7 @@ public class SessionScopeImplTest {
     private MockHttpServletRequest _httpServletRequest;
     private SessionScopeImpl _session;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         _httpServletRequest = ManualProviderFactory.HTTP_SERVLET_REQUEST;
@@ -40,7 +40,7 @@ public class SessionScopeImplTest {
         _session.setUnderlyingContext(_httpServletRequest);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

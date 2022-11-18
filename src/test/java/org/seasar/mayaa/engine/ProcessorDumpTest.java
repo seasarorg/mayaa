@@ -1,6 +1,6 @@
 package org.seasar.mayaa.engine;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.springframework.mock.web.MockHttpServletRequest;

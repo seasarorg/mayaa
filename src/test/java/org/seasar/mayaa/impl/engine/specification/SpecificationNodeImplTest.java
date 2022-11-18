@@ -15,15 +15,15 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Iterator;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
@@ -34,7 +34,7 @@ public class SpecificationNodeImplTest {
 
     private SpecificationNodeImpl _node;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -45,7 +45,7 @@ public class SpecificationNodeImplTest {
         _node.addAttribute(SpecificationUtil.createQName("ATTR_TEST2"), "VALUE2");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

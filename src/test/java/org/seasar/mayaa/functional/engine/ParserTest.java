@@ -17,8 +17,11 @@ package org.seasar.mayaa.functional.engine;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.functional.EngineTestBase;
+import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 
 /**
  * HTMLパーサのテストを行う。
@@ -28,7 +31,11 @@ import org.seasar.mayaa.functional.EngineTestBase;
  * @see https://html.spec.whatwg.org/multipage/
  * @author Mitsutaka WATANABE <mttk.wtnb@gmail.com>
  */
-public class ParserTest extends EngineTestBase {
+ public class ParserTest extends EngineTestBase {
+    @BeforeEach
+    void 新しいパーサを用いる() {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, "true");
+    }
 
     @Test
     public void HTMLをパースして変更がない部分はそのまま出力する() throws IOException {
@@ -41,8 +48,7 @@ public class ParserTest extends EngineTestBase {
         enableDump();
         final String DIR = "/it-case/parser/namespace-in-html/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
-        printPageTree();
-    }
+    }   
 
     @Test
     public void CDATA() throws IOException {

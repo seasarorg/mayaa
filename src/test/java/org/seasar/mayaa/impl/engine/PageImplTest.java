@@ -15,10 +15,10 @@
  */
 package org.seasar.mayaa.impl.engine;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -27,7 +27,7 @@ public class PageImplTest {
 
     private PageImpl _page;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _page = new PageImpl();
         _page.initialize("hello");

@@ -15,10 +15,10 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IteratorUtilTest {
 

@@ -15,11 +15,11 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 
@@ -31,231 +31,231 @@ public class PathAdjusterImplTest {
     @Test
     public void testIsTargetNodeHtml() {
         PathAdjusterImpl adjuster = new PathAdjusterImpl();
-        assertTrue("a", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "a")));
-        assertTrue("link", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "link")));
-        assertTrue("area", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "area")));
-        assertTrue("base", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "base")));
-        assertTrue("img", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "img")));
-        assertTrue("embed", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "embed")));
-        assertTrue("iframe", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "iframe")));
-        assertTrue("frame", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "frame")));
-        assertTrue("script", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "script")));
-        assertTrue("applet", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "applet")));
-        assertTrue("form", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "form")));
-        assertTrue("object", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "object")));
-        assertFalse("body", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "body")));
-        assertFalse("m:a", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "a")));
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "a")), "a");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "link")), "link");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "area")), "area");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "base")), "base");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "img")), "img");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "embed")), "embed");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "iframe")), "iframe");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "frame")), "frame");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "script")), "script");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "applet")), "applet");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "form")), "form");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "object")), "object");
+        assertFalse(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "body")), "body");
+        assertFalse(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "a")), "m:a");
     }
 
     @Test
     public void testIsTargetNodeXhtml() {
         PathAdjusterImpl adjuster = new PathAdjusterImpl();
-        assertTrue("a", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "a")));
-        assertTrue("link", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "link")));
-        assertTrue("area", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "area")));
-        assertTrue("base", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "base")));
-        assertTrue("img", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "img")));
-        assertTrue("embed", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "embed")));
-        assertTrue("iframe", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "iframe")));
-        assertTrue("frame", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "frame")));
-        assertTrue("script", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "script")));
-        assertTrue("applet", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "applet")));
-        assertTrue("form", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "form")));
-        assertTrue("object", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "object")));
-        assertFalse("body", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "body")));
-        assertFalse("m:a", adjuster.isTargetNode(
-                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "a")));
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "a")), "a");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "link")), "link");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "area")), "area");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "base")), "base");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "img")), "img");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "embed")), "embed");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "iframe")), "iframe");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "frame")), "frame");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "script")), "script");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "applet")), "applet");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "form")), "form");
+        assertTrue(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "object")), "object");
+        assertFalse(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "body")), "body");
+        assertFalse(adjuster.isTargetNode(
+                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "a")), "m:a");
     }
 
     @Test
     public void testIsTargetAttributeHtml() {
         PathAdjusterImpl adjuster = new PathAdjusterImpl();
-        assertTrue("a href", adjuster.isTargetAttribute(
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "a"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")));
-        assertFalse("a name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")), "a href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "a"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")));
-        assertTrue("link href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")), "a name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "link"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")));
-        assertFalse("link type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")), "link href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "link"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")));
-        assertTrue("area href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")), "link type");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "area"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")));
-        assertFalse("area shape", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")), "area href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "area"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "shape")));
-        assertTrue("base href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "shape")), "area shape");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "base"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")));
-        assertTrue("img src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")), "base href");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "img"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")));
-        assertFalse("img alt", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")), "img src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "img"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "alt")));
-        assertTrue("embed src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "alt")), "img alt");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "embed"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")));
-        assertFalse("embed name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")), "embed src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "embed"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")));
-        assertTrue("iframe src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")), "embed name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "iframe"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")));
-        assertFalse("iframe name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")), "iframe src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "iframe"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")));
-        assertTrue("frame", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")), "iframe name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")));
-        assertTrue("frame", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")), "frame");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "longdesc")));
-        assertFalse("frame name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "longdesc")), "frame");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")));
-        assertTrue("script src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")), "frame name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "script"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")));
-        assertFalse("script type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "src")), "script src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "script"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")));
-        assertTrue("applet code", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")), "script type");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "applet"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "code")));
-        assertFalse("applet width", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "code")), "applet code");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "applet"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "width")));
-        assertTrue("form action", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "width")), "applet width");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "form"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "action")));
-        assertFalse("form name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "action")), "form action");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "form"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")));
-        assertTrue("object data", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "name")), "form name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "object"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "data")));
-        assertFalse("object type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "data")), "object data");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "object"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")));
-        assertFalse("body", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "type")), "object type");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_HTML, "body"),
-                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")));
+                QNameImpl.getInstance(CONST_IMPL.URI_HTML, "href")), "body");
         // isTargetAttributeでは名前空間を見ない
-        assertTrue("m:a", adjuster.isTargetAttribute(
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "a"),
-                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "href")));
+                QNameImpl.getInstance(CONST_IMPL.URI_MAYAA, "href")), "m:a");
     }
 
     @Test
     public void testIsTargetAttributeXhtml() {
         PathAdjusterImpl adjuster = new PathAdjusterImpl();
-        assertTrue("a href", adjuster.isTargetAttribute(
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "a"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")));
-        assertFalse("a name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")), "a href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "a"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")));
-        assertTrue("link href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")), "a name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "link"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")));
-        assertFalse("link type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")), "link href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "link"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")));
-        assertTrue("area href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")), "link type");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "area"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")));
-        assertFalse("area shape", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")), "area href");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "area"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "shape")));
-        assertTrue("base href", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "shape")), "area shape");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "base"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")));
-        assertTrue("img src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")), "base href");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "img"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")));
-        assertFalse("img alt", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")), "img src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "img"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "alt")));
-        assertTrue("embed src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "alt")), "img alt");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "embed"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")));
-        assertFalse("embed name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")), "embed src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "embed"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")));
-        assertTrue("iframe src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")), "embed name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "iframe"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")));
-        assertFalse("iframe name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")), "iframe src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "iframe"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")));
-        assertTrue("frame", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")), "iframe name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")));
-        assertTrue("frame", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")), "frame");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "longdesc")));
-        assertFalse("frame name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "longdesc")), "frame");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "frame"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")));
-        assertTrue("script src", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")), "frame name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "script"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")));
-        assertFalse("script type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "src")), "script src");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "script"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")));
-        assertTrue("applet code", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")), "script type");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "applet"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "code")));
-        assertFalse("applet width", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "code")), "applet code");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "applet"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "width")));
-        assertTrue("form action", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "width")), "applet width");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "form"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "action")));
-        assertFalse("form name", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "action")), "form action");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "form"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")));
-        assertTrue("object data", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "name")), "form name");
+        assertTrue(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "object"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "data")));
-        assertFalse("object type", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "data")), "object data");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "object"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")));
-        assertFalse("body", adjuster.isTargetAttribute(
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "type")), "object type");
+        assertFalse(adjuster.isTargetAttribute(
                 QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "body"),
-                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")));
+                QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "href")), "body");
     }
 
     @Test

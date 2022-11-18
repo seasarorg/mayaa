@@ -15,12 +15,12 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.PrintWriter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,7 +30,7 @@ public class ResponseImplTest {
     private MockHttpServletResponse _httpServletResponse;
     private ResponseImpl _response;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _httpServletResponse = new MockHttpServletResponse();
         _response =  new ResponseImpl();

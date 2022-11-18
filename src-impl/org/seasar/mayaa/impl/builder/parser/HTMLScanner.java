@@ -1127,7 +1127,7 @@ class HtmlTokenizer {
     }
 
     private char getChar() throws ScanningInterruptedExeption, IOException {
-        if (cbuf.isEmpty()) {
+        if (cbuf.remaining() == 0) {
             cbuf.flip();
             cbuf.clear();
             if (inputSource.getCharacterStream().read(cbuf) == 0) {
@@ -1411,7 +1411,7 @@ class HtmlTokenizer {
     }
 
     private void emitTextIfAvailable(TokenHandler handler) {
-        if (!characterBuilder.isEmpty()) {
+        if (characterBuilder.length() > 0) {
             if (traceEmittion) {
                 System.out.printf("%s: TEXT \"%s\"\n", location, characterBuilder.toString());
             }

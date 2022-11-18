@@ -164,7 +164,6 @@ public class ProcessorITCase extends WebDriverBase {
     };
     //@formatter:on
 
-    static List<Object[]> test() throws Throwable {
     @BeforeAll
     public static void setUpClass() {
         setUpSelenide();

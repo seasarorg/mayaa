@@ -15,13 +15,13 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
@@ -34,7 +34,7 @@ public class PageAttributeScopeTest {
 
     private ScriptEnvironmentImpl _scriptEnvironment;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         _scriptEnvironment = ManualProviderFactory.SCRIPT_ENVIRONMENT;
@@ -43,7 +43,7 @@ public class PageAttributeScopeTest {
         _scriptEnvironment.startScope(null);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

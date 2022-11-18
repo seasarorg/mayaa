@@ -15,17 +15,17 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.WrapDynaBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.NativeJavaMethod;
@@ -43,7 +43,7 @@ public class NativeDynaBeanTest {
     private TestBean _bean;
     private DynaBean _dynaBean;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _cx = Context.enter();
         _cx.setWrapFactory(new WrapFactoryImpl());
@@ -54,7 +54,7 @@ public class NativeDynaBeanTest {
         ScriptableObject.putProperty(_scope, "bean", obj);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Context.exit();
     }

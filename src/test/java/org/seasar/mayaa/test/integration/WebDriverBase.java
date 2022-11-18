@@ -10,8 +10,8 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.title;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.regex.Pattern;
 
@@ -22,16 +22,6 @@ import org.openqa.selenium.WebElement;
 
 public class WebDriverBase {
 
-    String title;
-    String path;
-    Command[] commands;
-
-    public WebDriverBase(String title, String path, Command[] commands) {
-        this.title = title;
-        this.path = path;
-        this.commands = commands;
-    }
-
     static void setUpSelenide() {
         // テスト対象アプリの起動
         // Configuration.browser = WebDriverRunner.SAFARI;
@@ -40,7 +30,7 @@ public class WebDriverBase {
         Configuration.reportsFolder = "target/selenide-reports";
     }
 
-    public void runTest() {
+    public void runTest(String title, String path, Command[] commands) {
         open(path);
         if (commands == null) {
             fail("Scenario is not described.");

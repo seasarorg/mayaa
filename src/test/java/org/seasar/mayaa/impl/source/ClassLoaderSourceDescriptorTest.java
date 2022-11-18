@@ -15,9 +15,9 @@
  */
 package org.seasar.mayaa.impl.source;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

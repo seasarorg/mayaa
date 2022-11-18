@@ -15,16 +15,16 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.net.URISyntaxException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.QName;
@@ -39,7 +39,7 @@ public class SpecificationUtilTest {
     private PageImpl _page;
     private TemplateImpl _template;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
 
@@ -113,7 +113,7 @@ public class SpecificationUtilTest {
 
         Specification actual = SpecificationUtil.deserialize(_template.getSystemID(), cacheDir);
 
-        assertTrue("Instance must be of Page", actual instanceof Template);
+        assertTrue(actual instanceof Template, "Instance must be of Page");
         assertEquals(_template, actual);
 
         assertFalse(actual.isDeprecated());
@@ -134,7 +134,7 @@ public class SpecificationUtilTest {
 
         Specification actual = SpecificationUtil.deserialize(_page.getSystemID(), cacheDir);
 
-        assertTrue("Instance must be of Page", actual instanceof Page);
+        assertTrue(actual instanceof Page, "Instance must be of Page");
         assertEquals(_page, actual);
 
         assertFalse(actual.isDeprecated());

@@ -15,16 +15,16 @@
  */
 package org.seasar.mayaa.impl.builder.library.scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
@@ -33,7 +33,7 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class WebXmlAliasSourceScannerTest {
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -41,7 +41,7 @@ public class WebXmlAliasSourceScannerTest {
         scanner = new WebXMLTaglibSourceScanner();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ManualProviderFactory.tearDown();
     }
@@ -63,10 +63,10 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 
     @Test
@@ -84,10 +84,10 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 
     @Test
@@ -105,10 +105,10 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 
     @Test
@@ -126,10 +126,10 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 
     @Test
@@ -147,10 +147,10 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 
     @Test
@@ -168,9 +168,9 @@ public class WebXmlAliasSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/tlds/mayaa-sample2.tld"));
-        assertTrue("2", sources.contains("/tlds/mayaa-sample3.tld"));
+        assertTrue(sources.contains("/tlds/mayaa-sample2.tld"), "1");
+        assertTrue(sources.contains("/tlds/mayaa-sample3.tld"), "2");
 
-        assertEquals("3", 2, sources.size());
+        assertEquals(2, sources.size(), "3");
     }
 }

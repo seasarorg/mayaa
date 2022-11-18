@@ -15,15 +15,15 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaAdapter;
 import org.mozilla.javascript.Scriptable;
@@ -38,7 +38,7 @@ public class NativeMapTest {
     private Scriptable _scope;
     private Map<String, String> _map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _cx = Context.enter();
         _cx.setWrapFactory(new WrapFactoryImpl());
@@ -48,7 +48,7 @@ public class NativeMapTest {
         ScriptableObject.putProperty(_scope, "map", obj);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Context.exit();
     }

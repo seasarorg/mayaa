@@ -15,13 +15,13 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
 import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
@@ -407,21 +407,21 @@ public class StringUtilTest {
         String[] copy0 = StringUtil.arraycopy(src0);
         assertNotSame(src0, copy0);
         for (int i = 0; i < src0.length; i++) {
-            assertEquals("0:" + i, src0[i], copy0[i]);
+            assertEquals(src0[i], copy0[i], "0:" + i);
         }
 
         String[] src1 = new String[] { "1" };
         String[] copy1 = StringUtil.arraycopy(src1);
         assertNotSame(src1, copy1);
         for (int i = 0; i < src1.length; i++) {
-            assertEquals("0:" + i, src1[i], copy1[i]);
+            assertEquals(src1[i], copy1[i], "0:" + i);
         }
 
         String[] src3 = new String[] { "1", "2", "3" };
         String[] copy3 = StringUtil.arraycopy(src3);
         assertNotSame(src3, copy3);
         for (int i = 0; i < src3.length; i++) {
-            assertEquals("0:" + i, src3[i], copy3[i]);
+            assertEquals(src3[i], copy3[i], "0:" + i);
         }
     }
 

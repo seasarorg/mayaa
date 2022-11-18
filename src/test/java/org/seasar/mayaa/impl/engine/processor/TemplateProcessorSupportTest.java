@@ -15,14 +15,14 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.servlet.ServletContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
@@ -37,7 +37,7 @@ public class TemplateProcessorSupportTest {
     private TemplateProcessorSupport _processor;
     private TemplateProcessorSupport _parent;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         _servletContext = new MockServletContext();
         FactoryFactory.setInstance(new FactoryFactoryImpl());

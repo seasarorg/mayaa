@@ -15,11 +15,11 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -29,7 +29,7 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
  */
 public class TemplateAttributeReaderImplTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         _reader = new TemplateAttributeReaderImpl();
         _tagName = QNameImpl.getInstance(

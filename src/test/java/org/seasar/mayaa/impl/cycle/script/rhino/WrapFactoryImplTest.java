@@ -15,8 +15,8 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,9 +24,9 @@ import java.util.HashMap;
 import org.apache.commons.beanutils.BasicDynaBean;
 import org.apache.commons.beanutils.BasicDynaClass;
 import org.apache.commons.beanutils.DynaBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.mayaa.impl.cycle.web.RequestScopeImpl;
@@ -41,7 +41,7 @@ public class WrapFactoryImplTest {
     private Scriptable _scope;
     private WrapFactoryImpl _factory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _cx = Context.enter();
         _cx.setWrapFactory(new WrapFactoryImpl());
@@ -49,7 +49,7 @@ public class WrapFactoryImplTest {
         _factory = new WrapFactoryImpl();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Context.exit();
     }

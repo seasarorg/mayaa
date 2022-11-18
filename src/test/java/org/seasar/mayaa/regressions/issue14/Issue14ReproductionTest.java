@@ -15,14 +15,14 @@
  */
 package org.seasar.mayaa.regressions.issue14;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 /**

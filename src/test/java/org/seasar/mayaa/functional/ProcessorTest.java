@@ -15,11 +15,11 @@
  */
 package org.seasar.mayaa.functional;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.builder.library.ExpectedTypeMismatchValueException;
 import org.seasar.mayaa.impl.engine.processor.DoRenderNotFoundException;
 import org.seasar.mayaa.impl.engine.processor.TooManyLoopException;

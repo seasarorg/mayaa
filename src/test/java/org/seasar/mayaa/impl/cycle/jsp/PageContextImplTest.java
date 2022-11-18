@@ -15,14 +15,14 @@
  */
 package org.seasar.mayaa.impl.cycle.jsp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.servlet.jsp.PageContext;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
 /**
@@ -32,7 +32,7 @@ public class PageContextImplTest {
 
     private PageContextImpl _pageContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -40,7 +40,7 @@ public class PageContextImplTest {
         _pageContext = new PageContextImpl();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

@@ -17,23 +17,20 @@ package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-
-import test.PerformanceTest;
 
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -44,13 +41,13 @@ public class ScriptEnvironmentTest {
 
     ScriptEnvironmentImpl testee;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         FactoryFactory.release();
         FactoryFactory.setInstance(new FactoryFactoryImpl());
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // -- Given
         // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
@@ -141,7 +138,6 @@ public class ScriptEnvironmentTest {
     }
 
     @Test
-    @Category(PerformanceTest.class)
     public void 複数スレッドでコンパイルを行う() throws InterruptedException {
         final String[] scripts = {
             "ABC    ${  var a = 0; a += 10 * 2 }  XYZ",

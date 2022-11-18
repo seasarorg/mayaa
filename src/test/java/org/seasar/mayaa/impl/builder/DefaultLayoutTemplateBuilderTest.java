@@ -15,15 +15,15 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -51,7 +51,7 @@ public class DefaultLayoutTemplateBuilderTest {
 
     private DefaultLayoutTemplateBuilder _builder;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         FactoryFactory.setInstance(new ManualProviderFactory(this) {
             @Override
@@ -67,7 +67,7 @@ public class DefaultLayoutTemplateBuilderTest {
         _builder.setParameter("defaultLayoutPageName", VALID_SYSTEM_ID);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }
@@ -111,8 +111,7 @@ public class DefaultLayoutTemplateBuilderTest {
 
         SpecificationNode mayaaNode = _builder.createMayaaNode(page, spec);
 
-        assertTrue(mayaaNode.getSystemID(),
-                mayaaNode.getSystemID().endsWith(SYSTEM_ID_SUFFIX));
+        assertTrue(mayaaNode.getSystemID().endsWith(SYSTEM_ID_SUFFIX), mayaaNode.getSystemID());
     }
 
     /**
@@ -175,9 +174,9 @@ public class DefaultLayoutTemplateBuilderTest {
         // assertTrue(_builder.validatePageName(VALID_SYSTEM_ID));
         assertFalse(_builder.validatePageName(null));
         assertFalse(_builder.validatePageName(""));
-        assertFalse("存在しない", _builder.validatePageName("/foo/bar.html"));
-        assertFalse("/はじまりでない", _builder.validatePageName(INVALID_SYSTEM_ID_1));
-        assertFalse("/../がある", _builder.validatePageName(INVALID_SYSTEM_ID_2));
+        assertFalse(_builder.validatePageName("/foo/bar.html"), "存在しない");
+        assertFalse(_builder.validatePageName(INVALID_SYSTEM_ID_1), "/はじまりでない");
+        assertFalse(_builder.validatePageName(INVALID_SYSTEM_ID_2), "/../がある");
     }
 
     public static class MockPageSourceFactory extends PageSourceFactoryImpl {

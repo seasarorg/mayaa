@@ -15,17 +15,17 @@
  */
 package org.seasar.mayaa.impl.builder.library.scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
@@ -33,7 +33,7 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
  * @author Koji Suga (Gluegent, Inc.)
  */
 public class FolderSourceScannerTest {
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -41,7 +41,7 @@ public class FolderSourceScannerTest {
         scanner = new FolderSourceScanner();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         ManualProviderFactory.tearDown();
     }
@@ -65,11 +65,11 @@ public class FolderSourceScannerTest {
         }
 
         System.out.println(sources);
-        assertTrue("1", sources.contains("/web.xml"));
-        assertFalse("2", sources.contains("/tlds"));
-        assertFalse("3", sources.contains("/tlds/TaglibSAXParser11Test.tld"));
+        assertTrue(sources.contains("/web.xml"), "1");
+        assertFalse(sources.contains("/tlds"), "2");
+        assertFalse(sources.contains("/tlds/TaglibSAXParser11Test.tld"), "3");
 
-        assertEquals("4", 1, sources.size());
+        assertEquals(1, sources.size(), "4");
     }
 
     /*
@@ -88,11 +88,11 @@ public class FolderSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/web.xml"));
-        assertFalse("2", sources.contains("/tlds"));
-        assertTrue("3", sources.contains("/tlds/TaglibSAXParser11Test.tld"));
+        assertTrue(sources.contains("/web.xml"), "1");
+        assertFalse(sources.contains("/tlds"), "2");
+        assertTrue(sources.contains("/tlds/TaglibSAXParser11Test.tld"), "3");
 
-        assertEquals("4", 5, sources.size());
+        assertEquals(5, sources.size(), "4");
     }
 
     /*
@@ -110,8 +110,8 @@ public class FolderSourceScannerTest {
             sources.add(source.getSystemID());
         }
 
-        assertTrue("1", sources.contains("/mlds/TestMLD.mld"));
+        assertTrue(sources.contains("/mlds/TestMLD.mld"), "1");
 
-        assertEquals("2", 1, sources.size());
+        assertEquals(1, sources.size(), "2");
     }
 }

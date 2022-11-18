@@ -15,9 +15,9 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,9 +27,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
@@ -43,13 +43,13 @@ public class IOUtilTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<m:mayaa xmlns:m=\"http://mayaa.seasar.org\">\n\n        <m:write m:id=\"message\" value=\"日本語\" />\n\n</m:mayaa>\n";
     private String encoding = "UTF-8";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

@@ -24,14 +24,14 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
+public class NekoHtmlParser extends AbstractSAXParser implements CONST_IMPL {
 
 	/**
 	 * @param scanner HTMLパーサのスキャナオブジェクト
 	 * @param templateDefaultCharset テンプレートの文字コードが不明な場合に使用する文字コード。
 	 * @param balanceTag タグのバランスを修正するか。基本的にtrue。falseにする場合は必ずテンプレートのタグのバランスを取ること。
 	 */
-	public TemplateParser(boolean balanceTag) {
+	public NekoHtmlParser(boolean balanceTag) {
         super(new TemplateParserConfiguration(new TemplateScanner(), balanceTag));
     }
 

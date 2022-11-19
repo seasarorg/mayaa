@@ -368,6 +368,8 @@ public class EngineTestBase {
         // When
         final MockHttpServletResponse response = exec(request, pageScopeAttribute);
 
+        ((EngineImpl) engine).deprecateSpecification(targetContentPath, true);
+
         // Then
         verifyResponse(response, expectedContentPath);
     }

@@ -50,7 +50,7 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.mayaa.impl.builder.parser.HtmlTemplateParser;
-import org.seasar.mayaa.impl.builder.parser.TemplateParser;
+import org.seasar.mayaa.impl.builder.parser.NekoHtmlParser;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
@@ -84,9 +84,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private static final long serialVersionUID = -1031702086020145692L;
 
     private List<InjectionResolver> _resolvers = new ArrayList<>();
-    private List<InjectionResolver> _unmodifiableResolvers =
-        Collections.unmodifiableList(_resolvers);
-    private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
+    private List<InjectionResolver> _unmodifiableResolvers = Collections.unmodifiableList(_resolvers);
+    private XMLReaderPool _htmlReaderPool = new HtmlReaderPool();
     private transient InjectionChain _chain = new DefaultInjectionChain();
     private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
@@ -620,11 +619,25 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 LOG.warn(message, e);
             }
         } else if (BALANCE_TAG.equals(name)) {
-        	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, true));
+            if (_htmlReaderPool instanceof NekoHtmlReaderPool) {
+                ((NekoHtmlReaderPool) _htmlReaderPool).setBalanceTag(ObjectUtil.booleanValue(value, true));
+            }
         } else if (INSERT_IMPLIED_TAG.equals(name)) {
-        	_htmlReaderPool.setInsertImpliedTag(ObjectUtil.booleanValue(value, true));
+            if (_htmlReaderPool instanceof HtmlReaderPool) {
+                ((HtmlReaderPool) _htmlReaderPool).setInsertImpliedTag(ObjectUtil.booleanValue(value, true));
+            }
         } else if (USE_NEW_PARSER.equals(name)) {
-        	_htmlReaderPool.setUseNewParser(ObjectUtil.booleanValue(value, true));
+            // switch HTML reader pool instance
+            boolean val = ObjectUtil.booleanValue(value, true);
+            if (val) {
+                if (_htmlReaderPool instanceof HtmlReaderPool == false) {
+                    _htmlReaderPool = new HtmlReaderPool();
+                }
+            } else {
+                if (_htmlReaderPool instanceof NekoHtmlReaderPool == false) {
+                    _htmlReaderPool = new NekoHtmlReaderPool();
+                }
+            }
         }
         super.setParameter(name, value);
     }
@@ -662,38 +675,22 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
-    protected class HtmlReaderPool extends XMLReaderPool {
+    protected class NekoHtmlReaderPool extends XMLReaderPool {
 
         private boolean _balanceTag = true;
-        private boolean _useNewParser = false;
-        private boolean _insertImpliedTag = false;
 
         protected void setBalanceTag(boolean balanceTag) {
         	_balanceTag = balanceTag;
         }
 
-        public void setUseNewParser(boolean useNewParser) {
-            _useNewParser = useNewParser;
-        }
-
-        public void setInsertImpliedTag(boolean insertImpliedTag) {
-            _insertImpliedTag = insertImpliedTag;
-        }
-
         @Override
         protected Object createObject() {
-            if (_useNewParser) {
-                HtmlTemplateParser parser = new HtmlTemplateParser(_balanceTag, _insertImpliedTag);
-                parser.setInsertImpliedTag(_insertImpliedTag);
-                return parser;
-            } else {
-                return new TemplateParser(_balanceTag);
-            }
+            return new NekoHtmlParser(_balanceTag);
         }
 
         @Override
         protected boolean validateObject(Object object) {
-            return object instanceof TemplateParser;
+            return object instanceof NekoHtmlParser;
         }
 
         @Override
@@ -703,7 +700,35 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
             return htmlReader;
         }
+    }
 
+    protected class HtmlReaderPool extends XMLReaderPool {
+
+        private boolean _insertImpliedTag = false;
+
+        public void setInsertImpliedTag(boolean insertImpliedTag) {
+            _insertImpliedTag = insertImpliedTag;
+        }
+
+        @Override
+        protected Object createObject() {
+            HtmlTemplateParser parser = new HtmlTemplateParser();
+            parser.setInsertImpliedTag(_insertImpliedTag);
+            return parser;
+        }
+
+        @Override
+        protected boolean validateObject(Object object) {
+            return object instanceof HtmlTemplateParser;
+        }
+
+        @Override
+        public XMLReader borrowXMLReader(ContentHandler handler,
+                boolean namespaces, boolean validation, boolean xmlSchema, boolean notifyEntity) {
+            XMLReader htmlReader = (XMLReader) borrowObject();
+            buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
+            return htmlReader;
+        }
     }
 
     protected class InjectionChainImpl implements InjectionChain {

@@ -30,6 +30,7 @@
     <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>8</maven.compiler.release>
+    <doclint>none</doclint>
   </properties>
 
   <profiles>
@@ -300,6 +301,11 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <systemPropertyVariables>
+            <inMaven>1</inMaven>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

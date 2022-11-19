@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.builder.parser;
 import java.io.IOException;
 
 import org.apache.xerces.impl.Constants;
-import org.apache.xerces.impl.XMLEntityManager;
 import org.apache.xerces.impl.XMLErrorReporter;
 import org.apache.xerces.parsers.BasicParserConfiguration;
 import org.apache.xerces.xni.XMLDocumentHandler;
@@ -59,22 +58,12 @@ public class HtmlTemplateParser extends AdditionalSAXParser implements CONST_IMP
     /**
      * @param balanceTag タグのバランスを修正するか。基本的にtrue。falseにする場合は必ずテンプレートのタグのバランスを取ること。
      */
-    public HtmlTemplateParser(boolean balanceTag, boolean insertImpliedTag) {
+    public HtmlTemplateParser() {
         super(new ParserConfiguration());
         // super(isHTML ? new TemplateParserConfiguration(): new StandardParserConfiguration());
         try {
             setFeature("http://xml.org/sax/features/namespaces", false);
             setFeature("http://xml.org/sax/features/validation", false);
-            //setFeature("http://apache.org/xml/features/validation/schema", false);
-            // setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-            // setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            // setFeature("http://xml.org/sax/features/use-entity-resolver2", false);
-
-            // setFeature("http://apache.org/xml/features/scanner/notify-char-refs", true);
-            // setFeature("http://apache.org/xml/features/scanner/notify-builtin-refs", true);
-
-            // setProperty("http://apache.org/xml/properties/internal/validator/dtd", false);
-
         } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
             System.out.println(e);
         }

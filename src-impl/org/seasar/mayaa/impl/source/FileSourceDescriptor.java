@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.AccessControlException;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -104,7 +103,7 @@ public class FileSourceDescriptor implements WritableSourceDescriptor, Changeabl
                 		 if (file.exists()) {
                 			 _file = file;
                 		 }
-                	 } catch(AccessControlException e) {
+                	 } catch(SecurityException e) {
                 		 // OKな場所とそうでない場所があるのでtryはする。
                 		 LOG.debug("access denied. " + file.toString());
                 	 }

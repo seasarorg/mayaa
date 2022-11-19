@@ -29,8 +29,8 @@
     <!-- 普段はJUnitパフォーマンス計測用テスト、遅いテストは除外する -->
     <testExcludedGroups>test.PerformanceTest.class,test.SlowTest.class</testExcludedGroups>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <doclint>none</doclint>
   </properties>
 
@@ -200,8 +200,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
             <encoding>UTF-8</encoding>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>1.8</source>
+            <target>1.8</target>
             <compilerArgument>-Xlint:deprecation</compilerArgument>
           </configuration>
         </plugin>
@@ -246,7 +246,7 @@
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
-          <source>1.7</source>
+          <source>1.8</source>
           <quiet>true</quiet>
         </configuration>
         <executions>

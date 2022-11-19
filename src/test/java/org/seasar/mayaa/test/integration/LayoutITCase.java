@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -57,6 +58,7 @@ public class LayoutITCase extends WebDriverBase {
 
     @ParameterizedTest(name = "{0}: path={1}")
     @MethodSource
+    @EnabledIfSystemProperty(named = "inMaven", matches = "1")
     public void test(String title, String path, Command[] commands) {
         runTest(title, path, commands);
     }

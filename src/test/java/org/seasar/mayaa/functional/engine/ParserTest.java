@@ -17,9 +17,9 @@ package org.seasar.mayaa.functional.engine;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 
@@ -32,40 +32,58 @@ import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
  * @author Mitsutaka WATANABE <mttk.wtnb@gmail.com>
  */
  public class ParserTest extends EngineTestBase {
-    @BeforeEach
-    void 新しいパーサを用いる() {
-        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, "true");
-    }
 
-    @Test
-    public void HTMLをパースして変更がない部分はそのまま出力する() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void HTMLをパースして変更がない部分はそのまま出力する(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         final String DIR = "/it-case/parser/through/";
-        execAndVerify(DIR + "target.html", DIR + "target.html", null);
+        if (useNewParser) {            
+            execAndVerify(DIR + "target.html", DIR + "target.html", null);
+        } else {
+            getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
+            execAndVerify(DIR + "target.html", DIR + "expected-old-parser.html", null);
+            getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
+        }
     }
 
-    @Test
-    public void HTML自体は名前空間をサポートしないがMayaaでは名前空間を定義可能とする() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void HTML自体は名前空間をサポートしないがMayaaでは名前空間を定義可能とする(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         enableDump();
         final String DIR = "/it-case/parser/namespace-in-html/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }   
 
-    @Test
-    public void CDATA() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void CDATA(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         enableDump();
         final String DIR = "/it-case/parser/cdata/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+    }
         printPageTree();
     }
 
-    @Test
-    public void 引用符で囲まれない属性値は空白まで解釈する() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void 引用符で囲まれない属性値は空白まで解釈する(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         final String DIR = "/it-case/parser/non-quotation-attr/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
 
-    @Test
-    public void 属性値が空文字列のときは属性名だけを出力する() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void 属性値が空文字列のときは属性名だけを出力する(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         final String DIR = "/it-case/parser/empty-attr/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
@@ -74,8 +92,11 @@ import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
      * HTMLとしてのパースであるためDOCTYPE宣言は大文字小文字を区別しない。
      * なお、XMLとして扱ってしまうと区別するためDOCTYPEは大文字でなければならない。
      */
-    @Test
-    public void doctypeの宣言が大文字小文字を区別しない() throws IOException {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void doctypeの宣言が大文字小文字を区別しない(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
         final String DIR = "/it-case/parser/case-insensitive-doctype/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }

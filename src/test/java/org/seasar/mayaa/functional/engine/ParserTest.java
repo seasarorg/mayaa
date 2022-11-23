@@ -21,6 +21,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
+import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
  * HTMLパーサのテストを行う。
@@ -103,8 +104,50 @@ import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
         getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
     }
 
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void SSS(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
+        enableDump();
+        final String DIR = "/it-case/parser/dynamic/";
+        DynamicRegisteredSourceHolder.registerContents(DIR + "target.html", 
+        "<!doctype html>\n" +
+        "<html>" +
+        "<DIV>${var a='no body';}${a.toUpperCase()}</DIV>" +
+        "</html>"
+        );
+        DynamicRegisteredSourceHolder.registerContents(DIR + "expected.html", 
+        "<!DOCTYPE html>\n" +
+        "<html>" +
+        "<div>NO BODY</div>" +
+        "</html>"
+        );
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
+
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
+        DynamicRegisteredSourceHolder.unregisterAll();
     }
 
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void HTMLフラグメントのパースができる(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
+        enableDump();
+        final String DIR = "/it-case/parser/dynamic/";
+        DynamicRegisteredSourceHolder.registerContents(DIR + "target.html", 
+        "<DIV>${var a='no body';}${a.toUpperCase()}</DIV>"
+        );
+        DynamicRegisteredSourceHolder.registerContents(DIR + "expected.html", 
+        "<div>NO BODY</div>"
+        );
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
+
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
+        DynamicRegisteredSourceHolder.unregisterAll();
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

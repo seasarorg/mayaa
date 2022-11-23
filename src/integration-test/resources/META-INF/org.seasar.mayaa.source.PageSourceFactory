@@ -3,6 +3,7 @@
    PUBLIC "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN"
    "http://mayaa.seasar.org/dtd/mayaa-factory_1_0.dtd">
 <factory>
+	<parameter name="dynamic" value="" />
    <parameter name="folder" value="/WEB-INF/page1" />
    <parameter name="folder" value="/WEB-INF/page2" />
 </factory>

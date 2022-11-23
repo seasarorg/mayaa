@@ -131,6 +131,8 @@ public class PageSourceFactoryImpl extends ParameterAwareImpl
         	}
         } else if ("absolutePath".equals(name)) {
             sourceHolderClass = AbsolutePathSourceHolder.class;
+        } else if ("dynamic".equals(name)) {
+            sourceHolderClass = DynamicRegisteredSourceHolder.class;
         } else {
             super.setParameter(name, value);
             return;

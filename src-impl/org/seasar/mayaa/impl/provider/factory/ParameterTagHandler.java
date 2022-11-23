@@ -39,7 +39,12 @@ public class ParameterTagHandler extends TagHandler {
             Attributes attributes, String systemID, int lineNumber) {
         String name = XMLUtil.getStringValue(attributes, "name", null);
         String value = XMLUtil.getStringValue(attributes, "value", null);
-        value = StringUtil.replaceSystemProperties(value);
+
+        if (value != null) {
+            value = StringUtil.replaceSystemProperties(value);
+        } else {
+            value = "";
+        }
         _parent.getParameterAware().setParameter(name, value);
     }
 

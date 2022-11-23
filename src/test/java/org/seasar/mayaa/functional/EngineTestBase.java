@@ -46,11 +46,12 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
+import org.seasar.mayaa.source.SourceDescriptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -311,11 +312,13 @@ public class EngineTestBase {
 
     protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath, String message) throws IOException {
 
-        final URL url = getClass().getResource(expectedContentPath);
-        if (url == null) {
+        SourceDescriptor sd = SourceUtil.getSourceDescriptor(expectedContentPath);
+
+        // final URL url = getClass().getResource(expectedContentPath);
+        if (!sd.exists()) {
             fail("Specified file is not found. " + expectedContentPath);
         }
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(sd.getInputStream()));) {
 
             String line;
             while ((line = reader.readLine()) != null) {

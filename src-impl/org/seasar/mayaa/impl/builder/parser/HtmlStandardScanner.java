@@ -45,7 +45,6 @@ import org.apache.xerces.xni.parser.XMLDocumentScanner;
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.seasar.mayaa.impl.builder.parser.HtmlTokenizer.TagToken;
 import org.xml.sax.Locator;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * 
@@ -53,7 +52,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * フォーマル公開識別子については妥当性の検証を行わない。
  * HTML文字参照以外は解決しない
  */
-public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityHandler {
+public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XMLEntityHandler {
 
     static final String NS_URI_HTML = "http://www.w3.org/1999/xhtml";
 
@@ -77,7 +76,6 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
     static final QName QN_TEMPLATE = new QName(null, "template", "template", NS_URI_HTML);
 
     /**  */
-    DefaultHandler defaultHandler = null;
     XMLDocumentHandler documentHandler = null;
 
     HtmlTokenizer tokenizer;
@@ -102,31 +100,57 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
         return documentHandler;
     }
 
+    // FEATURES
+    public static final String FEATURE_PREFIX = "http://mayaa.seasar.org/parser/feature/";
+    public static final String FEATURE_DELETE_UNEXPECTED_ELEMENT = FEATURE_PREFIX + "delete-unexpected-element";
+    public static final String FEATURE_INSERT_IMPLIED_ELEMENT = FEATURE_PREFIX + "insert-implied-element";
+    public static final String FEATURE_DOCUMENT_FRAGMENT = FEATURE_PREFIX + "document-fragment";
+
+    boolean featureInsertImpliedElement = false;
+    boolean featureDeleteUnexpectedElement = false;
+    boolean featureDocumentFragment = true;
+    
     @Override
     public String[] getRecognizedFeatures() {
         return new String[] {
-                // NO FEATURE
+            FEATURE_DELETE_UNEXPECTED_ELEMENT,
+            FEATURE_INSERT_IMPLIED_ELEMENT,
+            FEATURE_DOCUMENT_FRAGMENT,
         };
     }
 
     @Override
     public Boolean getFeatureDefault(String featureId) {
-        return null;
+        switch (featureId) {
+            case FEATURE_DELETE_UNEXPECTED_ELEMENT: return Boolean.FALSE;
+            case FEATURE_INSERT_IMPLIED_ELEMENT: return Boolean.FALSE;
+            case FEATURE_DOCUMENT_FRAGMENT: return Boolean.TRUE;
+            default: return Boolean.FALSE;
+        }
     }
 
     @Override
     public void setFeature(String featureId, boolean state) throws XMLConfigurationException {
-        // NO FEATURE
+        switch (featureId) {
+            case FEATURE_DELETE_UNEXPECTED_ELEMENT:
+                featureDeleteUnexpectedElement = state;
+                break;
+            case FEATURE_INSERT_IMPLIED_ELEMENT:
+                featureInsertImpliedElement = state;
+                break;
+            case FEATURE_DOCUMENT_FRAGMENT:
+                featureDocumentFragment = state;
+                break;
+        }
     }
+    // FEATURES:END
 
     // PROPERTEIS
-    static final String PROPERTY_ENTITY_MANAGER = Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_MANAGER_PROPERTY;
     static final String ERROR_REPORTER = Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
 
     @Override
     public String[] getRecognizedProperties() {
         return new String[] {
-            PROPERTY_ENTITY_MANAGER
         };
     }
 
@@ -137,17 +161,10 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
 
     @Override
     public void setProperty(String propertyId, Object value) throws XMLConfigurationException {
-        // Xerces properties
-        if (propertyId.startsWith(Constants.XERCES_PROPERTY_PREFIX)) {
-            final String suffix = propertyId.substring(Constants.XERCES_PROPERTY_PREFIX.length());
-            if (Constants.ENTITY_MANAGER_PROPERTY.equals(suffix)) {
-                // entityManager = (XMLEntityManager) value;
-                return;
-            }
-            return;
-        }
     }
+    // PROPERTEIS:END
 
+    // INTERNAL UTILS
     boolean matchOneOfThese(String target, String... compare) {
         for (String c : compare) {
             if (c.equals(target)) {
@@ -160,6 +177,7 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
     QName createHtmlQName(String tagName) {
         return new QName(null, tagName, tagName, NS_URI_HTML);
     }
+    // INTERNAL UTILS:END
 
     /**
      * Initially, the stack of open elements is empty.
@@ -203,9 +221,6 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
     }
 
     InsertionMode insertionMode = InsertionMode.Initial;
-
-    boolean featureInsertImpliedTag = false;
-    boolean featureIgnoreSpeculativeDuplcatedTag = true;
 
     class TokenHandlerInitial extends TokenHandlerBase {
         @Override
@@ -253,8 +268,10 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
                 // Ignore whitespace
                 super.emitText(tokenizer, location, text);
             } else {
-                unclosedElementStack.push(QN_HTML);
-                documentHandler.startElement(QN_HTML, EMPTY_ATTRIBUTES, null);
+                if (!featureDocumentFragment) {
+                    unclosedElementStack.push(QN_HTML);
+                    documentHandler.startElement(QN_HTML, EMPTY_ATTRIBUTES, null);
+                }
                 insertionMode = InsertionMode.BeforeHead;
             }
         }
@@ -270,8 +287,10 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
                 documentHandler.startElement(QN_HTML, attributes, null);
                 insertionMode = InsertionMode.BeforeHead;
             } else {
-                unclosedElementStack.push(QN_HTML);
-                documentHandler.startElement(QN_HTML, EMPTY_ATTRIBUTES, null);
+                if (!featureDocumentFragment) {
+                    unclosedElementStack.push(QN_HTML);
+                    documentHandler.startElement(QN_HTML, EMPTY_ATTRIBUTES, null);
+                }
                 insertionMode = InsertionMode.BeforeHead;
 
                 insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
@@ -286,14 +305,7 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
     class TokenHandlerBeforeHead extends TokenHandlerBase {
         @Override
         public void emitText(HtmlTokenizer tokenizer, HtmlLocation location, String text) {
-            // ignore whitespaces before doctype, otherwise change insertion mode to "before html"
-            if (REGEX_WHITESPACE_ONLY.matcher(text).matches()) {
-                // Ignore whitespace
-                super.emitText(tokenizer, location, text);
-            } else {
-                insertionMode = InsertionMode.BeforeHtml;
-                insertionMode.handler.emitText(tokenizer, location, text);
-            }
+            super.emitText(tokenizer, location, text);
         }
 
         @Override
@@ -320,7 +332,7 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
                 documentHandler.startElement(QN_HEAD, EMPTY_ATTRIBUTES, null);
                 insertionMode = InsertionMode.InHead;
             } else {
-                if (featureInsertImpliedTag) {
+                if (!featureDocumentFragment) {
                     unclosedElementStack.push(QN_HEAD);
                     documentHandler.startElement(QN_HEAD, EMPTY_ATTRIBUTES, null);
                 }
@@ -359,12 +371,13 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
             } else if (tagToken.isEndTag) {
                 unclosedElementStack.pop();
                 documentHandler.endElement(createHtmlQName(tagName), null);
-            } else if (featureIgnoreSpeculativeDuplcatedTag && !tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
+            } else if (featureDeleteUnexpectedElement && !tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
                 // INGNORE
             } else {
-                QName n = unclosedElementStack.pop();
+                QName n = unclosedElementStack.peek();
                 if (n.localpart.equals("head")) {
                     documentHandler.endElement(n, null);
+                    unclosedElementStack.pop();
                 } else {
                     // should be "head"
                     reportError("parse-error", new Object[]{ tagName });
@@ -399,20 +412,19 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
                 unclosedElementStack.push(QN_BODY);
                 documentHandler.startElement(QN_BODY, attributes, null);
                 insertionMode = InsertionMode.InBody;
-            } else if (featureIgnoreSpeculativeDuplcatedTag && "head".equals(tagName) && !tagToken.isEndTag) {
-                // IGNORE
-                reportError("info-ignore-tag", new Object[]{ tagName });
-            } else if (tagToken.isEndTag) {
-                // IGNORE
-            } else if (featureIgnoreSpeculativeDuplcatedTag && !tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
-                // INGNORE
             } else {
-                if (featureInsertImpliedTag) {
+                if (featureDeleteUnexpectedElement) {
+                    if (!tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
+                        // INGNORE
+                        reportError("info-ignore-tag", new Object[]{ tagName });
+                    }
+                }
+                if (!featureDocumentFragment) {
                     unclosedElementStack.push(QN_BODY);
                     documentHandler.startElement(QN_BODY, EMPTY_ATTRIBUTES, null);    
                     insertionMode = InsertionMode.InBody;
-                    insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
                 }
+                super.emitTag(tokenizer, location, tagToken, attributes);
             }
         }
     }
@@ -443,7 +455,7 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
                 unclosedElementStack.pop();
                 documentHandler.endElement(QN_BODY, null);
                 insertionMode = InsertionMode.AfterBody;
-            } else if (featureIgnoreSpeculativeDuplcatedTag && "head".equals(tagName) && !tagToken.isEndTag) {
+            } else if (featureDeleteUnexpectedElement && "head".equals(tagName) && !tagToken.isEndTag) {
                 // IGNORE
             } else if (!tagToken.isEndTag) {
                 QName n = createHtmlQName(tagName);
@@ -452,7 +464,7 @@ public class HTMLScanner implements XMLComponent, XMLDocumentScanner, XMLEntityH
             } else if (tagToken.isEndTag) {
                 unclosedElementStack.pop();
                 documentHandler.endElement(createHtmlQName(tagName), null);
-            } else if (featureIgnoreSpeculativeDuplcatedTag && !tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
+            } else if (featureDeleteUnexpectedElement && !tagToken.isEndTag && matchOneOfThese(tagName, "head", "noscript")) {
                 // INGNORE
             } else {
                 super.emitTag(tokenizer, location, tagToken, attributes);

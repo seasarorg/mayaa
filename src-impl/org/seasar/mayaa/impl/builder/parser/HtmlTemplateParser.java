@@ -32,17 +32,20 @@ import org.xml.sax.SAXNotSupportedException;
  * @author Mitsutaka Watanabe
  */
 public class HtmlTemplateParser extends AdditionalSAXParser implements CONST_IMPL {
-    static class ParserConfiguration extends BasicParserConfiguration {
-        protected static final String ERROR_REPORTER = 
-            Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
+    public static String FEATURE_DELETE_UNEXPECTED_ELEMENT = HtmlStandardScanner.FEATURE_DELETE_UNEXPECTED_ELEMENT;
+    public static String FEATURE_INSERT_IMPLIED_ELEMENT = HtmlStandardScanner.FEATURE_INSERT_IMPLIED_ELEMENT;
 
-        HTMLScanner scanner = new HTMLScanner();
+    static class ParserConfiguration extends BasicParserConfiguration {
+        protected static final String ERROR_REPORTER = Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
+
+        HtmlStandardScanner scanner = new HtmlStandardScanner();
 
         ParserConfiguration() {
             addRecognizedProperties(new String[] { ERROR_REPORTER });
             XMLErrorReporter errorReporter = new XMLErrorReporter();
             setProperty(ERROR_REPORTER, errorReporter);
             addComponent(errorReporter);
+            addComponent(scanner);
         }
 
         @Override
@@ -61,15 +64,14 @@ public class HtmlTemplateParser extends AdditionalSAXParser implements CONST_IMP
     public HtmlTemplateParser() {
         super(new ParserConfiguration());
         // super(isHTML ? new TemplateParserConfiguration(): new StandardParserConfiguration());
-        try {
-            setFeature("http://xml.org/sax/features/namespaces", false);
-            setFeature("http://xml.org/sax/features/validation", false);
-        } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
-            System.out.println(e);
-        }
-
+        setFeature("http://xml.org/sax/features/namespaces", false);
+        setFeature("http://xml.org/sax/features/validation", false);
     }
 
-    public void setInsertImpliedTag(boolean _insertImpliedTag) {
+    public void setFeature(String featureId, boolean state) {
+        try {
+            super.setFeature(featureId, state);
+        } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
+        }
     }
 }

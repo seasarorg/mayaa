@@ -17,7 +17,6 @@ package org.seasar.mayaa.functional.engine;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
@@ -67,7 +66,45 @@ import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
         final String DIR = "/it-case/parser/cdata/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }
-        printPageTree();
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void headが存在しない時に空のheadタグを付加しない(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
+        if (!useNewParser) {
+            /* <html>や<body>が無い場合もそのままにするNekoHTMLオプション。これが無いと勝手に付与されてしまう。 
+             * http://cyberneko.org/html/features/balance-tags/document-fragment
+            */
+            getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
+        }
+
+        enableDump();
+        final String DIR = "/it-case/parser/head-missing/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+
+        if (!useNewParser) {
+            getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
+        }
+
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = {false, true})
+    public void headが重複していても重複したheadタグを削除しない(boolean useNewParser) throws IOException {
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
+
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
+
+        enableDump();
+        final String DIR = "/it-case/parser/head-duplicated/";
+        execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+
+        getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "true");
+    }
+
+    }
+
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

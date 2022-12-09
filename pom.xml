@@ -587,7 +587,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>3.2.18.RELEASE</version>
+      <version>6.0.0</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->

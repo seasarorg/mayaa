@@ -15,24 +15,28 @@
  */
 package org.seasar.mayaa;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.provider.ProviderFactory;
+import org.seasar.mayaa.source.PageSourceFactory;
 import org.seasar.mayaa.source.SourceDescriptor;
 
 /**
  * ファクトリのファクトリオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class FactoryFactory implements Serializable {
-
-    private static final long serialVersionUID = 4985431947480350680L;
+public abstract class FactoryFactory {
 
     private static FactoryFactory _instance;
     private static Object _context;
-    private static Map<Class<?>, UnifiedFactory> _factories = new HashMap<>();
+    private static Map<Class<? extends UnifiedFactory>, UnifiedFactory> _factories = new HashMap<>();
+
+    private static PageSourceFactory _pageSourceFactory;
+    private static ProviderFactory _providerFactory;
+    private static CycleFactory _cycleFactory;
 
     /**
      * ファクトリの初期化。
@@ -90,13 +94,68 @@ public abstract class FactoryFactory implements Serializable {
     }
 
     /**
+     * {@code PageSourceFactory}インスタンスを生成する。
+     * @return {@code PageSourceFactory}インスタンス
+     */
+    public static PageSourceFactory getPageSourceFactory() {
+        if (_pageSourceFactory == null) {
+            synchronized (_instance) {
+                if (_pageSourceFactory == null) {
+                    _pageSourceFactory = (PageSourceFactory) _instance.getFactory(PageSourceFactory.class, _context);
+                }
+            }
+        }
+        return _pageSourceFactory;
+    }
+
+    /**
+     * {@code ProviderFactory}インスタンスを生成する。
+     * @return {@code ProviderFactory}インスタンス
+     */
+    public static ProviderFactory getProviderFactory() {
+        if (_providerFactory == null) {
+            synchronized (_instance) {
+                if (_providerFactory == null) {
+                    _providerFactory = (ProviderFactory) _instance.getFactory(ProviderFactory.class, _context);
+                }
+            }
+        }
+        return _providerFactory;
+    }
+
+    /**
+     * {@code CycleFactory}インスタンスを生成する。
+     * @return {@code CycleFactory}インスタンス
+     */
+    public static CycleFactory getCycleFactory() {
+        if (_cycleFactory == null) {
+            synchronized (_instance) {
+                if (_cycleFactory == null) {
+                    _cycleFactory = (CycleFactory) _instance.getFactory(CycleFactory.class, _context);
+                }
+            }
+        }
+        return _cycleFactory;
+    }
+
+    /**
      * ファクトリを取得する。
      * @param interfaceClass 取得するファクトリのインターフェイス。
      * @return 指定インターフェイスに対応したファクトリ。
      */
-    public static UnifiedFactory getFactory(Class<?> interfaceClass) {
+    public static UnifiedFactory getFactory(Class<? extends UnifiedFactory> interfaceClass) {
         check();
-        UnifiedFactory factory = (UnifiedFactory) _factories.get(interfaceClass);
+        if (PageSourceFactory.class.isAssignableFrom(interfaceClass)) {
+            return getPageSourceFactory();
+        }
+        if (ProviderFactory.class.isAssignableFrom(interfaceClass)) {
+            return getProviderFactory();
+        }
+        if (CycleFactory.class.isAssignableFrom(interfaceClass)) {
+            return getCycleFactory();
+        }
+
+        UnifiedFactory factory = _factories.get(interfaceClass);
         if (factory == null) {
             factory = _instance.getFactory(interfaceClass, _context);
             if (factory == null) {
@@ -122,6 +181,9 @@ public abstract class FactoryFactory implements Serializable {
     public static synchronized void release() {
         _instance = null;
         _context = null;
+        _pageSourceFactory = null;
+        _providerFactory = null;
+        _cycleFactory = null;
         _factories.clear();
     }
 
@@ -131,8 +193,8 @@ public abstract class FactoryFactory implements Serializable {
      * @param context コンテキストオブジェクト。
      * @return ファクトリ。
      */
-    protected abstract UnifiedFactory getFactory(
-            Class<?> interfaceClass, Object context);
+    protected abstract <T extends UnifiedFactory> T getFactory(
+            Class<T> interfaceClass, Object context);
 
     /**
      * ブートストラップ用のソースディスクリプタを取得する。

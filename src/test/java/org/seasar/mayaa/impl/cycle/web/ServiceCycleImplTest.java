@@ -34,8 +34,7 @@ public class ServiceCycleImplTest {
     @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
-        CycleFactory factory =
-            (CycleFactory)FactoryFactory.getFactory(CycleFactory.class);
+        CycleFactory factory = FactoryFactory.getCycleFactory();
         _cycle = factory.getServiceCycle();
     }
 

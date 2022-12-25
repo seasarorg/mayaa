@@ -45,15 +45,7 @@ public class CycleUtil {
     }
 
     public static CycleFactory getFactory() {
-        if (_singleton._factory == null) {
-            synchronized (_singleton) {
-                if (_singleton._factory == null) {
-                    _singleton._factory =
-                        (CycleFactory) FactoryFactory.getFactory(CycleFactory.class);
-                }
-            }
-        }
-        return _singleton._factory;
+        return FactoryFactory.getCycleFactory();
     }
 
     public static void initialize(
@@ -94,9 +86,6 @@ public class CycleUtil {
     }
 
     public static ServiceCycle getServiceCycle() {
-        if (getFactory() == null) {
-            throw new CycleNotInitializedException();
-        }
         return getFactory().getServiceCycle();
     }
 

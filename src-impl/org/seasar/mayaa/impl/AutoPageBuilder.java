@@ -39,7 +39,6 @@ import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.source.PageSourceFactory;
 import org.seasar.mayaa.source.SourceHolder;
 
 /**
@@ -182,7 +181,7 @@ public class AutoPageBuilder implements Runnable {
             reportTime(SpecificationUtil.getDefaultSpecification(), diffMillis(engineBuildTime));
 
             // prepare SourceHolderFactory
-            FactoryFactory.getFactory(PageSourceFactory.class);
+            FactoryFactory.getPageSourceFactory();
 
             while (currentThread == _thread) {
                 _buildTimeSum = 0;

@@ -48,20 +48,19 @@ public class FactoryFactoryImpl extends FactoryFactory
         return false;
     }
 
-    protected UnifiedFactory marshallFactory(
-            Class<?> interfaceClass, Object context,
-            SourceDescriptor source, UnifiedFactory beforeFactory) {
+    protected <T extends UnifiedFactory> T marshallFactory(
+            Class<T> interfaceClass, Object context,
+            SourceDescriptor source, T beforeFactory) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        UnifiedFactory factory;
+        T factory;
         if (source.exists()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("marshall factory: " + source.getSystemID());
             }
-            UnifiedFactoryHandler handler =
-                new UnifiedFactoryHandler(interfaceClass, beforeFactory);
+            UnifiedFactoryHandler<T> handler = new UnifiedFactoryHandler<>(interfaceClass, beforeFactory);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_FACTORY10,

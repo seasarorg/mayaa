@@ -97,8 +97,7 @@ public class EngineTestBase {
     }
 
     public ServiceProvider getServiceProvider() {
-        ProviderFactory factory = (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
-        return factory.getServiceProvider();
+        return FactoryFactory.getProviderFactory().getServiceProvider();
     }
     /**
      * Mavenかで実行されているかどうかを判定する。 pom.xml内でmaven-surefire-plugin経由で

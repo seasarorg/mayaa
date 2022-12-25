@@ -98,7 +98,7 @@ public abstract class FactoryFactory {
      * @return {@code PageSourceFactory}インスタンス
      */
     public static PageSourceFactory getPageSourceFactory() {
-        if (_pageSourceFactory == null) {
+        if (_pageSourceFactory == null && isInitialized()) {
             synchronized (_instance) {
                 if (_pageSourceFactory == null) {
                     _pageSourceFactory = (PageSourceFactory) _instance.getFactory(PageSourceFactory.class, _context);
@@ -113,7 +113,7 @@ public abstract class FactoryFactory {
      * @return {@code ProviderFactory}インスタンス
      */
     public static ProviderFactory getProviderFactory() {
-        if (_providerFactory == null) {
+        if (_providerFactory == null && isInitialized()) {
             synchronized (_instance) {
                 if (_providerFactory == null) {
                     _providerFactory = (ProviderFactory) _instance.getFactory(ProviderFactory.class, _context);
@@ -128,7 +128,7 @@ public abstract class FactoryFactory {
      * @return {@code CycleFactory}インスタンス
      */
     public static CycleFactory getCycleFactory() {
-        if (_cycleFactory == null) {
+        if (_cycleFactory == null && isInitialized()) {
             synchronized (_instance) {
                 if (_cycleFactory == null) {
                     _cycleFactory = (CycleFactory) _instance.getFactory(CycleFactory.class, _context);

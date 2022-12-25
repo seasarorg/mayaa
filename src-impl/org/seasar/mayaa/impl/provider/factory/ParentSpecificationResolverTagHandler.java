@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class ParentSpecificationResolverTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class ParentSpecificationResolverTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<ParentSpecificationResolver> INTERFACE_CLASS = ParentSpecificationResolver.class;
+    private static Class<? extends ParentSpecificationResolver> DEFAULT_IMPL_CLASS = ParentSpecificationResolverImpl.class;
 
     private ProviderTagHandler _parent;
     private ParentSpecificationResolver _beforeResolver;
@@ -46,9 +49,9 @@ public class ParentSpecificationResolverTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
-        _currentResolver = (ParentSpecificationResolver) MarshallUtil.marshall(
-                adjusterClass, ParentSpecificationResolver.class, _beforeResolver,
+        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentResolver = MarshallUtil.marshall(
+                adjusterClass, INTERFACE_CLASS, _beforeResolver,
                 systemID, lineNumber);
         _parent.getServiceProvider().setParentSpecificationResolver(_currentResolver);
     }

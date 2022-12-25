@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.builder.SpecificationBuilderImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SpecificationBuilderTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class SpecificationBuilderTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<SpecificationBuilder> INTERFACE_CLASS = SpecificationBuilder.class;
+    private static Class<? extends SpecificationBuilder> DEFAULT_IMPL_CLASS = SpecificationBuilderImpl.class;
 
     private ProviderTagHandler _parent;
     private SpecificationBuilder _beforeBuilder;
@@ -46,10 +49,9 @@ public class SpecificationBuilderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> builderClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentBuilder = (SpecificationBuilder) MarshallUtil.marshall(
-                builderClass, SpecificationBuilder.class, _beforeBuilder,
+        Class<?> builderClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentBuilder = MarshallUtil.marshall(
+                builderClass, INTERFACE_CLASS, _beforeBuilder,
                 systemID, lineNumber);
         _parent.getServiceProvider().setSpecificationBuilder(_currentBuilder);
     }

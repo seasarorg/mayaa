@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.provider.factory;
 
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -24,8 +25,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class ProviderTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<ServiceProvider> INTERFACE_CLASS = ServiceProvider.class;
+    private static Class<? extends ServiceProvider> DEFAULT_IMPL_CLASS = ServiceProviderImpl.class;
 
     private ServiceProvider _beforeProvider;
     private ServiceProvider _currentProvider;
@@ -45,11 +48,13 @@ public class ProviderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> providerClass = XMLUtil.getClassValue(
-                attributes, "class", null);
+        Class<?> providerClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
         _currentProvider = (ServiceProvider) MarshallUtil.marshall(
-                providerClass, ServiceProvider.class, _beforeProvider,
-                systemID, lineNumber);
+                providerClass,
+                INTERFACE_CLASS,
+                _beforeProvider,
+                systemID,
+                lineNumber);
     }
 
     public ServiceProvider getServiceProvider() {

@@ -19,14 +19,16 @@ import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.engine.error.TemplateErrorHandler;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.xml.sax.Attributes;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ErrorHandlerTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class ErrorHandlerTagHandler extends AbstractParameterAwareTagHandler {
+    private static Class<ErrorHandler> INTERFACE_CLASS = ErrorHandler.class;
+    private static Class<? extends ErrorHandler> DEFAULT_IMPL_CLASS = TemplateErrorHandler.class;
 
     private EngineTagHandler _parent;
     private ErrorHandler _beforeHandler;
@@ -46,10 +48,9 @@ public class ErrorHandlerTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> handlerClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentHandler = (ErrorHandler) MarshallUtil.marshall(
-                handlerClass, ErrorHandler.class, _beforeHandler,
+        Class<?> handlerClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentHandler = MarshallUtil.marshall(
+                handlerClass, INTERFACE_CLASS, _beforeHandler,
                 systemID, lineNumber);
         _parent.getEngine().setErrorHandler(_currentHandler);
     }

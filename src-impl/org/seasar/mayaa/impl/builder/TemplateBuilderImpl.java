@@ -84,7 +84,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     private List<InjectionResolver> _resolvers = new ArrayList<>();
     private List<InjectionResolver> _unmodifiableResolvers = Collections.unmodifiableList(_resolvers);
-    private XMLReaderPool _htmlReaderPool = new HtmlReaderPool();
+    private XMLReaderPool _htmlReaderPool = new NekoHtmlReaderPool();
     private transient InjectionChain _chain = new DefaultInjectionChain();
     private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
@@ -623,7 +623,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             }
         } else if (USE_NEW_PARSER.equals(name)) {
             // switch HTML reader pool instance
-            boolean val = ObjectUtil.booleanValue(value, true);
+            boolean val = ObjectUtil.booleanValue(value, false);
             if (val) {
                 if (_htmlReaderPool instanceof HtmlReaderPool == false) {
                     _htmlReaderPool = new HtmlReaderPool();

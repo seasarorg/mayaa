@@ -29,6 +29,7 @@
         <parameter name="noCacheValue" value="no-cache"/><!-- since 1.1.27, for firefox "no-cache, no-store" -->
         <parameter name="dumpEnabled" value="false" />
         <parameter name="convertCharset" value="false"/><!-- since 1.1.12 -->
+        <parameter name="useNewParser" value="false"/><!-- since 1.2.1 -->
     </engine>
 
     <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">

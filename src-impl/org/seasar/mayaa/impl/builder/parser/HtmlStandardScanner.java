@@ -1551,7 +1551,7 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.EndTagOpen;
                         } else if (Character.isAlphabetic(c)) {
                             tagToken = new TagToken();
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             tokenizeState = TokenizeState.TagName;
                         } else if (c == '?') {
                             handler.reportError("unexpected-question-mark-instead-of-tag-name", null);
@@ -1574,7 +1574,7 @@ class HtmlTokenizer {
                         if (Character.isAlphabetic(c)) {
                             tagToken = new TagToken();
                             tagToken.isEndTag = true;
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             tokenizeState = TokenizeState.TagName;
                         } else if (c == '>') {
                             handler.reportError("missing-end-tag-name", null);
@@ -1595,7 +1595,7 @@ class HtmlTokenizer {
                         // https://html.spec.whatwg.org/multipage/parsing.html#tag-name-state
                         c = getChar();
                         if (Character.isAlphabetic(c)) {
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                         } else if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ') {
                             tokenizeState = TokenizeState.BeforeAttributeName;
                         } else if (c == '/') {
@@ -1667,7 +1667,7 @@ class HtmlTokenizer {
                                 doElseClause = false;
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             temporaryBuffer.append((char) c);
                             doElseClause = false;
                         }
@@ -1732,7 +1732,7 @@ class HtmlTokenizer {
                                 doElseClause = false;
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             temporaryBuffer.append((char) c);
                             doElseClause = false;
                         }
@@ -1801,7 +1801,7 @@ class HtmlTokenizer {
                                 doElseClause = false;
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             temporaryBuffer.append((char) c);
                             doElseClause = false;
                         }
@@ -1961,7 +1961,7 @@ class HtmlTokenizer {
                                 doElseClause = false;
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            tagToken.nameBuilder.append(Character.toLowerCase(c));
+                            tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             temporaryBuffer.append((char) c);
                             doElseClause = false;
                         }
@@ -1993,7 +1993,7 @@ class HtmlTokenizer {
                                 appendTextNode(c);
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            temporaryBuffer.append(Character.toLowerCase(c));
+                            temporaryBuffer.append(c /*Character.toLowerCase(c)*/);
                             appendTextNode(c);
                         } else {
                             pushBack();
@@ -2102,7 +2102,7 @@ class HtmlTokenizer {
                                 appendTextNode(c);
                             }
                         } else if (Character.isAlphabetic(c)) {
-                            temporaryBuffer.append(Character.toLowerCase(c));
+                            temporaryBuffer.append(c /*Character.toLowerCase(c)*/);
                             appendTextNode(c);
                         } else {
                             pushBack();

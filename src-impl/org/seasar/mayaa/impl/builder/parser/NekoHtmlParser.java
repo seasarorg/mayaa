@@ -49,7 +49,7 @@ public class NekoHtmlParser extends AbstractSAXParser implements CONST_IMPL {
         public TemplateParserConfiguration(HTMLScanner scanner) {
             AdditionalHandlerFilter starter = new AdditionalHandlerFilter();
             addComponent(starter);
-            setProperty(TemplateScanner.HTML_NAMES_ELEMS, "lower");
+            setProperty(TemplateScanner.HTML_NAMES_ELEMS, "match");
             setProperty(TemplateScanner.HTML_NAMES_ATTRS, "no-change");
             /* テンプレート上にエンコーディング指定がなければUTF-8と見なす */
             setProperty(TemplateScanner.HTML_DEFAULT_ENCODING, DEFAULT_CHARSET);

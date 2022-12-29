@@ -120,7 +120,7 @@ import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
         DynamicRegisteredSourceHolder.registerContents(DIR + "expected.html", 
         "<!DOCTYPE html>\n" +
         "<html>" +
-        "<div>NO BODY</div>" +
+        "<DIV>NO BODY</DIV>" +
         "</html>"
         );
         getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
@@ -138,10 +138,10 @@ import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
         enableDump();
         final String DIR = "/it-case/parser/dynamic/";
         DynamicRegisteredSourceHolder.registerContents(DIR + "target.html", 
-        "<DIV>${var a='no body';}${a.toUpperCase()}</DIV>"
+        "<IF><div>${var a='no body';}${a.toUpperCase()}</DIV></if>"
         );
         DynamicRegisteredSourceHolder.registerContents(DIR + "expected.html", 
-        "<div>NO BODY</div>"
+        "<IF><div>NO BODY</div></IF>"
         );
         getServiceProvider().getTemplateBuilder().setParameter(TemplateBuilderImpl.BALANCE_TAG, "false");
 

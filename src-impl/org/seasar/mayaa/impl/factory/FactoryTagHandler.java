@@ -25,15 +25,14 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class FactoryTagHandler
+public class FactoryTagHandler<T extends UnifiedFactory>
         extends AbstractParameterAwareTagHandler {
 
-    private Class<?> _interfaceClass;
-    private UnifiedFactory _beforeFactory;
-    private UnifiedFactory _currentFactory;
+    private Class<T> _interfaceClass;
+    private T _beforeFactory;
+    private T _currentFactory;
 
-    public FactoryTagHandler(
-            Class<?> interfaceClass, UnifiedFactory beforeFactory) {
+    public FactoryTagHandler(Class<T> interfaceClass, T beforeFactory) {
         super("factory");
         if (interfaceClass == null) {
             throw new IllegalArgumentException();
@@ -44,13 +43,12 @@ public class FactoryTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> factoryClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentFactory = (UnifiedFactory) MarshallUtil.marshall(
+        Class<?> factoryClass = XMLUtil.getClassValue(attributes, "class", null);
+        _currentFactory = MarshallUtil.marshall(
                 factoryClass, _interfaceClass, _beforeFactory,
                 systemID, lineNumber);
-        Class<?> serviceClass = XMLUtil.getClassValue(
-                attributes, "serviceClass", null);
+
+        Class<?> serviceClass = XMLUtil.getClassValue(attributes, "serviceClass", null);
         if (serviceClass != null) {
             _currentFactory.setServiceClass(serviceClass);
         } else {
@@ -60,7 +58,7 @@ public class FactoryTagHandler
         }
     }
 
-    public UnifiedFactory getFactory() {
+    public T getFactory() {
         if (_currentFactory == null) {
             throw new IllegalStateException();
         }

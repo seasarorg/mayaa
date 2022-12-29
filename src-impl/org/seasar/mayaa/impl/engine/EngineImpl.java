@@ -133,7 +133,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public ErrorHandler getErrorHandler() {
         if (_errorHandler == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("An ErrorHandler of Engine is not defined.");
         }
         return _errorHandler;
     }

@@ -24,27 +24,25 @@ import org.seasar.mayaa.impl.util.xml.XMLHandler;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class UnifiedFactoryHandler extends XMLHandler
+public class UnifiedFactoryHandler<T extends UnifiedFactory> extends XMLHandler
         implements CONST_IMPL {
 
     private static final Log LOG =
         LogFactory.getLog(UnifiedFactoryHandler.class);
 
-    private FactoryTagHandler _rootHandler;
+    private FactoryTagHandler<T> _rootHandler;
 
-    public UnifiedFactoryHandler(
-            Class<?> interfaceClass, UnifiedFactory beforeFactory) {
+    public UnifiedFactoryHandler(Class<T> interfaceClass, T beforeFactory) {
         if (interfaceClass == null) {
             throw new IllegalArgumentException();
         }
-        _rootHandler = new FactoryTagHandler(
-                interfaceClass, beforeFactory);
+        _rootHandler = new FactoryTagHandler<>(interfaceClass, beforeFactory);
         setRootHandler(_rootHandler);
         setLog(LOG);
         getEntityMap().put(PUBLIC_FACTORY10, "mayaa-factory_1_0.dtd");
     }
 
-    public UnifiedFactory getUnifiedFactory() {
+    public T getUnifiedFactory() {
         return _rootHandler.getFactory();
     }
 

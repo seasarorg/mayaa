@@ -25,6 +25,8 @@ import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.builder.PathAdjusterImpl;
+import org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl;
 import org.seasar.mayaa.provider.ServiceProvider;
 
 /**
@@ -40,9 +42,9 @@ public class ServiceProviderImpl extends ParameterAwareImpl
     private LibraryManager _libraryManager;
     private SpecificationBuilder _specificationBuilder;
     private TemplateBuilder _templateBuilder;
-    private PathAdjuster _pathAdjuster;
+    private PathAdjuster _pathAdjuster = new PathAdjusterImpl();
     private TemplateAttributeReader _templateAttributeReader;
-    private ParentSpecificationResolver _parentSpecificationResolver;
+    private ParentSpecificationResolver _parentSpecificationResolver = new ParentSpecificationResolverImpl();
 
     public void setEngine(Engine engine) {
         if (engine == null) {
@@ -67,7 +69,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public ScriptEnvironment getScriptEnvironment() {
         if (_scriptEnvironment == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A ScriptEnvironment is not defined.");
         }
         return _scriptEnvironment;
     }
@@ -81,7 +83,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public LibraryManager getLibraryManager() {
         if (_libraryManager == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A LibraryManager is not defined.");
         }
         return _libraryManager;
     }
@@ -96,7 +98,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public SpecificationBuilder getSpecificationBuilder() {
         if (_specificationBuilder == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A SpecificationBuilder is not defined");
         }
         return _specificationBuilder;
     }
@@ -110,7 +112,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public TemplateBuilder getTemplateBuilder() {
         if (_templateBuilder == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A TemplateBuilder is not defined");
         }
         return _templateBuilder;
     }
@@ -124,7 +126,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public PathAdjuster getPathAdjuster() {
         if (_pathAdjuster == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A PathAdjuster is not defined");
         }
         return _pathAdjuster;
     }
@@ -139,7 +141,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public TemplateAttributeReader getTemplateAttributeReader() {
         if (_templateAttributeReader == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A TemplateAttributeReader is not defined");
         }
         return _templateAttributeReader;
     }
@@ -153,7 +155,7 @@ public class ServiceProviderImpl extends ParameterAwareImpl
 
     public ParentSpecificationResolver getParentSpecificationResolver() {
         if (_parentSpecificationResolver == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("A ParentSpecificationResolver is not defined");
         }
         return _parentSpecificationResolver;
     }

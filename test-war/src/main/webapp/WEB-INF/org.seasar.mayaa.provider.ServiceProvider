@@ -109,6 +109,7 @@
         <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
         <parameter name="replaceSSIInclude" value="false"/><!-- since 1.1.25 -->
         <parameter name="balanceTag" value="true"/><!-- since 1.1.29 -->
+        <parameter name="useNewParser" value="false"/><!-- since 1.2.1 -->
     </templateBuilder>
 
     <!--

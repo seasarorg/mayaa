@@ -24,6 +24,9 @@
     <div v-on:click="handleClick" v-bind:test="ss">
         &copy;
     </div>
+    <div @click="handleClick" :test="ss">
+        &copy;
+    </div>
     <!-- for vue template notation -->
     <script type="vue/template" id="vue-tmpl">
         <div @click="handleClick" v-bind:[aa]=ss :test="ss">

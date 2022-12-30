@@ -167,7 +167,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
     // INTERNAL UTILS
     boolean matchOneOfThese(String target, String... compare) {
         for (String c : compare) {
-            if (c.equals(target)) {
+            if (c.equalsIgnoreCase(target)) {
                 return true;
             }
         }
@@ -282,7 +282,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
                 reportError("parse-error", new Object[]{ tagName });
                 // AND IGNORE THIS TOKEN
-            } else if (!tagToken.isEndTag && tagName.equals("html")) {
+            } else if (!tagToken.isEndTag && "head".equalsIgnoreCase(tagName)) {
                 unclosedElementStack.push(QN_HTML);
                 documentHandler.startElement(QN_HTML, attributes, null);
                 insertionMode = InsertionMode.BeforeHead;
@@ -314,7 +314,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
                 reportError("parse-error", new Object[]{ tagName });
                 // AND IGNORE THIS TOKEN
-            } else if (!tagToken.isEndTag && tagName.equals("html")) {
+            } else if (!tagToken.isEndTag && "head".equalsIgnoreCase(tagName)) {
                 reportError("parse-error", new Object[]{ tagName });
                 // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
@@ -327,7 +327,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                 }
                 documentHandler.startElement(QN_HEAD, attributes, null);
                 insertionMode = InsertionMode.InHead;
-            } else if (!tagToken.isEndTag && tagName.equals("head")) {
+            } else if (!tagToken.isEndTag && "head".equalsIgnoreCase(tagName)) {
                 unclosedElementStack.push(QN_HEAD);
                 documentHandler.startElement(QN_HEAD, EMPTY_ATTRIBUTES, null);
                 insertionMode = InsertionMode.InHead;
@@ -356,9 +356,9 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                     reportError("non-void-html-element-start-tag-with-trailing-solidus", new Object[]{ tagName });
                 }
                 documentHandler.emptyElement(createHtmlQName(tagName), attributes, null);
-            } else if (tagToken.isEndTag && tagName.equals("head")) {
+            } else if (tagToken.isEndTag && "head".equalsIgnoreCase(tagName)) {
                 QName n = unclosedElementStack.pop();
-                if (!n.localpart.equals("head")) {
+                if (!"head".equalsIgnoreCase(n.localpart)) {
                     // should be "head"
                     reportError("parse-error", new Object[]{ tagName });
                 }
@@ -375,7 +375,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                 // INGNORE
             } else {
                 QName n = unclosedElementStack.peek();
-                if (n.localpart.equals("head")) {
+                if ("head".equalsIgnoreCase(n.localpart)) {
                     documentHandler.endElement(n, null);
                     unclosedElementStack.pop();
                 } else {
@@ -397,7 +397,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
         @Override
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
             final String tagName = tagToken.nameBuilder.toString();
-            if ("html".equals(tagName) && !tagToken.isEndTag) {
+            if ("html".equalsIgnoreCase(tagName) && !tagToken.isEndTag) {
                 reportError("parse-error", new Object[]{ tagName });
                 // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
@@ -408,7 +408,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                     // present on the top element of the stack of open elements. If it is not, add the attribute
                     // and its corresponding value to that element.
                 }
-            } else if ("body".equals(tagName) && !tagToken.isEndTag) {
+            } else if ("body".equalsIgnoreCase(tagName) && !tagToken.isEndTag) {
                 unclosedElementStack.push(QN_BODY);
                 documentHandler.startElement(QN_BODY, attributes, null);
                 insertionMode = InsertionMode.InBody;
@@ -437,7 +437,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
         @Override
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
             final String tagName = tagToken.nameBuilder.toString();
-            if ("html".equals(tagName) && !tagToken.isEndTag) {
+            if ("html".equalsIgnoreCase(tagName) && !tagToken.isEndTag) {
                 reportError("parse-error", new Object[]{ tagName });
                 // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
@@ -448,14 +448,14 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                     // present on the top element of the stack of open elements. If it is not, add the attribute
                     // and its corresponding value to that element.
                 }
-            } else if ("body".equals(tagName) && !tagToken.isEndTag) {
+            } else if ("body".equalsIgnoreCase(tagName) && !tagToken.isEndTag) {
                 reportError("parse-error", new Object[]{ tagName });
-            } else if ("body".equals(tagName) && tagToken.isEndTag) {
+            } else if ("body".equalsIgnoreCase(tagName) && tagToken.isEndTag) {
                 // close body tag
                 unclosedElementStack.pop();
                 documentHandler.endElement(QN_BODY, null);
                 insertionMode = InsertionMode.AfterBody;
-            } else if (featureDeleteUnexpectedElement && "head".equals(tagName) && !tagToken.isEndTag) {
+            } else if (featureDeleteUnexpectedElement && "head".equalsIgnoreCase(tagName) && !tagToken.isEndTag) {
                 // IGNORE
             } else if (!tagToken.isEndTag) {
                 QName n = createHtmlQName(tagName);
@@ -520,7 +520,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
             } else if (tagToken.isEndTag) {
                 QName qName = createHtmlQName(tagName);
                 documentHandler.endElement(qName, null);
-                if (lastOpendTagName != null && lastOpendTagName.rawname.equals(qName.rawname)) {
+                if (lastOpendTagName != null && lastOpendTagName.rawname.equalsIgnoreCase(qName.rawname)) {
                     unclosedElementStack.pop();
                 }
             } else {
@@ -1214,7 +1214,7 @@ class HtmlTokenizer {
             System.err.printf("INFO: not appropriate end tag token\n");
             return false;
         }
-        if (lastStartTagToken.nameBuilder.toString().equals(tagToken.nameBuilder.toString())) {
+        if (lastStartTagToken.nameBuilder.toString().equalsIgnoreCase(tagToken.nameBuilder.toString())) {
             return true;
         }
         System.err.printf("INFO: not appropriate end tag token\n");
@@ -1981,12 +1981,12 @@ class HtmlTokenizer {
                         if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ' || c == '/' || c == '>') {
                             if (temporaryBuffer.length() >= 6) {
                                 String firstSixChars = temporaryBuffer.substring(0, 6);
-                                if (firstSixChars.equalsIgnoreCase("script")) {
+                                if ("script".equalsIgnoreCase(firstSixChars)) {
                                     tokenizeState = TokenizeState.ScriptDataDoubleEscaped;
                                     appendTextNode(c);
                                 } else {
                                     tokenizeState = TokenizeState.ScriptDataEscaped;
-                                   appendTextNode(c);
+                                    appendTextNode(c);
                                 }
                             } else {
                                 tokenizeState = TokenizeState.ScriptDataEscaped;
@@ -2090,12 +2090,12 @@ class HtmlTokenizer {
                         if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ' || c == '/' || c == '>') {
                             if (temporaryBuffer.length() >= 6) {
                                 String firstSixChars = temporaryBuffer.substring(0, 6);
-                                if (firstSixChars.equalsIgnoreCase("script")) {
+                                if ("script".equalsIgnoreCase(firstSixChars)) {
                                     tokenizeState = TokenizeState.ScriptDataEscaped;
-                                   appendTextNode(c);
+                                    appendTextNode(c);
                                 } else {
                                     tokenizeState = TokenizeState.ScriptDataDoubleEscaped;
-                                   appendTextNode(c);
+                                    appendTextNode(c);
                                 }
                             } else {
                                 tokenizeState = TokenizeState.ScriptDataDoubleEscaped;

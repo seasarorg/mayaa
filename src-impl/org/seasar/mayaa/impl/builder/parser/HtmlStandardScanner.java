@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.impl.Constants;
 import org.apache.xerces.impl.XMLEntityHandler;
 import org.apache.xerces.impl.XMLErrorReporter;
@@ -53,6 +55,7 @@ import org.xml.sax.Locator;
  * HTML文字参照以外は解決しない
  */
 public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XMLEntityHandler {
+    static final Log LOG = LogFactory.getLog(HtmlStandardScanner.class);
 
     static final String NS_URI_HTML = "http://www.w3.org/1999/xhtml";
 
@@ -537,7 +540,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
 
         @Override
         public TokenHandler getNextHandler() {
-            // System.err.println(insertionMode);
             return insertionMode.handler;
         }
     }
@@ -551,8 +553,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
                 m.handler = m.handlerClass.getDeclaredConstructor(this.getClass()).newInstance(this);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                  | SecurityException | InvocationTargetException | NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                    throw new IllegalStateException(e);
             }
         }
 
@@ -572,7 +573,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner, XM
      */
     private void reportFatalError(String msgId, Object[] args)
         throws XNIException {
-            System.err.println("ERROR:" + msgId);
+            LOG.info("ERROR:" + msgId);
         // errorReporter.reportError(XMLMessageFormatter.XML_DOMAIN,
         //                            msgId, args,
         //                            XMLErrorReporter.SEVERITY_FATAL_ERROR);
@@ -1211,13 +1212,11 @@ class HtmlTokenizer {
 
     private boolean isAppropriateEndTagToken(TagToken tagToken) {
         if (lastStartTagToken == null) {
-            System.err.printf("INFO: not appropriate end tag token\n");
             return false;
         }
         if (lastStartTagToken.nameBuilder.toString().equalsIgnoreCase(tagToken.nameBuilder.toString())) {
             return true;
         }
-        System.err.printf("INFO: not appropriate end tag token\n");
         return false;
     }
 
@@ -1241,8 +1240,6 @@ class HtmlTokenizer {
     }
 
     private void emitAttribute(String prefix, String name, String value) {
-        // System.out.printf("%s: ATTR %s:%s=%s\n", location.toString(), prefix, name, value);
-
         // add to current attribute list.
         attributes.addAttribute(new QName(prefix, name, name, null), name, value);
     }
@@ -1257,7 +1254,7 @@ class HtmlTokenizer {
         String systemId = doctype.systemIdBuilder == null ? null: doctype.systemIdBuilder.toString();
 
         if (traceEmittion) {
-            System.out.printf("%s: DOCTYPE %s %s %s\n", location.toString(), doctypeName, publicId, systemId);
+            HtmlStandardScanner.LOG.trace(String.format("%s: DOCTYPE %s %s %s", location.toString(), doctypeName, publicId, systemId));
         }
         handler.emitDoctype(null, location, doctypeName, publicId, systemId);
         location = currentLocation.clone();
@@ -1338,13 +1335,13 @@ class HtmlTokenizer {
     private void emitComment(TokenHandler handler, String comment, boolean mayXmlDecl) {
         if (mayXmlDecl && comment.startsWith("?xml ")) {
             if (traceEmittion) {
-                System.out.printf("%s: XML DECL <%s>\n", location.toString(), comment);
+                HtmlStandardScanner.LOG.trace(String.format("%s: XML DECL <%s>", location.toString(), comment));
             }
             Map<String, String> map = extractAttributes(comment.substring(5));
             handler.emitXmlDecl(this, location, map.get("version"), map.get("encoding"), map.get("standalone"));
         } else {
             if (traceEmittion) {
-                System.out.printf("%s: COMMENT <!-- %s -->\n", location.toString(), comment);
+                HtmlStandardScanner.LOG.trace(String.format("%s: COMMENT <!-- %s -->", location.toString(), comment));
             }
             handler.emitComment(this, location, comment);
         }
@@ -1355,15 +1352,15 @@ class HtmlTokenizer {
         final String tagName = tagToken.nameBuilder.toString();
         if (tagToken.isSelfClosingTag) {
             if (traceEmittion) {
-                System.out.printf("%s: ELEM(EMPTY) %s %s\n", location.toString(), tagName, attributes);
+                HtmlStandardScanner.LOG.trace(String.format("%s: ELEM(EMPTY) %s %s", location.toString(), tagName, attributes));
             }
         } else if (tagToken.isEndTag) {
             if (traceEmittion) {
-                System.out.printf("%s: ELEM END /%s %s\n", location.toString(), tagName, attributes);
+                HtmlStandardScanner.LOG.trace(String.format("%s: ELEM END /%s %s", location.toString(), tagName, attributes));
             }
         } else {
             if (traceEmittion) {
-                System.out.printf("%s: ELEM START %s %s\n", location.toString(), tagName, attributes);
+                HtmlStandardScanner.LOG.trace(String.format("%s: ELEM START %s %s", location.toString(), tagName, attributes));
             }
         }
 
@@ -1409,7 +1406,7 @@ class HtmlTokenizer {
         tagToken.isSelfClosingTag = true;
         if (traceEmittion) {
         final String tagName = tagToken.nameBuilder.toString();
-        System.out.printf("%s: ELEM(EMPTY) %s %s\n", location.toString(), tagName, attributes);
+        HtmlStandardScanner.LOG.trace(String.format("%s: ELEM(EMPTY) %s %s", location.toString(), tagName, attributes));
         }
 
         if (tagToken.isEndTag) {
@@ -1425,7 +1422,7 @@ class HtmlTokenizer {
     private void emitTextIfAvailable(TokenHandler handler) {
         if (characterBuilder.length() > 0) {
             if (traceEmittion) {
-                System.out.printf("%s: TEXT \"%s\"\n", location, characterBuilder.toString());
+                HtmlStandardScanner.LOG.trace(String.format("%s: TEXT \"%s\"", location, characterBuilder.toString()));
             }
             handler.emitText(this, location, characterBuilder.toString());
             characterBuilder = new StringBuilder();
@@ -1450,13 +1447,13 @@ class HtmlTokenizer {
             do {
                 if (traceInsertionModeChanged) {
                     if (lastTokenHandler != handler) {
-                        System.err.println(handler.getClass().getSimpleName());
+                        HtmlStandardScanner.LOG.trace("INFO: Insertion mode is changed to " + handler.getClass().getSimpleName());
                         lastTokenHandler = handler;
                     }
                 }
                 if (traceTokenizeStateChanged) {
                     if (lastTokenizeState != tokenizeState) {
-                        System.err.println(tokenizeState);
+                        HtmlStandardScanner.LOG.trace("INFO: Tokenize state is changed to " + tokenizeState);
                         lastTokenizeState = tokenizeState;
                     }
                 }
@@ -3044,7 +3041,7 @@ class HtmlTokenizer {
             // EOF
             return;
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            HtmlStandardScanner.LOG.error("Parser error " + e.getMessage(), e);
             return;
         }
     }

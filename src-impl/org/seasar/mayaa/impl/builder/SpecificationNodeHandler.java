@@ -137,7 +137,7 @@ public abstract class SpecificationNodeHandler
         try {
             _namespaceStack.pop();
         } catch (EmptyStackException e) {
-            throw new IllegalStateException(getClass().getName());
+//            throw new IllegalStateException(getClass().getName());
         }
     }
 

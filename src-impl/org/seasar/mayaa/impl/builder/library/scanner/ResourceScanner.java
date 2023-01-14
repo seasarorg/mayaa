@@ -79,16 +79,22 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             if (path.charAt(path.length()-1) != File.separatorChar) {
                 path += File.separatorChar;
             }
+
+            String folder;
             if (_root != null) {
-                path += _root;
-                File dir = new File(path);
+                File dir = new File(path, _root);
                 if (dir.exists() == false || dir.isDirectory() == false) {
                     continue;
                 }
+                folder = _root;
+            } else {
+                folder = "/";
             }
 
+
             FolderSourceScanner folderScanner = new FolderSourceScanner();
-            folderScanner.setParameter("folder", path);
+            folderScanner.setParameter("root", path);    // Classpath root
+            folderScanner.setParameter("folder", folder); // Iteration target folder
             folderScanner.setParameter("recursive", "true");
             folderScanner.setParameter("absolute", "true");
             for (String extension : _extensions) {

@@ -45,6 +45,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     private FileSourceDescriptor _source;
 
+    private String _root;
     private String _folder;
 
     private boolean _recursive = false;
@@ -84,7 +85,14 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 appScope = appSource.getApplicationScope();
                 _source = appSource;
             }
-            _source.setRoot(getFolder());
+
+            if (StringUtil.isEmpty(_root)) {
+//                _source.setSystemID("/" + _folder);
+                _source.setRoot(getFolder());
+            } else {
+                _source.setSystemID("/" + _folder);
+                _source.setRoot(_root);
+            }
         }
         if (_source.exists() && _source.isDirectory()) {
             return new FileToSourceIterator(appScope,
@@ -170,6 +178,11 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _folder = value;
+        } else if ("root".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _root = value;
         } else if ("recursive".equals(name)) {
             _recursive = Boolean.valueOf(value).booleanValue();
         } else if ("absolute".equals(name)) {
@@ -248,7 +261,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
             if (_applicationScope != null) {
                 root = _applicationScope.getRealPath(sourceRoot);
             } else {
-                root = "";
+                root = sourceRoot;
             }
             String absolutePath = file.getAbsolutePath();
             String path = absolutePath.substring(root.length());

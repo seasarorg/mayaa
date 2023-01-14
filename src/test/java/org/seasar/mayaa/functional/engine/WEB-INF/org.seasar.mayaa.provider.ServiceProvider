@@ -79,6 +79,8 @@
             <parameter name="ignore" value="META-INF/MANIFEST.MF"/>
             <parameter name="extension" value=".mld"/>
             <parameter name="extension" value=".tld"/>
+            <parameter name="includeJar" value="taglibs-standard-*.jar"/>
+            <parameter name="excludeJar" value="*"/>
         </scanner>
 
         <scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>

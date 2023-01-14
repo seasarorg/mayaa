@@ -165,10 +165,27 @@ public class LibraryManagerImpl extends NonSerializableParameterAwareImpl
 
                     _libraries.put(library.getNamespaceURI(), library);
                     if (LOG.isInfoEnabled()) {
-                        LOG.info(StringUtil.getMessage(
-                            LibraryManagerImpl.class, 4,
-                            source.getSystemID(),
-                            String.valueOf(library.getNamespaceURI())));
+                        // 読み込み元のファイルがJARファイルの場合はファイル名をログに出力
+                        String containerFile = null;
+                        if (source instanceof HavingAliasSourceDescriptor) {
+                            final SourceAlias alias = ((HavingAliasSourceDescriptor) source).getAlias();
+                            if (alias != null) {
+                                containerFile = alias.getAlias();
+                            }
+                        }
+                        if (containerFile == null) {
+                            LOG.info(StringUtil.getMessage(
+                                LibraryManagerImpl.class, 4,
+                                source.getSystemID(),
+                                String.valueOf(library.getNamespaceURI())));
+                        } else {
+                            LOG.info(StringUtil.getMessage(
+                                LibraryManagerImpl.class, 5,
+                                source.getSystemID(),
+                                String.valueOf(library.getNamespaceURI()),
+                                containerFile
+                            ));
+                        }
                     }
                     built = true;
                     break;

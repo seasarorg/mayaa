@@ -16,6 +16,9 @@
 package org.seasar.mayaa.impl.builder.library.scanner;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,25 +47,30 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
     private List<String> _jars = new ArrayList<>();
     private Set<String> _extensions = new HashSet<>();
     private Set<String> _ignores = new HashSet<>();
+    private JarMatcher _jarMatcher = new JarMatcher();
 
     public ResourceScanner() {
-        String[] pathArray = System.getProperty(
-                "java.class.path", ".").split(File.pathSeparator);
-        for (int i = 0; i < pathArray.length; i++) {
-            String path = pathArray[i];
-            File file = new File(path);
-            if (file.exists()) {
-                if (file.isDirectory()) {
-                    _classPath.add(path);
-                } else if (file.getName().endsWith(".jar")) {
-                    _jars.add(path);
-                }
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
     public Iterator<SourceDescriptor> scan() {
+        // classpath要素を分解してスキャン対象を決定。
+        // includeJar, excludeJarの指定が存在しない場合は互換性のため全てのJarを含める
+        String[] pathArray = System.getProperty("java.class.path", ".").split(File.pathSeparator);
+        for (String path: pathArray) {
+            File file = new File(path);
+            if (!file.exists()) {
+                continue;
+            }
+            if (file.isDirectory()) {
+                _classPath.add(path);
+            } else if (file.getName().endsWith(".jar")) {
+                if (_jarMatcher.matches(file.toPath().getFileName())) {
+                    _jars.add(path);
+                }
+            }
+        }
+
         IteratorIterator itit = new IteratorIterator();
         for (String path : _classPath) {
             if (StringUtil.isEmpty(path)) {
@@ -71,16 +79,22 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             if (path.charAt(path.length()-1) != File.separatorChar) {
                 path += File.separatorChar;
             }
+
+            String folder;
             if (_root != null) {
-                path += _root;
-                File dir = new File(path);
+                File dir = new File(path, _root);
                 if (dir.exists() == false || dir.isDirectory() == false) {
                     continue;
                 }
+                folder = _root;
+            } else {
+                folder = "/";
             }
 
+
             FolderSourceScanner folderScanner = new FolderSourceScanner();
-            folderScanner.setParameter("folder", path);
+            folderScanner.setParameter("root", path);    // Classpath root
+            folderScanner.setParameter("folder", folder); // Iteration target folder
             folderScanner.setParameter("recursive", "true");
             folderScanner.setParameter("absolute", "true");
             for (String extension : _extensions) {
@@ -122,7 +136,6 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
     }
 
     // Parameterizable implements ------------------------------------
-
     public void setParameter(String name, String value) {
         if ("root".equals(name)) {
             _root = value;
@@ -135,8 +148,46 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
             _extensions.add(value);
         } else if ("ignore".equals(name)) {
             _ignores.add(value);
+        } else if ("includeJar".equals(name)) {
+            _jarMatcher.include(value);
+        } else if ("excludeJar".equals(name)) {
+            _jarMatcher.exclude(value);
         } else {
             super.setParameter(name, value);
+        }
+    }
+
+    /**
+     * Jarファイル名に対してGlobパターンで含む(include)・除外する(exclude)を順番に追加管理する。
+     * 評価時は指定された順番で行い、最初にパターンに一致した結果を返す
+     */
+    class JarMatcher {
+        List<JarMatcherElement> _jarMatchers = new ArrayList<>();
+        class JarMatcherElement {
+            boolean isInclude;
+            PathMatcher matcher;
+            JarMatcherElement(String globPattern, boolean isInclude) {
+                this.isInclude = isInclude;
+                this.matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
+            }
+        }
+
+        void include(String globPattern) {
+            _jarMatchers.add(new JarMatcherElement(globPattern, true));
+        }
+        void exclude(String globPattern) {
+            _jarMatchers.add(new JarMatcherElement(globPattern, false));
+        }
+
+        boolean matches(Path jarPath) {
+            for (JarMatcherElement elm: _jarMatchers) {
+                final boolean match = elm.matcher.matches(jarPath);
+                if (match) {
+                    // 最初にマッチした結果を返す。
+                    return elm.isInclude;
+                }
+            }
+            return true;
         }
     }
 }

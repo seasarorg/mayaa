@@ -15,12 +15,12 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.engine.TemplateImpl;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
@@ -30,13 +30,13 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
  */
 public class TemplateBuilderImplTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

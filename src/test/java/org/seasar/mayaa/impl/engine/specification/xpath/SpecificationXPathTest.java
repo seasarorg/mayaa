@@ -15,9 +15,9 @@
  */
 package org.seasar.mayaa.impl.engine.specification.xpath;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -31,9 +31,9 @@ import org.jaxen.XPathFunctionContext;
 import org.jaxen.pattern.Pattern;
 import org.jaxen.pattern.PatternParser;
 import org.jaxen.saxpath.SAXPathException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -55,7 +55,7 @@ public class SpecificationXPathTest implements CONST_IMPL {
     private SpecificationNode _node3;
     private SpecificationNode _node4;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -91,7 +91,7 @@ public class SpecificationXPathTest implements CONST_IMPL {
         _node4.addPrefixMapping("m", URI_MAYAA);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

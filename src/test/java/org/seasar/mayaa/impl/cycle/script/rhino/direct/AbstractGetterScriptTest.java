@@ -15,16 +15,16 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino.direct;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -44,7 +44,7 @@ public class AbstractGetterScriptTest {
 
     protected PositionAware _position;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
@@ -76,7 +76,7 @@ public class AbstractGetterScriptTest {
         };
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

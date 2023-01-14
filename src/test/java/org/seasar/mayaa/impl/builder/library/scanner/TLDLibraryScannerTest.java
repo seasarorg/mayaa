@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.impl.builder.library.scanner;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)

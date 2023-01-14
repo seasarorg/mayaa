@@ -15,10 +15,10 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -31,7 +31,7 @@ public class ServiceCycleImplTest {
 
     private ServiceCycle _cycle;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         CycleFactory factory =

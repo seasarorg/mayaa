@@ -15,8 +15,8 @@
  */
 package org.seasar.mayaa.functional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
@@ -46,8 +46,10 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
+import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -59,7 +61,7 @@ public class EngineTestBase {
     private Engine engine;
     private String requestedPageName;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws SecurityException, IOException {
         try (InputStream in = EngineTestBase.class.getClassLoader().getResourceAsStream("jul.properties")) {
             LogManager.getLogManager().readConfiguration(in);
@@ -95,7 +97,8 @@ public class EngineTestBase {
     }
 
     public ServiceProvider getServiceProvider() {
-        return (ServiceProvider) FactoryFactory.getFactory(ServiceProvider.class);
+        ProviderFactory factory = (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
+        return factory.getServiceProvider();
     }
     /**
      * Mavenかで実行されているかどうかを判定する。 pom.xml内でmaven-surefire-plugin経由で
@@ -225,7 +228,7 @@ public class EngineTestBase {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws SecurityException, IOException {
         final Object _testClassInstance = this;
         servletContext = new MockServletContext() {
@@ -326,7 +329,7 @@ public class EngineTestBase {
                 final String headerPair[] = line.split(":", 2);
                 if (headerPair.length == 2) {
                     final String value = response.getHeader(headerPair[0]);
-                    assertEquals("Response header is not match. " + headerPair[0], headerPair[1], value);
+                    assertEquals(headerPair[1], value, "Response header is not match. " + headerPair[0]);
                 }
             }
 
@@ -342,7 +345,7 @@ public class EngineTestBase {
             for (String actualLine: content.split("\n")) {
                 String expectedLine = line;
                 actualLine = actualLine.replaceAll("\r", "");
-                assertEquals("body compare:" + lineIndex, expectedLine, actualLine); 
+                assertEquals(expectedLine, actualLine, "body compare:" + lineIndex); 
 
                 lineIndex++;
                 line = reader.readLine();

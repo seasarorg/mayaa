@@ -15,22 +15,22 @@
  */
 package org.seasar.mayaa.impl.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
 /**
@@ -38,13 +38,13 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
  */
 public class ObjectUtilTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         ManualProviderFactory.SCRIPT_ENVIRONMENT.initScope();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }
@@ -271,21 +271,21 @@ public class ObjectUtilTest {
         Integer[] copy0 = (Integer[]) ObjectUtil.arraycopy(src0, Integer.class);
         assertNotSame(src0, copy0);
         for (int i = 0; i < src0.length; i++) {
-            assertEquals("0:" + i, src0[i], copy0[i]);
+            assertEquals(src0[i], copy0[i], "0:" + i);
         }
 
         Integer[] src1 = new Integer[] { Integer.valueOf(1) };
         Integer[] copy1 = (Integer[]) ObjectUtil.arraycopy(src1, Integer.class);
         assertNotSame(src1, copy1);
         for (int i = 0; i < src1.length; i++) {
-            assertEquals("0:" + i, src1[i], copy1[i]);
+            assertEquals(src1[i], copy1[i], "0:" + i);
         }
 
         Integer[] src3 = new Integer[] { Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3) };
         Integer[] copy3 = (Integer[]) ObjectUtil.arraycopy(src3, Integer.class);
         assertNotSame(src3, copy3);
         for (int i = 0; i < src3.length; i++) {
-            assertEquals("0:" + i, src3[i], copy3[i]);
+            assertEquals(src3[i], copy3[i], "0:" + i);
         }
     }
 

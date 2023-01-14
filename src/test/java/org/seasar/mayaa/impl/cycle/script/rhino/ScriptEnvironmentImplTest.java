@@ -15,13 +15,13 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -39,7 +39,7 @@ public class ScriptEnvironmentImplTest {
 
     private PositionAware _position;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ManualProviderFactory.setUp(this);
         _scriptEnvironment = ManualProviderFactory.SCRIPT_ENVIRONMENT;
@@ -69,7 +69,7 @@ public class ScriptEnvironmentImplTest {
         };
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ManualProviderFactory.tearDown();
     }

@@ -15,16 +15,18 @@
  */
 package org.seasar.mayaa.functional.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.builder.library.NoRequiredPropertyException;
 import org.seasar.mayaa.impl.engine.error.TemplateErrorHandler;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -74,7 +76,7 @@ public class EngineTest extends EngineTestBase {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void HTML5形式で指定したCharsetがレスポンスヘッダに設定される() throws IOException {
         // Mayaaは <meta charset="XX"> の形式の記述には対応していないので ＠Ignore する。
         final String DIR = "/it-case/html-transform/charset-html5/";
@@ -282,6 +284,7 @@ public class EngineTest extends EngineTestBase {
 
     @Test
     public void script() throws IOException {
+        enableDump();
         final String DIR = "/it-case/engine/script/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
     }

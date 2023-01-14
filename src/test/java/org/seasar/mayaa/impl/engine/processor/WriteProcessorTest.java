@@ -15,9 +15,9 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author katochin
@@ -26,7 +26,7 @@ public class WriteProcessorTest {
 
 	private WriteProcessor _writeProcessor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		_writeProcessor = new WriteProcessor();
 	}

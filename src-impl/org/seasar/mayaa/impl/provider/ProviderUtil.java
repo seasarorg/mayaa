@@ -37,14 +37,12 @@ public class ProviderUtil {
     }
 
     private static ServiceProvider getServiceProvider() {
-        ProviderFactory factory =
-            (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
+        ProviderFactory factory = FactoryFactory.getProviderFactory();
         return factory.getServiceProvider();
     }
 
     public static boolean isInitialized() {
-        ProviderFactory factory =
-            (ProviderFactory) FactoryFactory.getFactory(ProviderFactory.class);
+        ProviderFactory factory = FactoryFactory.getProviderFactory();
         return factory != null && factory.isServiceProviderInitialized();
     }
 

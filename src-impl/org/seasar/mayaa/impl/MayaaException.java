@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -43,6 +44,9 @@ public abstract class MayaaException
 
     public MayaaException(Throwable cause) {
         super(cause);
+        if (!FactoryFactory.isInitialized()) {
+            return;
+        }
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         if (cycle != null) {
             NodeTreeWalker original = cycle.getOriginalNode();

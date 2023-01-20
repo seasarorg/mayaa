@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateBuilderTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class TemplateBuilderTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<TemplateBuilder> INTERFACE_CLASS = TemplateBuilder.class;
+    private static Class<? extends TemplateBuilder> DEFAULT_IMPL_CLASS = TemplateBuilderImpl.class;
 
     private ProviderTagHandler _parent;
     private TemplateBuilder _beforeBuilder;
@@ -47,10 +50,9 @@ public class TemplateBuilderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> builderClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentBuilder = (TemplateBuilder) MarshallUtil.marshall(
-                builderClass, TemplateBuilder.class, _beforeBuilder,
+        Class<?> builderClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentBuilder = MarshallUtil.marshall(
+                builderClass, INTERFACE_CLASS, _beforeBuilder,
                 systemID, lineNumber);
         _parent.getServiceProvider().setTemplateBuilder(_currentBuilder);
     }

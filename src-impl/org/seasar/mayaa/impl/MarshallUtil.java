@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.seasar.mayaa.PositionAware;
+import org.seasar.mayaa.impl.NeedCompatibilityException.CompatibilityType;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
 import org.seasar.mayaa.impl.source.URLSourceDescriptor;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -51,25 +52,45 @@ public class MarshallUtil {
         }
     }
 
-    public static Object marshall(Class<?> instanceClass, Class<?> interfaceClass,
-            Object beforeObject, String systemID, int lineNumber) {
+    /**
+     * 要求するインタフェースを実装するクラスのインスタンスを生成する。
+     * 指定された実装クラスにインターフェースの実装インスタンスを１つとるコンストラクタが定義されている場合、
+     * かつ、引き渡し対象のオブジェクトがnullだった場合は{@code NeedCompatibilityException}をスローする。
+     * 
+     * @param <T> 要求するインターフェース
+     * @param instanceClass 生成する対象の実装クラスオブジェクト
+     * @param interfaceClass 生成するクラスに要求するインターフェースクラスオブジェクト
+     * @param beforeObject 指定された実装クラスのコンストラクタがインターフェースの実装インスタンスを１つとる場合に引き渡されるインスタンス
+     * @param systemID インスタンス生成の記述ファイルを指す systemID
+     * @param lineNumber インスタンス生成の記述ファイル内の行番号
+     * @return インタフェースを実装するクラスのインスタンス
+     * @throws NeedCompatibilityException 指定された実装クラスにインターフェースの実装インスタンスを１つとるコンストラクタが定義されている場合、かつ、引き渡し対象のオブジェクトがnullだった場合
+     */
+    public static <T> T marshall(Class<?> instanceClass, Class<T> interfaceClass,
+            T beforeObject, String systemID, int lineNumber) throws NeedCompatibilityException {
         if (instanceClass == null) {
             if (beforeObject == null) {
                 throw new IllegalArgumentException();
             }
             return beforeObject;
         }
-        if (beforeObject != null) {
-            Constructor<?> constructor = ObjectUtil.getConstructor(
-                    instanceClass, new Class<?>[] { interfaceClass });
-            if (constructor != null) {
-                Object obj = ObjectUtil.newInstance(
-                        constructor, new Object[] { beforeObject });
+
+        Constructor<?> constructor = ObjectUtil.getConstructor(instanceClass, new Class<?>[] { interfaceClass });
+        if (constructor != null) {
+            if (beforeObject == null) {
+                // 初期化済みのオブジェクトを受け取るコンストラクタが定義されているかを検査し、
+                // 定義されていた場合は、互換性のためにビルトインのデスクリプタから順に初期化順でやり直す。
+                throw new NeedCompatibilityException(CompatibilityType.LoadFactoryDefinitionForwardWay, instanceClass);
+            } else {
+                @SuppressWarnings("unchecked")
+                T obj = (T) ObjectUtil.newInstance(constructor, new Object[] { beforeObject });
                 setPosition(obj, systemID, lineNumber);
                 return obj;
             }
         }
-        Object obj = ObjectUtil.newInstance(instanceClass);
+
+        @SuppressWarnings("unchecked")
+        T obj = (T) ObjectUtil.newInstance(instanceClass);
         setPosition(obj, systemID, lineNumber);
         return obj;
     }

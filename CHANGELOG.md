@@ -1,5 +1,32 @@
 # 変更点
 
+## Mayaa 1.2.1 : Not yet released
+
+### Changes
+- 各ファクトリクラス、ServiceProviderの読み込みで書式にエラーがあっても起動できてしまっていたため、明確にエラーとするようにした。
+- 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更しました。
+これまでは順に生成されてもより後から生成されたもので破棄および上書きされていたため無駄となっていました。
+ただし、`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は互換性のため元の順序で生成を行います。
+- ServiceProvider定義のXMLの`class`属性を任意指定とし、省略された場合はビルトインの設定ファイルと同じ実装をデフォルトとして用いるようにしました。実装を変更したい場合のみ旧来通り`class`属性で指定します。
+
+(ビルトインの設定ファイルのパス) org/seasar/mayaa/impl/provider/factory/org.seasar.mayaa.provider.ServiceProvider
+
+| エレメント名 | 要求されるインタフェース                      | デフォルト実装クラス名 |
+|------------|-------------------------------------------|--------------------|
+| provider   | org.seasar.mayaa.provider.ServiceProvider | org.seasar.mayaa.impl.provider.ServiceProviderImpl |
+| engine     | org.seasar.mayaa.engine.Engine            | org.seasar.mayaa.impl.engine.EngineImpl |
+| parentSpecificationResolver | org.seasar.mayaa.engine.specification.ParentSpecificationResolver | org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl |
+| scriptEnvironment       | org.seasar.mayaa.cycle.script.rhino.ScriptEnvironment | org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl |
+| templateBuilder         | org.seasar.mayaa.builder.TemplateBuilder | org.seasar.mayaa.impl.builder.TemplateBuilderImpl |
+| templateAttributeReader | org.seasar.mayaa.builder.library.TemplateAttributeReader | org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl |
+| specificationBuilder    | org.seasar.mayaa.builder.SpecificationBuilder | org.seasar.mayaa.impl.builder.SpecificationBuilderImpl |
+| templateBuilder         | org.seasar.mayaa.builder.TemplateBuilder | org.seasar.mayaa.impl.builder.TemplateBuilderImpl |
+| pathAdjuster            | org.seasar.mayaa.builder.PathAdjuster | org.seasar.mayaa.impl.builder.PathAdjusterImpl |
+| libraryManager          | org.seasar.mayaa.builder.library.LibraryManager | org.seasar.mayaa.impl.builder.library.LibraryManagerImpl |
+| templateAttributeReader | org.seasar.mayaa.builder.library.TemplateAttributeReader | org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl |
+
+
+
 ## Mayaa 1.2 : 2020-11-15
 
 ### Changes

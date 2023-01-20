@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ScriptEnvirionmentTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class ScriptEnvirionmentTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<ScriptEnvironment> INTERFACE_CLASS = ScriptEnvironment.class;
+    private static Class<? extends ScriptEnvironment> DEFAULT_IMPL_CLASS = ScriptEnvironmentImpl.class;
 
     private ProviderTagHandler _parent;
     private ScriptEnvironment _beforeEnv;
@@ -45,12 +48,10 @@ public class ScriptEnvirionmentTagHandler
         putHandler(new ScopeTagHandler(this));
     }
 
-    protected void start(
-            Attributes attributes, String systemID, int lineNumber) {
-        Class<?> environmentClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentEnv = (ScriptEnvironment) MarshallUtil.marshall(
-                environmentClass, ScriptEnvironment.class, _beforeEnv,
+    protected void start(Attributes attributes, String systemID, int lineNumber) {
+        Class<?> environmentClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentEnv = MarshallUtil.marshall(
+                environmentClass, INTERFACE_CLASS, _beforeEnv,
                 systemID, lineNumber);
         _parent.getServiceProvider().setScriptEnvironment(_currentEnv);
     }

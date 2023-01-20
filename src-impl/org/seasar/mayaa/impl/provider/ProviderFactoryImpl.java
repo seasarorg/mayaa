@@ -16,12 +16,17 @@
 package org.seasar.mayaa.impl.provider;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.MarshallUtil;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NeedCompatibilityException;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
+import org.seasar.mayaa.impl.NeedCompatibilityException.CompatibilityType;
 import org.seasar.mayaa.impl.provider.factory.ServiceProviderHandler;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
@@ -33,10 +38,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ProviderFactoryImpl extends ParameterAwareImpl
-        implements ProviderFactory, CONST_IMPL {
-
-    private static final long serialVersionUID = 3581634661222113559L;
+public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl implements ProviderFactory {
 
     private Object _context;
     private Class<?> _serviceClass;
@@ -49,11 +51,10 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     protected ServiceProvider marshallServiceProvider(
             SourceDescriptor source, ServiceProvider beforeProvider) {
         if (source.exists()) {
-            ServiceProviderHandler handler =
-                new ServiceProviderHandler(beforeProvider);
+            ServiceProviderHandler handler = new ServiceProviderHandler(beforeProvider);
             InputStream stream = source.getInputStream();
             try {
-                XMLUtil.parse(handler, stream, PUBLIC_PROVIDER10,
+                XMLUtil.parse(handler, stream, CONST_IMPL.PUBLIC_PROVIDER10,
                         source.getSystemID(), true, true, false);
                 return handler.getServiceProvider();
             } finally {
@@ -64,19 +65,120 @@ public class ProviderFactoryImpl extends ParameterAwareImpl
     }
 
     protected ServiceProvider getServiceProvider(Object context) {
+        try {
+            return getServiceProvider(context, true);
+        } catch (NeedCompatibilityException e) {
+            assert(e.getCompatibilityType() == CompatibilityType.LoadFactoryDefinitionForwardWay);
+            return getServiceProvider(context, false);
+        }
+    }
+
+    /**
+     * org.seasar.mayaa.provider.ServiceProviderファイルに定義されている内容で{@code ServiceProvider}を生成する。
+     * <p>
+     * v1.2 まではビルトイン、ロード中のMETA-INF内、WEB-INF内の順にそれぞれで配置された記述ファイルごとにインスタンスを生成していたが、
+     * より後から生成されたもので破棄されていた（設定が継承されるわけではない）。
+     * v1.2.1からはWEB-INF、ロード中のMETA-INF内、ビルトインの順で最初に見つかった記述ファイルのみを対象に生成する。
+     * <p>
+     * ただし、各エレメントの`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は、
+     * 先に生成されたインスタンスを引き渡す仕様との互換性のために元の順序で生成を行う（オブジェクトベースの継承の挙動となっている）
+     * 
+     * @param context 設定する{@code UnderlyingContext}オブジェクト
+     * @param loadBackwardWay WEB-INF、ロード中のMETA-INF内、ビルトインの順で読み込む場合はtrue
+     * @return 生成された{@code ServiceProvider}
+     * @throws IllegalStateException ファイルに記述された内容不正などで必要なオブジェクトが生成されなかった時
+     */
+    private ServiceProvider getServiceProvider(Object context, boolean loadBackwardWay) throws IllegalStateException {
         final String systemID = "org.seasar.mayaa.provider.ServiceProvider";
-        SourceDescriptor source = MarshallUtil.getDefaultSource(
-                systemID, ServiceProviderHandler.class);
-        ServiceProvider provider = marshallServiceProvider(source, null);
+
+        List<SourceDescriptor> sources = new ArrayList<>();
+        // Collect source files
+        // Mayaa Built-in source file
+        SourceDescriptor source = MarshallUtil.getDefaultSource(systemID, ServiceProviderHandler.class);
+        if (source.exists()) {
+            sources.add(source);
+        }
+        // 各META-INF/org.seasar.mayaa.provider.ServiceProvider を列挙する。順序は不定。
         Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
             source = it.next();
-            provider = marshallServiceProvider(source, provider);
+            if (source.exists()) {
+                sources.add(source);
+            }
         }
-        source = FactoryFactory.getBootstrapSource(
-                ApplicationSourceDescriptor.WEB_INF, systemID);
-        provider = marshallServiceProvider(source, provider);
+        source = FactoryFactory.getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, systemID);
+        if (source.exists()) {
+            sources.add(source);
+        }
+
+        if (loadBackwardWay) {
+            Collections.reverse(sources);
+        }
+
+        ServiceProvider provider = null;
+        for (SourceDescriptor s: sources) {
+            provider = marshallServiceProvider(s, provider);
+            validate(s, provider);
+            if (loadBackwardWay && provider != null) {
+                return provider;
+            }
+        }
         return provider;
+    }
+
+    private void validate(SourceDescriptor source, ServiceProvider provider) throws IllegalStateException {
+        ArrayList<String> lackedElementNames = new ArrayList<>();
+        try {
+            provider.getEngine();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("engine");
+        }
+
+        try {
+            provider.getParentSpecificationResolver();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("parentSpecificationResolver");
+        }
+
+        try {
+            provider.getScriptEnvironment();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("scriptEnvironment");
+        }
+
+        try {
+            provider.getTemplateBuilder();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("templateBuilder");
+        }
+
+        try {
+            provider.getTemplateAttributeReader();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("templateAttributeReader");
+        }
+
+        try {
+            provider.getPathAdjuster();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("pathAdjuster");
+        }
+
+        try {
+            provider.getSpecificationBuilder();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("specificationBuilder");
+        }
+
+        try {
+            provider.getLibraryManager();
+        } catch (IllegalStateException e) {
+            lackedElementNames.add("libraryManager");
+        }
+
+        if (!lackedElementNames.isEmpty()) {
+            throw new IllegalStateException("Some required elements are not specified in \"" + source.toString() + "\" " + lackedElementNames.toString());
+        }
     }
 
     public void setServiceClass(Class<?> serviceClass) {

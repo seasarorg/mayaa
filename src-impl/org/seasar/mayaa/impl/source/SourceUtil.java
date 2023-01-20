@@ -33,8 +33,7 @@ public class SourceUtil {
         if (StringUtil.isEmpty(systemID)) {
             throw new IllegalArgumentException();
         }
-        PageSourceFactory factory = (PageSourceFactory)
-                FactoryFactory.getFactory(PageSourceFactory.class);
+        PageSourceFactory factory = FactoryFactory.getPageSourceFactory();
         return factory.getPageSource(systemID);
     }
 

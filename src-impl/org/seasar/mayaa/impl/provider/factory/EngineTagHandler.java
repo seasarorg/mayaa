@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class EngineTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class EngineTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<Engine> INTERFACE_CLASS = Engine.class;
+    private static Class<? extends Engine> DEFAULT_IMPL_CLASS = EngineImpl.class;
 
     private ProviderTagHandler _parent;
     private Engine _beforeEngine;
@@ -45,12 +48,10 @@ public class EngineTagHandler
         putHandler(new ErrorHandlerTagHandler(this, _beforeEngine));
     }
 
-    protected void start(
-            Attributes attributes, String systemID, int lineNumber) {
-        Class<?> engineClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentEngine = (Engine) MarshallUtil.marshall(
-                engineClass, Engine.class, _beforeEngine,
+    protected void start(Attributes attributes, String systemID, int lineNumber) {
+        Class<?> engineClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentEngine = MarshallUtil.marshall(
+                engineClass, INTERFACE_CLASS, _beforeEngine,
                 systemID, lineNumber);
         _parent.getServiceProvider().setEngine(_currentEngine);
     }

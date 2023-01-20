@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.PathAdjuster;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.builder.PathAdjusterImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class PathAdjusterTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class PathAdjusterTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<PathAdjuster> INTERFACE_CLASS = PathAdjuster.class;
+    private static Class<? extends PathAdjuster> DEFAULT_IMPL_CLASS = PathAdjusterImpl.class;
 
     private ProviderTagHandler _parent;
     private PathAdjuster _beforeAdjuster;
@@ -46,9 +49,9 @@ public class PathAdjusterTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", null);
-        _currentAdjuster = (PathAdjuster) MarshallUtil.marshall(
-                adjusterClass, PathAdjuster.class, _beforeAdjuster,
+        Class<?> adjusterClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentAdjuster = MarshallUtil.marshall(
+                adjusterClass, INTERFACE_CLASS, _beforeAdjuster,
                 systemID, lineNumber);
         _parent.getServiceProvider().setPathAdjuster(_currentAdjuster);
     }

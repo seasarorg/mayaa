@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.builder.library.LibraryManagerImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class LibraryManagerTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class LibraryManagerTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<LibraryManager> INTERFACE_CLASS = LibraryManager.class;
+    private static Class<? extends LibraryManager> DEFAULT_IMPL_CLASS = LibraryManagerImpl.class;
 
     private ProviderTagHandler _parent;
     private LibraryManager _beforeManager;
@@ -49,10 +52,9 @@ public class LibraryManagerTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> managerClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentManager = (LibraryManager) MarshallUtil.marshall(
-                managerClass, LibraryManager.class, _beforeManager,
+        Class<?> managerClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentManager = MarshallUtil.marshall(
+                managerClass, INTERFACE_CLASS, _beforeManager,
                 systemID, lineNumber);
         _parent.getServiceProvider().setLibraryManager(_currentManager);
     }

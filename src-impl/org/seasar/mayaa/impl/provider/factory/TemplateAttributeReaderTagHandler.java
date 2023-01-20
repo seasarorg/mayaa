@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.provider.factory;
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.library.TemplateAttributeReader;
 import org.seasar.mayaa.impl.MarshallUtil;
+import org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.xml.sax.Attributes;
@@ -25,8 +26,10 @@ import org.xml.sax.Attributes;
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class TemplateAttributeReaderTagHandler
-        extends AbstractParameterAwareTagHandler {
+public class TemplateAttributeReaderTagHandler extends AbstractParameterAwareTagHandler {
+
+    private static Class<TemplateAttributeReader> INTERFACE_CLASS = TemplateAttributeReader.class;
+    private static Class<? extends TemplateAttributeReader> DEFAULT_IMPL_CLASS = TemplateAttributeReaderImpl.class;
 
     private ProviderTagHandler _parent;
     private TemplateAttributeReader _beforeReader;
@@ -48,10 +51,9 @@ public class TemplateAttributeReaderTagHandler
 
     protected void start(
             Attributes attributes, String systemID, int lineNumber) {
-        Class<?> builderClass = XMLUtil.getClassValue(
-                attributes, "class", null);
-        _currentReader = (TemplateAttributeReader) MarshallUtil.marshall(
-                builderClass, TemplateAttributeReader.class, _beforeReader,
+        Class<?> builderClass = XMLUtil.getClassValue(attributes, "class", DEFAULT_IMPL_CLASS);
+        _currentReader = MarshallUtil.marshall(
+                builderClass, INTERFACE_CLASS, _beforeReader,
                 systemID, lineNumber);
         _parent.getServiceProvider().setTemplateAttributeReader(_currentReader);
     }

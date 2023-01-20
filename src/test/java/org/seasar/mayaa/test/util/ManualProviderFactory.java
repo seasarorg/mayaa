@@ -61,8 +61,6 @@ import org.springframework.mock.web.MockServletContext;
  */
 public class ManualProviderFactory extends FactoryFactory {
 
-    private static final long serialVersionUID = -8568174561545251202L;
-
     public static ManualProviderFactory MOCK_INSTANCE;
     public static MockServletContext SERVLET_CONTEXT;
     public static MockHttpServletRequest HTTP_SERVLET_REQUEST;
@@ -164,8 +162,8 @@ public class ManualProviderFactory extends FactoryFactory {
         _bootstrapSource = bootstrapSource;
     }
 
-    protected UnifiedFactory getFactory(
-            Class<?> interfaceClass, Object context) {
+    @SuppressWarnings("unchecked")
+    protected <T extends UnifiedFactory> T getFactory(Class<T> interfaceClass, Object context) {
         if(interfaceClass == null || context == null) {
             throw new IllegalArgumentException();
         }
@@ -177,12 +175,10 @@ public class ManualProviderFactory extends FactoryFactory {
                 _factory.setUnderlyingContext(SERVLET_CONTEXT);
                 _factory.initialize(HTTP_SERVLET_REQUEST, HTTP_SERVLET_RESPONSE);
             }
-            return _factory;
+            return (T) _factory;
         }
         if(ProviderFactory.class.isAssignableFrom(interfaceClass)) {
-            return new ProviderFactoryImpl() {
-                private static final long serialVersionUID =
-                    -7327918968313668847L;
+            return (T) new ProviderFactoryImpl() {
                 public ServiceProvider getServiceProvider() {
                     return PROVIDER;
                 }
@@ -192,7 +188,7 @@ public class ManualProviderFactory extends FactoryFactory {
             };
         }
         if(PageSourceFactory.class.isAssignableFrom(interfaceClass)) {
-            return getPageSourceFactory(context);
+            return (T) getPageSourceFactory(context);
         }
         throw new IllegalArgumentException();
     }

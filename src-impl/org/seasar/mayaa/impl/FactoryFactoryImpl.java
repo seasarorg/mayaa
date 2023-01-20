@@ -16,13 +16,17 @@
 package org.seasar.mayaa.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.UnifiedFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
+import org.seasar.mayaa.impl.NeedCompatibilityException.CompatibilityType;
 import org.seasar.mayaa.impl.cycle.web.ApplicationScopeImpl;
 import org.seasar.mayaa.impl.factory.UnifiedFactoryHandler;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
@@ -37,7 +41,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class FactoryFactoryImpl extends FactoryFactory
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = -1393736148065197812L;
     private static final Log LOG = LogFactory.getLog(FactoryFactoryImpl.class);
 
     protected boolean checkInterface(Class<?> clazz) {
@@ -48,20 +51,19 @@ public class FactoryFactoryImpl extends FactoryFactory
         return false;
     }
 
-    protected UnifiedFactory marshallFactory(
-            Class<?> interfaceClass, Object context,
-            SourceDescriptor source, UnifiedFactory beforeFactory) {
+    protected <T extends UnifiedFactory> T marshallFactory(
+            Class<T> interfaceClass, Object context,
+            SourceDescriptor source, T beforeFactory) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
         String systemID = source.getSystemID();
-        UnifiedFactory factory;
+        T factory;
         if (source.exists()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("marshall factory: " + source.getSystemID());
             }
-            UnifiedFactoryHandler handler =
-                new UnifiedFactoryHandler(interfaceClass, beforeFactory);
+            UnifiedFactoryHandler<T> handler = new UnifiedFactoryHandler<>(interfaceClass, beforeFactory);
             InputStream stream = source.getInputStream();
             try {
                 XMLUtil.parse(handler, stream, PUBLIC_FACTORY10,
@@ -84,24 +86,67 @@ public class FactoryFactoryImpl extends FactoryFactory
         return factory;
     }
 
-    protected UnifiedFactory getFactory(
-            Class<?> interfaceClass, Object context) {
+    @Override
+    protected <T extends UnifiedFactory> T getFactory(Class<T> interfaceClass, Object context) {
+        try {
+            return getFactory(interfaceClass, context, true);
+        } catch (NeedCompatibilityException e) {
+            assert(e.getCompatibilityType() == CompatibilityType.LoadFactoryDefinitionForwardWay);
+            return getFactory(interfaceClass, context, false);    
+        }
+    }
+
+    /**
+     * org.seasar.mayaa.provider.ServiceProviderファイルに定義されている内容で{@code ServiceProvider}を生成する。
+     * v1.2.1まではビルトイン、ロード中のMETA-INF内、WEB-INF内にそれぞれ生成しており、後から生成されたもので無効になる（設定が継承されるわけではない）。
+     * v1.2.1からはWEB-INF、ロード中のMETA-INF内、ビルトインの順で最初に見つかったファイルのみを対象に生成する。
+     * <p>
+     * ただし、各エレメントの`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は、
+     * 先に生成されたインスタンスを引き渡す仕様との互換性のために元の順序で生成を行う（オブジェクトベースの継承の挙動となっている）
+     * 
+     * @param interfaceClass 生成するファクトリクラスに要求するインタフェースクラスオブジェクト
+     * @param context 設定する{@code UnderlyingContext}オブジェクト
+     * @param loadBackwardWay WEB-INF、ロード中のMETA-INF内、ビルトインの順で読み込む場合はtrue
+     * @return 生成された{@code ServiceProvider}
+     * @throws IllegalStateException ファイルに記述された内容不正などで必要なオブジェクトが生成されなかった時
+     */
+    private <T extends UnifiedFactory> T getFactory(Class<T> interfaceClass, Object context, boolean loadBackwardWay) {
         if (checkInterface(interfaceClass) == false || context == null) {
             throw new IllegalArgumentException();
         }
         String systemID = interfaceClass.getName();
-        SourceDescriptor source = MarshallUtil.getDefaultSource(
-                systemID, UnifiedFactoryHandler.class);
-        UnifiedFactory factory = marshallFactory(
-                interfaceClass, context, source, null);
+        List<SourceDescriptor> sources = new ArrayList<>();
+
+        // Collect source files
+        // Mayaa Built-in source file
+        SourceDescriptor source = MarshallUtil.getDefaultSource(systemID, UnifiedFactoryHandler.class);
+        if (source.exists()) {
+            sources.add(source);
+        }
+        // 
         Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
             source = it.next();
-            factory = marshallFactory(interfaceClass, context, source, factory);
+            if (source.exists()) {
+                sources.add(source);
+            }
         }
-        source = getBootstrapSource(
-                ApplicationSourceDescriptor.WEB_INF, systemID);
-        factory = marshallFactory(interfaceClass, context, source, factory);
+        source = getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, systemID);
+        if (source.exists()) {
+            sources.add(source);
+        }
+
+        if (loadBackwardWay) {
+            Collections.reverse(sources);
+        }
+
+        T factory = null;
+        for (SourceDescriptor s: sources) {
+            factory = marshallFactory(interfaceClass, context, s, factory);
+            if (loadBackwardWay && factory != null) {
+                return factory;
+            }
+        }
         return factory;
     }
 

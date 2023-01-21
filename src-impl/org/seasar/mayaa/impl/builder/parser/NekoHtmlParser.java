@@ -26,7 +26,7 @@ import org.xml.sax.SAXNotSupportedException;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
+public class NekoHtmlParser extends AbstractSAXParser implements CONST_IMPL {
     public static final String BALANCE_TAGS = "http://cyberneko.org/html/features/balance-tags";
 
 	/**
@@ -34,7 +34,7 @@ public class TemplateParser extends AbstractSAXParser implements CONST_IMPL {
 	 * @param templateDefaultCharset テンプレートの文字コードが不明な場合に使用する文字コード。
 	 * @param balanceTag タグのバランスを修正するか。基本的にtrue。falseにする場合は必ずテンプレートのタグのバランスを取ること。
 	 */
-	public TemplateParser() {
+	public NekoHtmlParser() {
         super(new TemplateParserConfiguration(new TemplateScanner()));
     }
 

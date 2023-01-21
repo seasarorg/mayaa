@@ -50,7 +50,7 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.mayaa.impl.builder.parser.HtmlTemplateParser;
-import org.seasar.mayaa.impl.builder.parser.TemplateParser;
+import org.seasar.mayaa.impl.builder.parser.NekoHtmlParser;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
@@ -687,14 +687,14 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
         @Override
         protected Object createObject() {
-            TemplateParser parser = new TemplateParser();
-            parser.setFeature(TemplateParser.BALANCE_TAGS, _balanceTag);
+            NekoHtmlParser parser = new NekoHtmlParser();
+            parser.setFeature(NekoHtmlParser.BALANCE_TAGS, _balanceTag);
             return parser;
         }
 
         @Override
         protected boolean validateObject(Object object) {
-            return object instanceof TemplateParser;
+            return object instanceof NekoHtmlParser;
         }
 
         @Override
@@ -703,8 +703,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             XMLReader htmlReader = (XMLReader) borrowObject();
             buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
 
-            if (htmlReader instanceof TemplateParser) {
-                ((TemplateParser) htmlReader).setFeature(TemplateParser.BALANCE_TAGS, _balanceTag);
+            if (htmlReader instanceof NekoHtmlParser) {
+                ((NekoHtmlParser) htmlReader).setFeature(NekoHtmlParser.BALANCE_TAGS, _balanceTag);
             }
             return htmlReader;
         }

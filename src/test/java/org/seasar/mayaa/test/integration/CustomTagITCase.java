@@ -1,18 +1,19 @@
 package org.seasar.mayaa.test.integration;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class CustomTagITCase extends WebDriverBase {
     //@formatter:off
-    final static Object[][] data = new Object[][] {
-        /* TestCustomTag */
-        {
+    final static Stream<Arguments> data = Stream.of(
+        arguments(
             "scope",
             "/tests/customtag/scopetest.html",
             new Command[] {
@@ -31,7 +32,8 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyTextPresent("nested"),
                 verifyTextPresent("at_end")
             }
-        }, {
+        ),
+        arguments(
             "buffered",
             "/tests/customtag/eval_body_buffered.html",
             new Command[] {
@@ -39,7 +41,8 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyTextNotPresent("original-body"),
                 verifyTextPresent("replaced-body")
             }
-        }, {
+        ),
+        arguments(
             "simpletag",
             "/tests/customtag/simpletest.html",
             new Command[] {
@@ -52,7 +55,8 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyText("//span[@id=\"hello5\"]",
                 "hello TestTag parent:org.apache.taglibs.standard.tag.rt.core.IfTag")
             }
-        }, {
+        ),
+        arguments(
             "dynamic-attribute",
             "/tests/customtag/dynamic_attribute.html",
             new Command[] {
@@ -64,14 +68,16 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyText("//span[@id=\"message5\"]", "not support"),
                 verifyText("//span[@id=\"message6\"]", "not support")
             }
-        }, {
+        ),
+        arguments(
             "dynamic-attribute",
             "/tests/customtag/dynamic_attribute_wrong.html",
             new Command[] {
                 verifyTextPresent("DynamicAttributeNotSupportTag"),
                 verifyTextPresent("javax.servlet.jsp.tagext.DynamicAttributes")
             }
-        }, {
+        ),
+        arguments(
             "rtexprvalue attribute",
             "/tests/customtag/rtexprtest.html",
             new Command[] {
@@ -81,7 +87,8 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyText("//span[@id=\"expr3\"]", "${20 - 10}"),
                 verifyText("//span[@id=\"expr4\"]", "STRING")
             }
-        }, {
+        ),
+        arguments(
             "replace_injection_attribute",
             "/tests/customtag/replace_injection_attribute.html",
             new Command[] {
@@ -89,21 +96,24 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyText("//p[1]", "good"),
                 verifyText("//p[2]", "good")
             }
-        }, {
+        ),
+        arguments(
             "simpletag-dynamic-attribute",
             "/tests/customtag/simple_dynamic_test.html",
             new Command[] {
                 verifyTitle("tests_4_07"),
                 verifyText("//span[@id=\"message1\"]", "dynamic=DYNAMIC")
             }
-        }, {
+        ),
+        arguments(
             "TagExtraInfo#getVariableInfo returns null",
             "/tests/customtag/vinulltest.html",
             new Command[] {
                 verifyTitle("tests_4_08"),
                 verifyText("//span[@id=\"tag\"]", "hello TestTag")
             }
-        }, {
+        ),
+        arguments(
             "simpletag body",
             "/tests/customtag/simplebodytest.html",
             new Command[] {
@@ -115,15 +125,16 @@ public class CustomTagITCase extends WebDriverBase {
                 verifyText("//span[@id=\"test5\"]",
                 "hello TestTag body:hello TestTagComponent2 body:body5[doBase write 2]")
             }
-        }, {
+        ),
+        arguments(
             "simpletag body",
             "/tests/customtag/emptybody.html",
             new Command[] {
                 verifyTitle("tests_4_10"),
                 verifyText("//span[@id=\"test1\"]", "bodycontentempty")
             }
-        },
-    };
+        )
+    );
     //@formatter:on
 
     @BeforeAll
@@ -132,13 +143,13 @@ public class CustomTagITCase extends WebDriverBase {
     }
 
     @ParameterizedTest(name = "{0}: path={1}")
-    @MethodSource
+    @MethodSource("dataProvider")
     @EnabledIfSystemProperty(named = "inMaven", matches = "1")
     public void test(String title, String path, Command[] commands) {
         runTest(title, path, commands);
     }
 
-    static List<Object[]> test() {
-        return Arrays.asList(data);
+    static Stream<Arguments> dataProvider() {
+        return data;
     }
 }

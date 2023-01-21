@@ -46,11 +46,12 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
+import org.seasar.mayaa.source.SourceDescriptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -229,21 +230,7 @@ public class EngineTestBase {
 
     @BeforeEach
     public void setup() throws SecurityException, IOException {
-        final Object _testClassInstance = this;
-        servletContext = new MockServletContext() {
-            /**
-             * {@link ServletContext#getResource(String)}の代替実装。
-             * テストクラスのパッケージからの相対パスとして取得する。
-             * 
-             * @param path 要求されているリソースのパス
-             */
-            public URL getResource(String path) throws MalformedURLException {
-                if (path.startsWith("/")) {
-                    path = path.substring(1);
-                }
-                return _testClassInstance.getClass().getResource(path);
-            }
-        };
+        servletContext = new TestingMockServletContext(this);
 
         FactoryFactory.setContext(servletContext);
 
@@ -310,11 +297,13 @@ public class EngineTestBase {
 
     protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath, String message) throws IOException {
 
-        final URL url = getClass().getResource(expectedContentPath);
-        if (url == null) {
+        SourceDescriptor sd = SourceUtil.getSourceDescriptor(expectedContentPath);
+
+        // final URL url = getClass().getResource(expectedContentPath);
+        if (!sd.exists()) {
             fail("Specified file is not found. " + expectedContentPath);
         }
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(sd.getInputStream()));) {
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -372,3 +361,32 @@ public class EngineTestBase {
     }
 
 }
+
+class TestingMockServletContext extends MockServletContext {
+    Object _testClassInstance = null;
+
+    public TestingMockServletContext(Object testClassInstance) {
+        this._testClassInstance = testClassInstance;
+    }
+
+    /**
+     * {@link ServletContext#getResource(String)}の代替実装。
+     * テストクラスのパッケージからの相対パスとして取得する。
+     * 
+     * @param path 要求されているリソースのパス
+     */
+    public URL getResource(String path) throws MalformedURLException {
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return _testClassInstance.getClass().getResource(path);
+    }
+
+    @Override
+    public String getMimeType(String filePath) {
+        if (filePath != null && filePath.endsWith(".inc")) {
+            return "text/html";
+        }
+        return super.getMimeType(filePath);
+    }
+};

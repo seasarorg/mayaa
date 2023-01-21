@@ -39,9 +39,10 @@ public class ProcessorTest extends EngineTestBase {
             // When
             final MockHttpServletRequest request = createRequest(BASE_PATH + "for/target_exception.html");
             exec(request, null);
-            fail("TooManyLoopExceptionが発生するはず");
+            fail("TooManyLoopException must be thrown.");
         } catch (TooManyLoopException e) {
-            ;
+        } catch (Throwable e) {
+            fail("TooManyLoopException must be thrown.");
         }
     }
 
@@ -61,9 +62,10 @@ public class ProcessorTest extends EngineTestBase {
             // When
             final MockHttpServletRequest request = createRequest(BASE_PATH + "component/hello_nocomponent.html");
             exec(request, null);
-            fail("DoRenderNotFoundExceptionが発生するはず");
+            fail("DoRenderNotFoundException must be thrown.");
         } catch (DoRenderNotFoundException e) {
-            ;
+        } catch (Throwable e) {
+            fail("DoRenderNotFoundException must be thrown.");
         }
 
     }
@@ -79,9 +81,10 @@ public class ProcessorTest extends EngineTestBase {
             // When
             final MockHttpServletRequest request = createRequest(BASE_PATH + "if/target_typemismatch.html");
             exec(request, null);
-            fail("ExpectedTypeMismatchValueExceptionが発生するはず");
+            fail("ExpectedTypeMismatchValueException must be thrown.");
         } catch (ExpectedTypeMismatchValueException e) {
-            ;
+        } catch (Throwable e) {
+            fail("ExpectedTypeMismatchValueException must be thrown.");
         }
 
     }

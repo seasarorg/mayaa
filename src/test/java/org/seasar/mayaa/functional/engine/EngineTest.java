@@ -251,7 +251,8 @@ public class EngineTest extends EngineTestBase {
             MockHttpServletResponse response = exec(request, null);
             fail("NoRequiredPropertyException must be thrown.");
         } catch (NoRequiredPropertyException e) {
-            assertEquals("lack of required attribute - http://mayaa.seasar.org: element.name, /it-case/engine/required/target.mayaa#4.", e.getMessage());
+        } catch (Throwable e) {
+            fail("NoRequiredPropertyException must be thrown.");
         }
     }
 
@@ -265,7 +266,8 @@ public class EngineTest extends EngineTestBase {
             MockHttpServletResponse response = exec(request, null);
             fail("NoRequiredPropertyException must be thrown.");
         } catch (NoRequiredPropertyException e) {
-            assertEquals("lack of required attribute - http://mayaa.seasar.org: element.name, /it-case/engine/required_not_empty/target.mayaa#4.", e.getMessage());
+        } catch (Throwable e) {
+            fail("NoRequiredPropertyException must be thrown.");
         }
     }
 

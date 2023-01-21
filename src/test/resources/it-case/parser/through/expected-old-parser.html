@@ -3,7 +3,7 @@
 <html lang="ja">
 
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Cache-Control" content="no-cache">
     <title>tests_1_08</title>
     <link rel="stylesheet" href="../base.css" type="text/css">
@@ -22,6 +22,9 @@
     &#60;
     <!-- for vue template notation -->
     <div v-on:click="handleClick" v-bind:test="ss">
+        &copy;
+    </div>
+    <div>
         &copy;
     </div>
     <!-- for vue template notation -->
@@ -57,7 +60,7 @@
         Please select a shape:
         <img src="shapes.png" usemap="#shapes" alt="Four shapes are available: a red hollow box, a green circle, a blue triangle, and a yellow four-pointed star.">
         <map name="shapes">
-          <area shape="rect&lta" a coords="50,50,100,100"> <!-- the hole in the red box -->
+          <area shape="rect&lt;" a coords="50,50,100,100"> <!-- the hole in the red box -->
           <area shape="rect" coords="25,25,125,125" href="red.html" alt="Red box.">
           <area shape="circle" coords="200,75,50" href="green.html" alt="Green circle.">
           <area shape="poly" coords="325,25,262,125,388,125" href="blue.html" alt="Blue triangle.">

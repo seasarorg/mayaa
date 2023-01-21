@@ -16,4 +16,8 @@
         <m:attribute name="title" value="adjust test" />
     </m:echo>
 
+    <m:echo id="test5">
+        <m:write value="${text}"/>
+    </m:echo>
+
 </m:mayaa>

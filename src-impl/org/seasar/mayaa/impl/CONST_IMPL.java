@@ -47,10 +47,16 @@ public interface CONST_IMPL {
     String TEMPLATE_DEFAULT_CHARSET = "UTF-8";
     String SCRIPT_DEFAULT_CHARSET = "UTF-8";
 
-    URI URI_MAYAA = URIImpl.getInstance("http://mayaa.seasar.org");
-    URI URI_HTML = URIImpl.getInstance("http://www.w3.org/TR/html4");
-    URI URI_XHTML = URIImpl.getInstance("http://www.w3.org/1999/xhtml");
-    URI URI_XML = URIImpl.getInstance("http://www.w3.org/XML/1998/namespace");
+    String URI_MAYAA_STR = "http://mayaa.seasar.org";
+    String URI_HTML_STR = "http://www.w3.org/TR/html4";
+    String URI_XHTML_STR = "http://www.w3.org/1999/xhtml";
+    String URI_XML_STR = "http://www.w3.org/XML/1998/namespace";
+
+
+    URI URI_MAYAA = URIImpl.getInstance(URI_MAYAA_STR);
+    URI URI_HTML = URIImpl.getInstance(URI_HTML_STR);
+    URI URI_XHTML = URIImpl.getInstance(URI_XHTML_STR);
+    URI URI_XML = URIImpl.getInstance(URI_XML_STR);
 
     String PUBLIC_FACTORY10 =
             "-//The Seasar Foundation//DTD Mayaa Factory 1.0//EN";
@@ -61,6 +67,39 @@ public interface CONST_IMPL {
 
     QName QH_ID = QNameImpl.getInstance(URI_HTML, "id");
     QName QX_ID = QNameImpl.getInstance(URI_XHTML, "id");
+    /** Void elements in HTML */
+    QName QH_AREA = QNameImpl.getInstance(URI_HTML, "area");
+    QName QH_BASE = QNameImpl.getInstance(URI_HTML, "base");
+    QName QH_BR = QNameImpl.getInstance(URI_HTML, "br");
+    QName QH_COL = QNameImpl.getInstance(URI_HTML, "col");
+    QName QH_COMMAND = QNameImpl.getInstance(URI_HTML, "command");
+    QName QH_EMBED = QNameImpl.getInstance(URI_HTML, "embed");
+    QName QH_HR = QNameImpl.getInstance(URI_HTML, "hr");
+    QName QH_IMG = QNameImpl.getInstance(URI_HTML, "img");
+    QName QH_INPUT = QNameImpl.getInstance(URI_HTML, "input");
+    QName QH_KEYGEN = QNameImpl.getInstance(URI_HTML, "keygen");
+    QName QH_LINK = QNameImpl.getInstance(URI_HTML, "link");
+    QName QH_META = QNameImpl.getInstance(URI_HTML, "meta");
+    QName QH_PARAM = QNameImpl.getInstance(URI_HTML, "param");
+    QName QH_SOURCE = QNameImpl.getInstance(URI_HTML, "source");
+    QName QH_TRACK = QNameImpl.getInstance(URI_HTML, "track");
+    QName QH_WBR = QNameImpl.getInstance(URI_HTML, "wbr");
+    QName QX_AREA = QNameImpl.getInstance(URI_XHTML, "area");
+    QName QX_BASE = QNameImpl.getInstance(URI_XHTML, "base");
+    QName QX_BR = QNameImpl.getInstance(URI_XHTML, "br");
+    QName QX_COL = QNameImpl.getInstance(URI_XHTML, "col");
+    QName QX_COMMAND = QNameImpl.getInstance(URI_XHTML, "command");
+    QName QX_EMBED = QNameImpl.getInstance(URI_XHTML, "embed");
+    QName QX_HR = QNameImpl.getInstance(URI_XHTML, "hr");
+    QName QX_IMG = QNameImpl.getInstance(URI_XHTML, "img");
+    QName QX_INPUT = QNameImpl.getInstance(URI_XHTML, "input");
+    QName QX_KEYGEN = QNameImpl.getInstance(URI_XHTML, "keygen");
+    QName QX_LINK = QNameImpl.getInstance(URI_XHTML, "link");
+    QName QX_META = QNameImpl.getInstance(URI_XHTML, "meta");
+    QName QX_PARAM = QNameImpl.getInstance(URI_XHTML, "param");
+    QName QX_SOURCE = QNameImpl.getInstance(URI_XHTML, "source");
+    QName QX_TRACK = QNameImpl.getInstance(URI_XHTML, "track");
+    QName QX_WBR = QNameImpl.getInstance(URI_XHTML, "wbr");
 
     QName QM_CDATA = QNameImpl.getInstance("cdata");
     QName QM_CHARACTERS = QNameImpl.getInstance("characters");

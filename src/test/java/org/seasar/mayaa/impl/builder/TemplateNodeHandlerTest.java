@@ -33,7 +33,7 @@ import org.seasar.mayaa.test.util.ManualProviderFactory;
 import org.xml.sax.helpers.LocatorImpl;
 
 /**
- * Tests for {@link org.seasar.mayaa.impl.builder.TemplateNodeHandler}
+ * Tests for {@link org.seasar.mayaa.impl.builder.NekoHtmlNodeHandler}
  * @author Koji SUGA (Gluegent, Inc.)
  */
 public class TemplateNodeHandlerTest {
@@ -49,9 +49,9 @@ public class TemplateNodeHandlerTest {
         ManualProviderFactory.tearDown();
     }
 
-    protected TemplateNodeHandler createHandler(String path) {
+    protected NekoHtmlNodeHandler createHandler(String path) {
         TemplateImpl template = new TemplateImpl();
-        TemplateNodeHandler handler = new TemplateNodeHandler(template);
+        NekoHtmlNodeHandler handler = new NekoHtmlNodeHandler(template);
         handler.setSSIIncludeReplacementEnabled(true);
 
         LocatorImpl locator = new LocatorImpl();
@@ -75,7 +75,7 @@ public class TemplateNodeHandlerTest {
     public void testIncludeToInsert() throws Throwable {
         String path = "/common/include.html";
         String comment = "#include virtual=\"" + path + "\"";
-        TemplateNodeHandler handler = createHandler(path);
+        NekoHtmlNodeHandler handler = createHandler(path);
 
         handler.comment(comment.toCharArray(), 0, comment.length());
 
@@ -94,7 +94,7 @@ public class TemplateNodeHandlerTest {
     public void testIncludeToInsert_file() throws Throwable {
         String path = "include.html";
         String comment = "#include file=\"" + path + "\"";
-        TemplateNodeHandler handler = createHandler(path);
+        NekoHtmlNodeHandler handler = createHandler(path);
 
         handler.comment(comment.toCharArray(), 0, comment.length());
 
@@ -113,7 +113,7 @@ public class TemplateNodeHandlerTest {
     public void testIncludeToInsert_query_and_fragment() throws Throwable {
         String path = "/common/include.html";
         String comment = "#include virtual=\"" + path + "?foo=bar&amp;bar=baz#fragment\"";
-        TemplateNodeHandler handler = createHandler(path);
+        NekoHtmlNodeHandler handler = createHandler(path);
 
         handler.comment(comment.toCharArray(), 0, comment.length());
 
@@ -126,7 +126,7 @@ public class TemplateNodeHandlerTest {
         assertEquals("/common/include.html", spec.getAttribute(QNameImpl.getInstance("path")).getValue());
         assertEquals("fragment", spec.getAttribute(QNameImpl.getInstance("name")).getValue());
 
-        URI parameterURI = URIImpl.getInstance(TemplateNodeHandler.AUTO_INSERT_NAMESPACE);
+        URI parameterURI = URIImpl.getInstance(NekoHtmlNodeHandler.AUTO_INSERT_NAMESPACE);
         assertEquals("bar", spec.getAttribute(QNameImpl.getInstance(parameterURI, "foo")).getValue());
         assertEquals("baz", spec.getAttribute(QNameImpl.getInstance(parameterURI, "bar")).getValue());
     }
@@ -135,7 +135,7 @@ public class TemplateNodeHandlerTest {
     public void testIncludeToInsert_not_include() throws Throwable {
         String path = "/common/include.html";
         String comment = "#includ virtual=\"" + path + "\"";
-        TemplateNodeHandler handler = createHandler(path);
+        NekoHtmlNodeHandler handler = createHandler(path);
 
         handler.comment(comment.toCharArray(), 0, comment.length());
 
@@ -151,7 +151,7 @@ public class TemplateNodeHandlerTest {
     public void testIncludeToInsert_disabled() throws Throwable {
         String path = "/common/include.html";
         String comment = "#include virtual=\"" + path + "\"";
-        TemplateNodeHandler handler = createHandler(path);
+        NekoHtmlNodeHandler handler = createHandler(path);
         handler.setSSIIncludeReplacementEnabled(false);
 
         handler.comment(comment.toCharArray(), 0, comment.length());

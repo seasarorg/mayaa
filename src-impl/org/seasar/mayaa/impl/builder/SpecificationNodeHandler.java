@@ -15,12 +15,8 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
@@ -41,7 +37,6 @@ import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
-import org.seasar.mayaa.impl.engine.specification.PrefixMappingImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
@@ -74,8 +69,7 @@ public abstract class SpecificationNodeHandler
     private Specification _specification;
     private SequenceIDGenerator _sequenceIDGenerator;
     private NodeTreeWalker _current;
-    private Locator _locator;
-    private Map<String, PrefixMapping> _elementPrefixMappings;
+    protected Locator _locator;
     private Stack<Namespace> _namespaceStack = new Stack<>();
     protected StringBuilder _charactersBuffer;
     private int _charactersStartLineNumber;
@@ -167,6 +161,7 @@ public abstract class SpecificationNodeHandler
     }
 
     public void startDocument() {
+        _specification.clearChildNodes();
         _sequenceIDGenerator.resetSequenceID(1);
         initCharactersBuffer();
         _charactersStartLineNumber = -1;
@@ -176,32 +171,10 @@ public abstract class SpecificationNodeHandler
 
     @Override
     public void startPrefixMapping(String prefix, String uri) {
-        if (_elementPrefixMappings == null) {
-            _elementPrefixMappings = new LinkedHashMap<>();
-        }
-        _elementPrefixMappings.put(prefix, PrefixMappingImpl.getInstance(prefix, URIImpl.getInstance(uri)));
     }
 
     @Override
     public void endPrefixMapping(String prefix) {
-        if (_elementPrefixMappings != null) {
-            _elementPrefixMappings.remove(prefix);
-        }
-    }
-
-    private Collection<PrefixMapping> getNodePrefixMapping() {
-        if (_elementPrefixMappings != null) {
-            return _elementPrefixMappings.values();
-        }
-        return Collections.emptyList();
-    }
-
-    private boolean hasNodePrefixMapping() {
-        return _elementPrefixMappings != null;
-    }
-
-    private void clearNodePrefixMapping() {
-        _elementPrefixMappings = null;
     }
 
     protected SpecificationNode createChildNode(
@@ -291,13 +264,8 @@ public abstract class SpecificationNodeHandler
         cycle.setOriginalNode(originalNode);
     }
 
-    protected boolean checkAttribute(String qName, String value) {
-        // workaround for XML parser(NekoHTML?)'s bug.
-        if (StringUtil.isEmpty(qName)) {
-            throw new IllegalArgumentException();
-        }
-        return ("xmlns".equals(qName) == false
-                && qName.startsWith("xmlns:") == false);
+    protected boolean isXmlNamespaceDecl(String qName, String value) {
+        return "xmlns".equals(qName) || qName.startsWith("xmlns:");
     }
 
     @Override
@@ -311,15 +279,19 @@ public abstract class SpecificationNodeHandler
         Namespace elementNS = new NamespaceImpl();
 
         URI defaultURI = parentNamespace.getDefaultNamespaceURI();
-        if (hasNodePrefixMapping()) {
-            for (PrefixMapping mapping: getNodePrefixMapping()) {
-                elementNS.addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
-                // デフォルトの名前空間マッピングなら個別に設定
-                if (mapping.getPrefix().equals("")) {
-                    defaultURI = mapping.getNamespaceURI();
+
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String attrName = attributes.getQName(i);
+            String attrValue = attributes.getValue(i);
+            if (isXmlNamespaceDecl(attrName, attrValue)) {
+                int index = attrName.indexOf(':');
+                if (index != -1) {
+                    elementNS.addPrefixMapping(attrName.substring(index + 1), URIImpl.getInstance(attrValue));
+                } else {
+                    defaultURI = URIImpl.getInstance(attrValue);
+                    elementNS.addPrefixMapping("", defaultURI);
                 }
             }
-            clearNodePrefixMapping();
         }
         elementNS.setParentSpace(parentNamespace);
         elementNS.setDefaultNamespaceURI(defaultURI);
@@ -341,7 +313,7 @@ public abstract class SpecificationNodeHandler
         for (int i = 0; i < attributes.getLength(); i++) {
             String attrName = attributes.getQName(i);
             String attrValue = attributes.getValue(i);
-            if (checkAttribute(attrName, attrValue)) {
+            if (!isXmlNamespaceDecl(attrName, attrValue)) {
                 PrefixAwareName parsedAttrName = BuilderUtil.parseName(node, attrName);
                 QName attrQName = parsedAttrName.getQName();
                 node.addAttribute(attrQName, attrName, attrValue);

@@ -142,6 +142,11 @@ public class BuilderUtil implements CONST_IMPL {
         if (parsed.length == 2) {
             prefix = parsed[0];
             localName = parsed[1];
+            if (prefix.isEmpty()) {
+                // :attrName のようにプレフィックス部分が空の時は":"も属性名に含める。
+                // 本来のXML仕様としては許容されないがHTML仕様としては名前空間自体をサポートしていないため属性名として有効なものとした。
+                localName = ":" + localName;
+            }
             mapping = node.getMappingFromPrefix(prefix, true);
             if (mapping == null) {
                 if ("xml".equals(prefix)) {

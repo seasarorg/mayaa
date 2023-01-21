@@ -211,14 +211,6 @@ public class ParserTest extends EngineTestBase {
             DynamicRegisteredSourceHolder.registerContents("/expected.html", 
             "<!DOCTYPE html>\n" +
             "<html lang=\"ja\">\n" +
-            "<head></head><body>\n" + 
-            "            headが存在しない時にheadを付加しない。\n" +
-            "</body>\n" +
-            "</html>"
-            );
-            DynamicRegisteredSourceHolder.registerContents("/expected-neko.html", 
-            "<!DOCTYPE html>\n" +
-            "<html lang=\"ja\">\n" +
             "<body>\n" + 
             "            headが存在しない時にheadを付加しない。\n" +
             "</body>\n" +
@@ -241,19 +233,34 @@ public class ParserTest extends EngineTestBase {
             DynamicRegisteredSourceHolder.registerContents("/target.html", 
             "<!DOCTYPE html>\n" +
             "<html>\n" +
-            "<body><section><div><span>Hello</body>\n" +
+            "<body><section><div><span>Hello</span>a</body> b\n" +
             "</html>"
             );
             DynamicRegisteredSourceHolder.registerContents("/expected.html", 
             "<!DOCTYPE html>\n" +
             "<html>\n" +
-            "<head></head>" +
-            "<body><section><div><span>Hello</span></div></section></body>\n" +
+            "<body><section><div><span>Hello</span>a</div></section></body> b\n" +
             "</html>"
             );
-    
-            enableDump();
+
+            if (!useNewParser && tagBalance) {
+                // NOTICE: NekoHTMLが閉じタグ補完をする過程で既存のbody閉じhtml閉じの間のテキストが移動される
+                DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+                "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body><section><div><span>Hello</span>a b\n</div></section></body></html>"
+                );
+            }
+            if (!useNewParser && !tagBalance) {
+                // NOTICE: （既存の不可解挙動）NekoHTMLが閉じタグ補完しなくてもbody閉じhtml閉じの間のテキストがtagBalanceありとは別の位置に移動される
+                DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+                "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body><section><div><span>Hello</span>a</div> b\n</section></body></html>"
+                );
+            }
             execAndVerify("/target.html", "/expected.html", null);
+
         }
 
         @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")

@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.LogManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.seasar.mayaa.FactoryFactory;
@@ -49,7 +48,6 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.seasar.mayaa.source.SourceDescriptor;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -305,39 +303,60 @@ public class EngineTestBase {
         }
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(sd.getInputStream()));) {
 
+            StringBuilder expected = new StringBuilder();
+            boolean body = false;
+            boolean first = true;
             String line;
             while ((line = reader.readLine()) != null) {
+                if (body) {
+                    if (!first) {
+                        expected.append("\n");
+                    }
+                    expected.append(line);
+                    first = false;
+                    continue;
+                }
                 if (line.isEmpty()) {
-                    line = reader.readLine();
-                    break;
+                    body = true;
+                    continue;
                 }
-                if (!line.matches("\\w.*")) {
-                    break;
-                }
+
                 final String headerPair[] = line.split(":", 2);
-                if (headerPair.length == 2) {
+                // HTTPヘッダのフィールドの指定かどうかを判定
+                if (headerPair.length == 2 && response.getHeader(headerPair[0]) != null) {
                     final String value = response.getHeader(headerPair[0]);
                     assertEquals(headerPair[1], value, "Response header is not match. " + headerPair[0]);
+                } else {
+                    body = true;
+                    first = false;
+                    expected.append(line);
                 }
             }
 
             // Process Body
-            final String content = response.getContentAsString();
+            String content = response.getContentAsString();
+
+            // 比較のために改行コードを\nのみに揃える
+            content = content.replaceAll("\r", "");
 
             if (isDumpEnabled()) {
                 System.out.println("RESPONSE DUMP ==============");
                 System.out.println(content);    
+
+                System.out.println("Expected DUMP ==============");
+                System.out.println(expected.toString());
             }
 
-            int lineIndex = 1;
-            for (String actualLine: content.split("\n")) {
-                String expectedLine = line;
-                actualLine = actualLine.replaceAll("\r", "");
-                assertEquals(expectedLine, actualLine, "body compare:" + lineIndex); 
+            assertEquals(expected.toString(), content);
+            // int lineIndex = 1;
+            // for (String actualLine: content.split("\n")) {
+            //     String expectedLine = line;
+            //     actualLine = actualLine.replaceAll("\r", "");
+            //     assertEquals(expectedLine, actualLine, "body compare:" + lineIndex); 
 
-                lineIndex++;
-                line = reader.readLine();
-            }
+            //     lineIndex++;
+            //     line = reader.readLine();
+            // }
         }
     }
 

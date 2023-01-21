@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.engine.error.ErrorHandler;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.builder.library.NoRequiredPropertyException;
 import org.seasar.mayaa.impl.engine.error.TemplateErrorHandler;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -248,7 +247,7 @@ public class EngineTest extends EngineTestBase {
 
         // When
         try {
-            MockHttpServletResponse response = exec(request, null);
+            exec(request, null);
             fail("NoRequiredPropertyException must be thrown.");
         } catch (NoRequiredPropertyException e) {
         } catch (Throwable e) {
@@ -263,7 +262,7 @@ public class EngineTest extends EngineTestBase {
 
         // When
         try {
-            MockHttpServletResponse response = exec(request, null);
+            exec(request, null);
             fail("NoRequiredPropertyException must be thrown.");
         } catch (NoRequiredPropertyException e) {
         } catch (Throwable e) {

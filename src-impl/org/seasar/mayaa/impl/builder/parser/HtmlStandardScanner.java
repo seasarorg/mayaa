@@ -2391,13 +2391,10 @@ class HtmlTokenizer {
                         } else if (skipStringIgnoreCase("DOCTYPE")) {
                             tokenizeState = TokenizeState.Doctype;
                         } else if (skipString("[CDATA[")) {
-                            // NOTICE:NON STANDARD
-                            // handler.reportError("cdata-in-html-content", null);
-                            // commentBuilder = new StringBuilder();
-                            // commentBuilder.append("[CDATA[");
-                            // tokenizeState = TokenizeState.BogusComment;
-                            appendTextNode("<![CDATA["); // NOTICE:NON STANDARD
-                            tokenizeState = TokenizeState.CDataSection; // NOTICE:NON STANDARD
+                            handler.reportError("cdata-in-html-content", null);
+                            commentBuilder = new StringBuilder();
+                            commentBuilder.append("[CDATA[");
+                            tokenizeState = TokenizeState.BogusComment;
                         } else {
                             handler.reportError("incorrectly-opened-comment", null);
                             tokenizeState = TokenizeState.BogusComment;
@@ -3043,7 +3040,6 @@ class HtmlTokenizer {
                         // https://html.spec.whatwg.org/multipage/parsing.html#cdata-section-bracket-state
                         c = getChar();
                         if (c == ']') {
-                            appendTextNode(']');  // NOTICE:NON STANDARD 
                             tokenizeState = TokenizeState.CDataSectionEnd;
                         } else {
                             appendTextNode(']'); 
@@ -3058,7 +3054,6 @@ class HtmlTokenizer {
                         if (c == ']') {
                             appendTextNode(']'); 
                         } else if (c == '>') {
-                            appendTextNode("]>"); // NOTICE:NON STANDARD 
                             tokenizeState = TokenizeState.Data;
                         } else {
                             appendTextNode(']'); 

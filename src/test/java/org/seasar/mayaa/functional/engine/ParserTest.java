@@ -93,6 +93,15 @@ public class ParserTest extends EngineTestBase {
 
         @ParameterizedTest(name = "useNewParser {0}")
         @ValueSource(booleans = {false, true})
+        public void CDATA(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+    
+            final String DIR = "/it-case/parser/cdata/";
+            execAndVerify(DIR + "target.html", DIR + "expected.html", null);
+        }
+
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
         public void 引用符で囲まれない属性値は空白まで解釈する(boolean useNewParser) throws IOException {
             setUseNewParser(useNewParser);
     

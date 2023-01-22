@@ -8,7 +8,8 @@
         <errorHandler class="org.seasar.mayaa.impl.engine.error.TemplateErrorHandler">
             <parameter name="folder" value="/"/>
             <parameter name="extension" value="html"/>
-            <parameter name="warnHandlePageNotExist" value="false" /><!-- since 1.2.1 -->
+            <parameter name="omitHandlerPageNotExist" value="true" /><!-- since 1.2.1 -->
+            <parameter name="omitStackTraceToLogger" value="true" /><!-- since 1.2.1 -->
         </errorHandler>
         <parameter name="pageClass" value="org.seasar.mayaa.impl.engine.PageImpl"/>
         <parameter name="templateClass" value="org.seasar.mayaa.impl.engine.TemplateImpl"/>

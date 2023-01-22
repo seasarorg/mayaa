@@ -42,7 +42,9 @@ public class TemplateErrorHandler extends ParameterAwareImpl
 
     private String _folder = "/";
     private String _extension = "html";
-
+    private boolean _omitHandlerPageNotExist = false;
+    private boolean _omitStackTraceToLogger = false;
+    
     protected String getFolder() {
         return _folder;
     }
@@ -84,7 +86,11 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 if (isPageNotFound == false && LOG.isErrorEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 1, t.getMessage());
-                    LOG.error(msg, t);
+                    if (_omitStackTraceToLogger) {
+                        LOG.error(msg);
+                    } else {
+                        LOG.error(msg, t);
+                    }
                 }
                 if (pageFlush) {
                     Response response = CycleUtil.getResponse();
@@ -92,7 +98,7 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 }
                 break;
             } catch (PageNotFoundException ignore) {
-                if (LOG.isInfoEnabled()) {
+                if (!_omitHandlerPageNotExist && LOG.isInfoEnabled()) {
                     String msg = StringUtil.getMessage(
                             TemplateErrorHandler.class, 2, pageName);
                     LOG.info(msg);
@@ -114,6 +120,16 @@ public class TemplateErrorHandler extends ParameterAwareImpl
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _extension = value;
+        } else if ("omitHandlerPageNotExist".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _omitHandlerPageNotExist = Boolean.valueOf(value);
+        } else if ("omitStackTraceToLogger".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            _omitStackTraceToLogger = Boolean.valueOf(value);
         }
         super.setParameter(name, value);
     }

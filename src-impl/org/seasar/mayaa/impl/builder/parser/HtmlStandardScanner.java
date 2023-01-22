@@ -353,9 +353,10 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         public void emitText(HtmlTokenizer tokenizer, HtmlLocation location, String text) {
             // ignore whitespaces before doctype, otherwise change insertion mode to "before html"
             if (REGEX_WHITESPACE_ONLY.matcher(text).matches()) {
-                // Ignore whitespace
+                // Ignore whitespace originally, but to retain template as it.
                 super.emitText(tokenizer, location, text);
             } else {
+                super.emitText(tokenizer, location, text);
                 setInsertionMode(InsertionMode.BeforeHtml);
                 insertionMode.handler.emitText(tokenizer, location, text);
             }
@@ -392,9 +393,10 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         public void emitText(HtmlTokenizer tokenizer, HtmlLocation location, String text) {
             // ignore whitespaces before doctype, otherwise change insertion mode to "before html"
             if (REGEX_WHITESPACE_ONLY.matcher(text).matches()) {
-                // Ignore whitespace
+                // Ignore whitespace originally, but to retain template as it.
                 super.emitText(tokenizer, location, text);
             } else {
+                super.emitText(tokenizer, location, text);
                 if (!fragmentCase) {
                     insertImpliedStartTag(QN_HTML);
                 }

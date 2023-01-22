@@ -70,7 +70,11 @@ public abstract class SpecificationNodeHandler
     private SequenceIDGenerator _sequenceIDGenerator;
     private NodeTreeWalker _current;
     protected Locator _locator;
-    private Stack<Namespace> _namespaceStack = new Stack<>();
+    class NSPair {
+        Namespace namespace;
+        String qName;
+    }
+    private Stack<NSPair> _namespaceStack = new Stack<>();
     protected StringBuilder _charactersBuffer;
     private int _charactersStartLineNumber;
     private boolean _outputMayaaWhitespace = false;
@@ -123,17 +127,28 @@ public abstract class SpecificationNodeHandler
     }
 
     private void initNamespace() {
-        Namespace ns = getTopLevelNamespace();
-        _namespaceStack.push(ns);
+        NSPair pair = new NSPair();
+        pair.namespace = getTopLevelNamespace();
+        pair.qName = "TOP";
+        _namespaceStack.push(pair);
     }
 
-    protected void pushNamespace(Namespace newNamespace) {
-        _namespaceStack.push(newNamespace);
+    protected void pushNamespace(String qName, Namespace newNamespace) {
+        NSPair pair = new NSPair();
+        pair.namespace = newNamespace;
+        pair.qName = qName;
+        _namespaceStack.push(pair);
     }
 
-    protected void popNamespace() {
+    protected boolean popNamespace(String qName) {
         try {
-            _namespaceStack.pop();
+            NSPair pair = _namespaceStack.peek();
+            if (pair.qName.equalsIgnoreCase(qName)) {
+                _namespaceStack.pop();
+                return true;
+            }
+            // _namespaceStack.pop();
+            return false;
         } catch (EmptyStackException e) {
             throw new IllegalStateException(getClass().getName());
         }
@@ -191,7 +206,8 @@ public abstract class SpecificationNodeHandler
         SpecificationNode child = createChildNode(
                 qName, systemID, lineNumber, _sequenceIDGenerator.nextSequenceID(), prefix);
 
-        child.setParentSpace(_namespaceStack.peek());
+        NSPair pair = _namespaceStack.peek();
+        child.setParentSpace(pair.namespace);
         _current.addChildNode(child);
         return child;
     }
@@ -275,7 +291,7 @@ public abstract class SpecificationNodeHandler
         // エレメントが始まるまでの文字をテキストノードバッファに追加
         addCharactersNode();
 
-        Namespace parentNamespace = _namespaceStack.peek();
+        Namespace parentNamespace = _namespaceStack.peek().namespace;
         Namespace elementNS = new NamespaceImpl();
 
         URI defaultURI = parentNamespace.getDefaultNamespaceURI();
@@ -296,7 +312,7 @@ public abstract class SpecificationNodeHandler
         elementNS.setParentSpace(parentNamespace);
         elementNS.setDefaultNamespaceURI(defaultURI);
 
-        pushNamespace(elementNS);
+        pushNamespace(qName, elementNS);
 
         SpecificationNode node = addNode(qName, elementNS);
 
@@ -328,10 +344,13 @@ public abstract class SpecificationNodeHandler
     @Override
     public void endElement(String namespaceURI,
             String localName, String qName) {
-        popNamespace();
         addCharactersNode();
-        _current = _current.getParentNode();
-        saveToCycle(_current);
+        if (popNamespace(qName)) {
+            if (_current.getParentNode() != null) {
+                _current = _current.getParentNode();
+                saveToCycle(_current);    
+            }
+        }
     }
 
     @Override

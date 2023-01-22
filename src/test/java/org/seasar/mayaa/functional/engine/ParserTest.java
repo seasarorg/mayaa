@@ -252,20 +252,12 @@ public class ParserTest extends EngineTestBase {
             "</html>"
             );
 
-            if (!useNewParser && tagBalance) {
+            if (!useNewParser) {
                 // NOTICE: NekoHTMLが閉じタグ補完をする過程で既存のbody閉じhtml閉じの間のテキストが移動される
                 DynamicRegisteredSourceHolder.registerContents("/expected.html", 
                 "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<body><section><div><span>Hello</span>a b\n</div></section></body></html>"
-                );
-            }
-            if (!useNewParser && !tagBalance) {
-                // NOTICE: （既存の不可解挙動）NekoHTMLが閉じタグ補完しなくてもbody閉じhtml閉じの間のテキストがtagBalanceありとは別の位置に移動される
-                DynamicRegisteredSourceHolder.registerContents("/expected.html", 
-                "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<body><section><div><span>Hello</span>a</div> b\n</section></body></html>"
                 );
             }
             execAndVerify("/target.html", "/expected.html", null);
@@ -302,7 +294,7 @@ public class ParserTest extends EngineTestBase {
             if (!useNewParser && !tagBalance) {
                 // NOTICE: （既存の不可解挙動）NekoHTMLが閉じタグ補完しない場合、不必要なbodyタグが挿入され、全体が最初のエレメントで囲まれる。
                 DynamicRegisteredSourceHolder.registerContents("/expected.inc", 
-                "<body><head><title>TITLE</title></head><div>NO BODY</div></body><body></body>"
+                "<body><head><title>TITLE</title></head><div>NO BODY</div><body></body></body>"
                 );
             }
 
@@ -324,7 +316,7 @@ public class ParserTest extends EngineTestBase {
             if (!useNewParser && !tagBalance) {
                 // NOTICE: （既存の不可解挙動）NekoHTMLが閉じタグ補完しない場合、不必要なbodyタグが挿入され、全体が最初のエレメントで囲まれる。
                 DynamicRegisteredSourceHolder.registerContents("/expected.inc", 
-                "<head><body><div>NO BODY</div></body><body></body></head>"
+                "<head><body><div>NO BODY</div><body></body></body></head>"
                 );
             }
 

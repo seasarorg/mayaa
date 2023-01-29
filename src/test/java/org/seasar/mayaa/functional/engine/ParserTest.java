@@ -222,6 +222,29 @@ public class ParserTest extends EngineTestBase {
             execAndVerify("/target.html", "/expected.html", null);
         }
 
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void plaintextタグのパースができる(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head>\n" + 
+            "</head>\n" +
+            "<body>\n" + 
+            "<plaintext>plaintextタグはHTML5以降廃止されている。<a href=\"https://developer.mozilla.org/ja/docs/Web/HTML/Element/plaintext\">リンク</a></plaintext>\n" +
+            "</body></html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head>\n" + 
+            "</head>\n" +
+            "<body>\n" + 
+            "<plaintext>plaintextタグはHTML5以降廃止されている。<a href=\"https://developer.mozilla.org/ja/docs/Web/HTML/Element/plaintext\">リンク</a></plaintext>\n" +
+            "</body></html>"
+            );
+    
+            execAndVerify("/target.html", "/expected.html", null);
+        }
     }
 
     @Nested

@@ -1063,7 +1063,6 @@ class HtmlTokenizer {
         RcData,
         RawText,
         ScriptData,
-        PlainText,
         TagOpen,
         EndTagOpen,
         TagName,
@@ -1447,9 +1446,6 @@ class HtmlTokenizer {
                 case "noscript":
                     setTokenizerState(TokenizeState.RawText);
                     break;
-                case "plaintext":
-                    setTokenizerState(TokenizeState.PlainText);
-                    break;
                 default:
                     break;
             }
@@ -1572,20 +1568,6 @@ class HtmlTokenizer {
                         if (c == '<') {
                             tokenizeState = TokenizeState.ScriptDataLessThanSign;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
-                            appendTextNode(0xFFFD);
-                        } else if (c == CHAR_SUB) {
-                            emitTextIfAvailable(handler);
-                            emitEof();
-                        } else {
-                            appendTextNode(c);
-                        }
-                        break;
-
-                    case PlainText:
-                        // https://html.spec.whatwg.org/multipage/parsing.html#plaintext-state
-                        c = getChar();
-                        if (c == 0) {
                             handler.reportError("unexpected-null-character", null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {

@@ -16,12 +16,14 @@
 package org.seasar.mayaa.impl.builder;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -43,9 +45,10 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     }
 
     protected SpecificationNodeHandler createContentHandler(
-            Specification specification) {
-        SpecificationNodeHandler handler =
-            new PageNodeHandler(specification);
+            Specification specification, String encoding) {
+        SpecificationNodeHandler handler = new PageNodeHandler(specification);
+
+        handler.setSpecifiedEncoding(encoding);
         handler.setOutputMayaaWhitespace(_outputMayaaWhitespace);
         return handler;
     }
@@ -65,29 +68,44 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
         }
         SourceDescriptor source = specification.getSource();
         if (source.exists()) {
-            SpecificationNodeHandler handler =
-                createContentHandler(specification);
+            boolean again = false;
+            String encoding = TEMPLATE_DEFAULT_CHARSET;
+            do {
+                try {
+                    parse(source, specification, encoding);
+                    again = false;
+                } catch (ParserEncodingChangedException e) {
+                    encoding = e.getEncoding();
+                    again = true;
+                }
+            } while (again);
+        }
+    }
 
-            XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
-            XMLReader xmlReader =
-                pool.borrowXMLReader(handler, true /* use namespace */, false /* do not validate */, false /* not use xml schema */);
+    protected void parse(SourceDescriptor source, Specification specification, String encoding) throws ParserEncodingChangedException {
+        SpecificationNodeHandler handler = createContentHandler(specification, encoding);
+
+        XMLReaderPool pool = getXMLReaderPool(source.getSystemID());
+        XMLReader xmlReader =
+        pool.borrowXMLReader(handler, false /* use namespace */, false /* do not validate */, false /* not use xml schema */, true);
+
+        try (
             InputStream stream = source.getInputStream();
-            InputSource input = new InputSource(stream);
+            Reader reader = new InputStreamReader(stream, encoding);
+        ) {
+            InputSource input = new InputSource(reader);
             input.setPublicId(getPublicID());
             input.setSystemId(source.getSystemID());
-            try {
-                xmlReader.parse(input);
-                afterBuild(specification);
-            } catch (Throwable t) {
-                if (t instanceof RuntimeException) {
-                    throw (RuntimeException) t;
-                }
-                throw new RuntimeException(
-                        "build failed. " + source.getSystemID(), t);
-            } finally {
-                pool.returnXMLReader(xmlReader);
-                IOUtil.close(stream);
+
+            xmlReader.parse(input);
+            afterBuild(specification);
+        } catch (Throwable t) {
+            if (t instanceof ParserEncodingChangedException) {
+                throw (ParserEncodingChangedException) t;
             }
+            throw new RuntimeException("build failed. " + source.getSystemID(), t);
+        } finally {
+            pool.returnXMLReader(xmlReader);
         }
     }
 

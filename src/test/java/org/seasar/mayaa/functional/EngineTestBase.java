@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.LogManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.seasar.mayaa.FactoryFactory;
@@ -46,11 +45,11 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.provider.ServiceProviderImpl;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
+import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.provider.ProviderFactory;
 import org.seasar.mayaa.provider.ServiceProvider;
+import org.seasar.mayaa.source.SourceDescriptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -113,7 +112,7 @@ public class EngineTestBase {
     }
 
     public void printProcessorTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 
@@ -127,7 +126,7 @@ public class EngineTestBase {
 
 
     public void printPageTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 
@@ -137,7 +136,7 @@ public class EngineTestBase {
     }
 
     public void printTemplateTree() {
-        if (!isRunUnderMaven()) {
+        if (isRunUnderMaven()) {
             return;
         }
 
@@ -229,21 +228,7 @@ public class EngineTestBase {
 
     @BeforeEach
     public void setup() throws SecurityException, IOException {
-        final Object _testClassInstance = this;
-        servletContext = new MockServletContext() {
-            /**
-             * {@link ServletContext#getResource(String)}の代替実装。
-             * テストクラスのパッケージからの相対パスとして取得する。
-             * 
-             * @param path 要求されているリソースのパス
-             */
-            public URL getResource(String path) throws MalformedURLException {
-                if (path.startsWith("/")) {
-                    path = path.substring(1);
-                }
-                return _testClassInstance.getClass().getResource(path);
-            }
-        };
+        servletContext = new TestingMockServletContext(this);
 
         FactoryFactory.setContext(servletContext);
 
@@ -310,45 +295,68 @@ public class EngineTestBase {
 
     protected void verifyResponse(final MockHttpServletResponse response, final String expectedContentPath, String message) throws IOException {
 
-        final URL url = getClass().getResource(expectedContentPath);
-        if (url == null) {
+        SourceDescriptor sd = SourceUtil.getSourceDescriptor(expectedContentPath);
+
+        // final URL url = getClass().getResource(expectedContentPath);
+        if (!sd.exists()) {
             fail("Specified file is not found. " + expectedContentPath);
         }
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(sd.getInputStream()));) {
 
+            StringBuilder expected = new StringBuilder();
+            boolean body = false;
+            boolean first = true;
             String line;
             while ((line = reader.readLine()) != null) {
+                if (body) {
+                    if (!first) {
+                        expected.append("\n");
+                    }
+                    expected.append(line);
+                    first = false;
+                    continue;
+                }
                 if (line.isEmpty()) {
-                    line = reader.readLine();
-                    break;
+                    body = true;
+                    continue;
                 }
-                if (!line.matches("\\w.*")) {
-                    break;
-                }
+
                 final String headerPair[] = line.split(":", 2);
-                if (headerPair.length == 2) {
+                // HTTPヘッダのフィールドの指定かどうかを判定
+                if (headerPair.length == 2 && response.getHeader(headerPair[0]) != null) {
                     final String value = response.getHeader(headerPair[0]);
                     assertEquals(headerPair[1], value, "Response header is not match. " + headerPair[0]);
+                } else {
+                    body = true;
+                    first = false;
+                    expected.append(line);
                 }
             }
 
             // Process Body
-            final String content = response.getContentAsString();
+            String content = response.getContentAsString();
+
+            // 比較のために改行コードを\nのみに揃える
+            content = content.replaceAll("\r", "");
 
             if (isDumpEnabled()) {
                 System.out.println("RESPONSE DUMP ==============");
                 System.out.println(content);    
+
+                System.out.println("Expected DUMP ==============");
+                System.out.println(expected.toString());
             }
 
-            int lineIndex = 1;
-            for (String actualLine: content.split("\n")) {
-                String expectedLine = line;
-                actualLine = actualLine.replaceAll("\r", "");
-                assertEquals(expectedLine, actualLine, "body compare:" + lineIndex); 
+            assertEquals(expected.toString(), content);
+            // int lineIndex = 1;
+            // for (String actualLine: content.split("\n")) {
+            //     String expectedLine = line;
+            //     actualLine = actualLine.replaceAll("\r", "");
+            //     assertEquals(expectedLine, actualLine, "body compare:" + lineIndex); 
 
-                lineIndex++;
-                line = reader.readLine();
-            }
+            //     lineIndex++;
+            //     line = reader.readLine();
+            // }
         }
     }
 
@@ -367,8 +375,47 @@ public class EngineTestBase {
         // When
         final MockHttpServletResponse response = exec(request, pageScopeAttribute);
 
+        ((EngineImpl) engine).deprecateSpecification(targetContentPath, true);
+
         // Then
         verifyResponse(response, expectedContentPath);
     }
 
 }
+
+class TestingMockServletContext extends MockServletContext {
+    Object _testClassInstance = null;
+
+    public TestingMockServletContext(Object testClassInstance) {
+        this._testClassInstance = testClassInstance;
+    }
+
+    /**
+     * {@link ServletContext#getResource(String)}の代替実装。
+     * テストクラスのパッケージからの相対パスとして取得する。
+     * 
+     * @param path 要求されているリソースのパス
+     */
+    public URL getResource(String path) throws MalformedURLException {
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return _testClassInstance.getClass().getResource(path);
+    }
+
+    @Override
+    public String getMimeType(String filePath) {
+        if (filePath != null && filePath.lastIndexOf('.') != -1) {
+            String ext = filePath.substring(filePath.lastIndexOf('.'));
+            switch (ext) {
+                case ".inc":
+                    return "text/html";
+                case ".xml":
+                    return "text/xml";
+                default:
+                    break;
+            }
+        }
+        return super.getMimeType(filePath);
+    }
+};

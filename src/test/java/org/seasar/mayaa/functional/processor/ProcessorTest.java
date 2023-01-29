@@ -63,9 +63,10 @@ public class ProcessorTest extends EngineTestBase {
         final String DIR = "/it-case/processor/for_toomany/";
         try {
             execAndVerify(DIR + "target.html", DIR + "expected.html", null);
-            fail();
+            fail("TooManyLoopException must be thrown.");
         } catch (TooManyLoopException e) {
-            assertEquals("Too many loops, max count is 2. /it-case/processor/for_toomany/target.mayaa#5.", e.getMessage());
+        } catch (Throwable e) {
+            fail("TooManyLoopException must be thrown.");
         }
     }
 

@@ -1,0 +1,17 @@
+/m:doctype m:name='html'
+/m:characters m:text='␊'
+/html4:html
+ /m:characters m:text='␊'
+ /html4:head
+  /m:characters m:text='␊␉'
+  /html4:meta html4:http-equiv='content-type' html4:content='text/html; charset=utf-8'
+  /m:characters m:text='␊'
+ /m:characters m:text='␊'
+ /html4:body
+  /m:characters m:text='␊␉'
+  /html4:div m:id='testee-id'
+   /m:characters m:text='␊␉␉'
+   /a:tag {uri:namespace-a}attr='attribute-in-a'
+   /m:characters m:text='␊␉'
+  /m:characters m:text='␊'
+ /m:characters m:text='␊'

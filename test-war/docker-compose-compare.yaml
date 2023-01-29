@@ -1,0 +1,32 @@
+# 2つのバージョンのmayaa-*.jar を用いて同じテストコンテンツを起動して、
+# JUnitテストで両者に同じリクエストを出して結果に違いがないかを比較する。
+#
+#   参照する環境変数 | 説明
+#  ---------------|----------------------------
+#   VERSION_1     | 比較対象１のMayaaバージョン 例）1.1.34
+#   VERSION_2     | 比較対象２のMayaaバージョン 例）1.2.1-SNAPSHOT
+#
+# ◆実行 (バージョン番号は例)
+#  mvn clean
+#  mvn package -U -Dmayaa.version=1.1.34
+#  mvn package -U -Dmayaa.version=1.2.1-SNAPSHOT
+#  VERSION_1=1.1.33 VERSION_2=1.2.1-SNAPSHOT docker compose -f docker-compose-compare.yaml up
+#
+#  (別のターミナルでテスト実行)
+#  mvn test -Dtest=CompareITCase -DVERSION_1=1.1.34 -DVERSION_2=1.2.1-SNAPSHOT
+#
+version: '3'
+services:
+  web:
+    #  DOCKER IMAGE                      Java Runtime   Servlet
+    image: tomcat:8                      #  1.8.0_272      3.1
+    ports: 
+      - "8080:8080"   # service port
+      - "8787:8787"   # debug port
+    environment:
+      - VERSION_1
+      - VERSION_2
+    volumes:
+      - "./tomcat/setenv.sh:/usr/local/tomcat/bin/setenv.sh:ro"   # for Tomcat 
+      - "./target/mayaa-package-test-${VERSION_1}.war:/usr/local/tomcat/webapps/mayaa-${VERSION_1}.war"           # for Tomcat
+      - "./target/mayaa-package-test-${VERSION_2}.war:/usr/local/tomcat/webapps/mayaa-${VERSION_2}.war"           # for Tomcat

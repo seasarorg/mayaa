@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.cyberneko.html.HTMLEntities;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Namespace;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
@@ -32,6 +32,7 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.engine.CharsetConverter;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
@@ -52,12 +53,18 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
     private static final Log LOG = LogFactory.getLog(TemplateNodeHandler.class);
 
-    // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-    private boolean _afterDocType;// workaround for doctype
-    private int _inEntity;
-    private boolean inDTD = false;
+    private SpecificationNode _dtdNode = null;
     private boolean _outputTemplateWhitespace = true;
     private boolean _isSSIIncludeReplacementEnabled = false;
+
+    private static final QName QH_ATTR_HTTP_EQUIV = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "http-equiv");
+    private static final QName QH_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "content");
+    private static final QName QX_ATTR_HTTP_EQUIV = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "http-equiv");
+    private static final QName QX_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "content");
+    private static final QName QH_ATTR_CHARSET = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "charset");
+
+    protected int _columnNumberBeforeFirstElement = -1;
+    private int _inEntity;
 
     public TemplateNodeHandler(Template specification) {
         super(specification);
@@ -99,107 +106,64 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
     /**
      * metaタグのhttp-equiv="content-type" の場合、contentのcharsetを変換して
-     * 返すようにする。
+     * ノードの属性にセットする。
      * それ以外の場合はなにもしない。
      *
-     * @param namespaceURI 名前空間URI
-     * @param localName 要素名
-     * @param qName QName
-     * @param attributes 属性リスト
-     * @return 変換された属性リストまたは変換されなかった場合は引数に指定した属性リスト
+     * @param node 対象となるSpecificationNodeインスタンス
      */
-    protected Attributes wrapContentTypeConverter(String namespaceURI,
-            String localName, String qName, Attributes attributes) {
-        if (StringUtil.isEmpty(namespaceURI) || URI_HTML.equals(namespaceURI) ||
-                URI_XHTML.equals(namespaceURI)) {
-            if ("meta".equalsIgnoreCase(localName)) {
-                int contentTypeIndex = getContentTypeIndex(namespaceURI, attributes);
-                if (contentTypeIndex != -1) {
-                    String contentType = attributes.getValue(contentTypeIndex);
-                    contentType = CharsetConverter.convertContentType(contentType);
-                    return new ContentTypeConvertAttributes(
-                            attributes, contentTypeIndex, contentType);
+    final void convertContentType(final SpecificationNode node) {
+        if (URI_HTML.equals(node.getDefaultNamespaceURI())) {
+            convertContentType(node, QH_ATTR_HTTP_EQUIV, QH_ATTR_CONTENT);
+        } else if (URI_XHTML.equals(node.getDefaultNamespaceURI())) {
+            convertContentType(node, QX_ATTR_HTTP_EQUIV, QX_ATTR_CONTENT);
+        }
+    }
+    protected void convertContentType(final SpecificationNode node, final QName attrHttpEquiv, final QName attrContent) {
+        NodeAttribute na = node.getAttribute(attrHttpEquiv);
+        if (na != null && "content-type".equalsIgnoreCase(na.getValue())) {
+            na = node.getAttribute(attrContent);
+            if (na != null) {
+                String contentType = na.getValue();
+                String encoding = CharsetConverter.extractEncodingExplict(contentType);
+                String cunnrentEncoding = getSpecifiedEncoding();
+                if (cunnrentEncoding == null || cunnrentEncoding.isEmpty()) {
+                    if (encoding != null && !encoding.equals(CONST_IMPL.TEMPLATE_DEFAULT_CHARSET)) {
+                        throw new ParserEncodingChangedException(encoding);
+                    }
+                } else if (encoding != null && !encoding.equals(cunnrentEncoding)) {
+                    throw new ParserEncodingChangedException(encoding);
                 }
+                contentType = CharsetConverter.convertContentType(na.getValue());
+                node.removeAttribute(attrContent);
+                node.addAttribute(attrContent, contentType);
+                return;
             }
         }
-        return attributes;
-    }
-
-    protected int getContentTypeIndex(String namespaceURI, Attributes attributes) {
-        int httpEquivIndex =
-            getIndexIgnoreCase(namespaceURI, "http-equiv", attributes);
-        if (httpEquivIndex != -1 &&
-                "content-type".equalsIgnoreCase(attributes.getValue(httpEquivIndex))) {
-            return getIndexIgnoreCase(namespaceURI, "content", attributes);
-        }
-        return -1;
-    }
-
-    protected int getIndexIgnoreCase(
-            String namespaceURI, String localName, Attributes attributes) {
-        for (int i = 0; i < attributes.getLength(); i++) {
-            String uri = attributes.getURI(i);
-            if ((StringUtil.isEmpty(uri) || namespaceURI.equals(uri)) &&
-                    localName.equalsIgnoreCase(attributes.getLocalName(i))) {
-                return i;
+        // <meta charset="UTF-8">
+        na = node.getAttribute(QH_ATTR_CHARSET);
+        if (na != null) {
+            String encoding = na.getValue();
+            String cunnrentEncoding = getSpecifiedEncoding();
+            if (cunnrentEncoding == null || cunnrentEncoding.isEmpty()) {
+                if (encoding != null && !encoding.equals(CONST_IMPL.TEMPLATE_DEFAULT_CHARSET)) {
+                    throw new ParserEncodingChangedException(encoding);
+                }
+            } else if (encoding != null && !encoding.equals(cunnrentEncoding)) {
+                throw new ParserEncodingChangedException(encoding);
             }
-        }
-        return -1;
-    }
+            encoding = CharsetConverter.encodingToCharset(encoding);
 
+            node.removeAttribute(QH_ATTR_CHARSET);
+            node.addAttribute(QH_ATTR_CHARSET, encoding);
+        }
+    }
+    @Override
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
-        Attributes wrapedAttributes = wrapContentTypeConverter(
-                namespaceURI, localName, qName, attributes);
 
-        // TODO doctype宣言後の改行をテンプレート通りにする
-        // workaround NekoHTMLParserがdoctype宣言後に"\n"のみを含めてしまう
-        // また、xercesそのままの場合は改行文字が来ない
-        if (_afterDocType) {
-            _afterDocType = false;// workaround for doctype
-            int length = _charactersBuffer.length();
-            if (length > 0) {
-                int firstCharIndex;
-                for (firstCharIndex = 0; firstCharIndex < length; firstCharIndex++) {
-                    char currentChar = _charactersBuffer.charAt(firstCharIndex);
-                    if (currentChar != ' ' && currentChar != '\t') {
-                        break;
-                    }
-                }
-                if (_charactersBuffer.charAt(firstCharIndex) == '\n') {
-                    _charactersBuffer.insert(firstCharIndex, '\r');
-                } else if (_charactersBuffer.charAt(firstCharIndex) != '\r') {
-                    _charactersBuffer.insert(firstCharIndex, "\r\n");
-                }
-            } else {
-                _charactersBuffer.insert(0, "\r\n");
-            }
-        }// workaround
-        super.startElement(namespaceURI, localName, qName, wrapedAttributes);
-    }
-
-    protected String removeIgnorableWhitespace(String characters) {
-        StringBuilder buffer = new StringBuilder(characters.length());
-        String[] line = characters.split("\n");
-        for (int i = 0; i < line.length; i++) {
-            if (line[i].trim().length() > 0) {
-                String token = line[i].replaceAll("^[ \t]+", "");
-                token = token.replaceAll("[ \t]+$", "");
-                buffer.append(token.replaceAll("[ \t]+", " "));
-                if (i < line.length - 1) {
-                    buffer.append("\n");
-                }
-            } else if (i == 0) {
-                buffer.append("\n");
-            }
-        }
-        return buffer.toString();
-    }
-
-    @Override
-    public void characters(char[] buffer, int start, int length) {
-        if (_inEntity == 0) {
-            appendCharactersBuffer(buffer, start, length);
+        super.startElement(namespaceURI, localName, qName, attributes);
+        if (qName.equalsIgnoreCase("meta")) {
+            convertContentType((SpecificationNode) getCurrentNode());
         }
     }
 
@@ -210,10 +174,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
     @Override
     public void comment(char[] buffer, int start, int length) {
-        // パーサがDTD定義をコメントに埋め込んでくるためDTD処理中であれば除外する。
-        if (inDTD) {
-            return;
-        }
         addCharactersNode();
         String comment = new String(buffer, start, length);
 
@@ -249,6 +209,16 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         addCharactersNode();
         setCurrentNode(getCurrentNode().getParentNode());
         leaveCData();
+    }
+
+    @Override
+    public void xmlDecl(String version, String encoding, String standalone) {
+        super.xmlDecl(version, encoding, standalone);
+        if ("xml".equalsIgnoreCase(getTemplate().getExtension())) {
+            // XMLファイルはXercesパーサが使用されるがXML宣言の後の改行を返却してこないため強制的に付加する.
+            //　改行がない時も付加してしまうが、互換性のため残す。
+            appendCharactersBuffer("\n");
+        }
     }
 
     /**
@@ -313,145 +283,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         }
     }
 
-    protected static class ContentTypeConvertAttributes implements Attributes {
-        private Attributes _original;
-        private int _targetIndex;
-        private String _newValue;
-
-        public ContentTypeConvertAttributes(Attributes original,
-                int targetIndex, String newValue) {
-            _original = original;
-            _targetIndex = targetIndex;
-            _newValue = newValue;
-        }
-
-        /**
-         * Look up the index of an attribute by Namespace name.
-         * @param uri The Namespace URI, or the empty string if the name has no Namespace URI.
-         * @param localName The attribute's local name.
-         * @return The index of the attribute, or -1 if it does not appear in the list.
-         * @see org.xml.sax.Attributes#getIndex(java.lang.String, java.lang.String)
-         */
-        public int getIndex(String uri, String localName) {
-            return _original.getIndex(uri, localName);
-        }
-
-        /**
-         * Look up the index of an attribute by XML 1.0 qualified name.
-         * @param qName The qualified (prefixed) name.
-         * @return The index of the attribute, or -1 if it does not appear in the list.
-         * @see org.xml.sax.Attributes#getIndex(java.lang.String)
-         */
-        public int getIndex(String qName) {
-            return _original.getIndex(qName);
-        }
-
-        /**
-         * Return the number of attributes in the list.
-         * Once you know the number of attributes, you can iterate through the list.
-         * @return The number of attributes in the list.
-         * @see org.xml.sax.Attributes#getLength()
-         */
-        public int getLength() {
-            return _original.getLength();
-        }
-
-        /**
-         * Look up an attribute's local name by index.
-         * @param index The attribute index (zero-based).
-         * @return The local name, or the empty string if Namespace processing is not being performed, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getLocalName(int)
-         */
-        public String getLocalName(int index) {
-            return _original.getLocalName(index);
-        }
-
-        /**
-         * Look up an attribute's XML 1.0 qualified name by index.
-         * @param index The attribute index (zero-based).
-         * @return The XML 1.0 qualified name, or the empty string if none is available, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getQName(int)
-         */
-        public String getQName(int index) {
-            return _original.getQName(index);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The attribute's type as a string, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getType(int)
-         */
-        public String getType(int index) {
-            return _original.getType(index);
-        }
-
-        /**
-         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
-         * @param localName The local name of the attribute.
-         * @return The attribute type as a string, or null if the attribute is not in the list or if Namespace processing is not being performed.
-         * @see org.xml.sax.Attributes#getType(java.lang.String, java.lang.String)
-         */
-        public String getType(String uri, String localName) {
-            return _original.getType(uri, localName);
-        }
-
-        /**
-         * @param qName The XML 1.0 qualified name.
-         * @return The attribute type as a string, or null if the attribute is not in the list or if qualified names are not available.
-         * @see org.xml.sax.Attributes#getType(java.lang.String)
-         */
-        public String getType(String qName) {
-            return _original.getType(qName);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The Namespace URI, or the empty string if none is available, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getURI(int)
-         */
-        public String getURI(int index) {
-            return _original.getURI(index);
-        }
-
-        /**
-         * @param index The attribute index (zero-based).
-         * @return The attribute's value as a string, or null if the index is out of range.
-         * @see org.xml.sax.Attributes#getValue(int)
-         */
-        public String getValue(int index) {
-            if (_targetIndex == index) {
-                return _newValue;
-            }
-            return _original.getValue(index);
-        }
-
-        /**
-         * @param uri The Namespace URI, or the empty String if the name has no Namespace URI.
-         * @param localName The local name of the attribute.
-         * @return The attribute value as a string, or null if the attribute is not in the list.
-         * @see org.xml.sax.Attributes#getValue(java.lang.String, java.lang.String)
-         */
-        public String getValue(String uri, String localName) {
-            if (getIndex(uri, localName) == _targetIndex) {
-                return _newValue;
-            }
-            return _original.getValue(uri, localName);
-        }
-
-        /**
-         * @param qName The XML 1.0 qualified name.
-         * @return The attribute value as a string, or null if the attribute is not in the list or if qualified names are not available.
-         * @see org.xml.sax.Attributes#getValue(java.lang.String)
-         */
-        public String getValue(String qName) {
-            if (getIndex(qName) == _targetIndex) {
-                return _newValue;
-            }
-            return _original.getValue(qName);
-        }
-
-    }
-
     //- implementation of DTD Catalog.
     // Java9 より標準の javax.xml.catalog.CatalogReader が提供されるので最低バージョンが上がるタイミングで標準半に置き換えたい。
     @Override
@@ -493,48 +324,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         return null;
     }
 
-    //- LexicalHander
-    @Override
-    public void startEntity(String name) {
-        if (inDTD) {
-            return;
-        }
-        if (HTMLEntities.get(name) != -1) {
-            String entityRef = "&" + name + ";";
-            appendCharactersBuffer(entityRef);    
-        }
-        ++_inEntity;
-    }
-
-    @Override
-    public void endEntity(String name) {
-        if (inDTD) {
-            return;
-        }
-        --_inEntity;
-    }
-
-    @Override
-    public void startDTD(String name, String publicID, String systemID) {
-        inDTD = true;
-        addCharactersNode();
-        SpecificationNode node = addNode(QM_DOCTYPE);
-        node.addAttribute(QM_NAME, name);
-        if (StringUtil.hasValue(publicID)) {
-            node.addAttribute(QM_PUBLIC_ID, publicID);
-        }
-        if (StringUtil.hasValue(systemID)) {
-            node.addAttribute(QM_SYSTEM_ID, systemID);
-        }
-
-        // TODO doctype宣言後の改行をテンプレート通りにしたあと削除
-        _afterDocType = true;// workaround for doctype
-    }
-
-    @Override
-    public void endDTD() {
-        inDTD = false;
-    }
 
     @Override
     Namespace getTopLevelNamespace() {
@@ -547,4 +336,49 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         return _topLevelNamespace;
     }
 
-}
+    @Override
+    public void startDTD(String name, String publicId, String systemId) {
+        if (_dtdNode == null) {
+            addCharactersNode();
+            _dtdNode = addNode(QM_DOCTYPE);
+        }
+        _dtdNode.removeAttribute(QM_NAME);
+        _dtdNode.addAttribute(QM_NAME, name);
+
+        _dtdNode.removeAttribute(QM_PUBLIC_ID);
+        if (StringUtil.hasValue(publicId)) {
+            _dtdNode.addAttribute(QM_PUBLIC_ID, publicId);
+        }
+        _dtdNode.removeAttribute(QM_SYSTEM_ID);
+        if (StringUtil.hasValue(systemId)) {
+            _dtdNode.addAttribute(QM_SYSTEM_ID, systemId);
+        }
+    }
+
+    @Override
+    public void endDTD() {
+    }
+
+    @Override
+    public void characters(char[] buffer, int start, int length) {
+        if (_inEntity == 0) {
+            appendCharactersBuffer(buffer, start, length);
+        }
+    }
+
+    protected void processEntity(String name) {
+        appendCharactersBuffer('&' + name + ';');
+    }
+
+    @Override
+    public void startEntity(String name) {
+        processEntity(name);
+        ++_inEntity;
+    }
+
+    @Override
+    public void endEntity(String name) {
+        --_inEntity;
+    }
+
+ }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>tests_1_08</title>
+    <link rel="stylesheet" href="../base.css" type="text/css">
+    <base href="https://www.example.com/news/index.html">
+</head>
+<body>
+
+<h1>render test</h1>
+
+<div class="main">
+    <h2>escape html</h2>
+
+    <div class="box" m:id="MAYAA_ID">
+        <span id value="&lt;&gt;">&lt;&amp;amp;&gt;</span>
+    </div>
+    &#60;
+    <!-- for vue template notation -->
+    <div v-on:click="handleClick" v-bind:test="ss">
+        &copy;
+    </div>
+    <div @click="handleClick" :test="ss">
+        &copy;
+    </div>
+    <!-- for vue template notation -->
+    <script type="vue/template" id="vue-tmpl">
+        <div @click="handleClick" v-bind:[aa]=ss :test="ss">
+        </div>
+    </script>
+    <script>
+        const example = 'Consider this string: <!-- <script>';
+        console.log(example);
+        if(x<!--y) {
+          console.log("OK: not treated as comment");
+        }
+    </script>
+    <!-- despite appearances, this is actually part of the script still! -->
+    <script>
+        // this is the same script block still...
+    </script>
+    <x:custom id="custom-id">
+        <a href="#"><div>block</div></a>
+        <p>Smile!</p>
+    </x:custom>
+    <template id="template"><p>Smile!</p></template>
+    <!-- Void Elements -->
+    <video controls width="250" height="200" muted>
+        <source src="/media/cc0-videos/flower.webm" type="video/webm">
+        <source src="/media/cc0-videos/flower.mp4" type="video/mp4">
+        This browser does not support the HTML5 video element.
+        <track default kind="captions" srclang="en" src="/media/examples/friday.vtt">
+    </video>
+
+    <p>
+        Please select a shape:
+        <img src="shapes.png" usemap="#shapes" alt="Four shapes are available: a red hollow box, a green circle, a blue triangle, and a yellow four-pointed star.">
+        <map name="shapes">
+          <area shape="rect&lt;" a coords="50,50,100,100"> <!-- the hole in the red box -->
+          <area shape="rect" coords="25,25,125,125" href="red.html" alt="Red box.">
+          <area shape="circle" coords="200,75,50" href="green.html" alt="Green circle.">
+          <area shape="poly" coords="325,25,262,125,388,125" href="blue.html" alt="Blue triangle.">
+          <area shape="poly&yen;" coords="450,25,435,60,400,75,435,90,450,125,465,90,500,75,465,60" href="yellow.html" alt="Yellow star.">
+        </map>
+    </p>
+
+    <table>
+        <caption>Superheros and <wbr>sidekicks</caption>
+        <colgroup>
+            <col>
+            <col span="2" class="batman">
+            <col span="2" class="flash">
+        </colgroup>
+        <tr>
+            <td> </td>
+            <th scope="col">Batman</th>
+            <th scope="col">Robin</th>
+            <th scope="col">The Flash</th>
+            <th scope="col">Kid Flash</th>
+        </tr>
+        <tr>
+            <th scope="row">Skill</th>
+            <td>Smarts</td>
+            <td>Dex, acrobat</td>
+            <td>Super speed</td>
+            <td>Super speed</td>
+        </tr>
+    </table>
+    <embed type="video/webm" src="/media/cc0-videos/flower.mp4" width="250" height="200">
+    <img src="/media/image.jpg" width="320" height="200">
+    <input type="text" name="family-name" value="Yamada">
+
+    <hr>
+    <form>
+        <select name="selection">
+            <option selected value="A">A LABEL</option>
+            <option value="B">B LABEL</option>
+        </select>
+    </form>
+</div>
+
+</body>
+</html>

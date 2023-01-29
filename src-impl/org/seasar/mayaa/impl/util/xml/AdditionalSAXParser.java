@@ -15,41 +15,32 @@
  */
 package org.seasar.mayaa.impl.util.xml;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.AbstractSAXParser;
+import org.apache.xerces.parsers.StandardParserConfiguration;
 import org.apache.xerces.xni.Augmentations;
-import org.seasar.mayaa.impl.builder.parser.AdditionalHandlerFilter;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.parser.XMLParserConfiguration;
+import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class AdditionalSAXParser extends SAXParser {
+public class AdditionalSAXParser extends AbstractSAXParser {
 
-    private AdditionalHandlerFilter _filter;
-
-    public AdditionalSAXParser() {
-        super();
-
-        _filter = new AdditionalHandlerFilter();
-        fConfiguration.addRecognizedProperties(
-                _filter.getRecognizedProperties()
-        );
+    protected AdditionalSAXParser() {
+        this(new StandardParserConfiguration());
     }
 
-    public void setProperty(String propertyId, Object value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
-        super.setProperty(propertyId, value);
-
-        _filter.setProperty(propertyId, value);
+    protected AdditionalSAXParser(XMLParserConfiguration config) {
+        super(config);
     }
 
-    public void xmlDecl(
-            String version, String encoding, String standalone,
-            Augmentations augs) {
+    @Override
+    public void xmlDecl(String version, String encoding, String standalone, Augmentations augs) throws XNIException {
         super.xmlDecl(version, encoding, standalone, augs);
-
-        _filter.xmlDecl(version, encoding, standalone, augs);
+        if (fContentHandler instanceof AdditionalHandler) {
+            ((AdditionalHandler) fContentHandler).xmlDecl(version, encoding, standalone);
+        }
     }
 
 }

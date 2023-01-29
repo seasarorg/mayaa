@@ -8,6 +8,8 @@
         <errorHandler class="org.seasar.mayaa.impl.engine.error.TemplateErrorHandler">
             <parameter name="folder" value="/"/>
             <parameter name="extension" value="html"/>
+            <parameter name="omitHandlerPageNotExist" value="false" /><!-- since 1.2.1 -->
+            <parameter name="omitStackTraceToLogger" value="false" /><!-- since 1.2.1 -->
         </errorHandler>
         <parameter name="pageClass" value="org.seasar.mayaa.impl.engine.PageImpl"/>
         <parameter name="templateClass" value="org.seasar.mayaa.impl.engine.TemplateImpl"/>
@@ -29,6 +31,7 @@
         <parameter name="noCacheValue" value="no-cache"/><!-- since 1.1.27, for firefox "no-cache, no-store" -->
         <parameter name="dumpEnabled" value="false" />
         <parameter name="convertCharset" value="false"/><!-- since 1.1.12 -->
+        <parameter name="useNewParser" value="false"/><!-- since 1.2.1 -->
     </engine>
 
     <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
@@ -45,7 +48,6 @@
     </scriptEnvironment>
 
     <specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
-        <parameter name="outputTemplateWhitespace" value="true"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
     </specificationBuilder>
 
@@ -103,7 +105,6 @@
         </resolver>
         <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
         <parameter name="outputTemplateWhitespace" value="true"/>
-        <parameter name="outputMayaaWhitespace" value="false"/>
         <parameter name="optimize" value="true"/>
         <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
         <parameter name="replaceSSIInclude" value="false"/><!-- since 1.1.25 -->

@@ -49,9 +49,8 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
-import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
-import org.seasar.mayaa.impl.builder.parser.TemplateParser;
-import org.seasar.mayaa.impl.builder.parser.TemplateScanner;
+import org.seasar.mayaa.impl.builder.parser.HtmlTemplateParser;
+import org.seasar.mayaa.impl.builder.parser.NekoHtmlParser;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
@@ -66,7 +65,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -76,6 +74,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         implements TemplateBuilder {
     public static final String DEFAULT_CHARSET = "defaultCharset";
     public static final String BALANCE_TAG = "balanceTag";
+    public static final String USE_NEW_PARSER = "useNewParser";
     public static final String REPLACE_SSI_INCLUDE = "replaceSSIInclude";
     public static final String OPTIMIZE = "optimize";
     public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
@@ -84,9 +83,8 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     private static final long serialVersionUID = -1031702086020145692L;
 
     private List<InjectionResolver> _resolvers = new ArrayList<>();
-    private List<InjectionResolver> _unmodifiableResolvers =
-        Collections.unmodifiableList(_resolvers);
-    private HtmlReaderPool _htmlReaderPool = new HtmlReaderPool();
+    private List<InjectionResolver> _unmodifiableResolvers = Collections.unmodifiableList(_resolvers);
+    private XMLReaderPool _htmlReaderPool = new NekoHtmlReaderPool();
     private transient InjectionChain _chain = new DefaultInjectionChain();
     private boolean _outputTemplateWhitespace = true;
     private boolean _optimize = true;
@@ -119,12 +117,20 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     }
 
     protected SpecificationNodeHandler createContentHandler(
-            Specification specification) {
+            Specification specification, String encoding) {
         if (specification instanceof Template == false) {
             throw new IllegalArgumentException();
         }
-        TemplateNodeHandler handler =
-            new TemplateNodeHandler((Template) specification);
+
+        TemplateNodeHandler handler = null;
+
+        if (_htmlReaderPool instanceof HtmlReaderPool) {
+            handler = new TemplateNodeHandler((Template) specification);
+        } else if (_htmlReaderPool instanceof NekoHtmlReaderPool) {
+            handler = new NekoHtmlNodeHandler((Template) specification);
+        }
+
+        handler.setSpecifiedEncoding(encoding);
         handler.setOutputTemplateWhitespace(isOutputTemplateWhitespace());
         handler.setSSIIncludeReplacementEnabled(isSSIIncludeReplacementEnabled());
         return handler;
@@ -152,7 +158,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         String systemID = specification.getSystemID();
         /*
          * SSI includeが有効なとき、{@link #getIncludeExtension()}の拡張子であれば
-         * divで囲んで自動的にm:doRenderになるようにする。ただしNekoHTMLParserの都合上、
+         * divで囲んで自動的にm:doRenderになるようにする。ただしTemplateParserの都合上、
          * 最低限何かのタグで囲む必要がある。(ルートに文字列があっても無視される)
          */
         if (isSSIIncludeReplacementEnabled() && systemID.endsWith(getIncludeExtension())) {
@@ -613,14 +619,27 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         } else if (DEFAULT_CHARSET.equals(name)) {
             try {
                 "".getBytes(value);
-                _htmlReaderPool.setDefaultCharset(value);
             } catch (UnsupportedEncodingException e) {
                 String message =
                     StringUtil.getMessage(TemplateBuilderImpl.class, 0, value);
                 LOG.warn(message, e);
             }
         } else if (BALANCE_TAG.equals(name)) {
-        	_htmlReaderPool.setBalanceTag(ObjectUtil.booleanValue(value, true));
+            if (_htmlReaderPool instanceof NekoHtmlReaderPool) {
+                ((NekoHtmlReaderPool) _htmlReaderPool).setBalanceTag(ObjectUtil.booleanValue(value, true));
+            }
+        } else if (USE_NEW_PARSER.equals(name)) {
+            // switch HTML reader pool instance
+            boolean val = ObjectUtil.booleanValue(value, false);
+            if (val) {
+                if (_htmlReaderPool instanceof HtmlReaderPool == false) {
+                    _htmlReaderPool = new HtmlReaderPool();
+                }
+            } else {
+                if (_htmlReaderPool instanceof NekoHtmlReaderPool == false) {
+                    _htmlReaderPool = new NekoHtmlReaderPool();
+                }
+            }
         }
         super.setParameter(name, value);
     }
@@ -658,43 +677,72 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     // support class --------------------------------------------------
 
-    protected static class HtmlReaderPool extends XMLReaderPool {
+    protected class NekoHtmlReaderPool extends XMLReaderPool {
 
-        private static final long serialVersionUID = -5203349759797583368L;
-        private String _defaultCharset = TEMPLATE_DEFAULT_CHARSET;
         private boolean _balanceTag = true;
-
-        protected void setDefaultCharset(String charset) {
-            _defaultCharset = charset;
-        }
 
         protected void setBalanceTag(boolean balanceTag) {
         	_balanceTag = balanceTag;
         }
 
+        @Override
         protected Object createObject() {
-            return new TemplateParser(new TemplateScanner(), _defaultCharset, _balanceTag);
+            NekoHtmlParser parser = new NekoHtmlParser();
+            parser.setFeature(NekoHtmlParser.BALANCE_TAGS, _balanceTag);
+            return parser;
         }
 
+        @Override
         protected boolean validateObject(Object object) {
-            return object instanceof TemplateParser;
+            return object instanceof NekoHtmlParser;
         }
 
+        @Override
         public XMLReader borrowXMLReader(ContentHandler handler,
-                boolean namespaces, boolean validation, boolean xmlSchema) {
-            XMLReader htmlReader = super.borrowXMLReader(
-                    handler, namespaces, validation, xmlSchema);
-            if (handler instanceof AdditionalHandler) {
-                try {
-                    htmlReader.setProperty(
-                            AdditionalHandler.ADDITIONAL_HANDLER, handler);
-                } catch (SAXException e) {
-                    throw new RuntimeException(e);
-                }
+                boolean namespaces, boolean validation, boolean xmlSchema, boolean notifyEntity) {
+            XMLReader htmlReader = (XMLReader) borrowObject();
+            buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
+
+            if (htmlReader instanceof NekoHtmlParser) {
+                ((NekoHtmlParser) htmlReader).setFeature(NekoHtmlParser.BALANCE_TAGS, _balanceTag);
             }
             return htmlReader;
         }
+    }
 
+    protected class HtmlReaderPool extends XMLReaderPool {
+
+        private boolean _balanceTag = true;
+
+        protected void setBalanceTag(boolean balanceTag) {
+        	_balanceTag = balanceTag;
+        }
+
+        @Override
+        protected Object createObject() {
+            HtmlTemplateParser parser = new HtmlTemplateParser();
+            parser.setFeature(HtmlTemplateParser.FEATURE_INSERT_IMPLIED_ELEMENT, false);
+            parser.setFeature(HtmlTemplateParser.FEATURE_DELETE_UNEXPECTED_ELEMENT, _balanceTag);
+            return parser;
+        }
+
+        @Override
+        protected boolean validateObject(Object object) {
+            return object instanceof HtmlTemplateParser;
+        }
+
+        @Override
+        public XMLReader borrowXMLReader(ContentHandler handler,
+                boolean namespaces, boolean validation, boolean xmlSchema, boolean notifyEntity) {
+            XMLReader htmlReader = (XMLReader) borrowObject();
+            buildReader(htmlReader, handler, namespaces, validation, xmlSchema, notifyEntity);
+            if (htmlReader instanceof HtmlTemplateParser) {
+                HtmlTemplateParser parser = (HtmlTemplateParser) htmlReader;
+                parser.setFeature(HtmlTemplateParser.FEATURE_INSERT_IMPLIED_ELEMENT, false);
+                parser.setFeature(HtmlTemplateParser.FEATURE_DELETE_UNEXPECTED_ELEMENT, false);
+            }
+            return htmlReader;
+        }
     }
 
     protected class InjectionChainImpl implements InjectionChain {

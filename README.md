@@ -43,6 +43,22 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
 ## 変更履歴
 最近の変更履歴は下記の通りです。過去の変更点については [CHANGELOG.md](./CHANGELOG.md) を参照ください。
 
+### Mayaa 1.2.1 : Not yet released
+
+#### Changes
+- [#80](https://github.com/seasarorg/mayaa/pull/80) - Mayaa動作要件の最低JavaバージョンをJava8としました。
+- [#75](https://github.com/seasarorg/mayaa/issue/75) - xml宣言やmetaタグでcharset変更を検知した時に文字コードを指定して再読み込みするように変更しました。
+
+#### Fixes
+- [#75](https://github.com/seasarorg/mayaa/issues/75) - balanceTag を無効にするとDOCTYPEがheadタグ内に余分に付加される問題を修正しました。
+
+
+#### Experimental
+- [#77](https://github.com/seasarorg/mayaa/pull/77) -  NekoHTMLを使用せずHTML Living Standardの定義に近いHTMLパーサを実装しました。[詳細](#新パーサーについて)
+
+#### Internal
+- テストフレームワークをJUnit5に変更しました。
+
 ### Mayaa 1.2 : 2020-11-15
 
 #### Changes
@@ -62,7 +78,24 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
   org.seasar.mayaa.provider.ServiceProvider 内の scriptEnvironment のパラメータ名 cacheSize にて最小の保持数を設定します。（デフォルト値128）
 - [#49](https://github.com/seasarorg/mayaa/pull/49) - URLエンコードされる文字を含むsystemIDのファイル実体が参照できない潜在的不具合に対応しました。
 
-### Mayaa 1.1.34 : 2017-07-30
-#### Fixes
-- [#7](https://github.com/seasarorg/mayaa/issues/7) - mayaaファイルに ${} で書いた変数名がそのまま展開される場合がある不具合を修正しました。
-- [#5](https://github.com/seasarorg/mayaa/issues/5) - テンプレートに書かれたインデントが詰められる不具合を修正しました。
+
+## 新パーサーについて
+
+昨今のフロントエンドの仕様に追従できるようにNekoHTMLを使用せずHTML Living Standardの定義に近いHTMLパーサを独自実装しました。
+
+WEB-INF/org.seasar.mayaa.provider.ServiceProvider の templateBuilder 設定でパラメータ名 `useNewParser` を `true` に設定すると有効になります。
+```xml
+    <templateBuilder class="org.seasar.mayaa.impl.builder.TemplateBuilderImpl">
+        (snip)
+        <parameter name="useNewParser" value="true"/>
+```
+未指定時は NekoHTMLパーサを使用します。
+将来的にはこの新パーサをデフォルトにします。最終的にはNekoHTML版のパーサは廃止する計画です。
+
+まだ実験的機能ですが下記の特徴があります。
+
+* HTMLのタグバランシング機能を廃止
+* Void Element を正しく処理できるようにした（一部のエレメントはNekoHTMLパーサでも対応した） 
+* Empty attribute では属性名のみを出力する ( `<input disabled>` のように出力される )
+* Unquoted attribute value をパースできるようにした( '=' 以後の最初の空白文字までを値とみなす)。出力は常に二重引用符で囲む。
+* @click や :value などJavaScriptのUIライブラリで使用される属性の記法を出力する

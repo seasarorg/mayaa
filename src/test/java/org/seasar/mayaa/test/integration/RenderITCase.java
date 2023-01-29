@@ -1,17 +1,19 @@
 package org.seasar.mayaa.test.integration;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class RenderITCase extends WebDriverBase {
     //@formatter:off
-    final static Object[][] data = new Object[][] {
-        {
+    final static Stream<Arguments> data = Stream.of(
+        arguments(
             "no-injection",
             "/tests/engine/inject_no.html",
             new Command[] {
@@ -22,7 +24,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementPresent("//meta"),
                 verifyElementPresent("//link")
             }
-        }, {
+        ),
+        arguments(
             "injection with .mayaa",
             "/tests/engine/inject_mayaa.html",
             new Command[] {
@@ -32,7 +35,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementNotPresent("//span[@id=\"message1\"]"),
                 verifyText("//span[@id=\"message2\"]", "dummy")
             }
-        }, {
+        ),
+        arguments(
             "no-injection",
             "/tests/engine/inject_no.html",
             new Command[] {
@@ -43,7 +47,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementPresent("//meta"),
                 verifyElementPresent("//link")
             }
-        }, {
+        ),
+        arguments(
             "injection with .mayaa",
             "/tests/engine/inject_mayaa.html",
             new Command[] {
@@ -54,7 +59,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementNotPresent("//span[@id=\"message1\"]"),
                 verifyText("//span[@id=\"message2\"]", "dummy")
             }
-        }, {
+        ),
+        arguments(
             "injection on template",
             "/tests/engine/inject_template.html",
             new Command[] {
@@ -65,7 +71,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyTextNotPresent("dummy"),
                 verifyElementNotPresent("//div/span")
             }
-        }, {
+        ),
+        arguments(
             "replace",
             "/tests/engine/replace.html",
             new Command[] {
@@ -82,7 +89,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementNotPresent("//span[@id=\"message2_body\"]"),
                 verifyElementNotPresent("//span[@id=\"message3\"]")
             }
-        }, {
+        ),
+        arguments(
             "ignore",
             "/tests/engine/ignore_mayaa.html",
             new Command[] {
@@ -94,7 +102,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyElementPresent("//span[@id=\"message1\"]"),
                 verifyElementPresent("//span[@id=\"message2\"]")
             }
-        }, {
+        ),
+        arguments(
             "ignore",
             "/tests/engine/inject_xpath.html",
             new Command[] {
@@ -104,7 +113,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//span[@class=\"message1\"]", "hello"),
                 verifyText("//span[@class=\"message2\"]", "dummy")
             }
-        }, {
+        ),
+        arguments(
             "xmlns # namespaceを調べられるなら追加すること：現状不明",
             "/tests/engine/xout.html",
             new Command[] {
@@ -112,7 +122,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//p[@id=\"message\"]", "hello"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
             "escape",
             "/tests/engine/escape.html",
             new Command[] {
@@ -126,7 +137,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//span[@id=\"message7\"]/b[@id=\"message7_2\"]", "&lt;&amp;amp;&gt;"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
             "escape",
             "/tests/engine/escape.xhtml",
             new Command[] {
@@ -140,7 +152,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//span[@id=\"message7\"]/b[@id=\"message7_2\"]", "&lt;&amp;amp;&gt;"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
         //     "escape 目視", // htmlタグに xhtmlのxmlns定義を明示することで実行可能になるが、、
         //     "/tests/engine/escape.xml",
         //     new Command[] {
@@ -165,7 +178,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyTextNotPresent("hello11"),
                 verifyTextNotPresent("hello22")
             }
-        }, {
+        ),
+        arguments(
             "template_attribute",
             "/tests/engine/template_attribute.html",
             new Command[] {
@@ -177,7 +191,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//span[@id=\"message5\"]", "001.1"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
             "script",
             "/tests/engine/script.html",
             new Command[] {
@@ -224,57 +239,64 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey7\"]", "20.1"),
                 verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue7\"]", "")
             }
-        }, {
+        ),
+        arguments(
             "prefix no xmlns",
             "/tests/engine/no_xmlns.html",
             new Command[] {
                 verifyTitle("tests_1_14"),
                 verifyTextPresent("prefix")
             }
-        }, {
+        ),
+        arguments(
             "forward",
             "/tests/engine/forward/forward.html",
             new Command[] {
                 verifyTitle("tests_1_15"),
                 verifyTextPresent("forwarded")
             }
-        }, {
+        ),
+        arguments(
             "redirect",
             "/tests/engine/forward/redirect.html",
             new Command[] {
                 verifyTitle("tests_1_16"),
                 verifyTextPresent("redirected")
             }
-        }, {
+        ),
+        arguments(
             "handle error and forward",
             "/tests/engine/forward/error_forward.html",
             new Command[] {
                 verifyTitle("tests_1_17"),
                 verifyTextPresent("error_forwarded")
             }
-        }, {
+        ),
+        arguments(
             "handle error and redirect",
             "/tests/engine/forward/error_redirect.html",
             new Command[] {
                 verifyTitle("tests_1_18"),
                 verifyTextPresent("error_redirected")
             }
-        }, {
+        ),
+        arguments(
             "required test - null",
             "/tests/engine/required.html",
             new Command[] {
                 verifyTextPresent(
-                "lack of required attribute - http://mayaa.seasar.org: element.name, /tests/engine/required.mayaa#4."),
+                "NoRequiredPropertyException"),
             }
-        },
-        {
-            "required test - empty",
+        ),
+        arguments(
+                "required test - empty",
             "/tests/engine/required_not_empty.html",
             new Command[] {
                 verifyTextPresent(
-                "lack of required attribute - http://mayaa.seasar.org: element.name, /tests/engine/required_not_empty.mayaa#4.")
+                "NoRequiredPropertyException")
             }
-        }, {
+        ),
+        arguments(
             "undefined identifier",
             "/tests/engine/undefined_identifier.html",
             new Command[] {
@@ -282,7 +304,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//form/div[1]", "一つ選択"),
                 verifyText("//form/div[2]", "複数選択")
             }
-        }, {
+        ),
+        arguments(
             "cdata",
             "/tests/engine/cdata.html",
             new Command[] {
@@ -290,16 +313,16 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("message1", "&lt;hello1&gt;"),
                 verifyText("message2", "&lt;hello2&gt;")
             }
-        },
-        
-        {
-            "forward under WEB-INF",
+        ),
+        arguments(
+                "forward under WEB-INF",
             "/tests/engine/forward/forward_to_webinf.html",
             new Command[] {
                 verifyTitle("tests_1_23"),
                 verifyTextPresent("forwarded")
             }
-        }, {
+        ),
+        arguments(
             "charset変換で文字化けしないことを確認_HTML",
             "/tests/engine/charset_html.html",
             new Command[] {
@@ -307,7 +330,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("bake", "～∥－―￢￡Φ①"),
                 verifyAttribute("//meta", "content", "text/html; charset=Shift_JIS")
             }
-        }, {
+        ),
+        arguments(
             "charset変換で文字化けしないことを確認_XHTML",
             "/tests/engine/charset_xhtml.html",
             new Command[] {
@@ -315,7 +339,8 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("bake", "～∥－―￢￡Φ①"),
                 verifyAttribute("//meta", "content", "text/html; charset=Shift_JIS")
             }
-        }, {
+        ),
+        arguments(
             "SSI include 記述を m:insert へ変換",
             "/tests/engine/inject_include.html",
             new Command[] {
@@ -324,23 +349,23 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("li1", "111"),
                 verifyText("li2", "222")
             }
-        },
-    };
+        )
+    );
     //@formatter:on
 
     @BeforeAll
     public static void setUpClass() {
         setUpSelenide();
     }
-       
+
     @ParameterizedTest(name = "{0}: path={1}")
-    @MethodSource
+    @MethodSource("dataProvider")
     @EnabledIfSystemProperty(named = "inMaven", matches = "1")
     public void test(String title, String path, Command[] commands) {
         runTest(title, path, commands);
     }
 
-    static List<Object[]> test() {
-        return Arrays.asList(data);
+    static Stream<Arguments> dataProvider() {
+        return data;
     }
 }

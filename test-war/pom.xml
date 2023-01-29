@@ -8,7 +8,7 @@
   <artifactId>mayaa-package-test</artifactId>
   <name>Mayaa Package Test</name>
   <packaging>war</packaging>
-  <version>1.0</version>
+  <version>${mayaa.version}</version>
   <description>This is an webapp for testing the Mayaa distribution package.</description>
   <url>http://mayaa.seasar.org/</url>
 
@@ -19,6 +19,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mayaa.version>1.2.1-SNAPSHOT</mayaa.version>
+    <maven.compiler.release>8</maven.compiler.release>
+    <doclint>none</doclint>
+  </properties>
 
   <build>
     <plugins>
@@ -37,13 +44,17 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
         <configuration>
           <encoding>UTF-8</encoding>
-          <source>1.7</source>
-          <target>1.7</target>
           <compilerArgument>-Xlint:deprecation</compilerArgument>
         </configuration>
       </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M7</version>
+        </plugin>
         <plugin>
           <groupId>com.lazerycode.jmeter</groupId>
           <artifactId>jmeter-maven-plugin</artifactId>
@@ -89,7 +100,7 @@
     <dependency>
       <groupId>com.github.seasarorg.mayaa</groupId>
       <artifactId>mayaa</artifactId>
-      <version>1.1.34</version>
+      <version>${mayaa.version}</version>
     </dependency>
     <dependency><!-- for custom tags -->
       <groupId>javax.servlet</groupId>
@@ -108,6 +119,18 @@
       <groupId>javax.servlet.jsp.jstl</groupId>
       <artifactId>javax.servlet.jsp.jstl-api</artifactId>
       <version>1.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
     </dependency>
   </dependencies> 
 

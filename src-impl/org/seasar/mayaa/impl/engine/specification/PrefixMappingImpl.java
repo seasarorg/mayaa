@@ -42,6 +42,9 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
         if (_cache == null) {
             return null;
         }
+        if (namespaceURI.equals(URIImpl.NULL_NS_URI)) {
+            return new PrefixMappingImpl(prefix, namespaceURI);
+        }
 
         String key = forPrefixMappingString(prefix, namespaceURI);
 
@@ -58,7 +61,7 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
     private URI _namespaceURI;
 
     private PrefixMappingImpl(String prefix, URI namespaceURI) {
-        if (namespaceURI == null || namespaceURI.getValue().isEmpty()) {
+        if (namespaceURI == null) {
             throw new IllegalArgumentException();
         }
         if (prefix == null) {

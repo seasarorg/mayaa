@@ -1,17 +1,19 @@
 package org.seasar.mayaa.test.integration;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class ProcessorITCase extends WebDriverBase {
     //@formatter:off
-    final static Object[][] data = new Object[][] {
-        {
+    final static Stream<Arguments> data = Stream.of(
+        arguments(
             "write",
             "/tests/processor/write.html",
             new Command[] {
@@ -40,7 +42,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyText("//span[@id=\"test16\"]", "&amp;Test16th"),
                 verifyText("//span[@id=\"test17\"]", "body<br>text<br>to<br>multi<br>line")
             }
-        }, {
+        ),
+        arguments(
             "if",
             "/tests/processor/if.html",
             new Command[] {
@@ -52,7 +55,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("if_5"),
                 verifyTextNotPresent("if_6")
             }
-        }, {
+        ),
+        arguments(
             "for",
             "/tests/processor/for.html",
             new Command[] {
@@ -65,13 +69,15 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("test3_1"),
                 verifyTextPresent("test3_2")
             }
-        }, {
+        ),
+        arguments(
             "for too many loop",
             "/tests/processor/for_toomany.html",
             new Command[] {
                 verifyTextPresent("Too many loops, max count is 2")
             }
-        }, {
+        ),
+        arguments(
             "forEach",
             "/tests/processor/forEach.html",
             new Command[] {
@@ -80,7 +86,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("2:bar"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
             "formatNumber",
             "/tests/processor/formatNumber.html",
             new Command[] {
@@ -90,7 +97,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("defValue"),
                 verifyTextNotPresent("error")
             }
-        }, {
+        ),
+        arguments(
             "formatDate",
             "/tests/processor/formatDate.html",
             new Command[] {
@@ -100,7 +108,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("defValue"),
                 verifyTextNotPresent("error")
             }
-        }, {
+        ),
+        arguments(
             "element",
             "/tests/processor/element.html",
             new Command[] {
@@ -112,7 +121,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("element1"),
                 verifyTextPresent("element2")
             }
-        }, {
+        ),
+        arguments(
             "echo",
             "/tests/processor/echo.html",
             new Command[] {
@@ -126,7 +136,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextPresent("echo1"), verifyTextPresent("echo2"),
                 verifyTextPresent("echo3")
             }
-        }, {
+        ),
+        arguments(
             "comment",
             "/tests/processor/comment.html",
             new Command[] {
@@ -135,7 +146,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyTextNotPresent("body"),
                 verifyTextNotPresent("comment out by mayaa")
             }
-        }, {
+        ),
+        arguments(
             "forEach recursive",
             "/tests/processor/forEachRecursive.html",
             new Command[] {
@@ -150,7 +162,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyText("//ul[@id='root']/li/ul/li/ul/li/ul/li[1]/span", "1-3-3-1"),
                 verifyTextNotPresent("dummy")
             }
-        }, {
+        ),
+        arguments(
             "exec",
             "/tests/processor/exec.html",
             new Command[] {
@@ -161,8 +174,8 @@ public class ProcessorITCase extends WebDriverBase {
                 verifyText("test3", "テスト3"),
                 verifyText("test4", "テスト4")
             }
-        }
-    };
+        )
+    );
     //@formatter:on
 
     @BeforeAll
@@ -171,13 +184,13 @@ public class ProcessorITCase extends WebDriverBase {
     }
 
     @ParameterizedTest(name = "{0}: path={1}")
-    @MethodSource
+    @MethodSource("dataProvider")
     @EnabledIfSystemProperty(named = "inMaven", matches = "1")
     public void test(String title, String path, Command[] commands) {
         runTest(title, path, commands);
     }
 
-    static List<Object[]> test() {
-        return Arrays.asList(data);
+    static Stream<Arguments> dataProvider() {
+        return data;
     }
 }

@@ -3,6 +3,8 @@
 ## Mayaa 1.2.1 : Not yet released
 
 ### Changes
+- [#80](https://github.com/seasarorg/mayaa/pull/80) - Mayaa動作要件の最低JavaバージョンをJava8としました。
+- [#75](https://github.com/seasarorg/mayaa/issue/75) - xml宣言やmetaタグでcharset変更を検知した時に文字コードを指定して再読み込みするように変更しました。
 - 各ファクトリクラス、ServiceProviderの読み込みで書式にエラーがあっても起動できてしまっていたため、明確にエラーとするようにした。
 - 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更しました。
 これまでは順に生成されてもより後から生成されたもので破棄および上書きされていたため無駄となっていました。
@@ -25,7 +27,15 @@
 | libraryManager          | org.seasar.mayaa.builder.library.LibraryManager | org.seasar.mayaa.impl.builder.library.LibraryManagerImpl |
 | templateAttributeReader | org.seasar.mayaa.builder.library.TemplateAttributeReader | org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl |
 
+### Fixes
+- [#75](https://github.com/seasarorg/mayaa/issues/75) - balanceTag を無効にするとDOCTYPEがheadタグ内に余分に付加される問題を修正しました。
 
+
+### Experimental
+- [#77](https://github.com/seasarorg/mayaa/pull/77) -  NekoHTMLを使用せずHTML Living Standardの定義に近いHTMLパーサを実装しました（デフォルトはNekoHTML版）。
+
+### Internal
+- テストフレームワークをJUnit5に変更しました。
 
 ## Mayaa 1.2 : 2020-11-15
 

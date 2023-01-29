@@ -7,7 +7,11 @@
     <servlet>
         <servlet-name>MayaaServlet</servlet-name>
         <servlet-class>org.seasar.mayaa.impl.MayaaServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>

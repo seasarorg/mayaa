@@ -2,9 +2,9 @@
 <!DOCTYPE provider
     PUBLIC "-//The Seasar Foundation//DTD Mayaa Provider 1.0//EN"
     "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
-<provider>
+<provider class="org.seasar.mayaa.impl.provider.ServiceProviderImpl">
 
-    <engine>
+    <engine class="org.seasar.mayaa.impl.engine.EngineImpl">
         <errorHandler class="org.seasar.mayaa.impl.engine.error.TemplateErrorHandler">
             <parameter name="folder" value="/"/>
             <parameter name="extension" value="html"/>
@@ -19,7 +19,7 @@
         <parameter name="requestedSuffixEnabled" value="false" />
         <parameter name="welcomeFileName" value="index.html"/>
         <parameter name="requestCharacterEncoding" value="UTF-8"/>
-        <parameter name="pageSerialize" value="true"/>
+        <parameter name="pageSerialize" value="false"/>
         <parameter name="surviveLimit" value="5"/>
         <parameter name="autoBuild" value="false"/>
         <parameter name="autoBuild.repeat" value="false"/>
@@ -33,7 +33,7 @@
         <parameter name="convertCharset" value="true"/><!-- since 1.1.12 -->
     </engine>
 
-    <scriptEnvironment>
+    <scriptEnvironment class="org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl">
         <scope class="org.seasar.mayaa.impl.cycle.scope.ParamScope"/>
         <scope class="org.seasar.mayaa.impl.cycle.scope.HeaderScope"/>
         <scope class="org.seasar.mayaa.impl.cycle.scope.BindingScope"/>
@@ -47,12 +47,12 @@
         <parameter name="cacheSize" value="256"/><!-- since 1.2-SNAPSHOT -->
     </scriptEnvironment>
 
-    <specificationBuilder>
+    <specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
         <parameter name="outputTemplateWhitespace" value="true"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
     </specificationBuilder>
 
-    <libraryManager>
+    <libraryManager class="org.seasar.mayaa.impl.builder.library.LibraryManagerImpl">
         <converter name="ProcessorProperty" class="org.seasar.mayaa.impl.builder.library.converter.ProcessorPropertyConverter"/>
         <converter name="PrefixAwareName" class="org.seasar.mayaa.impl.builder.library.converter.PrefixAwareNameConverter"/>
         <scanner class="org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner">
@@ -94,7 +94,7 @@
         <builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder"/>
     </libraryManager>
 
-    <templateBuilder>
+    <templateBuilder class="org.seasar.mayaa.impl.builder.TemplateBuilderImpl">
         <resolver class="org.seasar.mayaa.impl.builder.injection.MetaValuesSetter"/>
         <resolver class="org.seasar.mayaa.impl.builder.injection.ReplaceSetter"/>
         <resolver class="org.seasar.mayaa.impl.builder.injection.RenderedSetter"/>
@@ -107,7 +107,7 @@
             <parameter name="addAttribute" value="{http://www.w3.org/1999/xhtml}id"/>
         </resolver>
         <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
-        <parameter name="outputTemplateWhitespace" value="true"/>
+        <parameter name="outputTemplateWhitespace" value="false"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
         <parameter name="optimize" value="true"/>
         <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
@@ -116,12 +116,12 @@
         <parameter name="useNewParser" value="true"/><!-- since 1.2.1 -->
     </templateBuilder>
 
-    <pathAdjuster>
+    <pathAdjuster class="org.seasar.mayaa.impl.builder.PathAdjusterImpl">
         <parameter name="enabled" value="true"/>
         <parameter name="force" value="false"/><!-- since 1.1.13 -->
     </pathAdjuster>
 
-    <templateAttributeReader>
+    <templateAttributeReader class="org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl">
         <!-- example
         <ignoreAttribute
                 qName="{http://struts.apache.org/tags-html}errors"
@@ -142,6 +142,7 @@
         <parameter name="enabled" value="true"/>
     </templateAttributeReader>
 
-    <parentSpecificationResolver />
+    <parentSpecificationResolver class="org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl">
+    </parentSpecificationResolver>
 
 </provider>

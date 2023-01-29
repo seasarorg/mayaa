@@ -63,6 +63,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     private static final QName QX_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "content");
 
     protected int _columnNumberBeforeFirstElement = -1;
+    private int _inEntity;
 
     public TemplateNodeHandler(Template specification) {
         super(specification);
@@ -349,11 +350,25 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     }
 
     @Override
-    public void startEntity(String name) throws SAXException {
+    public void characters(char[] buffer, int start, int length) {
+        if (_inEntity == 0) {
+            appendCharactersBuffer(buffer, start, length);
+        }
+    }
+
+    protected void processEntity(String name) {
+        appendCharactersBuffer('&' + name + ';');
     }
 
     @Override
-    public void endEntity(String name) throws SAXException {
+    public void startEntity(String name) {
+        processEntity(name);
+        ++_inEntity;
+    }
+
+    @Override
+    public void endEntity(String name) {
+        --_inEntity;
     }
 
  }

@@ -151,7 +151,7 @@ public class EngineTest extends EngineTestBase {
     @Test
     public void escape_xhtml() throws IOException {
         // getServiceProvider().getTemplateBuilder();
-        setEngineParameter(CONST_IMPL.TEMPLATE_PATH_PATTERN, ".*\\.(html|xml|xhtml|mayaa)");
+        setEngineParameter(CONST_IMPL.TEMPLATE_PATH_PATTERN, ".*\\.(html|xml|xhtml)");
 
         final String DIR = "/it-case/engine/escape_xhtml/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);
@@ -159,7 +159,7 @@ public class EngineTest extends EngineTestBase {
 
     @Test
     public void escape_xml() throws IOException {
-        setEngineParameter(CONST_IMPL.TEMPLATE_PATH_PATTERN, ".*\\.(html|xml|xhtml|mayaa)");
+        setEngineParameter(CONST_IMPL.TEMPLATE_PATH_PATTERN, ".*\\.(html|xml|xhtml)");
 
         final String DIR = "/it-case/engine/escape/";
         execAndVerify(DIR + "target.xml", DIR + "expected.xml", null);

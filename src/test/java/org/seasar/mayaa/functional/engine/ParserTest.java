@@ -141,6 +141,41 @@ public class ParserTest extends EngineTestBase {
             execAndVerify(DIR + "target.html", DIR + "expected.html", null);
         }
     
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void HTMLファイルで文字参照の状態がテンプレート記載のまま維持される(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+    
+            execAndVerify("/target.html", "/expected.html", null);
+        }
+
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void XMLファイルでも文字参照の状態がテンプレート記載のまま維持される(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.xml", 
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.xml", 
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+    
+            execAndVerify("/target.xml", "/expected.xml", null);
+        }
     }
 
     @Nested

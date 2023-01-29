@@ -405,8 +405,16 @@ class TestingMockServletContext extends MockServletContext {
 
     @Override
     public String getMimeType(String filePath) {
-        if (filePath != null && filePath.endsWith(".inc")) {
-            return "text/html";
+        if (filePath != null && filePath.lastIndexOf('.') != -1) {
+            String ext = filePath.substring(filePath.lastIndexOf('.'));
+            switch (ext) {
+                case ".inc":
+                    return "text/html";
+                case ".xml":
+                    return "text/xml";
+                default:
+                    break;
+            }
         }
         return super.getMimeType(filePath);
     }

@@ -81,6 +81,7 @@ public abstract class SpecificationNodeHandler
     private boolean _inCData;
 
     private String _encoding;
+    private boolean _justSeenXmlDecl = false;
 
     /**
      * {@link Specification} をファイルから読み込む際の最上位の名前空間設定を返す。
@@ -258,6 +259,10 @@ public abstract class SpecificationNodeHandler
     }
 
     private String removeIgnorableWhitespace(String characters) {
+        if (_justSeenXmlDecl) {
+            _justSeenXmlDecl =  false;
+            return characters;
+        }
         StringBuilder buffer = new StringBuilder(characters.length());
         String[] line = characters.split("\n");
         for (int i = 0; i < line.length; i++) {
@@ -396,6 +401,7 @@ public abstract class SpecificationNodeHandler
         if (buffer.length() > 0) {
             node.addAttribute(QM_DATA, buffer.toString().trim());
         }
+        _justSeenXmlDecl = true;
     }
 
     @Override

@@ -59,7 +59,7 @@ public class ProcessingInstructionProcessor
         if (StringUtil.hasValue(_data)) {
             processingInstruction.append(" ").append(_data);
         }
-        processingInstruction.append("?>\r\n");
+        processingInstruction.append("?>");
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         cycle.getResponse().write(processingInstruction.toString());
         return ProcessStatus.SKIP_BODY;

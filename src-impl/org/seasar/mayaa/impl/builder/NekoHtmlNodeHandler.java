@@ -28,9 +28,7 @@ import org.xml.sax.Attributes;
  */
 public class NekoHtmlNodeHandler extends TemplateNodeHandler {
 
-    private boolean _justAfterXmlDecl = false;
     private boolean inDTD = false;
-    private int _inEntity;
     private SpecificationNode _lastVoidElement;
 
     public NekoHtmlNodeHandler(Template specification) {
@@ -38,37 +36,8 @@ public class NekoHtmlNodeHandler extends TemplateNodeHandler {
     }
 
     @Override
-    public void characters(char[] buffer, int start, int length) {
-        if (_justAfterXmlDecl) {
-            _justAfterXmlDecl = false;
-            if (buffer[start] == '\r') {
-                start++;
-                length--;
-            }
-            if (length > 0 && buffer[start] == '\n') {
-                start++;
-                length--;
-            }
-            if (length <= 0) {
-                return;
-            }
-        }
-        if (_inEntity == 0) {
-            super.characters(buffer, start, length);
-        }
-    }
-    @Override
-    public void xmlDecl(String version, String encoding, String standalone) {
-        super.xmlDecl(version, encoding, standalone);
-        _justAfterXmlDecl = true;
-    }
-
-    @Override
     public void startElement(String namespaceURI,
             String localName, String qName, Attributes attributes) {
-        if (_justAfterXmlDecl) {
-            _justAfterXmlDecl = false;
-        }
         
         // エレメントが始まればDTD処理のフェーズは終了
         inDTD = false;
@@ -112,9 +81,7 @@ public class NekoHtmlNodeHandler extends TemplateNodeHandler {
         if (inDTD) {
             return;
         }
-        String entityRef = "&" + name + ";";
-        appendCharactersBuffer(entityRef);
-        ++_inEntity;
+        super.startEntity(name);
     }
 
     @Override
@@ -122,7 +89,7 @@ public class NekoHtmlNodeHandler extends TemplateNodeHandler {
         if (inDTD) {
             return;
         }
-        --_inEntity;
+        super.endEntity(name);
     }
 
     @Override

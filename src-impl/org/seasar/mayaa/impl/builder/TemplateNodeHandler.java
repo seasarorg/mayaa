@@ -148,24 +148,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         }
     }
 
-    protected String removeIgnorableWhitespace(String characters) {
-        StringBuilder buffer = new StringBuilder(characters.length());
-        String[] line = characters.split("\n");
-        for (int i = 0; i < line.length; i++) {
-            if (line[i].trim().length() > 0) {
-                String token = line[i].replaceAll("^[ \t]+", "");
-                token = token.replaceAll("[ \t]+$", "");
-                buffer.append(token.replaceAll("[ \t]+", " "));
-                if (i < line.length - 1) {
-                    buffer.append("\n");
-                }
-            } else if (i == 0) {
-                buffer.append("\n");
-            }
-        }
-        return buffer.toString();
-    }
-
     @Override
     public void ignorableWhitespace(char[] buffer, int start, int length) {
         appendCharactersBuffer(buffer, start, length);
@@ -208,6 +190,16 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
         addCharactersNode();
         setCurrentNode(getCurrentNode().getParentNode());
         leaveCData();
+    }
+
+    @Override
+    public void xmlDecl(String version, String encoding, String standalone) {
+        super.xmlDecl(version, encoding, standalone);
+        if ("xml".equalsIgnoreCase(getTemplate().getExtension())) {
+            // XMLファイルはXercesパーサが使用されるがXML宣言の後の改行を返却してこないため強制的に付加する.
+            //　改行がない時も付加してしまうが、互換性のため残す。
+            appendCharactersBuffer("\n");
+        }
     }
 
     /**

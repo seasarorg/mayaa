@@ -46,7 +46,6 @@
     </scriptEnvironment>
 
     <specificationBuilder class="org.seasar.mayaa.impl.builder.SpecificationBuilderImpl">
-        <parameter name="outputTemplateWhitespace" value="true"/>
         <parameter name="outputMayaaWhitespace" value="false"/>
     </specificationBuilder>
 
@@ -106,7 +105,6 @@
         </resolver>
         <resolver class="org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver"/>
         <parameter name="outputTemplateWhitespace" value="true"/>
-        <parameter name="outputMayaaWhitespace" value="false"/>
         <parameter name="optimize" value="true"/>
         <parameter name="defaultCharset" value="UTF-8"/><!-- since 1.1.22 -->
         <parameter name="replaceSSIInclude" value="true"/><!-- since 1.1.25 -->

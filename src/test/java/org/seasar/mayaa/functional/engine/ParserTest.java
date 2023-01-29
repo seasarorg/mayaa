@@ -176,6 +176,52 @@ public class ParserTest extends EngineTestBase {
     
             execAndVerify("/target.xml", "/expected.xml", null);
         }
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void HTMLファイルにXML宣言がある(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<!DOCTYPE html>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+            "<!DOCTYPE html>\n" +
+            "<html><head></head>\n" +
+            "<body><span id=\"message1\">&lt;&amp;amp;&gt;</span></body></html>"
+            );
+    
+            execAndVerify("/target.html", "/expected.html", null);
+        }
+
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void noscriptタグのパースができる(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head>\n" + 
+            "<noscript><meta keyword=\"キーワード\"></noscript>\n" +
+            "</head>\n" +
+            "<body>\n" + 
+            "<noscript><!-- 外部ファイルにリンクするアンカー --><a href=\"https://example.com/\">外部リンク</a></noscript>\n" +
+            "</body></html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html><head>\n" + 
+            "<noscript><meta keyword=\"キーワード\"></noscript>\n" +
+            "</head>\n" +
+            "<body>\n" + 
+            "<noscript><!-- 外部ファイルにリンクするアンカー --><a href=\"https://example.com/\">外部リンク</a></noscript>\n" +
+            "</body></html>"
+            );
+    
+            execAndVerify("/target.html", "/expected.html", null);
+        }
+
     }
 
     @Nested

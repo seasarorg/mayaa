@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,7 @@ public class CompareITCase {
         "/tests/customtag/simpletest.html",
         "/tests/customtag/dynamic_attribute.html",
         "/tests/customtag/dynamic_attribute_wrong.html",
+        "/tests/customtag/replace_injection_attribute.html",  // v1.1.34にてなぜか閉じタグ</html> が </xml:html> となっている。
         "/tests/customtag/rtexprtest.html",
         "/tests/customtag/simple_dynamic_test.html",
         "/tests/customtag/vinulltest.html",
@@ -89,7 +91,6 @@ public class CompareITCase {
         "/tests/layout/relative/basepage2.html",
         "/tests/layout/usecomponent.html"
         // "/tests/engine/through.html",   // Empty string の出力形式、Void Element対応により差分あり
-       // "/tests/customtag/replace_injection_attribute.html",  // v1.1.34にてなぜか閉じタグ</html> が </xml:html> となっている。
     };
 
     @Test
@@ -111,13 +112,21 @@ public class CompareITCase {
                     InputStreamReader reader = new InputStreamReader(connection.getInputStream());
                     BufferedReader br = new BufferedReader(reader);
 
+                    StringBuilder buf = new StringBuilder();
                     // PathAdjusterが動作した部分を吸収
-                    results.add(br
-                      .lines()
+                    br.lines()
                       .map(e -> e.replace(context, "/MAYAA"))
-                      .collect(Collectors.toList()));
+                      .forEach(e -> buf.append(e));
 
-                      // System.out.println(results.get(i));
+                    String content = buf.toString();
+
+                    // 1.1系でのXML宣言直後の連続する改行コードを1つに補正
+                    content = content.replace("?>\n\n", "?>\n");
+
+                    // /tests/customtag/replace_injection_attribute.html のみv1.1.34にてなぜか閉じタグ</html> が </xml:html> となっているのを吸収
+                    content = content.replace("</xml:html>", "</html>");
+
+                    results.add(Arrays.asList(content.split("\n")));
 
                 } catch (MalformedURLException e) {
                     System.err.println(path);

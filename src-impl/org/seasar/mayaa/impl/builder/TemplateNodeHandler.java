@@ -322,7 +322,6 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
 
         Namespace _topLevelNamespace = new NamespaceImpl();
         _topLevelNamespace.setDefaultNamespaceURI(defaultURI);
-        _topLevelNamespace.addPrefixMapping("m", CONST_IMPL.URI_MAYAA);
         return _topLevelNamespace;
     }
 

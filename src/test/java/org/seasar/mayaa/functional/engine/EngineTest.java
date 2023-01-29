@@ -75,9 +75,7 @@ public class EngineTest extends EngineTestBase {
 
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = {false, true})
-    @Disabled
     public void HTML5形式で指定したCharsetがレスポンスヘッダに設定される(boolean useNewParser)throws IOException {
-        // Mayaaは <meta charset="XX"> の形式の記述には対応していないので ＠Ignore する。
         setUseNewParser(useNewParser);
         final String DIR = "/it-case/html-transform/charset-html5/";
         execAndVerify(DIR + "target.html", DIR + "expected.html", null);

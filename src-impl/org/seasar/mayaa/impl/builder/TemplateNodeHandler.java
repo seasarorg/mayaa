@@ -61,6 +61,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     private static final QName QH_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "content");
     private static final QName QX_ATTR_HTTP_EQUIV = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "http-equiv");
     private static final QName QX_ATTR_CONTENT = QNameImpl.getInstance(CONST_IMPL.URI_XHTML, "content");
+    private static final QName QH_ATTR_CHARSET = QNameImpl.getInstance(CONST_IMPL.URI_HTML, "charset");
 
     protected int _columnNumberBeforeFirstElement = -1;
     private int _inEntity;
@@ -135,7 +136,25 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
                 contentType = CharsetConverter.convertContentType(na.getValue());
                 node.removeAttribute(attrContent);
                 node.addAttribute(attrContent, contentType);
+                return;
             }
+        }
+        // <meta charset="UTF-8">
+        na = node.getAttribute(QH_ATTR_CHARSET);
+        if (na != null) {
+            String encoding = na.getValue();
+            String cunnrentEncoding = getSpecifiedEncoding();
+            if (cunnrentEncoding == null || cunnrentEncoding.isEmpty()) {
+                if (encoding != null && !encoding.equals(CONST_IMPL.TEMPLATE_DEFAULT_CHARSET)) {
+                    throw new ParserEncodingChangedException(encoding);
+                }
+            } else if (encoding != null && !encoding.equals(cunnrentEncoding)) {
+                throw new ParserEncodingChangedException(encoding);
+            }
+            encoding = CharsetConverter.encodingToCharset(encoding);
+
+            node.removeAttribute(QH_ATTR_CHARSET);
+            node.addAttribute(QH_ATTR_CHARSET, encoding);
         }
     }
     @Override

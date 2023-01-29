@@ -40,12 +40,16 @@ public class MetaValuesSetter extends NonSerializableParameterAwareImpl
         SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "http-equiv");
     protected static final QName QH_META =
         SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "meta");
+    protected static final QName QH_CHARSET =
+        SpecificationUtil.createQName(CONST_IMPL.URI_HTML, "charset");
     protected static final QName QX_CONTENT =
         SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "content");
     protected static final QName QX_HTTP_EQUIV =
         SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "http-equiv");
     protected static final QName QX_META =
         SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "meta");
+    protected static final QName QX_CHARSET =
+        SpecificationUtil.createQName(CONST_IMPL.URI_XHTML, "charset");
 
     protected void addMayaaAttribute(
             SpecificationNode original, QName qName, String value) {
@@ -89,6 +93,16 @@ public class MetaValuesSetter extends NonSerializableParameterAwareImpl
             NodeAttribute content = original.getAttribute(contentName);
             if (content != null) {
                 setEquiv(original, equiv.getValue(), content.getValue());
+                return;
+            }
+        }
+        
+        NodeAttribute charsetAttr = original.getAttribute(QH_CHARSET);
+        if (charsetAttr != null) {
+            final String charset = charsetAttr.getValue();
+            if (!StringUtil.isEmpty(charset)) {
+                final String contentType = "text/html; charset=" + charset;
+                setEquiv(original, "Content-Type", contentType);
             }
         }
     }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+    <m:beforeRender><![CDATA[
+    ]]></m:beforeRender>
+
+    <m:echo m:id="item">
+        <m:attribute name="value" value="TEST" />
+    </m:echo>
+</m:mayaa>

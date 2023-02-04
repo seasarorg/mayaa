@@ -135,4 +135,25 @@ public class Issue13ReproductionTest extends EngineTestBase {
         // 実行時点で発生
         response = exec(request, null);
     }
+
+
+    @Test
+    @Order(9)
+    public void aとdが1回ずつ実行された後再度aを実行すると例外() throws IOException {
+        // １回め
+        MockHttpServletRequest request = createRequest("/it-case/regression/issue13/a.html");
+        MockHttpServletResponse response = exec(request, null);
+        verifyResponse(response, "/it-case/regression/issue13/a-expected.html");
+
+        // ２回め
+        request = createRequest("/it-case/regression/issue13/d.html");
+        response = exec(request, null);
+        verifyResponse(response, "/it-case/regression/issue13/d-expected.html");
+
+        // 3回め
+        request = createRequest("/it-case/regression/issue13/a.html");
+
+        // 実行時点で発生
+        response = exec(request, null);
+    }
 }

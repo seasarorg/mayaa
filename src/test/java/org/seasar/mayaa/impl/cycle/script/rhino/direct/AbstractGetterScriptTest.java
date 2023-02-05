@@ -119,7 +119,7 @@ public class AbstractGetterScriptTest {
         try {
             TextCompiledScriptImpl undef = new TextCompiledScriptImpl(
                     "page. \n foo.bar \n ;", _position, 1);
-            undef.execute(null);
+            undef.execute(Object.class, null);
             fail();
         } catch (Throwable t) {
             assertTrue(t instanceof OffsetLineRhinoException);
@@ -136,7 +136,7 @@ public class AbstractGetterScriptTest {
         current.setAttribute("map", map);
 
         TestGetterScript script = new TestGetterScript("map.name", "map", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 
@@ -144,10 +144,10 @@ public class AbstractGetterScriptTest {
     public void testGetPropertyFromScriptObject() {
         TextCompiledScriptImpl setter = new TextCompiledScriptImpl(
                 "var obj = {}; obj.name = 'value'", _position, 1);
-        setter.execute(null);
+        setter.execute(Object.class, null);
 
         TestGetterScript script = new TestGetterScript("obj.name", "obj", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 
@@ -158,7 +158,7 @@ public class AbstractGetterScriptTest {
         current.setAttribute("obj", no);
 
         TestGetterScript script = new TestGetterScript("obj.name", "obj", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 
@@ -169,7 +169,7 @@ public class AbstractGetterScriptTest {
         current.setAttribute("obj", no);
 
         TestGetterScript script = new TestGetterScript("obj.name", "obj", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 
@@ -180,7 +180,7 @@ public class AbstractGetterScriptTest {
         current.setAttribute("obj", no);
 
         TestGetterScript script = new TestGetterScript("obj.name", "obj", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 
@@ -191,7 +191,7 @@ public class AbstractGetterScriptTest {
         current.setAttribute("obj", no);
 
         TestGetterScript script = new TestGetterScript("obj.name", "obj", "name");
-        Object result = script.execute(null);
+        Object result = script.execute(Object.class, null);
         assertEquals("value", result);
     }
 

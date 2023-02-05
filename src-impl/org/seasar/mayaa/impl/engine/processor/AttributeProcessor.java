@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class AttributeProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 87560642282310502L;
+    private static final long serialVersionUID = -3393961364808306951L;
 
     private PrefixAwareName _name;
     private ProcessorProperty _value;
@@ -147,6 +147,7 @@ public class AttributeProcessor extends TemplateProcessorSupport {
         private PrefixAwareName _attrName;
         private ProcessorProperty _attrValue;
         private CompiledScript _script;
+        private String _basePath;
 
         public ProcessorPropertyWrapper(
                 PrefixAwareName name, ProcessorProperty property, String basePath) {
@@ -155,12 +156,9 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             }
             _attrName = name;
             _attrValue = property;
+            _basePath = basePath;
             if (_attrValue != null) {
-	            if (_attrValue.getValue().isLiteral()) {
-	                _script = new EscapedLiteralScript(_attrValue.getValue(), basePath);
-	            } else {
-	                _script = new EscapableScript(_attrValue.getValue(), basePath);
-	            }
+                _script = _attrValue.getValue();
             }
         }
 
@@ -192,128 +190,25 @@ public class AttributeProcessor extends TemplateProcessorSupport {
             return getName().toString() + "=\"" + _script + "\"";
         }
 
-    }
-
-    protected class EscapableScript extends ScriptWrapper {
-
-        private static final long serialVersionUID = -5393294025521796857L;
-
-        private String _basePath;
-
-        public EscapableScript(CompiledScript script, String basePath) {
-            super(script);
-            _basePath = basePath;
-        }
-
-        public Object execute(Object[] args) {
-            Object result = super.execute(args);
-            if (isString() && StringUtil.hasValue(result)) {
+        @Override
+        public Object getExecutedValue(Object[] args) {
+            Object result = _script.execute(String.class, args);
+            if (StringUtil.hasValue(result)) {
                 if (_basePath != null) {
                     PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
-                    result =
-                        adjuster.adjustRelativePath(_basePath, result.toString());
+                    result = adjuster.adjustRelativePath(_basePath, result.toString());
                 }
-                result = escape(result.toString());
             }
-
             return result;
         }
-
-    }
-
-    protected class EscapedLiteralScript extends ScriptWrapper {
-
-        private static final long serialVersionUID = -441522603771461865L;
-
-        private String _escapedValue = "";
-
-        public EscapedLiteralScript(CompiledScript script, String basePath) {
-            super(script);
-
-            if (isString()) {
-                Object obj = super.execute(null);
-                if (StringUtil.hasValue(obj)) {
-                    _escapedValue = obj.toString();
-                    if (basePath != null) {
-                        PathAdjuster adjuster = ProviderUtil.getPathAdjuster();
-                        _escapedValue =
-                            adjuster.adjustRelativePath(
-                                    basePath, _escapedValue);
-                    }
-                    _escapedValue = escape(_escapedValue);
-                }
-            }
-        }
-
-        public Object execute(Object[] args) {
-            return _escapedValue;
-        }
-
-    }
-
-    protected abstract class ScriptWrapper implements CompiledScript {
-
-        private static final long serialVersionUID = -1582289477400400196L;
-
-        private CompiledScript _script;
-        private boolean _string;
-
-        public ScriptWrapper(CompiledScript script) {
-            _script = script;
-            _string = String.class.equals(_script.getExpectedClass());
-        }
-
-        public boolean isString() {
-            return _string;
-        }
-
-        public void setExpectedClass(Class<?> expectedClass) {
-            _script.setExpectedClass(expectedClass);
-        }
-
+    
+        @Override
         public Class<?> getExpectedClass() {
-            return _script.getExpectedClass();
+            return String.class;
         }
 
-        public Object execute(Object[] args) {
-            return _script.execute(args);
+        public boolean escapeAmp() {
+            return isEscapeAmp();
         }
-
-        public void setMethodArgClasses(Class<?>[] methodArgClasses) {
-            _script.setMethodArgClasses(methodArgClasses);
-        }
-
-        public Class<?>[] getMethodArgClasses() {
-            return _script.getMethodArgClasses();
-        }
-
-        public boolean isLiteral() {
-            return _script.isLiteral();
-        }
-
-        public String getScriptText() {
-            return _script.getScriptText();
-        }
-
-        public boolean isReadOnly() {
-            return _script.isReadOnly();
-        }
-
-        public void assignValue(Object value) {
-            _script.assignValue(value);
-        }
-
-        public String toString() {
-            return _script.toString();
-        }
-
-        public String escape(String value) {
-            if (isEscapeAmp()) {
-                return StringUtil.escapeWhitespace(StringUtil.escapeXml(value));
-            }
-            return StringUtil.escapeWhitespace(StringUtil.escapeXmlWithoutAmp(value));
-        }
-
     }
-
 }

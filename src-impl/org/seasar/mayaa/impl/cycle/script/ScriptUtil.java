@@ -32,10 +32,7 @@ public class ScriptUtil {
         // no instantiation.
     }
 
-    public static CompiledScript compile(String text, Class<?> expectedClass) {
-        if (expectedClass == null) {
-            throw new IllegalArgumentException();
-        }
+    public static CompiledScript compile(String text) {
         CompiledScript compiled;
         if (StringUtil.hasValue(text)) {
             ScriptEnvironment environment = ProviderUtil.getScriptEnvironment();
@@ -45,7 +42,6 @@ public class ScriptUtil {
         } else {
             compiled = LiteralScript.NULL_LITERAL_SCRIPT;
         }
-        compiled.setExpectedClass(expectedClass);
         return compiled;
     }
 

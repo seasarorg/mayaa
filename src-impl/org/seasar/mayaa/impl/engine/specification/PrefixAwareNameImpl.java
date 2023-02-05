@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,8 +28,8 @@ import org.seasar.mayaa.impl.util.StringUtil;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixAwareNameImpl implements PrefixAwareName, Serializable {
-    private static final long serialVersionUID = -8898891078217203404L;
+public class PrefixAwareNameImpl implements PrefixAwareName {
+    private static final long serialVersionUID = 7623241470182328291L;
 
     @SuppressWarnings("unchecked")
     private static Map<String, PrefixAwareName> _cache =

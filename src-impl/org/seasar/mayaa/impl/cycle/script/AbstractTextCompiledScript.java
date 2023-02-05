@@ -24,13 +24,12 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 public abstract class AbstractTextCompiledScript
         implements CompiledScript {
 
-    private static final long serialVersionUID = 8741954417010320298L;
+    private static final long serialVersionUID = 1290844872159625425L;
 
     private static final Class<?>[] ZERO_ARGS_TYPE = new Class[0];
 
     private String _text;
     private String _scriptText;
-    private Class<?> _expectedClass = Object.class;
     private Class<?>[] _methodArgClasses;
 
     public AbstractTextCompiledScript(String text) {
@@ -46,17 +45,6 @@ public abstract class AbstractTextCompiledScript
 
     protected String getText() {
         return _text;
-    }
-
-    public void setExpectedClass(Class<?> expectedClass) {
-        if (expectedClass == null) {
-            expectedClass = Object.class;
-        }
-        _expectedClass = expectedClass;
-    }
-
-    public Class<?> getExpectedClass() {
-        return _expectedClass;
     }
 
     public void setMethodArgClasses(Class<?>[] methodArgClasses) {

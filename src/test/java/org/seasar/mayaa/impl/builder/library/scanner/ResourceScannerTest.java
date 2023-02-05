@@ -47,6 +47,7 @@ public class ResourceScannerTest {
         "/META-INF/fmt-1_0-rt.tld",
         "/META-INF/fmt.tld",
         "/META-INF/fn.tld",
+        "/META-INF/issue13.mld",
         "/META-INF/permittedTaglibs.tld",
         "/META-INF/scriptfree.tld",
         "/META-INF/sql-1_0-rt.tld",
@@ -82,6 +83,7 @@ public class ResourceScannerTest {
         "/META-INF/fmt-1_0-rt.tld",
         "/META-INF/fmt.tld",
         "/META-INF/fn.tld",
+        "/META-INF/issue13.mld",
         "/META-INF/permittedTaglibs.tld",
         "/META-INF/scriptfree.tld",
         "/META-INF/sql-1_0-rt.tld",
@@ -109,7 +111,8 @@ public class ResourceScannerTest {
       scanner.setParameter("excludeJar", "*");
 
       List<String> expected = Arrays.asList(
-        "/META-INF/TestTag.tld"
+        "/META-INF/TestTag.tld",
+        "/META-INF/issue13.mld"
       );
 
       List<String> sources = new ArrayList<>();
@@ -131,7 +134,8 @@ public class ResourceScannerTest {
       scanner.setParameter("excludeJar", "*");
 
       List<String> expected = Arrays.asList(
-        "/META-INF/TestTag.tld"
+        "/META-INF/TestTag.tld",
+        "/META-INF/issue13.mld"
       );
 
       List<String> sources = new ArrayList<>();

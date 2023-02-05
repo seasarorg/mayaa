@@ -35,7 +35,7 @@ public class ProcessorUtil {
      */
     public static boolean toBoolean(ProcessorProperty property) {
         return property != null && ObjectUtil.booleanValue(
-                property.getValue().execute(null), false);
+                property.getExecutedValue(null), false);
     }
 
 }

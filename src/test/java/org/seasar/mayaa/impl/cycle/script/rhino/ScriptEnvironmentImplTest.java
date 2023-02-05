@@ -79,8 +79,6 @@ public class ScriptEnvironmentImplTest {
         ScriptBlock block = new ScriptBlock(
                 "var obj = { run: function() { return 'hi'; } }; obj.run();", false, "$");
         CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
-        script.setExpectedClass(String.class);
-        assertEquals(String.class, script.getExpectedClass());
         assertFalse(script.isLiteral());
     }
 

@@ -23,22 +23,10 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 public abstract class AbstractCompiledScript
         implements CompiledScript {
 
-    private static final long serialVersionUID = 643467147738117809L;
+    private static final long serialVersionUID = -8773272598482774816L;
     private static final Class<?>[] ZERO_ARGS_TYPE = new Class[0];
 
-    private Class<?> _expectedClass = Object.class;
     private Class<?>[] _methodArgClasses;
-
-    public void setExpectedClass(Class<?> expectedClass) {
-        if (expectedClass == null) {
-            expectedClass = Object.class;
-        }
-        _expectedClass = expectedClass;
-    }
-
-    public Class<?> getExpectedClass() {
-        return _expectedClass;
-    }
 
     public void setMethodArgClasses(Class<?>[] methodArgClasses) {
         if (methodArgClasses == null) {

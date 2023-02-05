@@ -101,6 +101,14 @@ public interface CONST_IMPL {
     QName QX_TRACK = QNameImpl.getInstance(URI_XHTML, "track");
     QName QX_WBR = QNameImpl.getInstance(URI_XHTML, "wbr");
 
+    QName QX_BASEFONT = QNameImpl.getInstance(URI_XHTML, "basefont");  // transitional
+    QName QX_ISINDEX = QNameImpl.getInstance(URI_XHTML, "isindex");    // transitional
+    QName QX_FRAME = QNameImpl.getInstance(URI_XHTML, "frame");        // nonstandard
+    QName QX_BGSOUND = QNameImpl.getInstance(URI_XHTML, "bgsound");    // nonstandard
+    QName QX_NEXTID = QNameImpl.getInstance(URI_XHTML, "nextid");      // nonstandard
+    QName QX_SOUND = QNameImpl.getInstance(URI_XHTML, "sound");        // nonstandard
+    QName QX_SPACER = QNameImpl.getInstance(URI_XHTML, "spacer");      // nonstandard
+
     QName QM_CDATA = QNameImpl.getInstance("cdata");
     QName QM_CHARACTERS = QNameImpl.getInstance("characters");
     QName QM_COMMENT = QNameImpl.getInstance("comment");

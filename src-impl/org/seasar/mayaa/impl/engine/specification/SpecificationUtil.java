@@ -461,7 +461,7 @@ public class SpecificationUtil implements CONST_IMPL {
         protected CompiledScript compile(String text) {
             if (StringUtil.hasValue(text)) {
                 ScriptUtil.assertSingleScript(text);
-                return ScriptUtil.compile(text, Void.class);
+                return ScriptUtil.compile(text);
             }
             return LiteralScript.NULL_LITERAL_SCRIPT;
         }
@@ -500,7 +500,7 @@ public class SpecificationUtil implements CONST_IMPL {
                     bodyText = ScriptUtil.getBlockSignedText(bodyText);
                     CompiledScript script = compile(bodyText);
                     scripts.add(script);
-                    script.execute(null);
+                    script.execute(Void.class, null);
                 } finally {
                     cycle.setInjectedNode(save);
                 }
@@ -523,7 +523,7 @@ public class SpecificationUtil implements CONST_IMPL {
             for (CompiledScript script : scripts) {
                 NodeTreeWalker save = cycle.getInjectedNode();
                 try {
-                    script.execute(null);
+                    script.execute(Void.class, null);
                 } finally {
                     cycle.setInjectedNode(save);
                 }

@@ -50,7 +50,7 @@ public class InsertProcessor
         extends TemplateProcessorSupport
         implements CONST_IMPL, InformalPropertyAcceptable, VirtualPropertyAcceptable {
 
-    private static final long serialVersionUID = -945900326182620192L;
+    private static final long serialVersionUID = -8902501079316706769L;
 
     private static final String RENDERING_INSERT_CHAIN =
         InsertProcessor.class.getName() + "#renderingInsertChain";
@@ -200,7 +200,7 @@ public class InsertProcessor
         	if (_path == null || StringUtil.isEmpty(_path.getValue().getScriptText())) {
         		return new PathPart();
         	}
-       		String path = StringUtil.valueOf(_path.getValue().execute(null));
+       		String path = StringUtil.valueOf(_path.getExecutedValue(null));
        		if (StringUtil.isEmpty(path)) {
        			return new PathPart();
        		}
@@ -304,7 +304,7 @@ public class InsertProcessor
                 ProcessorProperty prop = (ProcessorProperty) object;
                 properties.put(
                         prop.getName().getQName().getLocalName(),
-                        prop.getValue().execute(null));
+                        prop.getExecutedValue(null));
             }
         }
         Map<String, Object> params = pushRenderingParams().getParams();
@@ -321,7 +321,7 @@ public class InsertProcessor
             	if (_name == null) {
             		name = "";
             	} else {
-            		name = StringUtil.valueOf(_name.getValue().execute(null));
+            		name = StringUtil.valueOf(_name.getExecutedValue(null));
             	}
                 ComponentRenderer renderer = new ComponentRenderer(this, name);
                 ret = RenderUtil.renderPage(fireEvent, renderer,

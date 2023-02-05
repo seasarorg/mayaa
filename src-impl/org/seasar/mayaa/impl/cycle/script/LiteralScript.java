@@ -26,12 +26,11 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class LiteralScript implements CompiledScript {
 
-    private static final long serialVersionUID = -3791475287481727514L;
+    private static final long serialVersionUID = 5290750739909753829L;
 
     public static final LiteralScript NULL_LITERAL_SCRIPT = new LiteralScript("");
 
     private String _text;
-    private Class<?> _expectedClass = Object.class;
 
     public LiteralScript(String text) {
         if (text == null) {
@@ -40,28 +39,18 @@ public class LiteralScript implements CompiledScript {
         _text = text;
     }
 
-    public void setExpectedClass(Class<?> expectedClass) {
-        if (expectedClass == null) {
-            throw new IllegalArgumentException();
-        }
-        _expectedClass = expectedClass;
-    }
-
-    public Class<?> getExpectedClass() {
-        return _expectedClass;
-    }
-
-    public Object execute(Object[] args) {
-        if (_expectedClass == Void.class) {
+    @Override
+    public Object execute(Class<?> expectedClass, Object[] args) {
+        if (expectedClass == Void.class) {
             return null;
         }
         if (NULL_LITERAL_SCRIPT == this || StringUtil.isEmpty(_text)) {
             return NULL_LITERAL_SCRIPT._text;
         }
-        if (String.class.equals(_expectedClass) || Object.class.equals(_expectedClass)) {
+        if (String.class.equals(expectedClass) || Object.class.equals(expectedClass)) {
             return _text;
         }
-        return ObjectUtil.convert(_expectedClass, _text);
+        return ObjectUtil.convert(expectedClass, _text);
     }
 
     public void setMethodArgClasses(Class<?>[] methodArgClasses) {

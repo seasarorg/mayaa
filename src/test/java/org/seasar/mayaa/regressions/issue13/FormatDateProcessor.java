@@ -52,7 +52,7 @@ public class FormatDateProcessor extends TemplateProcessorSupport {
     }
 
     private String format(ProcessorProperty property) {
-        Object result = property.getValue().execute(null);
+        Object result = property.getExecutedValue(null);
         if (result != null) {
             if (result instanceof LocalDateTime) {
                 LocalDateTime dt = (LocalDateTime) result;

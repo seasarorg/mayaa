@@ -36,7 +36,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class SourceCompiledScriptImpl
 extends AbstractSourceCompiledScript {
 
-    private static final long serialVersionUID = 970613841877330176L;
+    private static final long serialVersionUID = 1886623299725569857L;
 
     private transient Script _rhinoScript;
     private Date _compiledTimestamp;
@@ -89,13 +89,14 @@ extends AbstractSourceCompiledScript {
         }
     }
 
-    public Object execute(Object[] args) {
-        Context cx = RhinoUtil.enter();
+    @Override
+    public Object execute(Class<?> expectedClass, Object[] args) {
+       Context cx = RhinoUtil.enter();
         Object ret = null;
         try {
             compileFromSource(cx, getSource());
             Object jsRet = _rhinoScript.exec(cx, RhinoUtil.getScope());
-            ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
+            ret = RhinoUtil.convertResult(cx, expectedClass, jsRet);
         } catch (WrappedException e) {
             RhinoUtil.removeWrappedException(e);
         } finally {

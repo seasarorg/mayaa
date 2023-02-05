@@ -49,8 +49,7 @@ public class SourceCompiledScriptImplTest {
         source.setNeighborClass(SourceCompiledScriptImplTest.class);
         SourceCompiledScriptImpl script = new SourceCompiledScriptImpl(
                 source, "iso-8859-1");
-        script.setExpectedClass(String.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(String.class, null);
         assertTrue(obj instanceof String);
         assertEquals("hi", obj);
     }

@@ -77,7 +77,7 @@ public abstract class AbstractServiceCycle
             throw new ScriptFileNotFoundException(systemID);
         }
 
-        script.execute(null);
+        script.execute(Void.class, null);
     }
 
     protected CompiledScript getScript(String systemID, String encoding) {

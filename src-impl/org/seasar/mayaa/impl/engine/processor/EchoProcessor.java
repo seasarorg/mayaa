@@ -43,7 +43,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class EchoProcessor extends ElementProcessor {
 
-    private static final long serialVersionUID = 3924111635172574833L;
+    private static final long serialVersionUID = -3474634644850330323L;
 
     private PrefixAwareName _customName;
     public void setOriginalNode(SpecificationNode originalNode) {
@@ -132,19 +132,19 @@ public class EchoProcessor extends ElementProcessor {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 attributeMap.put(
                         prop.getName().getQName().getLocalName(),
-                        resolveEntity(prop.getValue()));
+                        resolveEntity(prop.getValue(), prop.getExpectedClass()));
             }
             return attributeMap;
         }
         return null;
     }
 
-    private Object resolveEntity(CompiledScript script) {
+    private Object resolveEntity(CompiledScript script, Class<?> expectedClass) {
         if (script instanceof LiteralScript &&
-                String.class.equals(script.getExpectedClass())) {
-            return StringUtil.resolveEntity((String) script.execute(null));
+                String.class.equals(expectedClass)) {
+            return StringUtil.resolveEntity((String) script.execute(String.class, null));
         }
-        return script.execute(null);
+        return script.execute(expectedClass, null);
     }
 
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {

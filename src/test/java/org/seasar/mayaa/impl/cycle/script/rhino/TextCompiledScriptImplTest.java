@@ -66,20 +66,11 @@ public class TextCompiledScriptImplTest {
     }
 
     @Test
-    public void testGetExpectedType() {
-        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
-                "null", _position, 1);
-        script.setExpectedClass(String.class);
-        assertEquals(String.class, script.getExpectedClass());
-    }
-
-    @Test
     public void testExec1() {
         TextCompiledScriptImpl script = new TextCompiledScriptImpl(
                 "var obj = { run: function() { return 'hi'; } }; obj.run();",
                 _position, 1);
-        script.setExpectedClass(String.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(String.class, null);
         assertTrue(obj instanceof String);
         assertEquals("hi", obj);
     }
@@ -90,8 +81,7 @@ public class TextCompiledScriptImplTest {
         TextCompiledScriptImpl script = new TextCompiledScriptImpl(
                 "request.foo",
                 _position, 1);
-        script.setExpectedClass(Object.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(Object.class, null);
         assertTrue(obj instanceof String);
         assertEquals("bar", obj);
     }
@@ -101,8 +91,7 @@ public class TextCompiledScriptImplTest {
         CycleUtil.getPageScope().setAttribute("foo", "bar");
         TextCompiledScriptImpl script = new TextCompiledScriptImpl(
                 "foo", _position, 1);
-        script.setExpectedClass(Object.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(Object.class, null);
         assertTrue(obj instanceof String);
         assertEquals("bar", obj);
     }
@@ -112,8 +101,7 @@ public class TextCompiledScriptImplTest {
         CycleUtil.getPageScope().setAttribute("foo", "bar");
         TextCompiledScriptImpl script = new TextCompiledScriptImpl(
                 "page.foo", _position, 1);
-        script.setExpectedClass(Object.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(Object.class, null);
         assertTrue(obj instanceof String);
         assertEquals("bar", obj);
     }
@@ -122,13 +110,11 @@ public class TextCompiledScriptImplTest {
     public void testGetPageAttribute3() {
         TextCompiledScriptImpl prepareScript = new TextCompiledScriptImpl(
                 "var foo = 'bar'", _position, 1);
-        prepareScript.setExpectedClass(Object.class);
-        prepareScript.execute(null);
+        prepareScript.execute(Object.class, null);
 
         TextCompiledScriptImpl script = new TextCompiledScriptImpl(
                 "page.foo", _position, 1);
-        script.setExpectedClass(Object.class);
-        Object obj = script.execute(null);
+        Object obj = script.execute(Object.class, null);
         assertTrue(obj instanceof String);
         assertEquals("bar", obj);
     }

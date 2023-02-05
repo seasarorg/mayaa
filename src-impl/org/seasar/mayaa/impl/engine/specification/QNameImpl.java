@@ -25,7 +25,6 @@ import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 
 
 /**
@@ -33,7 +32,7 @@ import org.seasar.mayaa.impl.util.WeakValueHashMap;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class QNameImpl implements QName, CONST_IMPL, Serializable {
-    private static final long serialVersionUID = -102674132611191747L;
+    private static final long serialVersionUID = 2143966034062341815L;
 
     @SuppressWarnings("unchecked")
      private static volatile Map<String, QName> _cache =

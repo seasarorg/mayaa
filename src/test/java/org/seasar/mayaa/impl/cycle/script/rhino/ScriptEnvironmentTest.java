@@ -94,7 +94,7 @@ public class ScriptEnvironmentTest {
         CycleUtil.initialize(request, new MockHttpServletResponse());
 
         testee.startScope(null);
-        compiledScript.execute(null);
+        compiledScript.execute(Void.class, null);
         // System.out.println(result);
         testee.endScope();
 
@@ -175,7 +175,7 @@ public class ScriptEnvironmentTest {
                         CycleUtil.initialize(request, new MockHttpServletResponse());
                 
                         testee.startScope(null);
-                        compiledScript.execute(null);
+                        compiledScript.execute(Void.class, null);
                         testee.endScope();
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -39,7 +39,7 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
-    private static final long serialVersionUID = -646585734601397162L;
+    private static final long serialVersionUID = -6115371515313274708L;
     public static final String BODY_CONTENT_EMPTY = "empty";
     public static final String BODY_CONTENT_JSP = "JSP";
     public static final String BODY_CONTENT_SCRIPTLESS = "scriptless";
@@ -141,7 +141,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
 
     private Object prepareScript(CompiledScript script) {
         if (script.isLiteral()) {
-            return script.execute(null);
+            return script.execute(String.class, null);
         }
         return script;
     }
@@ -219,7 +219,7 @@ public class TLDProcessorDefinition extends ProcessorDefinitionImpl {
         public Object getAttribute(String attName) {
             Object value = super.getAttribute(attName);
             if (value instanceof CompiledScript) {
-                return ((CompiledScript) value).execute(null);
+                return ((CompiledScript) value).execute(Object.class, null);
             }
             return value;
         }

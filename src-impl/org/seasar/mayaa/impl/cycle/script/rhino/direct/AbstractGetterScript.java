@@ -108,7 +108,8 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
      * @return 変数の値を返します。見つからない場合はnullを返します。
      * @throws OffsetLineRhinoException 属性がnullで、プロパティを取得しようとしたとき。
      */
-    public Object execute(Object[] args) {
+    @Override
+    public Object execute(Class<?> expectedClass, Object[] args) {
         Context cx = RhinoUtil.enter();
         try {
             Object result = getAttribute();
@@ -128,7 +129,7 @@ public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
                 result = readProperty(result);
             }
 
-            return RhinoUtil.convertResult(cx, getExpectedClass(), result);
+            return RhinoUtil.convertResult(cx, expectedClass, result);
         } finally {
             Context.exit();
         }

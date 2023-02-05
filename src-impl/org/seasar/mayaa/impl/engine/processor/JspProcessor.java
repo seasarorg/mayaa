@@ -81,7 +81,7 @@ public class JspProcessor extends TemplateProcessorSupport
             TryCatchFinallyProcessor,
             CONST_IMPL {
 
-    private static final long serialVersionUID = -5567131378936566428L;
+    private static final long serialVersionUID = 7946370958046466257L;
 
     private static final PageContext _pageContext = new PageContextImpl();
 
@@ -267,7 +267,7 @@ public class JspProcessor extends TemplateProcessorSupport
             ProcessorProperty property = it.next();
             ObjectUtil.setProperty(targetTag,
                     property.getName().getQName().getLocalName(),
-                    property.getValue().execute(null));
+                    property.getExecutedValue(null));
         }
 
         // javax.servlet.jsp.tagext.DynamicAttributes対応
@@ -336,8 +336,8 @@ public class JspProcessor extends TemplateProcessorSupport
             try {
                 // 式を実行してからsetDynamicAttribute
                 CompiledScript script =
-                    ScriptUtil.compile(attr.getValue(), Object.class);
-                Object execValue = script.execute(null);
+                    ScriptUtil.compile(attr.getValue());
+                Object execValue = script.execute(Object.class, null);
 
                 toDynamicAttributes(customTag).setDynamicAttribute(
                              qName.getNamespaceURI().getValue(),

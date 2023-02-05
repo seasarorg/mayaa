@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 public class CharactersProcessor extends TemplateProcessorSupport
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = -3111998528603997211L;
+    private static final long serialVersionUID = -6762409726256198534L;
 
     private ProcessorProperty _text;
 
@@ -48,7 +48,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
 
     public CharactersProcessor(ProcessorProperty prop, String text) {
         ProcessorProperty propCopy = new ProcessorPropertyImpl(
-                prop.getName(), text, prop.getValue().getExpectedClass());
+                prop.getName(), text, prop.getExpectedClass());
         setText(propCopy);
     }
 
@@ -64,7 +64,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
         Object value = null;
         SpecificationUtil.endScope();
         try {
-            value = getText().getValue().execute(null);
+            value = getText().getExecutedValue(null);
         } finally {
             SpecificationUtil.startScope(this.getVariables());
         }

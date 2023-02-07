@@ -4,6 +4,8 @@ package org.seasar.mayaa.impl;
  * 内部挙動変更に伴って互換性維持のための制御が必要な時にスローされる例外クラス。
  */
 public class NeedCompatibilityException extends RuntimeException {
+  private static final long serialVersionUID = 2867428449825826419L;
+
   public enum CompatibilityType {
     LoadFactoryDefinitionForwardWay
   }

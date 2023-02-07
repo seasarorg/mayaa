@@ -114,8 +114,6 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     protected static class NumberFormatPool extends AbstractSoftReferencePool {
 
-        private static final long serialVersionUID = -4295432835558317767L;
-
         private String _formatPattern;
 
         public NumberFormatPool(String formatPattern) {

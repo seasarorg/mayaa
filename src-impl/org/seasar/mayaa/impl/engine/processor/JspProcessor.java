@@ -579,8 +579,6 @@ public class JspProcessor extends TemplateProcessorSupport
 
     protected static class TagPool extends AbstractSoftReferencePool {
 
-        private static final long serialVersionUID = -4519484537723904500L;
-
         private Class<?> _clazz;
         private boolean _isSimpleTag;
 

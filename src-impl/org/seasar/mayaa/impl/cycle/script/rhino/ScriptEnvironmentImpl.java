@@ -47,7 +47,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
-    private static final long serialVersionUID = -4067264733660357274L;
     private static final int DEFAULT_HARD_SIZE = 128;
 
     private static Scriptable _standardObjects;

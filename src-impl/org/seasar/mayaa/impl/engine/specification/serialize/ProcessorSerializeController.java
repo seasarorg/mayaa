@@ -23,6 +23,8 @@ import java.util.Map;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -77,6 +79,25 @@ public class ProcessorSerializeController implements ProcessorReferenceResolver 
             _listener.release();
             _listener = null;
         }
+    }
+
+    // シリアライズ時にTemplateProcessorオブジェクトの参照関係を保持、解決するための
+    // ProcessorSerializeControllerをスレッドローカルに貼り付ける。
+    static final String SERIALIZE_CONTROLLER_KEY = ProcessorSerializeController.class.getName() + "#serializeController";
+    static {
+        CycleUtil.registVariableFactory(
+            SERIALIZE_CONTROLLER_KEY,
+            new DefaultCycleLocalInstantiator() {
+                public Object create(Object[] params) {
+                    ProcessorSerializeController result =
+                        new ProcessorSerializeController();
+                    return result;
+                }
+            });
+    }
+    public static ProcessorSerializeController currentInstance() {
+        return (ProcessorSerializeController) CycleUtil.getGlobalVariable(
+                SERIALIZE_CONTROLLER_KEY, null);
     }
 
 }

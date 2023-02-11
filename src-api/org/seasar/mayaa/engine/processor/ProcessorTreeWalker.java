@@ -18,15 +18,13 @@ package org.seasar.mayaa.engine.processor;
 import java.util.Map;
 
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFinder;
-import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolverFinder;
 
 /**
  * プロセッサツリーを操作する。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ProcessorTreeWalker
-        extends ProcessorReferenceResolverFinder,
-                 NodeReferenceResolverFinder {
+        extends NodeReferenceResolverFinder {
 
     /**
      * プロセッサ実行スコープに、登録スクリプト変数を提供する。

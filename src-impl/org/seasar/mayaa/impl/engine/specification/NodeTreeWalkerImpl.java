@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
+import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -150,7 +151,7 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
     }
 
     public NodeReferenceResolver findNodeResolver() {
-        return SpecificationImpl.nodeSerializer();
+        return NodeSerializeController.currentInstance();
     }
 
     /* (non-Javadoc)

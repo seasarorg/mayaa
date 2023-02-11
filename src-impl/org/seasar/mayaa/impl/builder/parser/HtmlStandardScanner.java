@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.impl.Constants;
 import org.apache.xerces.impl.XMLErrorReporter;
-import org.apache.xerces.impl.msg.XMLMessageFormatter;
 import org.apache.xerces.xni.Augmentations;
 import org.apache.xerces.xni.QName;
 import org.apache.xerces.xni.XMLAttributes;
@@ -645,16 +644,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         setInsertionMode(InsertionMode.Initial);
         unclosedElementStack = new Stack<>();
         fragmentCase = featureDocumentFragment;
-    }
-
-    /**
-     * Convenience function used in all XML scanners.
-     */
-    private void reportFatalError(String msgId, Object ... args)
-        throws XNIException {
-        errorReporter.reportError(null, XMLMessageFormatter.XML_DOMAIN,
-                                   msgId, args,
-                                   XMLErrorReporter.SEVERITY_FATAL_ERROR);
     }
 
     @Override

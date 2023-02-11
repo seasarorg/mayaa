@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
@@ -30,8 +29,6 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;

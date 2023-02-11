@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

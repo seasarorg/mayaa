@@ -675,6 +675,8 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
 
 class ScanningInterruptedExeption extends Exception {
+    private static final long serialVersionUID = -592372281502837246L;
+
     public ScanningInterruptedExeption() {
         super();
     }

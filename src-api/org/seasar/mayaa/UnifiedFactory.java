@@ -15,13 +15,11 @@
  */
 package org.seasar.mayaa;
 
-import java.io.Serializable;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface UnifiedFactory
-    extends ContextAware, ParameterAware, Serializable {
+    extends ContextAware, ParameterAware {
 
     /**
      * ファクトリの初期化。作成するサービス対象の実装クラスの設定。

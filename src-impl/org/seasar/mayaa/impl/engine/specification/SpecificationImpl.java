@@ -243,64 +243,22 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
         return false;
     }
 
-    // for serialize
-    private static final String SERIALIZE_CONTROLLER_KEY =
-        SpecificationImpl.class.getName() + "#serializeController";
-    static {
-        CycleUtil.registVariableFactory(
-            SERIALIZE_CONTROLLER_KEY,
-            new DefaultCycleLocalInstantiator() {
-                public Object create(Object[] params) {
-                    return new NodeSerializeController();
-                }
-                public void destroy(Object instance) {
-                    if (instance instanceof NodeSerializeController) {
-                        ((NodeSerializeController) instance).release();
-                    }
-                }
-            });
-    }
-
-    public static NodeSerializeController nodeSerializer() {
-        return (NodeSerializeController) CycleUtil.getGlobalVariable(
-                SERIALIZE_CONTROLLER_KEY, null);
-    }
-
-    protected void afterDeserialize() {
-        // no-op
-    }
-
     private void readObject(ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-        nodeSerializer().init();
-        try {
-            in.defaultReadObject();
-            for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext();) {
-                NodeTreeWalker child = it.next();
-                child.setParentNode(this);
-            }
-
-            // ソースと関連づいていた場合は現在のSourceDescriptorを取得して設定
-            if (_hasSource) {
-                SourceDescriptor sourceDescriptor = SourceUtil.getSourceDescriptor(super.getSystemID());
-                setSource(sourceDescriptor);
-            }
-            nodeSerializer().specLoaded(this);
-
-            afterDeserialize();
-        } finally {
-            nodeSerializer().release();
+        in.defaultReadObject();
+        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext();) {
+            NodeTreeWalker child = it.next();
+            child.setParentNode(this);
         }
+
+        // ソースと関連づいていた場合は現在のSourceDescriptorを取得して設定
+        if (_hasSource) {
+            SourceDescriptor sourceDescriptor = SourceUtil.getSourceDescriptor(super.getSystemID());
+            setSource(sourceDescriptor);
+        }
+        NodeSerializeController.currentInstance().specLoaded(this);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        nodeSerializer().init();
-        try {
-            out.defaultWriteObject();
-        } finally {
-            nodeSerializer().release();
-        }
-    }
 
     /*
      * (non-Javadoc)

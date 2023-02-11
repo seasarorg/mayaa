@@ -24,16 +24,14 @@ import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public abstract class AbstractScriptEnvironment
-        extends ParameterAwareImpl implements ScriptEnvironment {
-
-    private static final long serialVersionUID = -1647884867508562923L;
+        extends NonSerializableParameterAwareImpl implements ScriptEnvironment {
 
     private transient List<AttributeScope> _attributeScopes;
     private String _blockSign = "$";

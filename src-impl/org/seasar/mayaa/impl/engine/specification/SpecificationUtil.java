@@ -51,6 +51,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
+import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -406,7 +408,10 @@ public class SpecificationUtil implements CONST_IMPL {
             synchronized(spec) {
                 File file = new File(cacheDir, filename);
                 try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file))){
+                    NodeSerializeController.currentInstance().init();
                     stream.writeObject(spec);
+                } finally {
+                    NodeSerializeController.currentInstance().release();
                 }
             }
         } catch (FileNotFoundException e) {
@@ -435,6 +440,8 @@ public class SpecificationUtil implements CONST_IMPL {
             return null;
         }
 
+        NodeSerializeController.currentInstance().init();
+        ProcessorSerializeController.currentInstance().init();
 
         try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(cacheFile))) {
             Specification result = (Specification) stream.readObject();
@@ -447,7 +454,11 @@ public class SpecificationUtil implements CONST_IMPL {
             LOG.info(message);
             cacheFile.delete();
             return null;
+        } finally {
+            ProcessorSerializeController.currentInstance().release();
+            NodeSerializeController.currentInstance().release();
         }
+
     }
 
     // script cache ----------------------------------------------

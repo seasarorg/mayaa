@@ -32,13 +32,11 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
-import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
-import org.seasar.mayaa.engine.specification.serialize.ProcessorResolveListener;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -49,7 +47,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TemplateImpl
         extends SpecificationImpl
-        implements Template, ProcessorReferenceResolver {
+        implements Template {
 
     private static final long serialVersionUID = 2126209350220642842L;
 
@@ -309,24 +307,6 @@ public class TemplateImpl
     }
 
     // for serialize
-    private static final String SERIALIZE_CONTROLLER_KEY =
-        TemplateImpl.class.getName() + "#serializeController";
-    static {
-        CycleUtil.registVariableFactory(SERIALIZE_CONTROLLER_KEY,
-                new DefaultCycleLocalInstantiator() {
-            public Object create(Object[] params) {
-                ProcessorSerializeController result =
-                    new ProcessorSerializeController();
-                result.init();
-                return result;
-            }
-        });
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        out.defaultWriteObject();
-    }
-
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -338,31 +318,7 @@ public class TemplateImpl
                 child.setParentProcessor(this);
             }
         }
-        nodeSerializer().specLoaded(this);
-    }
-
-    protected void afterDeserialize() {
-        processorSerializer().release();
-    }
-
-    public static ProcessorSerializeController processorSerializer() {
-        return (ProcessorSerializeController) CycleUtil.getGlobalVariable(
-                SERIALIZE_CONTROLLER_KEY, null);
-    }
-
-    // ProcessorReferenceResolver implements ------------------------
-
-    public void registResolveProcessorListener(
-            String uniqueID, ProcessorResolveListener listener) {
-        processorSerializer().registResolveProcessorListener(uniqueID, listener);
-    }
-
-    public void processorLoaded(String uniqueID, ProcessorTreeWalker item) {
-        processorSerializer().processorLoaded(uniqueID, item);
-    }
-
-    public ProcessorReferenceResolver findProcessorResolver() {
-        return processorSerializer();
+        NodeSerializeController.currentInstance().specLoaded(this);
     }
 
     // PositionAware implements ------------------------------------
@@ -402,7 +358,7 @@ public class TemplateImpl
         return Objects.equals(_extension, other._extension)
             && Objects.equals(_pageName, other._pageName)
             && Objects.equals(_suffix, other._suffix)
-            && Objects.equals(_childProcessors.size(), other._childProcessors.size());
+            && Objects.equals(_childProcessors, other._childProcessors);
     }
 
 }

@@ -104,6 +104,8 @@ public class SpecificationUtilTest {
     public void testSerializeTemplate() throws URISyntaxException {
         File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
         File expectedFile = new File(cacheDir, "tests#page.html.ser");
+        expectedFile.delete();
+
         assertFalse(_template.isDeprecated());
 
         SpecificationUtil.serialize(_template, cacheDir);
@@ -113,7 +115,7 @@ public class SpecificationUtilTest {
 
         Specification actual = SpecificationUtil.deserialize(_template.getSystemID(), cacheDir);
 
-        assertTrue(actual instanceof Template, "Instance must be of Page");
+        assertTrue(actual instanceof Template, "Instance must be of Template");
         assertEquals(_template, actual);
 
         assertFalse(actual.isDeprecated());

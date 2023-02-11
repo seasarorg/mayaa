@@ -42,11 +42,10 @@ import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
 import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.engine.TemplateImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
-import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
+import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
@@ -55,7 +54,7 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 public class TemplateProcessorSupport
         implements TemplateProcessor, OptimizableProcessor {
 
-    private static final long serialVersionUID = 8297043573746398769L;
+    private static final long serialVersionUID = -2563169515122616036L;
     private static final Log LOG = LogFactory.getLog(TemplateProcessorSupport.class);
     private static final String PREFIX_UNIQUE_ID = "_m";
 
@@ -266,10 +265,10 @@ public class TemplateProcessorSupport
         String uniqueID = getUniqueID();
         out.writeUTF(originalNodeID);
         out.writeUTF(uniqueID);
-        out.writeUTF(_injectedNode.getQName().getNamespaceURI().getValue());
-        out.writeUTF(_injectedNode.getQName().getLocalName());
+        out.writeUTF(_definition.getLibraryDefinition().getNamespaceURI().getValue());
+        out.writeUTF(_definition.getName());
 
-        NodeSerializeController controller = SpecificationImpl.nodeSerializer();
+        NodeSerializeController controller = NodeSerializeController.currentInstance();
         if (controller.collectNode(_injectedNode)) {
         	// オリジナルの保存
         	out.writeUTF(UNIQUENESS_MARK);
@@ -394,11 +393,11 @@ public class TemplateProcessorSupport
     }
 
     public ProcessorReferenceResolver findProcessorResolver() {
-        return TemplateImpl.processorSerializer();
+        return ProcessorSerializeController.currentInstance();
     }
 
     public NodeReferenceResolver findNodeResolver() {
-        return SpecificationImpl.nodeSerializer();
+        return NodeSerializeController.currentInstance();
     }
 
     /* (non-Javadoc)
@@ -416,8 +415,8 @@ public class TemplateProcessorSupport
          && Objects.equals(_definition, other._definition)
          && _evalBodyInclude == other._evalBodyInclude
          && Objects.equals(_injectedNode, other._injectedNode)
-         && Objects.equals(_originalNode, other._originalNode)
-         && Objects.equals(_parent, other._parent);
+         && Objects.equals(_originalNode, other._originalNode);
+        //  && Objects.equals(_parent, other._parent);
     }
 
 }

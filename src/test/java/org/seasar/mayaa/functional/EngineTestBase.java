@@ -40,7 +40,7 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.FactoryFactoryImpl;
-import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
@@ -219,7 +219,7 @@ public class EngineTestBase {
         }
     }
 
-    class NullErrorHandler extends ParameterAwareImpl implements ErrorHandler {
+    class NullErrorHandler extends NonSerializableParameterAwareImpl implements ErrorHandler {
         @Override
         public void doErrorHandle(Throwable t, boolean pageFlush) {
             throw new RuntimeException(t);

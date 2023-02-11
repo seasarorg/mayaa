@@ -87,8 +87,6 @@ public class DateFormatPool {
 
     private static class Pool extends AbstractSoftReferencePool {
 
-        private static final long serialVersionUID = 32939508346669867L;
-
         private String _formatPattern;
         private Locale _locale;
 

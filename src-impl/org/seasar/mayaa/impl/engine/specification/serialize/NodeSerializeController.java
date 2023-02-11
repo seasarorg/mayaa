@@ -26,6 +26,8 @@ import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
+import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
@@ -121,6 +123,29 @@ public class NodeSerializeController implements NodeReferenceResolver {
             _listener.release();
             _listener = null;
         }
+    }
+
+    // シリアライズ時にSpecificationNodeオブジェクトの参照関係を保持、解決するための
+    // NodeSerializeControllerをスレッドローカルに貼り付ける。
+    static final String SERIALIZE_CONTROLLER_KEY = NodeSerializeController.class.getName() + "#serializeController";
+    static {
+        CycleUtil.registVariableFactory(
+            SERIALIZE_CONTROLLER_KEY,
+            new DefaultCycleLocalInstantiator() {
+                public Object create(Object[] params) {
+                    return new NodeSerializeController();
+                }
+                public void destroy(Object instance) {
+                    if (instance instanceof NodeSerializeController) {
+                        ((NodeSerializeController) instance).release();
+                    }
+                }
+            });
+    }
+
+    public static NodeSerializeController currentInstance() {
+        return (NodeSerializeController) CycleUtil.getGlobalVariable(
+            SERIALIZE_CONTROLLER_KEY, null);
     }
 
 }

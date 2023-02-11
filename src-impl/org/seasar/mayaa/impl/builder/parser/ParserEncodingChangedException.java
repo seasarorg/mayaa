@@ -1,6 +1,7 @@
 package org.seasar.mayaa.impl.builder.parser;
 
 public class ParserEncodingChangedException extends RuntimeException {
+  private static final long serialVersionUID = -6271853091666328092L;
   private String _encoding;
 
   public ParserEncodingChangedException(String encoding) {

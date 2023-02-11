@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.util.collection;
 
-import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +22,7 @@ import java.util.List;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractSoftReferencePool implements Serializable {
-
-    private static final long serialVersionUID = -4959957173402498504L;
+public abstract class AbstractSoftReferencePool {
 
     private List<SoftReference<Object>> _pool;
 

@@ -24,10 +24,11 @@ import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorPropertyImpl implements ProcessorProperty {
-    private static final long serialVersionUID = 1794156997857284538L;
+    private static final long serialVersionUID = -3871000102668243504L;
 
     private PrefixAwareName _name;
     private CompiledScript _compiled;
+    private Class<?> _expectedClass;
 
     public ProcessorPropertyImpl(
             PrefixAwareName name, String value, Class<?> expectedClass) {
@@ -35,7 +36,8 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
             throw new IllegalArgumentException();
         }
         _name = name;
-        _compiled = ScriptUtil.compile(value, expectedClass);
+        _compiled = ScriptUtil.compile(value);
+        _expectedClass = expectedClass;
     }
 
     public PrefixAwareName getName() {
@@ -44,6 +46,10 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
 
     public CompiledScript getValue() {
         return _compiled;
+    }
+
+    public Object getExecutedValue(Object[] args) {
+        return _compiled.execute(_expectedClass, args);
     }
 
     public boolean equals(Object obj) {
@@ -60,5 +66,10 @@ public class ProcessorPropertyImpl implements ProcessorProperty {
 
     public String toString() {
         return _name.toString() + "=\"" + _compiled.toString() + "\"";
+    }
+
+    @Override
+    public Class<?> getExpectedClass() {
+        return _expectedClass;
     }
 }

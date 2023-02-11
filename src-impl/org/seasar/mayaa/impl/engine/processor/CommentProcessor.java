@@ -33,7 +33,8 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
  */
 public class CommentProcessor extends CharactersProcessor {
 
-    private static final long serialVersionUID = -5176372123366627130L;
+    private static final long serialVersionUID = 2105316300125388274L;
+
     private static final String COMMENTIN = "<!--";
     private static final String COMMENTOUT = "-->";
 
@@ -44,7 +45,7 @@ public class CommentProcessor extends CharactersProcessor {
             if (CycleUtil.isDraftWriting()) {
                 value = getText().getValue().getScriptText();
             } else {
-                value = getText().getValue().execute(null);
+                value = getText().getExecutedValue(null);
             }
             if (value != null) {
                 buffer.append(value.toString());

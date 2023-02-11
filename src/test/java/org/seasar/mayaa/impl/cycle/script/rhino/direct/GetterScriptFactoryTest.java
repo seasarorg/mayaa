@@ -94,23 +94,21 @@ public class GetterScriptFactoryTest {
 
         TextCompiledScriptImpl dtoScript = new TextCompiledScriptImpl(
                 dtoScriptText, _position, 1);
-        dtoScript.setExpectedClass(Object.class);
         TextCompiledScriptImpl mapScript = new TextCompiledScriptImpl(
                 mapScriptText, _position, 1);
-        mapScript.setExpectedClass(Object.class);
 
         int count = 10000;
 
         long first = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
-            assertEquals("complist", dtoScript.execute(null));
+            assertEquals("complist", dtoScript.execute(Object.class, null));
         }
 
         long second = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
-            assertEquals("mapvalue", mapScript.execute(null));
+            assertEquals("mapvalue", mapScript.execute(Object.class, null));
         }
 
         long third = System.currentTimeMillis();
@@ -457,7 +455,7 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof StandardGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -476,7 +474,7 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof StandardGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -496,14 +494,14 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof PageGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
         String script2 = " this.text ";
         AbstractGetterScript result2 =
             (AbstractGetterScript) GetterScriptFactory.create(script2, _position, 1);
         assertTrue(result2 instanceof PageGetterScript);
         assertEquals("text", result2.getAttributeName());
-        assertEquals("foo", result2.execute(null));
+        assertEquals("foo", result2.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -523,7 +521,7 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof RequestGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -543,7 +541,7 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof SessionGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -563,7 +561,7 @@ public class GetterScriptFactoryTest {
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result instanceof ApplicationGetterScript);
         assertEquals("text", result.getAttributeName());
-        assertEquals("foo", result.execute(null));
+        assertEquals("foo", result.execute(Object.class, null));
 
 
         // TODO 多段に対応したらGetterScriptになるようにする
@@ -579,14 +577,14 @@ public class GetterScriptFactoryTest {
         String script = " page.text.name ";
 
         TextCompiledScriptImpl result1 = new TextCompiledScriptImpl(script, _position, 1);
-        assertEquals("java.lang.String", result1.execute(null));
+        assertEquals("java.lang.String", result1.execute(Object.class, null));
 
         AbstractGetterScript result2 =
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result2 instanceof PageGetterScript);
         assertEquals("text", result2.getAttributeName());
         assertEquals("name", result2.getPropertyName());
-        assertEquals("java.lang.String", result2.execute(null));
+        assertEquals("java.lang.String", result2.execute(Object.class, null));
 
         AbstractGetterScript resultUndefinde =
             (AbstractGetterScript) GetterScriptFactory.create(
@@ -594,7 +592,7 @@ public class GetterScriptFactoryTest {
         assertTrue(resultUndefinde instanceof PageGetterScript);
         assertEquals("text", resultUndefinde.getAttributeName());
         assertEquals("nothing", resultUndefinde.getPropertyName());
-        assertNull(resultUndefinde.execute(null));
+        assertNull(resultUndefinde.execute(Object.class, null));
     }
 
     /**
@@ -608,14 +606,14 @@ public class GetterScriptFactoryTest {
         String script = " page.text.name ";
 
         TextCompiledScriptImpl result1 = new TextCompiledScriptImpl(script, _position, 1);
-        assertEquals("mapvalue", result1.execute(null));
+        assertEquals("mapvalue", result1.execute(Object.class, null));
 
         AbstractGetterScript result2 =
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result2 instanceof PageGetterScript);
         assertEquals("text", result2.getAttributeName());
         assertEquals("name", result2.getPropertyName());
-        assertEquals("mapvalue", result2.execute(null));
+        assertEquals("mapvalue", result2.execute(Object.class, null));
 
         AbstractGetterScript resultUndefinde =
             (AbstractGetterScript) GetterScriptFactory.create(
@@ -623,7 +621,7 @@ public class GetterScriptFactoryTest {
         assertTrue(resultUndefinde instanceof PageGetterScript);
         assertEquals("text", resultUndefinde.getAttributeName());
         assertEquals("nothing", resultUndefinde.getPropertyName());
-        assertNull(resultUndefinde.execute(null));
+        assertNull(resultUndefinde.execute(Object.class, null));
     }
 
     /**
@@ -633,19 +631,19 @@ public class GetterScriptFactoryTest {
     public void testPropertyCall3() {
         TextCompiledScriptImpl prepare = new TextCompiledScriptImpl(
                 "page.text = { 'name' : 'jsvalue' };", _position, 1);
-        prepare.execute(null);
+        prepare.execute(Object.class, null);
 
         String script = " page.text.name ";
 
         TextCompiledScriptImpl result1 = new TextCompiledScriptImpl(script, _position, 1);
-        assertEquals("jsvalue", result1.execute(null));
+        assertEquals("jsvalue", result1.execute(Object.class, null));
 
         AbstractGetterScript result2 =
             (AbstractGetterScript) GetterScriptFactory.create(script, _position, 1);
         assertTrue(result2 instanceof PageGetterScript);
         assertEquals("text", result2.getAttributeName());
         assertEquals("name", result2.getPropertyName());
-        assertEquals("jsvalue", result2.execute(null));
+        assertEquals("jsvalue", result2.execute(Object.class, null));
 
         AbstractGetterScript resultUndefinde =
             (AbstractGetterScript) GetterScriptFactory.create(
@@ -653,7 +651,7 @@ public class GetterScriptFactoryTest {
         assertTrue(resultUndefinde instanceof PageGetterScript);
         assertEquals("text", resultUndefinde.getAttributeName());
         assertEquals("nothing", resultUndefinde.getPropertyName());
-        assertNull(resultUndefinde.execute(null));
+        assertNull(resultUndefinde.execute(Object.class, null));
     }
 
     /**

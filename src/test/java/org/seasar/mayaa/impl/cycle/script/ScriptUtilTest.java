@@ -135,19 +135,16 @@ public class ScriptUtilTest {
      */
     @Test
     public void testCompile() {
-        CompiledScript script = ScriptUtil.compile("${'test'}", String.class);
+        CompiledScript script = ScriptUtil.compile("${'test'}");
         assertEquals(TextCompiledScriptImpl.class, script.getClass());
         assertEquals("${'test'}", script.getScriptText());
-        assertEquals(String.class, script.getExpectedClass());
 
-        CompiledScript literal = ScriptUtil.compile("'test'", String.class);
+        CompiledScript literal = ScriptUtil.compile("'test'");
         assertEquals(LiteralScript.class, literal.getClass());
         assertEquals("'test'", literal.getScriptText());
-        assertEquals(String.class, literal.getExpectedClass());
 
-        CompiledScript nullScript = ScriptUtil.compile("", String.class);
+        CompiledScript nullScript = ScriptUtil.compile("");
         assertSame(LiteralScript.NULL_LITERAL_SCRIPT, nullScript);
-        assertEquals(String.class, nullScript.getExpectedClass());
     }
 
 }

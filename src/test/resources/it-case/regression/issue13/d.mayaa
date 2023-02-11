@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+  <!-- カスタムプロセッサでない m:formatDate でも他のページで別のexpectedClassかつ同じテキスト表現の${}参照があると発生する。 -->
+  <m:beforeRender><![CDATA[
+    var value = new java.util.Date(1600000000000);
+    ]]></m:beforeRender>
+  <m:formatDate m:id="item" value="${value}" pattern="yyyy-MM-dd" />
+</m:mayaa>

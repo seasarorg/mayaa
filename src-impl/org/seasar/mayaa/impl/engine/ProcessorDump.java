@@ -45,7 +45,7 @@ public class ProcessorDump extends ElementProcessor {
     // TODO EchoProcessorを継承して使っている部分をまとめる
     // TODO ServiceProviderで差し替え可能にする
 
-    private static final long serialVersionUID = 8044884422670533823L;
+    private static final long serialVersionUID = 7884837912520558752L;
 
     private static final PrintStream DEFAULT_OUT = System.out;
 
@@ -238,7 +238,7 @@ public class ProcessorDump extends ElementProcessor {
 	                temp.append(script.getScriptText());
 	            } else {
 try { // TODO 修正する [JIRA: MAYAA-5]
-	                Object result = script.execute(null);
+	                Object result = script.execute(String.class, null);
 	                if (StringUtil.isEmpty(result)) {
 	                    return;
 	                }

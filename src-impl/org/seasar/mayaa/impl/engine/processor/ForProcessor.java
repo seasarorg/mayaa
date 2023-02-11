@@ -29,7 +29,8 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class ForProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = 4166588057004692415L;
+    private static final long serialVersionUID = 109332595431942951L;
+
     private static final int DEFAULT_MAX = 256;
     private static final String COUNTER_KEY = ForProcessor.class.getName() + "#counter";
     static {
@@ -56,6 +57,7 @@ public class ForProcessor extends TemplateProcessorSupport
         if (test == null) {
             throw new IllegalArgumentException();
         }
+        assert(boolean.class.equals(test.getExpectedClass()));
         _test = test;
     }
 
@@ -82,7 +84,7 @@ public class ForProcessor extends TemplateProcessorSupport
             throw new TooManyLoopException(_max);
         }
         setCounter(++count);
-        return ObjectUtil.booleanValue(_test.getValue().execute(null), false);
+        return ObjectUtil.booleanValue(_test.getValue().execute(Boolean.class, null), false);
     }
 
     protected int getCounter() {
@@ -97,14 +99,14 @@ public class ForProcessor extends TemplateProcessorSupport
     public ProcessStatus doStartProcess(Page topLevelPage) {
         CycleUtil.clearLocalVariable(COUNTER_KEY, this);
         if (_init != null) {
-            _init.getValue().execute(null);
+            _init.getValue().execute(Void.class, null);
         }
         return execTest() ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
 
     public ProcessStatus doAfterChildProcess() {
         if (_after != null) {
-            _after.getValue().execute(null);
+            _after.getValue().execute(Void.class, null);
         }
         return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
     }

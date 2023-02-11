@@ -21,8 +21,7 @@ import java.io.Serializable;
  * コンパイル済みのスクリプトオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface CompiledScript
-        extends Serializable, ExpectedClassAware {
+public interface CompiledScript extends Serializable {
 
     /**
      * コンパイル可能およびリテラルを問わず、入力テキストを取得する。
@@ -38,10 +37,11 @@ public interface CompiledScript
 
     /**
      * スクリプトを実行して値を取得する。
+     * @param expectedClass 戻り値として期待する型のクラスオブジェクト
      * @param args nullもしくは、実行時引数（JSF等ミドルウェア対応）。
      * @return 実行結果の値。
      */
-    Object execute(Object[] args);
+    Object execute(Class<?> expectedClass, Object[] args);
 
     /**
      * JSF等の式言語様式実行ミドルウェア対応。

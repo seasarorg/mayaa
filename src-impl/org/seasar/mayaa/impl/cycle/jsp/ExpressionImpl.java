@@ -26,13 +26,15 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 public class ExpressionImpl extends Expression {
 
     private CompiledScript _script;
+    private Class<?> _expectedClass;
 
-    public ExpressionImpl(CompiledScript script) {
+    public ExpressionImpl(CompiledScript script, Class<?> expectedClass) {
         _script = script;
+        _expectedClass = expectedClass;
     }
 
     public Object evaluate(VariableResolver vResolver) {
-        return _script.execute(null);
+        return _script.execute(_expectedClass, null);
     }
 
 }

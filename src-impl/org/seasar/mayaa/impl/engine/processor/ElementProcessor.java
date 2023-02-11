@@ -17,10 +17,8 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import org.seasar.mayaa.builder.SequenceIDGenerator;
@@ -41,6 +39,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
+import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.ProcessorPropertyWrapper;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -51,35 +51,14 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ElementProcessor extends AbstractAttributableProcessor
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = -1041576023468766303L;
+    private static final long serialVersionUID = 5281080116712303012L;
+
     private static final String SUFFIX_DUPLICATED = "_d";
-    private static final Set<String> XHTML_EMPTY_ELEMENTS;
     private static final String RENDERED_NS_STACK_KEY =
             ElementProcessor.class.getName() + "#renderedNSStack";
     private static final String CURRENT_NS_KEY =
             ElementProcessor.class.getName() + "#currentNS";
     static {
-        XHTML_EMPTY_ELEMENTS = new HashSet<>();
-        XHTML_EMPTY_ELEMENTS.add("base");
-        XHTML_EMPTY_ELEMENTS.add("meta");
-        XHTML_EMPTY_ELEMENTS.add("link");
-        XHTML_EMPTY_ELEMENTS.add("hr");
-        XHTML_EMPTY_ELEMENTS.add("br");
-        XHTML_EMPTY_ELEMENTS.add("param");
-        XHTML_EMPTY_ELEMENTS.add("img");
-        XHTML_EMPTY_ELEMENTS.add("area");
-        XHTML_EMPTY_ELEMENTS.add("input");
-        XHTML_EMPTY_ELEMENTS.add("col");
-        // transitional
-        XHTML_EMPTY_ELEMENTS.add("basefont");
-        XHTML_EMPTY_ELEMENTS.add("isindex");
-        // nonstandard
-        XHTML_EMPTY_ELEMENTS.add("frame");
-        XHTML_EMPTY_ELEMENTS.add("wbr");
-        XHTML_EMPTY_ELEMENTS.add("bgsound");
-        XHTML_EMPTY_ELEMENTS.add("nextid");
-        XHTML_EMPTY_ELEMENTS.add("sound");
-        XHTML_EMPTY_ELEMENTS.add("spacer");
 
         CycleUtil.registVariableFactory(RENDERED_NS_STACK_KEY,
                 new DefaultCycleLocalInstantiator() {
@@ -268,9 +247,11 @@ public class ElementProcessor extends AbstractAttributableProcessor
             appendPrefixMappingString(buffer, it.next());
         }
     }
-
+    protected void appendAttributeString(StringBuilder buffer, PrefixAwareName propName, Object value) {
+        appendAttributeString(buffer, propName, value, true);
+    }
     protected void appendAttributeString(
-            StringBuilder buffer, PrefixAwareName propName, Object value) {
+            StringBuilder buffer, PrefixAwareName propName, Object value, boolean escapeAmp) {
         QName qName = propName.getQName();
         if (URI_MAYAA.equals(qName.getNamespaceURI())) {
             return;
@@ -293,24 +274,36 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrPrefix = attrPrefix + ":";
             }
         }
-        String valueStr = null;
-        if (value != null) {
-            if (value instanceof CompiledScript) {
-                CompiledScript script = (CompiledScript) value;
-                if (CycleUtil.isDraftWriting()) {
-                    // ノードツリー最適化中ならそのまま書き出す
-                    valueStr = script.getScriptText();
-                } else {
-                    Object result = script.execute(null);
-                    if (result == null) {
-                        return;
-                    }
-                    valueStr = result.toString();
-                }
-            } else {
-                valueStr = value.toString();
-            }
+        if (value == null) {
+            return;
         }
+
+        String valueStr = null;
+        if (value instanceof CompiledScript) {
+            CompiledScript script = (CompiledScript) value;
+            if (CycleUtil.isDraftWriting()) {
+                // ノードツリー最適化中ならそのまま書き出す
+                valueStr = script.getScriptText();
+            } else {
+                Object result = script.execute(String.class, null);
+                if (result == null) {
+                    return;
+                }
+                if (script instanceof LiteralScript) {
+                    valueStr = result.toString();
+                } else {
+                    if (escapeAmp) {
+                        valueStr = HTMLKnowledge.escapeHTMLEntity(result.toString());
+                    } else {
+                        valueStr = HTMLKnowledge.escapeHTMLEntityExceptAmp(result.toString());
+                    }
+                }
+                valueStr = StringUtil.escapeWhitespace(valueStr);
+            }
+        } else {
+            valueStr = value.toString();
+        }
+
         if (valueStr != null) {
             StringBuilder temp = new StringBuilder(32);
             temp.append(" ");
@@ -325,7 +318,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     protected boolean needsCloseElement(QName qName) {
         if (isXHTML(qName)
-                && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+                && HTMLKnowledge.isVoidElementLocalPart(qName.getLocalName())) {
             return false;
         } else if (isHTML(qName)) {
             if (HTMLKnowledge.isVoidElement(qName)) {
@@ -374,7 +367,12 @@ public class ElementProcessor extends AbstractAttributableProcessor
     protected void writePart2(StringBuilder buffer) {
         for (Iterator<ProcessorProperty> it = iterateProcesstimeProperties(); it.hasNext();) {
             ProcessorProperty prop = it.next();
-            appendAttributeString(buffer, prop.getName(), prop.getValue());
+            if (prop instanceof ProcessorPropertyWrapper) {
+                ProcessorPropertyWrapper p = (ProcessorPropertyWrapper) prop;
+                appendAttributeString(buffer, prop.getName(), prop.getValue(), p.escapeAmp());
+            } else {
+                appendAttributeString(buffer, prop.getName(), prop.getValue());
+            }
         }
         for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
@@ -401,7 +399,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         QName qName = getName().getQName();
 
         if (isXHTML(qName)
-                && XHTML_EMPTY_ELEMENTS.contains(qName.getLocalName())) {
+                && HTMLKnowledge.isVoidElementLocalPart(qName.getLocalName())) {
             buffer.append(" />");
         } else if (isHTML(qName) || getChildProcessorSize() > 0) {
             buffer.append(">");

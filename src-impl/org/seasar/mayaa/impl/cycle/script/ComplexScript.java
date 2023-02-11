@@ -23,9 +23,8 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class ComplexScript implements CompiledScript {
 
-     private static final long serialVersionUID = -7356099026354564155L;
+    private static final long serialVersionUID = -4686149451300693410L;
 
-    private Class<?> _expectedClass = Object.class;
     private CompiledScript[] _compiled;
 
     public ComplexScript(CompiledScript[] compiled) {
@@ -33,34 +32,21 @@ public class ComplexScript implements CompiledScript {
             throw new IllegalArgumentException();
         }
         _compiled = compiled;
-        for (int i = 0; i < compiled.length; i++) {
-            compiled[i].setExpectedClass(String.class);
-        }
     }
 
-    public void setExpectedClass(Class<?> expectedClass) {
-        if (expectedClass == null) {
-            throw new IllegalArgumentException();
-        }
-        _expectedClass = expectedClass;
-    }
-
-    public Class<?> getExpectedClass() {
-        return _expectedClass;
-    }
-
-    public Object execute(Object[] args) {
+    @Override
+    public Object execute(Class<?> expectedClass, Object[] args) {
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < _compiled.length; i++) {
-            Object ret = _compiled[i].execute(null);
+            Object ret = _compiled[i].execute(expectedClass, null);
             if (ret != null) {
                 buffer.append(ret);
             }
         }
-        if (_expectedClass == Void.class) {
+        if (expectedClass == Void.class) {
             return null;
         }
-        return ObjectUtil.convert(_expectedClass, buffer.toString());
+        return ObjectUtil.convert(expectedClass, buffer.toString());
     }
 
     public void setMethodArgClasses(Class<?>[] methodArgClasses) {

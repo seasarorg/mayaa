@@ -56,8 +56,8 @@ public class ExecProcessor extends TemplateProcessorSupport {
             if (_src != null) {
                 ServiceCycle cycle = CycleUtil.getServiceCycle();
 
-                String srcValue = StringUtil.valueOf(_src.getValue().execute(null));
-                String encValue = StringUtil.valueOf(_encoding.getValue().execute(null));
+                String srcValue = StringUtil.valueOf(_src.getExecutedValue(null));
+                String encValue = StringUtil.valueOf(_encoding.getExecutedValue(null));
 
                 if (StringUtil.isRelativePath(srcValue)) {
                     String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
@@ -67,7 +67,7 @@ public class ExecProcessor extends TemplateProcessorSupport {
                 cycle.load(srcValue, encValue);
             }
             if (_script != null) {
-                _script.getValue().execute(null);
+                _script.getExecutedValue(null);
             }
         } finally {
             SpecificationUtil.startScope(getVariables());

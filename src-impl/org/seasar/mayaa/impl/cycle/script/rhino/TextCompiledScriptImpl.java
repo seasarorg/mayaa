@@ -40,7 +40,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
 
-    private static final long serialVersionUID = 4793923040332838492L;
+    private static final long serialVersionUID = 5513642435649631129L;
 
     private final String _sourceName;
     private final int _lineNumber;
@@ -153,7 +153,8 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
         return ObjectUtil.invoke(host, _elStyleName, args, argClasses);
     }
 
-    public Object execute(Object[] args) {
+    @Override
+    public Object execute(Class<?> expectedClass, Object[] args) {
         Context cx = RhinoUtil.enter();
         Object ret = null;
         try {
@@ -165,7 +166,7 @@ public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
             } else {
                 jsRet = normalExecute(cx, scope);
             }
-            ret = RhinoUtil.convertResult(cx, getExpectedClass(), jsRet);
+            ret = RhinoUtil.convertResult(cx, expectedClass, jsRet);
         } catch (RhinoException e) {
             if (e instanceof WrappedException) {
                 WrappedException we = (WrappedException) e;

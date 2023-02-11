@@ -42,7 +42,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class PageImpl extends SpecificationImpl implements Page {
 
-    private static final long serialVersionUID = -7151911061582725013L;
+    private static final long serialVersionUID = -4473136348846078029L;
     static final Log LOG = LogFactory.getLog(PageImpl.class);
     private static final String CURRENT_PAGE_KEY = "__currentPage__";
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
@@ -123,7 +123,7 @@ public class PageImpl extends SpecificationImpl implements Page {
         if (_suffixScript != null && value.equals(_suffixScriptText)) {
             return _suffixScript;
         }
-        _suffixScript = ScriptUtil.compile(value, String.class);
+        _suffixScript = ScriptUtil.compile(value);
         _suffixScriptText = value;
         return _suffixScript;
     }

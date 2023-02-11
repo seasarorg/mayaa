@@ -87,7 +87,7 @@ public class BindingScope extends AbstractReadOnlyAttributeScope {
                 if (binding != null) {
                     return binding.get(name);
                 }
-                return prop.getValue().execute(null);
+                return prop.getExecutedValue(null);
             }
             return null;
         }

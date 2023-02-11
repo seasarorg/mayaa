@@ -38,4 +38,17 @@ public interface ProcessorProperty extends Serializable {
      */
     CompiledScript getValue();
 
+    /**
+     * プロパティ値のコンパイル済みスクリプトを実行した結果を取得する。
+     * @param args
+     * @return 実行後のプロパティ値。
+     */
+    public Object getExecutedValue(Object[] args);
+
+    /**
+     * このプロパティが期待する型を取得する。
+     * @return Classオブジェクト
+     */
+    Class<?> getExpectedClass();
+
 }

@@ -76,7 +76,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     }
 
     private String format(ProcessorProperty property) {
-        Object result = property.getValue().execute(null);
+        Object result = property.getExecutedValue(null);
         if (result != null) {
             if (result instanceof String && ((String) result).length() > 0) {
                 result = ObjectUtil.numberValue(result, null);
@@ -94,7 +94,7 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
             throw new IllegalArgumentException(
                     "argument type mismatch: " + result.getClass().getName());
         } else if (_default != null) {
-            return (String) _default.getValue().execute(null);
+            return (String) _default.getExecutedValue(null);
         }
         return "";
     }

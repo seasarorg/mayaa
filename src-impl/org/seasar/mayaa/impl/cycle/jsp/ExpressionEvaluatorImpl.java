@@ -45,8 +45,8 @@ public class ExpressionEvaluatorImpl extends ExpressionEvaluator {
 
     public Expression parseExpression(String expression,
             @SuppressWarnings("rawtypes") Class expectedClass, FunctionMapper fMapper) {
-        CompiledScript script = ScriptUtil.compile(expression, expectedClass);
-        return new ExpressionImpl(script);
+        CompiledScript script = ScriptUtil.compile(expression);
+        return new ExpressionImpl(script, expectedClass);
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
+import org.seasar.mayaa.impl.util.StringUtil;
 
 public class HTMLKnowledge {
   /**
@@ -45,7 +46,15 @@ public class HTMLKnowledge {
       CONST_IMPL.QX_PARAM,
       CONST_IMPL.QX_SOURCE,
       CONST_IMPL.QX_TRACK,
-      CONST_IMPL.QX_WBR)
+      CONST_IMPL.QX_WBR,
+      CONST_IMPL.QX_BASEFONT,  // transitional
+      CONST_IMPL.QX_ISINDEX,   // transitional
+      CONST_IMPL.QX_FRAME,     // nonstandard
+      CONST_IMPL.QX_BGSOUND,   // nonstandard
+      CONST_IMPL.QX_NEXTID,    // nonstandard
+      CONST_IMPL.QX_SOUND,     // nonstandard
+      CONST_IMPL.QX_SPACER     // nonstandard
+        )
     );
   private static final HashSet<String> HTML_VOID_ELEM_LOCALPART = new HashSet<>();
   static {
@@ -124,4 +133,43 @@ public class HTMLKnowledge {
     return HTML_ENTITIES.get(name);
   }
 
+  public static String escapeHTMLEntity(String text) {
+    return StringUtil.escapeXml(text);
+  }
+
+  public static String escapeHTMLEntityExceptAmp(String text) {
+    return StringUtil.escapeXmlWithoutAmp(text);
+  }
+
+  public static String unescapeHTMLEntity(String text) {
+    int lastMatchedIndex = 0;
+
+    int matchedIndex = text.indexOf('&', lastMatchedIndex);
+    if (matchedIndex == -1) {
+      return text;
+    }
+
+    StringBuilder sb = new StringBuilder(text.length());
+    while (matchedIndex != -1) {
+      sb.append(text.substring(lastMatchedIndex, matchedIndex));
+      int colonIndex = text.indexOf(';', matchedIndex + 1);
+      if (colonIndex == -1) {
+        // コロンが見つからない場合は&も含めて末尾まで追加して終了する。
+        lastMatchedIndex = matchedIndex;
+        break;
+      }
+      
+      final String name = text.substring(matchedIndex + 1, colonIndex);
+      Character ch = convertHTMLEntitiy(name);
+      if (ch == null) {
+        sb.append(text.substring(matchedIndex, colonIndex - 1));
+      } else {
+        sb.append(ch);
+      }
+      lastMatchedIndex = colonIndex + 1;
+      matchedIndex = text.indexOf('&', lastMatchedIndex);
+    }
+    sb.append(text.substring(lastMatchedIndex));
+    return sb.toString();
+  }
 }

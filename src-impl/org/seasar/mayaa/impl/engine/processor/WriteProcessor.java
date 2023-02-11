@@ -34,7 +34,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class WriteProcessor extends AbstractAttributableProcessor {
 
-    private static final long serialVersionUID = 9014904982423846249L;
+    private static final long serialVersionUID = -3040062846167228914L;
     private static final String BODY_VARIABLE_NAME = "bodyText";
     private boolean _forHTML;
     private boolean _forHyperText;
@@ -106,13 +106,13 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             if (_value == null) {
                 result = "";
             } else {
-                result = _value.getValue().execute(null);
+                result = _value.getValue().execute(String.class, null);
             }
         }
         String ret = null;
         boolean empty = StringUtil.isEmpty(result);
         if (empty && _default != null) {
-            result = _default.getValue().execute(null);
+            result = _default.getValue().execute(String.class, null);
             if (result != null) {
                 ret = result.toString();
             }

@@ -93,9 +93,6 @@ public class ScriptUtilTest {
             public Iterator<NodeTreeWalker> iterateChildNode() {
                 throw new UnsupportedOperationException();
             }
-            public void kill() {
-                throw new UnsupportedOperationException();
-            }
             public boolean removeChildNode(NodeTreeWalker childNode) {
                 throw new UnsupportedOperationException();
             }

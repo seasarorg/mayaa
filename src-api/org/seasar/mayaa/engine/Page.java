@@ -87,6 +87,7 @@ public interface Page
      * @param processor 通知を受けるプロセッサ。
      * @return true=登録成功 / false=既に登録済み
      */
+    @Deprecated
     boolean registBeginRenderNotifier(TemplateProcessor processor);
 
 }

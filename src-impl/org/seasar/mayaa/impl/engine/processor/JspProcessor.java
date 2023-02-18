@@ -247,7 +247,6 @@ public class JspProcessor extends TemplateProcessorSupport
         if (_tagClass == null) {
             throw new IllegalStateException();
         }
-        topLevelPage.registBeginRenderNotifier(this);
         clearLoadedTag();
         Tag customTag = getLoadedTag();
 
@@ -404,10 +403,6 @@ public class JspProcessor extends TemplateProcessorSupport
                 popNestedVariables();
             }
         }
-    }
-
-    public void notifyBeginRender(Page topLevelPage) {
-        CycleUtil.clearLocalVariable(STOCK_VARIABLES_KEY, this);
     }
 
     @SuppressWarnings("unchecked")

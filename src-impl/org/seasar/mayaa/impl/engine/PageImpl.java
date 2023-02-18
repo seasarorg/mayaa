@@ -18,8 +18,6 @@ package org.seasar.mayaa.impl.engine;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -188,7 +186,6 @@ public class PageImpl extends SpecificationImpl implements Page {
             setCurrentComponent(component);
             SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_BEFORE_RENDER_COMPONENT);
             try {
-                notifyBeginRender();
                 return RenderUtil.renderPage(true, this, null,
                         this, requestedSuffix, extension);
             } finally {
@@ -244,29 +241,10 @@ public class PageImpl extends SpecificationImpl implements Page {
         return templates[0].doTemplateRender(topLevelPage);
     }
 
-    protected Map<TemplateProcessor, Boolean> getBeginRenderListeners() {
-        synchronized(this) {
-            if (_beginRenderListeners == null) {
-                _beginRenderListeners = new ReferenceMap(
-                        AbstractReferenceMap.SOFT, AbstractReferenceMap.WEAK, true);
-            }
-        }
-        return _beginRenderListeners;
-    }
-
+    @Override
+    @Deprecated
     public boolean registBeginRenderNotifier(TemplateProcessor processor) {
-        boolean result =
-            getBeginRenderListeners().containsKey(processor) == false;
-        if (result == false) {
-            getBeginRenderListeners().put(processor, Boolean.TRUE);
-        }
-        return result;
-    }
-
-    protected void notifyBeginRender() {
-        for (TemplateProcessor listener : getBeginRenderListeners().keySet()) {
-            listener.notifyBeginRender(this);
-        }
+        throw new UnsupportedOperationException();
     }
 
     /*

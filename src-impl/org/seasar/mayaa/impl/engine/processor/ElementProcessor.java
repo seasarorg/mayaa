@@ -92,9 +92,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 new Object[] { getOriginalNode() });
     }
 
-    public void notifyBeginRender(Page topLevelPage) {
-        CycleUtil.clearGlobalVariable(RENDERED_NS_STACK_KEY);
-    }
 
     @SuppressWarnings("unchecked")
     protected Stack<List<PrefixMapping>> getRenderedNS() {
@@ -451,9 +448,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     public ProcessStatus processStart(Page topLevelPage) {
-        if (topLevelPage != null) {
-            topLevelPage.registBeginRenderNotifier(this);
-        }
         renderInit();
         return super.processStart(topLevelPage);
     }

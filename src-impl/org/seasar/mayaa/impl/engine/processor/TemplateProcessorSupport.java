@@ -231,6 +231,8 @@ public class TemplateProcessorSupport
         return new ProcessorTreeWalker[] { this };
     }
 
+    @Override
+    @Deprecated
     public void notifyBeginRender(Page topLevelPage) {
         // no operation
     }

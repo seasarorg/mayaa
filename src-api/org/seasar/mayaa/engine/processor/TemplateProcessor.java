@@ -104,6 +104,7 @@ public interface TemplateProcessor extends ProcessorTreeWalker, Serializable {
      *
      * @param topLevelPage 描画トップレベルのページ。
      */
+    @Deprecated
     void notifyBeginRender(Page topLevelPage);
 
 }

@@ -150,6 +150,10 @@ public class ElementProcessor extends AbstractAttributableProcessor
         return String.class;
     }
 
+    public Class<?> getInformalExpectedClass() {
+        return String.class;
+    }
+
     protected void resolvePrefix(PrefixAwareName name, Namespace currentNS) {
         if (name == null) {
             throw new IllegalArgumentException();

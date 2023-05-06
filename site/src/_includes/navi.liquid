@@ -25,7 +25,7 @@
     </div>
   </div>
   <!-- /notice now under working -->
-  <div aria-hidden class="bg-img-bluesky">
+  <div aria-hidden id="hdr-bg" class="bg-img-bluesky">
     <div class="px-2 pt-2 pb-0 lg:px-5 lg:pl-3 bg-img-mayaa-illust">
       <div class="flex items-center justify-between">
         <div class="flex items-center justify-start">
@@ -49,4 +49,11 @@
         </div>
     </div>
   </div>
+  <script>
+    const bg_list = ["bg-img-bluesky", "bg-img-broadsea", "bg-img-grass", "bg-img-greenrock", "bg-img-deepsea", "bg-img-reef" ];
+    setInterval(function(){
+      document.getElementById("hdr-bg").classList.remove(...bg_list);
+      document.getElementById("hdr-bg").classList.add(bg_list[Math.floor(Math.random() * bg_list.length)]);
+    }, 30000);
+  </script>
 </nav>

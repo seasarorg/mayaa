@@ -8,7 +8,28 @@
 }
 
 .bg-img-bluesky {
-  background:linear-gradient(to bottom, transparent, white 29px), url(../images/bg_hdr_about.jpg) repeat-x;
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_about.jpg) repeat-x;
+  transition: all 3s ease-out;
+}
+.bg-img-broadsea {
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_news.jpg) repeat-x;
+  transition: all 3s ease-out;
+}
+.bg-img-grass {
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_subproject.jpg) repeat-x;
+  transition: all 3s ease-out;
+}
+.bg-img-greenrock {
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_doc.jpg) repeat-x;
+  transition: all 3s ease-out;
+}
+.bg-img-deepsea {
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_support.jpg) repeat-x;
+  transition: all 3s ease-out;
+}
+.bg-img-reef {
+  background:linear-gradient(to bottom, transparent 12px, white 29px), url(../images/bg_hdr_download.jpg) repeat-x;
+  transition: all 3s ease-out;
 }
 
 .bg-img-mayaa-illust {

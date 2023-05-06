@@ -3,16 +3,18 @@
   <!-- notice now under working -->
   <div id="sticky-banner" tabindex="-1" class="z-50 flex justify-between w-full p-1 border-b border-red-200 bg-red-50 dark:bg-red-700 dark:border-red-600">
     <div class="flex items-center mx-auto">
-      <p class="flex items-center text-sm font-normal text-red-500 dark:text-red-400">
-        <span class="inline-flex p-1 mr-3 bg-red-200 rounded-full dark:bg-red-600">
-          <svg class="w-4 h-4 text-red-500 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"></path>
-          </svg>
-          <span class="sr-only">Light bulb</span>
+      <span class="inline-flex p-1 mr-3 bg-red-200 rounded-full dark:bg-red-600">
+        <svg class="w-4 h-4 text-red-500 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"></path>
+        </svg>
+        <span class="sr-only">Light bulb</span>
+      </span>
+      <p class="flex sm:flex-row flex-col items-center text-sm font-bold text-red-500 dark:text-red-400">
+        <span>ただいまニューアル作業中です。</span>
+        <span class="flex">
+          <span class="mr-1">オリジナルは</span>
+          <a href="https://mayaa.seasar.org/" class="inline font-medium text-red-600 underline dark:text-red-500 underline-offset-2 decoration-600 dark:decoration-500 decoration-solid hover:no-underline">http://mayaa.seasar.org/</a>
         </span>
-        <span class="font-bold">ただいまサイトリニューアル作業中です。オリジナルサイトはこちらです。</span>
-        <svg aria-hidden="true" class="w-4 h-4 -ml-1 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-        <a href="https://mayaa.seasar.org/" class="inline font-medium text-red-600 underline dark:text-red-500 underline-offset-2 decoration-600 dark:decoration-500 decoration-solid hover:no-underline">http://mayaa.seasar.org/</a>
       </p>
     </div>
     <div class="flex items-center">
@@ -33,13 +35,13 @@
                 <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
               </svg>
           </button>
-          <div class="mr-4 sm:mr-8">
+          <div class="mr-4 ml-2 sm:mr-8">
             <a href="/" >
-              <img src="/images/mayaa-text.svg" style="height:44px;" title="Mayaa">
+              <img src="/images/mayaa-text.svg" title="Mayaa" class="h-[28px] sm:h-[44px]">
             </a>
           </div>
         </div>
-        <div class="flex font-bold mr-24">
+        <div class="hidden sm:flex font-bold mr-24">
           <div class="center mr-3 sm:mr-8"><a href="/about/">About</a></div>
           <div class="center mr-3 sm:mr-8"><a href="/news/">News</a></div>
           <div class="center mr-3 sm:mr-8"><a href="/docs/">Documents</a></div>

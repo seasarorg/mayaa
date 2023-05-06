@@ -2,6 +2,11 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+
+.article-link a {
+  @apply text-blue-500 underline;
+}
+
 .bg-img-bluesky {
   background:linear-gradient(to bottom, transparent, white 29px), url(../images/bg_hdr_about.jpg) repeat-x;
 }
@@ -79,13 +84,10 @@ code[data-filename]:before {
     @apply mx-auto m-4 p-4 bg-white rounded-md;
   }
   ul {
-    @apply ml-8 my-4 text-sm;
-  }
-  header li {
-    @apply text-white mt-2 list-disc;
+    @apply ml-4 my-4 text-sm;
   }
   ol {
-    @apply ml-8 my-4 text-sm;
+    @apply ml-4 my-4 text-sm;
   }
   ol li {
     @apply mt-2 list-decimal;
@@ -95,10 +97,6 @@ code[data-filename]:before {
   }
   article ul li {
     @apply mt-2 list-disc;
-  }
-
-  article a {
-    @apply text-blue-500 underline;
   }
 
   article p {
@@ -117,7 +115,7 @@ code[data-filename]:before {
   }
 
   article table {
-    @apply w-full my-4 border-collapse border border-gray-400;
+    @apply w-full overflow-auto my-4 border-collapse border border-gray-400;
   }
   article th,
   article td {

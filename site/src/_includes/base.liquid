@@ -10,7 +10,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="manifest" href="/images/site.webmanifest">
     <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -18,8 +17,8 @@
 </head>
 <body>
   {% include navi %}
-  <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-72 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+  <aside id="logo-sidebar" class="{% if page.url == "/" %}sm:hidden{% endif %} fixed top-0 left-0 z-40 w-72 h-screen pt-24 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+    <div class="h-full px-3 pb-20 overflow-y-auto bg-white dark:bg-gray-800">
       {% assign navPages = collections.all | eleventyNavigation %}
       <ul class="ml-2 space-y-1 font-medium">
       {%- for entry in navPages %}
@@ -74,15 +73,15 @@
         </ul>
       </div>
     </aside>
-  
-  <div class="mt-12 p-4 sm:ml-64">
-    <article class="sm:px-8 p-0 max-w-screen-md mx-auto text-xs">
+
+  <div class="mt-12 sm:p-4 {% if page.url != "/" %}sm:ml-64{% endif %}">
+    <article class="{% if page.url != "/" %}article-link{% endif %} sm:px-8 p-0 max-w-screen-lg mx-auto text-xs">
         <section class="bg-white dark:bg-slate-800 rounded-lg min-h-fit px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
             {{ content }}
         </section>
     </article>
     <footer>
-      <small class="block mt-4 text-right text-xs">Copyright (c) 2004-2023 the Seasar Foundation and others. all rights reserved.</small>
+      <small class="block mt-4 text-right pr-2 font-bold text-gray-500 text-xs">&copy; 2004-2023 the Seasar Foundation and others.</small>
     </footer>
   </div>
 </body>

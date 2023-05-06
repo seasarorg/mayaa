@@ -1,6 +1,6 @@
 ---
 title: Mayaa, JavaServer Templates
-layout: top
+layout: base
 ---
 
 <section class="bg-white dark:bg-gray-900">
@@ -18,16 +18,23 @@ layout: top
       <p><a href="https://github.com/seasarorg/mayaa/releases/latest" class="text-blue-800 underline">直近の変更内容</a> / <a href="https://github.com/seasarorg/mayaa/blob/master/CHANGELOG.md" class="text-blue-800 underline">過去の変更内容</a></p>
     </div>
   </div>
-  <div class="min-w-fit w-20 mx-auto mb-4">
+  <!-- お知らせ -->
+  <div class="max-w-sm mx-auto mb-4">
     <h2 class="text-center text-base tracking-tighter text-blue-800 my-1 py-1">お知らせ</h2>
     {% assign news = collections.news | reverse %}
     <ul class="my-0">
       {%- for post in news limit:3 -%}
-      <li><a href="{{ post.url }}" class="flex space-x-2"><div class="font-mono">{{ post.data.date | date: '%Y.%m.%d' }}</div><div class="max-w-sm">{{ post.data.title }}</div></a></li>
+      <li>
+        <a href="{{ post.url }}">
+          <div class="">{{ post.data.title }}</div>
+          <div class="text-xs text-gray-500">({{ post.data.date | date: '%Y.%m.%d' }})</div>
+        </a>
+      </li>
       {%- endfor -%}  
     </ul>
     <div class="text-right"><a href="/news/" class="underline">その他のお知らせ</a></div>
   </div>
+  <!-- お知らせ -->
 </section>
 
 
@@ -36,9 +43,17 @@ layout: top
     <a href="#">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">まずは始める</h5>
     </a>
-    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">まずは小さな環境からステップを踏んで動かしならMayaaを理解する。</p>
+
+    <ul class="list-disc">
+      <li><a href="/getting-started/" class="underline">Mayaaを実行する</a></li>
+      <li><a href="/getting-started/various-values/" class="underline">いろいろな値を出してみる</a></li>
+      <li><a href="/getting-started/conditional/" class="underline">条件分岐とループ</a></li>
+      <li><a href="/getting-started/notation/" class="underline">Mayaaファイル</a></li>
+    </ul>
+
     <a href="/getting-started/" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
-        Getting Started
+      Mayaaを実行する
         <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
     </a>
   </div>
@@ -50,12 +65,13 @@ layout: top
     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Mayaaが持つ機能を余すことなく使うために。</p>
 
     <ul class="list-disc">
-      <li><a href="/docs/settings/" class="underline">エンジンの設定</a></li>
-      <li><a href="/docs/processors" class="underline">プロセッサリファレンス</a></li>
+      <li><a href="/advance/" class="underline">高度な使い方</a></li>
+      <li><a href="/docs/processors/" class="underline">プロセッサリファレンス</a></li>
       <li><a href="/docs/defined-objects/" class="underline">定義済みオブジェクト</a></li>
+      <li><a href="/docs/settings/" class="underline">エンジンの設定</a></li>
     </ul>
     <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
-        TIPS
+      高度な使い方
         <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
     </a>
   </div>
@@ -67,13 +83,15 @@ layout: top
     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Mayaaが開発された背景や各所の発表資料などのMayaa自体についての情報。開発状況やサポートなど。</p>
 
     <ul class="list-disc">
+      <li><a href="/about/project/" class="underline">Mayaaとは何か</a></li>
       <li><a href="https://github.com/seasarorg/mayaa/blob/master/CHANGELOG.md" class="underline">リリースノート(Github)</a></li>
       <li><a href="/support/" class="underline">サポートページ</a></li>
       <li><a href="https://github.com/seasarorg/mayaa" class="underline">Mayaa on Github</a></li>
+      <li><a href="/about/project/" class="underline">プロジェクトについて</a></li>
       <li><a href="/about/related-info/" class="underline">発表資料、関連サイト、記事など</a></li>
     </ul>
     <a href="/about/" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
-        Mayaaとは
+        Mayaaとは何か
         <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
     </a>
   </div>
@@ -85,8 +103,8 @@ layout: top
   <p>Mayaa の基本的な使い方では、HTML テンプレートファイルとそれに対応する設定ファイル (拡張子 .mayaa) の２つを
     元にして動的なページを生成します。HTML テンプレートの動的な部分に id 属性で印を付け、その id に対して設定をする形になります。</p>
     
-  <div class="flex space-x-6">
-    <div class="w-2/3">
+  <div class="sm:flex sm:space-x-6">
+    <div class="sm:w-2/3">
       <p>テンプレート型ビュー技術としての Mayaa の主な特徴は次の４点です。</p>
       <ul class="list-disc">
         <li>テンプレートとして使えるファイルは HTML、XHTML、XML</li>
@@ -95,7 +113,7 @@ layout: top
         <li>JSP カスタムタグを使える</li>
       </ul>
     </div>
-    <div class="w-1/3">
+    <div class="sm:w-1/3">
       <img src="/images/about_mayaa_standard.gif" title="Mayaa の基本的な動作">
     </div>
   </div>  

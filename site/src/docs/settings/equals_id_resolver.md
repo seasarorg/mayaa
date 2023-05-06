@@ -62,7 +62,7 @@ HTML/XHTML の id 属性をバインディングに使わないよう設定す�
 : Mayaa ファイルに同じ値を持つ id 属性が複数定義されている場合にメッセージをログ出力するかどうかを設定します。複数定義されている場合は最初に見つかったものを使うため、それ以外は使われません。ログは commons-logging の WARN レベルで出力します。`true` を設定すると出力し、`false` に設定すると出力しません。デフォルトは "`true`" です。
 
 `addAttribute`
-: Mayaa ファイルの id 属性と対応させるテンプレート側の属性を追加します。属性は " *{名前空間URI}属性名* " の形式で指定します。デフォルトは HTML の id "`{http://www.w3.org/TR/html4}id`" と XHTML の id "`{http://www.w3.org/1999/xhtml}id`" です。(Mayaa の内部では、HTML の名前空間 URI を "http://www.w3.org/TR/html4" として扱っています)
+: Mayaa ファイルの id 属性と対応させるテンプレート側の属性を追加します。属性は " **{名前空間URI}属性名** " の形式で指定します。デフォルトは HTML の id "`{http://www.w3.org/TR/html4}id`" と XHTML の id "`{http://www.w3.org/1999/xhtml}id`" です。(Mayaa の内部では、HTML の名前空間 URI を "http://www.w3.org/TR/html4" として扱っています)
 
 #### ■HTML の id と XHTML の id を処理対象から外す
 

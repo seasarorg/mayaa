@@ -60,7 +60,7 @@ mayaa ファイルから HTML コメントを出力したい場合、{% proc "m:
 
 ブラウザで http://localhost:8080/mayaa/comment.html にアクセスしてみましょう。
 
-```
+```html
 実行結果 (改行などは実際の実行結果と異なります)
 <html>
 <body>

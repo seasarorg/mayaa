@@ -29,7 +29,7 @@ eleventyNavigation:
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
     <m:with m:id="message">
-        <m:if test="${ param.name &amp;amp;&amp;amp; param.name.length > 0 }">
+        <m:if test="${ param.name &amp;&amp; param.name.length > 0 }">
             <m:write value="hello," />
         </m:if>
         <m:write value="${ param.name }" default="no name" />

@@ -24,7 +24,7 @@ mayaa ファイルに対応する指定がない場合には、初回アクセ�
 ※htmlのidを常に無視したい場合は 5-6「<a href="equals_id_resolver.html">id 属性を無視する</a>」をご覧ください。
 
 ```
-the injection id( *[対象 id の値]* ) is not found on the template, file:// *[URL]* 
+the injection id([対象 id の値]) is not found on the template, file://[URL]
 ```
 
 ### 簡単な例
@@ -36,7 +36,7 @@ the injection id( *[対象 id の値]* ) is not found on the template, file:// *
 <html>
 <body>
     <span id="notfound">not found</span>
-    <span  *id="ignored"* >ignored</span>
+    <span id="ignored">ignored</span>
 </body>
 </html>
 ```
@@ -44,7 +44,7 @@ the injection id( *[対象 id の値]* ) is not found on the template, file:// *
 ```xml {data-filename=ignore.mayaa}
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
-    < *m:ignore*   *m:id="ignored"*  />
+    <m:ignore m:id="ignored" />
 </m:mayaa>
 ```
 

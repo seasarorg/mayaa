@@ -23,7 +23,7 @@ Mayaa では、ひとつの URL で複数のテンプレートを使いわける
 
 ### 種類を指定する
 
-次に、どのファイルを使うかを指定します。`m:mayaa` に  *m:templateSuffix*  属性を書き、その値として種類 (en や ja) を文字列として指定します。スクリプトを書く場合、その結果が文字列になるようにしてください。
+次に、どのファイルを使うかを指定します。`m:mayaa` に  **m:templateSuffix**  属性を書き、その値として種類 (en や ja) を文字列として指定します。スクリプトを書く場合、その結果が文字列になるようにしてください。
 
 下の例ではパラメータとして `"locale"` を渡し、その値を使って切り替えます。
 
@@ -48,7 +48,7 @@ Mayaa では、ひとつの URL で複数のテンプレートを使いわける
 ```xml {data-filename=use_suffix.mayaa}
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mayaa xmlns:m="http://mayaa.seasar.org"
-         *m:templateSuffix="${ param.locale }"* >
+        m:templateSuffix="${ param.locale }">
 </m:mayaa>
 ```
 

@@ -91,7 +91,7 @@ Mayaa 標準の Engine に対するパラメータをいくつか説明します
 `forwardLimit`
 : 一回のレンダリング中に Mayaa の同一パスへ forward できる上限回数を指定します。デフォルトは "`10`" です。このパラメータは記述ミスで無限ループしてしまうのを避けるためにあります。
 
-`convertCharset` ( *※* 1.1.12 で追加されたパラメータ)
+`convertCharset`
 : テンプレートの meta タグで charset を "`Windows-31J`" としたとき、出力する HTML および HTTP レスポンスヘッダの Content-Type の charset として "`Shift_JIS`" を出力するかどうか設定します。"`true`" なら有効、"`false`" なら無効です。デフォルトは "`false`" です。
 
 </dl>
@@ -114,9 +114,9 @@ Mayaa 標準の `TemplateBuilder` に対するパラメータをいくつか説�
         <parameter name="`outputMayaaWhitespace`" value="`false`"/>
         <parameter name="`optimize`" value="`true`"/>
         <parameter name="`defaultCharset`" value="`UTF-8`"/>
-                <!--  *※* 1.1.22 で追加されたパラメータ -->
+                <!-- 1.1.22 で追加されたパラメータ -->
         <parameter name="`replaceSSIInclude`" value="`true`"/>
-                <!--  *※* 1.1.25 で追加されたパラメータ -->
+                <!-- 1.1.25 で追加されたパラメータ -->
     </templateBuilder>
 </provider>
 ```

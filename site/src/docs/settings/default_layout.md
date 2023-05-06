@@ -31,8 +31,8 @@ eleventyNavigation:
     "http://mayaa.seasar.org/dtd/mayaa-provider_1_0.dtd">
 <provider>
     <templateBuilder
-             *class="org.seasar.mayaa.impl.builder.* 
-                              *DefaultLayoutTemplateBuilder"* >
+            class="org.seasar.mayaa.impl.builder.
+                            DefaultLayoutTemplateBuilder">
         (<a href="equals_id_resolver.html">標準の `TemplateBuilderImpl` と同じ部分</a>は省略)
         <parameter name="defaultLayoutPageName"
                              value="/defaultlayout.html"/>

@@ -40,7 +40,7 @@ next:
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
 
     <m:for m:id="loop" init="${ var i = 1 }"
-            test="${ i &amp;lt; 6 }" after="${ i += 1 }" />
+            test="${ i &lt; 6 }" after="${ i += 1 }" />
 
     <m:exec m:id="evenodd" replace="false"
         script="${ var evenodd = (i % 2 == 0) ? 'even' : 'odd'; }" />

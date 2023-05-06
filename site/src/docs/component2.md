@@ -34,7 +34,7 @@ tags: tutorial
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
     <m:for m:id="loop"
             init="${ var count = 0 }"
-            test="${ count &amp;lt; 5 }"
+            test="${ count &lt; 5 }"
             after="${ count++ }" />
 
     <m:insert m:id="comp" path="/component.html" />

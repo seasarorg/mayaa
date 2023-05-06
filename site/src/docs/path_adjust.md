@@ -10,9 +10,9 @@ eleventyNavigation:
 
 ## PathAdjuster:パスを自動調整する
 
-<a href="component1.html">コンポーネント機能</a>、<a href="layout.html">レイアウト共有機能</a>を使うときにテンプレートが別のディレクトリにあると、ブラウザで直接開く場合と実行時とで画像やスタイルシートなどのファイルパスが変わってしまう場合があります。そのような場合、パスを  *"./"*  で始めることで自動調整させることができます。
+<a href="component1.html">コンポーネント機能</a>、<a href="layout.html">レイアウト共有機能</a>を使うときにテンプレートが別のディレクトリにあると、ブラウザで直接開く場合と実行時とで画像やスタイルシートなどのファイルパスが変わってしまう場合があります。そのような場合、パスを "./" で始めることで自動調整させることができます。
 
-<a href="path_adjust_settings.html">設定</a>で有効/無効、 *"./"*  で始まっていないパスを対象とするかどうかを変更できます。
+<a href="path_adjust_settings.html">設定</a>で有効/無効、"./" で始まっていないパスを対象とするかどうかを変更できます。
 
 
 ### 具体的な例
@@ -47,7 +47,7 @@ eleventyNavigation:
 ```xml {data-filename=hello.mayaa}
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mayaa xmlns:m="http://mayaa.seasar.org"
-        extends=" */layouts/layout.html* ">
+        extends="/layouts/layout.html">
 
     <m:doRender m:id="content" name="contentBody" />
 </m:mayaa>
@@ -56,7 +56,7 @@ eleventyNavigation:
 ```html {data-filename=layouts/layout.html}
 <html>
 <head>
-    <link href=" *../css/base.css* " rel="stylesheet" type="text/css">
+    <link href="../css/base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     # Hello
@@ -79,7 +79,7 @@ eleventyNavigation:
 実行結果 (改行などは実際の実行結果と異なります)
 <html>
 <head>
-    <link href=" *../css/base.css* " rel="stylesheet" type="text/css">
+    <link href="../css/base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     # Hello
@@ -99,7 +99,7 @@ eleventyNavigation:
 ```html {data-filename=layouts/layout.html}
 <html>
 <head>
-    <link href=" *./../css/base.css* " rel="stylesheet" type="text/css">
+    <link href="./../css/base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     # Hello
@@ -109,14 +109,14 @@ eleventyNavigation:
 </html>
 ```
 
-Mayaa はパスが *"./"* で始まっている場合、そのテンプレートからの相対パスと解釈して絶対パスに置き換えます。
+Mayaa はパスが "./" で始まっている場合、そのテンプレートからの相対パスと解釈して絶対パスに置き換えます。
 ブラウザで http://localhost:8080/mayaa/hello.html にアクセスしてみましょう。
 
 ```html
 実行結果 (改行などは実際の実行結果と異なります)
 <html>
 <head>
-    <link href=" */mayaa/css/base.css* " rel="stylesheet" type="text/css">
+    <link href="/mayaa/css/base.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     # Hello

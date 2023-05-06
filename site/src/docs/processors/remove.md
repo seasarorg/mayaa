@@ -38,7 +38,7 @@ eleventyNavigation:
 <m:mayaa xmlns:m="http://mayaa.seasar.org">
     <m:for m:id="loop"
             init="${ var i = 0; }"
-            test="${ i &amp;lt; 5 }"
+            test="${ i &lt; 5 }"
             after="${ i += 1 }" />
 
     <m:write m:id="message" value="${ i }" />

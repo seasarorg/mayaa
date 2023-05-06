@@ -27,18 +27,19 @@ Mayaaは、すでに2004年11月より、開発がスタートしています。
 
       <p>プロジェクトリーダー：</p>
       <ul>
-        <li><a href="http://suga.parfe.jp/td/">須賀 幸次</a> （<a href="http://www.gluegent.com">株式会社グルージェント</a>）</li>
+        <li>ワタナベ [@32nize](https://twitter.com/32nize){.twitter} [mitonize](https://github.com/mitonize){.github} (2019年12月〜)</li> 
       </ul>
 
       <p>コミッタ：</p>
       <ul>
-        <li><a href="http://d.hatena.ne.jp/masataka_k/">栗原 傑享</a> （<a href="http://www.gluegent.com">株式会社グルージェント</a>）</li>
-        <li><a href="http://d.hatena.ne.jp/maruo_syunsuke/">圓尾 俊介</a> （<a href="http://www.gluegent.com">株式会社グルージェント</a>）</li>
-        <li><a href="http://d.hatena.ne.jp/duran/">duran</a></li>
-        <li><a href="http://d.hatena.ne.jp/t-katochin/">加藤 太朗</a> （<a href="http://www.gluegent.com">株式会社グルージェント</a>）</li>
-        <li>佐々木 久禎 （<a href="http://www.gluegent.com">株式会社グルージェント</a>）</li>
-        <li><a href="http://d.hatena.ne.jp/matobat/">matobat</a></li>
-        <li>ワタナベ [@32nize](https://twitter.com/32nize){.twitter} [mitonize](https://github.com/mitonize){.github} (2019年12月〜)</li> 
+        <li>栗原 傑享</li>
+        <li>須賀 幸次</li>
+        <li>圓尾 俊介</li>
+        <li>duran</li>
+        <li>加藤 太朗</li>
+        <li>佐々木 久禎</li>
+        <li>matobat</li>
+        <li>Susumu ISHIGAMI</li>
       </ul>
 
     <h3>

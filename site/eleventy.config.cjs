@@ -1,5 +1,7 @@
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
+
+const markdownIt = require("markdown-it");
 const markdownItPrism = require('markdown-it-prism');
 const markdownItAttrs = require('markdown-it-attrs');
 const markdownItContainer = require('markdown-it-container');
@@ -16,6 +18,13 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
   eleventyConfig.addPlugin(eleventyNavigationPlugin);
+
+  let options = {
+    html: true,
+    breaks: false,
+    linkify: true
+  };
+  eleventyConfig.setLibrary("md", markdownIt(options));
   eleventyConfig.amendLibrary("md", mdLib => 
     mdLib
     .use(markdownItAttrs)

@@ -131,7 +131,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
         _name = name;
     }
 
-    protected PrefixAwareName getName() {
+    public PrefixAwareName getName() {
         if (_name == null) {
             throw new IllegalStateException();
         }

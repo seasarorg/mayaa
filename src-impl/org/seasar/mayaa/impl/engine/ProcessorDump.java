@@ -28,11 +28,13 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
+import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
+import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
@@ -52,7 +54,7 @@ public class ProcessorDump extends ElementProcessor {
     private PrintStream _out = DEFAULT_OUT;
     private String _headerLine = "DUMPSTART =======================================";
     private String _footerLine = "DUMPEND =========================================";
-    private String _indentChar = "    ";
+    private String _indentChar = "  ";
     private boolean _printContents = false;
 
     public void setOut(PrintStream out) {
@@ -71,6 +73,10 @@ public class ProcessorDump extends ElementProcessor {
         _printContents = printContents;
     }
 
+    /**
+     * 最上位のダンプメソッド
+     * @param topLevelPage
+     */
     public void printSource(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         RequestScope request = cycle.getRequestScope();
@@ -81,12 +87,17 @@ public class ProcessorDump extends ElementProcessor {
 
         print(_headerLine);
         print(template.getSystemID());
-        printTree(0, template);
+        print("PROCESSOR TREE --------------------------------");
+        printProcessorTree(0, template);
+        print("ORIGINAL NODE TREE --------------------------------");
+        printSpecificationNodeTree(0, template);
+        print("PAGE NODE TREE --------------------------------");
+        printSpecificationNodeTree(0, topLevelPage);
         print(_footerLine);
     }
 
-    protected void printTree(int indentCount, ProcessorTreeWalker walker) {
-// TODO レイアウト機能を使う場合
+    protected void printProcessorTree(int indentCount, ProcessorTreeWalker walker) {
+        // TODO レイアウト機能を使う場合
         int childSize = walker.getChildProcessorSize();
         if (walker instanceof TemplateProcessor) {
             printTag(indentCount, (TemplateProcessor) walker,
@@ -94,53 +105,117 @@ public class ProcessorDump extends ElementProcessor {
         }
         if (childSize > 0) {
             for (int i = 0; i < childSize; i++) {
-                printTree(indentCount + 1, walker.getChildProcessor(i));
+                printProcessorTree(indentCount + 1, walker.getChildProcessor(i));
             }
-            if (walker instanceof TemplateProcessor) {
-                printTag(indentCount, (TemplateProcessor) walker, "</", ">", false);
+            // if (walker instanceof TemplateProcessor) {
+            //     printTag(indentCount, (TemplateProcessor) walker, "</", ">", false);
+            // }
+        }
+    }
+
+    protected void printSpecificationNodeTree(int indentCount, NodeTreeWalker walker) {
+        // TODO レイアウト機能を使う場合
+        int childSize = walker.getChildNodeSize();
+        if (walker instanceof SpecificationNode) {
+            printNode(indentCount, (SpecificationNode) walker,
+                    "<", (childSize > 0 ? ">" : " />"), true);
+        } else {
+            print("Non SpecificationNode:" + walker.getClass().getSimpleName());
+        }
+        if (childSize > 0) {
+            for (int i = 0; i < childSize; i++) {
+                printSpecificationNodeTree(indentCount + 1, walker.getChildNode(i));
+            }
+            if (walker instanceof SpecificationNode) {
+                printNode(indentCount, (SpecificationNode) walker, "</", ">", false);
+            } else {
+                print("Non SpecificationNode:" + walker.getClass().getSimpleName());
             }
         }
+    }
+    protected void printNode(
+        int indentCount, SpecificationNode node,
+        String start, String end, boolean printAttributes) {
+
+        StringBuilder sb = new StringBuilder(128);
+        sb.append(node.getSystemID());
+        sb.append(':');
+        sb.append(node.getSequenceID());
+        sb.append("\t");
+
+        for (int i = 0; i < indentCount; i++) {
+            sb.append(_indentChar);
+        }
+
+        sb.append(start);
+        sb.append(prefixedQName(node, node.getQName()));
+
+        if (printAttributes) {
+            writeAttributes(sb, node);
+        }
+
+        sb.append(end);
+        print(sb.toString());
     }
 
     protected void printTag(
             int indentCount, TemplateProcessor processor,
             String start, String end, boolean printAttributes) {
-        if (_printContents && processor instanceof LiteralCharactersProcessor) {
-            print(((LiteralCharactersProcessor) processor).getText());
+
+        StringBuilder sb = new StringBuilder(128);
+        sb.append(processor.getInjectedNode().getSystemID());
+        sb.append(':');
+        sb.append(processor.getInjectedNode().getSequenceID());
+        sb.append("\t");
+        for (int i = 0; i < indentCount; i++) {
+            sb.append(_indentChar);
+        }
+
+
+        if (processor instanceof LiteralCharactersProcessor) {
+            final String value = ((LiteralCharactersProcessor) processor).getText();
+            sb.append("LiteralCharacters: \"");
+            if (_printContents) {
+                sb.append(value.replaceAll("\n", "\\\\n").replaceAll("\r", "\\\\r").replaceAll("\t", "\\\\t"));
+            } else {
+                sb.append("(omit) length:").append(value.length());
+            }
+            sb.append("\"");
+
 // TODO insert の場合
 // TODO echo の場合
         } else {
-            StringBuilder sb = new StringBuilder(128);
-
-            for (int i = 0; i < indentCount; i++) {
-                sb.append(_indentChar);
-            }
-
+            final String processorName = processor.getClass().getSimpleName().replace("Processor", "");
+            sb.append(processorName).append(": ");
             sb.append(start);
 
             SpecificationNode node = getNode(processor);
-            String prefix = "";
-            PrefixMapping mapping =
-                node.getMappingFromURI(node.getQName().getNamespaceURI(), true);
-            if (mapping != null && StringUtil.hasValue(mapping.getPrefix())) {
-                prefix = mapping.getPrefix() + ":";
+            sb.append(prefixedQName(node, node.getQName()));
+            if (processor instanceof ElementProcessor) {
+                ElementProcessor p = (ElementProcessor) processor;
+                sb.append(" name=\"").append(prefixedQName(p.getName())).append("\"");
             }
-            sb.append(prefix);
-            sb.append(node.getQName().getLocalName());
 
             if (printAttributes) {
                 writeAttributes(sb, processor);
             }
 
             sb.append(end);
-
-            // TODO original
-            // sb.append("<!-- mayaa/original[");
-            // sb.append(processor.getOriginalNode().getQName().getLocalName());
-            // sb.append("] -->");
-
-            print(sb.toString());
         }
+
+        // TODO original
+        // sb.append("\n");
+        // for (int i = 0; i < indentCount; i++) {
+        //     sb.append(_indentChar);
+        // }
+        sb.append("  original[");
+        sb.append(processor.getOriginalNode().getSystemID());
+        sb.append(':');
+        sb.append(processor.getOriginalNode().getSequenceID());
+        // sb.append(processor.getOriginalNode().getId());
+        sb.append("]");
+
+        print(sb.toString());
     }
 
     protected SpecificationNode getNode(TemplateProcessor processor) {
@@ -155,26 +230,25 @@ public class ProcessorDump extends ElementProcessor {
         return processor.getInjectedNode();
     }
 
+    protected void writeAttributes(StringBuilder sb, SpecificationNode node) {
+        for (Iterator<NodeAttribute> it = node.iterateAttribute(); it.hasNext();) {
+            NodeAttribute prop = it.next();
+            QName propName = prop.getQName();
+            final String name = prefixedQName(node, propName);
+            writeProcessorAttributeString(sb, name, prop.getValue());
+        }
+    }
+
     protected void writeAttributes(StringBuilder sb, TemplateProcessor processor) {
         if (processor instanceof ElementProcessor) {
             writeElementAttributes(sb, (ElementProcessor) processor);
         } else {
             SpecificationNode node = processor.getInjectedNode();
-            URI namespace = node.getQName().getNamespaceURI();
-            for (Iterator<NodeAttribute> it = processor.getInjectedNode().iterateAttribute();
-                    it.hasNext();) {
+            for (Iterator<NodeAttribute> it = processor.getInjectedNode().iterateAttribute(); it.hasNext();) {
                 NodeAttribute prop = it.next();
                 QName propName = prop.getQName();
-                String prefix = "";
-                if (namespace.equals(propName.getNamespaceURI()) == false) {
-                    PrefixMapping mapping =
-                        node.getMappingFromURI(propName.getNamespaceURI(), true);
-                    if (mapping != null && StringUtil.hasValue(mapping.getPrefix())) {
-                        prefix = mapping.getPrefix() + ":";
-                    }
-                }
-                writeProcessorAttributeString(
-                        sb, prefix, propName.getLocalName(), prop.getValue());
+                final String name = prefixedQName(node, propName);
+                writeProcessorAttributeString(sb, name, prop.getValue());
             }
         }
     }
@@ -186,15 +260,13 @@ public class ProcessorDump extends ElementProcessor {
         }
         for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (hasProcesstimeProperty(prop) == false
-                    && prop.getValue().isLiteral() == false) {
+            if (hasProcesstimeProperty(prop) == false && prop.getValue().isLiteral() == false) {
                 appendAttributeString(sb, prop.getName(), prop.getValue());
             }
         }
         for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (hasProcesstimeProperty(prop) == false
-                    && prop.getValue().isLiteral()) {
+            if (hasProcesstimeProperty(prop) == false && prop.getValue().isLiteral()) {
                 appendAttributeString(sb, prop.getName(), prop.getValue());
             }
         }
@@ -256,22 +328,61 @@ try { // TODO 修正する [JIRA: MAYAA-5]
     }
 
     protected void writeProcessorAttributeString(
-            StringBuilder sb, String prefix, String localName, Object value) {
+            StringBuilder sb, String name, Object value) {
         sb.append(" ");
-        sb.append(prefix);
-        sb.append(localName);
+        sb.append(name);
         sb.append("=\"");
         if (value instanceof CompiledScript) {
             CompiledScript script = (CompiledScript) value;
             sb.append(script.getScriptText());
         } else {
-            sb.append(value.toString());
+            sb.append(value.toString().replaceAll("\n", "\\\\n"));
         }
         sb.append("\"");
     }
 
     protected void print(String value) {
         _out.println(value);
+    }
+
+    private String prefixedQName(SpecificationNode node, QName qName) {
+        PrefixMapping mapping = node.getMappingFromURI(qName.getNamespaceURI(), true);
+
+        if (mapping != null && StringUtil.hasValue(mapping.getPrefix())) {
+            return mapping.getPrefix() + ":" + qName.getLocalName();
+        }
+
+        if (CONST_IMPL.URI_MAYAA.equals(qName.getNamespaceURI())) {
+            return "M:" + qName.getLocalName();
+        }
+        if (CONST_IMPL.URI_XHTML.equals(qName.getNamespaceURI())) {
+            return "H:" + qName.getLocalName();
+        }
+        if (CONST_IMPL.URI_HTML.equals(qName.getNamespaceURI())) {
+            return "H4:" + qName.getLocalName();
+        }
+
+        return qName.toString();
+    }
+
+    private String prefixedQName(PrefixAwareName name) {
+        QName qName = name.getQName();
+
+        if (StringUtil.hasValue(name.getPrefix())) {
+            return name.getPrefix() + ":" + qName.getLocalName();
+        }
+
+        if (CONST_IMPL.URI_MAYAA.equals(qName.getNamespaceURI())) {
+            return "M:" + qName.getLocalName();
+        }
+        if (CONST_IMPL.URI_XHTML.equals(qName.getNamespaceURI())) {
+            return "H:" + qName.getLocalName();
+        }
+        if (CONST_IMPL.URI_HTML.equals(qName.getNamespaceURI())) {
+            return "H4:" + qName.getLocalName();
+        }
+
+        return qName.toString();
     }
 
 }

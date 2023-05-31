@@ -1,6 +1,6 @@
 # Mayaa
 
-http://mayaa.seasar.org/
+https://seasarorg.github.io/mayaa-site/
 
 MayaaはHTMLをベースとしたテンプレートによるプログラマとデザイナの作業分担を強く意識したWEBフロントサービスエンジンです。
 

@@ -152,7 +152,16 @@
                 attribute="styleId"
                 templateAttribute="id" />
         -->
-        <parameter name="enabled" value="false"/>
+        <!-- for template_attribute test -->
+        <ignoreAttribute
+                qName="{http://java.sun.com/jsp/jstl/core}out" attribute="escapeXml"/>
+        <aliasAttribute
+                qName="{http://java.sun.com/jsp/jstl/fmt}formatN*" attribute="pattern"
+                templateAttribute="formatPattern" />
+        <aliasAttribute
+                qName="{http://mayaa.seasar.org/test/mayaa-test}simpleTest*"
+                attribute="styleClass" templateAttribute="class" />
+        <parameter name="enabled" value="true"/>
     </templateAttributeReader>
 
     <parentSpecificationResolver class="org.seasar.mayaa.impl.engine.specification.ParentSpecificationResolverImpl">

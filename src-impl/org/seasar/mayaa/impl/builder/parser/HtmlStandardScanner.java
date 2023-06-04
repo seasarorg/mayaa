@@ -1036,7 +1036,6 @@ class HtmlTokenizer {
     private static final char CHAR_SUB = 0x1A;
 
     private XMLInputSource inputSource;
-    // private HTMLEntityScanner entityScanner;
     CharBuffer cbuf;
 
     private int pushedBack = CHAR_SUB;
@@ -1256,6 +1255,18 @@ class HtmlTokenizer {
         return true;
     }
 
+    private boolean isApplicableAttributeName(final String token) {
+        if (token == null || token.length() == 0) {
+            return false;
+        }
+        if (token.charAt(0) == '$' && token.length() > 2 && token.charAt(1) == '{' && token.charAt(token.length() - 1) == '}') {
+            // 属性名としての変数参照は無視する
+            return false;
+        }
+        return true;
+        // return ATTR_NAME_PATTERN.matcher(token).matches();
+    }
+
     private boolean isAppropriateEndTagToken(TagToken tagToken) {
         if (lastStartTagToken == null) {
             return false;
@@ -1286,6 +1297,9 @@ class HtmlTokenizer {
     }
 
     private void emitAttribute(String prefix, String name, String value) {
+        if (!isApplicableAttributeName(name)) {
+            return;
+        }
         // add to current attribute list.
         attributes.addAttribute(new QName(prefix, name, name, null), name, value);
     }
@@ -2138,17 +2152,22 @@ class HtmlTokenizer {
                         break;
 
                     case BeforeAttributeName:
+                        // https://html.spec.whatwg.org/multipage/parsing.html#before-attribute-name-state
                         c = getChar();
                         if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ') {
                             // Ignore these.
                         } else if (c == '/' || c == '>' || c == CHAR_SUB) {
                             pushBack();
+                            attrNameBuilder = new StringBuilder();
+                            attrValueBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.AfterAttributeName;
                         } else if (c == '=') {
+                            // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-unexpected-equals-sign-before-attribute-name
                             handler.reportError("unexpected-equals-sign-before-attribute-name", null);
+                            attrNameBuilder = new StringBuilder();
+                            attrValueBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.AttributeName;
-                            emitTextIfAvailable(handler);
-                            emitAttribute(null/* no prefix */, "=", "");
+                            attrNameBuilder.append("=");
                         } else {
                             pushBack();
                             attrNameBuilder = new StringBuilder();
@@ -2166,8 +2185,6 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.AfterAttributeName;
                         } else if (c == '=') {
                             tokenizeState = TokenizeState.BeforeAttributeValue;
-                        } else if (Character.isAlphabetic(c)) {
-                            attrNameBuilder.append(c /*Character.toLowerCase(c)*/);
                         } else if (c == 0) {
                             handler.reportError("unexpected-null-character", null);
                             attrNameBuilder.append((char) 0xFFFD);
@@ -2175,7 +2192,7 @@ class HtmlTokenizer {
                             handler.reportError("unexpected-null-character", null);
                             attrNameBuilder.append((char) c);
                         } else {
-                            attrNameBuilder.append((char) c);
+                            attrNameBuilder.append(c);
                         }
 
                         if (tokenizeState != TokenizeState.AttributeName) {
@@ -2279,6 +2296,7 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.BeforeAttributeName;
                         } else if (c == '>') {
                             emitTextIfAvailable(handler);
+                            emitAttribute(null, attrNameBuilder.toString(), attrValueBuilder.toString());
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
                         } else if (c == 0) {
@@ -2305,6 +2323,7 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.SelfClosingStartTag;
                         } else if (c == '>') {
                             emitTextIfAvailable(handler);
+                            emitAttribute(null, attrNameBuilder.toString(), attrValueBuilder.toString());
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
                         } else if (c == CHAR_SUB) {

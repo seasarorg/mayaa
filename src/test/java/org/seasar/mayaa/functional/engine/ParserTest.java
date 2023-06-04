@@ -478,6 +478,69 @@ public class ParserTest extends EngineTestBase {
             }
             execAndVerify("/target.html", "/expected.html", null);
         }
+
+        @ParameterizedTest(name = "useNewParser {0}")
+        @ValueSource(booleans = {false, true})
+        public void 不正な属性表記は除外される(boolean useNewParser) throws IOException {
+            setUseNewParser(useNewParser);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<div ='val0'>属性名がない</div>\n"
+            + "<div 1a='val1'>数字から始まる属性名</div>\n"
+            + "<div _=6>記号で始まる(_)</div>\n"
+            + "<div :b='1'>記号で始める(:名前空間に見えるが空の文字列)</div>\n"
+            + "<div @click=\"handle(e)\">記号から始まる(@)</div>\n"
+            + "<div c@lick=\"handle(e)\">記号を含む(@)</div>\n"
+            + "<div a$b=1>記号を含む($)</div>\n"
+            + "<div a-1-p='2'>ハイフンを含む</div>\n"
+            + "<div aあ=\"1\">非ASCII</div>\n"
+            + "<div c='${c}'>非nullの変数値の値を持つ属性</div>\n"
+            + "<div d='${d}'>null値の変数を参照する属性</div>\n"
+            + "<div ${c}>属性名は持たない変数参照</div>\n"
+            + "<input type=\"checkbox\" checked selected xxx >\n"
+            + "<div class='abc' x 1>値を持たない属性(暗黙的に空文字列の値を持つ)</div>\n"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/target.mayaa", 
+            "<m:mayaa xmlns:m=\"http://mayaa.seasar.org\"><m:beforeRender>var c = 'CCCC', d = null;</m:beforeRender></m:mayaa>"
+            );
+
+
+            DynamicRegisteredSourceHolder.registerContents("/expected-neko.html", 
+            "<div>属性名がない</div>\n"
+            + "<div 1a=\"val1\">数字から始まる属性名</div>\n"
+            + "<div _=\"6\">記号で始まる(_)</div>\n"
+            + "<div :b=\"1\">記号で始める(:名前空間に見えるが空の文字列)</div>\n"
+            + "<div>記号から始まる(@)</div>\n"
+            + "<div c>記号を含む(@)</div>\n"
+            + "<div a>記号を含む($)</div>\n"
+            + "<div a-1-p=\"2\">ハイフンを含む</div>\n"
+            + "<div aあ=\"1\">非ASCII</div>\n"
+            + "<div c=\"CCCC\">非nullの変数値の値を持つ属性</div>\n"
+            + "<div d=\"\">null値の変数を参照する属性</div>\n"
+            + "<div>属性名は持たない変数参照</div>\n"
+            + "<input type=\"checkbox\" checked selected xxx>\n"
+            + "<div class=\"abc\" x 1>値を持たない属性(暗黙的に空文字列の値を持つ)</div>\n"
+            );
+
+            // 新パーサでは英字に加えて一部の記号(_@:)から始まるものを許容する。
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<div ='val0'>属性名がない</div>\n"
+            + "<div 1a=\"val1\">数字から始まる属性名</div>\n"
+            + "<div _=\"6\">記号で始まる(_)</div>\n"
+            + "<div :b=\"1\">記号で始める(:名前空間に見えるが空の文字列)</div>\n"
+            + "<div @click=\"handle(e)\">記号から始まる(@)</div>\n"
+            + "<div c@lick=\"handle(e)\">記号を含む(@)</div>\n"
+            + "<div a$b=\"1\">記号を含む($)</div>\n"
+            + "<div a-1-p=\"2\">ハイフンを含む</div>\n"
+            + "<div aあ=\"1\">非ASCII</div>\n"
+            + "<div c=\"CCCC\">非nullの変数値の値を持つ属性</div>\n"
+            + "<div d=\"\">null値の変数を参照する属性</div>\n"
+            + "<div>属性名は持たない変数参照</div>\n"
+            + "<input type=\"checkbox\" checked selected xxx>\n"
+            + "<div class=\"abc\" x 1>値を持たない属性(暗黙的に空文字列の値を持つ)</div>\n"
+            );
+
+            execAndVerify("/target.html", useNewParser ? "/expected.html": "/expected-neko.html", null);
+        }
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

@@ -249,6 +249,7 @@ public class EngineTestBase {
     protected MockHttpServletRequest createRequest(final String path) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServletPath(path);
+        request.addHeader("accept-language", "ja");
         return request;
     }
 

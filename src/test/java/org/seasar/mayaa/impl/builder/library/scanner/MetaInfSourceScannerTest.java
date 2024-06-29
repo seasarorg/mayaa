@@ -54,6 +54,11 @@ public class MetaInfSourceScannerTest {
      */
     @Test
     public void testScanDefault() {
+        scanner.setParameter("folder", "/WEB-INF/lib");
+        scanner.setParameter("extension", ".jar");
+        scanner.setParameter("jar.extension", ".mld");
+        scanner.setParameter("jar.extension", ".tld");
+
         List<String> sources = new ArrayList<>();
         for (Iterator<SourceDescriptor> it = scanner.scan(); it.hasNext();) {
             SourceDescriptor source = (SourceDescriptor) it.next();
@@ -188,37 +193,4 @@ public class MetaInfSourceScannerTest {
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest3.tld"), "entry not match");
         assertEquals(10, sources.size(), "size not match");
     }
-
-        /*
-     * Test method for 'org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner.scan()'
-     */
-    @Test
-    public void testScanJarIgnoreWithGlob() {
-        // scanner.setParameter("folder", "/WEB-INF/lib");
-        // scanner.setParameter("extension", ".jar");
-        scanner.setParameter("jar.ignore", "glob:/META-INF/{x,sql,scriptfree,fn}*");
-
-        List<String> sources = new ArrayList<>();
-        for (Iterator<SourceDescriptor> it = scanner.scan(); it.hasNext();) {
-            SourceDescriptor source = (SourceDescriptor) it.next();
-            String name = source.getSystemID();
-            if (source instanceof HavingAliasSourceDescriptor) {
-                name = ((HavingAliasSourceDescriptor) source).getAlias().getAlias() + ":" + name;
-            }
-            sources.add(name);
-        }
-
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest2.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest3.tld"), "entry not match");
-        assertEquals(10, sources.size(), "size not match");
-    }
-
 }

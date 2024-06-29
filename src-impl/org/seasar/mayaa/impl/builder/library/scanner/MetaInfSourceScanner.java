@@ -19,8 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;

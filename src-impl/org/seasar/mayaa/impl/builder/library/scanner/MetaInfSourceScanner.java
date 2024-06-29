@@ -54,6 +54,19 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         }
     }
 
+    private boolean isIgnored(SourceDescriptor descriptor) {
+        String filename = descriptor.getSystemID();
+        if (filename.charAt(0) == '/') {
+            filename = filename.substring(1);
+        }
+        for (String matcher : _ignores) {
+            if (filename.startsWith(matcher)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * META-INF内の複数のJARファイルごとに生成される{@code SourceScanner}を集約することで
      * JARに含まれる{@code SourceDescriptor}を横断して走査するためのイテレータを返す。
@@ -65,8 +78,13 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
         initJarScanOptions();
         IteratorIterator itit = new IteratorIterator();
         for (Iterator<SourceDescriptor> it = _folderScanner.scan(); it.hasNext(); ) {
+            SourceDescriptor descriptor = it.next();
+            if (isIgnored(descriptor)) {
+                continue;
+            }
+
             JarSourceScanner scanner = new JarSourceScanner();
-            scanner.setDescriptor(it.next());
+            scanner.setDescriptor(descriptor);
             scanner.setParameter("root", _folderScanner.getFolder());
             scanner.setParameter("folder", _jarScanFolder);
             for (String ignore : _jarScanIgnores) {

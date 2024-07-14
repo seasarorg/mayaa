@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
@@ -38,6 +40,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class JarSourceScanner extends NonSerializableParameterAwareImpl implements
         SourceScanner {
+    private static final Log LOG = LogFactory.getLog(JarSourceScanner.class.getName());
 
     private String _root;
     private SourceDescriptor _descriptor;
@@ -50,6 +53,8 @@ public class JarSourceScanner extends NonSerializableParameterAwareImpl implemen
             return Collections.emptyIterator();
         }
         Set<SourceAlias> aliases = new HashSet<>();
+
+        LOG.debug("SCANNING " + _descriptor.getSystemID());
         scanSource(_descriptor, aliases);
         return new AliasToSourceIterator(aliases.iterator());
     }
@@ -98,14 +103,23 @@ public class JarSourceScanner extends NonSerializableParameterAwareImpl implemen
         JarEntry entry;
         while ((entry = jar.getNextJarEntry()) != null) {
             String entryName = entry.getName();
-            if (nameStartsWith(entryName)
-                    && extensionEndsWith(entryName)) {
-                aliases.add(new SourceAlias(jarPath, entryName, timestamp));
+            if (!isTargetEntry(entryName)) {
+                continue;
             }
+
+            if (isIgnored(entryName)) {
+                LOG.debug("SKIP    " + jarPath + "!" + entryName);
+                continue;
+            }
+            LOG.debug("READING " + jarPath + "!" + entryName);
+            aliases.add(new SourceAlias(jarPath, entryName, timestamp));
         }
     }
 
-    protected boolean nameStartsWith(String entryName) {
+    protected boolean isTargetEntry(String entryName) {
+        if (!extensionEndsWith(entryName)) {
+            return false;
+        }
         if (_folderFilters.size() > 0) {
             boolean ok = false;
             for (String filter : _folderFilters) {
@@ -117,14 +131,18 @@ public class JarSourceScanner extends NonSerializableParameterAwareImpl implemen
                 return false;
             }
         }
+        return true;
+    }
+
+    protected boolean isIgnored(String entryName) {
         if (_ignores.size() > 0) {
             for (String filter : _ignores) {
                 if (entryName.startsWith(filter)) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     protected boolean extensionEndsWith(String entryName) {

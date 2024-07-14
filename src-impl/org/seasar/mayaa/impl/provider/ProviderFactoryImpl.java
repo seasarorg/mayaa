@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.MarshallUtil;
@@ -39,6 +41,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl implements ProviderFactory {
+    private static final Log LOG = LogFactory.getLog(ProviderFactoryImpl.class.getName());
 
     private Object _context;
     private Class<?> _serviceClass;
@@ -73,6 +76,15 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
         }
     }
 
+    class Pair {
+        SourceDescriptor source;
+        String location;
+        Pair(SourceDescriptor source, String location) {
+            this.source = source;
+            this.location = location;
+        }
+    }
+
     /**
      * org.seasar.mayaa.provider.ServiceProviderファイルに定義されている内容で{@code ServiceProvider}を生成する。
      * <p>
@@ -91,24 +103,27 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
     private ServiceProvider getServiceProvider(Object context, boolean loadBackwardWay) throws IllegalStateException {
         final String systemID = "org.seasar.mayaa.provider.ServiceProvider";
 
-        List<SourceDescriptor> sources = new ArrayList<>();
+        List<Pair> sources = new ArrayList<>();
         // Collect source files
         // Mayaa Built-in source file
         SourceDescriptor source = MarshallUtil.getDefaultSource(systemID, ServiceProviderHandler.class);
         if (source.exists()) {
-            sources.add(source);
+            sources.add(new Pair(source, "[Built-in]"));
+            LOG.info("FOUND " + "[Built-in]" + source.getSystemID());
         }
         // 各META-INF/org.seasar.mayaa.provider.ServiceProvider を列挙する。順序は不定。
         Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
             source = it.next();
             if (source.exists()) {
-                sources.add(source);
+                sources.add(new Pair(source, "META-INF"));
+                LOG.info("FOUND " + "META-INF" + source.getSystemID());
             }
         }
         source = FactoryFactory.getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, systemID);
         if (source.exists()) {
-            sources.add(source);
+            sources.add(new Pair(source, "WEB-INF"));
+            LOG.info("FOUND " + "WEB-INF" + source.getSystemID());
         }
 
         if (loadBackwardWay) {
@@ -116,13 +131,17 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
         }
 
         ServiceProvider provider = null;
-        for (SourceDescriptor s: sources) {
-            provider = marshallServiceProvider(s, provider);
-            validate(s, provider);
+        for (Pair s: sources) {
+            LOG.info("LOADING " + s.location + s.source.getSystemID());
+            provider = marshallServiceProvider(s.source, provider);
+            validate(s.source, provider);
             if (loadBackwardWay && provider != null) {
+                LOG.info("LOADED " + s.location + s.source.getSystemID());
                 return provider;
             }
         }
+        Pair last = sources.get(sources.size() - 1);
+        LOG.info("LOADED " + last.location + last.source.getSystemID());
         return provider;
     }
 

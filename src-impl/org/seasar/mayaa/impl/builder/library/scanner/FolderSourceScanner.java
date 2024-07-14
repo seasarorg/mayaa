@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
@@ -40,6 +42,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class FolderSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
+
+    private static final Log LOG = LogFactory.getLog(FolderSourceScanner.class.getName());
 
     private static final long serialVersionUID = 2888604805693825909L;
 
@@ -75,6 +79,7 @@ public class FolderSourceScanner extends ParameterAwareImpl
     }
 
     public Iterator<SourceDescriptor> scan() {
+        LOG.debug("SCANNING " + getFolder());
         ApplicationScope appScope = null;
         if (_source == null) {
             if (_absolute) {
@@ -126,9 +131,11 @@ public class FolderSourceScanner extends ParameterAwareImpl
                 }
                 for (int i = 0; i < _acceptableExtensions.length; i++) {
                     if (pathName.getName().endsWith(_acceptableExtensions[i])) {
+                        LOG.debug("READING " + pathName);
                         return true;
                     }
                 }
+                LOG.debug("SKIP    " + pathName.getAbsolutePath());
                 return false;
             }
         };

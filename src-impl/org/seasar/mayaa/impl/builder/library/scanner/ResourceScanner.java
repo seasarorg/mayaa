@@ -54,6 +54,8 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
 
     @SuppressWarnings("unchecked")
     public Iterator<SourceDescriptor> scan() {
+        LOG.debug("SCANNING in Classpath");
+
         // classpath要素を分解してスキャン対象を決定。
         // includeJar, excludeJarの指定が存在しない場合は互換性のため全てのJarを含める
         String[] pathArray = System.getProperty("java.class.path", ".").split(File.pathSeparator);
@@ -63,10 +65,14 @@ public class ResourceScanner extends ParameterAwareImpl implements SourceScanner
                 continue;
             }
             if (file.isDirectory()) {
+                LOG.debug("READING " + file.getAbsolutePath());
                 _classPath.add(path);
             } else if (file.getName().endsWith(".jar")) {
                 if (_jarMatcher.matches(file.toPath().getFileName())) {
+                    LOG.debug("READING " + file.getAbsolutePath());
                     _jars.add(path);
+                } else {
+                    LOG.debug("SKIP    " + file.getAbsolutePath());
                 }
             }
         }

@@ -54,36 +54,7 @@
     <libraryManager class="org.seasar.mayaa.impl.builder.library.LibraryManagerImpl">
         <converter name="ProcessorProperty" class="org.seasar.mayaa.impl.builder.library.converter.ProcessorPropertyConverter"/>
         <converter name="PrefixAwareName" class="org.seasar.mayaa.impl.builder.library.converter.PrefixAwareNameConverter"/>
-        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner">
-            <parameter name="folder" value="/WEB-INF"/>
-            <parameter name="recursive" value="true"/>
-            <parameter name="extension" value=".tld"/>
-            <parameter name="extension" value=".mld"/>
-        </scanner>
-        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.MetaInfSourceScanner">
-            <parameter name="folder" value="/WEB-INF/lib"/>
-            <parameter name="extension" value=".jar"/>
-            <parameter name="ignore" value="commons-beanutils-"/>
-            <parameter name="ignore" value="commons-collections-"/>
-            <parameter name="ignore" value="commons-logging-"/>
-            <parameter name="ignore" value="nekohtml-"/>
-            <parameter name="ignore" value="jaxen-"/>
-            <parameter name="ignore" value="xml-apis-"/>
-            <parameter name="ignore" value="xercesImpl-"/>
-            <parameter name="ignore" value="rhino-"/>
-            <parameter name="jar.ignore" value="META-INF/MANIFEST.MF"/>
-            <parameter name="jar.extension" value=".mld"/>
-            <parameter name="jar.extension" value=".tld"/>
-        </scanner>
-        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.ResourceScanner">
-            <parameter name="root" value="META-INF/"/>
-            <parameter name="ignore" value="META-INF/MANIFEST.MF"/>
-            <parameter name="extension" value=".mld"/>
-            <parameter name="extension" value=".tld"/>
-            <parameter name="includeJar" value="taglibs-standard-impl-*.jar"/>
-            <parameter name="excludeJar" value="*"/>
-        </scanner>
-
+        <scanner class="org.seasar.mayaa.impl.builder.library.scanner.WebInfSourceScanner" />
         <scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>
 
         <!-- after scan jars -->

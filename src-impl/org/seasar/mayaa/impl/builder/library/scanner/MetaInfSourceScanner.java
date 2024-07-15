@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
@@ -31,6 +33,8 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class MetaInfSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
+    
+    private static final Log LOG = LogFactory.getLog(MetaInfSourceScanner.class.getName());
 
     private static final long serialVersionUID = -7285416169718204350L;
 
@@ -75,13 +79,17 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
      */
     @SuppressWarnings("unchecked")
     public Iterator<SourceDescriptor> scan() {
+        LOG.debug("SCANNING META-INF");
+
         initJarScanOptions();
         IteratorIterator itit = new IteratorIterator();
         for (Iterator<SourceDescriptor> it = _folderScanner.scan(); it.hasNext(); ) {
             SourceDescriptor descriptor = it.next();
             if (isIgnored(descriptor)) {
+                LOG.debug("SKIP    " + descriptor.getSystemID());
                 continue;
             }
+                LOG.debug("READING " + descriptor.getSystemID());
 
             JarSourceScanner scanner = new JarSourceScanner();
             scanner.setDescriptor(descriptor);

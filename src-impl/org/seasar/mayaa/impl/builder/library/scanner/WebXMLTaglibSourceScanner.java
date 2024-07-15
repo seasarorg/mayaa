@@ -77,6 +77,7 @@ public class WebXMLTaglibSourceScanner extends NonSerializableParameterAwareImpl
     }
 
     public Iterator<SourceDescriptor> scan() {
+        LOG.debug("SCANNING in web.xml");
         SourceDescriptor source = FactoryFactory.getBootstrapSource(
                 ApplicationSourceDescriptor.WEB_INF, "web.xml");
         return new TaglibLocationIterator(scanWebXml(source));

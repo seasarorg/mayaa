@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.scanner.SourceScanner;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.processor.TemplateProcessorSupport;
@@ -30,6 +32,7 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class DefaultSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
+    private static final Log LOG = LogFactory.getLog(DefaultSourceScanner.class.getName());
 
     private static final long serialVersionUID = 690422240376318319L;
 
@@ -45,6 +48,7 @@ public class DefaultSourceScanner extends ParameterAwareImpl
     }
 
     public Iterator<SourceDescriptor> scan() {
+        LOG.debug("SCANNING for mayaa.mld");
         return _sources.iterator();
     }
 

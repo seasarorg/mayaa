@@ -91,4 +91,19 @@ innerHTML は子要素のノードが (&), (<), (>) を含む場合はそれぞ�
 元テキスト	JUnit内の記述
 [c&lt;l&amp;a&quot;s&gt;s]	"[c&lt;l&amp;a\"s&gt;s]"
 
+
+## 過去バージョンとの比較
+
+test-warを用いて過去のバージョンと最新のバージョンの実行結果の比較を行うことができる。
+
+```sh
+export VERSION_1=1.1.34 VERSION_2=1.3.0
+mvn clean -Dmayaa.version=$VERSION_1 && mvn package -U -Dmayaa.version=$VERSION_1 && mvn package -U -Dmayaa.version=$VERSION_2
+docker compose -f docker-compose-compare.yaml up
+```
+
+```sh
+mvn test -Dtest=CompareITCase -DVERSION_1=$VERSION_1 -DVERSION_2=$VERSION_2
+```
+
 以上

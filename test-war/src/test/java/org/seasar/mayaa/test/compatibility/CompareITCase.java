@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -107,37 +108,62 @@ public class CompareITCase {
                 try {
                     final String context = "/mayaa-" + versions[i];
                     URL url = new URL("http", "localhost", 8080, context + path);
-                    URLConnection connection = url.openConnection();
-
-                    InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                    BufferedReader br = new BufferedReader(reader);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                     StringBuilder buf = new StringBuilder();
-                    // PathAdjusterが動作した部分を吸収
-                    br.lines()
-                      .map(e -> e.replace(context, "/MAYAA"))
-                      .forEach(e -> buf.append(e));
 
-                    String content = buf.toString();
+                    // ステータスコードを取得
+                    int statusCode = connection.getResponseCode();
 
-                    // 1.1系でのXML宣言直後の連続する改行コードを1つに補正
-                    content = content.replace("?>\n\n", "?>\n");
+                    // ステータスコードが200以外の場合もエラーストリームを取得
+                    if (statusCode >= 200 && statusCode < 300) {
+                        try (InputStreamReader r = new InputStreamReader(connection.getInputStream());
+                             BufferedReader br = new BufferedReader(r)) {
 
-                    // /tests/customtag/replace_injection_attribute.html のみv1.1.34にてなぜか閉じタグ</html> が </xml:html> となっているのを吸収
-                    content = content.replace("</xml:html>", "</html>");
+                            // PathAdjusterが動作した部分を吸収
+                            br.lines()
+                                .map(e -> e.replace(context, "/MAYAA"))
+                                .forEach(e -> buf.append(e));
 
-                    results.add(Arrays.asList(content.split("\n")));
 
+                            String content = buf.toString();
+                            // 1.1系でのXML宣言直後の連続する改行コードを1つに補正
+                            content = content.replace("?>\n\n", "?>\n");
+    
+                            // /tests/customtag/replace_injection_attribute.html のみv1.1.34にてなぜか閉じタグ</html> が </xml:html> となっているのを吸収
+                            content = content.replace("</xml:html>", "</html>");
+    
+                            results.add(Arrays.asList(content.split("\n")));      
+                        } catch (IOException e) {
+                            System.err.println("IOException:" + path);
+                        }
+                    } else {
+                        try (InputStreamReader r = new InputStreamReader(connection.getErrorStream());
+                             BufferedReader br = new BufferedReader(r)) {
+
+                            // エラーメッセージの行だけを取得する
+                            br.lines()
+                                .filter(e -> e.contains("id=\"exception-message\""))
+                                .forEach(e -> buf.append(e));
+
+                            String content = buf.toString();
+                            results.add(Arrays.asList(content.split("\n")));
+                        } catch (IOException e) {
+                            System.err.println("IOException:" + path);
+                        }
+                    }
+                    if (results.size() == 2) {
+                        assertArrayEquals(results.get(0).toArray(), results.get(1).toArray(), path);
+                        System.err.println("OK:" + path);
+                    }
+        
                 } catch (MalformedURLException e) {
-                    System.err.println(path);
+                    System.err.println("MalformedURLException:" + path);
                 } catch (IOException e) {
-                    System.err.println(path);
+                    System.err.println("IOException:" + path);
                 } finally {
                     //
                 }
-            }
-            if (results.size() == 2) {
-                assertArrayEquals(results.get(0).toArray(), results.get(1).toArray(), path);
             }
         }
     }

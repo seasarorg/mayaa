@@ -1,16 +1,42 @@
 # 変更点
 
-## Mayaa 1.2.1 : Not yet released
+## Mayaa 1.3.0-alpha
 
 ### Changes
-- [#80](https://github.com/seasarorg/mayaa/pull/80) - Mayaa動作要件の最低JavaバージョンをJava8としました。
-- [#75](https://github.com/seasarorg/mayaa/issue/75) - xml宣言やmetaタグでcharset変更を検知した時に文字コードを指定して再読み込みするように変更しました。
-- 各ファクトリクラス、ServiceProviderの読み込みで書式にエラーがあっても起動できてしまっていたため、明確にエラーとするようにした。
-- 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更しました。
-これまでは順に生成されてもより後から生成されたもので破棄および上書きされていたため無駄となっていました。
-ただし、`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は互換性のため元の順序で生成を行います。
-- ServiceProvider定義のXMLの`class`属性を任意指定とし、省略された場合はビルトインの設定ファイルと同じ実装をデフォルトとして用いるようにしました。実装を変更したい場合のみ旧来通り`class`属性で指定します。
+挙動が変わる部分がありますのでご確認ください。
 
+#### HTMLパーサ関連
+- HTMLテンプレート内のXML宣言の直後に余分な改行が含まれないようになりました。
+  XercesやNekoHTMLの制約に起因して 1.1.34まではのXML宣言の直後に改行を挿入していましたが、テンプレートに合わせるようにしました。
+- 空文字指定(Empty attribute)の属性をHTML仕様に合わせて出力するように変更しました。（ `disabled=""` から `disabled` に変更)
+- 既存のNekoHTMLパーサでも`source`や`embed`などの対応してなかった Void Element（閉じタグを伴わないタグ）に対応しました。 [#74](https://github.com/seasarorg/mayaa/issues/74) <br>
+  対応していないのは下記の通りです。
+  * Unquoted attribute value のパース
+  * `@attr` や `:attr` のパース（HTMLとしては非標準。新パーサでは対応）
+  * HTML Living Standardで規定されている省略可能なタグの補完 (html, head, body など）
+- xml宣言やmetaタグでcharset変更を検知した時に文字コードを指定して再読み込みするように変更しました。[#75](https://github.com/seasarorg/mayaa/issue/75)
+- `<meta charset="UTF-8">` 形式の記述も `http-equiv=”content-type”` のMayaa処理と同様の変換、HTMLレスポンスヘッダ送出に対応しました。
+- **[Experimental]** NekoHTMLを使用しないHTML Living Standardの定義に近いHTMLパーサを実装しました（デフォルトはNekoHTML版）。[#77](https://github.com/seasarorg/mayaa/pull/77) [#102](https://github.com/seasarorg/mayaa/pull/102) [#89](https://github.com/seasarorg/mayaa/pull/89) [#77](https://github.com/seasarorg/mayaa/pull/77) [#73](https://github.com/seasarorg/mayaa/pull/73)
+  org.seasar.mayaa.provider.ServiceProvider の templateBuilder の useNewParser 属性で有効にします。
+  * 新パーサで空白を伴わないHTML属性値（Unquoted attribute value）をパースできるようにしました。 '=' 以後の最初の空白文字までを値とみなします。出力は常に二重引用符で囲みます。
+  * `@attr` や `:attr` といった本来属性名として許可されない名称を利用可能にしました。Vueなどのフロントエンドのフレームワークにて利用される記法です。
+
+
+#### システム環境・運用関連
+- Mayaa動作要件の最低JavaバージョンをJava8としました。[#79](https://github.com/seasarorg/mayaa/issue/79) [#80](https://github.com/seasarorg/mayaa/pull/80)
+- JMX経由でSpecificationを無効化する操作を追加しました。 [#71](https://github.com/seasarorg/mayaa/pull/71) [#70](https://github.com/seasarorg/mayaa/pull/70)
+- プロセッサダンプでTemplateのプロセッサ、オリジナルノード、Pageの内容を追加表示しました。 [#99](https://github.com/seasarorg/mayaa/pull/99)
+
+#### 設定関連
+- WEB-INF配下を明示指定でスキャンできるWebInfSourceScannerを新設しました。ビルトインの設定はWebInfSourceScannerを使うようにしました。 [#106](https://github.com/seasarorg/mayaa/pull/106)
+- ビルトインのライブラリマネージャの読み込みで`WebXMLTaglibSourceScanner`を使用しないようにしました。<br>
+  web.xmlのServletバージョンをあげたときに追従しきれないためです。明確にweb.xmlのタグライブラリ定義を使用したい場合は `WEB-INF/org.seasar.mayaa.provider.ServiceProvider` にて `WebXMLTaglibSourceScanner`を含めてください。 [#106](https://github.com/seasarorg/mayaa/pull/106)
+- ResourceScannerで全てのJarをスキャンしないように除外指定できるようにしました。 [#87](https://github.com/seasarorg/mayaa/pull/87)
+- 各ファクトリクラス、ServiceProviderの読み込みで書式にエラーがあっても起動できてしまっていたため、明確にエラーとするようにした。
+- 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更しました。 [#88](https://github.com/seasarorg/mayaa/pull/88)<br>
+  これまでは順に生成されてもより後から生成されたもので破棄および上書きされていたため無駄となっていました。
+  ただし、`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は互換性のため元の順序で生成を行います。
+- ServiceProvider定義のXMLの`class`属性を任意指定とし、省略された場合はビルトインの設定ファイルと同じ実装をデフォルトとして用いるようにしました。実装を変更したい場合のみ旧来通り`class`属性で指定します。
 (ビルトインの設定ファイルのパス) org/seasar/mayaa/impl/provider/factory/org.seasar.mayaa.provider.ServiceProvider
 
 | エレメント名 | 要求されるインタフェース                      | デフォルト実装クラス名 |
@@ -28,14 +54,35 @@
 | templateAttributeReader | org.seasar.mayaa.builder.library.TemplateAttributeReader | org.seasar.mayaa.impl.builder.library.TemplateAttributeReaderImpl |
 
 ### Fixes
-- [#75](https://github.com/seasarorg/mayaa/issues/75) - balanceTag を無効にするとDOCTYPEがheadタグ内に余分に付加される問題を修正しました。
+- balanceTag を無効にするとDOCTYPEがheadタグ内に余分に付加される問題を修正しました。 [#75](https://github.com/seasarorg/mayaa/pull/75) [#76](https://github.com/seasarorg/mayaa/pull/76)
+- MetaInfSourceScanner の ignore パラメータが効いていないのを修正しました。 [#103](https://github.com/seasarorg/mayaa/issues/103) [#104](https://github.com/seasarorg/mayaa/pull/104)
+- [mayaa-user:1087] 独自プロセッサーを使うとエラーが発生する場合があったのを修正しました。 [#13](https://github.com/seasarorg/mayaa/issues/13) [#91](https://github.com/seasarorg/mayaa/issues/91) [#97](https://github.com/seasarorg/mayaa/issues/97)
+- TemplateProcessor.notifyBeginRenderが実質的に呼ばれていないことに対処しました。 [#96](https://github.com/seasarorg/mayaa/issues/96) [#97](https://github.com/seasarorg/mayaa/pull/97)
 
+### Internal (Performance)
+- ファクトリ参照を効率化しました。 [#88](https://github.com/seasarorg/mayaa/pull/88)
 
-### Experimental
-- [#77](https://github.com/seasarorg/mayaa/pull/77) -  NekoHTMLを使用せずHTML Living Standardの定義に近いHTMLパーサを実装しました（デフォルトはNekoHTML版）。
+### Internal (Maintenancability)
+- シリアライズ処理を適正化しました。 [#93](https://github.com/seasarorg/mayaa/issues/93) [#68](https://github.com/seasarorg/mayaa/pull/68) [#67](https://github.com/seasarorg/mayaa/pull/67) [#66](https://github.com/seasarorg/mayaa/pull/66)
+- IS_SECURE_WEB 設定をParameterAwareからEngineUtilに移動しました。 [#65](https://github.com/seasarorg/mayaa/pull/65)
+- ライブラリファイルのスキャンおよびServiceProviderファイル読み込みのログを出力しました。 [#105](https://github.com/seasarorg/mayaa/pull/105)
+- Java8 向けのAPI利用に制限する。 [#82](https://github.com/seasarorg/mayaa/pull/82)
+- Not use AccessControlExcepton for JEP 411 [#78](https://github.com/seasarorg/mayaa/pull/78)
+- Bump spring-web from 3.2.18.RELEASE to 6.0.0 [#84](https://github.com/seasarorg/mayaa/pull/84)
+- Bump xercesImpl from 2.12.0 to 2.12.2 [#72](https://github.com/seasarorg/mayaa/pull/72)
+- 静的ソースチェックの警告の解消 [#63](https://github.com/seasarorg/mayaa/pull/63)
+- unusedの警告を解消 [#94](https://github.com/seasarorg/mayaa/pull/94)
+- Fix GitHub format [#64](https://github.com/seasarorg/mayaa/pull/64)
 
-### Internal
-- テストフレームワークをJUnit5に変更しました。
+### Internal (Testing)
+- テストフレームワークをJUnit5に変更しました。 [#86](https://github.com/seasarorg/mayaa/pull/86) [#85](https://github.com/seasarorg/mayaa/pull/86)
+- UTでもAccept-Languageを送出しfmt:formatNumberが動作するようにしました。 [#101](https://github.com/seasarorg/mayaa/pull/101)
+- 主にテスト向けに動的に登録されたインメモリコンテンツを返却するSourceHolderを追加しました。 [#81](https://github.com/seasarorg/mayaa/pull/81)
+- test-warにJMeter実行シナリオを追加しました。 [#69](https://github.com/seasarorg/mayaa/pull/69)
+- テスト時に org.w3c.dom.ElementTraversal 不足エラー [#62](https://github.com/seasarorg/mayaa/pull/62)
+- Selenideをアップデート [#100](https://github.com/seasarorg/mayaa/pull/100)
+- test-war ディレクトリ内に旧パッケージとの互換性確認のために比較テストを用意しました。 [doc/TESTING.md#過去バージョンとの比較](https://github.com/seasarorg/mayaa/blob/master/doc/TESTING.md#過去バージョンとの比較)
+- test-warを用いたMayaaバージョン間の比較のテストケースで例外期待の際も一致を確認するようにしました。 [#107](https://github.com/seasarorg/mayaa/pull/107)
 
 ## Mayaa 1.2 : 2020-11-15
 

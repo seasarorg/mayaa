@@ -1,5 +1,7 @@
 /.settings
 /.tomcatplugin
+/.classpath
+/.project
 /build.bat
 target
 /work

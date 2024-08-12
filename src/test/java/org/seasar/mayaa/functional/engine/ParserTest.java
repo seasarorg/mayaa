@@ -541,6 +541,28 @@ public class ParserTest extends EngineTestBase {
 
             execAndVerify("/target.html", useNewParser ? "/expected.html": "/expected-neko.html", null);
         }
+
+        @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")
+        @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+        public void エレメント名がコロンで終わったら名前空間Prefixをローカルネームとして扱う(boolean useNewParser, boolean tagBalance) throws IOException {
+            setUseNewParser(useNewParser);
+            setBalanceTag(tagBalance);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><section: param=a><p>text</p></section:></body>\n" +
+            "</html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><section param=\"a\"><p>text</p></section></body>\n" +
+            "</html>"
+            );
+            execAndVerify("/target.html", "/expected.html", null);
+
+        }
+
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

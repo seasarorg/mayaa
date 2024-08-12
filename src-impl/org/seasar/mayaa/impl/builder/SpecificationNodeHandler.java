@@ -217,24 +217,44 @@ public abstract class SpecificationNodeHandler
         return addNode(qName, null, -1);
     }
 
+    /**
+     * 名前空間を考慮してノードを子要素としてツリーに追加して、追加したノードを返す。
+     * <p>qNameとして "prefix:localName" が渡された場合、prefixに対応する名前空間URIを取得し、localNameをノード名とする。
+     * prefixが存在しない場合（コロンが含まれない）は、親の名前空間をそのまま継承する。
+     * 
+     * <p>形式不正の時は下記のように処理される。
+     * <dl>
+     * <dt>qNameが ":" ではじまっている場合</dt><dd>prefixが空文字列になるので、末尾のコロンを無視してprefixをlocalNameとして扱う。</dd>
+     * <dt>qNameが ":" で終わっている場合</dt><dd>localNameが空文字列になるので、末尾のコロンを無視してprefixをlocalNameとして扱う。</dd>
+     * </dl>
+     * @param qName パーサーから取得されたエレメント名
+     * @param namespace 親の階層の名前空間定義
+     * @return 
+     */
     protected SpecificationNode addNode(String qName, Namespace namespace) {
-        QName nodeQName;
         String prefix = null;
+        String localName = qName;
+        URI namespaceURI = namespace.getDefaultNamespaceURI();
 
-        URI namespaceURI = URIImpl.NULL_NS_URI;
         int colonIndex = qName.indexOf(':');
         if (colonIndex != -1) {
             prefix = qName.substring(0, colonIndex);
-            String localName = qName.substring(colonIndex+1);
-            PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
-            if (mapping != null) {
-                namespaceURI = mapping.getNamespaceURI();
+            localName = qName.substring(colonIndex+1);
+
+            if (localName.length() == 0) {
+                localName = prefix;
+                prefix = null;
+            } else {
+                PrefixMapping mapping = namespace.getMappingFromPrefix(prefix, true);
+                if (mapping != null) {
+                    namespaceURI = mapping.getNamespaceURI();
+                } else {
+                    namespaceURI = URIImpl.NULL_NS_URI;
+                }
             }
-            nodeQName = QNameImpl.getInstance(namespaceURI, localName);
-        } else {
-            nodeQName = QNameImpl.getInstance(namespace.getDefaultNamespaceURI(), qName);
         }
 
+        QName nodeQName = QNameImpl.getInstance(namespaceURI, localName);
         return addNode(nodeQName, prefix, -1);
     }
 

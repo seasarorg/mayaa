@@ -134,19 +134,23 @@ public class BuilderUtil implements CONST_IMPL {
     }
 
     public static PrefixAwareName parseName(SpecificationNode node, String qName) {
-        String[] parsed = qName.split(":");
-        String prefix = null;
-        String localName = null;
-        URI namespaceURI = null;
+        String prefix = "";
+        String localName = qName;
+        URI namespaceURI = node.getQName().getNamespaceURI();
         PrefixMapping mapping = null;
-        if (parsed.length == 2) {
-            prefix = parsed[0];
-            localName = parsed[1];
-            if (prefix.isEmpty()) {
-                // :attrName のようにプレフィックス部分が空の時は":"も属性名に含める。
-                // 本来のXML仕様としては許容されないがHTML仕様としては名前空間自体をサポートしていないため属性名として有効なものとした。
-                localName = ":" + localName;
-            }
+
+        int firstColonIndex = qName.indexOf(':');
+        if (firstColonIndex == -1) {
+            // コロンが存在しない場合はプレフィックスを空文字列にする。
+        } else if (firstColonIndex == 0) {
+            // コロンが先頭の文字の場合はプレフィックスを空文字列にする。コロンも含めてlocalNameとする。
+            // 本来のXML仕様としては許容されないがHTML仕様としては名前空間自体をサポートしていないため属性名として有効なものとした。
+        } else if (firstColonIndex == qName.length() - 1) {
+            // コロンが末尾にある場合はプレフィックスを空文字列にする。コロンも含めてlocalNameとする。
+        } else {
+            prefix = qName.substring(0, firstColonIndex);
+            localName = qName.substring(firstColonIndex + 1);
+
             mapping = node.getMappingFromPrefix(prefix, true);
             if (mapping == null) {
                 if ("xml".equals(prefix)) {
@@ -159,24 +163,11 @@ public class BuilderUtil implements CONST_IMPL {
                 }
             }
             namespaceURI = mapping.getNamespaceURI();
-        } else if (parsed.length == 1) {
-            localName = parsed[0];
-            namespaceURI = node.getQName().getNamespaceURI();
-
-            if (namespaceURI == null) {
-                mapping = node.getMappingFromPrefix("", true);
-                if (mapping == null) {
-                    mapping = getDefaultPrefixMapping();
-                }
-                namespaceURI = mapping.getNamespaceURI();
-            }
-        } else {
-            throw new IllegalNameException(qName);
         }
-        if (mapping != null) {
-            prefix = mapping.getPrefix();
-        } else {
-            prefix = "";
+
+        if (namespaceURI == null) {
+            mapping = getDefaultPrefixMapping();
+            namespaceURI = mapping.getNamespaceURI();
         }
         PrefixAwareName ret = SpecificationUtil.createPrefixAwareName(
                 SpecificationUtil.createQName(namespaceURI, localName),

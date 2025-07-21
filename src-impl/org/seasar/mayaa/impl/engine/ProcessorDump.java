@@ -140,7 +140,7 @@ public class ProcessorDump extends ElementProcessor {
         StringBuilder sb = new StringBuilder(128);
         sb.append(node.getSystemID());
         sb.append(':');
-        sb.append(node.getSequenceID());
+        sb.append(node.getLineNumber());
         sb.append("\t");
 
         for (int i = 0; i < indentCount; i++) {
@@ -165,7 +165,7 @@ public class ProcessorDump extends ElementProcessor {
         StringBuilder sb = new StringBuilder(128);
         sb.append(processor.getInjectedNode().getSystemID());
         sb.append(':');
-        sb.append(processor.getInjectedNode().getSequenceID());
+        sb.append(processor.getInjectedNode().getLineNumber());
         sb.append("\t");
         for (int i = 0; i < indentCount; i++) {
             sb.append(_indentChar);
@@ -208,12 +208,12 @@ public class ProcessorDump extends ElementProcessor {
         // for (int i = 0; i < indentCount; i++) {
         //     sb.append(_indentChar);
         // }
-        sb.append("  original[");
-        sb.append(processor.getOriginalNode().getSystemID());
-        sb.append(':');
+            sb.append("  original[");
+            sb.append(processor.getOriginalNode().getSystemID());
+            sb.append(':');
         sb.append(processor.getOriginalNode().getSequenceID());
-        // sb.append(processor.getOriginalNode().getId());
-        sb.append("]");
+            // sb.append(processor.getOriginalNode().getId());
+            sb.append("]");
 
         print(sb.toString());
     }

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.impl.Constants;
-import org.apache.xerces.impl.XMLErrorReporter;
+import org.apache.xerces.util.ErrorHandlerWrapper;
 import org.apache.xerces.xni.Augmentations;
 import org.apache.xerces.xni.QName;
 import org.apache.xerces.xni.XMLAttributes;
@@ -43,9 +43,11 @@ import org.apache.xerces.xni.parser.XMLComponent;
 import org.apache.xerces.xni.parser.XMLComponentManager;
 import org.apache.xerces.xni.parser.XMLConfigurationException;
 import org.apache.xerces.xni.parser.XMLDocumentScanner;
+import org.apache.xerces.xni.parser.XMLErrorHandler;
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.seasar.mayaa.impl.builder.parser.HtmlTokenizer.TagToken;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.Locator;
 
 /**
@@ -154,7 +156,9 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
     // FEATURES:END
 
     // PROPERTEIS
-    static final String ERROR_REPORTER = Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
+    public static final String PROPERTY_PREFIX = "http://mayaa.seasar.org/parser/property/";
+
+    HTMLErrorReporter errorReporter = new DefaultHTMLErrorHandler(null);
 
     @Override
     public String[] getRecognizedProperties() {
@@ -407,7 +411,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
             final String tagName = tagToken.nameBuilder.toString();
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
-                reportError("parse-error", new Object[]{ tagName });
                 // AND IGNORE THIS TOKEN
             } else if (isStartTagOf(tagToken, "html")) {
                 insertStartTag(QN_HTML, attributes);
@@ -437,11 +440,8 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
             final String tagName = tagToken.nameBuilder.toString();
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
-                reportError("parse-error", new Object[]{ tagName });
                 // AND IGNORE THIS TOKEN
             } else if (isStartTagOf(tagToken, "html")) {
-                reportError("parse-error", new Object[]{ tagName });
-                // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
                     // If there is a template element on the stack of open elements, then ignore the token.
                     // IGNORE THIS TOKEN
@@ -527,9 +527,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
     class TokenHandlerInBody extends TokenHandlerBase {
         @Override
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
-            final String tagName = tagToken.nameBuilder.toString();
             if (isStartTagOf(tagToken, "html")) {
-                reportError("parse-error", new Object[]{ tagName });
                 // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
                     // If there is a template element on the stack of open elements, then ignore the token.
@@ -540,7 +538,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                     // and its corresponding value to that element.
                 }
             } else if (isStartTagOf(tagToken, "body")) {
-                reportError("parse-error", new Object[]{ tagName });
+                // AND IGNORE THIS TOKEN
             } else if (isEndTagOf(tagToken, "body")) {
                 insertEndTag(tagToken);
                 setInsertionMode(InsertionMode.AfterBody);
@@ -564,16 +562,20 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
     }
 
     class TokenHandlerBase implements TokenHandler {
+        HTMLErrorReporter errorReporter = new DefaultHTMLErrorHandler(null);
+
+        @Override
+        public void setErrorReporter(HTMLErrorReporter errorReporter) {
+            this.errorReporter = errorReporter;
+        }
 
         @Override
         public void emitXmlDecl(HtmlTokenizer tokenizer, HtmlLocation location, String version, String encoding, String standalone) {
-            reportError("parse-error", new Object[]{ "xmlDecl", version, encoding, standalone });
             // IGNORE THIS TOKEN
         }
 
         @Override
         public void emitDoctype(HtmlTokenizer tokenizer, HtmlLocation location, String doctypeName, String publicId, String systemId) {
-            reportError("parse-error", new Object[]{ "doctype", doctypeName, publicId, systemId });
             // AND IGNORE THIS TOKEN
         }
     
@@ -602,18 +604,13 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
 
         @Override
-        public void reportError(String msgId, Object[] args) {
-            if (HtmlStandardScanner.LOG.isInfoEnabled()) {
-                LOG.info("ERROR:" + msgId + (args == null ? "": (" " + Arrays.toString(args))));
+        public void reportError(HtmlLocation location, ParseError error, Object[] args) {
+            if (HtmlStandardScanner.LOG.isTraceEnabled()) {
+                LOG.trace("ParseError:" + error + (args == null ? "": (" " + Arrays.toString(args))));
             }
-            // reportFatalError(msgId, args);
+            errorReporter.reportError(location, error, args);
         }
 
-        public void reportWarn(String msgId, Object[] args) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(String.format("WARN: %s%s", insertionMode, msgId, (args == null ? "": (" " + Arrays.toString(args)))));
-            }
-        }
 
         @Override
         public TokenHandler getNextHandler() {
@@ -621,21 +618,23 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
     }
 
-    XMLErrorReporter errorReporter; 
-
     @Override
     public void reset(XMLComponentManager componentManager) throws XMLConfigurationException {
+        XMLErrorHandler errorHandler = (XMLErrorHandler) componentManager.getProperty(Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_HANDLER_PROPERTY);
+        if (errorHandler instanceof ErrorHandlerWrapper) {
+            Object a = ((ErrorHandlerWrapper) errorHandler).getErrorHandler();
+            errorReporter.setErrorHandler((ErrorHandler) a);
+        }
+
         for (InsertionMode m: InsertionMode.values()) {
             try {
                 m.handler = m.handlerClass.getDeclaredConstructor(this.getClass()).newInstance(this);
+                m.handler.setErrorReporter(errorReporter);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                  | SecurityException | InvocationTargetException | NoSuchMethodException e) {
                     throw new IllegalStateException(e);
             }
         }
-
-        // fSymbolTable = (SymbolTable)componentManager.getProperty(SYMBOL_TABLE);
-        errorReporter = (XMLErrorReporter)componentManager.getProperty(ERROR_REPORTER);
 
         tokenizer = new HtmlTokenizer();
         tokenizer.setInputSource(inputSource);
@@ -654,13 +653,13 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
             tokenizer.runTokenizer(insertionMode.handler);
             // return success
-            return true;    
+            return true;
         } catch (BufferUnderflowException e) {
             return false;
         }
     }
 
-} // class ElementStack
+}
 
 
 class ScanningInterruptedExeption extends Exception {
@@ -681,6 +680,11 @@ class HtmlLocation implements Locator, XMLLocator, Cloneable {
     int offset = 0;
     String publicId = null;
     String systemId = null;
+    CharBuffer cbuf;
+
+    void setCharBuffer(CharBuffer cbuf) {
+        this.cbuf = cbuf;
+    }
 
     @Override
     public String toString() {
@@ -741,6 +745,32 @@ class HtmlLocation implements Locator, XMLLocator, Cloneable {
     @Override
     public String getXMLVersion() {
         return null;
+    }
+
+    public String getTextAroundCurrent() {
+        final int range = 10; // 取得する文字数の範囲
+
+        // 現在の位置を取得
+        int currentPosition = cbuf.position();
+
+        // 開始位置 (0未満にならないようにする)
+        int start = Math.max(currentPosition - range, 0);
+
+        // 終了位置 (バッファの終端を超えないようにする)
+        int end = Math.min(currentPosition + range, cbuf.limit());
+
+        // 現在の位置を復元するためにバックアップ
+        int originalPosition = cbuf.position();
+
+        // 指定範囲のサブシーケンスを取得
+        cbuf.position(start);
+        char[] result = new char[end - start];
+        cbuf.get(result);
+
+        // 位置を元に戻す
+        cbuf.position(originalPosition);
+
+        return new String(result).replaceAll("\n", "\\\\n").replaceAll("\r", "\\\\r");
     }
 }
 
@@ -1014,7 +1044,9 @@ class Attributes implements XMLAttributes {
 }
 
 interface TokenHandler {
-    void reportError(String msgId, Object[] args);
+    void setErrorReporter(HTMLErrorReporter errorReporter);
+
+    void reportError(HtmlLocation location, ParseError error, Object[] args);
 
     void emitText(HtmlTokenizer tokenizer, HtmlLocation location, String text);
 
@@ -1168,20 +1200,15 @@ class HtmlTokenizer {
         location.copyPositionTo(currentLocation);
         cbuf = CharBuffer.allocate(4096);
         cbuf.flip();
+
+        location.setCharBuffer(cbuf);
+        currentLocation.setCharBuffer(cbuf);
+
     }
 
     public void setInputSource(XMLInputSource inputSource) {
         this.inputSource = inputSource;
-        location.column = 1;
-        location.line = 1;
-        location.offset = 1;
-        if (inputSource != null) {
-            location.publicId = inputSource.getPublicId();
-            location.systemId = inputSource.getSystemId();    
-        } else {
-            location.publicId = null;
-            location.systemId = null;
-        }
+        reset();
     }
 
     private char getChar() throws ScanningInterruptedExeption, IOException {
@@ -1523,7 +1550,7 @@ class HtmlTokenizer {
                         // } else if (c == '&') {
                         //     tokenizeState = TokenizeState.CharacterReference;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0);
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
@@ -1541,7 +1568,7 @@ class HtmlTokenizer {
                         // } else if (c == '&') {
                         //     tokenizeState = TokenizeState.CharacterReference;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
@@ -1557,7 +1584,7 @@ class HtmlTokenizer {
                         if (c == '<') {
                             tokenizeState = TokenizeState.RawTextLessThanSign;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
@@ -1573,7 +1600,7 @@ class HtmlTokenizer {
                         if (c == '<') {
                             tokenizeState = TokenizeState.ScriptDataLessThanSign;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
@@ -1595,18 +1622,19 @@ class HtmlTokenizer {
                             tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             tokenizeState = TokenizeState.TagName;
                         } else if (c == '?') {
-                            handler.reportError("unexpected-question-mark-instead-of-tag-name", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME, null);
                             commentBuilder = new StringBuilder();
                             commentBuilder.append(c);
                             mayXmlDeclAsBogusComment = true;
                             tokenizeState = TokenizeState.BogusComment;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-before-tag-name", null);
+                            handler.reportError(location, ParseError.EOF_BEFORE_TAG_NAME, null);
                             appendTextNode('<');
                         } else {
-                            handler.reportError("invalid-first-character-of-tag-name", null);
+                            handler.reportError(location, ParseError.INVALID_FIRST_CHARACTER_OF_TAG_NAME, null);
                             tokenizeState = TokenizeState.Data;
                             appendTextNode('<');
+                            pushBack();
                         }
                         break;
 
@@ -1618,17 +1646,17 @@ class HtmlTokenizer {
                             tagToken.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             tokenizeState = TokenizeState.TagName;
                         } else if (c == '>') {
-                            handler.reportError("missing-end-tag-name", null);
+                            handler.reportError(location, ParseError.MISSING_END_TAG_NAME, null);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-before-tag-name", null);
+                            handler.reportError(location, ParseError.EOF_BEFORE_TAG_NAME, null);
                             appendTextNode('<');
                             appendTextNode(0x002F);
                             emitEof();
                         } else {
-                            handler.reportError("invalid-first-character-of-tag-name", null);
+                            handler.reportError(location, ParseError.INVALID_FIRST_CHARACTER_OF_TAG_NAME, null);
                             tokenizeState = TokenizeState.BogusComment;
-                            appendTextNode('<');
+                            pushBack();
                         }
                         break;
 
@@ -1646,10 +1674,10 @@ class HtmlTokenizer {
                             emitTextIfAvailable(handler);
                             emitTag(handler, tagToken);
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             tagToken.nameBuilder.append((char) 0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-before-tag-name", null);
+                            handler.reportError(location, ParseError.EOF_BEFORE_TAG_NAME, null);
                             appendTextNode('<');
                             appendTextNode(0x002F);
                             emitEof();
@@ -1889,10 +1917,10 @@ class HtmlTokenizer {
                         } else if (c == '<') {
                             tokenizeState = TokenizeState.ScriptDataEscapedLessThanSign;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -1909,11 +1937,11 @@ class HtmlTokenizer {
                         } else if (c == '<') {
                             tokenizeState = TokenizeState.ScriptDataEscapedLessThanSign;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             tokenizeState = TokenizeState.ScriptDataEscaped;
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -1933,11 +1961,11 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.ScriptData;
                             appendTextNode('>');
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             tokenizeState = TokenizeState.ScriptDataEscaped;
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2052,10 +2080,10 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.ScriptDataDoubleEscapedLessThanSign;
                             appendTextNode('<');
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2074,11 +2102,11 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.ScriptDataDoubleEscapedLessThanSign;
                             appendTextNode('>');
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             tokenizeState = TokenizeState.ScriptDataDoubleEscaped;
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2098,11 +2126,11 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.ScriptData;
                             appendTextNode('>');
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             tokenizeState = TokenizeState.ScriptDataDoubleEscaped;
                             appendTextNode(0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-script-html-comment-like-text", null);
+                            handler.reportError(location, ParseError.EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2163,7 +2191,7 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.AfterAttributeName;
                         } else if (c == '=') {
                             // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-unexpected-equals-sign-before-attribute-name
-                            handler.reportError("unexpected-equals-sign-before-attribute-name", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME, null);
                             attrNameBuilder = new StringBuilder();
                             attrValueBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.AttributeName;
@@ -2186,10 +2214,10 @@ class HtmlTokenizer {
                         } else if (c == '=') {
                             tokenizeState = TokenizeState.BeforeAttributeValue;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             attrNameBuilder.append((char) 0xFFFD);
                         } else if (c == '"' || c == '\'' || c == '<') {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME, null);
                             attrNameBuilder.append((char) c);
                         } else {
                             attrNameBuilder.append(c);
@@ -2198,7 +2226,7 @@ class HtmlTokenizer {
                         if (tokenizeState != TokenizeState.AttributeName) {
                             // check duplication
                             if (containSameAttributeName(attrNameBuilder.toString())) {
-                                handler.reportError("duplicate-attribute", null);
+                                handler.reportError(location, ParseError.DUPLICATE_ATTRIBUTE, null);
                                 attrNameBuilder = new StringBuilder(); // reject this attribute 
                             }
                         }
@@ -2219,7 +2247,7 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitAttribute(null, attrNameBuilder.toString(), attrValueBuilder.toString());
                             emitTextIfAvailable(handler);
                             emitEof();
@@ -2243,7 +2271,7 @@ class HtmlTokenizer {
                         } else if (c == '\'') {
                             tokenizeState = TokenizeState.AttributeValueSingleQuoted;
                         } else if (c == '>') {
-                            handler.reportError("missing-attribute-value", null);
+                            handler.reportError(location, ParseError.MISSING_ATTRIBUTE_VALUE, null);
                             emitTextIfAvailable(handler);
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
@@ -2259,10 +2287,10 @@ class HtmlTokenizer {
                             emitAttribute(null, attrNameBuilder.toString(), attrValueBuilder.toString());
                             tokenizeState = TokenizeState.AfterAttributeValueQuoted;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             attrValueBuilder.append((char) 0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2276,10 +2304,10 @@ class HtmlTokenizer {
                             emitAttribute(null, attrNameBuilder.toString(), attrValueBuilder.toString());
                             tokenizeState = TokenizeState.AfterAttributeValueQuoted;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             attrValueBuilder.append((char) 0xFFFD);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2300,13 +2328,13 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             attrValueBuilder.append((char) 0xFFFD);
                         } else if (c == '"' || c == '\'' || c == '<' || c == '=' || c == '`') {
-                            handler.reportError("unexpected-character-in-unquoted-attribute-value", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE, null);
                             attrValueBuilder.append(c);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2327,11 +2355,11 @@ class HtmlTokenizer {
                             tokenizeState = TokenizeState.Data;
                             emitTag(handler, tagToken);
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
-                            handler.reportError("missing-whitespace-between-attributes", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_BETWEEN_ATTRIBUTES, null);
                             pushBack();
                             tokenizeState = TokenizeState.BeforeAttributeName;
                         }
@@ -2345,10 +2373,10 @@ class HtmlTokenizer {
                             emitSelfClosingTag(handler, tagToken);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-tag", null);
+                            handler.reportError(location, ParseError.EOF_IN_TAG, null);
                             emitEof();
                         } else {
-                            handler.reportError("unexpected-solidus-in-tag", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_SOLIDUS_IN_TAG, null);
                             pushBack();
                             tokenizeState = TokenizeState.BeforeAttributeName;
                         }
@@ -2366,11 +2394,11 @@ class HtmlTokenizer {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), mayXmlDeclAsBogusComment);
                             mayXmlDeclAsBogusComment = false;
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             commentBuilder.append((char) 0xFFFD);
                         } else {
                             commentBuilder.append((char) c);
@@ -2385,12 +2413,12 @@ class HtmlTokenizer {
                         } else if (skipStringIgnoreCase("DOCTYPE")) {
                             tokenizeState = TokenizeState.Doctype;
                         } else if (skipString("[CDATA[")) {
-                            handler.reportError("cdata-in-html-content", null);
+                            handler.reportError(location, ParseError.CDATA_IN_HTML_CONTENT, null);
                             commentBuilder = new StringBuilder();
                             commentBuilder.append("[CDATA[");
                             tokenizeState = TokenizeState.BogusComment;
                         } else {
-                            handler.reportError("incorrectly-opened-comment", null);
+                            handler.reportError(location, ParseError.INCORRECTLY_OPENED_COMMENT, null);
                             tokenizeState = TokenizeState.BogusComment;
                         }
                         break;
@@ -2400,7 +2428,7 @@ class HtmlTokenizer {
                         if (c == '-') {
                             tokenizeState = TokenizeState.CommentStartDash;
                         } else if (c == '>') {
-                            handler.reportError("abrupt-closing-of-empty-comment", null);
+                            handler.reportError(location, ParseError.ABRUPT_CLOSING_OF_EMPTY_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), mayXmlDeclAsBogusComment);
                             mayXmlDeclAsBogusComment = false;
@@ -2416,14 +2444,14 @@ class HtmlTokenizer {
                         if (c == '-') {
                             tokenizeState = TokenizeState.CommentEnd;
                         } else if (c == '>') {
-                            handler.reportError("abrupt-closing-of-empty-comment", null);
+                            handler.reportError(location, ParseError.ABRUPT_CLOSING_OF_EMPTY_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2444,12 +2472,12 @@ class HtmlTokenizer {
                         } else if (c == '-') {
                             tokenizeState = TokenizeState.CommentEndDash;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             commentBuilder.append((char) 0xFFFD);
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2500,7 +2528,7 @@ class HtmlTokenizer {
                             pushBack();
                             tokenizeState = TokenizeState.CommentEnd;
                         } else {
-                            handler.reportError("nested-comment", null);
+                            handler.reportError(location, ParseError.NESTED_COMMENT, null);
                             pushBack();
                             tokenizeState = TokenizeState.CommentEnd;
                         }
@@ -2512,7 +2540,7 @@ class HtmlTokenizer {
                         if (c == '-') {
                             tokenizeState = TokenizeState.CommentEnd;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
                             emitTextIfAvailable(handler);
@@ -2538,7 +2566,7 @@ class HtmlTokenizer {
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2560,12 +2588,12 @@ class HtmlTokenizer {
                         } else if (c == '>') {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
-                            handler.reportError("incorrectly-closed-comment", null);
+                            handler.reportError(location, ParseError.INCORRECTLY_CLOSED_COMMENT, null);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
                             emitComment(handler, commentBuilder.toString(), false);
-                            handler.reportError("eof-in-comment", null);
+                            handler.reportError(location, ParseError.EOF_IN_COMMENT, null);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
@@ -2586,14 +2614,14 @@ class HtmlTokenizer {
                             pushBack();
                             tokenizeState = TokenizeState.BeforeDoctypeName;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitTextIfAvailable(handler);
                             emitEof();
                         } else {
-                            handler.reportError("missing-whitespace-before-doctype-name", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_BEFORE_DOCTYPE_NAME, null);
                             pushBack();
                             tokenizeState = TokenizeState.BeforeDoctypeName;
                         }
@@ -2609,17 +2637,17 @@ class HtmlTokenizer {
                             doctype.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                             tokenizeState = TokenizeState.DoctypeName;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.nameBuilder.append((char) 0xFFFD);
                             tokenizeState = TokenizeState.DoctypeName;
                         } else if (c == '>' ) {
-                            handler.reportError("missing-doctype-name", null);
+                            handler.reportError(location, ParseError.MISSING_DOCTYPE_NAME, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2640,14 +2668,14 @@ class HtmlTokenizer {
                         } else if (Character.isAlphabetic(c)) {
                             doctype.nameBuilder.append(c /*Character.toLowerCase(c)*/);
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.nameBuilder.append((char) 0xFFFD);
                         } else if (c == '>' ) {
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
@@ -2666,7 +2694,7 @@ class HtmlTokenizer {
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2677,7 +2705,7 @@ class HtmlTokenizer {
                             } else if ((c == 's' || c == 'S') && skipStringIgnoreCase("YSTEM")) {
                                 tokenizeState = TokenizeState.AfterDoctypeSystemKeyword;
                             } else {
-                                handler.reportError("invalid-character-sequence-after-doctype-name", null);
+                                handler.reportError(location, ParseError.INVALID_CHARACTER_SEQUENCE_AFTER_DOCTYPE_NAME, null);
                                 pushBack();
                                 doctype.forceQuirkFlag = true;
                                 tokenizeState = TokenizeState.BogusDoctype;
@@ -2686,32 +2714,32 @@ class HtmlTokenizer {
                         break;
 
                     case AfterDoctypePublicKeyword:
-                        // https://html.spec.whatwg.org/multipage/parsing.html#before-doctype-name-state
+                        // https://html.spec.whatwg.org/multipage/parsing.html#after-doctype-public-keyword-state
                         c = getChar();
                         if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ') {
                             tokenizeState = TokenizeState.BeforeDoctypePublicIdentifier;
                         } else if (c == '"') {
-                            handler.reportError("missing-whitespace-after-doctype-public-keyword", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_AFTER_DOCTYPE_PUBLIC_KEYWORD, null);
                             doctype.publicIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypePublicIdentifierDoubleQuoted;
                         } else if (c == '\'') {
-                            handler.reportError("missing-whitespace-after-doctype-public-keyword", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_AFTER_DOCTYPE_PUBLIC_KEYWORD, null);
                             doctype.publicIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypePublicIdentifierSingleQuoted;
                         } else if (c == '>') {
-                            handler.reportError("missing-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2730,19 +2758,19 @@ class HtmlTokenizer {
                             doctype.publicIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypePublicIdentifierSingleQuoted;
                         } else if (c == '>') {
-                            handler.reportError("missing-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2755,16 +2783,16 @@ class HtmlTokenizer {
                         if (c == '"') {
                             tokenizeState = TokenizeState.AfterDoctypePublicIdentifier;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.publicIdBuilder.append((char) 0xFFFD);
                         } else if (c == '>') {
-                            handler.reportError("abrupt-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.ABRUPT_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2780,16 +2808,16 @@ class HtmlTokenizer {
                         if (c == '\'') {
                             tokenizeState = TokenizeState.AfterDoctypePublicIdentifier;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.publicIdBuilder.append((char) 0xFFFD);
                         } else if (c == '>') {
-                            handler.reportError("abrupt-doctype-public-identifier", null);
+                            handler.reportError(location, ParseError.ABRUPT_DOCTYPE_PUBLIC_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2809,21 +2837,21 @@ class HtmlTokenizer {
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == '"') {
-                            handler.reportError("missing-whitespace-between-doctype-public-and-system-identifiers", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS, null);
                             doctype.systemIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierDoubleQuoted;
                         } else if (c == '\'') {
-                            handler.reportError("missing-whitespace-between-doctype-public-and-system-identifiers", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS, null);
                             doctype.systemIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierSingleQuoted;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2846,13 +2874,13 @@ class HtmlTokenizer {
                             doctype.systemIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierSingleQuoted;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2865,27 +2893,27 @@ class HtmlTokenizer {
                         if (c == '\t'/*TAB*/ || c == '\n'/*LINEFEED*/ || c == 0x0C/*FORMFEED*/ || c == ' ') {
                             tokenizeState = TokenizeState.BeforeDoctypePublicIdentifier;
                         } else if (c == '"') {
-                            handler.reportError("missing-whitespace-after-doctype-system-keyword", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_AFTER_DOCTYPE_SYSTEM_KEYWORD, null);
                             doctype.publicIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierDoubleQuoted;
                         } else if (c == '\'') {
-                            handler.reportError("missing-whitespace-after-doctype-system-keyword", null);
+                            handler.reportError(location, ParseError.MISSING_WHITESPACE_AFTER_DOCTYPE_SYSTEM_KEYWORD, null);
                             doctype.publicIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierSingleQuoted;
                         } else if (c == '>') {
-                            handler.reportError("missing-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2904,19 +2932,19 @@ class HtmlTokenizer {
                             doctype.systemIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.DoctypeSystemIdentifierSingleQuoted;
                         } else if (c == '>') {
-                            handler.reportError("missing-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("missing-quote-before-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.MISSING_QUOTE_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -2930,16 +2958,16 @@ class HtmlTokenizer {
                         if (c == '"') {
                             tokenizeState = TokenizeState.AfterDoctypeSystemIdentifier;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.systemIdBuilder.append((char) 0xFFFD);
                         } else if (c == '>') {
-                            handler.reportError("abrupt-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.ABRUPT_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2956,16 +2984,16 @@ class HtmlTokenizer {
                             doctype.systemIdBuilder = new StringBuilder();
                             tokenizeState = TokenizeState.AfterDoctypeSystemIdentifier;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             doctype.systemIdBuilder.append((char) 0xFFFD);
                         } else if (c == '>') {
-                            handler.reportError("abrupt-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.ABRUPT_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
@@ -2985,13 +3013,13 @@ class HtmlTokenizer {
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-doctype", null);
+                            handler.reportError(location, ParseError.EOF_IN_DOCTYPE, null);
                             doctype.forceQuirkFlag = true;
                             emitTextIfAvailable(handler);
                             emitDoctype(handler, doctype);
                             emitEof();
                         } else {
-                            handler.reportError("unexpected-character-after-doctype-system-identifier", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_CHARACTER_AFTER_DOCTYPE_SYSTEM_IDENTIFIER, null);
                             doctype.forceQuirkFlag = false; // (This does not set the current DOCTYPE token's force-quirks flag to on.) 
                             pushBack();
                             tokenizeState = TokenizeState.BogusDoctype;
@@ -3006,7 +3034,7 @@ class HtmlTokenizer {
                             emitDoctype(handler, doctype);
                             tokenizeState = TokenizeState.Data;
                         } else if (c == 0) {
-                            handler.reportError("unexpected-null-character", null);
+                            handler.reportError(location, ParseError.UNEXPECTED_NULL_CHARACTER, null);
                             // ignore this character
                         } else if (c == CHAR_SUB) {
                             emitTextIfAvailable(handler);
@@ -3023,7 +3051,7 @@ class HtmlTokenizer {
                         if (c == ']') {
                             tokenizeState = TokenizeState.CDataSectionBracket;
                         } else if (c == CHAR_SUB) {
-                            handler.reportError("eof-in-cdata", null);
+                            handler.reportError(location, ParseError.EOF_IN_CDATA, null);
                             emitEof();
                         } else {
                             appendTextNode(c); 

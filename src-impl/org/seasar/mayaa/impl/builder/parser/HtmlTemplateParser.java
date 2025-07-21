@@ -17,11 +17,8 @@ package org.seasar.mayaa.impl.builder.parser;
 
 import java.io.IOException;
 
-import org.apache.xerces.impl.Constants;
-import org.apache.xerces.impl.XMLErrorReporter;
 import org.apache.xerces.parsers.BasicParserConfiguration;
 import org.apache.xerces.xni.XMLDocumentHandler;
-import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.xml.AdditionalSAXParser;
@@ -36,31 +33,31 @@ public class HtmlTemplateParser extends AdditionalSAXParser implements CONST_IMP
     public static String FEATURE_INSERT_IMPLIED_ELEMENT = HtmlStandardScanner.FEATURE_INSERT_IMPLIED_ELEMENT;
 
     static class ParserConfiguration extends BasicParserConfiguration {
-        protected static final String ERROR_REPORTER = Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
 
         HtmlStandardScanner scanner = new HtmlStandardScanner();
 
         ParserConfiguration() {
-            addRecognizedProperties(new String[] { ERROR_REPORTER });
-            XMLErrorReporter errorReporter = new XMLErrorReporter();
-            setProperty(ERROR_REPORTER, errorReporter);
-            addComponent(errorReporter);
             addComponent(scanner);
         }
 
         @Override
-        public void parse(XMLInputSource inputSource) throws XNIException, IOException {
-            scanner.reset(this);
-            XMLDocumentHandler documentHandler = getDocumentHandler();
-            scanner.setDocumentHandler(documentHandler);
-            scanner.setInputSource(inputSource);
-            scanner.scanDocument(true);
+        public void parse(XMLInputSource inputSource) throws IOException {
+            try {
+                scanner.reset(this);
+                XMLDocumentHandler documentHandler = getDocumentHandler();
+                scanner.setDocumentHandler(documentHandler);
+                scanner.setInputSource(inputSource);
+                scanner.scanDocument(true);    
+            } catch (IOException | RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                scanner.setInputSource(null);
+            }
         }
     }
 
-    /**
-     * @param balanceTag タグのバランスを修正するか。基本的にtrue。falseにする場合は必ずテンプレートのタグのバランスを取ること。
-     */
     public HtmlTemplateParser() {
         super(new ParserConfiguration());
         // super(isHTML ? new TemplateParserConfiguration(): new StandardParserConfiguration());

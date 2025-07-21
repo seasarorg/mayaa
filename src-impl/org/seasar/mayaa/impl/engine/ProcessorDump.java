@@ -185,8 +185,6 @@ public class ProcessorDump extends ElementProcessor {
 // TODO insert の場合
 // TODO echo の場合
         } else {
-            final String processorName = processor.getClass().getSimpleName().replace("Processor", "");
-            sb.append(processorName).append(": ");
             sb.append(start);
 
             SpecificationNode node = getNode(processor);

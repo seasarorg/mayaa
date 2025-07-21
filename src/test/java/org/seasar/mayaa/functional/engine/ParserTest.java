@@ -541,6 +541,67 @@ public class ParserTest extends EngineTestBase {
 
             execAndVerify("/target.html", useNewParser ? "/expected.html": "/expected-neko.html", null);
         }
+
+        @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")
+        @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+        public void エレメント名がコロンで終わったら名前空間Prefixをローカルネームとして扱う(boolean useNewParser, boolean tagBalance) throws IOException {
+            enableDump();
+            setUseNewParser(useNewParser);
+            setBalanceTag(tagBalance);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><section: param=a><p>text</p></section:></body>\n" +
+            "</html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><section: param=\"a\"><p>text</p></section:></body>\n" +
+            "</html>"
+            );
+            execAndVerify("/target.html", "/expected.html", null);
+        }
+
+        /**
+         * エレメント名の先頭文字として許されない文字がある場合は次の開始タグまではテキストノードとして扱われるが
+         * 閉じタグの先頭文字として許されない文字の場合はHTMLコメントとして出力する。ブラウザでの解釈も同じ。
+         * ただし、NekoHtmlの場合は不正な閉じタグのHTMLコメント出力はしない。
+         * 
+         * @param useNewParser
+         * @param tagBalance
+         * @throws IOException
+         * @see https://html.spec.whatwg.org/multipage/parsing.html#parse-error-invalid-first-character-of-tag-name
+         */
+        @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+        @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")
+        public void エレメント名がコロンで始まるときはエレメントとして評価されずテキストノードとして扱う_閉じタグはコメント化(boolean useNewParser, boolean tagBalance) throws IOException {
+            setUseNewParser(useNewParser);
+            setBalanceTag(tagBalance);
+            enableDump();
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><:div param=a><p>text</p></:div></body>\n" +
+            "</html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected-neko.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><:div param=a><p>text</p></body>\n" +
+            "</html>"
+            );
+            // ウェブブラウザの解釈と同じ（エレメント名として不正な閉じタグはコメントとして付加される）
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<body><:div param=a><p>text</p><!--:div--></body>\n" +
+            "</html>"
+            );
+            execAndVerify("/target.html", useNewParser ? "/expected.html": "/expected-neko.html", null);
+
+        }
+
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

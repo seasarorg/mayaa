@@ -1607,6 +1607,7 @@ class HtmlTokenizer {
                             handler.reportError("invalid-first-character-of-tag-name", null);
                             tokenizeState = TokenizeState.Data;
                             appendTextNode('<');
+                            pushBack();
                         }
                         break;
 
@@ -1628,7 +1629,7 @@ class HtmlTokenizer {
                         } else {
                             handler.reportError("invalid-first-character-of-tag-name", null);
                             tokenizeState = TokenizeState.BogusComment;
-                            appendTextNode('<');
+                            pushBack();
                         }
                         break;
 

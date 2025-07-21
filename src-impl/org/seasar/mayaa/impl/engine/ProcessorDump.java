@@ -191,7 +191,7 @@ public class ProcessorDump extends ElementProcessor {
             sb.append(prefixedQName(node, node.getQName()));
             if (processor instanceof ElementProcessor) {
                 ElementProcessor p = (ElementProcessor) processor;
-                sb.append(" name=\"").append(prefixedQName(p.getName())).append("\"");
+                sb.append(" qname=\"").append(prefixedQName(p.getName())).append("\"");
             }
 
             if (printAttributes) {
@@ -235,38 +235,16 @@ public class ProcessorDump extends ElementProcessor {
         }
     }
 
-    protected void writeAttributes(StringBuilder sb, TemplateProcessor processor) {
-        if (processor instanceof ElementProcessor) {
-            writeElementAttributes(sb, (ElementProcessor) processor);
-        } else {
-            SpecificationNode node = processor.getInjectedNode();
-            for (Iterator<NodeAttribute> it = processor.getInjectedNode().iterateAttribute(); it.hasNext();) {
-                NodeAttribute prop = it.next();
-                QName propName = prop.getQName();
-                final String name = prefixedQName(node, propName);
-                writeProcessorAttributeString(sb, name, prop.getValue());
-            }
+    protected void writeAttributes(StringBuilder sb, TemplateProcessor processor) {        // if (processor instanceof ElementProcessor) {
+        SpecificationNode node = processor.getInjectedNode();
+        for (Iterator<NodeAttribute> it = processor.getInjectedNode().iterateAttribute(); it.hasNext();) {
+            NodeAttribute prop = it.next();
+            QName propName = prop.getQName();
+            final String name = prefixedQName(node, propName);
+            writeProcessorAttributeString(sb, name, prop.getValue());
         }
     }
 
-    protected void writeElementAttributes(StringBuilder sb, ElementProcessor processor) {
-        for (Iterator<ProcessorProperty> it = processor.iterateProcesstimeProperties(); it.hasNext();) {
-            ProcessorProperty prop = it.next();
-            appendAttributeString(sb, prop.getName(), prop.getValue());
-        }
-        for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (hasProcesstimeProperty(prop) == false && prop.getValue().isLiteral() == false) {
-                appendAttributeString(sb, prop.getName(), prop.getValue());
-            }
-        }
-        for (Iterator<Serializable> it = processor.iterateInformalProperties(); it.hasNext();) {
-            ProcessorProperty prop = (ProcessorProperty) it.next();
-            if (hasProcesstimeProperty(prop) == false && prop.getValue().isLiteral()) {
-                appendAttributeString(sb, prop.getName(), prop.getValue());
-            }
-        }
-    }
 
     protected void appendAttributeString(
             StringBuilder buffer, PrefixAwareName propName, Object value) {

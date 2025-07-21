@@ -203,17 +203,15 @@ public class ProcessorDump extends ElementProcessor {
             sb.append(end);
         }
 
-        // TODO original
-        // sb.append("\n");
-        // for (int i = 0; i < indentCount; i++) {
-        //     sb.append(_indentChar);
-        // }
+        // ダンプしているInjectedNodeがOriginalNodeが異なる場合はOriginalNodeの情報も出力する
+        if (processor.getOriginalNode().getSequenceID() != processor.getInjectedNode().getSequenceID()) {
             sb.append("  original[");
             sb.append(processor.getOriginalNode().getSystemID());
             sb.append(':');
-        sb.append(processor.getOriginalNode().getSequenceID());
+            sb.append(processor.getOriginalNode().getLineNumber());
             // sb.append(processor.getOriginalNode().getId());
             sb.append("]");
+        } 
 
         print(sb.toString());
     }

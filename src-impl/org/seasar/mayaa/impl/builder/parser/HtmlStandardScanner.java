@@ -355,7 +355,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                 // Ignore whitespace originally, but to retain template as it.
                 super.emitText(tokenizer, location, text);
             } else {
-                super.emitText(tokenizer, location, text);
                 setInsertionMode(InsertionMode.BeforeHtml);
                 insertionMode.handler.emitText(tokenizer, location, text);
             }

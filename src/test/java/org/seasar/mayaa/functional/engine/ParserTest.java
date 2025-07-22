@@ -332,7 +332,42 @@ public class ParserTest extends EngineTestBase {
     
             execAndVerify("/target.html", "/expected.html", null);
         }
-    
+
+        @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")
+        @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+        public void html以外のエレメントがパースできる(boolean useNewParser, boolean tagBalance) throws IOException {
+            setUseNewParser(useNewParser);
+            setBalanceTag(tagBalance);
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<!DOCTYPE html>\n" +
+            "<html lang=\"ja\">\n" +
+            "<body>\n" + 
+            "<a href=\"/\"><IF>AAA</IF></a>\n" +
+            "</body>\n" +
+            "</html>"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<!DOCTYPE html>\n" +
+            "<html lang=\"ja\">\n" +
+            "<body>\n" + 
+            "<a href=\"/\"><IF>AAA</IF></a>\n" +
+            "</body>\n" +
+            "</html>"
+            );
+            if (!useNewParser && tagBalance) {
+                // NOTICE: NekoHTMLが閉じタグ補完する場合、閉じタグが不適切に補完される
+                DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+                "<!DOCTYPE html>\n" +
+                "<html lang=\"ja\">\n" +
+                "<body>\n" + 
+                "<a href=\"/\"></a><IF><a href=\"/\">AAA</a></IF>\n" +
+                "</body>\n" +
+                "</html>"
+                );
+            }
+            execAndVerify("/target.html", "/expected.html", null);
+        }
+
     }
 
     @Nested
@@ -601,6 +636,31 @@ public class ParserTest extends EngineTestBase {
             execAndVerify("/target.html", useNewParser ? "/expected.html": "/expected-neko.html", null);
 
         }
+
+        @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+        @ParameterizedTest(name = "useNewParser {0} / TagBalance {1}")
+        public void エレメント名が不正な文字で始まるときはテキストノードとして扱う(boolean useNewParser, boolean tagBalance) throws IOException {
+            setUseNewParser(useNewParser);
+            setBalanceTag(tagBalance);
+            enableDump();
+            DynamicRegisteredSourceHolder.registerContents("/target.html", 
+            "<42></_45>\n"
+            );
+            DynamicRegisteredSourceHolder.registerContents("/expected.html", 
+            "<42><!--_45-->\n"
+            );
+            // nekoHTMLでタグバランスなしの場合は不正な形式の閉じタグはコメントとしても削除されない。
+            DynamicRegisteredSourceHolder.registerContents("/expected-neko.html", 
+            "<42>\n"
+            );
+            // nekoHTMLでタグバランスをした場合は開始タグも削除されてしまう。
+            DynamicRegisteredSourceHolder.registerContents("/expected-neko-balanced.html", 
+            "\n"
+            );
+            execAndVerify("/target.html", useNewParser ? "/expected.html": (tagBalance ? "/expected-neko-balanced.html": "/expected-neko.html"), null);
+
+        }
+
 
     }
 

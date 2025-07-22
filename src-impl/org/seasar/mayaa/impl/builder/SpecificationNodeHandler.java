@@ -436,22 +436,22 @@ public abstract class SpecificationNodeHandler
 
     private String exceptionMessage(SAXParseException e) {
         return
-            "The problem occurred during Perse. " +
-            _specification.getSystemID() +
-            ((e.getMessage() != null)?" - " + e.getMessage(): "");
+            "The problem occurred during parse. " +
+            _specification.getSystemID() + "[" + e.getLineNumber() + ":" + e.getColumnNumber() + "]" +
+            ((e.getMessage() != null) ? " - " + e.getMessage(): "");
     }
 
     @Override
     public void warning(SAXParseException e) {
         if (LOG.isWarnEnabled()) {
-            LOG.warn(exceptionMessage(e), e);
+            LOG.warn(exceptionMessage(e));
         }
     }
 
     @Override
     public void fatalError(SAXParseException e) {
         if (LOG.isFatalEnabled()) {
-            LOG.fatal(exceptionMessage(e), e);
+            LOG.fatal(exceptionMessage(e));
         }
         throw new RuntimeException(exceptionMessage(e), e);
     }
@@ -459,7 +459,7 @@ public abstract class SpecificationNodeHandler
     @Override
     public void error(SAXParseException e) {
         if (LOG.isErrorEnabled()) {
-            LOG.error(exceptionMessage(e), e);
+            LOG.error(exceptionMessage(e));
         }
         throw new RuntimeException(exceptionMessage(e), e);
     }

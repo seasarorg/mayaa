@@ -1,0 +1,78 @@
+package org.seasar.mayaa.impl.builder.parser;
+
+import org.apache.xerces.impl.XMLErrorReporter;
+
+/**
+ * HtmlStadaardScannerで発生するエラーの種類を定義する列挙型。
+ * 各エラーの詳細はWHATWGのHTML Living Standardを参照。
+ * それぞれのエラーは、エラーの重要度を示すshort型のseverityフィールドを持つ。
+ * エラー自体でパースを中断するべきかどうかは、severityフィールドの値によって決まる。
+ * 
+ * <ul>
+ * <li>FATAL_ERRORの場合は中断する。</li>
+ * <li>ERRORの場合は中断する。</li>
+ * <li>WARNINGの場合は中断しない。</li>
+ * </ul>
+ */
+enum ParseError {
+    PARSE_ERROR,
+    UNEXPECTED_NULL_CHARACTER,
+    // TAG
+    EOF_BEFORE_TAG_NAME,
+    EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT,
+    EOF_IN_TAG,
+    INVALID_FIRST_CHARACTER_OF_TAG_NAME,
+    MISSING_ATTRIBUTE_VALUE,
+    MISSING_END_TAG_NAME,
+    UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME,
+    UNEXPECTED_SOLIDUS_IN_TAG,
+    // ATTRIBUTE
+    DUPLICATE_ATTRIBUTE,
+    MISSING_WHITESPACE_BETWEEN_ATTRIBUTES,
+    UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME,
+    UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE,
+    UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME,
+    // CDATA
+    CDATA_IN_HTML_CONTENT,
+    EOF_IN_CDATA,
+    // COMMENTES
+    INCORRECTLY_OPENED_COMMENT,
+    ABRUPT_CLOSING_OF_EMPTY_COMMENT,
+    NESTED_COMMENT,
+    INCORRECTLY_CLOSED_COMMENT,
+    EOF_IN_COMMENT,
+    // doctype
+    EOF_IN_DOCTYPE,
+    MISSING_WHITESPACE_AFTER_DOCTYPE_SYSTEM_KEYWORD,
+    MISSING_QUOTE_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER,
+    MISSING_WHITESPACE_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS,
+    ABRUPT_DOCTYPE_PUBLIC_IDENTIFIER,
+    MISSING_WHITESPACE_BEFORE_DOCTYPE_NAME,
+    MISSING_DOCTYPE_NAME,
+    INVALID_CHARACTER_SEQUENCE_AFTER_DOCTYPE_NAME,
+    MISSING_WHITESPACE_AFTER_DOCTYPE_PUBLIC_KEYWORD,
+    MISSING_DOCTYPE_PUBLIC_IDENTIFIER,
+    MISSING_DOCTYPE_SYSTEM_IDENTIFIER,
+    MISSING_QUOTE_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER,
+    ABRUPT_DOCTYPE_SYSTEM_IDENTIFIER,
+    UNEXPECTED_CHARACTER_AFTER_DOCTYPE_SYSTEM_IDENTIFIER;
+
+    static final short SEVERITY_ERROR = XMLErrorReporter.SEVERITY_ERROR;
+    static final short SEVERITY_FATAL_ERROR = XMLErrorReporter.SEVERITY_FATAL_ERROR;
+    static final short SEVERITY_WARNING = XMLErrorReporter.SEVERITY_WARNING;
+
+    short severity;
+
+    /** デフォルトのエラーの重要度はWARNING */
+    ParseError() {
+        this.severity = SEVERITY_WARNING;
+    }
+
+    ParseError(short severity) {
+        this.severity = severity;
+    }
+
+    public String messageId() {
+        return this.name().replace('_', '-');
+    }
+}

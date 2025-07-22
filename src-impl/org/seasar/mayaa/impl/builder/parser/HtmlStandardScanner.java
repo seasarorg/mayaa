@@ -1634,7 +1634,6 @@ class HtmlTokenizer {
                             handler.reportError(location, ParseError.INVALID_FIRST_CHARACTER_OF_TAG_NAME, null);
                             tokenizeState = TokenizeState.Data;
                             appendTextNode('<');
-                            pushBack();
                         }
                         break;
 
@@ -1656,7 +1655,7 @@ class HtmlTokenizer {
                         } else {
                             handler.reportError(location, ParseError.INVALID_FIRST_CHARACTER_OF_TAG_NAME, null);
                             tokenizeState = TokenizeState.BogusComment;
-                            pushBack();
+                            appendTextNode('<');
                         }
                         break;
 

@@ -28,9 +28,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
 
 import org.seasar.mayaa.impl.util.IOUtil;
 
@@ -41,6 +41,147 @@ import org.seasar.mayaa.impl.util.IOUtil;
  * @author Koji Suga (Gluegent Inc.)
  */
 public class MockServletContext implements ServletContext {
+    // Stub implementations for ServletContext methods required by the interface
+
+    public <T extends jakarta.servlet.Filter> T createFilter(Class<T> clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getEffectiveMinorVersion() {
+        return getMinorVersion();
+    }
+
+    public jakarta.servlet.ServletRegistration.Dynamic addServlet(String servletName, Class<? extends Servlet> servletClass) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.ServletRegistration.Dynamic addServlet(String servletName, Servlet servlet) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.ServletRegistration.Dynamic addServlet(String servletName, String className) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T extends java.util.EventListener> T createListener(Class<T> clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setRequestCharacterEncoding(String encoding) {
+        // no-op
+    }
+
+    public void setResponseCharacterEncoding(String encoding) {
+        // no-op
+    }
+
+    public void addListener(Class<? extends java.util.EventListener> listenerClass) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void addListener(String className) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T extends java.util.EventListener> void addListener(T t) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.ServletRegistration getServletRegistration(String servletName) {
+        return null;
+    }
+
+    public java.util.Set<jakarta.servlet.SessionTrackingMode> getEffectiveSessionTrackingModes() {
+        return Collections.emptySet();
+    }
+
+    public boolean setInitParameter(String name, String value) {
+        return false;
+    }
+
+    public ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    public java.util.Map<String, ? extends jakarta.servlet.ServletRegistration> getServletRegistrations() {
+        return Collections.emptyMap();
+    }
+
+    public jakarta.servlet.SessionCookieConfig getSessionCookieConfig() {
+        return null;
+    }
+
+    public jakarta.servlet.FilterRegistration.Dynamic addFilter(String filterName, Class<? extends jakarta.servlet.Filter> filterClass) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.FilterRegistration.Dynamic addFilter(String filterName, jakarta.servlet.Filter filter) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.FilterRegistration.Dynamic addFilter(String filterName, String className) {
+        throw new UnsupportedOperationException();
+    }
+
+    public java.util.Map<String, ? extends jakarta.servlet.FilterRegistration> getFilterRegistrations() {
+        return Collections.emptyMap();
+    }
+
+    public String getVirtualServerName() {
+        return "MockVirtualServer";
+    }
+
+    public jakarta.servlet.ServletRegistration.Dynamic addJspFile(String servletName, String jspFile) {
+        throw new UnsupportedOperationException();
+    }
+
+    public jakarta.servlet.FilterRegistration getFilterRegistration(String filterName) {
+        return null;
+    }
+
+    public void declareRoles(String... roleNames) {
+        // no-op
+    }
+
+    public String getRequestCharacterEncoding() {
+        return null;
+    }
+
+    public java.util.Set<jakarta.servlet.SessionTrackingMode> getDefaultSessionTrackingModes() {
+        return Collections.emptySet();
+    }
+
+    public <T extends Servlet> T createServlet(Class<T> clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setSessionTrackingModes(java.util.Set<jakarta.servlet.SessionTrackingMode> sessionTrackingModes) {
+        // no-op
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        // no-op
+    }
+
+    public int getSessionTimeout() {
+        return 0;
+    }
+
+    public String getResponseCharacterEncoding() {
+        return null;
+    }
+
+    public String getContextPath() {
+        return _contextPath;
+    }
+
+    public int getEffectiveMajorVersion() {
+        return getMajorVersion();
+    }
+
+    public jakarta.servlet.descriptor.JspConfigDescriptor getJspConfigDescriptor() {
+        return null;
+    }
 
     private String _contextPath;
     private String _contextRoot;
@@ -60,14 +201,14 @@ public class MockServletContext implements ServletContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#getAttribute(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getAttribute(java.lang.String)
      */
     public Object getAttribute(String name) {
         return _attributes.get(name);
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#getAttributeNames()
+     * @see jakarta.servlet.ServletContext#getAttributeNames()
      */
     public Enumeration<String> getAttributeNames() {
         final Iterator<String> keyIterator = _attributes.keySet().iterator();
@@ -83,7 +224,7 @@ public class MockServletContext implements ServletContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#removeAttribute(java.lang.String)
+     * @see jakarta.servlet.ServletContext#removeAttribute(java.lang.String)
      */
     public void removeAttribute(String name) {
         if (_attributes.containsKey(name)) {
@@ -92,7 +233,7 @@ public class MockServletContext implements ServletContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#setAttribute(java.lang.String, java.lang.Object)
+     * @see jakarta.servlet.ServletContext#setAttribute(java.lang.String, java.lang.Object)
      */
     public void setAttribute(String name, Object object) {
         _attributes.put(name, object);
@@ -103,7 +244,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param uripath 他Webアプリケーションのコンテキストパス
      * @return null
-     * @see javax.servlet.ServletContext#getContext(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getContext(java.lang.String)
      */
     public ServletContext getContext(String uripath) {
         return null;
@@ -114,7 +255,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param name 初期化パラメータ名
      * @return null
-     * @see javax.servlet.ServletContext#getInitParameter(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getInitParameter(java.lang.String)
      */
     public String getInitParameter(String name) {
         return null;
@@ -124,7 +265,7 @@ public class MockServletContext implements ServletContext {
      * 要素を持たないEnumerationを返します。
      *
      * @return 要素を持たないEnumeration
-     * @see javax.servlet.ServletContext#getInitParameterNames()
+     * @see jakarta.servlet.ServletContext#getInitParameterNames()
      */
     public Enumeration<String> getInitParameterNames() {
         return Collections.emptyEnumeration();
@@ -134,7 +275,7 @@ public class MockServletContext implements ServletContext {
      * Servlet API のメジャーバージョン番号として 2 を返します。
      *
      * @return 2
-     * @see javax.servlet.ServletContext#getMajorVersion()
+     * @see jakarta.servlet.ServletContext#getMajorVersion()
      */
     public int getMajorVersion() {
         return 2;
@@ -144,7 +285,7 @@ public class MockServletContext implements ServletContext {
      * Servlet API のマイナーバージョン番号として 3 を返します。
      *
      * @return 3
-     * @see javax.servlet.ServletContext#getMinorVersion()
+     * @see jakarta.servlet.ServletContext#getMinorVersion()
      */
     public int getMinorVersion() {
         return 3;
@@ -157,7 +298,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param file MimeTypeを判定するファイル名
      * @return fileに対応するMimeType
-     * @see javax.servlet.ServletContext#getMimeType(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getMimeType(java.lang.String)
      */
     public String getMimeType(String file) {
         return URLConnection.guessContentTypeFromName(file);
@@ -166,7 +307,7 @@ public class MockServletContext implements ServletContext {
     /**
      * nullを返します。
      *
-     * @see javax.servlet.ServletContext#getNamedDispatcher(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getNamedDispatcher(java.lang.String)
      */
     public RequestDispatcher getNamedDispatcher(String name) {
         return null;
@@ -195,7 +336,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param path RealPathを取得するパス
      * @return ファイルとしての絶対パス
-     * @see javax.servlet.ServletContext#getRealPath(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getRealPath(java.lang.String)
      */
     public String getRealPath(String path) {
         File file = getFile(path);
@@ -212,7 +353,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param path URLを取得するリソース名
      * @return pathに対応するURL。存在しない場合はnull
-     * @see javax.servlet.ServletContext#getResource(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getResource(java.lang.String)
      */
     public URL getResource(String path) throws MalformedURLException {
         File file = getFile(path);
@@ -229,7 +370,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param path URLを取得するリソース名
      * @return pathに対応するリソースのInputStream。存在しない場合はnull
-     * @see javax.servlet.ServletContext#getResourceAsStream(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getResourceAsStream(java.lang.String)
      */
     public InputStream getResourceAsStream(String path) {
         try {
@@ -245,7 +386,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param path ディレクトリのパス
      * @return 空のSet
-     * @see javax.servlet.ServletContext#getResourcePaths(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getResourcePaths(java.lang.String)
      */
     public Set<String> getResourcePaths(String path) {
         return Collections.emptySet();
@@ -256,7 +397,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param path 対象のパス
      * @return null
-     * @see javax.servlet.ServletContext#getRequestDispatcher(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getRequestDispatcher(java.lang.String)
      */
     public RequestDispatcher getRequestDispatcher(String path) {
         return null;
@@ -266,7 +407,7 @@ public class MockServletContext implements ServletContext {
      * "Mayaa MockServletContext"という文字列を返します。
      *
      * @return "Mayaa MockServletContext"
-     * @see javax.servlet.ServletContext#getServerInfo()
+     * @see jakarta.servlet.ServletContext#getServerInfo()
      */
     public String getServerInfo() {
         return "Mayaa MockServletContext";
@@ -277,7 +418,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param name 対象のServlet名
      * @return null
-     * @see javax.servlet.ServletContext#getServlet(java.lang.String)
+     * @see jakarta.servlet.ServletContext#getServlet(java.lang.String)
      * @deprecated
      */
     public Servlet getServlet(String name) {
@@ -288,7 +429,7 @@ public class MockServletContext implements ServletContext {
      * contextPathを返します。
      *
      * @return contextPath
-     * @see javax.servlet.ServletContext#getServletContextName()
+     * @see jakarta.servlet.ServletContext#getServletContextName()
      */
     public String getServletContextName() {
         return _contextPath;
@@ -298,7 +439,7 @@ public class MockServletContext implements ServletContext {
      * 要素を持たないEnumerationを返します。
      *
      * @return 要素を持たないEnumeration
-     * @see javax.servlet.ServletContext#getServletNames()
+     * @see jakarta.servlet.ServletContext#getServletNames()
      * @deprecated
      */
     public Enumeration<String> getServletNames() {
@@ -309,7 +450,7 @@ public class MockServletContext implements ServletContext {
      * 要素を持たないEnumerationを返します。
      *
      * @return 要素を持たないEnumeration
-     * @see javax.servlet.ServletContext#getServlets()
+     * @see jakarta.servlet.ServletContext#getServlets()
      * @deprecated
      */
     public Enumeration<?> getServlets() {
@@ -320,7 +461,7 @@ public class MockServletContext implements ServletContext {
      * java.lang.System.out.printlnを利用してmessageを出力する。
      *
      * @param message メッセージ
-     * @see javax.servlet.ServletContext#log(java.lang.String)
+     * @see jakarta.servlet.ServletContext#log(java.lang.String)
      */
     public void log(String message) {
         System.out.println(message);
@@ -332,7 +473,7 @@ public class MockServletContext implements ServletContext {
      *
      * @param message メッセージ
      * @param exception 例外
-     * @see javax.servlet.ServletContext#log(java.lang.Exception, java.lang.String)
+     * @see jakarta.servlet.ServletContext#log(java.lang.Exception, java.lang.String)
      * @deprecated
      */
     public void log(Exception exception, String message) {
@@ -347,7 +488,7 @@ public class MockServletContext implements ServletContext {
      * その後、throwableのprintStackTrace()を実行する。
      *
      * @param message メッセージ
-     * @see javax.servlet.ServletContext#log(java.lang.String, java.lang.Throwable)
+     * @see jakarta.servlet.ServletContext#log(java.lang.String, java.lang.Throwable)
      */
     public void log(String message, Throwable throwable) {
         System.out.println(message);

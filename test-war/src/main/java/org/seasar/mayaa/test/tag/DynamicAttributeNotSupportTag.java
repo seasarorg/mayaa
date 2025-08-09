@@ -17,8 +17,8 @@ package org.seasar.mayaa.test.tag;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * @author Hisayoshi Sasaki (Gluegent, Inc.)

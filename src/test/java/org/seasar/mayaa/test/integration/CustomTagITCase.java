@@ -74,7 +74,7 @@ public class CustomTagITCase extends WebDriverBase {
             "/tests/customtag/dynamic_attribute_wrong.html",
             new Command[] {
                 verifyTextPresent("DynamicAttributeNotSupportTag"),
-                verifyTextPresent("javax.servlet.jsp.tagext.DynamicAttributes")
+                verifyTextPresent("jakarta.servlet.jsp.tagext.DynamicAttributes")
             }
         ),
         arguments(

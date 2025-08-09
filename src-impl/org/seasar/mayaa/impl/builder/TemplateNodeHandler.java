@@ -284,7 +284,7 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
     }
 
     //- implementation of DTD Catalog.
-    // Java9 より標準の javax.xml.catalog.CatalogReader が提供されるので最低バージョンが上がるタイミングで標準半に置き換えたい。
+    // Java9 より標準の jakarta.xml.catalog.CatalogReader が提供されるので最低バージョンが上がるタイミングで標準半に置き換えたい。
     @Override
     public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException {
         return null;

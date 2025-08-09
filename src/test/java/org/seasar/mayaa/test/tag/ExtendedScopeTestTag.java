@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.test.tag;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 /**
  * @author Koji Suga (Gluegent, Inc.)

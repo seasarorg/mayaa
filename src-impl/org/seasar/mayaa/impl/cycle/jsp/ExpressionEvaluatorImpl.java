@@ -15,11 +15,11 @@
  */
 package org.seasar.mayaa.impl.cycle.jsp;
 
-import javax.servlet.jsp.el.ELException;
-import javax.servlet.jsp.el.Expression;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.FunctionMapper;
-import javax.servlet.jsp.el.VariableResolver;
+import jakarta.servlet.jsp.el.ELException;
+import jakarta.servlet.jsp.el.Expression;
+import jakarta.servlet.jsp.el.ExpressionEvaluator;
+import jakarta.servlet.jsp.el.FunctionMapper;
+import jakarta.servlet.jsp.el.VariableResolver;
 
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;

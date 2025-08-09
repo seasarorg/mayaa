@@ -15,8 +15,8 @@
  */
 package org.seasar.mayaa.impl.cycle.web;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * AutoPageBuilderで利用するHttpServletResponseのモック。
@@ -27,6 +27,21 @@ public class MockHttpServletResponse extends MockServletResponse
         implements HttpServletResponse {
 
     private int _status;
+
+    @Override
+    public java.util.Collection<String> getHeaders(String name) {
+        return java.util.Collections.emptyList();
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return null;
+    }
+
+    @Override
+    public java.util.Collection<String> getHeaderNames() {
+        return java.util.Collections.emptyList();
+    }
 
     public void sendRedirect(String url) {
         // do nothing.

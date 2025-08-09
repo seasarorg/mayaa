@@ -17,10 +17,10 @@ package org.seasar.mayaa.test.tag;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.JspFragment;
+import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -53,7 +53,7 @@ public class SimpleBodyTestTag extends SimpleTagSupport {
      * getAttribute("SimpleTestTag") を String として取り、出力。
      * その後 simpleName, styleClass の値を出力。
      *
-     * @see javax.servlet.jsp.tagext.SimpleTag#doTag()
+     * @see jakarta.servlet.jsp.tagext.SimpleTag#doTag()
      */
     public void doTag() throws JspException, IOException {
         String echo = (String) getJspContext().getAttribute("SimpleTestTag");

@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
 
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
@@ -41,8 +41,70 @@ public class MockServletRequest implements ServletRequest {
     private Map<String, Object> _attributes = new HashMap<>();
     private List<Locale> _locale;
 
-    public Map<String, Object> getParameterMap() {
-        return _parameters;
+    // Implemented abstract methods from ServletRequest
+
+    @Override
+    public long getContentLengthLong() {
+        return 0L;
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+
+    @Override
+    public jakarta.servlet.DispatcherType getDispatcherType() {
+        return null;
+    }
+
+    @Override
+    public String getRequestId() {
+        return null;
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return null;
+    }
+
+    @Override
+    public jakarta.servlet.ServletConnection getServletConnection() {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+        return false;
+    }
+
+    @Override
+    public jakarta.servlet.AsyncContext startAsync() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public jakarta.servlet.AsyncContext startAsync(ServletRequest servletRequest, jakarta.servlet.ServletResponse servletResponse) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public jakarta.servlet.ServletContext getServletContext() {
+        return null;
+    }
+
+    @Override
+    public jakarta.servlet.AsyncContext getAsyncContext() {
+        return null;
+    }
+
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        Map<String, String[]> paramMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry : _parameters.entrySet()) {
+            paramMap.put(entry.getKey(), (String[]) entry.getValue());
+        }
+        return paramMap;
     }
 
     public Enumeration<String> getParameterNames() {

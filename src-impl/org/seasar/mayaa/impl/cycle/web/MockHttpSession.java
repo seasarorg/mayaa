@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 import org.seasar.mayaa.impl.util.collection.IteratorEnumeration;
 
@@ -116,13 +116,6 @@ public class MockHttpSession implements HttpSession {
      * @deprecated
      */
     public void removeValue(String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    public javax.servlet.http.HttpSessionContext getSessionContext() {
         throw new UnsupportedOperationException();
     }
 

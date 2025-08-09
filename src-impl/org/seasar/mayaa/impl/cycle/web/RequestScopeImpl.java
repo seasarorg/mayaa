@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
@@ -72,7 +72,6 @@ public class RequestScopeImpl extends AbstractRequestScope {
     public Locale[] getLocales() {
         check();
         if (_locales == null) {
-            @SuppressWarnings("unchecked")
             Enumeration<Locale> locales = _httpServletRequest.getLocales();
             if (locales == null) {
                 _locales = new Locale[0];
@@ -128,7 +127,6 @@ public class RequestScopeImpl extends AbstractRequestScope {
 
     public Iterator<String> iterateAttributeNames() {
         check();
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _httpServletRequest.getAttributeNames();
         return EnumerationIterator.getInstance(e);
     }
@@ -138,7 +136,6 @@ public class RequestScopeImpl extends AbstractRequestScope {
         if (StringUtil.isEmpty(name)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _httpServletRequest.getAttributeNames();
         while (e.hasMoreElements()) {
             if (e.nextElement().equals(name)) {

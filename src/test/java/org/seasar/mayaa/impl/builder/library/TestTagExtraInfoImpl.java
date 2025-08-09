@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import javax.servlet.jsp.tagext.TagExtraInfo;
+import jakarta.servlet.jsp.tagext.TagExtraInfo;
 
 /**
  * @author suga

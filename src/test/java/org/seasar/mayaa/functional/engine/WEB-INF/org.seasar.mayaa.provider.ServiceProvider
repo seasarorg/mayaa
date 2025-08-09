@@ -78,7 +78,7 @@
             <parameter name="ignore" value="META-INF/MANIFEST.MF"/>
             <parameter name="extension" value=".mld"/>
             <parameter name="extension" value=".tld"/>
-            <parameter name="includeJar" value="taglibs-standard-*.jar"/>
+            <parameter name="includeJar" value="jakarta.servlet.jsp.jstl-*.jar"/>
             <parameter name="excludeJar" value="*"/>
         </scanner>
 
@@ -154,7 +154,7 @@
         -->
         <!-- for template_attribute test -->
         <ignoreAttribute
-                qName="{http://java.sun.com/jsp/jstl/core}out" attribute="escapeXml"/>
+                qName="{http://jakarta.ee/jsp/jstl/core}out" attribute="escapeXml"/>
         <aliasAttribute
                 qName="{http://java.sun.com/jsp/jstl/fmt}formatN*" attribute="pattern"
                 templateAttribute="formatPattern" />

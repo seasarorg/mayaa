@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <m:mayaa xmlns:m="http://mayaa.seasar.org"
-        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:c="http://jakarta.ee/jsp/jstl/core"
         xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
 
     <c:out m:id="message1" value="&lt;b&gt;hello&lt;/b&gt;" m:replace="false" />

@@ -115,7 +115,7 @@
 
     <templateAttributeReader>
         <ignoreAttribute
-                qName="{http://java.sun.com/jsp/jstl/core}out" attribute="escapeXml"/>
+                qName="{http://jakarta.ee/jsp/jstl/core}out" attribute="escapeXml"/>
         <aliasAttribute
                 qName="{http://java.sun.com/jsp/jstl/fmt}formatN*" attribute="patt*"
                 templateAttribute="formatPattern" />

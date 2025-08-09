@@ -43,16 +43,26 @@ public class ResourceScannerTest {
         "/META-INF/TestTag.tld",
         "/META-INF/c.tld",
         "/META-INF/c-1_0-rt.tld",
-        "/META-INF/c-1_1.tld",
+        "/META-INF/c-1_0.tld",
+        "/META-INF/c-1_2.tld",
         "/META-INF/fmt-1_0-rt.tld",
+        "/META-INF/fmt-1_0.tld",
+        "/META-INF/fmt-1_1.tld",
         "/META-INF/fmt.tld",
+        "/META-INF/fn-1_1.tld",
         "/META-INF/fn.tld",
         "/META-INF/issue13.mld",
+        "/META-INF/permittedTaglibs-1_1.tld",
         "/META-INF/permittedTaglibs.tld",
+        "/META-INF/scriptfree-1_1.tld",
         "/META-INF/scriptfree.tld",
         "/META-INF/sql-1_0-rt.tld",
+        "/META-INF/sql-1_0.tld",
+        "/META-INF/sql-1_1.tld",
         "/META-INF/sql.tld",
         "/META-INF/x-1_0-rt.tld",
+        "/META-INF/x-1_0.tld",
+        "/META-INF/x-1_1.tld",
         "/META-INF/x.tld"
       );
 
@@ -77,19 +87,7 @@ public class ResourceScannerTest {
 
       List<String> expected = Arrays.asList(
         "/META-INF/TestTag.tld",
-        "/META-INF/c.tld",
-        "/META-INF/c-1_0-rt.tld",
-        "/META-INF/c-1_1.tld",
-        "/META-INF/fmt-1_0-rt.tld",
-        "/META-INF/fmt.tld",
-        "/META-INF/fn.tld",
-        "/META-INF/issue13.mld",
-        "/META-INF/permittedTaglibs.tld",
-        "/META-INF/scriptfree.tld",
-        "/META-INF/sql-1_0-rt.tld",
-        "/META-INF/sql.tld",
-        "/META-INF/x-1_0-rt.tld",
-        "/META-INF/x.tld"
+        "/META-INF/issue13.mld"
       );
 
       List<String> sources = new ArrayList<>();

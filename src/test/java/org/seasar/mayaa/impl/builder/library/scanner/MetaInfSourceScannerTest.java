@@ -69,25 +69,32 @@ public class MetaInfSourceScannerTest {
             sources.add(name);
         }
 
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fn.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/scriptfree.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_2.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fn-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fn.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/scriptfree-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/scriptfree.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest2.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest3.tld"), "entry not match");
-        assertEquals(18, sources.size(), "size not match");
+        assertEquals(25, sources.size(), "size not match");
     }
 
     /*
@@ -110,25 +117,32 @@ public class MetaInfSourceScannerTest {
             sources.add(name);
         }
 
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fn.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/scriptfree.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/sql.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/x.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_2.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fn-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fn.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/scriptfree-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/scriptfree.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/sql.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/x.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest2.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest3.tld"), "entry not match");
-        assertEquals(18, sources.size(), "size not match");
+        assertEquals(25, sources.size(), "size not match");
     }
     /*
      * Test method for 'org.seasar.mayaa.impl.builder.library.scanner.FolderSourceScanner.scan()'
@@ -137,7 +151,7 @@ public class MetaInfSourceScannerTest {
     public void testScanIgnore() {
         scanner.setParameter("folder", "/WEB-INF/lib");
         scanner.setParameter("extension", ".jar");
-        scanner.setParameter("ignore", "standard-");
+        scanner.setParameter("ignore", "jakarta.servlet.jsp.jstl-");
         scanner.setParameter("jar.extension", ".mld");
         scanner.setParameter("jar.extension", ".tld");
 
@@ -150,6 +164,7 @@ public class MetaInfSourceScannerTest {
             }
             sources.add(name);
         }
+        System.err.println(sources);
 
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest2.tld"), "entry not match");
@@ -181,16 +196,19 @@ public class MetaInfSourceScannerTest {
             sources.add(name);
         }
 
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/c.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt-1_0.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/fmt.tld"), "entry not match");
-        assertTrue(sources.contains("/WEB-INF/lib/standard-1.1.2.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c-1_2.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/c.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0-rt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_0.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/fmt.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs-1_1.tld"), "entry not match");
+        assertTrue(sources.contains("/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar:/META-INF/permittedTaglibs.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest2.tld"), "entry not match");
         assertTrue(sources.contains("/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar:/META-INF/TagLibraryInfoManagerImplTest3.tld"), "entry not match");
-        assertEquals(10, sources.size(), "size not match");
+        assertEquals(13, sources.size(), "size not match");
     }
 }

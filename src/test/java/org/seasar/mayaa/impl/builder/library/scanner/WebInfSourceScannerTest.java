@@ -71,24 +71,31 @@ public class WebInfSourceScannerTest {
             "/WEB-INF/tlds/TaglibSAXParser12Test.tld",
             "/WEB-INF/tlds/TaglibSAXParser11_errorTest.tld",
             "/WEB-INF/tlds/TaglibSAXParser20Test.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fn.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/permittedTaglibs.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/scriptfree.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/sql-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/sql-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/sql.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/x-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/x-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/x.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_2.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fn-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fn.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/scriptfree-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/scriptfree.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/sql-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/sql-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/sql-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/sql.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/x-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/x-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/x-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/x.tld",
             "/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar!/META-INF/TagLibraryInfoManagerImplTest.tld",
             "/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar!/META-INF/TagLibraryInfoManagerImplTest2.tld",
-            "/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar!/META-INF/TagLibraryInfoManagerImplTest3.tld",    
+            "/WEB-INF/lib/TagLibraryInfoManagerImplTest.jar!/META-INF/TagLibraryInfoManagerImplTest3.tld",
         };
         for (String expected: expectedList) {
             assertTrue(sources.contains(expected), "not contains " + expected);
@@ -131,7 +138,7 @@ public class WebInfSourceScannerTest {
     @Test
     public void testScanJarIgnore() {
         scanner.setParameter("include", "tlds/*.tld");
-        scanner.setParameter("includeJar", "standard-*.jar");
+        scanner.setParameter("includeJar", "jakarta.servlet.jsp.jstl-*.jar");
         scanner.setParameter("excludeInJarMetaInf", "{x,sql,scriptfree,fn}*");
         scanner.setParameter("includeInJarMetaInf", "*.tld");
 
@@ -151,13 +158,16 @@ public class WebInfSourceScannerTest {
             "/WEB-INF/tlds/TaglibSAXParser12Test.tld",
             "/WEB-INF/tlds/TaglibSAXParser11_errorTest.tld",
             "/WEB-INF/tlds/TaglibSAXParser20Test.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/permittedTaglibs.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_2.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs.tld"
         };
         for (String expected: expectedList) {
             assertTrue(sources.contains(expected), "not contains " + expected);
@@ -189,13 +199,16 @@ public class WebInfSourceScannerTest {
             "/WEB-INF/tlds/TaglibSAXParser12Test.tld",
             "/WEB-INF/tlds/TaglibSAXParser11_errorTest.tld",
             "/WEB-INF/tlds/TaglibSAXParser20Test.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/c.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0-rt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt-1_0.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/fmt.tld",
-            "/WEB-INF/lib/standard-1.1.2.jar!/META-INF/permittedTaglibs.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c-1_2.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/c.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0-rt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_0.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/fmt.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs-1_1.tld",
+            "/WEB-INF/lib/jakarta.servlet.jsp.jstl-3.0.1.jar!/META-INF/permittedTaglibs.tld"
         };
         for (String expected: expectedList) {
             assertTrue(sources.contains(expected), "not contains " + expected);

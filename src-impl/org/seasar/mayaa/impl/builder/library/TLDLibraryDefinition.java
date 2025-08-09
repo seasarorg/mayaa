@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import javax.servlet.jsp.JspFactory;
+import jakarta.servlet.jsp.JspFactory;
 
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.impl.util.StringUtil;

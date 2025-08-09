@@ -17,9 +17,9 @@ package org.seasar.mayaa.test.tag;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.DynamicAttributes;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.DynamicAttributes;
+import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
 /**
  * DynamicAttributeをimplementsしたSimpleTagのテストのためのクラス。
@@ -51,9 +51,8 @@ public class SimpleDynamicAttributeTestTag
 
     /**
      * dynamicName + "=" + dynamicValue を String として取り、出力。
-     *
-     * @see javax.servlet.jsp.tagext.SimpleTag#doTag()
      */
+    @Override
     public void doTag() throws JspException, IOException {
         getJspContext().getOut().print(dynamicName);
         getJspContext().getOut().print("=");

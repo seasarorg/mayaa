@@ -20,8 +20,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.BodyContent;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 

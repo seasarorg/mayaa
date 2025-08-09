@@ -18,20 +18,21 @@ package org.seasar.mayaa.impl.cycle.jsp;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.VariableResolver;
-import javax.servlet.jsp.tagext.BodyContent;
+import jakarta.el.ELContext;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.el.ExpressionEvaluator;
+import jakarta.servlet.jsp.el.VariableResolver;
+import jakarta.servlet.jsp.tagext.BodyContent;
 
 import org.seasar.mayaa.cycle.Response;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -359,6 +360,11 @@ public class PageContextImpl extends PageContext {
             return "Mayaa Servlet";
         }
 
+    }
+
+    @Override
+    public ELContext getELContext() {
+        throw new UnsupportedOperationException("Unimplemented method 'getELContext'");
     }
 
 }

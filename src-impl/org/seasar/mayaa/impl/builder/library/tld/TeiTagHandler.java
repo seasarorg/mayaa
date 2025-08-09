@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.impl.builder.library.tld;
 
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.Tag;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

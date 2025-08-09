@@ -21,7 +21,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.seasar.mayaa.impl.cycle.AbstractResponse;
 import org.seasar.mayaa.impl.util.StringUtil;

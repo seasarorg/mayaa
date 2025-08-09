@@ -39,7 +39,7 @@ public class CustomTagTest extends EngineTestBase {
             execAndVerify(DIR + "target.html", DIR + "expected.html", null);
             fail();
         } catch (java.lang.IllegalArgumentException e) {
-            assertEquals("org.seasar.mayaa.test.tag.DynamicAttributeNotSupportTag does not implements javax.servlet.jsp.tagext.DynamicAttributes.", e.getMessage());
+            assertEquals("org.seasar.mayaa.test.tag.DynamicAttributeNotSupportTag does not implements jakarta.servlet.jsp.tagext.DynamicAttributes.", e.getMessage());
         }
     }
 

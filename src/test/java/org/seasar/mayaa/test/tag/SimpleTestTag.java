@@ -17,11 +17,11 @@ package org.seasar.mayaa.test.tag;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.JspTag;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.JspTag;
+import jakarta.servlet.jsp.tagext.SimpleTagSupport;
+import jakarta.servlet.jsp.tagext.Tag;
 
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -56,7 +56,7 @@ public class SimpleTestTag extends SimpleTagSupport {
      * 親を順に辿って{@link org.apache.taglibs.standard.tag.rt.core.IfTag}を探し、見つけたらクラス名を出力する。
      * 見つからなければ直上の親のクラス名を出力する。
      *
-     * @see javax.servlet.jsp.tagext.SimpleTag#doTag()
+     * @see jakarta.servlet.jsp.tagext.SimpleTag#doTag()
      */
     public void doTag() throws JspException, IOException {
         String echo = (String) getJspContext().getAttribute("SimpleTestTag");

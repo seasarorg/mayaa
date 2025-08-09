@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.seasar.mayaa.impl.cycle.scope.AbstractReadOnlyAttributeScope;
 import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
@@ -47,7 +47,6 @@ public class HeaderValuesScope
     }
 
     public Iterator<String> iterateAttributeNames() {
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _request.getHeaderNames();
         return EnumerationIterator.getInstance(e);
     }

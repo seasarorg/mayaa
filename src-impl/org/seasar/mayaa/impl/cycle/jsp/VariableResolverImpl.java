@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.impl.cycle.jsp;
 
-import javax.servlet.jsp.el.VariableResolver;
+import jakarta.servlet.jsp.el.VariableResolver;
 
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;

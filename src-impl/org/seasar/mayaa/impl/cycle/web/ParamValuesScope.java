@@ -18,7 +18,7 @@ package org.seasar.mayaa.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.seasar.mayaa.impl.cycle.scope.AbstractReadOnlyAttributeScope;
 import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
@@ -45,7 +45,6 @@ public class ParamValuesScope
     }
 
     public Iterator<String> iterateAttributeNames() {
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _request.getParameterNames();
         return EnumerationIterator.getInstance(e);
     }

@@ -15,7 +15,7 @@
  */
 package org.seasar.mayaa.test.tag;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * doStartTagでSKIP_PAGEを返すタグ。

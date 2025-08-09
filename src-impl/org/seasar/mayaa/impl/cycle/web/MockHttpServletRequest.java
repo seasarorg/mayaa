@@ -18,10 +18,10 @@ package org.seasar.mayaa.impl.cycle.web;
 import java.security.Principal;
 import java.util.Enumeration;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -114,7 +114,7 @@ public class MockHttpServletRequest extends MockServletRequest
         return null;
     }
 
-    public Enumeration<Object> getHeaders(String name) {
+    public Enumeration<String> getHeaders(String name) {
         return null;
     }
 
@@ -152,6 +152,43 @@ public class MockHttpServletRequest extends MockServletRequest
 
     public boolean isRequestedSessionIdValid() {
         return false;
+    }
+
+    // Stub implementations for missing HttpServletRequest methods
+
+    @Override
+    public boolean authenticate(jakarta.servlet.http.HttpServletResponse response) {
+        return false;
+    }
+
+    @Override
+    public void login(String username, String password) {
+        // no-op for mock
+    }
+
+    @Override
+    public void logout() {
+        // no-op for mock
+    }
+
+    @Override
+    public jakarta.servlet.http.Part getPart(String name) {
+        return null;
+    }
+
+    @Override
+    public java.util.Collection<jakarta.servlet.http.Part> getParts() {
+        return java.util.Collections.emptyList();
+    }
+
+    @Override
+    public <T extends jakarta.servlet.http.HttpUpgradeHandler> T upgrade(Class<T> handlerClass) {
+        return null;
+    }
+
+    @Override
+    public String changeSessionId() {
+        return null;
     }
 
 }

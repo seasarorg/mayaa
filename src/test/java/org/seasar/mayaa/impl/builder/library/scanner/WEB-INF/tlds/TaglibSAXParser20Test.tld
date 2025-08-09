@@ -48,7 +48,7 @@
             <description>variable description</description>
             <name-given>varName</name-given>
             <variable-class>
-                javax.servlet.jsp.tagext.TagVariableInfo
+                jakarta.servlet.jsp.tagext.TagVariableInfo
             </variable-class>
             <declare>true</declare>
             <scope>NESTED</scope>
@@ -58,7 +58,7 @@
             <description>variable description</description>
             <name-from-attribute>varName2</name-from-attribute>
             <variable-class>
-                javax.servlet.jsp.tagext.TagVariableInfo
+                jakarta.servlet.jsp.tagext.TagVariableInfo
             </variable-class>
             <declare>false</declare>
             <scope>AT_BEGIN</scope>

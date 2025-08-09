@@ -18,7 +18,7 @@ package org.seasar.mayaa.impl.cycle.web;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
@@ -69,7 +69,6 @@ public class ApplicationScopeImpl
 
     public Iterator<String> iterateAttributeNames() {
         check();
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _servletContext.getAttributeNames();
         return EnumerationIterator.getInstance(e);
     }
@@ -80,7 +79,6 @@ public class ApplicationScopeImpl
             return false;
         }
 
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = _servletContext.getAttributeNames();
         while (e.hasMoreElements()) {
             if (e.nextElement().equals(name)) {

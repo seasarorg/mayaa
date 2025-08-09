@@ -24,8 +24,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.ServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,6 +134,11 @@ public class MockServletResponse implements ServletResponse, CONST_IMPL {
         // do nothing.
     }
 
+    @Override
+    public void setContentLengthLong(long length) {
+        // do nothing.
+    }
+
     private static class MockServletOutputStream extends ServletOutputStream {
 
         private ByteArrayOutputStream _buffer = new ByteArrayOutputStream(5120);
@@ -141,6 +146,17 @@ public class MockServletResponse implements ServletResponse, CONST_IMPL {
 
         protected MockServletOutputStream() {
             // do nothing.
+        }
+
+        @Override
+        public boolean isReady() {
+            // Always ready in this mock implementation
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(jakarta.servlet.WriteListener writeListener) {
+            // No-op for mock
         }
 
         public byte[] getBuffer() {

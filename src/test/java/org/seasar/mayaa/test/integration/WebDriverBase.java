@@ -15,9 +15,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.regex.Pattern;
 
-import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Driver;
+import com.codeborne.selenide.WebElementCondition;
+
 import org.openqa.selenium.WebElement;
 
 public class WebDriverBase {
@@ -65,7 +67,7 @@ public class WebDriverBase {
      * 
      * @param value 比較対象の文字列
      */
-    Condition textEx(String value) {
+    WebElementCondition textEx(String value) {
         if (value.startsWith("exact:")) {
             return exactText(value.substring("exact:".length()));
         } else if (value.startsWith("regexp:")) {
@@ -82,21 +84,21 @@ public class WebDriverBase {
      * @param expectedValue 比較対象の文字列
      * @return Condtionオブジェクト
      */
-    Condition attributeEx(final String attrName, final String expectedValue) {
-        return new Condition("attributeEx") {
+    WebElementCondition attributeEx(final String attrName, final String expectedValue) {
+        return new WebElementCondition("attributeEx") {
             @Override
-            public boolean apply(Driver driver, WebElement element) {
+            public CheckResult check(Driver driver, WebElement element) {
                 final String actualText = element.getAttribute(attrName);
                 final String expectedText = expectedValue;
 
                 if (expectedText.startsWith("exact:")) {
                     final String text = expectedText.substring("exact:".length());
-                    return text.equals(actualText);
+                    return text.equals(actualText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not match a specified text.", actualText);
                 } else if (expectedText.startsWith("regexp:")) {
                     final String regexp = expectedText.substring("regexp:".length());
-                    return Pattern.matches(regexp, actualText);
+                    return Pattern.matches(regexp, actualText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not match a specified pattern.", actualText);
                 } else {
-                    return actualText.contains(expectedText);
+                    return actualText.contains(expectedText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not have a specified text.", actualText);
                 }
             }
 
@@ -114,40 +116,22 @@ public class WebDriverBase {
      * @param expectedValue 比較対象の文字列
      * @return Condtionオブジェクト
      */
-    Condition innerHtml(final String expectedValue) {
-        return new Condition("innerHtml") {
+    WebElementCondition innerHtml(final String expectedValue) {
+        return new WebElementCondition("innerHtml") {
             @Override
-            public boolean apply(Driver driver, WebElement element) {
+            public CheckResult check(Driver driver, WebElement element) {
                 final String actualText = element.getAttribute("innerHTML");
                 final String expectedText = expectedValue;
 
                 if (expectedText.startsWith("exact:")) {
                     final String text = expectedText.substring("exact:".length());
-                    return text.equals(actualText);
+                    return text.equals(actualText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not match a specified text.", actualText);
                 } else if (expectedText.startsWith("regexp:")) {
                     final String regexp = expectedText.substring("regexp:".length());
-                    return Pattern.matches(regexp, actualText);
+                    return Pattern.matches(regexp, actualText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not match a specified pattern.", actualText);
                 } else {
-                    return actualText.contains(expectedText);
+                    return actualText.contains(expectedText) ? CheckResult.accepted(actualText): CheckResult.rejected("InnerHTML does not have a specified text.", actualText);
                 }
-            }
-
-            @Override
-            public String actualValue(Driver driver, WebElement element) {
-                final String actualText = element.getAttribute("innerHTML");
-
-                StringBuilder builder = new StringBuilder();
-                builder.append("length=").append(actualText.length()).append(", \"");
-                for (int i = 0; i < actualText.length(); ++i) {
-                    int codePoint = actualText.codePointAt(i);
-                    if (Character.isISOControl(codePoint)) {
-                        builder.append("\\u").append(Integer.toHexString(codePoint));
-                    } else {
-                        builder.appendCodePoint(codePoint);
-                    }
-                }
-                builder.append("\"");
-                return builder.toString();
             }
 
             @Override

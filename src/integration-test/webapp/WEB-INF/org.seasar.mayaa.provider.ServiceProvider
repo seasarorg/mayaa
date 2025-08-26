@@ -101,9 +101,9 @@
                 templateAttribute="id" />
         -->
         <ignoreAttribute
-                qName="{http://jakarta.ee/jsp/jstl/core}out" attribute="escapeXml"/>
+                qName="{jakarta.tags.core}out" attribute="escapeXml"/>
         <aliasAttribute
-                qName="{http://java.sun.com/jsp/jstl/fmt}formatN*" attribute="patt*"
+                qName="{jakarta.tags.fmt}formatN*" attribute="patt*"
                 templateAttribute="formatPattern" />
         <aliasAttribute
                 qName="{http://mayaa.seasar.org/test/mayaa-test}simpleTest*"

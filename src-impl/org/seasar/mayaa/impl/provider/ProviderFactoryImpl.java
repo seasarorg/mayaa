@@ -80,7 +80,7 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
         }
     }
 
-    class Pair {
+    static class Pair {
         SourceDescriptor source;
         String location;
         Pair(SourceDescriptor source, String location) {

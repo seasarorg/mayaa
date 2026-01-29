@@ -100,7 +100,7 @@ public class FactoryFactoryImpl extends FactoryFactory
         }
     }
 
-    class Pair {
+    static class Pair {
         SourceDescriptor source;
         String location;
         Pair(SourceDescriptor source, String location) {

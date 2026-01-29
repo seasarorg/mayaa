@@ -47,6 +47,8 @@ public class MayaaServlet extends HttpServlet {
             LOG.info("init start");
             FactoryFactory.setInstance(new FactoryFactoryImpl());
             FactoryFactory.setContext(getServletContext());
+            // Allow overriding load order switch via web.xml init-param
+            applyInitParams();
             _initialized = true;
         }
         LOG.info("prepareLibraries start");
@@ -63,6 +65,29 @@ public class MayaaServlet extends HttpServlet {
             if (ObjectUtil.booleanValue(debugValue, false)) {
                 getServletContext().setAttribute(CONST_IMPL.DEBUG, Boolean.TRUE);
             }
+        }
+    }
+
+    /**
+     * Apply Servlet init-params to framework configuration.
+     * Currently supports:
+     *  - enableBackwardOrderLoading: when true, use backward order (WEB-INF → META-INF → built-in)
+     *    for ServiceProvider/factory resolution. When false, force forward order.
+     *    If unset, defaults to forward order (backward disabled).
+     */
+    protected void applyInitParams() {
+        if (getServletConfig() == null) {
+            return;
+        }
+        // Support both a concise name and the full property-like name
+        String v = getServletConfig().getInitParameter("enableBackwardOrderLoading");
+        if (!StringUtil.hasValue(v)) {
+            v = getServletConfig().getInitParameter("org.seasar.mayaa.provider.enableBackwardOrderLoading");
+        }
+        if (StringUtil.hasValue(v)) {
+            boolean enable = ObjectUtil.booleanValue(v, false);
+            FactoryFactory.setEnableBackwardOrderLoadingOverride(Boolean.valueOf(enable));
+            LOG.info("Servlet init-param: enableBackwardOrderLoading=" + enable);
         }
     }
 

@@ -37,6 +37,25 @@ public abstract class FactoryFactory {
     private static PageSourceFactory _pageSourceFactory;
     private static ProviderFactory _providerFactory;
     private static CycleFactory _cycleFactory;
+    // Override set from servlet init-param to control backward/forward load order.
+    private static volatile Boolean _overrideEnableBackwardOrderLoading;
+
+    public static boolean isDisabledBackwardOrderLoading() {
+        // Servlet init-param override: when set, use it; otherwise default to forward order (backward disabled)
+        if (_overrideEnableBackwardOrderLoading != null) {
+            return !_overrideEnableBackwardOrderLoading.booleanValue();
+        }
+        // Default: backward order is disabled (forward order is used)
+        return true;
+    }
+
+    /**
+     * Overrides the backward/forward load order switch using a servlet init-param.
+     * @param enableBackwardOrder when {@code Boolean.TRUE}, backward order is enabled; when {@code Boolean.FALSE}, disabled
+     */
+    public static void setEnableBackwardOrderLoadingOverride(Boolean enableBackwardOrder) {
+        _overrideEnableBackwardOrderLoading = enableBackwardOrder;
+    }
 
     /**
      * ファクトリの初期化。

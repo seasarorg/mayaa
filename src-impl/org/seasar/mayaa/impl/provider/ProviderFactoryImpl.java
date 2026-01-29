@@ -68,6 +68,10 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
     }
 
     protected ServiceProvider getServiceProvider(Object context) {
+        // If the switch is ON, force forward order without compatibility fallback.
+        if (FactoryFactory.isDisabledBackwardOrderLoading()) {
+            return getServiceProvider(context, false);
+        }
         try {
             return getServiceProvider(context, true);
         } catch (NeedCompatibilityException e) {
@@ -76,7 +80,7 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
         }
     }
 
-    class Pair {
+    static class Pair {
         SourceDescriptor source;
         String location;
         Pair(SourceDescriptor source, String location) {
@@ -101,47 +105,105 @@ public class ProviderFactoryImpl extends NonSerializableParameterAwareImpl imple
      * @throws IllegalStateException ファイルに記述された内容不正などで必要なオブジェクトが生成されなかった時
      */
     private ServiceProvider getServiceProvider(Object context, boolean loadBackwardWay) throws IllegalStateException {
-        final String systemID = "org.seasar.mayaa.provider.ServiceProvider";
+        List<Pair> sources = collectSources();
+        
+        if (loadBackwardWay) {
+            Collections.reverse(sources);
+            return loadProviderBackward(sources);
+        } else {
+            return loadProviderForward(sources);
+        }
+    }
 
+    /**
+     * ソースファイルを収集する。
+     * Built-in → META-INF → WEB-INF の順序で収集される。
+     * 
+     * @return 存在するソースファイルのリスト
+     */
+    private List<Pair> collectSources() {
+        final String systemID = "org.seasar.mayaa.provider.ServiceProvider";
         List<Pair> sources = new ArrayList<>();
-        // Collect source files
+        
         // Mayaa Built-in source file
         SourceDescriptor source = MarshallUtil.getDefaultSource(systemID, ServiceProviderHandler.class);
         if (source.exists()) {
             sources.add(new Pair(source, "[Built-in]"));
-            LOG.info("FOUND " + "[Built-in]" + source.getSystemID());
+            LOG.info("FOUND [Built-in] " + source.getSystemID());
         }
+        
         // 各META-INF/org.seasar.mayaa.provider.ServiceProvider を列挙する。順序は不定。
         Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
             source = it.next();
             if (source.exists()) {
                 sources.add(new Pair(source, "META-INF"));
-                LOG.info("FOUND " + "META-INF" + source.getSystemID());
+                LOG.info("FOUND META-INF " + source.getSystemID());
             }
         }
+        
+        // WEB-INF
         source = FactoryFactory.getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, systemID);
         if (source.exists()) {
             sources.add(new Pair(source, "WEB-INF"));
-            LOG.info("FOUND " + "WEB-INF" + source.getSystemID());
+            LOG.info("FOUND WEB-INF " + source.getSystemID());
         }
+        
+        return sources;
+    }
 
-        if (loadBackwardWay) {
-            Collections.reverse(sources);
-        }
-
+    /**
+     * Backward順序でServiceProviderをロード（最初に見つかった有効なものを返す）。
+     * 各ソースを順に試し、最初に妥当性検証を通過したプロバイダを返す。
+     * 
+     * @param sources ソースファイルのリスト（既にリバース済み）
+     * @return 最初に有効なServiceProvider、または null
+     */
+    private ServiceProvider loadProviderBackward(List<Pair> sources) {
         ServiceProvider provider = null;
-        for (Pair s: sources) {
-            LOG.info("LOADING " + s.location + s.source.getSystemID());
-            provider = marshallServiceProvider(s.source, provider);
-            validate(s.source, provider);
-            if (loadBackwardWay && provider != null) {
-                LOG.info("LOADED " + s.location + s.source.getSystemID());
-                return provider;
+        
+        for (Pair s : sources) {
+            LOG.info("LOADING " + s.location + " " + s.source.getSystemID());
+            provider = marshallServiceProvider(s.source, null);
+            
+            if (provider != null) {
+                try {
+                    validate(s.source, provider);
+                    LOG.info("LOADED " + s.location + " " + s.source.getSystemID());
+                    return provider;
+                } catch (IllegalStateException e) {
+                    LOG.warn("ServiceProvider validation failed for " + s.location + " " + 
+                            s.source.getSystemID() + ", trying next: " + e.getMessage());
+                    // 次のソースを試す
+                    provider = null;
+                }
             }
         }
-        Pair last = sources.get(sources.size() - 1);
-        LOG.info("LOADED " + last.location + last.source.getSystemID());
+        return provider;
+    }
+
+    /**
+     * Forward順序でServiceProviderをロード（チェーン的に上書き）。
+     * 全てのソースを順に読み込み、前のプロバイダを引き継ぎながら処理する。
+     * 
+     * @param sources ソースファイルのリスト
+     * @return 最終的なServiceProvider、または null
+     */
+    private ServiceProvider loadProviderForward(List<Pair> sources) {
+        ServiceProvider provider = null;
+        Pair lastSource = null;
+        
+        for (Pair s : sources) {
+            LOG.info("LOADING " + s.location + " " + s.source.getSystemID());
+            provider = marshallServiceProvider(s.source, provider);
+            lastSource = s;
+        }
+        
+        if (provider != null && lastSource != null) {
+            validate(lastSource.source, provider);
+            LOG.info("LOADED " + lastSource.location + " " + lastSource.source.getSystemID());
+        }
+        
         return provider;
     }
 

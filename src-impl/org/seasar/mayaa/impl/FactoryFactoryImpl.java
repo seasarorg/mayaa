@@ -88,11 +88,46 @@ public class FactoryFactoryImpl extends FactoryFactory
 
     @Override
     protected <T extends UnifiedFactory> T getFactory(Class<T> interfaceClass, Object context) {
+        // If the switch is ON, force forward order without compatibility fallback.
+        if (FactoryFactory.isDisabledBackwardOrderLoading()) {
+            return getFactory(interfaceClass, context, false);
+        }
         try {
             return getFactory(interfaceClass, context, true);
         } catch (NeedCompatibilityException e) {
             assert(e.getCompatibilityType() == CompatibilityType.LoadFactoryDefinitionForwardWay);
             return getFactory(interfaceClass, context, false);    
+        }
+    }
+
+    static class Pair {
+        SourceDescriptor source;
+        String location;
+        Pair(SourceDescriptor source, String location) {
+            this.source = source;
+            this.location = location;
+        }
+    }
+
+    /**
+     * UnifiedFactoryの最低限の妥当性チェックを行う。
+     * getServiceClass()が呼び出せることを確認する。
+     * 
+     * @param source 読み込んだソース
+     * @param factory チェック対象のファクトリ
+     * @throws IllegalStateException ファクトリが適切に初期化されていない場合
+     */
+    private <T extends UnifiedFactory> void validateFactory(
+            SourceDescriptor source, T factory) throws IllegalStateException {
+        if (factory == null) {
+            throw new IllegalStateException("Factory is null after loading: " + source.getSystemID());
+        }
+        try {
+            factory.getServiceClass(); // 最低限の動作確認
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException(
+                "Factory is not properly initialized: " + source.getSystemID() + 
+                " - " + e.getMessage(), e);
         }
     }
 
@@ -114,39 +149,110 @@ public class FactoryFactoryImpl extends FactoryFactory
         if (checkInterface(interfaceClass) == false || context == null) {
             throw new IllegalArgumentException();
         }
-        String systemID = interfaceClass.getName();
-        List<SourceDescriptor> sources = new ArrayList<>();
+        
+        List<Pair> sources = collectSources(interfaceClass);
+        
+        if (loadBackwardWay) {
+            Collections.reverse(sources);
+            return loadFactoryBackward(interfaceClass, context, sources);
+        } else {
+            return loadFactoryForward(interfaceClass, context, sources);
+        }
+    }
 
-        // Collect source files
+    /**
+     * ソースファイルを収集する。
+     * Built-in → META-INF → WEB-INF の順序で収集される。
+     * 
+     * @param interfaceClass ファクトリインタフェースクラス
+     * @return 存在するソースファイルのリスト
+     */
+    private List<Pair> collectSources(Class<?> interfaceClass) {
+        String systemID = interfaceClass.getName();
+        List<Pair> sources = new ArrayList<>();
+        
         // Mayaa Built-in source file
         SourceDescriptor source = MarshallUtil.getDefaultSource(systemID, UnifiedFactoryHandler.class);
         if (source.exists()) {
-            sources.add(source);
+            sources.add(new Pair(source, "[Built-in]"));
+            LOG.info("FOUND [Built-in] " + source.getSystemID());
         }
-        // 
+        
+        // 各META-INF/org.seasar.mayaa.provider.ServiceProvider を列挙する。順序は不定。
         Iterator<SourceDescriptor> it = MarshallUtil.iterateMetaInfSources(systemID);
         while (it.hasNext()) {
             source = it.next();
             if (source.exists()) {
-                sources.add(source);
+                sources.add(new Pair(source, "META-INF"));
+                LOG.info("FOUND META-INF " + source.getSystemID());
             }
         }
+        
+        // WEB-INF
         source = getBootstrapSource(ApplicationSourceDescriptor.WEB_INF, systemID);
         if (source.exists()) {
-            sources.add(source);
+            sources.add(new Pair(source, "WEB-INF"));
+            LOG.info("FOUND WEB-INF " + source.getSystemID());
         }
+        
+        return sources;
+    }
 
-        if (loadBackwardWay) {
-            Collections.reverse(sources);
-        }
-
-        T factory = null;
-        for (SourceDescriptor s: sources) {
-            factory = marshallFactory(interfaceClass, context, s, factory);
-            if (loadBackwardWay && factory != null) {
-                return factory;
+    /**
+     * Backward順序でファクトリをロード（最初に見つかった有効なものを返す）。
+     * 各ソースを順に試し、最初に妥当性検証を通過したファクトリを返す。
+     * 
+     * @param interfaceClass ファクトリインタフェースクラス
+     * @param context アプリケーションコンテキスト
+     * @param sources ソースファイルのリスト（既にリバース済み）
+     * @return 最初に有効なファクトリ、または null
+     */
+    private <T extends UnifiedFactory> T loadFactoryBackward(
+            Class<T> interfaceClass, Object context, List<Pair> sources) {
+        for (Pair s : sources) {
+            LOG.info("LOADING " + s.location + " " + s.source.getSystemID());
+            T factory = marshallFactory(interfaceClass, context, s.source, null);
+            
+            if (factory != null) {
+                try {
+                    validateFactory(s.source, factory);
+                    LOG.info("LOADED " + s.location + " " + s.source.getSystemID());
+                    return factory;
+                } catch (IllegalStateException e) {
+                    LOG.warn("Factory validation failed for " + s.location + " " + 
+                            s.source.getSystemID() + ", trying next: " + e.getMessage());
+                    // 次のソースを試す
+                }
             }
         }
+        return null;
+    }
+
+    /**
+     * Forward順序でファクトリをロード（チェーン的に上書き）。
+     * 全てのソースを順に読み込み、前のファクトリを引き継ぎながら処理する。
+     * 
+     * @param interfaceClass ファクトリインタフェースクラス
+     * @param context アプリケーションコンテキスト
+     * @param sources ソースファイルのリスト
+     * @return 最終的なファクトリ、または null
+     */
+    private <T extends UnifiedFactory> T loadFactoryForward(
+            Class<T> interfaceClass, Object context, List<Pair> sources) {
+        T factory = null;
+        Pair lastSource = null;
+        
+        for (Pair s : sources) {
+            LOG.info("LOADING " + s.location + " " + s.source.getSystemID());
+            factory = marshallFactory(interfaceClass, context, s.source, factory);
+            lastSource = s;
+        }
+        
+        if (factory != null && lastSource != null) {
+            validateFactory(lastSource.source, factory);
+            LOG.info("LOADED " + lastSource.location + " " + lastSource.source.getSystemID());
+        }
+        
         return factory;
     }
 

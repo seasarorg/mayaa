@@ -20,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.UnifiedFactory;
 import org.seasar.mayaa.cycle.CycleFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
@@ -35,6 +38,18 @@ import org.springframework.mock.web.MockServletContext;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class FactoryFactoryImplTest {
+
+    @BeforeEach
+    public void setUp() {
+        // Ensure override is cleared before each test
+        FactoryFactory.setEnableBackwardOrderLoadingOverride(null);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Always clear override after each test to avoid leakage
+        FactoryFactory.setEnableBackwardOrderLoadingOverride(null);
+    }
 
     @Test
     public void testCheckInterface() {
@@ -71,6 +86,27 @@ public class FactoryFactoryImplTest {
         UnifiedFactory current = factory.marshallFactory(CycleFactory.class, new MockServletContext((String)null),
                 source, before);
         assertEquals(ServiceCycle.class, current.getServiceClass());
+    }
+
+    @Test
+    public void testOverrideTrue_EnablesBackwardOrder() {
+        FactoryFactory.setEnableBackwardOrderLoadingOverride(Boolean.TRUE);
+        assertFalse(FactoryFactory.isDisabledBackwardOrderLoading(),
+                "Override=TRUE should enable backward order");
+    }
+
+    @Test
+    public void testOverrideFalse_DisablesBackwardOrder() {
+        FactoryFactory.setEnableBackwardOrderLoadingOverride(Boolean.FALSE);
+        assertTrue(FactoryFactory.isDisabledBackwardOrderLoading(),
+                "Override=FALSE should disable backward order");
+    }
+
+    @Test
+    public void testOverrideNull_DefaultsToForwardOrder() {
+        FactoryFactory.setEnableBackwardOrderLoadingOverride(null);
+        assertTrue(FactoryFactory.isDisabledBackwardOrderLoading(),
+                "With no override, should default to forward order (backward disabled)");
     }
 
 }

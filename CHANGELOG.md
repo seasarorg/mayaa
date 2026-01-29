@@ -33,7 +33,7 @@
   web.xmlのServletバージョンをあげたときに追従しきれないためです。明確にweb.xmlのタグライブラリ定義を使用したい場合は `WEB-INF/org.seasar.mayaa.provider.ServiceProvider` にて `WebXMLTaglibSourceScanner`を含めてください。 [#106](https://github.com/seasarorg/mayaa/pull/106)
 - ResourceScannerで全てのJarをスキャンしないように除外指定できるようにしました。 [#87](https://github.com/seasarorg/mayaa/pull/87)
 - 各ファクトリクラス、ServiceProviderの読み込みで書式にエラーがあっても起動できてしまっていたため、明確にエラーとするようにした。
-- 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更しました。 [#88](https://github.com/seasarorg/mayaa/pull/88)<br>
+- 各ファクトリクラス、ServiceProviderの生成時の順序を現在のビルトイン、ロード中のMETA-INF内、WEB-INF内から、逆順に変更できるようにしました。有効にするには web.xml にて MayaaServletに対する初期化パラメータ(`init-param`)で`enableBackwardOrderLoading`を`true`に設定してください。 [#88](https://github.com/seasarorg/mayaa/pull/88) [#115](https://github.com/seasarorg/mayaa/pull/115)<br>
   これまでは順に生成されてもより後から生成されたもので破棄および上書きされていたため無駄となっていました。
   ただし、`class`属性で指定されたクラスにインタフェースクラスを1つ引数にとるコンストラクタが定義されている場合は互換性のため元の順序で生成を行います。
 - ServiceProvider定義のXMLの`class`属性を任意指定とし、省略された場合はビルトインの設定ファイルと同じ実装をデフォルトとして用いるようにしました。実装を変更したい場合のみ旧来通り`class`属性で指定します。

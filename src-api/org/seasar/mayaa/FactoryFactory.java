@@ -58,6 +58,18 @@ public abstract class FactoryFactory {
     }
 
     /**
+     * ファクトリのインスタンスをクリアする。
+     */
+    public static void reset() {
+        _instance = null;
+        _context = null;
+        _pageSourceFactory = null;
+        _providerFactory = null;
+        _cycleFactory = null;
+        _factories.clear();        
+    }
+
+    /**
      * ファクトリの初期化。
      * @param instance ファクトリのインスタンス。
      */

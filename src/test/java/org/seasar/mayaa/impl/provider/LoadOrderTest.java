@@ -63,6 +63,7 @@ public class LoadOrderTest {
                 return super.getResource(path);
             }
         };
+        FactoryFactory.reset();
         // デフォルト状態: Forward順序（Backwardは disabled）
         FactoryFactory.setEnableBackwardOrderLoadingOverride(null);
     }

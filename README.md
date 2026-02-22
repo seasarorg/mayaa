@@ -42,6 +42,7 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
 変更点については [CHANGELOG.md](./CHANGELOG.md) を参照ください。
 
 ## ドキュメント
+- アップグレード: [doc/UPGRADING.md](./doc/UPGRADING.md)
 - 互換性: [doc/COMPATIBILITY.md](./doc/COMPATIBILITY.md)
 - 運用・管理: [doc/MANAGEMENT.md](./doc/MANAGEMENT.md)
 - パーサ仕様: [doc/PARSER.md](./doc/PARSER.md)

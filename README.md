@@ -4,7 +4,7 @@ https://seasarorg.github.io/mayaa-site/
 
 MayaaはHTMLをベースとしたテンプレートによるプログラマとデザイナの作業分担を強く意識したWEBフロントサービスエンジンです。
 
-*Mayaa 1.3.0-alpha1 よりJDK動作要件が Java8 以上になっています。*
+*Mayaa 1.3.0 よりJDK動作要件が Java8 以上になっています。*
 
 ## システム動作仕様環境
  * Java8 以降 
@@ -40,4 +40,11 @@ ML購読登録： https://www.seasar.org/mailman/listinfo/mayaa-user
 
 ## 変更履歴
 変更点については [CHANGELOG.md](./CHANGELOG.md) を参照ください。
+
+## ドキュメント
+- アップグレード: [doc/UPGRADING.md](./doc/UPGRADING.md)
+- 互換性: [doc/COMPATIBILITY.md](./doc/COMPATIBILITY.md)
+- 運用・管理: [doc/MANAGEMENT.md](./doc/MANAGEMENT.md)
+- パーサ仕様: [doc/PARSER.md](./doc/PARSER.md)
+- テスト: [doc/TESTING.md](./doc/TESTING.md)
 

@@ -1,6 +1,6 @@
 # 変更点
 
-## Mayaa 1.3.0-alpha
+## Mayaa 1.3.0 : 2026-02-22
 
 ### Changes
 挙動が変わる部分がありますのでご確認ください。
@@ -68,7 +68,6 @@
 - ライブラリファイルのスキャンおよびServiceProviderファイル読み込みのログを出力しました。 [#105](https://github.com/seasarorg/mayaa/pull/105)
 - Java8 向けのAPI利用に制限する。 [#82](https://github.com/seasarorg/mayaa/pull/82)
 - Not use AccessControlExcepton for JEP 411 [#78](https://github.com/seasarorg/mayaa/pull/78)
-- Bump spring-web from 3.2.18.RELEASE to 6.0.0 [#84](https://github.com/seasarorg/mayaa/pull/84)
 - Bump xercesImpl from 2.12.0 to 2.12.2 [#72](https://github.com/seasarorg/mayaa/pull/72)
 - 静的ソースチェックの警告の解消 [#63](https://github.com/seasarorg/mayaa/pull/63)
 - unusedの警告を解消 [#94](https://github.com/seasarorg/mayaa/pull/94)

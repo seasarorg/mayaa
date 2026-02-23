@@ -55,3 +55,22 @@ mvn jmeter:jmeter
 `mvn jmeter:jmeter` を一度実行すると結果のレポートが生成されるため、再実行するにはクリーンするか、
 `target/jmeter/reports/` 配下のディレクトリを削除する。
 
+
+## Spring Bootでのテスト起動
+
+Spring Boot組込Tomcatを使用してテスト用アプリケーションを起動することもできます。
+
+### 起動方法
+プロジェクトルートから以下のコマンドを実行します：
+
+```
+mvn -f test-war/pom.xml spring-boot:run
+```
+
+アプリケーションはデフォルトでポート8080で起動します。
+ブラウザで `http://localhost:8080` にアクセスしてアプリケーションが正常に動作することを確認できます。
+
+### 注意点
+- Spring Boot起動時は docker-compose による起動とは異なり、単一のコンテナで実行されます
+- デバッグポートやJMXの設定は行われていません
+- パフォーマンス測定はdocker-composeを使用してください

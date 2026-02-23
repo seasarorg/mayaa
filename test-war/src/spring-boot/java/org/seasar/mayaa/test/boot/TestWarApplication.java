@@ -14,9 +14,9 @@ public class TestWarApplication {
     }
 
     @Bean
-    public ServletRegistrationBean<MayaaServlet> mayaaServlet() {
+    public ServletRegistrationBean<?> mayaaServlet() {
         MayaaServlet servlet = new MayaaServlet();
-        ServletRegistrationBean<MayaaServlet> bean = new ServletRegistrationBean<>(servlet, "*.html");
+        ServletRegistrationBean<?> bean = new ServletRegistrationBean<>(servlet, "*.html");
         bean.setName("MayaaServlet");
         bean.setLoadOnStartup(1);
         return bean;

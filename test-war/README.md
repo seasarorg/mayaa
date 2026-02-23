@@ -63,14 +63,29 @@ Spring Boot組込Tomcatを使用してテスト用アプリケーションを起
 ### 起動方法
 プロジェクトルートから以下のコマンドを実行します：
 
+#### 方法1: spring-boot-maven-plugin を使用
 ```
-mvn -f test-war/pom.xml spring-boot:run
+mvn -f test-war/pom.xml spring-boot:run -Pspring-boot -Dmayaa.version=1.3.0
+```
+
+#### 方法2: JARファイルをビルドして実行
+```
+mvn -f test-war/pom.xml clean package -Pspring-boot -DskipTests -Dmayaa.version=1.3.0
+cd test-war
+java -jar target/mayaa-package-test-1.3.0.jar
 ```
 
 アプリケーションはデフォルトでポート8080で起動します。
 ブラウザで `http://localhost:8080` にアクセスしてアプリケーションが正常に動作することを確認できます。
 
+ポート番号を変更する場合は以下のように指定します：
+
+```
+java -jar target/mayaa-package-test-1.3.0.jar --server.port=18080
+```
+
 ### 注意点
 - Spring Boot起動時は docker-compose による起動とは異なり、単一のコンテナで実行されます
+- `-Pspring-boot` プロファイルの指定が必須です
 - デバッグポートやJMXの設定は行われていません
 - パフォーマンス測定はdocker-composeを使用してください

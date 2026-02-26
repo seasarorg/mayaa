@@ -36,6 +36,13 @@ DD_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 docker-compose up
 ```
 
+### WildFly利用時の注意（ロガー設定）
+- `quay.io/wildfly/wildfly:32.0.1.Final-jdk21` を使う場合、`./wildfly/standalone.conf` で
+  `org.jboss.logmanager` と `wildfly-common` を `-Xbootclasspath/a` に含める必要があります。
+- JMX有効化（`-Dcom.sun.management.jmxremote*`）時はロガー初期化が早期に走るため、上記設定がないと
+  `WFLYLOG0078` や `ClassNotFoundException: org.jboss.logmanager.*` で起動失敗します。
+- Tomcat用の `./tomcat/setenv.sh` にはこの設定は不要です（WildFly専用の対応）。
+
 ## パフォーマンス測定
 JMeterによるパフォーマンス測定を行う。
 docker-compose により起動したウェブアプリケーションに対して負荷をかける
@@ -65,14 +72,15 @@ Spring Boot組込Tomcatを使用してテスト用アプリケーションを起
 
 #### 方法1: spring-boot-maven-plugin を使用
 ```
-mvn -f test-war/pom.xml spring-boot:run -Pspring-boot -Dmayaa.version=1.3.0
+mvn -f test-war/pom.xml spring-boot:run -Pspring-boot -Dmayaa.version=2.0.0-SNAPSHOT
+
 ```
 
 #### 方法2: JARファイルをビルドして実行
 ```
-mvn -f test-war/pom.xml clean package -Pspring-boot -DskipTests -Dmayaa.version=1.3.0
+mvn -f test-war/pom.xml clean package -Pspring-boot -DskipTests -Dmayaa.version=2.0.0-SNAPSHOT
 cd test-war
-java -jar target/mayaa-package-test-1.3.0.jar
+java -jar target/mayaa-package-test-2.0.0-SNAPSHOT.jar
 ```
 
 アプリケーションはデフォルトでポート8080で起動します。
@@ -81,11 +89,12 @@ java -jar target/mayaa-package-test-1.3.0.jar
 ポート番号を変更する場合は以下のように指定します：
 
 ```
-java -jar target/mayaa-package-test-1.3.0.jar --server.port=18080
+java -jar target/mayaa-package-test-2.0.0-SNAPSHOT.jar --server.port=18080
 ```
 
 ### 注意点
 - Spring Boot起動時は docker-compose による起動とは異なり、単一のコンテナで実行されます
 - `-Pspring-boot` プロファイルの指定が必須です
-- デバッグポートやJMXの設定は行われていません
+- デバッグポートは `8787` で有効です（`test-war/pom.xml` の `spring-boot-maven-plugin` 設定）
+- JMXの設定は行われていません
 - パフォーマンス測定はdocker-composeを使用してください

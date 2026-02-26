@@ -17,21 +17,16 @@
 # JMX_HOSTNAME=0.0.0.0
 # DD_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 #
-version: '3'
 services:
   web:
     #  DOCKER IMAGE                      Java Runtime   Servlet
-    #image: jboss/wildfly:20.0.1.Final  #  11.0.8         4.0
-    #image: jboss/wildfly:19.1.0.Final  #  11.0.5         4.0
-    image: jboss/wildfly:10.1.0.Final  #  1.8.0_191      4.0
-    #image: jboss/wildfly:8.1.0.Final   #  1.7.0_201      3.1
-    #image: tomcat:8                    #  1.8.0_272      3.1
-    #image: tomcat:7                    #  1.8.0_272      3.0
-    #image: tomcat:6                    #  1.7.0_131      2.5
+    # image: quay.io/wildfly/wildfly:32.0.1.Final-jdk21  #  21.0.2        21.0.2         6.0
+    image: tomcat:10.1-jdk21               #  21.0.2        21.0.2         6.0
     ports: 
       - "8080:8080"   # service port
       - "9012:9012"   # JMX port
       - "8787:8787"   # debug port
+      - "9990:9990"   # Wildfly管理コンソールのポート(Tomcatは使用しない)
     environment:
       - JMX_HOSTNAME
     volumes: # 下記の記述はコンテナを切り替えてもコメントアウトする必要なし(互いに無影響)

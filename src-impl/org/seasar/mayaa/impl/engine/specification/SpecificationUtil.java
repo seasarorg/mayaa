@@ -252,7 +252,6 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static Namespace getFixedNamespace(Namespace original) {
         return original;
-        //return NamespaceImpl.getInstance(original);
     }
 
     public static QName createQName(String localName) {

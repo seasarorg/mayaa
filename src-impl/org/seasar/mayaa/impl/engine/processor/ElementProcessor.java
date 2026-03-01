@@ -69,14 +69,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 new DefaultCycleLocalInstantiator() {
             public Object create(Object[] params) {
                 SpecificationNode originalNode = (SpecificationNode) params[0];
-                Namespace currentNS = SpecificationUtil.createNamespace();
-                currentNS.setParentSpace(originalNode.getParentSpace());
-                for (Iterator<PrefixMapping> it = originalNode.iteratePrefixMapping(false); it.hasNext();) {
-                    PrefixMapping prefixMapping = it.next();
-                    currentNS.addPrefixMapping(prefixMapping.getPrefix(), prefixMapping.getNamespaceURI());
-                }
-                currentNS.setDefaultNamespaceURI(originalNode.getDefaultNamespaceURI());
-                return currentNS;
+                return SpecificationUtil.copyNamespace(originalNode);
             }});
     }
 

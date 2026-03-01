@@ -42,7 +42,6 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.ApplicationSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
-import org.seasar.mayaa.impl.util.ReferenceCache;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceHolder;
 
@@ -222,7 +221,6 @@ public class FileSearchRenderer {
     }
 
     public void destroy() {
-        ReferenceCache.finishThreads();
         ProviderUtil.getEngine().destroy();
         JspProcessor.clear();
 

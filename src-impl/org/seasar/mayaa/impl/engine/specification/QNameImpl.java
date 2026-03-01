@@ -16,52 +16,38 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
-
-import org.apache.commons.collections.ReferenceMap;
-import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class QNameImpl implements QName, CONST_IMPL, Serializable {
+public final class QNameImpl implements QName, CONST_IMPL, Serializable {
     private static final long serialVersionUID = 2143966034062341815L;
 
-    @SuppressWarnings("unchecked")
-     private static volatile Map<String, QName> _cache =
-         Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, QName> _cache = Caffeine.newBuilder()
+        .softValues()
+        .build();
 
     public static QName getInstance(String localName) {
         return getInstance(URI_MAYAA, localName);
     }
 
     public static QName getInstance(String namespaceURI, String localName) {
-        URI uri = URIImpl.getInstance(namespaceURI);
-        return getInstance(uri, localName);
+        String key = forQNameString(namespaceURI, localName);
+        QName result = _cache.get(key, k -> new QNameImpl(URIImpl.getInstance(namespaceURI), localName));
+        return result;
     }
 
     public static QName getInstance(URI namespaceURI, String localName) {
-        // undeploy時に_cacheが消されたあとアクセスされる場合がある
-        if (_cache == null) {
-            return null;
-        }
-
-        String key = forQNameString(namespaceURI, localName);
-
-        // 一時的に重複しても問題ないので速度を優先する。（synchronizeを外した）
-        QName result = _cache.get(key);
-        if (result == null) {
-            result = new QNameImpl(namespaceURI, localName);
-            _cache.put(key, result);
-        }
-        return result;
+        return getInstance(namespaceURI.getValue(), localName);
     }
 
     private URI _namespaceURI;
@@ -94,8 +80,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
      * @param localName ローカル名
      * @return "{URI}localName"形式の文字列
      */
-    private static String forQNameString(URI namespaceURI, String localName) {
-        String namespace = namespaceURI.getValue();
+    private static String forQNameString(String namespace, String localName) {
         int namespaceLength = namespace.length();
         int localNameLength = localName.length();
         char[] buffer = new char[namespaceLength + localNameLength + 2];
@@ -107,7 +92,7 @@ public class QNameImpl implements QName, CONST_IMPL, Serializable {
     }
 
     public String toString() {
-        return forQNameString(getNamespaceURI(), getLocalName());
+        return forQNameString(_namespaceURI.getValue(), _localName);
     }
 
     @Override

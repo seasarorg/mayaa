@@ -15,64 +15,42 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.util.Iterator;
-
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.impl.util.ReferenceCache;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
-public class URIImpl implements URI {
+public final class URIImpl implements URI {
     private static final long serialVersionUID = 7985133276316017754L;
 
-    private static ReferenceCache<URIImpl> _cache = new ReferenceCache<>(URIImpl.class);
+    private static final Cache<String, URIImpl> _cache = Caffeine.newBuilder()
+        .softValues()
+        .build();
+
     public static URI NULL_NS_URI = new URIImpl("");
 
     public static URI getInstance(String uri) {
         if (uri == null || uri.isEmpty()) {
             return NULL_NS_URI;
         }
-        // undeploy時に_cacheが消されたあとアクセスされる場合がある
-        if (_cache == null) {
-            return null;
-        }
-        for (Iterator<?> it = _cache.iterator(); it.hasNext(); ) {
-            URIImpl namespaceURI = (URIImpl)it.next();
-            if (namespaceURI.equals(uri)) {
-                return namespaceURI;
-            }
-        }
-        return new URIImpl(uri);
+        URIImpl result = _cache.get(uri, k -> new URIImpl(uri));
+        return result;
     }
 
     private String _value;
-    private int _hashCode;
 
     private URIImpl() {
         // for serialize
     }
 
     private URIImpl(String uri) {
-        setValue(uri);
+        _value = uri;
     }
 
     public String getValue() {
         return _value;
-    }
-
-    public void setValue(String uri) {
-        if (uri == null) {
-            throw new IllegalArgumentException();
-        }
-        if (_value != null) {
-            _cache.remove(this);
-        }
-        _value = uri;
-        if (_cache.contains(this) == false) {
-            _cache.add(this);
-        }
-        _hashCode = (getClass().getName() + "|" + _value).hashCode();
     }
 
     public String toString() {
@@ -93,9 +71,10 @@ public class URIImpl implements URI {
     }
 
     public int hashCode() {
-        return _hashCode;
+        return _value.hashCode();
     }
 
+    // serializable
     private Object readResolve() {
         return getInstance(_value);
     }

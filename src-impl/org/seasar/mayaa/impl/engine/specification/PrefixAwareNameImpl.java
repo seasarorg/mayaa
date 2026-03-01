@@ -15,39 +15,31 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixAwareName;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.StringUtil;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PrefixAwareNameImpl implements PrefixAwareName {
-    private static final long serialVersionUID = 7623241470182328291L;
+    private static final long serialVersionUID = -8898891078217203404L;
 
-    @SuppressWarnings("unchecked")
-    private static Map<String, PrefixAwareName> _cache =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, PrefixAwareName> _cache = Caffeine.newBuilder()
+        .softValues()
+        .build();
+    
     static {
         CacheControllerRegistry.registerCacheController("PrefixAwareName", _cache);
     }
 
     public static PrefixAwareName getInstance(QName qName, String prefix) {
         String key = forPrefixAwareNameString(qName, prefix);
-        PrefixAwareName result;
-        synchronized (_cache) {
-            result = _cache.get(key);
-            if (result == null) {
-                result = new PrefixAwareNameImpl(qName, prefix);
-                _cache.put(key, result);
-            }
-        }
+        PrefixAwareName result = _cache.get(key, k -> new PrefixAwareNameImpl(qName, prefix) );
         return result;
     }
 

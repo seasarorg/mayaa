@@ -54,6 +54,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         .maximumSize(10_000)
         .recordStats()
         .build();
+    private static final Cache<String, CompiledScript> _sourceScriptCache = Caffeine.newBuilder()
+        .maximumSize(1_000)
+        .recordStats()
+        .build();
 
     private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
@@ -65,7 +69,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     public ScriptEnvironmentImpl() {
         super();
         _scriptCache.invalidateAll();
+        _sourceScriptCache.invalidateAll();
         CacheControllerRegistry.registerCacheController("CompiledScript", _scriptCache);
+        CacheControllerRegistry.registerCacheController("SourceCompiledScript", _sourceScriptCache);
     }
 
     protected CompiledScript compile(
@@ -103,12 +109,18 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return application.getMimeType(systemID);
     }
 
-    public CompiledScript compile(
-            SourceDescriptor source, String encoding) {
+    public CompiledScript compile(SourceDescriptor source, String encoding) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
-        return new SourceCompiledScriptImpl(source, encoding);
+        if (source.exists() == false) {
+            return null;
+        }
+        String cacheKey = source.getSystemID() + "\n" + (encoding == null ? "" : encoding);
+        CompiledScript script = _sourceScriptCache.get(cacheKey, key -> {
+            return new SourceCompiledScriptImpl(source, encoding);
+        });
+        return script;
     }
 
     protected static Scriptable getStandardObjects() {

@@ -35,9 +35,6 @@ import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
@@ -46,10 +43,6 @@ public abstract class AbstractServiceCycle
 
     private static final long serialVersionUID = -4084527796306356704L;
 
-    private static final Cache<String, CompiledScript> _scriptCache = Caffeine.newBuilder()
-            .softValues()
-            .build();
-    
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -81,26 +74,24 @@ public abstract class AbstractServiceCycle
     }
 
     protected CompiledScript getScript(String systemID, String encoding) {
-        return _scriptCache.get(systemID, key -> {
-            ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
+        ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
 
-            if (key.startsWith("/") == false) {
-                appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        if (systemID.startsWith("/") == false) {
+            appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
+        }
+        appSource.setSystemID(systemID);
+        SourceDescriptor source;
+        if (appSource.exists()) {
+            source = appSource;
+        } else {
+            source = SourceUtil.getSourceDescriptor(systemID);
+            if (source.exists() == false) {
+                return null;
             }
-            appSource.setSystemID(key);
-            SourceDescriptor source;
-            if (appSource.exists()) {
-                source = appSource;
-            } else {
-                source = SourceUtil.getSourceDescriptor(key);
-                if (source.exists() == false) {
-                    return null;
-                }
-            }
+        }
 
-            ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-            return env.compile(source, encoding);
-        });
+        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
+        return env.compile(source, encoding);
     }
 
     public Iterator<AttributeScope> iterateAttributeScope() {

@@ -62,26 +62,6 @@ public class ScriptEnvironmentTest {
 
     }
 
-    @Test
-    public void testキャッシュサイズの指定() {
-        // setupメソッドで実行することをいったんリセットして本メソッド内で実行
-        init();
-
-        // -- Given
-        // * ./WEB-INF/org.seasar.mayaa.provider.ServiceProvider 内の
-        // scriptEnvironment cacheSize に 256 が設定されている
-        FactoryFactory.setContext(new MockServletContext(this.getClass().getPackage().getName().replace('.', '/')));
-
-        // -- When
-        // ファクトリーを経由してScriptEnvironmentインスタンスを生成する
-        // ServiceProviderのインスタンスを取得することでScriptEnvironmentを作成する。
-        testee = (ScriptEnvironmentImpl) ProviderUtil.getScriptEnvironment();
-
-        // -- Then
-        // スクリプトのキャッシュ設定値が256に設定されている。
-        assertEquals(256, testee.getScriptCacheSize());
-    }
-
     CompiledScript runScript(String script) {
         final PositionAware position = new Position("/1", 1);
 
@@ -149,8 +129,6 @@ public class ScriptEnvironmentTest {
         };
 
         final PositionAware position = new Position("/1", 1);
-
-        testee.setScriptCacheSize(1);
 
         final int threadsCount = 100;
         final Random random = new Random();

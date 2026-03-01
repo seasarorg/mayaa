@@ -32,7 +32,17 @@ public interface CacheControlMXBean {
     int getRetainSize();
     void setRetainSize(int retainSize);
     long getCurrentSize();
+    long getRequestCount();
     long getHitCount();
+    double getHitRate();
     long getMissCount();
+    double getMissRate();
+    long getLoadSuccessCount();
+    long getLoadFailureCount();
+    long getTotalLoadTime();
+    long getEvictionCount();
+    boolean isStatsEnabled();
+    boolean isMaximumSizeManageable();
+    void invalidateAll();
     String getClassName();
 }

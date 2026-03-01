@@ -233,6 +233,7 @@ public class EngineTestBase {
         FactoryFactory.setContext(servletContext);
 
         engine = ProviderUtil.getEngine();
+        engine.reset();
         // デフォルトのエラーハンドラを無効化して内部の例外でJUnitを失敗させる。
         engine.setErrorHandler(new NullErrorHandler());
 

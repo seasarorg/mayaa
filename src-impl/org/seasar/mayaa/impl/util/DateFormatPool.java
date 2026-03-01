@@ -17,24 +17,22 @@ package org.seasar.mayaa.impl.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.Locale.Category;
 
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class DateFormatPool {
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, Pool> _formatPools =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, Pool> _formatPools = Caffeine.newBuilder()
+            .softValues()
+            .build();
 
     private DateFormatPool() {
         throw new UnsupportedOperationException();
@@ -50,11 +48,9 @@ public class DateFormatPool {
 
     public static DateFormat borrowFormat(String formatPattern, Locale locale) {
         String key = makeKey(formatPattern, locale);
-        Pool pool = _formatPools.get(key);
-        if (pool == null) {
-            pool = new Pool(formatPattern, locale);
-            _formatPools.put(key, pool);
-        }
+        Pool pool = _formatPools.get(key, k -> {
+            return new Pool(formatPattern, locale);
+        });
         return pool.borrowFormat();
     }
 
@@ -65,7 +61,7 @@ public class DateFormatPool {
         SimpleLocaleDateFormat format = (SimpleLocaleDateFormat) object;
 
         String key = makeKey(format.toPattern(), format.getLocale());
-        Pool pool = (Pool) _formatPools.get(key);
+        Pool pool = _formatPools.getIfPresent(key);
         if (pool != null) {
             pool.returnFormat(format);
         }

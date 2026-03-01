@@ -39,8 +39,6 @@ import jakarta.servlet.jsp.tagext.Tag;
 import jakarta.servlet.jsp.tagext.TryCatchFinally;
 import jakarta.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.CycleWriter;
@@ -70,6 +68,9 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 /**
  * @author Koji Suga (Gluegent, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -85,9 +86,9 @@ public class JspProcessor extends TemplateProcessorSupport
 
     private static final PageContext _pageContext = new PageContextImpl();
 
-    @SuppressWarnings("unchecked")
-    private static final Map<String, TagPool> _tagPools =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, TagPool> _tagPools = Caffeine.newBuilder()
+            .softValues()
+            .build();
     static {
         CacheControllerRegistry.registerCacheController("JspTagPool", _tagPools);
     }
@@ -120,7 +121,7 @@ public class JspProcessor extends TemplateProcessorSupport
     private boolean _forceBodySkip;
 
     public static void clear() {
-        _tagPools.clear();
+        _tagPools.invalidateAll();
     }
 
     public static boolean isSupportClass(Class<?> test) {
@@ -192,12 +193,9 @@ public class JspProcessor extends TemplateProcessorSupport
     protected TagPool getTagPool() {
         synchronized (_tagPools) {
             String key = _tagClass.getName() + getAttributesKey();
-            TagPool pool = (TagPool) _tagPools.get(key);
-            if (pool == null) {
-                pool = new TagPool(_tagClass);
-                _tagPools.put(key, pool);
-            }
-            return pool;
+            return _tagPools.get(key, k ->{
+                return new TagPool(_tagClass);
+            });
         }
     }
 

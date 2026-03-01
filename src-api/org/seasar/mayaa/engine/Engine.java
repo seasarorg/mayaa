@@ -106,4 +106,9 @@ public interface Engine extends ParameterAware {
      */
     void destroy();
 
+    /**
+     * Engineを初期化します。
+     */
+    void reset();
+
 }

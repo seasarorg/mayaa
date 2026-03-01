@@ -124,4 +124,32 @@ public interface CONST_J2EE {
     String LOCATION_WEB_DTD_31 =
             "http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd";
     String FILE_WEB_DTD_31 = "web-app_3_1.xsd";
+
+    String LOCATION_JAKARTAEE_9 =
+        "https://jakarta.ee/xml/ns/jakartaee/jakartaee_9.xsd";
+    String FILE_JAKARTAEE_9 = "jakartaee_9.xsd";
+
+    String LOCATION_JAKARTAEE_WEB_SERVICE_CLIENT_20 =
+        "https://jakarta.ee/xml/ns/jakartaee/jakartaee_web_services_client_2_0.xsd";
+    String FILE_JAKARTAEE_WEB_SERVICE_CLIENT_20 = "jakartaee_web_services_client_2_0.xsd";
+
+    String LOCATION_JAKARTAEE_JSP_TAGLIB_30 =
+        "https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_0.xsd";
+    String FILE_JAKARTAEE_JSP_TAGLIB_30 = "web-jsptaglibrary_3_0.xsd";
+
+    String LOCATION_JAKARTAEE_10 =
+        "https://jakarta.ee/xml/ns/jakartaee/jakartaee_10.xsd";
+    String FILE_JAKARTAEE_10 = "jakartaee_10.xsd";
+
+    String LOCATION_JAKARTAEE_JSP_TAGLIB_31 =
+        "https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_1.xsd";
+    String FILE_JAKARTAEE_JSP_TAGLIB_31 = "web-jsptaglibrary_3_1.xsd";
+
+    String LOCATION_JAKARTAEE_11 =
+        "https://jakarta.ee/xml/ns/jakartaee/jakartaee_11.xsd";
+    String FILE_JAKARTAEE_11 = "jakartaee_11.xsd";
+
+    String LOCATION_JAKARTAEE_JSP_TAGLIB_40 =
+        "https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_4_0.xsd";
+    String FILE_JAKARTAEE_JSP_TAGLIB_40 = "web-jsptaglibrary_4_0.xsd";
 }

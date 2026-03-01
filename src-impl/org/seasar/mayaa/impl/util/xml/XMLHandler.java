@@ -75,6 +75,10 @@ public class XMLHandler extends DefaultHandler {
         return _entities;
     }
 
+    protected boolean shouldWarnUnresolvedEntity(String publicId, String systemId) {
+        return true;
+    }
+
     protected String getSystemID() {
         if (_locator != null) {
             return _locator.getSystemId();
@@ -120,7 +124,8 @@ public class XMLHandler extends DefaultHandler {
             return ret;
         }
         Log log = getLog();
-        if (log != null && log.isWarnEnabled()) {
+        if (log != null && log.isWarnEnabled()
+            && shouldWarnUnresolvedEntity(publicId, systemId)) {
             String message = StringUtil.getMessage(
                     XMLHandler.class, 0, publicId, systemId);
             log.warn(message);

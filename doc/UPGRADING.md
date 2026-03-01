@@ -248,6 +248,26 @@ if (input.hasAttribute('disabled')) { ... }
 </libraryManager>
 ```
 
+#### Jakarta系TLD読み込み時にXSD解決WARNが出る
+
+**症状:**
+- `Entity not resolved locally ... https://jakarta.ee/xml/ns/jakartaee/...` が起動ログに出る
+
+**原因:**
+- TLDのXSD検証が有効な場合、外部スキーマ解決が発生するため
+
+**対応:**
+`WEB-INF/org.seasar.mayaa.provider.ServiceProvider` の `TLDDefinitionBuilder` に以下を設定:
+
+```xml
+<libraryManager>
+    <builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder">
+        <parameter name="tldValidation" value="false"/>
+        <parameter name="tldXmlSchema" value="false"/>
+    </builder>
+</libraryManager>
+```
+
 #### 起動時に設定ファイルのエラーが発生する
 
 **症状:**

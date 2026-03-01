@@ -28,6 +28,7 @@ import org.seasar.mayaa.impl.builder.library.tld.TLDLibraryDefinitionHandler;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.HavingAliasSourceDescriptor;
 import org.seasar.mayaa.impl.util.IOUtil;
+import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.XMLUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
@@ -38,6 +39,8 @@ public class TLDDefinitionBuilder extends NonSerializableParameterAwareImpl
         implements DefinitionBuilder {
 
     private static final Log LOG = LogFactory.getLog(TLDDefinitionBuilder.class);
+    private static final String PARAM_TLD_VALIDATION = "tldValidation";
+    private static final String PARAM_TLD_XML_SCHEMA = "tldXmlSchema";
 
     public LibraryDefinition build(SourceDescriptor source) {
         if (source == null) {
@@ -47,8 +50,13 @@ public class TLDDefinitionBuilder extends NonSerializableParameterAwareImpl
         if (source.exists() && systemID.toLowerCase().endsWith(".tld")) {
             InputStream stream = source.getInputStream();
             TLDLibraryDefinitionHandler handler = new TLDLibraryDefinitionHandler();
+            boolean validation = ObjectUtil.booleanValue(
+                    getParameter(PARAM_TLD_VALIDATION), true);
+            boolean xmlSchema = ObjectUtil.booleanValue(
+                    getParameter(PARAM_TLD_XML_SCHEMA), true);
             try {
-                XMLUtil.parse(handler, stream, "tld", systemID, true, true, true);
+                XMLUtil.parse(handler, stream, "tld", systemID,
+                        true, validation, xmlSchema);
             } catch (Throwable t) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("TLD parse error on " + systemID, t);

@@ -26,6 +26,8 @@ import org.seasar.mayaa.impl.util.xml.XMLHandler;
  */
 public class TLDLibraryDefinitionHandler extends XMLHandler {
 
+    private static final String JAKARTAEE_SCHEMA_BASE = "https://jakarta.ee/xml/ns/jakartaee/";
+
     private static final Log LOG = LogFactory.getLog(TLDLibraryDefinitionHandler.class);
 
     private TaglibTagHandler _rootHandler;
@@ -40,6 +42,14 @@ public class TLDLibraryDefinitionHandler extends XMLHandler {
 
     public LibraryDefinition getLibraryDefinition() {
         return _rootHandler.getLibraryDefinition();
+    }
+
+    @Override
+    protected boolean shouldWarnUnresolvedEntity(String publicId, String systemId) {
+        if (systemId != null && systemId.startsWith(JAKARTAEE_SCHEMA_BASE)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -71,7 +71,11 @@
 
         <scanner class="org.seasar.mayaa.impl.builder.library.scanner.DefaultSourceScanner"/>
         <builder class="org.seasar.mayaa.impl.builder.library.MLDDefinitionBuilder"/>
-        <builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder"/>
+        <builder class="org.seasar.mayaa.impl.builder.library.TLDDefinitionBuilder">
+            <parameter name="tldValidation" value="false"/>
+            <parameter name="tldXmlSchema" value="false"/>
+        </builder>
+
     </libraryManager>
 
     <templateBuilder class="org.seasar.mayaa.impl.builder.TemplateBuilderImpl">

@@ -31,7 +31,6 @@ import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.ReferenceCache;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -43,39 +42,11 @@ public class NamespaceImpl implements Namespace {
 
     private static final Log LOG = LogFactory.getLog(NamespaceImpl.class);
 
-    private static ReferenceCache<Namespace> _cache =
-        new ReferenceCache<>(Namespace.class);
-
-    public static Namespace getInstance(Namespace namespace) {
-        return getInstance(serialize(namespace));
-    }
-
-    public static Namespace getInstance(String serializeKey) {
-        synchronized(_cache) {
-            // キャッシュされたシングルトンを返す
-            for (Iterator<Namespace> it = _cache.iterator(); it.hasNext(); ) {
-                NamespaceImpl space = (NamespaceImpl) it.next();
-                if (space.getSerializeKey().equals(serializeKey)) {
-                    return space;
-                }
-            }
-            Namespace namespace = deserialize(serializeKey);
-            if (_cache.contains(namespace) == false) {
-                _cache.add(namespace);
-            }
-            return namespace;
-        }
-    }
-
     public static Namespace copyOf(Namespace namespace) {
         if (namespace == null) {
             return namespace;
         }
-        Namespace parent = namespace.getParentSpace();
-        if (parent != null) {
-            String key = serialize(parent);
-            parent = getInstance(key);
-        }
+        Namespace parent = copyOf(namespace.getParentSpace());
         NamespaceImpl result = new NamespaceImpl();
         result.setParentSpace(parent);
         for (Iterator<PrefixMapping> it = namespace.iteratePrefixMapping(false); it.hasNext(); ) {
@@ -314,11 +285,6 @@ public class NamespaceImpl implements Namespace {
             if (line.startsWith("/")) {
                 line = line.substring("/".length());
                 if (current != null) {
-                    synchronized(_cache) {
-                        if (_cache.contains(current) == false) {
-                            _cache.add(current);
-                        }
-                    }
                     parent = current;
                 }
                 current = new NamespaceImpl();

@@ -15,15 +15,13 @@
  */
 package org.seasar.mayaa.impl.management;
 
-import java.util.Map;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.commons.collections.map.ReferenceMap;
-import org.seasar.mayaa.impl.engine.SpecificationCache;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.management.CacheControlMXBean;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Policy;
 
 /**
  * 
@@ -31,128 +29,99 @@ import org.seasar.mayaa.management.CacheControlMXBean;
  * @author Watanabe, Mitsutaka
  */
 public class CacheControllerRegistry {
-
-    public static void registerCacheController(String controllerName, final Map<?,?> map) {
+    public static void registerCacheController(String controllerName, final Cache<?,?> cache) {
         CacheControlMXBean mbean = new CacheControlMXBean(){
+            private Policy.Eviction<?, ?> getEvictionPolicy() {
+                return cache.policy().eviction().orElse(null);
+            }
+
             @Override
             public String getClassName() {
-                return map.getClass().getName();
+                return cache.getClass().getName();
             }
             @Override
             public int getRetainSize() {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
+                Policy.Eviction<?, ?> eviction = getEvictionPolicy();
+                if (eviction == null) {
+                    return -1;
+                }
+                long maximum = eviction.getMaximum();
+                return maximum > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) maximum;
             }
             @Override
             public void setRetainSize(int retainSize) {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
+                if (retainSize < 0) {
+                    throw new IllegalArgumentException("retainSize must be >= 0");
+                }
+                Policy.Eviction<?, ?> eviction = getEvictionPolicy();
+                if (eviction == null) {
+                    throw new UnsupportedOperationException("Managing retain size is not supported");
+                }
+                eviction.setMaximum(retainSize);
             }
             @Override
             public long getCurrentSize() {
-                return map.size();
-            }
-            @Override
-            public long getHitCount() {
-                throw new UnsupportedOperationException("Collecting cache hit count is not supported");
+                return cache.estimatedSize();
             }
 
             @Override
-            public long getMissCount() {
-                throw new UnsupportedOperationException("Collecting cache miss count is not supported");
-            }
-        };
-        JMXUtil.register(mbean, makeObjectName(controllerName));
-    }
-
-    public static void registerCacheController(String controllerName, final SpecificationCache specificationCache) {
-        CacheControlMXBean mbean = new CacheControlMXBean(){
-            @Override
-            public String getClassName() {
-                return specificationCache.getClass().getName();
-            }
-            @Override
-            public int getRetainSize() {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
-            }
-            @Override
-            public void setRetainSize(int retainSize) {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
-            }
-            @Override
-            public long getCurrentSize() {
-                return specificationCache.size();
+            public long getRequestCount() {
+                return cache.stats().requestCount();
             }
 
             @Override
             public long getHitCount() {
-                return specificationCache.getHitCount();
+                return cache.stats().hitCount();
+            }
+
+            @Override
+            public double getHitRate() {
+                return cache.stats().hitRate();
             }
 
             @Override
             public long getMissCount() {
-                return specificationCache.getMissCount();
-            }
-        };
-        JMXUtil.register(mbean, makeObjectName(controllerName));
-    }
-
-    public static void registerCacheController(String controllerName, final WeakValueHashMap<?,?> weakValueHashMap) {
-        CacheControlMXBean mbean = new CacheControlMXBean(){
-            @Override
-            public String getClassName() {
-                return weakValueHashMap.getClass().getName();
-            }
-            @Override
-            public int getRetainSize() {
-                return weakValueHashMap.getHardSize();
-            }
-            @Override
-            public void setRetainSize(int retainSize) {
-                weakValueHashMap.setHardSize(retainSize);
-            }
-            @Override
-            public long getCurrentSize() {
-                return weakValueHashMap.size();
+                return cache.stats().missCount();
             }
 
             @Override
-            public long getHitCount() {
-                return weakValueHashMap.getHitCount();
+            public double getMissRate() {
+                return cache.stats().missRate();
             }
 
             @Override
-            public long getMissCount() {
-                return weakValueHashMap.getMissCount();
-            }
-        };
-        JMXUtil.register(mbean, makeObjectName(controllerName));
-    }
-
-    public static void registerCacheController(String controllerName, final ReferenceMap referenceMap) {
-        CacheControlMXBean mbean = new CacheControlMXBean(){
-            @Override
-            public String getClassName() {
-                return referenceMap.getClass().getName();
-            }
-            @Override
-            public int getRetainSize() {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
-            }
-            @Override
-            public void setRetainSize(int retainSize) {
-                throw new UnsupportedOperationException("Managing retain size is not supported");
-            }
-            @Override
-            public long getCurrentSize() {
-                return referenceMap.size();
-            }
-            @Override
-            public long getHitCount() {
-                throw new UnsupportedOperationException("Collecting cache hit count is not supported");
+            public long getLoadSuccessCount() {
+                return cache.stats().loadSuccessCount();
             }
 
             @Override
-            public long getMissCount() {
-                throw new UnsupportedOperationException("Collecting cache miss count is not supported");
+            public long getLoadFailureCount() {
+                return cache.stats().loadFailureCount();
+            }
+
+            @Override
+            public long getTotalLoadTime() {
+                return cache.stats().totalLoadTime();
+            }
+
+            @Override
+            public long getEvictionCount() {
+                return cache.stats().evictionCount();
+            }
+
+            @Override
+            public boolean isStatsEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isMaximumSizeManageable() {
+                return getEvictionPolicy() != null;
+            }
+
+            @Override
+            public void invalidateAll() {
+                cache.invalidateAll();
             }
         };
         JMXUtil.register(mbean, makeObjectName(controllerName));

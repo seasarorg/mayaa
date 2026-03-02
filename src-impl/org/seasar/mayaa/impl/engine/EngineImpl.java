@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -59,6 +60,9 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
@@ -79,7 +83,12 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     private transient AtomicReference<Specification> _defaultSpecification = new AtomicReference<>(null);
 
     private transient ErrorHandler _errorHandler;
-    private transient SpecificationCache _specCache;
+    private final Cache<String, Specification> _specCache = Caffeine.newBuilder()
+        .expireAfterWrite(10, TimeUnit.MINUTES)
+        .maximumSize(10_000)
+        .recordStats()
+        .build();
+
     private transient SerializeExecutor _serializeExecutor;
     /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
     private volatile boolean _destroyed = false;
@@ -103,6 +112,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public EngineImpl() {
         EngineRegistory.registerEngine(this);
+        CacheControllerRegistry.registerCacheController("specificationCache", _specCache);
         CycleUtil.registVariableFactory(CONST_IMPL.DEFAULT_SPECIFICATION_KEY, new DefaultCycleLocalInstantiator(){
             /**
              * デフォルトSpecificationをCycleに貼り付ける。
@@ -139,7 +149,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     }
 
     public Specification findSpecificationFromCache(String systemID) {
-        return getCache().get(systemID);
+        return _specCache.getIfPresent(systemID);
     }
 
     /**
@@ -457,14 +467,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         dump.printSource(page);
     }
 
-    protected SpecificationCache getCache() {
-        if (_specCache == null) {
-            _specCache = new SpecificationCache(_surviveLimit);
-            CacheControllerRegistry.registerCacheController("SpecificationCache", _specCache);
-        }
-        return _specCache;
-    }
-
     private static interface SpecificationGenerator {
         Class<?> getInstantiator(SourceDescriptor source);
         void initialize(Specification instance);
@@ -480,7 +482,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             if (spec != null) {
                 if (spec.isDeprecated() == false) {
                     if (registerCache) {
-                        getCache().add(spec);
+                        _specCache.put(spec.getSystemID(), spec);
                     }
                     return spec;
                 }
@@ -515,7 +517,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             throw e;
         }
         if (registerCache) {
-            getCache().add(spec);
+            _specCache.put(spec.getSystemID(), spec);
         }
         return spec;
     }
@@ -577,12 +579,13 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         return EngineUtil.getEngineSetting(CONST_IMPL.SUFFIX_SEPARATOR, "$");
     }
 
-    public synchronized void destroy() {
+    public void destroy() {
         _destroyed = true;
-        if (_specCache != null) {
-            _specCache.release();
-        }
         disableSerialize();
+    }
+
+    public void reset() {
+        _specCache.invalidateAll();
     }
 
     protected void finalize() throws Throwable {

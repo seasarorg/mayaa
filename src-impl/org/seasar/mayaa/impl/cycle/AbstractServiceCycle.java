@@ -15,13 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -47,9 +43,6 @@ public abstract class AbstractServiceCycle
 
     private static final long serialVersionUID = -4084527796306356704L;
 
-    @SuppressWarnings("unchecked")
-    private static final Map<String, CompiledScript> _scriptCache =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;
     private NodeTreeWalker _injectedNode;
@@ -81,13 +74,8 @@ public abstract class AbstractServiceCycle
     }
 
     protected CompiledScript getScript(String systemID, String encoding) {
-        CompiledScript script = (CompiledScript) _scriptCache.get(systemID);
-        if (script != null) {
-            return script;
-        }
+        ApplicationSourceDescriptor appSource = new ApplicationSourceDescriptor();
 
-        ApplicationSourceDescriptor appSource =
-            new ApplicationSourceDescriptor();
         if (systemID.startsWith("/") == false) {
             appSource.setRoot(ApplicationSourceDescriptor.WEB_INF);
         }
@@ -103,9 +91,7 @@ public abstract class AbstractServiceCycle
         }
 
         ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        script = env.compile(source, encoding);
-        _scriptCache.put(systemID, script);
-        return script;
+        return env.compile(source, encoding);
     }
 
     public Iterator<AttributeScope> iterateAttributeScope() {

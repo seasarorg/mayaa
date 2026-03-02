@@ -19,24 +19,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 import org.seasar.mayaa.impl.source.ClassLoaderSourceDescriptor;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public final class StringUtil {
 
-    @SuppressWarnings("unchecked")
-    private static Map<Package, Properties> _propFiles =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<Package, Properties> _propFiles = Caffeine.newBuilder()
+            .softValues()
+            .build();
     private static final String[] ZERO = new String[0];
 
     private StringUtil() {
@@ -496,25 +495,24 @@ public final class StringUtil {
     protected static String getMessage(
             Class<?> clazz, int index, String[] params) {
         Package key = clazz.getPackage();
-        Properties properties = _propFiles.get(key);
-        if (properties == null) {
-            ClassLoaderSourceDescriptor source =
-                new ClassLoaderSourceDescriptor();
+        Properties properties = _propFiles.get(key, k -> {
+            ClassLoaderSourceDescriptor source = new ClassLoaderSourceDescriptor();
             source.setSystemID("message.properties");
             source.setNeighborClass(clazz);
-            properties = new Properties();
-            _propFiles.put(key, properties);
+            Properties prop = new Properties();
             if (source.exists()) {
                 InputStream stream = source.getInputStream();
                 try {
-                    properties.load(stream);
+                    prop.load(stream);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
                     IOUtil.close(stream);
                 }
             }
-        }
+            return prop;
+        });
+
         String className = ObjectUtil.getSimpleClassName(clazz);
         StringBuilder propertyName = new StringBuilder(className);
         if (index > 0) {

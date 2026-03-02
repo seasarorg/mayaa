@@ -17,11 +17,6 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -29,6 +24,9 @@ import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * 数値を指定フォーマットで文字列に変換して出力するプロセッサ。
@@ -40,9 +38,9 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
 
     private static final long serialVersionUID = 5513075315121041838L;
 
-    @SuppressWarnings("unchecked")
-    private static Map<String, NumberFormatPool> _formatPools =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, NumberFormatPool> _formatPools = Caffeine.newBuilder()
+            .softValues()
+            .build();
 
     private ProcessorProperty _value;
     private ProcessorProperty _default;
@@ -100,14 +98,9 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     }
 
     protected NumberFormatPool getFormatPool() {
-        synchronized (_formatPools) {
-            NumberFormatPool pool = _formatPools.get(_pattern);
-            if (pool == null) {
-                pool = new NumberFormatPool(_pattern);
-                _formatPools.put(_pattern, pool);
-            }
-            return pool;
-        }
+        return _formatPools.get(_pattern, key -> {
+            return new NumberFormatPool(key);
+        });
     }
 
     // support class

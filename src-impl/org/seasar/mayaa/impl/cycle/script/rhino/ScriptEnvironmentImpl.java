@@ -16,7 +16,6 @@
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
 import java.util.Map;
-
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
@@ -38,8 +37,10 @@ import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
-import org.seasar.mayaa.impl.util.WeakValueHashMap;
 import org.seasar.mayaa.source.SourceDescriptor;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * Rhino用のスクリプト環境。
@@ -47,10 +48,16 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
-    private static final int DEFAULT_HARD_SIZE = 128;
 
     private static Scriptable _standardObjects;
-    private WeakValueHashMap<String, CompiledScript> scriptCache = new WeakValueHashMap<>(DEFAULT_HARD_SIZE);
+    private static final Cache<String, CompiledScript> _scriptCache = Caffeine.newBuilder()
+        .maximumSize(10_000)
+        .recordStats()
+        .build();
+    private static final Cache<String, CompiledScript> _sourceScriptCache = Caffeine.newBuilder()
+        .maximumSize(1_000)
+        .recordStats()
+        .build();
 
     private static final boolean CONSTRAINT_GLOBAL_PROPERTY_DEFINE = true;
 
@@ -61,7 +68,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     public ScriptEnvironmentImpl() {
         super();
-        CacheControllerRegistry.registerCacheController("CompiledScript", scriptCache);
+        _scriptCache.invalidateAll();
+        _sourceScriptCache.invalidateAll();
+        CacheControllerRegistry.registerCacheController("CompiledScript", _scriptCache);
+        CacheControllerRegistry.registerCacheController("SourceCompiledScript", _sourceScriptCache);
     }
 
     protected CompiledScript compile(
@@ -73,21 +83,16 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         if (scriptBlock.isLiteral()) {
 	        return new LiteralScript(text);
         } else {
-	        CompiledScript script = (CompiledScript) scriptCache.get(text);
-	        if (script == null) {
-	            synchronized (scriptCache) {
-	                script = (CompiledScript) scriptCache.get(text);
-	                if (script == null) {
-	                	if (_useGetterScriptEmulation) {
-	        		        script = GetterScriptFactory.create(text, position, offsetLine);
-	        		    }
-	        		    if (script == null) {
-	        		    	script = new TextCompiledScriptImpl(text, position, offsetLine);
-	        		    }
-	                    scriptCache.put(text, script);
-	                }
-	            }
-	        }
+	        CompiledScript script = (CompiledScript) _scriptCache.get(text, key -> {
+                CompiledScript s = null;
+                if (_useGetterScriptEmulation) {
+                    s = GetterScriptFactory.create(text, position, offsetLine);
+                }
+                if (s == null) {
+                    s = new TextCompiledScriptImpl(text, position, offsetLine);
+                }
+                return s;
+            });
 	        return script;
         }
     }
@@ -104,12 +109,18 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return application.getMimeType(systemID);
     }
 
-    public CompiledScript compile(
-            SourceDescriptor source, String encoding) {
+    public CompiledScript compile(SourceDescriptor source, String encoding) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
-        return new SourceCompiledScriptImpl(source, encoding);
+        if (source.exists() == false) {
+            return null;
+        }
+        String cacheKey = source.getSystemID() + "\n" + (encoding == null ? "" : encoding);
+        CompiledScript script = _sourceScriptCache.get(cacheKey, key -> {
+            return new SourceCompiledScriptImpl(source, encoding);
+        });
+        return script;
     }
 
     protected static Scriptable getStandardObjects() {
@@ -252,14 +263,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return (scriptObject instanceof Scriptable);
     }
 
-    public void setScriptCacheSize(int cacheSize) {
-        scriptCache.setHardSize(cacheSize);
-    }
-
-    public int getScriptCacheSize() {
-        return scriptCache.getHardSize();
-    }
-
     static void setWrapFactory(WrapFactory wrap) {
         _wrap = wrap;
     }
@@ -287,11 +290,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             _useGetterScriptEmulation = ObjectUtil.booleanValue(value, false);
-        } else if ("cacheSize".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            setScriptCacheSize(Integer.parseInt(value));
         }
         super.setParameter(name, value);
     }

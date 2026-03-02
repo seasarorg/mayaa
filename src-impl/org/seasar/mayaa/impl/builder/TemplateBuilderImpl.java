@@ -324,7 +324,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 } else {
                     if (processor instanceof ElementProcessor == false
                             && processor instanceof AttributeProcessor == false) {
-                        //Namespace root = NamespaceImpl.getInstance("/null\n");
                         processor.getOriginalNode().setParentSpace(null);
                         processor.getInjectedNode().setParentSpace(null);
                         //System.out.println(processor.getClass().getName());

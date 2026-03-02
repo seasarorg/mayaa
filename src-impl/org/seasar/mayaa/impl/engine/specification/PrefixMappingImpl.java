@@ -16,13 +16,11 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.URI;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,9 +28,9 @@ import org.seasar.mayaa.engine.specification.URI;
 public class PrefixMappingImpl implements PrefixMapping, Serializable {
     private static final long serialVersionUID = -7627574345551562433L;
 
-    @SuppressWarnings("unchecked")
-    private static volatile Map<String, PrefixMapping> _cache =
-            Collections.synchronizedMap(new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT, true));
+    private static final Cache<String, PrefixMapping> _cache = Caffeine.newBuilder()
+            .softValues()
+            .build();
 
     public static PrefixMapping getInstance(String prefix, URI namespaceURI) {
         if (namespaceURI == null) {
@@ -48,12 +46,9 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
 
         String key = forPrefixMappingString(prefix, namespaceURI);
 
-        PrefixMapping result = _cache.get(key);
-        if (result == null) {
-            result = new PrefixMappingImpl(prefix, namespaceURI);
-            _cache.put(key, result);
-        }
-        return result;
+        return _cache.get(key, k -> {
+            return new PrefixMappingImpl(prefix, namespaceURI);
+        });
     }
 
 
@@ -126,9 +121,6 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
         return toString().hashCode();
     }
 
-    public static int keptSize() {
-        return _cache.size();
-    }
     private Object readResolve() {
         return getInstance(_prefix, _namespaceURI);
     }

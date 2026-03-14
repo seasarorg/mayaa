@@ -1,0 +1,23 @@
+services:
+  spring-boot:
+    image: maven:3.9-eclipse-temurin-21
+    working_dir: /workspace
+    ports:
+      - "8080:8080"
+      - "9012:9012"
+      - "8787:8787"
+    environment:
+      JMX_HOSTNAME: ${JMX_HOSTNAME:-127.0.0.1}
+      MAYAA_VERSION: ${MAYAA_VERSION:-2.0.0-SNAPSHOT}
+      APP_ARGS: ${APP_ARGS:-}
+    volumes:
+      - ../:/workspace
+      - ~/.m2:/root/.m2
+    command:
+      - sh
+      - -lc
+      - >-
+        mvn -f test-war/pom.xml spring-boot:run -Pspring-boot -DskipTests
+        -Dmayaa.version=$$MAYAA_VERSION
+        -Djmx.hostname=$$JMX_HOSTNAME
+        $$APP_ARGS

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        var namePattern = request.getParameter('namePattern');
+        if (namePattern == null || namePattern == '') {
+            namePattern = '.*';
+        }
+
+        page.cacheNames = Packages.org.seasar.mayaa.test.boot.MayaaCacheControlHelper.listCacheNames();
+        page.resetResult = Packages.org.seasar.mayaa.test.boot.MayaaCacheControlHelper.invalidateByPattern(namePattern);
+    ]]></m:beforeRender>
+
+    <m:echo m:id="cacheNames">${ cacheNames }</m:echo>
+    <m:echo m:id="resetResult">${ resetResult }</m:echo>
+
+</m:mayaa>

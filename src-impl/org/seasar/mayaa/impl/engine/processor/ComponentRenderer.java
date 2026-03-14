@@ -22,7 +22,6 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
 import org.seasar.mayaa.impl.engine.RenderUtil;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -97,12 +96,10 @@ public class ComponentRenderer implements TemplateRenderer {
 
     protected DoRenderProcessor findDoRender(
             Template[] templates, String name) {
-        synchronized (ProviderUtil.getEngine()) {
-            for (int i = templates.length - 1; 0 <= i; i--) {
-                DoRenderProcessor doRender = findDoRender(templates[i], name);
-                if (doRender != null) {
-                    return doRender;
-                }
+        for (int i = templates.length - 1; 0 <= i; i--) {
+            DoRenderProcessor doRender = findDoRender(templates[i], name);
+            if (doRender != null) {
+                return doRender;
             }
         }
         return null;

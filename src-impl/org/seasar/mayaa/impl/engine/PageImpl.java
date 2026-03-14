@@ -137,17 +137,15 @@ public class PageImpl extends SpecificationImpl implements Page {
             throw new IllegalArgumentException();
         }
         Engine engine = ProviderUtil.getEngine();
-        synchronized (engine) {
-            String systemID = engine.getTemplateID(this, suffix, extension);
-            Template template = findTemplateFromCache(systemID);
-            if (template != null) {
-                if (template.getSource().exists()) {
-                    return template;
-                }
-                return null;
+        String systemID = engine.getTemplateID(this, suffix, extension);
+        Template template = findTemplateFromCache(systemID);
+        if (template != null) {
+            if (template.getSource().exists()) {
+                return template;
             }
-            return engine.createTemplateInstance(this, suffix, extension);
+            return null;
         }
+        return engine.createTemplateInstance(this, suffix, extension);
     }
 
     public Template getTemplate(String suffix, String extension) {

@@ -25,6 +25,13 @@
     <maven.compiler.release>21</maven.compiler.release>
     <doclint>none</doclint>
     <spring-boot.version>3.2.12</spring-boot.version>
+    <jmx.hostname>127.0.0.1</jmx.hostname>
+    <spring-boot.jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9012 -Dcom.sun.management.jmxremote.rmi.port=9012 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=${jmx.hostname}</spring-boot.jvmArguments>
+    <jmeter.thread>20</jmeter.thread>
+    <jmeter.rampup>20</jmeter.rampup>
+    <jmeter.duration>180</jmeter.duration>
+    <jmeter.delay>15</jmeter.delay>
+    <jmeter.version>5.6.3</jmeter.version>
   </properties>
 
   <build>
@@ -91,6 +98,7 @@
             </execution>
           </executions>
           <configuration>
+            <jmeterVersion>${jmeter.version}</jmeterVersion>
             <testFilesIncluded>
               <jMeterTestFile>performance.jmx</jMeterTestFile>
             </testFilesIncluded>
@@ -98,8 +106,10 @@
             <errorRateThresholdInPercent>10</errorRateThresholdInPercent>
             <propertiesJMeter>
               <BUILD_TAG>${project.version}</BUILD_TAG>
-              <threads>7</threads>
-              <duration>300</duration>
+              <thread>${jmeter.thread}</thread>
+              <rampup>${jmeter.rampup}</rampup>
+              <duration>${jmeter.duration}</duration>
+              <delay>${jmeter.delay}</delay>
             </propertiesJMeter>
           </configuration>
       </plugin>
@@ -177,7 +187,7 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${spring-boot.version}</version>
             <configuration>
-              <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</jvmArguments>
+              <jvmArguments>${spring-boot.jvmArguments}</jvmArguments>
             </configuration>
             <executions>
               <execution>

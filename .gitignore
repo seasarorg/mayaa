@@ -52,6 +52,9 @@ ehthumbs_vista.db
 # Dump file
 *.stackdump
 
+# JFR flight recordings
+*.jfr
+
 # Folder config file
 [Dd]esktop.ini
 

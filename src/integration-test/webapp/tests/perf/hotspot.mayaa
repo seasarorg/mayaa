@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mayaa xmlns:m="http://mayaa.seasar.org">
+
+    <m:beforeRender><![CDATA[
+        function intParam(name, defaultValue) {
+            var raw = request.getParameter(name);
+            if (raw == null || raw == '') {
+                return defaultValue;
+            }
+            try {
+                return java.lang.Integer.parseInt(raw);
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+
+        var cpuLoops = intParam('cpu', 12000);
+        var payloadKb = intParam('payloadKb', 256);
+        var cacheSize = intParam('cacheSize', 64);
+        var keyRange = intParam('keyRange', 4096);
+        var rows = intParam('rows', 120);
+
+        page.perfParams = 'cpu=' + cpuLoops + ', payloadKb=' + payloadKb + ', cacheSize=' + cacheSize + ', keyRange=' + keyRange + ', rows=' + rows;
+        page.perfResult = Packages.org.seasar.mayaa.test.boot.PerfWorkloadHelper.runWorkload(cacheSize, keyRange, payloadKb, cpuLoops);
+        page.perfStats = Packages.org.seasar.mayaa.test.boot.PerfWorkloadHelper.stats();
+        page.rows = rows;
+    ]]></m:beforeRender>
+
+    <m:echo m:id="perfParams">${ perfParams }</m:echo>
+    <m:echo m:id="perfResult">${ perfResult }</m:echo>
+    <m:echo m:id="perfStats">${ perfStats }</m:echo>
+
+    <m:echo m:id="perfRows">
+        <m:for init="${ var i = 0 }" test="${ i &lt; rows }" after="${ i++ }"><m:doBody /></m:for>
+    </m:echo>
+
+    <m:echo m:id="perfRow">
+        <m:attribute name="id" value="${ 'perfRow' + i }" />
+        ${ 'row-' + i + '-' + perfStats }
+    </m:echo>
+
+</m:mayaa>

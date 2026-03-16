@@ -64,7 +64,7 @@ public class NamespaceImpl implements Namespace {
     private transient Set<PrefixMapping> _mappings;
     private transient PrefixMapping _defaultNamespaceMapping;
     private String _serializeKey;
-    private transient boolean _needDeserialize;
+    private transient volatile boolean _needDeserialize;
 
     public void setParentSpace(Namespace parent) {
         /*
@@ -341,8 +341,13 @@ public class NamespaceImpl implements Namespace {
     }
 
     protected void doDeserialize() {
-        if (_needDeserialize) {
-            _needDeserialize = false;
+        if (_needDeserialize == false) {
+            return;
+        }
+        synchronized (this) {
+            if (_needDeserialize == false) {
+                return;
+            }
 
             NamespaceImpl current = deserialize(getSerializeKey());
 
@@ -353,6 +358,7 @@ public class NamespaceImpl implements Namespace {
                     ; it.hasNext(); ) {
                 _mappings.add(it.next());
             }
+            _needDeserialize = false;
         }
     }
 

@@ -49,7 +49,7 @@ public class CycleFactoryImpl
     private Class<?> _serviceClass;
     private CycleLocalVariables _localVariables = new CycleLocalVariablesImpl();
 
-    protected synchronized void initCurrentStrage() {
+    protected void initCurrentStrage() {
         if (_currentCycle.get() == null) {
             _currentCycle.set(new Object[1]);
         }

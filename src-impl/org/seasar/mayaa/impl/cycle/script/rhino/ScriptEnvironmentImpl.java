@@ -49,7 +49,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  */
 public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
-    private static Scriptable _standardObjects;
+    private static volatile Scriptable _standardObjects;
     private static final Cache<String, CompiledScript> _scriptCache = Caffeine.newBuilder()
         .maximumSize(10_000)
         .recordStats()
@@ -124,20 +124,43 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     protected static Scriptable getStandardObjects() {
-        if (_standardObjects == null) {
-            Context cx = Context.enter();
-            try {
-                _standardObjects = cx.initStandardObjects(null, true);
-                if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
-                	ScriptableObject scope = (ScriptableObject)_standardObjects;
-                	scope.defineProperty("__global__", scope,
-                			ScriptableObject.READONLY | ScriptableObject.DONTENUM);
+        Scriptable result = _standardObjects;
+        if (result == null) {
+            synchronized (ScriptEnvironmentImpl.class) {
+                result = _standardObjects;
+                if (result == null) {
+                    Context cx = Context.enter();
+                    try {
+                        result = cx.initStandardObjects(null, true);
+                        if (CONSTRAINT_GLOBAL_PROPERTY_DEFINE) {
+                            ScriptableObject scope = (ScriptableObject) result;
+                            scope.defineProperty("__global__", scope,
+                                    ScriptableObject.READONLY | ScriptableObject.DONTENUM);
+                        }
+                        _standardObjects = result; // volatile write: publish after core init
+                        // NativeJavaPackage の内部キャッシュを起動時に一度だけ pre-warm。
+                        // リクエストスレッドが java.lang.* へ初アクセスする際の synchronized 競合を低減する。
+                        // ウォームアップ失敗は致命的ではないので try-catch で保護する。
+                        try {
+                            Scriptable warmupScope = cx.newObject(result);
+                            warmupScope.setParentScope(result);
+                            cx.evaluateString(warmupScope,
+                                "java.lang.Object; java.lang.String; java.lang.System;"
+                                + " java.lang.Math; java.lang.Integer; java.lang.Long;"
+                                + " java.lang.Boolean; java.lang.Number; java.lang.Class;"
+                                + " java.lang.StringBuilder; java.lang.StringBuffer;"
+                                + " java.util.Date; java.util.ArrayList; java.util.HashMap;",
+                                "<warmup>", 1, null);
+                        } catch (Exception e) {
+                            // pre-warm はベストエフォートなので失敗しても無視する
+                        }
+                    } finally {
+                        Context.exit();
+                    }
                 }
-            } finally {
-                Context.exit();
             }
         }
-        return _standardObjects;
+        return result;
     }
 
     private static final String PARENT_SCRIPTABLE_KEY =

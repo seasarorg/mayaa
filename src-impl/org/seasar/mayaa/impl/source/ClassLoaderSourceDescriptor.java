@@ -38,9 +38,9 @@ public class ClassLoaderSourceDescriptor
 
     private String _root = "";
     private Class<?> _neighbor;
-    private URL _url;
-    private File _file;
-    private Date _timestamp;
+    private volatile URL _url;
+    private volatile File _file;
+    private volatile Date _timestamp;
 
     private SourceAlias _alias;
     private String _systemID = "";
@@ -100,17 +100,22 @@ public class ClassLoaderSourceDescriptor
 
     protected void prepareURL() {
         String path = (_root + getSystemID()).substring(1);
+        URL resolvedUrl = null;
         if (_neighbor != null) {
-            _url = IOUtil.getResource(path, _neighbor);
+            resolvedUrl = IOUtil.getResource(path, _neighbor);
         }
-        if (_url == null) {
+        if (resolvedUrl == null) {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            _url = IOUtil.getResource(path, loader);
+            resolvedUrl = IOUtil.getResource(path, loader);
         }
-        _file = IOUtil.getFile(_url);
-        if (_timestamp == null && _file == null) {
-            _timestamp = new Date();
+        File resolvedFile = IOUtil.getFile(resolvedUrl);
+        Date resolvedTimestamp = _timestamp;
+        if (resolvedTimestamp == null && resolvedFile == null) {
+            resolvedTimestamp = new Date();
         }
+        _timestamp = resolvedTimestamp;
+        _file = resolvedFile;
+        _url = resolvedUrl;
     }
 
     public InputStream getInputStream() {

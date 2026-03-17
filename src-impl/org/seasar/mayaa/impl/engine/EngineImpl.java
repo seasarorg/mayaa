@@ -548,6 +548,12 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     }
 
     public Template createTemplateInstance(final Page page, final String suffix, final String extension) {
+        final String templateId = getTemplateID(page, suffix, extension);
+        Specification cached = _specCache.getIfPresent(templateId);
+        if (cached != null) {
+            return (Template) cached;
+        }
+
         final SpecificationGenerator generator = new SpecificationGenerator() {
             public Class<?> getInstantiator(SourceDescriptor source) {
                 if (source.exists() == false) {
@@ -559,8 +565,15 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 ((Template) instance).initialize(page, suffix, extension);
             }
         };
-        final String templateId = getTemplateID(page, suffix, extension);
-        return (Template) createSpecificationInstance(templateId, true, generator);
+        Specification created = createSpecificationInstance(templateId, false, generator);
+        if (created == null) {
+            return null;
+        }
+        Specification existing = _specCache.asMap().putIfAbsent(templateId, created);
+        if (existing != null) {
+            return (Template) existing;
+        }
+        return (Template) created;
     }
 
     public String getTemplateID(final Page page, final String suffix, final String extension) {

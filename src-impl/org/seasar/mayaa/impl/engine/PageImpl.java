@@ -46,9 +46,10 @@ public class PageImpl extends SpecificationImpl implements Page {
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
 
     private String _pageName;
-    private transient Page _superPage;
-    private transient String _superSuffix;
-    private transient String _superExtension;
+    private transient volatile Page _superPage;
+    private transient volatile String _superSuffix;
+    private transient volatile String _superExtension;
+    private transient volatile boolean _superPrepared;
 
     private transient Map<TemplateProcessor, Boolean> _beginRenderListeners;
     private String _suffixScriptText;
@@ -65,17 +66,23 @@ public class PageImpl extends SpecificationImpl implements Page {
     }
 
     protected void prepareSuper() {
-        if (_superPage != null && _superPage.isDeprecated() == false) {
+        Page superPage = _superPage;
+        if (_superPrepared && (superPage == null || superPage.isDeprecated() == false)) {
             return;
         }
         synchronized (this) {
-            if (_superPage != null && _superPage.isDeprecated() == false) {
+            superPage = _superPage;
+            if (_superPrepared && (superPage == null || superPage.isDeprecated() == false)) {
                 return;
             }
             // TODO mayaa以外からも取得できるようにする
             String extendsPath =
                 SpecificationUtil.getMayaaAttributeValue(this, CONST_IMPL.QM_EXTENDS);
             if (StringUtil.isEmpty(extendsPath)) {
+                _superPage = null;
+                _superSuffix = null;
+                _superExtension = null;
+                _superPrepared = true;
                 return;
             }
             Engine engine = ProviderUtil.getEngine();
@@ -86,6 +93,7 @@ public class PageImpl extends SpecificationImpl implements Page {
                     StringUtil.adjustRelativePath(_pageName, pagePath[0]));
             _superSuffix = pagePath[1];
             _superExtension = pagePath[2];
+            _superPrepared = true;
         }
     }
 
@@ -137,17 +145,15 @@ public class PageImpl extends SpecificationImpl implements Page {
             throw new IllegalArgumentException();
         }
         Engine engine = ProviderUtil.getEngine();
-        synchronized (engine) {
-            String systemID = engine.getTemplateID(this, suffix, extension);
-            Template template = findTemplateFromCache(systemID);
-            if (template != null) {
-                if (template.getSource().exists()) {
-                    return template;
-                }
-                return null;
+        String systemID = engine.getTemplateID(this, suffix, extension);
+        Template template = findTemplateFromCache(systemID);
+        if (template != null) {
+            if (template.getSource().exists()) {
+                return template;
             }
-            return engine.createTemplateInstance(this, suffix, extension);
+            return null;
         }
+        return engine.createTemplateInstance(this, suffix, extension);
     }
 
     public Template getTemplate(String suffix, String extension) {
@@ -254,7 +260,7 @@ public class PageImpl extends SpecificationImpl implements Page {
     @Override
     public int hashCode() {
         return Objects.hash(_beginRenderListeners, _pageName, _suffixScript, _suffixScriptText, _superExtension,
-                _superPage, _superSuffix);
+                _superPage, _superPrepared, _superSuffix);
     }
 
     /*
@@ -274,6 +280,7 @@ public class PageImpl extends SpecificationImpl implements Page {
                 && Objects.equals(_suffixScriptText, other._suffixScriptText)
                 && Objects.equals(_superExtension, other._superExtension)
                 && Objects.equals(_superPage, other._superPage)
+            && _superPrepared == other._superPrepared
                 && Objects.equals(_superSuffix, other._superSuffix)
                 && super.equals(other);
     }

@@ -50,7 +50,7 @@ public class SpecificationNodeImpl extends NamespaceImpl
     private int _sequenceID = -1;
     private String _id = null;
     private Map<QName, NodeAttribute> _attributes;
-    private NodeTreeWalkerImpl _delegateNodeTreeWalker;
+    private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     // for PrefixAwareName
     private QName _qName;
     private String _prefix;
@@ -65,15 +65,20 @@ public class SpecificationNodeImpl extends NamespaceImpl
     }
 
     protected NodeTreeWalker getNodeTreeWalker() {
-        if (_delegateNodeTreeWalker == null) {
+        NodeTreeWalkerImpl delegate = _delegateNodeTreeWalker;
+        if (delegate == null) {
             synchronized (this) {
-                _delegateNodeTreeWalker = new NodeTreeWalkerImpl();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("_delegateNodeTreeWalker created.");
+                delegate = _delegateNodeTreeWalker;
+                if (delegate == null) {
+                    delegate = new NodeTreeWalkerImpl();
+                    _delegateNodeTreeWalker = delegate;
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("_delegateNodeTreeWalker created.");
+                    }
                 }
             }
         }
-        return _delegateNodeTreeWalker;
+        return delegate;
     }
 
     public String toString() {

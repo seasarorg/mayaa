@@ -88,7 +88,7 @@ public class CommentProcessor extends CharactersProcessor {
         StringBuilder sb = new StringBuilder();
         writePart1(sb);
         CharactersProcessor characterProcessor =
-            new CharactersProcessor(this, sb.toString());
+            new CharactersProcessor(this, sb.toString(), true);
         BuilderUtil.characterProcessorCopy(this, characterProcessor, sequenceIDGenerator);
         results[0] = characterProcessor;
 

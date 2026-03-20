@@ -22,11 +22,13 @@ import java.util.regex.Pattern;
 
 import org.seasar.mayaa.cycle.CycleWriter;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -119,7 +121,7 @@ public class WriteProcessor extends AbstractAttributableProcessor {
         } else if (empty == false) {
             ret = String.valueOf(result);
             if (ProcessorUtil.toBoolean(_escapeXml)) {
-                ret = StringUtil.escapeXml(ret);
+                ret = applyEscapeByOutputContext(ret, OutputContextStack.current());
             }
             if (_forHyperText && ProcessorUtil.toBoolean(_escapeEol)) {
                 ret = StringUtil.escapeEol(ret, _forHTML);
@@ -130,6 +132,32 @@ public class WriteProcessor extends AbstractAttributableProcessor {
         }
         if (ret != null) {
             write(ret);
+        }
+    }
+
+    /**
+     * ボディ収集中（EVAL_BODY_BUFFERED）の間は子 CharactersProcessor の
+     * autoEscape を抑制する。
+     */
+    @Override
+    protected ProcessStatus processStart(Page topLevelPage) {
+        if (isChildEvaluation()) {
+            OutputContextStack.pushSuppressAutoEscape();
+        }
+        return super.processStart(topLevelPage);
+    }
+
+    /**
+     * ボディ収集終了時に autoEscape 抑制をポップする。
+     */
+    @Override
+    protected ProcessStatus processEnd() {
+        try {
+            return super.processEnd();
+        } finally {
+            if (isChildEvaluation()) {
+                OutputContextStack.popSuppressAutoEscape();
+            }
         }
     }
 
@@ -168,6 +196,27 @@ public class WriteProcessor extends AbstractAttributableProcessor {
 
     protected void writeBody(String body) {
         // no-op
+    }
+
+    static String applyEscapeByOutputContext(String value, OutputContext outputContext) {
+        if (value == null) {
+            return "";
+        }
+        if (outputContext == OutputContext.SCRIPT) {
+            return EscapeUtil.escapeJavaScriptString(value);
+        }
+        if (outputContext == OutputContext.STYLE) {
+            return EscapeUtil.escapeCssString(value);
+        }
+        if (outputContext == OutputContext.HTML_ATTRIBUTE) {
+            return EscapeUtil.escapeHtml(value);
+        }
+        if (outputContext == OutputContext.HTML_BODY
+                || outputContext == OutputContext.TEXTAREA_PRE
+                || outputContext == OutputContext.HTML_COMMENT) {
+            return EscapeUtil.escapeHtmlBody(value);
+        }
+        return EscapeUtil.escapeHtmlBody(value);
     }
 
     /**

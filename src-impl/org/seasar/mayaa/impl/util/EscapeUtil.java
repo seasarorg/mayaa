@@ -41,6 +41,30 @@ public class EscapeUtil {
         return StringUtil.escapeXml(value).replace("'", "&#39;");
     }
 
+    public static String escapeHtmlBody(String value) {
+        if (value == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(value.length() + 16);
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                default:
+                    sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     public static String escapeHtmlWithoutAmp(String value) {
         if (value == null) {
             return "";

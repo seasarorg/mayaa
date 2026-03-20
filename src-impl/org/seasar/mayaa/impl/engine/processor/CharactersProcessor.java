@@ -19,7 +19,6 @@ import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
-import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
@@ -29,9 +28,7 @@ import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
-import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.EscapeUtil;
 
 /**
@@ -88,12 +85,14 @@ public class CharactersProcessor extends TemplateProcessorSupport
         }
         if (value != null && value instanceof Undefined == false) {
             ServiceCycle cycle = CycleUtil.getServiceCycle();
-            boolean autoEscape = isAutoEscapeEnabled()
+            boolean autoEscape = AutoEscapeContext.isAutoEscapeEnabled()
                     && !_suppressAutoEscape
-                    && !OutputContextStack.isAutoEscapeSuppressed();
+                    && !AutoEscapeContext.isAutoEscapeSuppressed();
+
             String output = applyHtmlBodyAutoEscape(value.toString(),
                     getText().getValue(), autoEscape,
-                    getEscapeDetectionLevel(), OutputContextStack.current());
+                    AutoEscapeContext.getEscapeDetectionLevel(),
+                    OutputContextStack.current());
             cycle.getResponse().write(output);
         }
         return ProcessStatus.SKIP_BODY;
@@ -133,21 +132,6 @@ public class CharactersProcessor extends TemplateProcessorSupport
         return value;
     }
 
-    private boolean isAutoEscapeEnabled() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).isAutoEscapeEnabled();
-        }
-        return false;
-    }
-
-    private String getEscapeDetectionLevel() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).getEscapeDetectionLevel();
-        }
-        return EscapeUtil.DETECTION_LEVEL_NORMAL;
-    }
 
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
         if (getOriginalNode().getQName().equals(QM_CHARACTERS) == false) {

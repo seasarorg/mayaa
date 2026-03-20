@@ -23,7 +23,6 @@ import java.util.Stack;
 
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
-import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
@@ -42,11 +41,9 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
-import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.ProcessorPropertyWrapper;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -293,7 +290,8 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     valueStr = result.toString();
                 } else {
                     valueStr = applyHtmlAttributeAutoEscape(result.toString(), script,
-                            isAutoEscapeEnabled(), getEscapeDetectionLevel(), escapeAmp,
+                            AutoEscapeContext.isAutoEscapeEnabled(),
+                            AutoEscapeContext.getEscapeDetectionLevel(), escapeAmp,
                             OutputContext.HTML_ATTRIBUTE);
                 }
                 valueStr = StringUtil.escapeWhitespace(valueStr);
@@ -338,22 +336,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
             return EscapeUtil.escapeHtml(value);
         }
         return EscapeUtil.escapeHtmlWithoutAmp(value);
-    }
-
-    private boolean isAutoEscapeEnabled() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).isAutoEscapeEnabled();
-        }
-        return false;
-    }
-
-    private String getEscapeDetectionLevel() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).getEscapeDetectionLevel();
-        }
-        return EscapeUtil.DETECTION_LEVEL_NORMAL;
     }
 
     protected boolean needsCloseElement(QName qName) {

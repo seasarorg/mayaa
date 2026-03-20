@@ -29,20 +29,11 @@ public final class OutputContextStack {
     private static final String OUTPUT_CONTEXT_STACK_KEY =
             OutputContextStack.class.getName() + "#outputContextStack";
 
-    private static final String AUTO_ESCAPE_SUPPRESS_DEPTH_KEY =
-            OutputContextStack.class.getName() + "#autoEscapeSuppressDepth";
-
     static {
         CycleUtil.registVariableFactory(OUTPUT_CONTEXT_STACK_KEY,
                 new DefaultCycleLocalInstantiator() {
                     public Object create(Object[] params) {
                         return new ArrayDeque<OutputContext>();
-                    }
-                });
-        CycleUtil.registVariableFactory(AUTO_ESCAPE_SUPPRESS_DEPTH_KEY,
-                new DefaultCycleLocalInstantiator() {
-                    public Object create(Object[] params) {
-                        return new int[]{0};
                     }
                 });
     }
@@ -54,10 +45,6 @@ public final class OutputContextStack {
     @SuppressWarnings("unchecked")
     private static Deque<OutputContext> getStack() {
         return (Deque<OutputContext>) CycleUtil.getGlobalVariable(OUTPUT_CONTEXT_STACK_KEY, null);
-    }
-
-    private static int[] getSuppressDepth() {
-        return (int[]) CycleUtil.getGlobalVariable(AUTO_ESCAPE_SUPPRESS_DEPTH_KEY, null);
     }
 
     public static void push(OutputContext context) {
@@ -81,31 +68,5 @@ public final class OutputContextStack {
             return OutputContext.HTML_BODY;
         }
         return stack.peek();
-    }
-
-    /**
-     * WriteProcessor がボディ収集中であることを示す抑制をプッシュする。
-     * CharactersProcessor の自動エスケープを無効化するために使用する。
-     */
-    public static void pushSuppressAutoEscape() {
-        getSuppressDepth()[0]++;
-    }
-
-    /**
-     * WriteProcessor のボディ収集終了時に抑制をポップする。
-     */
-    public static void popSuppressAutoEscape() {
-        int[] depth = getSuppressDepth();
-        if (depth[0] > 0) {
-            depth[0]--;
-        }
-    }
-
-    /**
-     * 現在 autoEscape が抑制されているかどうかを返す。
-     * WriteProcessor のボディバッファ収集中は true になる。
-     */
-    public static boolean isAutoEscapeSuppressed() {
-        return getSuppressDepth()[0] > 0;
     }
 }

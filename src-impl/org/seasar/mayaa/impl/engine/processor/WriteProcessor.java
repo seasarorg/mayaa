@@ -142,7 +142,7 @@ public class WriteProcessor extends AbstractAttributableProcessor {
     @Override
     protected ProcessStatus processStart(Page topLevelPage) {
         if (isChildEvaluation()) {
-            OutputContextStack.pushSuppressAutoEscape();
+            AutoEscapeContext.pushSuppressAutoEscape();
         }
         return super.processStart(topLevelPage);
     }
@@ -156,7 +156,7 @@ public class WriteProcessor extends AbstractAttributableProcessor {
             return super.processEnd();
         } finally {
             if (isChildEvaluation()) {
-                OutputContextStack.popSuppressAutoEscape();
+                AutoEscapeContext.popSuppressAutoEscape();
             }
         }
     }

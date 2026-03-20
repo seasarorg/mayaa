@@ -15,6 +15,9 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.Page;
@@ -37,6 +40,9 @@ public class CommentProcessor extends CharactersProcessor {
 
     private static final String COMMENTIN = "<!--";
     private static final String COMMENTOUT = "-->";
+    private static final Pattern AUTO_ESCAPE_DIRECTIVE = Pattern.compile(
+            "^\\s*m:autoEscape\\s*=\\s*\"(true|false)\"\\s*$",
+            Pattern.CASE_INSENSITIVE);
 
     private void writePart1(StringBuilder buffer) {
         buffer.append(COMMENTIN);
@@ -61,6 +67,10 @@ public class CommentProcessor extends CharactersProcessor {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         StringBuilder buffer = new StringBuilder();
         writePart1(buffer);
+        Boolean pageAutoEscape = parseAutoEscapeDirective(buffer.substring(COMMENTIN.length()));
+        if (pageAutoEscape != null) {
+            AutoEscapeContext.setPageAutoEscapeEnabled(pageAutoEscape);
+        }
         cycle.getResponse().write(buffer.toString());
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
@@ -75,6 +85,9 @@ public class CommentProcessor extends CharactersProcessor {
 
     public ProcessorTreeWalker[] divide(SequenceIDGenerator sequenceIDGenerator) {
         if (getOriginalNode().getQName().equals(QM_COMMENT) == false) {
+            return new ProcessorTreeWalker[] { this };
+        }
+        if (isAutoEscapeDirectiveComment()) {
             return new ProcessorTreeWalker[] { this };
         }
 
@@ -103,6 +116,25 @@ public class CommentProcessor extends CharactersProcessor {
         results[results.length - 1] = literal;
         getStaticParentProcessor().removeProcessor(this);
         return results;
+    }
+
+    static Boolean parseAutoEscapeDirective(String comment) {
+        if (comment == null) {
+            return null;
+        }
+        Matcher matcher = AUTO_ESCAPE_DIRECTIVE.matcher(comment.trim());
+        if (!matcher.matches()) {
+            return null;
+        }
+        return Boolean.valueOf(matcher.group(1).toLowerCase());
+    }
+
+    private boolean isAutoEscapeDirectiveComment() {
+        if (getText() == null || getText().getValue() == null
+                || !getText().getValue().isLiteral()) {
+            return false;
+        }
+        return parseAutoEscapeDirective(getText().getValue().getScriptText()) != null;
     }
 
     private ProcessorProperty createVoidText() {

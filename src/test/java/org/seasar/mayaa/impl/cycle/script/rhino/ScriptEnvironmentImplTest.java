@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
@@ -87,6 +90,42 @@ public class ScriptEnvironmentImplTest {
         ScriptBlock block = new ScriptBlock(" user.name ", false, "$", true);
         CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
         assertTrue(script instanceof RawOutputCompiledScript);
+    }
+
+    @Test
+    public void testAutoEscapeDefaults() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        assertFalse(env.isAutoEscapeEnabled());
+        assertEquals("normal", env.getEscapeDetectionLevel());
+    }
+
+    @Test
+    public void testSetParameterAutoEscapeEnabled() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        env.setParameter("autoEscapeEnabled", "true");
+        assertTrue(env.isAutoEscapeEnabled());
+
+        env.setParameter("autoEscapeEnabled", "false");
+        assertFalse(env.isAutoEscapeEnabled());
+    }
+
+    @Test
+    public void testSetParameterEscapeDetectionLevel() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        env.setParameter("escapeDetectionLevel", "strict");
+        assertEquals("strict", env.getEscapeDetectionLevel());
+
+        env.setParameter("escapeDetectionLevel", "normal");
+        assertEquals("normal", env.getEscapeDetectionLevel());
+    }
+
+    @Test
+    public void testSetParameterValidation() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        assertThrows(IllegalParameterValueException.class,
+                () -> env.setParameter("autoEscapeEnabled", "invalid"));
+        assertThrows(IllegalParameterValueException.class,
+                () -> env.setParameter("escapeDetectionLevel", "high"));
     }
 
     @Test

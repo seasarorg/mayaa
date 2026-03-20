@@ -36,6 +36,7 @@ import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
+import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.source.SourceDescriptor;
@@ -66,6 +67,8 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     private static WrapFactory _wrap;
 
     private boolean _useGetterScriptEmulation;
+    private boolean _autoEscapeEnabled;
+    private String _escapeDetectionLevel = EscapeUtil.DETECTION_LEVEL_NORMAL;
 
     public ScriptEnvironmentImpl() {
         super();
@@ -298,6 +301,14 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return _wrap;
     }
 
+    public boolean isAutoEscapeEnabled() {
+        return _autoEscapeEnabled;
+    }
+
+    public String getEscapeDetectionLevel() {
+        return _escapeDetectionLevel;
+    }
+
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
@@ -312,6 +323,25 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);
+        } else if ("autoEscapeEnabled".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+                _autoEscapeEnabled = ObjectUtil.booleanValue(value, false);
+            } else {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+        } else if ("escapeDetectionLevel".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            if (EscapeUtil.DETECTION_LEVEL_NORMAL.equalsIgnoreCase(value)
+                    || EscapeUtil.DETECTION_LEVEL_STRICT.equalsIgnoreCase(value)) {
+                _escapeDetectionLevel = value.toLowerCase();
+            } else {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
         } else if ("useGetterScriptEmulation".equals("name")) {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);

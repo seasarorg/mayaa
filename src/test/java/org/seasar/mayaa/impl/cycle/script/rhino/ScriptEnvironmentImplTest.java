@@ -26,6 +26,7 @@ import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
@@ -79,6 +80,13 @@ public class ScriptEnvironmentImplTest {
                 "var obj = { run: function() { return 'hi'; } }; obj.run();", false, "$");
         CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
         assertFalse(script.isLiteral());
+    }
+
+    @Test
+    public void testCompileRawOutput() {
+        ScriptBlock block = new ScriptBlock(" user.name ", false, "$", true);
+        CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
+        assertTrue(script instanceof RawOutputCompiledScript);
     }
 
     @Test

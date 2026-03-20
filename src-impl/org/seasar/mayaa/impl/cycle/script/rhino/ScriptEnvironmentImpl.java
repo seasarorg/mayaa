@@ -32,6 +32,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
@@ -93,6 +94,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 }
                 return s;
             });
+	        if (scriptBlock.isRawOutput()) {
+	            return new RawOutputCompiledScript(script);
+	        }
 	        return script;
         }
     }

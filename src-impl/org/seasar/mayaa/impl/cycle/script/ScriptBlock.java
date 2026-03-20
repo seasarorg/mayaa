@@ -25,14 +25,20 @@ public class ScriptBlock {
     private String _blockString;
     private boolean _literal;
     private String _blockSign;
+    private boolean _rawOutput;
 
     public ScriptBlock(String blockString, boolean literal, String blockSign) {
+        this(blockString, literal, blockSign, false);
+    }
+
+    public ScriptBlock(String blockString, boolean literal, String blockSign, boolean rawOutput) {
         if (blockString == null || StringUtil.isEmpty(blockSign)) {
             throw new IllegalArgumentException();
         }
         _blockString = blockString;
         _literal = literal;
         _blockSign = blockSign;
+        _rawOutput = rawOutput;
     }
 
     public String getBlockString() {
@@ -45,6 +51,10 @@ public class ScriptBlock {
 
     public String getBlockSign() {
         return _blockSign;
+    }
+
+    public boolean isRawOutput() {
+        return _rawOutput;
     }
 
 }

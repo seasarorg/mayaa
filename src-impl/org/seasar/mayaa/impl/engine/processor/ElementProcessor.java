@@ -40,6 +40,7 @@ import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.ProcessorPropertyWrapper;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
@@ -283,7 +284,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 if (result == null) {
                     return;
                 }
-                if (script instanceof LiteralScript) {
+                if (script instanceof LiteralScript || script instanceof RawOutputCompiledScript) {
                     valueStr = result.toString();
                 } else {
                     if (escapeAmp) {

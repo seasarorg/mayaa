@@ -87,6 +87,7 @@ public class ManualProviderFactory extends FactoryFactory {
         SCRIPT_ENVIRONMENT = new ScriptEnvironmentImpl();
         SCRIPT_ENVIRONMENT.setParameter("wrapFactory",
                 "org.seasar.mayaa.impl.cycle.script.rhino.WrapFactoryImpl");
+        AutoEscapeTestConfigurer.applyFromSystemProperties(SCRIPT_ENVIRONMENT);
         PROVIDER.setScriptEnvironment(SCRIPT_ENVIRONMENT);
         SPECIFICATION_BUILDER = new SpecificationBuilderImpl();
         PROVIDER.setSpecificationBuilder(SPECIFICATION_BUILDER);

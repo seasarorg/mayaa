@@ -50,6 +50,7 @@ import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.test.util.AutoEscapeTestConfigurer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -233,6 +234,8 @@ public class EngineTestBase {
         FactoryFactory.setContext(servletContext);
 
         engine = ProviderUtil.getEngine();
+        AutoEscapeTestConfigurer.applyFromSystemProperties(
+            getServiceProvider().getScriptEnvironment());
         engine.reset();
         // デフォルトのエラーハンドラを無効化して内部の例外でJUnitを失敗させる。
         engine.setErrorHandler(new NullErrorHandler());

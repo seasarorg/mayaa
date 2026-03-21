@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -180,6 +182,17 @@ public class ScriptUtilTest {
         assertEquals("${_mayaa_scope_as_string(user.name)}", asStringBlocks[1].getScriptText());
         assertEquals(";", asStringBlocks[2].getScriptText());
 
+        CompiledScript asJson = ScriptUtil.compile("var d = MAYAA_SCOPE_AS_JSON(user);");
+        assertFalse(asJson.isLiteral());
+        assertEquals("var d = ${_mayaa_scope_as_json(user)};", asJson.getScriptText());
+        assertEquals(ComplexScript.class, asJson.getClass());
+        CompiledScript[] asJsonBlocks = ((ComplexScript) asJson).getCompiledScripts();
+        assertEquals(3, asJsonBlocks.length);
+        assertEquals("var d = ", asJsonBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, asJsonBlocks[1].getClass());
+        assertEquals("${_mayaa_scope_as_json(user)}", asJsonBlocks[1].getScriptText());
+        assertEquals(";", asJsonBlocks[2].getScriptText());
+
         CompiledScript raw = ScriptUtil.compile("var c = MAYAA_SCOPE_RAW(user.name);");
         assertFalse(raw.isLiteral());
         assertEquals("var c = ${user.name};", raw.getScriptText());
@@ -190,6 +203,30 @@ public class ScriptUtilTest {
         assertEquals(RawOutputCompiledScript.class, rawBlocks[1].getClass());
         assertEquals("${user.name}", rawBlocks[1].getScriptText());
         assertEquals(";", rawBlocks[2].getScriptText());
+    }
+
+    @Test
+    public void testCompile_scopeAsJson_isNotRewrittenOutsideScriptContext() {
+        CompiledScript asJson = ScriptUtil.compile("var payload = MAYAA_SCOPE_AS_JSON(user);");
+        assertEquals(LiteralScript.class, asJson.getClass());
+        assertEquals("var payload = MAYAA_SCOPE_AS_JSON(user);", asJson.getScriptText());
+    }
+
+    @Test
+    public void testCompile_scopeAsJson_embedsObjectAsJsonTextInScriptContext() {
+        SpecificationNodeImpl scriptNode = new SpecificationNodeImpl(
+                QNameImpl.getInstance("http://www.w3.org/TR/html4", "script"));
+        CycleUtil.getServiceCycle().setInjectedNode(scriptNode);
+
+        Map<String, Object> user = new LinkedHashMap<String, Object>();
+        user.put("name", "Alice");
+        user.put("count", Integer.valueOf(2));
+        CycleUtil.getPageScope().setAttribute("user", user);
+
+        CompiledScript script = ScriptUtil.compile("var payload = MAYAA_SCOPE_AS_JSON(user);");
+        assertEquals(ComplexScript.class, script.getClass());
+        String output = (String) script.execute(String.class, null);
+        assertEquals("var payload = {\"name\":\"Alice\",\"count\":2};", output);
     }
 
 }

@@ -155,4 +155,32 @@ public class TextCompiledScriptImplTest {
         assertEquals("\"\"", obj);
     }
 
+    @Test
+    public void testScopeMacroFunctionAsJson_returnsJsonObjectText() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_json({foo: 'bar', count: 1})", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("{\"foo\":\"bar\",\"count\":1}", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsJson_returnsNullLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_json(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("null", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsJson_serializesNestedValuesLikeJsonStringify() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_json({text: 'a\\\"b', skip: undefined, list: [1, undefined, 'x']})",
+                _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("{\"text\":\"a\\\"b\",\"list\":[1,null,\"x\"]}", obj);
+    }
+
 }

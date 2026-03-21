@@ -251,6 +251,7 @@ ${= sanitizer.clean(userInput) }
 ```js
 MAYAA_SCOPE(expression)     // JavaScript 式として埋め込み
 MAYAA_SCOPE_AS_STRING(expression) // JS文字列リテラルとして出力
+MAYAA_SCOPE_AS_JSON(expression) // JSON テキストとして出力
 MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 ```
 
@@ -259,6 +260,7 @@ MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 <script>
   var name = MAYAA_SCOPE(user.name);
   var enabled = MAYAA_SCOPE_AS_STRING(feature.enabled);
+  var users = MAYAA_SCOPE_AS_JSON(userList);
   var users = MAYAA_SCOPE_RAW(json.stringify(userList));
   var count = MAYAA_SCOPE(userList.length);
 </script>
@@ -269,12 +271,15 @@ MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 ```js
 MAYAA_SCOPE(true)                // -> true
 MAYAA_SCOPE_AS_STRING(true)      // -> "true"
+MAYAA_SCOPE_AS_JSON(true)        // -> true
 
 MAYAA_SCOPE(1)                   // -> 1
 MAYAA_SCOPE_AS_STRING(1)         // -> "1"
+MAYAA_SCOPE_AS_JSON(1)           // -> 1
 
 MAYAA_SCOPE("文字列")           // -> "文字列"
 MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
+MAYAA_SCOPE_AS_JSON("文字列")   // -> "文字列"
 ```
 
 **動作**:
@@ -282,14 +287,17 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 - コンパイル前: Scope マクロを次のルールでテキストリライトする
   1. `MAYAA_SCOPE(expr)` → `${=_mayaa_scope(expr)}`
   2. `MAYAA_SCOPE_AS_STRING(expr)` → `${=_mayaa_scope_as_string(expr)}`
-  3. `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
+  3. `MAYAA_SCOPE_AS_JSON(expr)` → `${=_mayaa_scope_as_json(expr)}`
+  4. `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
 - レンダリング時: リライト後の `${...}` / `${=...}` の通常ルールで評価される
 - `_mayaa_scope(...)` は評価結果を JavaScript 式として埋め込める文字列へ変換する
 - `_mayaa_scope_as_string(...)` は評価結果を常に JavaScript 文字列リテラルへ変換する
+- `_mayaa_scope_as_json(...)` は評価結果を JSON.stringify 相当で JSON テキストへ変換する
 
 **helper の補足**:
 - `_mayaa_scope(expr)` は、expr の評価結果に応じて JavaScript ソース断片を返す
 - `_mayaa_scope_as_string(expr)` は、expr の評価結果を文字列化したうえで JavaScript 文字列リテラルを返す
+- `_mayaa_scope_as_json(expr)` は、expr の評価結果を JSON テキストとして返す
 
 **返却規則**:
 
@@ -305,6 +313,8 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 | `_mayaa_scope_as_string(expr)` | `"abc"` | `"abc"` | そのまま JS 文字列リテラル化 |
 | `_mayaa_scope_as_string(expr)` | `null` | `""` | 空文字として埋め込む |
 | `_mayaa_scope_as_string(expr)` | `undefined` | `""` | 空文字として埋め込む |
+| `_mayaa_scope_as_json(expr)` | `{ foo: "bar" }` | `{"foo":"bar"}` | JSON テキストとして埋め込む |
+| `_mayaa_scope_as_json(expr)` | `null` | `null` | JSON の `null` として埋め込む |
 
 ※ `_mayaa_scope_as_string(expr)` は `expr == null ? "" : String(expr)` 相当の扱いを行う。
 
@@ -314,8 +324,9 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 - 引数は Mayaa 式として記述（例: `user.name`, `json.stringify(obj)`）
 - `MAYAA_SCOPE(...)` は評価結果を JavaScript 式として埋め込みたい場合に使う
 - `MAYAA_SCOPE_AS_STRING(...)` は評価結果を常に JavaScript 文字列リテラルとして埋め込みたい場合に使う
+- `MAYAA_SCOPE_AS_JSON(...)` は評価結果を JSON テキストとして埋め込みたい場合に使う
 - `MAYAA_SCOPE_RAW(...)` は信頼できる値のみに限定
-- Linter で `MAYAA_SCOPE` / `MAYAA_SCOPE_AS_STRING` / `MAYAA_SCOPE_RAW` を既知グローバルに登録（例: ESLint `globals: { MAYAA_SCOPE: "readonly", MAYAA_SCOPE_AS_STRING: "readonly", MAYAA_SCOPE_RAW: "readonly" }`）
+- Linter で `MAYAA_SCOPE` / `MAYAA_SCOPE_AS_STRING` / `MAYAA_SCOPE_AS_JSON` / `MAYAA_SCOPE_RAW` を既知グローバルに登録（例: ESLint `globals: { MAYAA_SCOPE: "readonly", MAYAA_SCOPE_AS_STRING: "readonly", MAYAA_SCOPE_AS_JSON: "readonly", MAYAA_SCOPE_RAW: "readonly" }`）
 
 ---
 
@@ -331,9 +342,10 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 | **JSON/JavaScript 値** | `${= json }` | JS エスケープ対象外 | `${= dataModel }` |
 | **script 内で JS 値を出力** | `MAYAA_SCOPE(...)` | コンパイル前に `${=_mayaa_scope(...)}` へリライトし、helper が JavaScript 式として妥当な文字列を返す | `var count = MAYAA_SCOPE(totalCount);` |
 | **script 内で文字列リテラルを出力** | `MAYAA_SCOPE_AS_STRING(...)` | コンパイル前に `${=_mayaa_scope_as_string(...)}` へリライトし、helper が JavaScript 文字列リテラルを返す | `var id = MAYAA_SCOPE_AS_STRING(user.id);` |
+| **script 内で JSON を出力** | `MAYAA_SCOPE_AS_JSON(...)` | コンパイル前に `${=_mayaa_scope_as_json(...)}` へリライトし、helper が JSON テキストを返す | `var users = MAYAA_SCOPE_AS_JSON(userList);` |
 | **script 内で非エスケープ値を出力** | `MAYAA_SCOPE_RAW(...)` | コンパイル前に `${=...}` へリライトし、非エスケープ出力 | `var x = MAYAA_SCOPE_RAW(jsonString);` |
 
-※ `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、いずれも通常の JavaScript 関数呼び出しとして記述できるため、同様に構文色付け/Linter の対象になります。
+※ `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_AS_JSON(...)` / `MAYAA_SCOPE_RAW(...)` は、いずれも通常の JavaScript 関数呼び出しとして記述できるため、同様に構文色付け/Linter の対象になります。
 
 ### 5.2 実装例
 
@@ -348,10 +360,10 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
   
   <!-- JavaScript は自動判別（script 内なら JSON エスケープ） -->
   <script>
-    /* global MAYAA_SCOPE, MAYAA_SCOPE_AS_STRING, MAYAA_SCOPE_RAW: readonly */
+    /* global MAYAA_SCOPE, MAYAA_SCOPE_AS_STRING, MAYAA_SCOPE_AS_JSON, MAYAA_SCOPE_RAW: readonly */
     
     // 静的解析を通したい場合は Scope マクロ記法を使う
-    var data = MAYAA_SCOPE_RAW(json.stringify(users));
+    var data = MAYAA_SCOPE_AS_JSON(users);
     var count = MAYAA_SCOPE(userList.length);
     var featureFlag = MAYAA_SCOPE_AS_STRING(feature.enabled);
   </script>
@@ -360,7 +372,7 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 
 ### 5.3 ESLint 設定例
 
-Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE` / `MAYAA_SCOPE_AS_STRING` / `MAYAA_SCOPE_RAW` を定義済みグローバルとして登録することで、Linter エラーを回避できます：
+Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE` / `MAYAA_SCOPE_AS_STRING` / `MAYAA_SCOPE_AS_JSON` / `MAYAA_SCOPE_RAW` を定義済みグローバルとして登録することで、Linter エラーを回避できます：
 
 **.eslintrc.json**:
 ```json
@@ -372,6 +384,7 @@ Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE`
   "globals": {
     "MAYAA_SCOPE": "readonly",
     "MAYAA_SCOPE_AS_STRING": "readonly",
+    "MAYAA_SCOPE_AS_JSON": "readonly",
     "MAYAA_SCOPE_RAW": "readonly"
   },
   "rules": {
@@ -384,7 +397,7 @@ Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE`
 
 ```html
 <script>
-  /* global MAYAA_SCOPE, MAYAA_SCOPE_AS_STRING, MAYAA_SCOPE_RAW: readonly */
+  /* global MAYAA_SCOPE, MAYAA_SCOPE_AS_STRING, MAYAA_SCOPE_AS_JSON, MAYAA_SCOPE_RAW: readonly */
   
   var result = MAYAA_SCOPE_RAW(dataModel);
   var label = MAYAA_SCOPE_AS_STRING(status.label);
@@ -556,11 +569,12 @@ Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE`
 
 ### 9.4 Scope マクロのリライト対象（実装固定）
 
-`MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、`ScriptUtil.compile(text)` の入力文字列に対してコンパイル前にリライトする。
+`MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_AS_JSON(...)` / `MAYAA_SCOPE_RAW(...)` は、`ScriptUtil.compile(text)` の入力文字列に対してコンパイル前にリライトする。
 
 - リライトルール:
   - `MAYAA_SCOPE(expr)` → `${=_mayaa_scope(expr)}`
   - `MAYAA_SCOPE_AS_STRING(expr)` → `${=_mayaa_scope_as_string(expr)}`
+  - `MAYAA_SCOPE_AS_JSON(expr)` → `${=_mayaa_scope_as_json(expr)}`
   - `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
 - 運用上の推奨対象: `<script> ... </script>` の本文テキスト
 - 外部 JavaScript ファイル（`src="..."`）は Mayaa のテンプレートコンパイル対象外のため、本リライト対象外

@@ -16,7 +16,7 @@
 package org.seasar.mayaa.impl.cycle.script;
 
 /**
- * Rewrites MAYAA_SCOPE macros into ordinary script blocks.
+ * Rewrites MAYAA_SCOPE macros into raw script blocks backed by scope helpers.
  */
 final class ScriptScopeMacroRewriter {
 
@@ -138,10 +138,10 @@ final class ScriptScopeMacroRewriter {
             case SCOPE_RAW:
                 return "${=" + expression + "}";
             case SCOPE_AS_STRING:
-                return "${String(" + expression + ")}";
+                return "${=_mayaa_scope_as_string(" + expression + ")}";
             case SCOPE:
             default:
-                return "${" + expression + "}";
+                return "${=_mayaa_scope(" + expression + ")}";
         }
     }
 

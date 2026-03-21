@@ -169,9 +169,8 @@ Mayaa テンプレートにおいて、`${}` で出力する値に対して **XS
 | `autoEscapeEnabled` | `true` | 自動エスケープ有効。コンテキストに応じてエスケープ適用 |
 | `escapeDetectionLevel` | `normal` | 以下のいずれか 1 つのパターンで既にエスケープ済みと判定：<br/>- HTML エンティティ: `&lt;` `&gt;` `&quot;` `&#39;` `&amp;`<br/>- JSON/バックスラッシュ: `\"` `\\` `\n` `\t` `\r` `\b` `\f` `\/` `\'` `\uXXXX` |
 | `escapeDetectionLevel` | `strict` | 複数パターンの共存を要求。例：`&lt;` AND `&quot;` など、異なるカテゴリから複数必要 |
-
-※ Scope マクロはコンパイル前に `${...}` 系へリライトされるため、最終的なエスケープ挙動はリライト後の記法に従います。
-（`MAYAA_SCOPE(...) -> ${...}`、`MAYAA_SCOPE_AS_STRING(...) -> ${String(...)}`、`MAYAA_SCOPE_RAW(...) -> ${=...}`）
+※ Scope マクロはコンパイル前に scope helper 呼び出しへリライトされるため、最終的な script 出力挙動は helper の返却値に従います。
+（`MAYAA_SCOPE(...) -> ${=_mayaa_scope(...)}`、`MAYAA_SCOPE_AS_STRING(...) -> ${=_mayaa_scope_as_string(...)}`、`MAYAA_SCOPE_RAW(...) -> ${=...}`）
 
 ---
 
@@ -250,8 +249,8 @@ ${= sanitizer.clean(userInput) }
 `<script>` 内で `${` 自体を使わず、構文色付け/Linter を効かせたい場合は次を使用します：
 
 ```js
-MAYAA_SCOPE(expression)     // 自動エスケープ
-MAYAA_SCOPE_AS_STRING(expression) // String(...) へ変換して出力
+MAYAA_SCOPE(expression)     // JavaScript 式として埋め込み
+MAYAA_SCOPE_AS_STRING(expression) // JS文字列リテラルとして出力
 MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 ```
 
@@ -269,33 +268,52 @@ MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 
 ```js
 MAYAA_SCOPE(true)                // -> true
-MAYAA_SCOPE_AS_STRING(true)      // -> true
+MAYAA_SCOPE_AS_STRING(true)      // -> "true"
 
 MAYAA_SCOPE(1)                   // -> 1
-MAYAA_SCOPE_AS_STRING(1)         // -> 1
+MAYAA_SCOPE_AS_STRING(1)         // -> "1"
 
 MAYAA_SCOPE("文字列")           // -> "文字列"
-MAYAA_SCOPE_AS_STRING("文字列") // -> 文字列
+MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 ```
 
 **動作**:
 - 編集時/静的解析時: 通常の JavaScript 関数呼び出しとして扱われるため、IDE の構文色付け/Linter を適用できる
 - コンパイル前: Scope マクロを次のルールでテキストリライトする
-  1. `MAYAA_SCOPE(expr)` → `${expr}`
-  2. `MAYAA_SCOPE_AS_STRING(expr)` → `${String(expr)}`
+  1. `MAYAA_SCOPE(expr)` → `${=_mayaa_scope(expr)}`
+  2. `MAYAA_SCOPE_AS_STRING(expr)` → `${=_mayaa_scope_as_string(expr)}`
   3. `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
 - レンダリング時: リライト後の `${...}` / `${=...}` の通常ルールで評価される
-- `MAYAA_SCOPE_AS_STRING(...)` は「常に文字列リテラル化」ではなく、`${String(...)}` として評価される
+- `_mayaa_scope(...)` は評価結果を JavaScript 式として埋め込める文字列へ変換する
+- `_mayaa_scope_as_string(...)` は評価結果を常に JavaScript 文字列リテラルへ変換する
 
-**`MAYAA_SCOPE_AS_STRING(...)` の補足**:
-- `MAYAA_SCOPE_AS_STRING(expr)` は `${String(expr)}` にリライトされる
-- そのため値は `String(...)` の評価結果として扱われ、追加で二重引用符を付与する専用処理は行わない
+**helper の補足**:
+- `_mayaa_scope(expr)` は、expr の評価結果に応じて JavaScript ソース断片を返す
+- `_mayaa_scope_as_string(expr)` は、expr の評価結果を文字列化したうえで JavaScript 文字列リテラルを返す
+
+**返却規則**:
+
+| helper | 入力値 | 返却イメージ | 用途 |
+|------|------|------|------|
+| `_mayaa_scope(expr)` | `true` | `true` | 真偽値を JS 式として埋め込む |
+| `_mayaa_scope(expr)` | `1` | `1` | 数値を JS 式として埋め込む |
+| `_mayaa_scope(expr)` | `"abc"` | `"abc"` | 文字列を JS 文字列リテラルとして埋め込む |
+| `_mayaa_scope(expr)` | `null` | `null` | null を JS の `null` として埋め込む |
+| `_mayaa_scope(expr)` | `undefined` | `null` | undefined も `null` 相当として埋め込む |
+| `_mayaa_scope_as_string(expr)` | `true` | `"true"` | 文字列化して JS 文字列リテラル化 |
+| `_mayaa_scope_as_string(expr)` | `1` | `"1"` | 文字列化して JS 文字列リテラル化 |
+| `_mayaa_scope_as_string(expr)` | `"abc"` | `"abc"` | そのまま JS 文字列リテラル化 |
+| `_mayaa_scope_as_string(expr)` | `null` | `""` | 空文字として埋め込む |
+| `_mayaa_scope_as_string(expr)` | `undefined` | `""` | 空文字として埋め込む |
+
+※ `_mayaa_scope_as_string(expr)` は `expr == null ? "" : String(expr)` 相当の扱いを行う。
 
 **運用ルール**:
 - `<script>` 内のみで使用する
-- 実装はコンパイル前リライト方式であるため、最終挙動は `${...}` / `${=...}` の既存仕様に従う
+- 実装はコンパイル前リライト方式であり、script 用 helper が最終的な埋め込み形式を決める
 - 引数は Mayaa 式として記述（例: `user.name`, `json.stringify(obj)`）
-- `MAYAA_SCOPE_AS_STRING(...)` は文字列化したいフラグ値・数値・ID などに使う
+- `MAYAA_SCOPE(...)` は評価結果を JavaScript 式として埋め込みたい場合に使う
+- `MAYAA_SCOPE_AS_STRING(...)` は評価結果を常に JavaScript 文字列リテラルとして埋め込みたい場合に使う
 - `MAYAA_SCOPE_RAW(...)` は信頼できる値のみに限定
 - Linter で `MAYAA_SCOPE` / `MAYAA_SCOPE_AS_STRING` / `MAYAA_SCOPE_RAW` を既知グローバルに登録（例: ESLint `globals: { MAYAA_SCOPE: "readonly", MAYAA_SCOPE_AS_STRING: "readonly", MAYAA_SCOPE_RAW: "readonly" }`）
 
@@ -311,8 +329,8 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> 文字列
 | **先に手動エスケープ済み** | `${= escaped }` | スキップ指定 | `${= util.escape(input) }` |
 | **テンプレート出力** | `${= template.render() }` | 信頼できるテンプレート | `${= layout.getContent() }` |
 | **JSON/JavaScript 値** | `${= json }` | JS エスケープ対象外 | `${= dataModel }` |
-| **script 内で JS 値を出力** | `MAYAA_SCOPE(...)` | コンパイル前に `${...}` へリライトし、以後は `${...}` の通常ルールで評価 | `var count = MAYAA_SCOPE(totalCount);` |
-| **script 内で文字列化して出力** | `MAYAA_SCOPE_AS_STRING(...)` | コンパイル前に `${String(...)}` へリライトし、`String(...)` 結果を `${...}` として評価 | `var id = MAYAA_SCOPE_AS_STRING(user.id);` |
+| **script 内で JS 値を出力** | `MAYAA_SCOPE(...)` | コンパイル前に `${=_mayaa_scope(...)}` へリライトし、helper が JavaScript 式として妥当な文字列を返す | `var count = MAYAA_SCOPE(totalCount);` |
+| **script 内で文字列リテラルを出力** | `MAYAA_SCOPE_AS_STRING(...)` | コンパイル前に `${=_mayaa_scope_as_string(...)}` へリライトし、helper が JavaScript 文字列リテラルを返す | `var id = MAYAA_SCOPE_AS_STRING(user.id);` |
 | **script 内で非エスケープ値を出力** | `MAYAA_SCOPE_RAW(...)` | コンパイル前に `${=...}` へリライトし、非エスケープ出力 | `var x = MAYAA_SCOPE_RAW(jsonString);` |
 
 ※ `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、いずれも通常の JavaScript 関数呼び出しとして記述できるため、同様に構文色付け/Linter の対象になります。
@@ -541,13 +559,13 @@ Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE`
 `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、`ScriptUtil.compile(text)` の入力文字列に対してコンパイル前にリライトする。
 
 - リライトルール:
-  - `MAYAA_SCOPE(expr)` → `${expr}`
-  - `MAYAA_SCOPE_AS_STRING(expr)` → `${String(expr)}`
+  - `MAYAA_SCOPE(expr)` → `${=_mayaa_scope(expr)}`
+  - `MAYAA_SCOPE_AS_STRING(expr)` → `${=_mayaa_scope_as_string(expr)}`
   - `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
 - 運用上の推奨対象: `<script> ... </script>` の本文テキスト
 - 外部 JavaScript ファイル（`src="..."`）は Mayaa のテンプレートコンパイル対象外のため、本リライト対象外
 
-この仕様は「macro を早期に通常記法へ寄せる」ことを目的とし、以後の評価・エスケープは `${...}` / `${=...}` の既存仕様に統一する。
+この仕様は「macro を早期に helper 呼び出しへ寄せる」ことを目的とし、script 内で必要な JavaScript リテラル化を実行時に決定できるようにする。
 
 ---
 

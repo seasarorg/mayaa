@@ -119,4 +119,40 @@ public class TextCompiledScriptImplTest {
         assertEquals("bar", obj);
     }
 
+    @Test
+    public void testScopeMacroFunctionScope_returnsQuotedStringLiteral() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope('bar')", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"bar\"", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionScope_returnsNullLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("null", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsString_returnsQuotedBooleanString() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_string(false)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"false\"", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsString_returnsEmptyStringLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_string(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"\"", obj);
+    }
+
 }

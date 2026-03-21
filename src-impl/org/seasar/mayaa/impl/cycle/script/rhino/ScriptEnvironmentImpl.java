@@ -65,6 +65,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     // singleton
     private static WrapFactory _wrap;
+    private static final String[] SCOPE_MACRO_FUNCTIONS = {
+        "_mayaa_scope", "_mayaa_scope_as_string"
+    };
 
     private boolean _useGetterScriptEmulation;
     private boolean _autoEscapeEnabled;
@@ -143,6 +146,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                             ScriptableObject scope = (ScriptableObject) result;
                             scope.defineProperty("__global__", scope,
                                     ScriptableObject.READONLY | ScriptableObject.DONTENUM);
+                            scope.defineFunctionProperties(SCOPE_MACRO_FUNCTIONS,
+                                ScopeMacroFunctionSupport.class,
+                                ScriptableObject.DONTENUM);
                         }
                         _standardObjects = result; // volatile write: publish after core init
                         // NativeJavaPackage の内部キャッシュを起動時に一度だけ pre-warm。

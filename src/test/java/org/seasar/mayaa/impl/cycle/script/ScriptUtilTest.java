@@ -147,7 +147,7 @@ public class ScriptUtilTest {
     }
 
     @Test
-    public void testCompile_rewriteMayaaScopeMacros_onlyScriptContext() {
+    public void testCompile_rewriteMayaaScopeMacros_toScopeHelpers_onlyScriptContext() {
         CompiledScript scope = ScriptUtil.compile("var a = MAYAA_SCOPE(user.name);");
         assertEquals(LiteralScript.class, scope.getClass());
         assertEquals("var a = MAYAA_SCOPE(user.name);", scope.getScriptText());
@@ -158,25 +158,26 @@ public class ScriptUtilTest {
 
         scope = ScriptUtil.compile("var a = MAYAA_SCOPE(user.name);");
         assertFalse(scope.isLiteral());
-        assertEquals("var a = ${user.name};", scope.getScriptText());
+        assertEquals("var a = ${_mayaa_scope(user.name)};", scope.getScriptText());
         assertEquals(ComplexScript.class, scope.getClass());
         CompiledScript[] scopeBlocks = ((ComplexScript) scope).getCompiledScripts();
         assertEquals(3, scopeBlocks.length);
         assertEquals(LiteralScript.class, scopeBlocks[0].getClass());
         assertEquals("var a = ", scopeBlocks[0].getScriptText());
-        assertEquals(TextCompiledScriptImpl.class, scopeBlocks[1].getClass());
-        assertEquals("${user.name}", scopeBlocks[1].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, scopeBlocks[1].getClass());
+        assertEquals("${_mayaa_scope(user.name)}", scopeBlocks[1].getScriptText());
         assertEquals(LiteralScript.class, scopeBlocks[2].getClass());
         assertEquals(";", scopeBlocks[2].getScriptText());
 
         CompiledScript asString = ScriptUtil.compile("var b = MAYAA_SCOPE_AS_STRING(user.name);");
         assertFalse(asString.isLiteral());
-        assertEquals("var b = ${String(user.name)};", asString.getScriptText());
+        assertEquals("var b = ${_mayaa_scope_as_string(user.name)};", asString.getScriptText());
         assertEquals(ComplexScript.class, asString.getClass());
         CompiledScript[] asStringBlocks = ((ComplexScript) asString).getCompiledScripts();
         assertEquals(3, asStringBlocks.length);
         assertEquals("var b = ", asStringBlocks[0].getScriptText());
-        assertEquals("${String(user.name)}", asStringBlocks[1].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, asStringBlocks[1].getClass());
+        assertEquals("${_mayaa_scope_as_string(user.name)}", asStringBlocks[1].getScriptText());
         assertEquals(";", asStringBlocks[2].getScriptText());
 
         CompiledScript raw = ScriptUtil.compile("var c = MAYAA_SCOPE_RAW(user.name);");

@@ -71,6 +71,54 @@ public class CharactersProcessorTest {
     }
 
     @Test
+    public void testApplyHtmlBodyAutoEscape_scriptLiteralIsNotEscaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "O'Reilly\n", new LiteralScript("O'Reilly\\n"), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+        assertEquals("O'Reilly\n", output);
+    }
+
+        @Test
+        public void testApplyHtmlBodyAutoEscapePerBlock_scriptMixed() {
+        CompiledScript[] scripts = new CompiledScript[] {
+            new LiteralScript("var v = '"),
+            new FixedResultScript("O'Reilly"),
+            new LiteralScript("';")
+        };
+        String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
+            scripts, String.class, true,
+            EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+        assertEquals("var v = 'O\\'Reilly';", output);
+        }
+
+        @Test
+        public void testApplyHtmlBodyAutoEscapePerBlock_scriptRawIsNotEscaped() {
+        CompiledScript[] scripts = new CompiledScript[] {
+            new LiteralScript("var data = "),
+            new RawOutputCompiledScript(new FixedResultScript("{\"k\":\"A'B\"}")),
+            new LiteralScript(";")
+        };
+        String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
+            scripts, String.class, true,
+            EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+        assertEquals("var data = {\"k\":\"A'B\"};", output);
+        }
+
+            @Test
+            public void testApplyHtmlBodyAutoEscapePerBlock_voidExpectedClassReturnsNull() {
+                int[] count = new int[] { 0 };
+            CompiledScript[] scripts = new CompiledScript[] {
+                    new CountingScript(count),
+                    new CountingScript(count)
+            };
+            String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
+                scripts, Void.class, true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+            assertEquals(null, output);
+                assertEquals(2, count[0]);
+            }
+
+    @Test
     public void testApplyHtmlBodyAutoEscape_style() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "\"x\"\n", new NonLiteralScript(), true,
@@ -107,6 +155,84 @@ public class CharactersProcessorTest {
 
         public Object execute(Class<?> expectedClass, Object[] args) {
             return "";
+        }
+
+        public void setMethodArgClasses(Class<?>[] methodArgClasses) {
+            // no-op
+        }
+
+        public Class<?>[] getMethodArgClasses() {
+            return null;
+        }
+
+        public boolean isReadOnly() {
+            return true;
+        }
+
+        public void assignValue(Object value) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static class FixedResultScript implements CompiledScript {
+        private static final long serialVersionUID = 1L;
+        private final String _result;
+
+        FixedResultScript(String result) {
+            _result = result;
+        }
+
+        public String getScriptText() {
+            return "expr";
+        }
+
+        public boolean isLiteral() {
+            return false;
+        }
+
+        public Object execute(Class<?> expectedClass, Object[] args) {
+            return _result;
+        }
+
+        public void setMethodArgClasses(Class<?>[] methodArgClasses) {
+            // no-op
+        }
+
+        public Class<?>[] getMethodArgClasses() {
+            return null;
+        }
+
+        public boolean isReadOnly() {
+            return true;
+        }
+
+        public void assignValue(Object value) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static class CountingScript implements CompiledScript {
+        private static final long serialVersionUID = 1L;
+        private final int[] _count;
+
+        CountingScript(int[] count) {
+            _count = count;
+        }
+
+        public String getScriptText() {
+            return "expr";
+        }
+
+        public boolean isLiteral() {
+            return false;
+        }
+
+        public Object execute(Class<?> expectedClass, Object[] args) {
+            _count[0]++;
+            if (expectedClass == Void.class) {
+                return null;
+            }
+            return "x";
         }
 
         public void setMethodArgClasses(Class<?>[] methodArgClasses) {

@@ -19,6 +19,8 @@ import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
+import org.seasar.mayaa.engine.specification.QName;
+import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -34,15 +36,38 @@ public class ScriptUtil {
 
     public static CompiledScript compile(String text) {
         CompiledScript compiled;
+        String targetText = text;
         if (StringUtil.hasValue(text)) {
             ScriptEnvironment environment = ProviderUtil.getScriptEnvironment();
             ServiceCycle cycle = CycleUtil.getServiceCycle();
             NodeTreeWalker node = cycle.getInjectedNode();
-            compiled = environment.compile(text, node);
+            if (isScriptContextNode(node)) {
+                targetText = ScriptScopeMacroRewriter.rewriteToScriptBlocks(text);
+            }
+            compiled = environment.compile(targetText, node);
         } else {
             compiled = LiteralScript.NULL_LITERAL_SCRIPT;
         }
         return compiled;
+    }
+
+    private static boolean isScriptContextNode(NodeTreeWalker node) {
+        NodeTreeWalker current = node;
+        while (current != null) {
+            if (current instanceof SpecificationNode) {
+                SpecificationNode specNode = (SpecificationNode) current;
+                QName qName = specNode.getQName();
+                if (qName != null && "script".equalsIgnoreCase(qName.getLocalName())) {
+                    return true;
+                }
+            }
+            try {
+                current = current.getParentNode();
+            } catch (UnsupportedOperationException e) {
+                current = null;
+            }
+        }
+        return false;
     }
 
     public static String getBlockSignedText(String text) {

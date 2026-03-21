@@ -170,7 +170,8 @@ Mayaa テンプレートにおいて、`${}` で出力する値に対して **XS
 | `escapeDetectionLevel` | `normal` | 以下のいずれか 1 つのパターンで既にエスケープ済みと判定：<br/>- HTML エンティティ: `&lt;` `&gt;` `&quot;` `&#39;` `&amp;`<br/>- JSON/バックスラッシュ: `\"` `\\` `\n` `\t` `\r` `\b` `\f` `\/` `\'` `\uXXXX` |
 | `escapeDetectionLevel` | `strict` | 複数パターンの共存を要求。例：`&lt;` AND `&quot;` など、異なるカテゴリから複数必要 |
 
-※ `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` は `autoEscapeEnabled` の設定値にかかわらず、自動エスケープを適用する固定仕様とします（`MAYAA_SCOPE_RAW(...)` は非エスケープ）。
+※ Scope マクロはコンパイル前に `${...}` 系へリライトされるため、最終的なエスケープ挙動はリライト後の記法に従います。
+（`MAYAA_SCOPE(...) -> ${...}`、`MAYAA_SCOPE_AS_STRING(...) -> ${String(...)}`、`MAYAA_SCOPE_RAW(...) -> ${=...}`）
 
 ---
 
@@ -250,7 +251,7 @@ ${= sanitizer.clean(userInput) }
 
 ```js
 MAYAA_SCOPE(expression)     // 自動エスケープ
-MAYAA_SCOPE_AS_STRING(expression) // 常に JS 文字列リテラル化
+MAYAA_SCOPE_AS_STRING(expression) // String(...) へ変換して出力
 MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 ```
 
@@ -268,37 +269,31 @@ MAYAA_SCOPE_RAW(expression) // 非エスケープ（${=...} 相当）
 
 ```js
 MAYAA_SCOPE(true)                // -> true
-MAYAA_SCOPE_AS_STRING(true)      // -> "true"
+MAYAA_SCOPE_AS_STRING(true)      // -> true
 
 MAYAA_SCOPE(1)                   // -> 1
-MAYAA_SCOPE_AS_STRING(1)         // -> "1"
+MAYAA_SCOPE_AS_STRING(1)         // -> 1
 
 MAYAA_SCOPE("文字列")           // -> "文字列"
-MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
+MAYAA_SCOPE_AS_STRING("文字列") // -> 文字列
 ```
 
 **動作**:
 - 編集時/静的解析時: 通常の JavaScript 関数呼び出しとして扱われるため、IDE の構文色付け/Linter を適用できる
-- レンダリング時: `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` を評価結果に置換
-- `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` は `autoEscapeEnabled` の設定値に依存せず、自動エスケープを行う
-- `MAYAA_SCOPE_AS_STRING(...)` は評価結果の型にかかわらず、JavaScript の文字列リテラルとして二重引用符付きで出力する
-- `MAYAA_SCOPE_AS_STRING(...)` の内部処理は次の順序で行う:
-  1. 式を評価して値を取得
-  2. 値を文字列化（`String.valueOf(value)` 相当）
-  3. JavaScript 文字列リテラル向けにエスケープ
-  4. 二重引用符 `"` で囲んで出力
+- コンパイル前: Scope マクロを次のルールでテキストリライトする
+  1. `MAYAA_SCOPE(expr)` → `${expr}`
+  2. `MAYAA_SCOPE_AS_STRING(expr)` → `${String(expr)}`
+  3. `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
+- レンダリング時: リライト後の `${...}` / `${=...}` の通常ルールで評価される
+- `MAYAA_SCOPE_AS_STRING(...)` は「常に文字列リテラル化」ではなく、`${String(...)}` として評価される
 
-**`MAYAA_SCOPE_AS_STRING(...)` のエスケープ対象**:
-- `\` → `\\`
-- `"` → `\"`
-- 改行（LF）→ `\n`
-- 復帰（CR）→ `\r`
-- タブ → `\t`
-- U+2028, U+2029 → `\u2028`, `\u2029`
+**`MAYAA_SCOPE_AS_STRING(...)` の補足**:
+- `MAYAA_SCOPE_AS_STRING(expr)` は `${String(expr)}` にリライトされる
+- そのため値は `String(...)` の評価結果として扱われ、追加で二重引用符を付与する専用処理は行わない
 
 **運用ルール**:
 - `<script>` 内のみで使用する
-- 実装時の Scope マクロ検出対象は、HTML の `script` 要素本文のみとする（固定）
+- 実装はコンパイル前リライト方式であるため、最終挙動は `${...}` / `${=...}` の既存仕様に従う
 - 引数は Mayaa 式として記述（例: `user.name`, `json.stringify(obj)`）
 - `MAYAA_SCOPE_AS_STRING(...)` は文字列化したいフラグ値・数値・ID などに使う
 - `MAYAA_SCOPE_RAW(...)` は信頼できる値のみに限定
@@ -316,9 +311,9 @@ MAYAA_SCOPE_AS_STRING("文字列") // -> "文字列"
 | **先に手動エスケープ済み** | `${= escaped }` | スキップ指定 | `${= util.escape(input) }` |
 | **テンプレート出力** | `${= template.render() }` | 信頼できるテンプレート | `${= layout.getContent() }` |
 | **JSON/JavaScript 値** | `${= json }` | JS エスケープ対象外 | `${= dataModel }` |
-| **script 内で JS 値を出力** | `MAYAA_SCOPE(...)` | `autoEscapeEnabled` に関係なく自動エスケープして型に応じて出力 | `var count = MAYAA_SCOPE(totalCount);` |
-| **script 内で常に文字列化** | `MAYAA_SCOPE_AS_STRING(...)` | `autoEscapeEnabled` に関係なく自動エスケープ後、常に `"..."` 文字列リテラルとして出力 | `var id = MAYAA_SCOPE_AS_STRING(user.id);` |
-| **script 内で非エスケープ値を出力** | `MAYAA_SCOPE_RAW(...)` | `${` を使わず JS 構文を維持し、非エスケープ出力 | `var x = MAYAA_SCOPE_RAW(jsonString);` |
+| **script 内で JS 値を出力** | `MAYAA_SCOPE(...)` | コンパイル前に `${...}` へリライトし、以後は `${...}` の通常ルールで評価 | `var count = MAYAA_SCOPE(totalCount);` |
+| **script 内で文字列化して出力** | `MAYAA_SCOPE_AS_STRING(...)` | コンパイル前に `${String(...)}` へリライトし、`String(...)` 結果を `${...}` として評価 | `var id = MAYAA_SCOPE_AS_STRING(user.id);` |
+| **script 内で非エスケープ値を出力** | `MAYAA_SCOPE_RAW(...)` | コンパイル前に `${=...}` へリライトし、非エスケープ出力 | `var x = MAYAA_SCOPE_RAW(jsonString);` |
 
 ※ `MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、いずれも通常の JavaScript 関数呼び出しとして記述できるため、同様に構文色付け/Linter の対象になります。
 
@@ -541,15 +536,18 @@ Scope マクロ記法を使う場合、プロジェクト全体で `MAYAA_SCOPE`
 2. **既存大規模プロジェクト**: `strict` モード（誤検知回避）
 3. **統一ルール確立後**: 手動エスケープ箇所に `${=...}` を明示 → 検出パターンに依存しない
 
-### 9.4 Scope マクロのパース対象（実装固定）
+### 9.4 Scope マクロのリライト対象（実装固定）
 
-`MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` のパース対象は、**HTML の `script` 要素本文のみ**とする。
+`MAYAA_SCOPE(...)` / `MAYAA_SCOPE_AS_STRING(...)` / `MAYAA_SCOPE_RAW(...)` は、`ScriptUtil.compile(text)` の入力文字列に対してコンパイル前にリライトする。
 
-- 対象: `<script> ... </script>` の本文テキスト
-- 非対象: HTML 本文、属性値、`onClick` などのイベント属性、`style` 属性、`<style>` 要素
-- 非対象: 外部 JavaScript ファイル（`src="..."` で読み込むファイル）
+- リライトルール:
+  - `MAYAA_SCOPE(expr)` → `${expr}`
+  - `MAYAA_SCOPE_AS_STRING(expr)` → `${String(expr)}`
+  - `MAYAA_SCOPE_RAW(expr)` → `${=expr}`
+- 運用上の推奨対象: `<script> ... </script>` の本文テキスト
+- 外部 JavaScript ファイル（`src="..."`）は Mayaa のテンプレートコンパイル対象外のため、本リライト対象外
 
-この制約は実装互換性と予測可能性を優先するための固定仕様とし、将来拡張は別仕様として扱う。
+この仕様は「macro を早期に通常記法へ寄せる」ことを目的とし、以後の評価・エスケープは `${...}` / `${=...}` の既存仕様に統一する。
 
 ---
 

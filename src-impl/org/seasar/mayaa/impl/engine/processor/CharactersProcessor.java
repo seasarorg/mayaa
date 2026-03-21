@@ -26,6 +26,7 @@ import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.ComplexScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
@@ -76,26 +77,70 @@ public class CharactersProcessor extends TemplateProcessorSupport
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        Object value = null;
+        String output = null;
+        ProcessorProperty text = getText();
+        CompiledScript script = text.getValue();
         SpecificationUtil.endScope();
         try {
-            value = getText().getExecutedValue(null);
-        } finally {
-            SpecificationUtil.startScope(this.getVariables());
-        }
-        if (value != null && value instanceof Undefined == false) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
             boolean autoEscape = AutoEscapeContext.isAutoEscapeEnabled()
                     && !_suppressAutoEscape
                     && !AutoEscapeContext.isAutoEscapeSuppressed();
+            String escapeDetectionLevel = AutoEscapeContext.getEscapeDetectionLevel();
+            OutputContext outputContext = OutputContextStack.current();
 
-            String output = applyHtmlBodyAutoEscape(value.toString(),
-                    getText().getValue(), autoEscape,
-                    AutoEscapeContext.getEscapeDetectionLevel(),
-                    OutputContextStack.current());
+            if (script instanceof ComplexScript) {
+                output = applyHtmlBodyAutoEscapePerBlock(
+                        ((ComplexScript) script).getCompiledScripts(),
+                        text.getExpectedClass(), autoEscape,
+                        escapeDetectionLevel, outputContext);
+            } else {
+                Object value = text.getExecutedValue(null);
+                if (value != null && value instanceof Undefined == false) {
+                    output = applyHtmlBodyAutoEscape(value.toString(),
+                            script, autoEscape, escapeDetectionLevel,
+                            outputContext);
+                }
+            }
+        } finally {
+            SpecificationUtil.startScope(this.getVariables());
+        }
+        if (output != null) {
+            ServiceCycle cycle = CycleUtil.getServiceCycle();
             cycle.getResponse().write(output);
         }
         return ProcessStatus.SKIP_BODY;
+    }
+
+    static String applyHtmlBodyAutoEscapePerBlock(CompiledScript[] scripts,
+            Class<?> expectedClass,
+            boolean autoEscapeEnabled,
+            String escapeDetectionLevel,
+            OutputContext outputContext) {
+        if (scripts == null || scripts.length == 0) {
+            return null;
+        }
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < scripts.length; i++) {
+            CompiledScript script = scripts[i];
+            if (script == null) {
+                continue;
+            }
+            Object value = script.execute(expectedClass, null);
+            if (value == null) {
+                continue;
+            }
+            String escaped = applyHtmlBodyAutoEscape(value.toString(),
+                    script, autoEscapeEnabled, escapeDetectionLevel,
+                    outputContext);
+            if (escaped != null) {
+                buffer.append(escaped);
+            }
+        }
+        // 各script は実行しつつも、expectedClass が Void.class の場合は出力文字列は不要。
+        if (expectedClass == Void.class) {
+            return null;
+        }
+        return buffer.toString();
     }
 
     static String applyHtmlBodyAutoEscape(String value,
@@ -105,6 +150,19 @@ public class CharactersProcessor extends TemplateProcessorSupport
             OutputContext outputContext) {
         if (value == null) {
             return null;
+        }
+        if (outputContext == OutputContext.SCRIPT) {
+            if (autoEscapeEnabled == false) {
+                return value;
+            }
+            if (script == null || script instanceof LiteralScript
+                    || script instanceof RawOutputCompiledScript) {
+                return value;
+            }
+            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                return value;
+            }
+            return EscapeUtil.escapeJavaScriptString(value);
         }
         if (autoEscapeEnabled == false) {
             return value;
@@ -118,9 +176,6 @@ public class CharactersProcessor extends TemplateProcessorSupport
         }
         if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
             return value;
-        }
-        if (outputContext == OutputContext.SCRIPT) {
-            return EscapeUtil.escapeJavaScriptString(value);
         }
         if (outputContext == OutputContext.STYLE) {
             return EscapeUtil.escapeCssString(value);

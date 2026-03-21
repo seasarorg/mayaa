@@ -30,6 +30,7 @@ import org.seasar.mayaa.impl.cycle.script.ComplexScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.EscapeUtil;
 
 /**
@@ -39,6 +40,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
         implements CONST_IMPL {
 
     private static final long serialVersionUID = -6762409726256198534L;
+    private static final String FEATURE_LABEL_AUTO_ESCAPE = "auto-escape";
 
     private ProcessorProperty _text;
     private boolean _suppressAutoEscape;
@@ -151,32 +153,85 @@ public class CharactersProcessor extends TemplateProcessorSupport
         if (value == null) {
             return null;
         }
-        if (outputContext == OutputContext.SCRIPT) {
-            if (autoEscapeEnabled == false) {
-                return value;
-            }
-            if (script == null || script instanceof LiteralScript
-                    || script instanceof RawOutputCompiledScript) {
-                return value;
-            }
-            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
-                return value;
-            }
-            return EscapeUtil.escapeJavaScriptString(value);
-        }
-        if (autoEscapeEnabled == false) {
-            return value;
-        }
+        // リテラルスクリプトおよび生出力マーカーは自動エスケープ対象外
         if (script == null || script instanceof LiteralScript
                 || script instanceof RawOutputCompiledScript) {
             return value;
         }
+
+        if (outputContext == OutputContext.SCRIPT) {
+            if (!autoEscapeEnabled) {
+                String escaped = EscapeUtil.escapeJavaScriptString(value);
+                if (!escaped.equals(value)) {
+                    warnAndRecordAutoEscape(
+                            "SCRIPT context: autoEscape が無効ですが、値に JavaScript エスケープが必要な文字が含まれています。"
+                            + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
+                            + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
+                            value);
+                }
+                return value;
+            }
+            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                warnAndRecordAutoEscape(
+                        "SCRIPT context: 値が既にエスケープ済みと判定されました。"
+                        + " 二重エスケープを避けるためにエスケープをスキップします。"
+                        + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
+                        value);
+                return value;
+            }
+            return EscapeUtil.escapeJavaScriptString(value);
+        }
+
+        if (outputContext == OutputContext.HTML_ATTRIBUTE) {
+            if (!autoEscapeEnabled) {
+                String escaped = EscapeUtil.escapeHtml(value);
+                if (!escaped.equals(value)) {
+                    warnAndRecordAutoEscape(
+                            "HTML_ATTRIBUTE context: autoEscape が無効ですが、値に HTML エスケープが必要な文字が含まれています。"
+                            + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
+                            + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
+                            value);
+                }
+                return value;
+            }
+            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                warnAndRecordAutoEscape(
+                        "HTML_ATTRIBUTE context: 値が既にエスケープ済みと判定されました。"
+                        + " 二重エスケープを避けるためにエスケープをスキップします。"
+                        + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
+                        value);
+                return value;
+            }
+            return EscapeUtil.escapeHtml(value);
+        }
+
+        if (!autoEscapeEnabled) {
+            String escaped = computeEscapedForContext(value, outputContext);
+            if (escaped != null && !escaped.equals(value)) {
+                warnAndRecordAutoEscape(
+                        outputContext.name() + " context: autoEscape が無効ですが、値に"
+                        + " エスケープが必要な文字が含まれています。"
+                        + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
+                        + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
+                        value);
+            }
+            return value;
+        }
+
+        // HTML_COMMENT はエスケープ対象外
         if (outputContext == OutputContext.HTML_COMMENT) {
             return value;
         }
+
         if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+            warnAndRecordAutoEscape(
+                    outputContext.name() + " context: 値が既にエスケープ済みと判定されました。"
+                    + " 二重エスケープを避けるためにエスケープをスキップします。"
+                    + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
+                    value);
             return value;
         }
+
         if (outputContext == OutputContext.STYLE) {
             return EscapeUtil.escapeCssString(value);
         }
@@ -185,6 +240,29 @@ public class CharactersProcessor extends TemplateProcessorSupport
             return EscapeUtil.escapeHtmlBody(value);
         }
         return value;
+    }
+
+    private static String truncateForLog(String value) {
+        return value.length() > 100 ? value.substring(0, 100) + "..." : value;
+    }
+
+    private static void warnAndRecordAutoEscape(String message, String value) {
+        String truncated = truncateForLog(value);
+        DiagnosticEventBuffer.recordWarn(DiagnosticEventBuffer.Phase.RENDER,
+                FEATURE_LABEL_AUTO_ESCAPE,
+                CharactersProcessor.class.getName(), message, truncated);
+    }
+
+    /** autoEscape=false 時の警告計算用：そのコンテキストで適用されるエスケープ結果を返す。不要なコンテキストは null を返す。 */
+    private static String computeEscapedForContext(String value, OutputContext outputContext) {
+        if (outputContext == OutputContext.STYLE) {
+            return EscapeUtil.escapeCssString(value);
+        }
+        if (outputContext == OutputContext.HTML_BODY
+                || outputContext == OutputContext.TEXTAREA_PRE) {
+            return EscapeUtil.escapeHtmlBody(value);
+        }
+        return null;
     }
 
 

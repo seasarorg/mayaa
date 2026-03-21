@@ -17,10 +17,13 @@ package org.seasar.mayaa.impl.engine.processor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.EscapeUtil;
 
 public class CharactersProcessorTest {
@@ -140,6 +143,78 @@ public class CharactersProcessorTest {
                 "&lt;b&gt;Tom&lt;/b&gt;", new NonLiteralScript(), true,
                 EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
         assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
+    }
+
+    // ---- HTML_ATTRIBUTE ----
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_dynamicEscaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "<script>alert('xss')</script>", new NonLiteralScript(), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_doubleQuoteEscaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "Tom & \"Jerry\"", new NonLiteralScript(), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("Tom &amp; &quot;Jerry&quot;", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_disabledReturnsUnescaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "Tom & <b>Jerry</b>", new NonLiteralScript(), false,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("Tom & <b>Jerry</b>", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_literalNotEscaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "Tom & <b>Jerry</b>",
+                new LiteralScript("Tom & <b>Jerry</b>"), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("Tom & <b>Jerry</b>", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_alreadyEscapedSkipped() {
+        // isEscaped() が true と判定する &amp; を含む値 → エスケープスキップ
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "Tom &amp; Jerry", new NonLiteralScript(), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("Tom &amp; Jerry", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlAttribute_rawOutputNotEscaped() {
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "<b>safe html</b>",
+                new RawOutputCompiledScript(new NonLiteralScript()), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+        assertEquals("<b>safe html</b>", output);
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_autoEscapeDisabled_recordsRenderWarningEvent() {
+        DiagnosticEventBuffer.clear();
+
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "<b>Tom</b>", new NonLiteralScript(), false,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+
+        assertEquals("<b>Tom</b>", output);
+
+        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        assertEquals(1, events.size());
+        DiagnosticEventBuffer.Event event = events.get(0);
+        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.getPhase());
+        assertEquals(DiagnosticEventBuffer.Level.WARN, event.getLevel());
+        assertEquals("auto-escape", event.getLabel());
+        assertEquals("org.seasar.mayaa.impl.engine.processor.CharactersProcessor", event.getSource());
     }
 
     static class NonLiteralScript implements CompiledScript {

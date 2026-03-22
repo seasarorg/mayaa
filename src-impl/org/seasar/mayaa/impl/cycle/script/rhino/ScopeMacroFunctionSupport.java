@@ -33,7 +33,7 @@ import org.seasar.mayaa.impl.util.EscapeUtil;
  *
  * _mayaa_scope は評価結果を JavaScript 式として妥当なソース断片へ変換し、
  * _mayaa_scope_as_string は評価結果を常に JavaScript 文字列リテラルへ変換し、
- * _mayaa_scope_as_json は評価結果を JSON テキストへ変換する。
+ * _mayaa_scope_with_stringify は評価結果を JSON.stringify 相当のテキストへ変換する。
  */
 public final class ScopeMacroFunctionSupport {
 
@@ -62,7 +62,7 @@ public final class ScopeMacroFunctionSupport {
         return quoteJavaScriptStringLiteral(Context.toString(value));
     }
 
-    public static Object _mayaa_scope_as_json(
+    public static Object _mayaa_scope_with_stringify(
             Context cx, Scriptable thisObj, Object[] args, Function funObj) {
         Object value = firstArg(args);
         String json = serializeJsonValue(value, new IdentityHashMap<Object, Boolean>());

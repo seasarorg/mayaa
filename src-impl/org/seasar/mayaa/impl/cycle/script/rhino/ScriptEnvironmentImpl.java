@@ -66,7 +66,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     // singleton
     private static WrapFactory _wrap;
     private static final String[] SCOPE_MACRO_FUNCTIONS = {
-        "_mayaa_scope", "_mayaa_scope_as_string", "_mayaa_scope_as_json"
+        "_mayaa_scope", "_mayaa_scope_as_string", "_mayaa_scope_with_stringify"
     };
 
     private boolean _useGetterScriptEmulation;

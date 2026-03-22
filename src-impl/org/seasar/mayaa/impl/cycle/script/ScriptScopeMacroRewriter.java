@@ -22,7 +22,7 @@ final class ScriptScopeMacroRewriter {
 
     private static final String MACRO_SCOPE = "MAYAA_SCOPE";
     private static final String MACRO_SCOPE_AS_STRING = "MAYAA_SCOPE_AS_STRING";
-    private static final String MACRO_SCOPE_AS_JSON = "MAYAA_SCOPE_AS_JSON";
+    private static final String MACRO_SCOPE_WITH_STRINGIFY = "MAYAA_SCOPE_WITH_STRINGIFY";
     private static final String MACRO_SCOPE_RAW = "MAYAA_SCOPE_RAW";
 
     private ScriptScopeMacroRewriter() {
@@ -138,8 +138,8 @@ final class ScriptScopeMacroRewriter {
         switch (type) {
             case SCOPE_RAW:
                 return "${=" + expression + "}";
-            case SCOPE_AS_JSON:
-                return "${=_mayaa_scope_as_json(" + expression + ")}";
+            case SCOPE_WITH_STRINGIFY:
+                return "${=_mayaa_scope_with_stringify(" + expression + ")}";
             case SCOPE_AS_STRING:
                 return "${=_mayaa_scope_as_string(" + expression + ")}";
             case SCOPE:
@@ -153,9 +153,9 @@ final class ScriptScopeMacroRewriter {
         if (asString != null) {
             return asString;
         }
-        MacroMatch asJson = matchMacro(text, index, MACRO_SCOPE_AS_JSON, MacroType.SCOPE_AS_JSON);
-        if (asJson != null) {
-            return asJson;
+        MacroMatch withStringify = matchMacro(text, index, MACRO_SCOPE_WITH_STRINGIFY, MacroType.SCOPE_WITH_STRINGIFY);
+        if (withStringify != null) {
+            return withStringify;
         }
         MacroMatch raw = matchMacro(text, index, MACRO_SCOPE_RAW, MacroType.SCOPE_RAW);
         if (raw != null) {
@@ -264,7 +264,7 @@ final class ScriptScopeMacroRewriter {
     private enum MacroType {
         SCOPE,
         SCOPE_AS_STRING,
-        SCOPE_AS_JSON,
+        SCOPE_WITH_STRINGIFY,
         SCOPE_RAW
     }
 

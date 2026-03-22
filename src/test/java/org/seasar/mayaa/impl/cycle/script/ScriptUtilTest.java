@@ -182,16 +182,16 @@ public class ScriptUtilTest {
         assertEquals("${_mayaa_scope_as_string(user.name)}", asStringBlocks[1].getScriptText());
         assertEquals(";", asStringBlocks[2].getScriptText());
 
-        CompiledScript asJson = ScriptUtil.compile("var d = MAYAA_SCOPE_AS_JSON(user);");
-        assertFalse(asJson.isLiteral());
-        assertEquals("var d = ${_mayaa_scope_as_json(user)};", asJson.getScriptText());
-        assertEquals(ComplexScript.class, asJson.getClass());
-        CompiledScript[] asJsonBlocks = ((ComplexScript) asJson).getCompiledScripts();
-        assertEquals(3, asJsonBlocks.length);
-        assertEquals("var d = ", asJsonBlocks[0].getScriptText());
-        assertEquals(RawOutputCompiledScript.class, asJsonBlocks[1].getClass());
-        assertEquals("${_mayaa_scope_as_json(user)}", asJsonBlocks[1].getScriptText());
-        assertEquals(";", asJsonBlocks[2].getScriptText());
+        CompiledScript withStringify = ScriptUtil.compile("var d = MAYAA_SCOPE_WITH_STRINGIFY(user);");
+        assertFalse(withStringify.isLiteral());
+        assertEquals("var d = ${_mayaa_scope_with_stringify(user)};", withStringify.getScriptText());
+        assertEquals(ComplexScript.class, withStringify.getClass());
+        CompiledScript[] withStringifyBlocks = ((ComplexScript) withStringify).getCompiledScripts();
+        assertEquals(3, withStringifyBlocks.length);
+        assertEquals("var d = ", withStringifyBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, withStringifyBlocks[1].getClass());
+        assertEquals("${_mayaa_scope_with_stringify(user)}", withStringifyBlocks[1].getScriptText());
+        assertEquals(";", withStringifyBlocks[2].getScriptText());
 
         CompiledScript raw = ScriptUtil.compile("var c = MAYAA_SCOPE_RAW(user.name);");
         assertFalse(raw.isLiteral());
@@ -206,14 +206,14 @@ public class ScriptUtilTest {
     }
 
     @Test
-    public void testCompile_scopeAsJson_isNotRewrittenOutsideScriptContext() {
-        CompiledScript asJson = ScriptUtil.compile("var payload = MAYAA_SCOPE_AS_JSON(user);");
-        assertEquals(LiteralScript.class, asJson.getClass());
-        assertEquals("var payload = MAYAA_SCOPE_AS_JSON(user);", asJson.getScriptText());
+    public void testCompile_scopeWithStringify_isNotRewrittenOutsideScriptContext() {
+        CompiledScript withStringify = ScriptUtil.compile("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);");
+        assertEquals(LiteralScript.class, withStringify.getClass());
+        assertEquals("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);", withStringify.getScriptText());
     }
 
     @Test
-    public void testCompile_scopeAsJson_embedsObjectAsJsonTextInScriptContext() {
+    public void testCompile_scopeWithStringify_embedsObjectAsJsonTextInScriptContext() {
         SpecificationNodeImpl scriptNode = new SpecificationNodeImpl(
                 QNameImpl.getInstance("http://www.w3.org/TR/html4", "script"));
         CycleUtil.getServiceCycle().setInjectedNode(scriptNode);
@@ -223,7 +223,7 @@ public class ScriptUtilTest {
         user.put("count", Integer.valueOf(2));
         CycleUtil.getPageScope().setAttribute("user", user);
 
-        CompiledScript script = ScriptUtil.compile("var payload = MAYAA_SCOPE_AS_JSON(user);");
+        CompiledScript script = ScriptUtil.compile("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);");
         assertEquals(ComplexScript.class, script.getClass());
         String output = (String) script.execute(String.class, null);
         assertEquals("var payload = {\"name\":\"Alice\",\"count\":2};", output);

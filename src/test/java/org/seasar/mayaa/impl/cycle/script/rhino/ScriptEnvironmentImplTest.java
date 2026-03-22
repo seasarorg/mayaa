@@ -15,7 +15,9 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -24,8 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.impl.IllegalParameterValueException;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
 
@@ -79,6 +83,36 @@ public class ScriptEnvironmentImplTest {
                 "var obj = { run: function() { return 'hi'; } }; obj.run();", false, "$");
         CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
         assertFalse(script.isLiteral());
+    }
+
+    @Test
+    public void testCompileRawOutput() {
+        ScriptBlock block = new ScriptBlock(" user.name ", false, "$", true);
+        CompiledScript script = _scriptEnvironment.compile(block, _position, 1);
+        assertTrue(script instanceof RawOutputCompiledScript);
+    }
+
+    @Test
+    public void testAutoEscapeDefaults() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        assertFalse(env.isAutoEscapeEnabled());
+    }
+
+    @Test
+    public void testSetParameterAutoEscapeEnabled() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        env.setParameter("autoEscapeEnabled", "true");
+        assertTrue(env.isAutoEscapeEnabled());
+
+        env.setParameter("autoEscapeEnabled", "false");
+        assertFalse(env.isAutoEscapeEnabled());
+    }
+
+    @Test
+    public void testSetParameterValidation() {
+        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
+        assertThrows(IllegalParameterValueException.class,
+                () -> env.setParameter("autoEscapeEnabled", "invalid"));
     }
 
     @Test

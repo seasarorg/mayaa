@@ -43,13 +43,16 @@ import org.seasar.mayaa.impl.FactoryFactoryImpl;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
+import java.util.List;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.seasar.mayaa.provider.ServiceProvider;
 import org.seasar.mayaa.source.SourceDescriptor;
+import org.seasar.mayaa.test.util.AutoEscapeTestConfigurer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -133,6 +136,22 @@ public class EngineTestBase {
         Page page = getPage();
         System.out.println("PAGE DUMP ==============");
         printTree(page);
+    }
+
+    public void printDiagnosticEvents() {
+        if (!isDumpEnabled()) {
+            return;
+        }
+        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        System.out.println("DIAGNOSTIC EVENTS (" + events.size() + ") ==============");
+        for (int i = 0; i < events.size(); i++) {
+            DiagnosticEventBuffer.Event e = events.get(i);
+            System.out.printf("  [%d] %s/%s label=%s%n", i, e.phase(), e.level(), e.label());
+            System.out.printf("       message   : %s%n", e.message());
+            System.out.printf("       scriptText: %s%n", e.scriptText());
+            System.out.printf("       sample    : %s%n", e.sample());
+            System.out.printf("       position  : %s:%d%n", e.positionSystemID(), e.positionLineNumber());
+        }
     }
 
     public void printTemplateTree() {
@@ -233,6 +252,8 @@ public class EngineTestBase {
         FactoryFactory.setContext(servletContext);
 
         engine = ProviderUtil.getEngine();
+        AutoEscapeTestConfigurer.applyFromSystemProperties(
+            getServiceProvider().getScriptEnvironment());
         engine.reset();
         // デフォルトのエラーハンドラを無効化して内部の例外でJUnitを失敗させる。
         engine.setErrorHandler(new NullErrorHandler());
@@ -381,6 +402,7 @@ public class EngineTestBase {
 
         // Then
         verifyResponse(response, expectedContentPath);
+        printDiagnosticEvents();
     }
 
 }

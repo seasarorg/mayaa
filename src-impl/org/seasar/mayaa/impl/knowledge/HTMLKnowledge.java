@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.util.StringUtil;
 
 public class HTMLKnowledge {
   /**
@@ -131,14 +130,6 @@ public class HTMLKnowledge {
       }
     }
     return HTML_ENTITIES.get(name);
-  }
-
-  public static String escapeHTMLEntity(String text) {
-    return StringUtil.escapeXml(text);
-  }
-
-  public static String escapeHTMLEntityExceptAmp(String text) {
-    return StringUtil.escapeXmlWithoutAmp(text);
   }
 
   public static String unescapeHTMLEntity(String text) {

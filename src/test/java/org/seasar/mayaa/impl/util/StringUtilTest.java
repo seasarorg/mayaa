@@ -347,7 +347,6 @@ public class StringUtilTest {
         assertEquals("&amp;amp;", StringUtil.escapeXml("&amp;"));
         assertEquals("test&lt;&gt;test", StringUtil.escapeXml("test<>test"));
         assertEquals("&quot;&amp;gt;&quot;", StringUtil.escapeXml("\"&gt;\""));
-        // "'" はエスケープしないようにした (rev.2811)
         assertEquals("'&amp;gt;'", StringUtil.escapeXml("'&gt;'"));
         assertEquals("test", StringUtil.escapeXml("test"));
     }
@@ -358,7 +357,6 @@ public class StringUtilTest {
         assertEquals("&amp;", StringUtil.escapeXmlWithoutAmp("&amp;"));
         assertEquals("test&lt;&gt;test", StringUtil.escapeXmlWithoutAmp("test<>test"));
         assertEquals("&quot;&gt;&quot;", StringUtil.escapeXmlWithoutAmp("\"&gt;\""));
-        // "'" はエスケープしないようにした (rev.2811)
         assertEquals("'&gt;'", StringUtil.escapeXmlWithoutAmp("'&gt;'"));
         assertEquals("test", StringUtil.escapeXmlWithoutAmp("test"));
     }

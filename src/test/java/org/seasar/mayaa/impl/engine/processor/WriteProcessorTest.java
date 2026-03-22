@@ -16,8 +16,11 @@
 package org.seasar.mayaa.impl.engine.processor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author katochin
@@ -31,11 +34,36 @@ public class WriteProcessorTest {
 		_writeProcessor = new WriteProcessor();
 	}
 	
+	@Test
 	public void testBodyTextMatches() {
-		assertEquals(true, _writeProcessor.isExistsBodyTextInScript("${ (new Number(bodyText))*2 \n}"));
-		assertEquals(false, _writeProcessor.isExistsBodyTextInScript(""));
-		assertEquals(true, _writeProcessor.isExistsBodyTextInScript("${'123'+bodyText\n} and ${bodyText+'321'\n}"));
-		assertEquals(false, _writeProcessor.isExistsBodyTextInScript("dummy"));
+		assertTrue(_writeProcessor.isExistsBodyTextInScript("${ (new Number(bodyText))*2 \n}"));
+		assertFalse(_writeProcessor.isExistsBodyTextInScript(""));
+		assertTrue(_writeProcessor.isExistsBodyTextInScript("${'123'+bodyText\n} and ${bodyText+'321'\n}"));
+		assertFalse(_writeProcessor.isExistsBodyTextInScript("dummy"));
+	}
+
+	@Test
+	public void testApplyEscapeByOutputContext_htmlBody() {
+		String actual = WriteProcessor.applyEscapeByOutputContext("\"x\" & <y>", OutputContext.HTML_BODY);
+		assertEquals("\"x\" &amp; &lt;y&gt;", actual);
+	}
+
+	@Test
+	public void testApplyEscapeByOutputContext_htmlAttribute() {
+		String actual = WriteProcessor.applyEscapeByOutputContext("\"x\" & <y> '", OutputContext.HTML_ATTRIBUTE);
+		assertEquals("&quot;x&quot; &amp; &lt;y&gt; &#39;", actual);
+	}
+
+	@Test
+	public void testApplyEscapeByOutputContext_script() {
+		String actual = WriteProcessor.applyEscapeByOutputContext("\"x\"\n", OutputContext.SCRIPT);
+		assertEquals("\\\"x\\\"\\n", actual);
+	}
+
+	@Test
+	public void testApplyEscapeByOutputContext_style() {
+		String actual = WriteProcessor.applyEscapeByOutputContext("\"x\"\n", OutputContext.STYLE);
+		assertEquals("\\\"x\\\"\\00000A ", actual);
 	}
 	
 }

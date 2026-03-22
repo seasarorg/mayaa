@@ -37,14 +37,17 @@ public class ScriptBlockIteratorTest {
         assertTrue(it.hasNext());
         ScriptBlock block1 = (ScriptBlock)it.next();
         assertFalse(block1.isLiteral());
+        assertFalse(block1.isRawOutput());
         assertEquals(" 123 ", block1.getBlockString());
         assertTrue(it.hasNext());
         ScriptBlock block2 = (ScriptBlock)it.next();
         assertTrue(block2.isLiteral());
+        assertFalse(block2.isRawOutput());
         assertEquals(" 456 ", block2.getBlockString());
         assertTrue(it.hasNext());
         ScriptBlock block3 = (ScriptBlock)it.next();
         assertFalse(block3.isLiteral());
+        assertFalse(block3.isRawOutput());
         assertEquals(" 789 ", block3.getBlockString());
         try {
             it.next();
@@ -217,6 +220,25 @@ public class ScriptBlockIteratorTest {
             // test environment
             assertTrue(true);
         }
+    }
+
+    @Test
+    public void testRawOutputBlock() {
+        Iterator<ScriptBlock> it = new ScriptBlockIterator(
+                "prefix ${= user.name } suffix", "$", false);
+        ScriptBlock block1 = it.next();
+        assertTrue(block1.isLiteral());
+        assertEquals("prefix ", block1.getBlockString());
+
+        ScriptBlock block2 = it.next();
+        assertFalse(block2.isLiteral());
+        assertTrue(block2.isRawOutput());
+        assertEquals(" user.name ", block2.getBlockString());
+
+        ScriptBlock block3 = it.next();
+        assertTrue(block3.isLiteral());
+        assertEquals(" suffix", block3.getBlockString());
+        assertFalse(it.hasNext());
     }
 
 }

@@ -22,6 +22,7 @@ import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.JspFragment;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -59,7 +60,7 @@ public class SimpleBodyTestTag extends SimpleTagSupport {
         JspWriter writer = getJspContext().getOut();
         writer.print(echo);
         writer.print(_simpleName);
-        writer.print(StringUtil.escapeXml(_styleClass));
+        writer.print(EscapeUtil.escapeHtmlBody(_styleClass));
 
         JspFragment body = getJspBody();
         if (body != null) {

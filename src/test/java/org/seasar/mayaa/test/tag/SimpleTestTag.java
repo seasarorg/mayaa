@@ -23,7 +23,7 @@ import jakarta.servlet.jsp.tagext.JspTag;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 import jakarta.servlet.jsp.tagext.Tag;
 
-import org.seasar.mayaa.impl.util.StringUtil;
+import org.seasar.mayaa.impl.util.EscapeUtil;
 
 /**
  * SimpleTagのテスト用。
@@ -63,7 +63,7 @@ public class SimpleTestTag extends SimpleTagSupport {
         JspWriter writer = getJspContext().getOut();
         writer.print(echo);
         writer.print(_simpleName);
-        writer.print(StringUtil.escapeXml(_styleClass));
+        writer.print(EscapeUtil.escapeHtmlBody(_styleClass));
 
         JspTag parent = getParent();
         while (parent != null) {

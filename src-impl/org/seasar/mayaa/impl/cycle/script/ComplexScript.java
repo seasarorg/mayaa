@@ -65,6 +65,10 @@ public class ComplexScript implements CompiledScript {
         return buffer.toString();
     }
 
+    public CompiledScript[] getCompiledScripts() {
+        return _compiled.clone();
+    }
+
     public boolean isLiteral() {
         return false;
     }

@@ -40,9 +40,11 @@ import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.ProcessorPropertyWrapper;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
+import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -75,6 +77,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
 
     private PrefixAwareName _name;
     private boolean _duplicated;
+    private transient boolean _outputContextPushed;
 
     protected void clearCurrentNS() {
         CycleUtil.clearGlobalVariable(CURRENT_NS_KEY);
@@ -283,14 +286,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 if (result == null) {
                     return;
                 }
-                if (script instanceof LiteralScript) {
+                if (script instanceof LiteralScript || script instanceof RawOutputCompiledScript) {
                     valueStr = result.toString();
                 } else {
-                    if (escapeAmp) {
-                        valueStr = HTMLKnowledge.escapeHTMLEntity(result.toString());
-                    } else {
-                        valueStr = HTMLKnowledge.escapeHTMLEntityExceptAmp(result.toString());
-                    }
+                    valueStr = applyHtmlAttributeAutoEscape(result.toString(), script,
+                            AutoEscapeContext.isAutoEscapeEnabled(),
+                            escapeAmp,
+                            OutputContext.HTML_ATTRIBUTE);
                 }
                 valueStr = StringUtil.escapeWhitespace(valueStr);
             }
@@ -308,6 +310,31 @@ public class ElementProcessor extends AbstractAttributableProcessor
             }
             buffer.append(temp.toString());
         }
+    }
+
+    static String applyHtmlAttributeAutoEscape(String value,
+            CompiledScript script,
+            boolean autoEscapeEnabled,
+            boolean escapeAmp,
+            OutputContext outputContext) {
+        if (value == null) {
+            return null;
+        }
+        if (script == null || script instanceof LiteralScript
+                || script instanceof RawOutputCompiledScript) {
+            return value;
+        }
+        if (outputContext != OutputContext.HTML_ATTRIBUTE) {
+            return value;
+        }
+
+        if (autoEscapeEnabled && EscapeUtil.isEscaped(value)) {
+            return value;
+        }
+        if (escapeAmp) {
+            return EscapeUtil.escapeHtml(value);
+        }
+        return EscapeUtil.escapeHtmlWithoutAmp(value);
     }
 
     protected boolean needsCloseElement(QName qName) {
@@ -422,12 +449,18 @@ public class ElementProcessor extends AbstractAttributableProcessor
         if (getName() == null) {
             throw new IllegalStateException();
         }
+        QName qName = getName().getQName();
         StringBuilder buffer = new StringBuilder(128);
         writePart1(buffer);
         appendPrefixMappingStrings(buffer, getCurrentNS());
         writePart2(buffer);
         writePart3(buffer);
         write(buffer.toString());
+        _outputContextPushed = false;
+        if (needsCloseElement(qName)) {
+            OutputContextStack.push(resolveOutputContext(qName));
+            _outputContextPushed = true;
+        }
         return ProcessStatus.EVAL_BODY_INCLUDE;
     }
 
@@ -442,6 +475,31 @@ public class ElementProcessor extends AbstractAttributableProcessor
         StringBuilder buffer = new StringBuilder(16);
         writePart4(buffer);
         write(buffer.toString());
+        if (_outputContextPushed) {
+            OutputContextStack.pop();
+            _outputContextPushed = false;
+        }
+    }
+
+    private OutputContext resolveOutputContext(QName qName) {
+        if (qName == null) {
+            throw new IllegalArgumentException();
+        }
+        if (isHTML(qName) || isXHTML(qName)) {
+            String localName = qName.getLocalName();
+            if ("script".equalsIgnoreCase(localName)) {
+                return OutputContext.SCRIPT;
+            }
+            if ("style".equalsIgnoreCase(localName)) {
+                return OutputContext.STYLE;
+            }
+            if ("textarea".equalsIgnoreCase(localName)
+                    || "pre".equalsIgnoreCase(localName)) {
+                return OutputContext.TEXTAREA_PRE;
+            }
+            return OutputContext.HTML_BODY;
+        }
+        return OutputContextStack.current();
     }
 
     public ProcessStatus processStart(Page topLevelPage) {
@@ -498,7 +556,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 CharactersProcessor part2 =
                         new CharactersProcessor(prop, buffer.toString());
                 BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
-                list.add(part2);
+                OutputContextScopeProcessor attrScope = new OutputContextScopeProcessor(OutputContext.HTML_ATTRIBUTE);
+                attrScope.setOriginalNode(getOriginalNode());
+                attrScope.setInjectedNode(getInjectedNode());
+                attrScope.setProcessorDefinition(getProcessorDefinition());
+                attrScope.setEvalBodyInclude(true);
+                attrScope.addChildProcessor(part2);
+                list.add(attrScope);
             }
             for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
@@ -509,7 +573,13 @@ public class ElementProcessor extends AbstractAttributableProcessor
                     CharactersProcessor part2 =
                             new CharactersProcessor(prop, buffer.toString());
                     BuilderUtil.characterProcessorCopy(this, part2, sequenceIDGenerator);
-                    list.add(part2);
+                    OutputContextScopeProcessor attrScope = new OutputContextScopeProcessor(OutputContext.HTML_ATTRIBUTE);
+                    attrScope.setOriginalNode(getOriginalNode());
+                    attrScope.setInjectedNode(getInjectedNode());
+                    attrScope.setProcessorDefinition(getProcessorDefinition());
+                    attrScope.setEvalBodyInclude(true);
+                    attrScope.addChildProcessor(part2);
+                    list.add(attrScope);
                 }
             }
 
@@ -522,8 +592,21 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 list.add(part3);
             }
             int size = getChildProcessorSize();
-            for (int i = 0; i < size; i++) {
-                list.add(getChildProcessor(i));
+            OutputContext childContext = resolveOutputContext(getName().getQName());
+            if (size > 0 && childContext != OutputContext.HTML_BODY) {
+                OutputContextScopeProcessor scope = new OutputContextScopeProcessor(childContext);
+                scope.setOriginalNode(getOriginalNode());
+                scope.setInjectedNode(getInjectedNode());
+                scope.setProcessorDefinition(getProcessorDefinition());
+                scope.setEvalBodyInclude(true);
+                for (int i = 0; i < size; i++) {
+                    scope.addChildProcessor(getChildProcessor(i));
+                }
+                list.add(scope);
+            } else {
+                for (int i = 0; i < size; i++) {
+                    list.add(getChildProcessor(i));
+                }
             }
             buffer = new StringBuilder();
             writePart4(buffer);

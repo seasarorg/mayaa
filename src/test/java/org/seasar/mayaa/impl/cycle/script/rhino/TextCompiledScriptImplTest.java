@@ -119,4 +119,68 @@ public class TextCompiledScriptImplTest {
         assertEquals("bar", obj);
     }
 
+    @Test
+    public void testScopeMacroFunctionScope_returnsQuotedStringLiteral() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope('bar')", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"bar\"", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionScope_returnsNullLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("null", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsString_returnsQuotedBooleanString() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_string(false)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"false\"", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionAsString_returnsEmptyStringLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_as_string(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("\"\"", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionWithStringify_returnsJsonObjectText() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_with_stringify({foo: 'bar', count: 1})", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("{\"foo\":\"bar\",\"count\":1}", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionWithStringify_returnsNullLiteralForNull() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_with_stringify(null)", _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("null", obj);
+    }
+
+    @Test
+    public void testScopeMacroFunctionWithStringify_serializesNestedValuesLikeJsonStringify() {
+        TextCompiledScriptImpl script = new TextCompiledScriptImpl(
+                "_mayaa_scope_with_stringify({text: 'a\\\"b', skip: undefined, list: [1, undefined, 'x']})",
+                _position, 1);
+        Object obj = script.execute(Object.class, null);
+        assertTrue(obj instanceof String);
+        assertEquals("{\"text\":\"a\\\"b\",\"list\":[1,null,\"x\"]}", obj);
+    }
+
 }

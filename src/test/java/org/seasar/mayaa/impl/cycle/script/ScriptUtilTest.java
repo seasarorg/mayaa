@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,8 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
+import org.seasar.mayaa.impl.engine.specification.QNameImpl;
+import org.seasar.mayaa.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.cycle.script.rhino.TextCompiledScriptImpl;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
@@ -142,6 +146,87 @@ public class ScriptUtilTest {
 
         CompiledScript nullScript = ScriptUtil.compile("");
         assertSame(LiteralScript.NULL_LITERAL_SCRIPT, nullScript);
+    }
+
+    @Test
+    public void testCompile_rewriteMayaaScopeMacros_toScopeHelpers_onlyScriptContext() {
+        CompiledScript scope = ScriptUtil.compile("var a = MAYAA_SCOPE(user.name);");
+        assertEquals(LiteralScript.class, scope.getClass());
+        assertEquals("var a = MAYAA_SCOPE(user.name);", scope.getScriptText());
+
+        SpecificationNodeImpl scriptNode = new SpecificationNodeImpl(
+                QNameImpl.getInstance("http://www.w3.org/TR/html4", "script"));
+        CycleUtil.getServiceCycle().setInjectedNode(scriptNode);
+
+        scope = ScriptUtil.compile("var a = MAYAA_SCOPE(user.name);");
+        assertFalse(scope.isLiteral());
+        assertEquals("var a = ${_mayaa_scope(user.name)};", scope.getScriptText());
+        assertEquals(ComplexScript.class, scope.getClass());
+        CompiledScript[] scopeBlocks = ((ComplexScript) scope).getCompiledScripts();
+        assertEquals(3, scopeBlocks.length);
+        assertEquals(LiteralScript.class, scopeBlocks[0].getClass());
+        assertEquals("var a = ", scopeBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, scopeBlocks[1].getClass());
+        assertEquals("${_mayaa_scope(user.name)}", scopeBlocks[1].getScriptText());
+        assertEquals(LiteralScript.class, scopeBlocks[2].getClass());
+        assertEquals(";", scopeBlocks[2].getScriptText());
+
+        CompiledScript asString = ScriptUtil.compile("var b = MAYAA_SCOPE_AS_STRING(user.name);");
+        assertFalse(asString.isLiteral());
+        assertEquals("var b = ${_mayaa_scope_as_string(user.name)};", asString.getScriptText());
+        assertEquals(ComplexScript.class, asString.getClass());
+        CompiledScript[] asStringBlocks = ((ComplexScript) asString).getCompiledScripts();
+        assertEquals(3, asStringBlocks.length);
+        assertEquals("var b = ", asStringBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, asStringBlocks[1].getClass());
+        assertEquals("${_mayaa_scope_as_string(user.name)}", asStringBlocks[1].getScriptText());
+        assertEquals(";", asStringBlocks[2].getScriptText());
+
+        CompiledScript withStringify = ScriptUtil.compile("var d = MAYAA_SCOPE_WITH_STRINGIFY(user);");
+        assertFalse(withStringify.isLiteral());
+        assertEquals("var d = ${_mayaa_scope_with_stringify(user)};", withStringify.getScriptText());
+        assertEquals(ComplexScript.class, withStringify.getClass());
+        CompiledScript[] withStringifyBlocks = ((ComplexScript) withStringify).getCompiledScripts();
+        assertEquals(3, withStringifyBlocks.length);
+        assertEquals("var d = ", withStringifyBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, withStringifyBlocks[1].getClass());
+        assertEquals("${_mayaa_scope_with_stringify(user)}", withStringifyBlocks[1].getScriptText());
+        assertEquals(";", withStringifyBlocks[2].getScriptText());
+
+        CompiledScript raw = ScriptUtil.compile("var c = MAYAA_SCOPE_RAW(user.name);");
+        assertFalse(raw.isLiteral());
+        assertEquals("var c = ${user.name};", raw.getScriptText());
+        assertEquals(ComplexScript.class, raw.getClass());
+        CompiledScript[] rawBlocks = ((ComplexScript) raw).getCompiledScripts();
+        assertEquals(3, rawBlocks.length);
+        assertEquals("var c = ", rawBlocks[0].getScriptText());
+        assertEquals(RawOutputCompiledScript.class, rawBlocks[1].getClass());
+        assertEquals("${user.name}", rawBlocks[1].getScriptText());
+        assertEquals(";", rawBlocks[2].getScriptText());
+    }
+
+    @Test
+    public void testCompile_scopeWithStringify_isNotRewrittenOutsideScriptContext() {
+        CompiledScript withStringify = ScriptUtil.compile("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);");
+        assertEquals(LiteralScript.class, withStringify.getClass());
+        assertEquals("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);", withStringify.getScriptText());
+    }
+
+    @Test
+    public void testCompile_scopeWithStringify_embedsObjectAsJsonTextInScriptContext() {
+        SpecificationNodeImpl scriptNode = new SpecificationNodeImpl(
+                QNameImpl.getInstance("http://www.w3.org/TR/html4", "script"));
+        CycleUtil.getServiceCycle().setInjectedNode(scriptNode);
+
+        Map<String, Object> user = new LinkedHashMap<String, Object>();
+        user.put("name", "Alice");
+        user.put("count", Integer.valueOf(2));
+        CycleUtil.getPageScope().setAttribute("user", user);
+
+        CompiledScript script = ScriptUtil.compile("var payload = MAYAA_SCOPE_WITH_STRINGIFY(user);");
+        assertEquals(ComplexScript.class, script.getClass());
+        String output = (String) script.execute(String.class, null);
+        assertEquals("var payload = {\"name\":\"Alice\",\"count\":2};", output);
     }
 
 }

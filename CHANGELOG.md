@@ -1,5 +1,15 @@
 # 変更点
 
+## Mayaa 2.0.0 : T.B.D.
+
+### Changes
+
+#### 自動エスケープ（Issue #110）関連
+- クオートのエスケープ仕様を出力コンテキスト依存に整理しました。
+  * HTML本文（HTML_BODY / TEXTAREA_PRE）では `"` と `'` をエスケープしません。
+  * HTML属性（HTML_ATTRIBUTE）では `"` と `'` をそれぞれ `&quot;` / `&#39;` にエスケープします。
+- `m:write` の `escapeXml=true` は、`script` / `style` / `textarea` を含む現在の出力コンテキストを判定してエスケープ方式を自動選択するようにしました。
+
 ## Mayaa 1.3.0 : 2026-02-22
 
 ### Changes

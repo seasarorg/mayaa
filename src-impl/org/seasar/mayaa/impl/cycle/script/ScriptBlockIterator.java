@@ -140,6 +140,7 @@ public class ScriptBlockIterator implements Iterator<ScriptBlock> {
             throw new NoSuchElementException();
         }
         String blockStart = _blockSign + "{";
+        String rawBlockStart = _blockSign + "{=";
         int sign = _text.indexOf(blockStart, _offset);
         if (sign != -1) {
             if (_offset == sign) {
@@ -148,13 +149,18 @@ public class ScriptBlockIterator implements Iterator<ScriptBlock> {
                 if (close == -1) {
                     throw new UnbalancedBraceException(_text, _text.length());
                 }
-                String text = _text.substring(_offset + blockStart.length(), close);
+                boolean rawOutput = _text.startsWith(rawBlockStart, _offset);
+                int scriptBodyOffset = _offset + blockStart.length();
+                if (rawOutput) {
+                    scriptBodyOffset++;
+                }
+                String text = _text.substring(scriptBodyOffset, close);
                 _offset = close + 1;
                 if (_onTemplate) {
                     // テンプレート上の場合はエンティティ解決をしてからスクリプトに渡す
                     text = StringUtil.resolveEntity(text);
                 }
-                return new ScriptBlock(text, false, _blockSign);
+                return new ScriptBlock(text, false, _blockSign, rawOutput);
             }
             // literal
             String lastLiteralBlock = _text.substring(_offset, sign);

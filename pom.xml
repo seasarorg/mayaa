@@ -31,6 +31,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
     <doclint>none</doclint>
+    <mayaa.autoEscapeEnabled>false</mayaa.autoEscapeEnabled>
+    <mayaa.escapeDetectionLevel>normal</mayaa.escapeDetectionLevel>
   </properties>
 
   <profiles>
@@ -73,6 +75,14 @@
             </plugin>
           </plugins>
         </build>
+      </profile>
+      <profile>
+        <!-- 自動エスケープONでテストを実行するためのプロファイル -->
+        <id>withAutoEscape</id>
+        <properties>
+          <mayaa.autoEscapeEnabled>true</mayaa.autoEscapeEnabled>
+          <mayaa.escapeDetectionLevel>normal</mayaa.escapeDetectionLevel>
+        </properties>
       </profile>
   </profiles>
 
@@ -220,6 +230,8 @@
             <argLine>${jacocoArgs} -Xmx2048m</argLine>
             <systemPropertyVariables>
               <inMaven>1</inMaven>
+              <mayaa.autoEscapeEnabled>${mayaa.autoEscapeEnabled}</mayaa.autoEscapeEnabled>
+              <mayaa.escapeDetectionLevel>${mayaa.escapeDetectionLevel}</mayaa.escapeDetectionLevel>
             </systemPropertyVariables>
           </configuration>
         </plugin>
@@ -305,6 +317,8 @@
         <configuration>
           <systemPropertyVariables>
             <inMaven>1</inMaven>
+            <mayaa.autoEscapeEnabled>${mayaa.autoEscapeEnabled}</mayaa.autoEscapeEnabled>
+            <mayaa.escapeDetectionLevel>${mayaa.escapeDetectionLevel}</mayaa.escapeDetectionLevel>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -438,7 +452,7 @@
               <goal>start</goal>
             </goals>
             <configuration>
-              <jvmArgs>-Djetty.port=8999 ${jacocoArgsIt}</jvmArgs>
+              <jvmArgs>-Djetty.port=8999 -Dmayaa.autoEscapeEnabled=${mayaa.autoEscapeEnabled} -Dmayaa.escapeDetectionLevel=${mayaa.escapeDetectionLevel} ${jacocoArgsIt}</jvmArgs>
               <waitForChild>false</waitForChild>
             </configuration>
           </execution>

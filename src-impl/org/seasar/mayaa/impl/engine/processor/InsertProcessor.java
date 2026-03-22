@@ -313,6 +313,7 @@ public class InsertProcessor
         properties.clear();
 
         invokeBeforeRenderComponent(renderPage);
+        Boolean previousAutoEscapeOverride = AutoEscapeContext.getPageAutoEscapeEnabled();
         try {
             ProcessStatus ret;
             getRenderingInsertChain().push(this);
@@ -343,6 +344,8 @@ public class InsertProcessor
         } catch(RuntimeException e) {
             invokeAfterRenderComponent();
             throw e;
+        } finally {
+            AutoEscapeContext.setPageAutoEscapeEnabled(previousAutoEscapeOverride);
         }
     }
 

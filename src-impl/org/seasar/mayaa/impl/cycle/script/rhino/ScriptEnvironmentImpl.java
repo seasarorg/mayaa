@@ -32,6 +32,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
+import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
 import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
@@ -63,8 +64,12 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 
     // singleton
     private static WrapFactory _wrap;
+    private static final String[] SCOPE_MACRO_FUNCTIONS = {
+        "_mayaa_scope", "_mayaa_scope_as_string", "_mayaa_scope_with_stringify"
+    };
 
     private boolean _useGetterScriptEmulation;
+    private boolean _autoEscapeEnabled;
 
     public ScriptEnvironmentImpl() {
         super();
@@ -93,6 +98,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 }
                 return s;
             });
+	        if (scriptBlock.isRawOutput()) {
+	            return new RawOutputCompiledScript(script);
+	        }
 	        return script;
         }
     }
@@ -136,6 +144,9 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                             ScriptableObject scope = (ScriptableObject) result;
                             scope.defineProperty("__global__", scope,
                                     ScriptableObject.READONLY | ScriptableObject.DONTENUM);
+                            scope.defineFunctionProperties(SCOPE_MACRO_FUNCTIONS,
+                                ScopeMacroFunctionSupport.class,
+                                ScriptableObject.DONTENUM);
                         }
                         _standardObjects = result; // volatile write: publish after core init
                         // NativeJavaPackage の内部キャッシュを起動時に一度だけ pre-warm。
@@ -294,6 +305,10 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return _wrap;
     }
 
+    public boolean isAutoEscapeEnabled() {
+        return _autoEscapeEnabled;
+    }
+
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
@@ -308,6 +323,15 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);
+        } else if ("autoEscapeEnabled".equals(name)) {
+            if (StringUtil.isEmpty(value)) {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
+            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+                _autoEscapeEnabled = ObjectUtil.booleanValue(value, false);
+            } else {
+                throw new IllegalParameterValueException(getClass(), name);
+            }
         } else if ("useGetterScriptEmulation".equals("name")) {
             if (StringUtil.isEmpty(value)) {
                 throw new IllegalParameterValueException(getClass(), name);

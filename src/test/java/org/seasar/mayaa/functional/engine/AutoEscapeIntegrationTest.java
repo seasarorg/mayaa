@@ -47,12 +47,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         getServiceProvider().getScriptEnvironment().setParameter(
                 "autoEscapeEnabled", Boolean.toString(enabled));
     }
-
-    void setEscapeDetectionLevel(String level) {
-        getServiceProvider().getScriptEnvironment().setParameter(
-                "escapeDetectionLevel", level);
-    }
-
     @AfterEach
     void cleanup() {
         DynamicRegisteredSourceHolder.unregisterAll();
@@ -65,7 +59,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
             throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
-        setEscapeDetectionLevel("normal");
 
         Map<String, Object> vars = createPageScope();
 
@@ -128,7 +121,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
             throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
-        setEscapeDetectionLevel("normal");
 
         Map<String, Object> vars = createPageScope();
 
@@ -203,7 +195,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
             throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
-        setEscapeDetectionLevel("normal");
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
         vars.put("safeHtml", "&lt;strong&gt;already escaped&lt;/strong&gt;");
@@ -233,7 +224,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                         throws IOException {
                 setUseNewParser(useNewParser);
                 setAutoEscapeEnabled(false);
-                setEscapeDetectionLevel("normal");
 
                 Map<String, Object> vars = new LinkedHashMap<String, Object>();
                 vars.put("safeHtml", "&lt;strong&gt;already escaped&lt;/strong&gt;");
@@ -260,7 +250,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                     throws IOException {
                 setUseNewParser(useNewParser);
                 setAutoEscapeEnabled(false);
-                setEscapeDetectionLevel("normal");
 
                 Map<String, Object> vars = new LinkedHashMap<String, Object>();
                 vars.put("safeAttr", "Tom &amp; Jerry");
@@ -286,7 +275,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                     throws IOException {
                 setUseNewParser(useNewParser);
                 setAutoEscapeEnabled(false);
-                setEscapeDetectionLevel("normal");
 
                 Map<String, Object> vars = new LinkedHashMap<String, Object>();
                 vars.put("safeJs", "Tom &amp; Jerry");
@@ -316,7 +304,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                     throws IOException {
                 setUseNewParser(useNewParser);
                 setAutoEscapeEnabled(false);
-                setEscapeDetectionLevel("normal");
 
                 Map<String, Object> vars = new LinkedHashMap<String, Object>();
                 vars.put("safeCss", "\\\"x\\\"\\00000A ");
@@ -338,7 +325,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                     throws IOException {
                 setUseNewParser(useNewParser);
                 setAutoEscapeEnabled(false);
-                setEscapeDetectionLevel("normal");
 
                 Map<String, Object> vars = new LinkedHashMap<String, Object>();
                 vars.put("safeText", "&lt;strong&gt;already escaped&lt;/strong&gt;");
@@ -364,7 +350,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
             throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
-        setEscapeDetectionLevel("normal");
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
         vars.put("trustedHtml", "<em>trusted</em>");

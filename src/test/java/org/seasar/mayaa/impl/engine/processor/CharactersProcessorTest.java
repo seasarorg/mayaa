@@ -24,7 +24,6 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
-import org.seasar.mayaa.impl.util.EscapeUtil;
 
 public class CharactersProcessorTest {
 
@@ -32,7 +31,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_dynamicHtmlBody() {
         String escaped = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom & Jerry</b>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("&lt;b&gt;Tom &amp; Jerry&lt;/b&gt;", escaped);
     }
 
@@ -40,7 +39,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_dynamicHtmlBody_quoteIsNotEscaped() {
         String escaped = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "\"Tom\" & Jerry", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("\"Tom\" &amp; Jerry", escaped);
     }
 
@@ -48,7 +47,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_disabled() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom</b>", new NonLiteralScript(), false,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("<b>Tom</b>", output);
     }
 
@@ -56,12 +55,12 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_literalOrRaw() {
         String literal = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom</b>", new LiteralScript("<b>Tom</b>"), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("<b>Tom</b>", literal);
 
         String raw = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom</b>", new RawOutputCompiledScript(new NonLiteralScript()), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("<b>Tom</b>", raw);
     }
 
@@ -69,7 +68,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_script() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "O'Reilly\n", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+                OutputContext.SCRIPT);
         assertEquals("O\\'Reilly\\n", output);
     }
 
@@ -77,7 +76,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_scriptLiteralIsNotEscaped() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "O'Reilly\n", new LiteralScript("O'Reilly\\n"), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+                OutputContext.SCRIPT);
         assertEquals("O'Reilly\n", output);
     }
 
@@ -90,7 +89,7 @@ public class CharactersProcessorTest {
         };
         String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
             scripts, String.class, true,
-            EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+            OutputContext.SCRIPT);
         assertEquals("var v = 'O\\'Reilly';", output);
         }
 
@@ -103,7 +102,7 @@ public class CharactersProcessorTest {
         };
         String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
             scripts, String.class, true,
-            EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+            OutputContext.SCRIPT);
         assertEquals("var data = {\"k\":\"A'B\"};", output);
         }
 
@@ -116,7 +115,7 @@ public class CharactersProcessorTest {
             };
             String output = CharactersProcessor.applyHtmlBodyAutoEscapePerBlock(
                 scripts, Void.class, true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.SCRIPT);
+                OutputContext.SCRIPT);
             assertEquals(null, output);
                 assertEquals(2, count[0]);
             }
@@ -125,7 +124,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_style() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "\"x\"\n", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.STYLE);
+                OutputContext.STYLE);
         assertEquals("\\\"x\\\"\\00000A ", output);
     }
 
@@ -133,7 +132,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_textareaPre() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom & Jerry</b>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.TEXTAREA_PRE);
+                OutputContext.TEXTAREA_PRE);
         assertEquals("&lt;b&gt;Tom &amp; Jerry&lt;/b&gt;", output);
     }
 
@@ -141,7 +140,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_alreadyEscaped() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "&lt;b&gt;Tom&lt;/b&gt;", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
         assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
     }
 
@@ -151,7 +150,7 @@ public class CharactersProcessorTest {
 
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom & Jerry</b>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_COMMENT);
+                OutputContext.HTML_COMMENT);
 
         assertEquals("<b>Tom & Jerry</b>", output);
         assertEquals(0, DiagnosticEventBuffer.snapshot().size());
@@ -163,7 +162,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_htmlAttribute_dynamicEscaped() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<script>alert('xss')</script>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;", output);
     }
 
@@ -171,7 +170,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_htmlAttribute_doubleQuoteEscaped() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "Tom & \"Jerry\"", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("Tom &amp; &quot;Jerry&quot;", output);
     }
 
@@ -179,7 +178,7 @@ public class CharactersProcessorTest {
     public void testApplyHtmlBodyAutoEscape_htmlAttribute_disabledReturnsUnescaped() {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "Tom & <b>Jerry</b>", new NonLiteralScript(), false,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("Tom & <b>Jerry</b>", output);
     }
 
@@ -188,7 +187,7 @@ public class CharactersProcessorTest {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "Tom & <b>Jerry</b>",
                 new LiteralScript("Tom & <b>Jerry</b>"), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("Tom & <b>Jerry</b>", output);
     }
 
@@ -197,7 +196,7 @@ public class CharactersProcessorTest {
         // isEscaped() が true と判定する &amp; を含む値 → エスケープスキップ
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "Tom &amp; Jerry", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("Tom &amp; Jerry", output);
     }
 
@@ -206,7 +205,7 @@ public class CharactersProcessorTest {
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>safe html</b>",
                 new RawOutputCompiledScript(new NonLiteralScript()), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_ATTRIBUTE);
+                OutputContext.HTML_ATTRIBUTE);
         assertEquals("<b>safe html</b>", output);
     }
 
@@ -216,7 +215,7 @@ public class CharactersProcessorTest {
 
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom</b>", new NonLiteralScript(), false,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
 
         assertEquals("<b>Tom</b>", output);
 
@@ -240,7 +239,7 @@ public class CharactersProcessorTest {
 
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "&lt;b&gt;Tom&lt;/b&gt;", new NonLiteralScript(), false,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+                OutputContext.HTML_BODY);
 
         assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
         assertEquals(0, DiagnosticEventBuffer.snapshot().size());

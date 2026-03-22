@@ -17,7 +17,6 @@ package org.seasar.mayaa.test.util;
 
 import org.seasar.mayaa.cycle.script.ScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
-import org.seasar.mayaa.impl.util.EscapeUtil;
 
 /**
  * テスト実行時のみ autoEscape 関連のシステムプロパティを ScriptEnvironment に反映する。
@@ -25,7 +24,6 @@ import org.seasar.mayaa.impl.util.EscapeUtil;
 public final class AutoEscapeTestConfigurer {
 
     private static final String PROP_AUTO_ESCAPE_ENABLED = "mayaa.autoEscapeEnabled";
-    private static final String PROP_ESCAPE_DETECTION_LEVEL = "mayaa.escapeDetectionLevel";
 
     private AutoEscapeTestConfigurer() {
         // utility class
@@ -41,12 +39,6 @@ public final class AutoEscapeTestConfigurer {
         if ("true".equalsIgnoreCase(autoEscapeEnabled)
                 || "false".equalsIgnoreCase(autoEscapeEnabled)) {
             scriptEnvironment.setParameter("autoEscapeEnabled", autoEscapeEnabled);
-        }
-
-        String detectionLevel = System.getProperty(PROP_ESCAPE_DETECTION_LEVEL);
-        if (EscapeUtil.DETECTION_LEVEL_NORMAL.equalsIgnoreCase(detectionLevel)
-                || EscapeUtil.DETECTION_LEVEL_STRICT.equalsIgnoreCase(detectionLevel)) {
-            scriptEnvironment.setParameter("escapeDetectionLevel", detectionLevel.toLowerCase());
         }
     }
 }

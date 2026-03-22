@@ -291,7 +291,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 } else {
                     valueStr = applyHtmlAttributeAutoEscape(result.toString(), script,
                             AutoEscapeContext.isAutoEscapeEnabled(),
-                            AutoEscapeContext.getEscapeDetectionLevel(), escapeAmp,
+                            escapeAmp,
                             OutputContext.HTML_ATTRIBUTE);
                 }
                 valueStr = StringUtil.escapeWhitespace(valueStr);
@@ -315,7 +315,6 @@ public class ElementProcessor extends AbstractAttributableProcessor
     static String applyHtmlAttributeAutoEscape(String value,
             CompiledScript script,
             boolean autoEscapeEnabled,
-            String escapeDetectionLevel,
             boolean escapeAmp,
             OutputContext outputContext) {
         if (value == null) {
@@ -329,7 +328,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             return value;
         }
 
-        if (autoEscapeEnabled && EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+        if (autoEscapeEnabled && EscapeUtil.isEscaped(value)) {
             return value;
         }
         if (escapeAmp) {

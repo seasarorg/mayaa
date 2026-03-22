@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
-import org.seasar.mayaa.impl.util.EscapeUtil;
 
 public class ElementProcessorTest {
 
@@ -29,7 +28,7 @@ public class ElementProcessorTest {
     public void testApplyHtmlAttributeAutoEscape_enabled() {
         String escaped = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "\"x\" & <tag>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, true, OutputContext.HTML_ATTRIBUTE);
+                true, OutputContext.HTML_ATTRIBUTE);
         assertEquals("&quot;x&quot; &amp; &lt;tag&gt;", escaped);
     }
 
@@ -37,7 +36,7 @@ public class ElementProcessorTest {
     public void testApplyHtmlAttributeAutoEscape_enabledWithoutAmp() {
         String escaped = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "\"x\" & <tag>", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, false, OutputContext.HTML_ATTRIBUTE);
+                false, OutputContext.HTML_ATTRIBUTE);
         assertEquals("&quot;x&quot; & &lt;tag&gt;", escaped);
     }
 
@@ -45,7 +44,7 @@ public class ElementProcessorTest {
     public void testApplyHtmlAttributeAutoEscape_disabledUsesUnifiedEscaping() {
         String escaped = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "\"x\" & <tag> '", new NonLiteralScript(), false,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, true, OutputContext.HTML_ATTRIBUTE);
+                true, OutputContext.HTML_ATTRIBUTE);
         assertEquals("&quot;x&quot; &amp; &lt;tag&gt; &#39;", escaped);
     }
 
@@ -53,12 +52,12 @@ public class ElementProcessorTest {
     public void testApplyHtmlAttributeAutoEscape_literalOrRaw() {
         String literal = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "<tag>", new LiteralScript("<tag>"), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, true, OutputContext.HTML_ATTRIBUTE);
+                true, OutputContext.HTML_ATTRIBUTE);
         assertEquals("<tag>", literal);
 
         String raw = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "<tag>", new RawOutputCompiledScript(new NonLiteralScript()), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, true, OutputContext.HTML_ATTRIBUTE);
+                true, OutputContext.HTML_ATTRIBUTE);
         assertEquals("<tag>", raw);
     }
 
@@ -66,7 +65,7 @@ public class ElementProcessorTest {
     public void testApplyHtmlAttributeAutoEscape_alreadyEscaped() {
         String escaped = ElementProcessor.applyHtmlAttributeAutoEscape(
                 "&quot;x&quot;", new NonLiteralScript(), true,
-                EscapeUtil.DETECTION_LEVEL_NORMAL, true, OutputContext.HTML_ATTRIBUTE);
+                true, OutputContext.HTML_ATTRIBUTE);
         assertEquals("&quot;x&quot;", escaped);
     }
 

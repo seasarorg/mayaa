@@ -42,14 +42,14 @@ public class EscapeUtilTest {
 
     @Test
     public void testIsEscapedNormal() {
-        assertTrue(EscapeUtil.isEscaped("&lt;b&gt;", EscapeUtil.DETECTION_LEVEL_NORMAL));
-        assertTrue(EscapeUtil.isEscaped("\\\"quoted\\\"", EscapeUtil.DETECTION_LEVEL_NORMAL));
-        assertFalse(EscapeUtil.isEscaped("plain", EscapeUtil.DETECTION_LEVEL_NORMAL));
+        assertTrue(EscapeUtil.isEscaped("&lt;b&gt;"));
+        assertTrue(EscapeUtil.isEscaped("\\\"quoted\\\""));
+        assertFalse(EscapeUtil.isEscaped("plain"));
     }
 
     @Test
-    public void testIsEscapedStrict() {
-        assertFalse(EscapeUtil.isEscaped("&lt;b&gt;", EscapeUtil.DETECTION_LEVEL_STRICT));
-        assertTrue(EscapeUtil.isEscaped("&lt;b&gt; and \\\"quoted\\\"", EscapeUtil.DETECTION_LEVEL_STRICT));
+    public void testIsEscapedIgnoresLevelAndUsesNormalRule() {
+        assertTrue(EscapeUtil.isEscaped("&lt;b&gt;"));
+        assertTrue(EscapeUtil.isEscaped("&lt;b&gt; and \\\"quoted\\\""));
     }
 }

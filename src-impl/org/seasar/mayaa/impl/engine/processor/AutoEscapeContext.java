@@ -20,7 +20,6 @@ import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
-import org.seasar.mayaa.impl.util.EscapeUtil;
 
 /**
  * autoEscape 関連のリクエスト内コンテキストを扱う。
@@ -31,8 +30,6 @@ final class AutoEscapeContext {
             + "#pageAutoEscapeEnabled";
     private static final String REQUEST_CONFIG_ENABLED_KEY = AutoEscapeContext.class.getName()
             + "#configAutoEscapeEnabled";
-    private static final String REQUEST_CONFIG_DETECTION_LEVEL_KEY = AutoEscapeContext.class.getName()
-            + "#configEscapeDetectionLevel";
     private static final String REQUEST_SUPPRESS_DEPTH_KEY = AutoEscapeContext.class.getName()
             + "#autoEscapeSuppressDepth";
 
@@ -55,21 +52,6 @@ final class AutoEscapeContext {
         boolean configuredValue = getConfiguredAutoEscapeEnabled();
         if (requestScope != null) {
             requestScope.setAttribute(REQUEST_CONFIG_ENABLED_KEY, Boolean.valueOf(configuredValue));
-        }
-        return configuredValue;
-    }
-
-    static String getEscapeDetectionLevel() {
-        RequestScope requestScope = getRequestScopeSafely();
-        if (requestScope != null) {
-            Object cached = requestScope.getAttribute(REQUEST_CONFIG_DETECTION_LEVEL_KEY);
-            if (cached instanceof String) {
-                return (String) cached;
-            }
-        }
-        String configuredValue = getConfiguredEscapeDetectionLevel();
-        if (requestScope != null) {
-            requestScope.setAttribute(REQUEST_CONFIG_DETECTION_LEVEL_KEY, configuredValue);
         }
         return configuredValue;
     }
@@ -119,14 +101,6 @@ final class AutoEscapeContext {
             return ((ScriptEnvironmentImpl) env).isAutoEscapeEnabled();
         }
         return false;
-    }
-
-    private static String getConfiguredEscapeDetectionLevel() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).getEscapeDetectionLevel();
-        }
-        return EscapeUtil.DETECTION_LEVEL_NORMAL;
     }
 
     private static int[] getSuppressDepth() {

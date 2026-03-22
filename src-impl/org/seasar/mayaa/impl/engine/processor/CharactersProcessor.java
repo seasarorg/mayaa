@@ -88,7 +88,6 @@ public class CharactersProcessor extends TemplateProcessorSupport
             boolean autoEscape = AutoEscapeContext.isAutoEscapeEnabled()
                     && !_suppressAutoEscape
                     && !AutoEscapeContext.isAutoEscapeSuppressed();
-            String escapeDetectionLevel = AutoEscapeContext.getEscapeDetectionLevel();
             OutputContext outputContext = OutputContextStack.current();
             PositionAware position = resolveCurrentPositionAware();
 
@@ -96,13 +95,13 @@ public class CharactersProcessor extends TemplateProcessorSupport
                 output = applyHtmlBodyAutoEscapePerBlock(
                         ((ComplexScript) script).getCompiledScripts(),
                         text.getExpectedClass(), autoEscape,
-                        escapeDetectionLevel, outputContext,
+                        outputContext,
                         position);
             } else {
                 Object value = text.getExecutedValue(null);
                 if (value != null && value instanceof Undefined == false) {
                     output = applyHtmlBodyAutoEscape(value.toString(),
-                            script, autoEscape, escapeDetectionLevel,
+                            script, autoEscape,
                             outputContext, position);
                 }
             }
@@ -119,16 +118,14 @@ public class CharactersProcessor extends TemplateProcessorSupport
     static String applyHtmlBodyAutoEscapePerBlock(CompiledScript[] scripts,
             Class<?> expectedClass,
             boolean autoEscapeEnabled,
-            String escapeDetectionLevel,
             OutputContext outputContext) {
         return applyHtmlBodyAutoEscapePerBlock(scripts, expectedClass,
-            autoEscapeEnabled, escapeDetectionLevel, outputContext, null);
+            autoEscapeEnabled, outputContext, null);
     }
 
     static String applyHtmlBodyAutoEscapePerBlock(CompiledScript[] scripts,
             Class<?> expectedClass,
             boolean autoEscapeEnabled,
-            String escapeDetectionLevel,
             OutputContext outputContext,
             PositionAware position) {
         if (scripts == null || scripts.length == 0) {
@@ -145,7 +142,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                 continue;
             }
             String escaped = applyHtmlBodyAutoEscape(value.toString(),
-                    script, autoEscapeEnabled, escapeDetectionLevel,
+                    script, autoEscapeEnabled,
                     outputContext, position);
             if (escaped != null) {
                 buffer.append(escaped);
@@ -161,16 +158,14 @@ public class CharactersProcessor extends TemplateProcessorSupport
     static String applyHtmlBodyAutoEscape(String value,
             CompiledScript script,
             boolean autoEscapeEnabled,
-            String escapeDetectionLevel,
             OutputContext outputContext) {
         return applyHtmlBodyAutoEscape(value, script, autoEscapeEnabled,
-            escapeDetectionLevel, outputContext, null);
+            outputContext, null);
     }
 
     static String applyHtmlBodyAutoEscape(String value,
             CompiledScript script,
             boolean autoEscapeEnabled,
-            String escapeDetectionLevel,
             OutputContext outputContext,
             PositionAware position) {
         if (value == null) {
@@ -186,7 +181,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
             if (!autoEscapeEnabled) {
                 String escaped = EscapeUtil.escapeJavaScriptString(value);
                 if (!escaped.equals(value)
-                        && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                        && !EscapeUtil.isEscaped(value)) {
                     warnAndRecordAutoEscape(
                             "SCRIPT context: autoEscape が無効ですが、値に JavaScript エスケープが必要な文字が含まれています。"
                             + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
@@ -195,7 +190,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                 }
                 return value;
             }
-            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+            if (EscapeUtil.isEscaped(value)) {
                 warnAndRecordAutoEscape(
                         "SCRIPT context: 値が既にエスケープ済みと判定されました。"
                         + " 二重エスケープを避けるためにエスケープをスキップします。"
@@ -210,7 +205,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
             if (!autoEscapeEnabled) {
                 String escaped = EscapeUtil.escapeHtml(value);
                 if (!escaped.equals(value)
-                        && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                        && !EscapeUtil.isEscaped(value)) {
                     warnAndRecordAutoEscape(
                             "HTML_ATTRIBUTE context: autoEscape が無効ですが、値に HTML エスケープが必要な文字が含まれています。"
                             + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
@@ -219,7 +214,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                 }
                 return value;
             }
-            if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+            if (EscapeUtil.isEscaped(value)) {
                 warnAndRecordAutoEscape(
                         "HTML_ATTRIBUTE context: 値が既にエスケープ済みと判定されました。"
                         + " 二重エスケープを避けるためにエスケープをスキップします。"
@@ -234,7 +229,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
             String escaped = computeEscapedForContext(value, outputContext);
             if (escaped != null
                     && !escaped.equals(value)
-                    && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+                    && !EscapeUtil.isEscaped(value)) {
                 warnAndRecordAutoEscape(
                         outputContext.name() + " context: autoEscape が無効ですが、値に"
                         + " エスケープが必要な文字が含まれています。"
@@ -250,7 +245,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
             return value;
         }
 
-        if (EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
+        if (EscapeUtil.isEscaped(value)) {
             warnAndRecordAutoEscape(
                     outputContext.name() + " context: 値が既にエスケープ済みと判定されました。"
                     + " 二重エスケープを避けるためにエスケープをスキップします。"

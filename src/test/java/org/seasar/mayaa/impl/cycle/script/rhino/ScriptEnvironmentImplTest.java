@@ -96,7 +96,6 @@ public class ScriptEnvironmentImplTest {
     public void testAutoEscapeDefaults() {
         ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
         assertFalse(env.isAutoEscapeEnabled());
-        assertEquals("normal", env.getEscapeDetectionLevel());
     }
 
     @Test
@@ -110,22 +109,10 @@ public class ScriptEnvironmentImplTest {
     }
 
     @Test
-    public void testSetParameterEscapeDetectionLevel() {
-        ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
-        env.setParameter("escapeDetectionLevel", "strict");
-        assertEquals("strict", env.getEscapeDetectionLevel());
-
-        env.setParameter("escapeDetectionLevel", "normal");
-        assertEquals("normal", env.getEscapeDetectionLevel());
-    }
-
-    @Test
     public void testSetParameterValidation() {
         ScriptEnvironmentImpl env = new ScriptEnvironmentImpl();
         assertThrows(IllegalParameterValueException.class,
                 () -> env.setParameter("autoEscapeEnabled", "invalid"));
-        assertThrows(IllegalParameterValueException.class,
-                () -> env.setParameter("escapeDetectionLevel", "high"));
     }
 
     @Test

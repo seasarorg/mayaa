@@ -22,9 +22,6 @@ import java.util.regex.Pattern;
  */
 public class EscapeUtil {
 
-    public static final String DETECTION_LEVEL_NORMAL = "normal";
-    public static final String DETECTION_LEVEL_STRICT = "strict";
-
     private static final Pattern HTML_ESCAPE_PATTERN = Pattern.compile(
             "&(?:lt|gt|quot|apos|amp|#39|#[0-9]+|#x[0-9A-Fa-f]+);");
     private static final Pattern BACKSLASH_ESCAPE_PATTERN = Pattern.compile(
@@ -145,15 +142,12 @@ public class EscapeUtil {
         return sb.toString();
     }
 
-    public static boolean isEscaped(String value, String level) {
+    public static boolean isEscaped(String value) {
         if (StringUtil.isEmpty(value)) {
             return false;
         }
         boolean htmlEscaped = HTML_ESCAPE_PATTERN.matcher(value).find();
         boolean slashEscaped = BACKSLASH_ESCAPE_PATTERN.matcher(value).find();
-        if (DETECTION_LEVEL_STRICT.equalsIgnoreCase(level)) {
-            return htmlEscaped && slashEscaped;
-        }
         return htmlEscaped || slashEscaped;
     }
 }

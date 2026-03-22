@@ -512,7 +512,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
 
     protected ProcessorTreeWalker convertCharactersProcessor(
             ProcessorTreeWalker processor, SequenceIDGenerator idGenerator) {
-        if (processor instanceof CharactersProcessor) {
+        if (processor.getClass() == CharactersProcessor.class) {
             CharactersProcessor cnode = (CharactersProcessor)processor;
             if (cnode.getText() != null
                     && cnode.getText().getValue() != null

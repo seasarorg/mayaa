@@ -41,7 +41,7 @@ public class CommentProcessor extends CharactersProcessor {
     private static final String COMMENTIN = "<!--";
     private static final String COMMENTOUT = "-->";
     private static final Pattern AUTO_ESCAPE_DIRECTIVE = Pattern.compile(
-            "^\\s*m:autoEscape\\s*=\\s*\"(true|false)\"\\s*$",
+            "^\\s*m:autoEscape\\s*=\\s*(?:\"(true|false)\"|(true|false))\\s*$",
             Pattern.CASE_INSENSITIVE);
 
     private void writePart1(StringBuilder buffer) {
@@ -87,12 +87,11 @@ public class CommentProcessor extends CharactersProcessor {
         if (getOriginalNode().getQName().equals(QM_COMMENT) == false) {
             return new ProcessorTreeWalker[] { this };
         }
-        if (isAutoEscapeDirectiveComment()) {
-            return new ProcessorTreeWalker[] { this };
-        }
+        boolean isAutoEscapeDirectiveComment = isAutoEscapeDirectiveComment();
 
-        ProcessorTreeWalker[] results =
-                new ProcessorTreeWalker[2 + getChildProcessorSize()];
+        int divideSize = 2 +getChildProcessorSize();
+        divideSize += isAutoEscapeDirectiveComment ? 1 : 0;
+        ProcessorTreeWalker[] results = new ProcessorTreeWalker[divideSize];
 
         if (getText() == null) {
             setText(createVoidText());
@@ -103,11 +102,25 @@ public class CommentProcessor extends CharactersProcessor {
         CharactersProcessor characterProcessor =
             new CharactersProcessor(this, sb.toString(), true);
         BuilderUtil.characterProcessorCopy(this, characterProcessor, sequenceIDGenerator);
-        results[0] = characterProcessor;
 
+        int index = 0;
+        if (isAutoEscapeDirectiveComment) {
+            DirectiveProcessor directive = new DirectiveProcessor();
+            directive.setOriginalNode(getOriginalNode());
+            directive.setInjectedNode(getInjectedNode());
+            directive.setProcessorDefinition(getProcessorDefinition());
+            directive.setEvalBodyInclude(false);
+            String commentText = getText().getValue().getScriptText();
+            directive.setDirectiveName("autoEscape");
+            directive.setDirectiveValue(parseAutoEscapeDirective(commentText).toString());
+            results[index++] = directive;
+        }
+
+        results[index++] = characterProcessor;
         for (int i = 0; i < getChildProcessorSize(); i++) {
-            results[i + 1] = getChildProcessor(i);
-            results[i + 1].setParentProcessor(getStaticParentProcessor());
+            results[index] = getChildProcessor(i);
+            results[index].setParentProcessor(getStaticParentProcessor());
+            index++;
         }
 
         LiteralCharactersProcessor literal =
@@ -126,7 +139,11 @@ public class CommentProcessor extends CharactersProcessor {
         if (!matcher.matches()) {
             return null;
         }
-        return Boolean.valueOf(matcher.group(1).toLowerCase());
+        String value = matcher.group(1);
+        if (value == null) {
+            value = matcher.group(2);
+        }
+        return Boolean.valueOf(value.toLowerCase());
     }
 
     private boolean isAutoEscapeDirectiveComment() {

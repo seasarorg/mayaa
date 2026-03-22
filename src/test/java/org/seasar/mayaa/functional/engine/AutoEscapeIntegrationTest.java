@@ -35,6 +35,253 @@ import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
  * 実運用に近いHTMLを使って自動エスケープの主要パターンを検証するIT。
  */
 public class AutoEscapeIntegrationTest extends EngineTestBase {
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void ページ単位でautoEscape有効_グローバルOFFページON(boolean useNewParser) throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false); // グローバルOFF
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String target = """
+                <!-- m:autoEscape="true" -->
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <!-- non directive comment -->
+                <div>${msg}</div>
+                </body></html>
+                """;
+
+        String expected = """
+                <!-- m:autoEscape="true" -->
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <!-- non directive comment -->
+                <div>&lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div>
+                </body></html>
+                """;
+
+        registerAndVerify("page-override-on", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void ページ単位でautoEscape無効_グローバルONページOFF(boolean useNewParser) throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(true); // グローバルON
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String target = """
+                <!-- m:autoEscape="false" -->
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <!-- non directive comment -->
+                <div>${msg}</div>
+                </body></html>
+                """;
+
+        String expected = """
+                <!-- m:autoEscape="false" -->
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <!-- non directive comment -->
+                <div><b>bold</b> & 'quote'</div>
+                </body></html>
+                """;
+
+        registerAndVerify("page-override-off", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void ページ単位でautoEscape有効_引用符なし_グローバルOFFページON(boolean useNewParser) throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false); // グローバルOFF
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String target = """
+                <!-- m:autoEscape=true --><!DOCTYPE html>
+                <html><head></head><body>
+                <div>${msg}</div>
+                </body></html>
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div>&lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div>
+                </body></html>
+                """;
+
+        registerAndVerify("page-override-on-unquoted", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void ページ単位でautoEscape無効_引用符なし_グローバルONページOFF(boolean useNewParser) throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(true); // グローバルON
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String target = """
+                <!-- m:autoEscape=false --><!DOCTYPE html>
+                <html><head></head><body>
+                <div>${msg}</div>
+                </body></html>
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div><b>bold</b> & 'quote'</div>
+                </body></html>
+                """;
+
+        registerAndVerify("page-override-off-unquoted", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+        public void 共有レイアウト利用時にページ単位autoEscape有効はページ描画部分へ適用される(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false); // グローバルOFF
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String targetHtml = """
+                <div>
+                    <div id="content0"><!-- m:autoEscape="true" --><div class="page">1. ${msg}</div></div>
+                    <div id="content1"><div class="page">2. ${msg}</div></div>
+                    <div id="content2"><!-- m:autoEscape="false" --><div class="page">3. ${msg}</div></div>
+                    <div id="content3"><div class="page">4. ${msg}</div></div>
+                </div>
+                """;
+        String targetMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org"
+                        m:extends="/it-case/auto-escape/layout-page-override-on/layout.html">
+                    <m:doRender id="content0" name="contentBody0" />
+                    <m:doRender id="content1" name="contentBody1" />
+                    <m:doRender id="content2" name="contentBody2" />
+                    <m:doRender id="content3" name="contentBody3" />
+                </m:mayaa>
+                """;
+        String layoutHtml = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div id="slot0">layout-default</div>
+                <div id="slot1">layout-default</div>
+                <div id="slot2">layout-default</div>
+                <div id="slot3">layout-default</div>
+                <div class="layout-tail">${msg}</div>
+                </body></html>
+                """;
+        String layoutMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:insert id="slot0" name="contentBody0" replace="false" />
+                    <m:insert id="slot1" name="contentBody1" replace="false" />
+                    <m:insert id="slot2" name="contentBody2" replace="false" />
+                    <m:insert id="slot3" name="contentBody3" replace="false" />
+                </m:mayaa>
+                """;
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div id="slot0"><!-- m:autoEscape="true" --><div class="page">1. &lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div></div>
+                <div id="slot1"><div class="page">2. <b>bold</b> & 'quote'</div></div>
+                <div id="slot2"><!-- m:autoEscape="false" --><div class="page">3. <b>bold</b> & 'quote'</div></div>
+                <div id="slot3"><div class="page">4. <b>bold</b> & 'quote'</div></div>
+                <div class="layout-tail"><b>bold</b> & 'quote'</div>
+                </body></html>
+                """;
+
+        registerLayoutAndVerify(
+                "layout-page-override-on",
+                targetHtml,
+                targetMayaa,
+                layoutHtml,
+                layoutMayaa,
+                expected,
+                vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+        public void 共有レイアウト利用時にページ単位autoEscape無効はページ描画部分へ適用される(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(true); // グローバルON
+
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("msg", "<b>bold</b> & 'quote'");
+
+        String targetHtml = """
+                <div>
+                    <div id="content0"><!-- m:autoEscape="true" --><div class="page">1. ${msg}</div></div>
+                    <div id="content1"><div class="page">2. ${msg}</div></div>
+                    <div id="content2"><!-- m:autoEscape="false" --><div class="page">3. ${msg}</div></div>
+                    <div id="content3"><div class="page">4. ${msg}</div></div>
+                </div>
+                """;
+        String targetMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org"
+                        m:extends="/it-case/auto-escape/layout-page-override-off/layout.html">
+                    <m:doRender id="content0" name="contentBody0" />
+                    <m:doRender id="content1" name="contentBody1" />
+                    <m:doRender id="content2" name="contentBody2" />
+                    <m:doRender id="content3" name="contentBody3" />
+                </m:mayaa>
+                """;
+        String layoutHtml = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div id="slot0">layout-default</div>
+                <div id="slot1">layout-default</div>
+                <div id="slot2">layout-default</div>
+                <div id="slot3">layout-default</div>
+                <div class="layout-tail">${msg}</div>
+                </body></html>
+                """;
+        String layoutMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:insert id="slot0" name="contentBody0" replace="false" />
+                    <m:insert id="slot1" name="contentBody1" replace="false" />
+                    <m:insert id="slot2" name="contentBody2" replace="false" />
+                    <m:insert id="slot3" name="contentBody3" replace="false" />
+                </m:mayaa>
+                """;
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div id="slot0"><!-- m:autoEscape="true" --><div class="page">1. &lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div></div>
+                <div id="slot1"><div class="page">2. &lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div></div>
+                <div id="slot2"><!-- m:autoEscape="false" --><div class="page">3. <b>bold</b> & 'quote'</div></div>
+                <div id="slot3"><div class="page">4. &lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div></div>
+                <div class="layout-tail">&lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div>
+                </body></html>
+                """;
+
+        registerLayoutAndVerify(
+                "layout-page-override-off",
+                targetHtml,
+                targetMayaa,
+                layoutHtml,
+                layoutMayaa,
+                expected,
+                vars);
+    }
 
     private static final String BASE = "/it-case/auto-escape/";
 
@@ -47,6 +294,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         getServiceProvider().getScriptEnvironment().setParameter(
                 "autoEscapeEnabled", Boolean.toString(enabled));
     }
+
     @AfterEach
     void cleanup() {
         DynamicRegisteredSourceHolder.unregisterAll();
@@ -54,7 +302,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = {false, true})
+    @ValueSource(booleans = { false, true })
     public void autoEscape有効時に主要コンテキストが安全に出力される(boolean useNewParser)
             throws IOException {
         setUseNewParser(useNewParser);
@@ -116,7 +364,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = {false, true})
+    @ValueSource(booleans = { false, true })
     public void autoEscape無効時にHTML本文SCRIPTSTYLEは未エスケープで出力される(boolean useNewParser)
             throws IOException {
         setUseNewParser(useNewParser);
@@ -182,15 +430,15 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertTrue(events.size() >= 3,
                 "autoEscape=false で差分が出る箇所の診断イベントが蓄積されること");
         for (DiagnosticEventBuffer.Event event : events) {
-                        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());
-                        assertEquals("auto-escape", event.label());
-                        assertTrue(event.positionLineNumber() >= DiagnosticEventBuffer.UNKNOWN_POSITION_LINE,
-                                        "レンダリング時のイベントにはposition情報フィールドがあること");
+            assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());
+            assertEquals("auto-escape", event.label());
+            assertTrue(event.positionLineNumber() >= DiagnosticEventBuffer.UNKNOWN_POSITION_LINE,
+                    "レンダリング時のイベントにはposition情報フィールドがあること");
         }
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = {false, true})
+    @ValueSource(booleans = { false, true })
     public void autoEscape有効でも既エスケープ値は二重エスケープしない(boolean useNewParser)
             throws IOException {
         setUseNewParser(useNewParser);
@@ -199,17 +447,19 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
         vars.put("safeHtml", "&lt;strong&gt;already escaped&lt;/strong&gt;");
 
-        String target =
-                "<!DOCTYPE html>\n"
-                + "<html><head></head><body>\n"
-                + "<div class=\"value\">${safeHtml}</div>\n"
-                + "</body></html>";
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div class="value">${safeHtml}</div>
+                </body></html>
+                """;
 
-        String expected =
-                "<!DOCTYPE html>\n"
-                + "<html><head></head><body>\n"
-                + "<div class=\"value\">&lt;strong&gt;already escaped&lt;/strong&gt;</div>\n"
-                + "</body></html>";
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div class="value">&lt;strong&gt;already escaped&lt;/strong&gt;</div>
+                </body></html>
+                """;
 
         registerAndVerify("already-escaped", target, expected, vars);
 
@@ -218,135 +468,155 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals("auto-escape", events.get(0).label());
     }
 
-        @ParameterizedTest(name = "useNewParser {0}")
-        @ValueSource(booleans = {false, true})
-        public void autoEscape無効時に既エスケープ値では警告を出さない(boolean useNewParser)
-                        throws IOException {
-                setUseNewParser(useNewParser);
-                setAutoEscapeEnabled(false);
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void autoEscape無効時に既エスケープ値では警告を出さない(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
 
-                Map<String, Object> vars = new LinkedHashMap<String, Object>();
-                vars.put("safeHtml", "&lt;strong&gt;already escaped&lt;/strong&gt;");
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("safeHtml", "&lt;strong&gt;already escaped&lt;/strong&gt;");
 
-                String target = "<!DOCTYPE html>\n"
-                                + "<html><head></head><body>\n"
-                                + "<div class=\"value\">${safeHtml}</div>\n"
-                                + "</body></html>";
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div class="value">${safeHtml}</div>
+                </body></html>
+                """;
 
-                String expected = "<!DOCTYPE html>\n"
-                                + "<html><head></head><body>\n"
-                                + "<div class=\"value\">&lt;strong&gt;already escaped&lt;/strong&gt;</div>\n"
-                                + "</body></html>";
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <div class="value">&lt;strong&gt;already escaped&lt;/strong&gt;</div>
+                </body></html>
+                """;
 
-                registerAndVerify("disabled-already-escaped", target, expected, vars);
+        registerAndVerify("disabled-already-escaped", target, expected, vars);
 
-                List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
-                assertEquals(0, events.size());
+        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        assertEquals(0, events.size());
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void autoEscape無効時にHTML_ATTRIBUTEの既エスケープ値では警告を出さない(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
+
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("safeAttr", "Tom &amp; Jerry");
+
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <a title="${safeAttr}">link</a>
+                </body></html>
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <a title="Tom &amp; Jerry">link</a>
+                </body></html>
+                """;
+
+        registerAndVerify("disabled-already-escaped-attribute", target, expected, vars);
+
+        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void autoEscape無効時にSCRIPTの既エスケープ値では警告を出さない(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
+
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("safeJs", "Tom &amp; Jerry");
+
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>window.profile = "${safeJs}";</script>
+                </body></html>
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>window.profile = "Tom &amp; Jerry";</script>
+                </body></html>
+                """;
+
+        registerAndVerify("disabled-already-escaped-script", target, expected, vars);
+
+        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        for (DiagnosticEventBuffer.Event event : events) {
+            assertTrue(event.scriptText() == null || event.scriptText().contains("safeJs") == false,
+                    "safeJs に起因する警告は記録されないこと");
         }
+    }
 
-            @ParameterizedTest(name = "useNewParser {0}")
-            @ValueSource(booleans = {false, true})
-            public void autoEscape無効時にHTML_ATTRIBUTEの既エスケープ値では警告を出さない(boolean useNewParser)
-                    throws IOException {
-                setUseNewParser(useNewParser);
-                setAutoEscapeEnabled(false);
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void autoEscape無効時にSTYLEの既エスケープ値では警告を出さない(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
 
-                Map<String, Object> vars = new LinkedHashMap<String, Object>();
-                vars.put("safeAttr", "Tom &amp; Jerry");
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("safeCss", "\\\"x\\\"\\00000A ");
 
-                String target = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<a title=\"${safeAttr}\">link</a>\n"
-                        + "</body></html>";
+        String target = """
+                <!DOCTYPE html>
+                <html><head><style>.hero::before { content: "${safeCss}"; }</style></head><body></body></html>
+                """;
 
-                String expected = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<a title=\"Tom &amp; Jerry\">link</a>\n"
-                        + "</body></html>";
+        String expected = """
+                <!DOCTYPE html>
+                <html><head><style>.hero::before { content: "\\"x\\"\\00000A "; }</style></head><body></body></html>
+                """;
 
-                registerAndVerify("disabled-already-escaped-attribute", target, expected, vars);
+        registerAndVerify("disabled-already-escaped-style", target, expected, vars);
 
-                assertEquals(0, DiagnosticEventBuffer.snapshot().size());
-            }
+        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+    }
 
-            @ParameterizedTest(name = "useNewParser {0}")
-            @ValueSource(booleans = {false, true})
-            public void autoEscape無効時にSCRIPTの既エスケープ値では警告を出さない(boolean useNewParser)
-                    throws IOException {
-                setUseNewParser(useNewParser);
-                setAutoEscapeEnabled(false);
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void autoEscape無効時にTEXTAREA_PREの既エスケープ値では警告を出さない(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
 
-                Map<String, Object> vars = new LinkedHashMap<String, Object>();
-                vars.put("safeJs", "Tom &amp; Jerry");
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("safeText", "&lt;strong&gt;already escaped&lt;/strong&gt;");
 
-                String target = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<script>window.profile = \"${safeJs}\";</script>\n"
-                        + "</body></html>";
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <textarea>${safeText}</textarea>
+                </body></html>
+                """;
 
-                String expected = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<script>window.profile = \"Tom &amp; Jerry\";</script>\n"
-                        + "</body></html>";
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <textarea>&lt;strong&gt;already escaped&lt;/strong&gt;</textarea>
+                </body></html>
+                """;
 
-                registerAndVerify("disabled-already-escaped-script", target, expected, vars);
+        registerAndVerify("disabled-already-escaped-textarea", target, expected, vars);
 
-                List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
-                for (DiagnosticEventBuffer.Event event : events) {
-                    assertTrue(event.scriptText() == null || event.scriptText().contains("safeJs") == false,
-                            "safeJs に起因する警告は記録されないこと");
-                }
-            }
+        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+    }
 
-            @ParameterizedTest(name = "useNewParser {0}")
-            @ValueSource(booleans = {false, true})
-            public void autoEscape無効時にSTYLEの既エスケープ値では警告を出さない(boolean useNewParser)
-                    throws IOException {
-                setUseNewParser(useNewParser);
-                setAutoEscapeEnabled(false);
-
-                Map<String, Object> vars = new LinkedHashMap<String, Object>();
-                vars.put("safeCss", "\\\"x\\\"\\00000A ");
-
-                String target = "<!DOCTYPE html>\n"
-                        + "<html><head><style>.hero::before { content: \"${safeCss}\"; }</style></head><body></body></html>";
-
-                String expected = "<!DOCTYPE html>\n"
-                        + "<html><head><style>.hero::before { content: \"\\\"x\\\"\\00000A \"; }</style></head><body></body></html>";
-
-                registerAndVerify("disabled-already-escaped-style", target, expected, vars);
-
-                assertEquals(0, DiagnosticEventBuffer.snapshot().size());
-            }
-
-            @ParameterizedTest(name = "useNewParser {0}")
-            @ValueSource(booleans = {false, true})
-            public void autoEscape無効時にTEXTAREA_PREの既エスケープ値では警告を出さない(boolean useNewParser)
-                    throws IOException {
-                setUseNewParser(useNewParser);
-                setAutoEscapeEnabled(false);
-
-                Map<String, Object> vars = new LinkedHashMap<String, Object>();
-                vars.put("safeText", "&lt;strong&gt;already escaped&lt;/strong&gt;");
-
-                String target = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<textarea>${safeText}</textarea>\n"
-                        + "</body></html>";
-
-                String expected = "<!DOCTYPE html>\n"
-                        + "<html><head></head><body>\n"
-                        + "<textarea>&lt;strong&gt;already escaped&lt;/strong&gt;</textarea>\n"
-                        + "</body></html>";
-
-                registerAndVerify("disabled-already-escaped-textarea", target, expected, vars);
-
-                assertEquals(0, DiagnosticEventBuffer.snapshot().size());
-            }
-
-        @ParameterizedTest(name = "useNewParser {0}")
-        @ValueSource(booleans = {false, true})
-        public void RAW出力マーカーはautoEscape有効時でも生出力される(boolean useNewParser)
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void RAW出力マーカーはautoEscape有効時でも生出力される(boolean useNewParser)
             throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
@@ -397,4 +667,27 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
         execAndVerify(targetPath, expectedPath, pageScope);
     }
+
+        private void registerLayoutAndVerify(String caseName,
+                        String targetHtml,
+                        String targetMayaa,
+                        String layoutHtml,
+                        String layoutMayaa,
+                        String expected,
+                        Map<String, Object> pageScope) throws IOException {
+                String casePath = BASE + caseName + "/";
+                String targetHtmlPath = casePath + "target.html";
+                String targetMayaaPath = casePath + "target.mayaa";
+                String layoutHtmlPath = casePath + "layout.html";
+                String layoutMayaaPath = casePath + "layout.mayaa";
+                String expectedPath = casePath + "expected.html";
+
+                DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
+                DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
+                DynamicRegisteredSourceHolder.registerContents(layoutHtmlPath, layoutHtml);
+                DynamicRegisteredSourceHolder.registerContents(layoutMayaaPath, layoutMayaa);
+                DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
+
+                execAndVerify(targetHtmlPath, expectedPath, pageScope);
+        }
 }

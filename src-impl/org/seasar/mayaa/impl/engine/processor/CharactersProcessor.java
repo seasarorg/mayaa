@@ -16,6 +16,7 @@
 package org.seasar.mayaa.impl.engine.processor;
 
 import org.mozilla.javascript.Undefined;
+import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -89,18 +90,20 @@ public class CharactersProcessor extends TemplateProcessorSupport
                     && !AutoEscapeContext.isAutoEscapeSuppressed();
             String escapeDetectionLevel = AutoEscapeContext.getEscapeDetectionLevel();
             OutputContext outputContext = OutputContextStack.current();
+            PositionAware position = resolveCurrentPositionAware();
 
             if (script instanceof ComplexScript) {
                 output = applyHtmlBodyAutoEscapePerBlock(
                         ((ComplexScript) script).getCompiledScripts(),
                         text.getExpectedClass(), autoEscape,
-                        escapeDetectionLevel, outputContext);
+                        escapeDetectionLevel, outputContext,
+                        position);
             } else {
                 Object value = text.getExecutedValue(null);
                 if (value != null && value instanceof Undefined == false) {
                     output = applyHtmlBodyAutoEscape(value.toString(),
                             script, autoEscape, escapeDetectionLevel,
-                            outputContext);
+                            outputContext, position);
                 }
             }
         } finally {
@@ -118,6 +121,16 @@ public class CharactersProcessor extends TemplateProcessorSupport
             boolean autoEscapeEnabled,
             String escapeDetectionLevel,
             OutputContext outputContext) {
+        return applyHtmlBodyAutoEscapePerBlock(scripts, expectedClass,
+            autoEscapeEnabled, escapeDetectionLevel, outputContext, null);
+    }
+
+    static String applyHtmlBodyAutoEscapePerBlock(CompiledScript[] scripts,
+            Class<?> expectedClass,
+            boolean autoEscapeEnabled,
+            String escapeDetectionLevel,
+            OutputContext outputContext,
+            PositionAware position) {
         if (scripts == null || scripts.length == 0) {
             return null;
         }
@@ -133,7 +146,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
             }
             String escaped = applyHtmlBodyAutoEscape(value.toString(),
                     script, autoEscapeEnabled, escapeDetectionLevel,
-                    outputContext);
+                    outputContext, position);
             if (escaped != null) {
                 buffer.append(escaped);
             }
@@ -150,6 +163,16 @@ public class CharactersProcessor extends TemplateProcessorSupport
             boolean autoEscapeEnabled,
             String escapeDetectionLevel,
             OutputContext outputContext) {
+        return applyHtmlBodyAutoEscape(value, script, autoEscapeEnabled,
+            escapeDetectionLevel, outputContext, null);
+    }
+
+    static String applyHtmlBodyAutoEscape(String value,
+            CompiledScript script,
+            boolean autoEscapeEnabled,
+            String escapeDetectionLevel,
+            OutputContext outputContext,
+            PositionAware position) {
         if (value == null) {
             return null;
         }
@@ -162,12 +185,13 @@ public class CharactersProcessor extends TemplateProcessorSupport
         if (outputContext == OutputContext.SCRIPT) {
             if (!autoEscapeEnabled) {
                 String escaped = EscapeUtil.escapeJavaScriptString(value);
-                if (!escaped.equals(value)) {
+                if (!escaped.equals(value)
+                        && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
                     warnAndRecordAutoEscape(
                             "SCRIPT context: autoEscape が無効ですが、値に JavaScript エスケープが必要な文字が含まれています。"
                             + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
                             + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
-                            value);
+                            value, script, position);
                 }
                 return value;
             }
@@ -176,7 +200,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                         "SCRIPT context: 値が既にエスケープ済みと判定されました。"
                         + " 二重エスケープを避けるためにエスケープをスキップします。"
                         + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
-                        value);
+                        value, script, position);
                 return value;
             }
             return EscapeUtil.escapeJavaScriptString(value);
@@ -185,12 +209,13 @@ public class CharactersProcessor extends TemplateProcessorSupport
         if (outputContext == OutputContext.HTML_ATTRIBUTE) {
             if (!autoEscapeEnabled) {
                 String escaped = EscapeUtil.escapeHtml(value);
-                if (!escaped.equals(value)) {
+                if (!escaped.equals(value)
+                        && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
                     warnAndRecordAutoEscape(
                             "HTML_ATTRIBUTE context: autoEscape が無効ですが、値に HTML エスケープが必要な文字が含まれています。"
                             + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
                             + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
-                            value);
+                            value, script, position);
                 }
                 return value;
             }
@@ -199,7 +224,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                         "HTML_ATTRIBUTE context: 値が既にエスケープ済みと判定されました。"
                         + " 二重エスケープを避けるためにエスケープをスキップします。"
                         + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
-                        value);
+                        value, script, position);
                 return value;
             }
             return EscapeUtil.escapeHtml(value);
@@ -207,13 +232,15 @@ public class CharactersProcessor extends TemplateProcessorSupport
 
         if (!autoEscapeEnabled) {
             String escaped = computeEscapedForContext(value, outputContext);
-            if (escaped != null && !escaped.equals(value)) {
+            if (escaped != null
+                    && !escaped.equals(value)
+                    && !EscapeUtil.isEscaped(value, escapeDetectionLevel)) {
                 warnAndRecordAutoEscape(
                         outputContext.name() + " context: autoEscape が無効ですが、値に"
                         + " エスケープが必要な文字が含まれています。"
                         + " autoEscape を有効にするか、意図的に未エスケープにする場合は"
                         + " MAYAA_SCOPE_RAW() または ${=...} を使用してください。",
-                        value);
+                    value, script, position);
             }
             return value;
         }
@@ -228,7 +255,7 @@ public class CharactersProcessor extends TemplateProcessorSupport
                     outputContext.name() + " context: 値が既にエスケープ済みと判定されました。"
                     + " 二重エスケープを避けるためにエスケープをスキップします。"
                     + " 手動エスケープを除去するか ${=...} / MAYAA_SCOPE_RAW() の使用を検討してください。",
-                    value);
+                    value, script, position);
             return value;
         }
 
@@ -246,11 +273,31 @@ public class CharactersProcessor extends TemplateProcessorSupport
         return value.length() > 100 ? value.substring(0, 100) + "..." : value;
     }
 
-    private static void warnAndRecordAutoEscape(String message, String value) {
+    private static void warnAndRecordAutoEscape(String message,
+            String value,
+            CompiledScript script,
+            PositionAware position) {
         String truncated = truncateForLog(value);
+        String scriptText = script != null ? script.getScriptText() : null;
         DiagnosticEventBuffer.recordWarn(DiagnosticEventBuffer.Phase.RENDER,
                 FEATURE_LABEL_AUTO_ESCAPE,
-                CharactersProcessor.class.getName(), message, truncated);
+                CharactersProcessor.class.getName(), message, scriptText, truncated,
+                position);
+    }
+
+    private PositionAware resolveCurrentPositionAware() {
+        ProcessorProperty text = getText();
+        if (text instanceof PositionAware) {
+            return (PositionAware) text;
+        }
+        try {
+            if (getOriginalNode() != null) {
+                return getOriginalNode();
+            }
+        } catch (RuntimeException e) {
+            // ignore and fallback
+        }
+        return null;
     }
 
     /** autoEscape=false 時の警告計算用：そのコンテキストで適用されるエスケープ結果を返す。不要なコンテキストは null を返す。 */

@@ -145,6 +145,18 @@ public class CharactersProcessorTest {
         assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
     }
 
+    @Test
+    public void testApplyHtmlBodyAutoEscape_htmlCommentIsNotEscapedOrWarned() {
+        DiagnosticEventBuffer.clear();
+
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "<b>Tom & Jerry</b>", new NonLiteralScript(), true,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_COMMENT);
+
+        assertEquals("<b>Tom & Jerry</b>", output);
+        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+    }
+
     // ---- HTML_ATTRIBUTE ----
 
     @Test
@@ -211,10 +223,27 @@ public class CharactersProcessorTest {
         List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
         assertEquals(1, events.size());
         DiagnosticEventBuffer.Event event = events.get(0);
-        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.getPhase());
-        assertEquals(DiagnosticEventBuffer.Level.WARN, event.getLevel());
-        assertEquals("auto-escape", event.getLabel());
-        assertEquals("org.seasar.mayaa.impl.engine.processor.CharactersProcessor", event.getSource());
+        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());
+        assertEquals(DiagnosticEventBuffer.Level.WARN, event.level());
+        assertEquals("auto-escape", event.label());
+        assertEquals("org.seasar.mayaa.impl.engine.processor.CharactersProcessor", event.source());
+        assertEquals("expr", event.scriptText());
+        assertEquals(null, event.positionSystemID());
+        assertEquals(DiagnosticEventBuffer.UNKNOWN_POSITION_LINE,
+            event.positionLineNumber());
+        assertEquals(false, event.positionOnTemplate());
+    }
+
+    @Test
+    public void testApplyHtmlBodyAutoEscape_autoEscapeDisabled_alreadyEscapedDoesNotRecordWarning() {
+        DiagnosticEventBuffer.clear();
+
+        String output = CharactersProcessor.applyHtmlBodyAutoEscape(
+                "&lt;b&gt;Tom&lt;/b&gt;", new NonLiteralScript(), false,
+                EscapeUtil.DETECTION_LEVEL_NORMAL, OutputContext.HTML_BODY);
+
+        assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
+        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
     }
 
     static class NonLiteralScript implements CompiledScript {

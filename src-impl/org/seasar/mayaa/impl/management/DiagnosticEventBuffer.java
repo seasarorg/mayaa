@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.seasar.mayaa.PositionAware;
+
 /**
  * 管理画面向けに、各フェーズの警告・エラーをリングバッファで保持する。
  */
@@ -36,54 +38,21 @@ public final class DiagnosticEventBuffer {
         ERROR
     }
 
-    public static final class Event {
-        private final long _timestampMillis;
-        private final Phase _phase;
-        private final Level _level;
-        private final String _label;
-        private final String _source;
-        private final String _message;
-        private final String _sample;
-
-        Event(long timestampMillis, Phase phase, Level level,
-                String label, String source, String message, String sample) {
-            _timestampMillis = timestampMillis;
-            _phase = phase;
-            _level = level;
-            _label = label;
-            _source = source;
-            _message = message;
-            _sample = sample;
-        }
-
-        public long getTimestampMillis() {
-            return _timestampMillis;
-        }
-
-        public Phase getPhase() {
-            return _phase;
-        }
-
-        public Level getLevel() {
-            return _level;
-        }
-
-        public String getLabel() {
-            return _label;
-        }
-
-        public String getSource() {
-            return _source;
-        }
-
-        public String getMessage() {
-            return _message;
-        }
-
-        public String getSample() {
-            return _sample;
-        }
+    public static record Event(
+            long timestampMillis,
+            Phase phase,
+            Level level,
+            String label,
+            String source,
+            String message,
+            String scriptText,
+            String sample,
+            String positionSystemID,
+            int positionLineNumber,
+            boolean positionOnTemplate) {
     }
+
+    public static final int UNKNOWN_POSITION_LINE = -1;
 
     private static final int DEFAULT_CAPACITY = 512;
     private static final Deque<Event> _events = new ArrayDeque<Event>(DEFAULT_CAPACITY);
@@ -97,8 +66,21 @@ public final class DiagnosticEventBuffer {
             String source,
             String message,
             String sample) {
+        recordWarn(phase, label, source, message, null, sample, null);
+    }
+
+    public static synchronized void recordWarn(Phase phase,
+            String label,
+            String source,
+            String message,
+            String scriptText,
+            String sample,
+            PositionAware position) {
         record(new Event(System.currentTimeMillis(), phase, Level.WARN,
-                label, source, message, sample));
+                label, source, message, scriptText, sample,
+                position != null ? position.getSystemID() : null,
+                position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
+                position != null && position.isOnTemplate()));
     }
 
     public static synchronized void recordError(Phase phase,
@@ -106,8 +88,21 @@ public final class DiagnosticEventBuffer {
             String source,
             String message,
             String sample) {
+        recordError(phase, label, source, message, null, sample, null);
+    }
+
+    public static synchronized void recordError(Phase phase,
+            String label,
+            String source,
+            String message,
+            String scriptText,
+            String sample,
+            PositionAware position) {
         record(new Event(System.currentTimeMillis(), phase, Level.ERROR,
-                label, source, message, sample));
+                label, source, message, scriptText, sample,
+                position != null ? position.getSystemID() : null,
+                position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
+                position != null && position.isOnTemplate()));
     }
 
     private static void record(Event event) {

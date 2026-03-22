@@ -44,11 +44,16 @@ public class DiagnosticEventBufferTest {
         List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
         assertEquals(1, events.size());
         DiagnosticEventBuffer.Event event = events.get(0);
-        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.getPhase());
-        assertEquals(DiagnosticEventBuffer.Level.WARN, event.getLevel());
-        assertEquals("auto-escape", event.getLabel());
-        assertEquals("test.Source", event.getSource());
-        assertEquals("warn message", event.getMessage());
-        assertEquals("sample value", event.getSample());
+        assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());
+        assertEquals(DiagnosticEventBuffer.Level.WARN, event.level());
+        assertEquals("auto-escape", event.label());
+        assertEquals("test.Source", event.source());
+        assertEquals("warn message", event.message());
+        assertEquals(null, event.scriptText());
+        assertEquals("sample value", event.sample());
+        assertEquals(null, event.positionSystemID());
+        assertEquals(DiagnosticEventBuffer.UNKNOWN_POSITION_LINE,
+            event.positionLineNumber());
+        assertEquals(false, event.positionOnTemplate());
     }
 }

@@ -105,13 +105,15 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         vars.put("msg", "<b>bold</b> & 'quote'");
 
         String target = """
-                <!-- m:autoEscape=true --><!DOCTYPE html>
+                <!-- m:autoEscape=true -->
+                <!DOCTYPE html>
                 <html><head></head><body>
                 <div>${msg}</div>
                 </body></html>
                 """;
 
         String expected = """
+                <!-- m:autoEscape=true -->
                 <!DOCTYPE html>
                 <html><head></head><body>
                 <div>&lt;b&gt;bold&lt;/b&gt; &amp; 'quote'</div>
@@ -131,13 +133,15 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         vars.put("msg", "<b>bold</b> & 'quote'");
 
         String target = """
-                <!-- m:autoEscape=false --><!DOCTYPE html>
+                <!-- m:autoEscape=false -->
+                <!DOCTYPE html>
                 <html><head></head><body>
                 <div>${msg}</div>
                 </body></html>
                 """;
 
         String expected = """
+                <!-- m:autoEscape=false -->
                 <!DOCTYPE html>
                 <html><head></head><body>
                 <div><b>bold</b> & 'quote'</div>
@@ -641,6 +645,89 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                 """;
 
         registerAndVerify("raw-marker", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void MAYAA_SCOPEマクロはscriptコンテキストで_ドル括弧なしでもJSリテラル展開される(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(true);
+
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("name", "Tom \"The Cat\"");
+        vars.put("title", "Mayaa");
+
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>
+                const userName = MAYAA_SCOPE(name);
+                const title = MAYAA_SCOPE_AS_STRING(title);
+                if (userName === "Tom \\"The Cat\\"" && title === "Mayaa") {
+                    document.getElementById("marker").textContent = "ok";
+                }
+                </script>
+                <div id="marker">ok</div>
+                </body></html>\
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>
+                const userName = "Tom \\\"The Cat\\\"";
+                const title = "Mayaa";
+                if (userName === "Tom \\"The Cat\\"" && title === "Mayaa") {
+                    document.getElementById("marker").textContent = "ok";
+                }
+                </script>
+                <div id="marker">ok</div>
+                </body></html>\
+                """;
+
+        registerAndVerify("scope-macro-script", target, expected, vars);
+    }
+
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void MAYAA_SCOPE_WITH_STRINGIFYはscriptコンテキストで_ドル括弧なしでもJSON展開される(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(true);
+
+        Map<String, Object> profile = new LinkedHashMap<String, Object>();
+        profile.put("name", "Alice");
+        profile.put("count", Integer.valueOf(2));
+
+        Map<String, Object> vars = new LinkedHashMap<String, Object>();
+        vars.put("user", profile);
+
+        String target = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>
+                const payload = MAYAA_SCOPE_WITH_STRINGIFY(user);
+                if (payload.name === "Alice" && payload.count === 2) {
+                    document.getElementById("marker").textContent = "ok";
+                }
+                </script>
+                </body></html>\
+                """;
+
+        String expected = """
+                <!DOCTYPE html>
+                <html><head></head><body>
+                <script>
+                const payload = {"name":"Alice","count":2};
+                if (payload.name === "Alice" && payload.count === 2) {
+                    document.getElementById("marker").textContent = "ok";
+                }
+                </script>
+                </body></html>\
+                """;
+
+        registerAndVerify("scope-macro-stringify", target, expected, vars);
     }
 
     private Map<String, Object> createPageScope() {

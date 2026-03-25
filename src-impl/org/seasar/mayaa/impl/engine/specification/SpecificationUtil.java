@@ -120,23 +120,6 @@ public class SpecificationUtil implements CONST_IMPL {
     }
 
     /**
-     * ServiceCycleで現在処理中のノードからparentを辿り、Specificationが
-     * 見つかった場合それを返します。
-     * 見つからない場合はnullを返します。
-     *
-     * @return Specification
-     */
-    public static Specification findSpecification() {
-        ServiceCycle cycle = CycleUtil.getServiceCycle();
-        NodeTreeWalker current = cycle.getOriginalNode();
-        // リソースアクセス中にredirectしても対応できるようにする。
-        if (current != null) {
-            return findSpecification(current);
-        }
-        return null;
-    }
-
-    /**
      * currentが持つm:mayaaノードを探し、もしあればm:mayaaノードの属性のうち
      * qNameで表されるものの値を返します。
      * 見つからない場合はnullを返します。

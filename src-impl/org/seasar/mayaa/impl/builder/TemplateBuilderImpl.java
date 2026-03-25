@@ -42,6 +42,7 @@ import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.OptimizableProcessor;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
+import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.QName;
@@ -52,6 +53,7 @@ import org.seasar.mayaa.impl.builder.injection.DefaultInjectionChain;
 import org.seasar.mayaa.impl.builder.parser.HtmlTemplateParser;
 import org.seasar.mayaa.impl.builder.parser.NekoHtmlParser;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor;
 import org.seasar.mayaa.impl.engine.processor.CharactersProcessor;
 import org.seasar.mayaa.impl.engine.processor.CommentProcessor;
@@ -528,6 +530,44 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
         return processor;
     }
 
+    protected void rewriteScopeMacrosForScriptCharacters(
+            NodeTreeWalker parent,
+            SpecificationNode original,
+            SpecificationNode injected) {
+        if (parent == null || original == null || injected == null) {
+            return;
+        }
+        if (QM_CHARACTERS.equals(original.getQName()) == false) {
+            return;
+        }
+        if (parent instanceof SpecificationNode == false) {
+            return;
+        }
+        QName parentQName = ((SpecificationNode) parent).getQName();
+        if (parentQName == null
+                || "script".equalsIgnoreCase(parentQName.getLocalName()) == false) {
+            return;
+        }
+        rewriteScopeMacrosOnCharactersNode(original);
+        if (injected != original) {
+            rewriteScopeMacrosOnCharactersNode(injected);
+        }
+    }
+
+    protected void rewriteScopeMacrosOnCharactersNode(SpecificationNode node) {
+        NodeAttribute textAttribute = node.getAttribute(QM_TEXT);
+        if (textAttribute == null) {
+            return;
+        }
+        String text = textAttribute.getValue();
+        String rewritten = ScriptUtil.rewriteScopeMacrosForScriptContext(text);
+        if (rewritten.equals(text)) {
+            return;
+        }
+        node.removeAttribute(QM_TEXT);
+        node.addAttribute(QM_TEXT, rewritten);
+    }
+
     protected SpecificationNode resolveOriginalNode(
             SpecificationNode original, InjectionChain chain) {
         if (original == null || chain == null) {
@@ -564,6 +604,7 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             if (injected == null) {
                 throw new TemplateNodeNotResolvedException(original.toString());
             }
+            rewriteScopeMacrosForScriptCharacters(original, child, injected);
             saveToCycle(child, injected);
             ProcessorTreeWalker processor = resolveInjectedNode(
                     template, stack, child, injected, divided);

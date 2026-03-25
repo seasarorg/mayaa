@@ -45,11 +45,19 @@ public class PageImpl extends SpecificationImpl implements Page {
     private static final String CURRENT_PAGE_KEY = "__currentPage__";
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
 
+    static final class SuperPageInfo {
+        final Page page;
+        final String suffix;
+        final String extension;
+
+        SuperPageInfo(Page page, String suffix, String extension) {
+            this.page = page;
+            this.suffix = suffix;
+            this.extension = extension;
+        }
+    }
+
     private String _pageName;
-    private transient volatile Page _superPage;
-    private transient volatile String _superSuffix;
-    private transient volatile String _superExtension;
-    private transient volatile boolean _superPrepared;
 
     private transient Map<TemplateProcessor, Boolean> _beginRenderListeners;
     private String _suffixScriptText;
@@ -65,51 +73,32 @@ public class PageImpl extends SpecificationImpl implements Page {
         _pageName = pageName;
     }
 
-    protected void prepareSuper() {
-        Page superPage = _superPage;
-        if (_superPrepared && (superPage == null || superPage.isDeprecated() == false)) {
-            return;
+    SuperPageInfo resolveSuperPageInfo() {
+        // 常に最新のextends定義を参照し、継承先はEngineキャッシュ経由で解決する。
+        String extendsPath =
+            SpecificationUtil.getMayaaAttributeValue(this, CONST_IMPL.QM_EXTENDS);
+        if (StringUtil.isEmpty(extendsPath)) {
+            return new SuperPageInfo(null, null, null);
         }
-        synchronized (this) {
-            superPage = _superPage;
-            if (_superPrepared && (superPage == null || superPage.isDeprecated() == false)) {
-                return;
-            }
-            // TODO mayaa以外からも取得できるようにする
-            String extendsPath =
-                SpecificationUtil.getMayaaAttributeValue(this, CONST_IMPL.QM_EXTENDS);
-            if (StringUtil.isEmpty(extendsPath)) {
-                _superPage = null;
-                _superSuffix = null;
-                _superExtension = null;
-                _superPrepared = true;
-                return;
-            }
-            Engine engine = ProviderUtil.getEngine();
-            String suffixSeparator = engine.getParameter(CONST_IMPL.SUFFIX_SEPARATOR);
-            String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
+        Engine engine = ProviderUtil.getEngine();
+        String suffixSeparator = engine.getParameter(CONST_IMPL.SUFFIX_SEPARATOR);
+        String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
 
-            _superPage = engine.getPage(
-                    StringUtil.adjustRelativePath(_pageName, pagePath[0]));
-            _superSuffix = pagePath[1];
-            _superExtension = pagePath[2];
-            _superPrepared = true;
-        }
+        Page superPage = engine.getPage(
+                StringUtil.adjustRelativePath(_pageName, pagePath[0]));
+        return new SuperPageInfo(superPage, pagePath[1], pagePath[2]);
     }
 
     public Page getSuperPage() {
-        prepareSuper();
-        return _superPage;
+        return resolveSuperPageInfo().page;
     }
 
     public String getSuperSuffix() {
-        prepareSuper();
-        return _superSuffix;
+        return resolveSuperPageInfo().suffix;
     }
 
     public String getSuperExtension() {
-        prepareSuper();
-        return _superExtension;
+        return resolveSuperPageInfo().extension;
     }
 
     public String getPageName() {
@@ -259,8 +248,7 @@ public class PageImpl extends SpecificationImpl implements Page {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(_beginRenderListeners, _pageName, _suffixScript, _suffixScriptText, _superExtension,
-                _superPage, _superPrepared, _superSuffix);
+        return Objects.hash(_beginRenderListeners, _pageName, _suffixScript, _suffixScriptText);
     }
 
     /*
@@ -278,10 +266,6 @@ public class PageImpl extends SpecificationImpl implements Page {
                 && Objects.equals(_pageName, other._pageName)
                 && Objects.equals(_suffixScript, other._suffixScript)
                 && Objects.equals(_suffixScriptText, other._suffixScriptText)
-                && Objects.equals(_superExtension, other._superExtension)
-                && Objects.equals(_superPage, other._superPage)
-            && _superPrepared == other._superPrepared
-                && Objects.equals(_superSuffix, other._superSuffix)
                 && super.equals(other);
     }
 

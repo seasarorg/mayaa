@@ -79,6 +79,8 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     public static final String DUMP_ENABLED = "dumpEnabled";
     public static final String CONVERT_CHARSET = "convertCharset";
     public static final String NO_CACHE_VALUE = "noCacheValue";
+    private static final String REQUEST_VALID_SPEC_CACHE_KEY =
+            EngineImpl.class.getName() + ".requestValidSpecCache";
 
     private transient AtomicReference<Specification> _defaultSpecification = new AtomicReference<>(null);
 
@@ -149,7 +151,55 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     }
 
     public Specification findSpecificationFromCache(String systemID) {
-        return _specCache.getIfPresent(systemID);
+        return findValidSpecificationFromCache(systemID);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Map<String, Specification> getRequestValidSpecCache() {
+        RequestScope request = CycleUtil.getRequestScope();
+        if (request == null) {
+            return null;
+        }
+        Object cached = request.getAttribute(REQUEST_VALID_SPEC_CACHE_KEY);
+        if (cached instanceof Map<?, ?>) {
+            return (Map<String, Specification>) cached;
+        }
+        Map<String, Specification> map = new HashMap<>();
+        request.setAttribute(REQUEST_VALID_SPEC_CACHE_KEY, map);
+        return map;
+    }
+
+    protected void clearRequestValidSpecCache(String systemID) {
+        Map<String, Specification> map = getRequestValidSpecCache();
+        if (map != null) {
+            map.remove(systemID);
+        }
+    }
+
+    protected Specification findValidSpecificationFromCache(String systemID) {
+        Map<String, Specification> requestCache = getRequestValidSpecCache();
+        if (requestCache != null && requestCache.containsKey(systemID)) {
+            return requestCache.get(systemID);
+        }
+
+        Specification cached = _specCache.getIfPresent(systemID);
+        if (cached == null) {
+            if (requestCache != null) {
+                requestCache.put(systemID, null);
+            }
+            return null;
+        }
+        if (cached.isDeprecated()) {
+            _specCache.invalidate(systemID);
+            if (requestCache != null) {
+                requestCache.put(systemID, null);
+            }
+            return null;
+        }
+        if (requestCache != null) {
+            requestCache.put(systemID, cached);
+        }
+        return cached;
     }
 
     /**
@@ -160,6 +210,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         if (Objects.nonNull(spec)) {
             spec.deprecate();
         }
+        clearRequestValidSpecCache(systemID);
         if (withSerialized) {
             SpecificationUtil.purgeSerializedFile(systemID);
         }
@@ -174,7 +225,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     }
 
     protected Page findPageFromCache(String pageName) {
-        return (Page) findSpecificationFromCache(pageName + _mayaaExtension);
+        return (Page) findValidSpecificationFromCache(pageName + _mayaaExtension);
     }
 
     public Page getPage(String pageName) {
@@ -503,10 +554,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             SpecificationUtil.startScope(null);
             try {
                 spec.build(rebuild);
-
-                if (spec.isDeprecated()) {
-                    return spec;
-                }
                 if (isSerializeEnabled()) {
                     submitSerialize(spec);
                 }
@@ -517,7 +564,10 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             throw e;
         }
         if (registerCache) {
+            // Pageの.mayaaが存在しない場合でもSpecificationをキャッシュする。
+            // これにより同一ページへのリクエストで毎回Specificationを再生成せずに済む。
             _specCache.put(spec.getSystemID(), spec);
+            clearRequestValidSpecCache(spec.getSystemID());
         }
         return spec;
     }
@@ -549,7 +599,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public Template createTemplateInstance(final Page page, final String suffix, final String extension) {
         final String templateId = getTemplateID(page, suffix, extension);
-        Specification cached = _specCache.getIfPresent(templateId);
+        Specification cached = findValidSpecificationFromCache(templateId);
         if (cached != null) {
             return (Template) cached;
         }
@@ -573,6 +623,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         if (existing != null) {
             return (Template) existing;
         }
+        clearRequestValidSpecCache(templateId);
         return (Template) created;
     }
 

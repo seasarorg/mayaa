@@ -16,7 +16,11 @@
 package org.seasar.mayaa.impl.engine;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.test.util.ManualProviderFactory;
+
+import com.github.benmanes.caffeine.cache.Cache;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -110,6 +116,50 @@ public class EngineImplTest {
         ManualProviderFactory.HTTP_SERVLET_REQUEST.setPathInfo("/docs/test.html");
         CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
         assertFalse(engine.isPageRequested(), "3");
+    }
+
+    @Test
+    public void testDeprecatedSpecificationIsNotReturnedFromCache() {
+        EngineImpl engine = new EngineImpl();
+        String pageName = "/cache-validation-check";
+        String systemID = pageName + ".mayaa";
+
+        engine.createPageInstance(pageName);
+        assertNotNull(engine.findSpecificationFromCache(systemID));
+
+        engine.deprecateSpecification(systemID, false);
+        assertNull(engine.findSpecificationFromCache(systemID));
+
+        assertNotNull(engine.getPage(pageName));
+        assertNotNull(engine.findSpecificationFromCache(systemID));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void 同一リクエスト内でfindSpecificationFromCacheを繰り返してもisDeprecatedは初回のみ評価される() throws Exception {
+        EngineImpl engine = new EngineImpl();
+        String pageName = "/isDeprecated-call-count";
+        String systemID = pageName + ".mayaa";
+
+        // Spec を Caffeine キャッシュに登録
+        engine.createPageInstance(pageName);
+
+        // リクエストスコープを開始
+        CycleUtil.initialize(ManualProviderFactory.HTTP_SERVLET_REQUEST, ManualProviderFactory.HTTP_SERVLET_RESPONSE);
+
+        // 1回目: Caffeine から取得 → isDeprecated()評価あり → リクエストキャッシュへ投入
+        assertNotNull(engine.findSpecificationFromCache(systemID), "1回目は非-null");
+
+        // Caffeine キャッシュだけを無効化 (リクエストキャッシュはクリアしない)
+        Field specCacheField = EngineImpl.class.getDeclaredField("_specCache");
+        specCacheField.setAccessible(true);
+        Cache<String, ?> specCache = (Cache<String, ?>) specCacheField.get(engine);
+        specCache.invalidate(systemID);
+
+        // 2回目: Caffeine にはないがリクエストキャッシュが有効なため非-null で返る
+        // → isDeprecated()に届かず、リクエストキャッシュで短絡されたことを証明する
+        assertNotNull(engine.findSpecificationFromCache(systemID),
+                "2回目: Caffeineが空でもリクエストキャッシュから返るため非-null");
     }
 
 }

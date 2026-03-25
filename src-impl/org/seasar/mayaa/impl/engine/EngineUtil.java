@@ -115,8 +115,24 @@ public class EngineUtil implements CONST_IMPL {
         return ObjectUtil.booleanValue(value, defaultValue);
     }
 
+    /**
+     * ServiceCycleで現在処理中のノードからparentを辿り、Specificationが
+     * 見つかった場合それを返します。
+     * 見つからない場合はnullを返します。
+     *
+     * @return Specification
+     */
+    private static Specification findCurrentSpecification() {
+        NodeTreeWalker current = CycleUtil.getServiceCycle().getOriginalNode();
+        // リソースアクセス中にredirectしても対応できるようにする。
+        if (current != null) {
+            return SpecificationUtil.findSpecification(current);
+        }
+        return null;
+    }
+
     public static String getSourcePath() {
-        Specification spec = SpecificationUtil.findSpecification();
+        Specification spec = findCurrentSpecification();
         if (spec == null) {
             String path = CycleUtil.getServiceCycle().getRequestScope().getRequestedPath();
             SourceDescriptor source = SourceUtil.getSourceDescriptor(path);
@@ -140,11 +156,11 @@ public class EngineUtil implements CONST_IMPL {
     }
 
     public static Template getTemplate() {
-        Specification spec = SpecificationUtil.findSpecification();
+        Specification spec = findCurrentSpecification();
         if (spec instanceof Page) {
             NodeTreeWalker parent = spec.getParentNode();
             if (parent != null) {
-                spec = SpecificationUtil.findSpecification();
+                spec = findCurrentSpecification();
             } else {
                 return null;
             }

@@ -336,9 +336,16 @@ public class RenderUtil implements CONST_IMPL {
                 // LIFO access
                 templateStack.add(0, template);
             }
-            suffix = page.getSuperSuffix();
-            extension = page.getSuperExtension();
-            page = page.getSuperPage();
+            if (page instanceof PageImpl) {
+                PageImpl.SuperPageInfo superInfo = ((PageImpl) page).resolveSuperPageInfo();
+                suffix = superInfo.suffix;
+                extension = superInfo.extension;
+                page = superInfo.page;
+            } else {
+                suffix = page.getSuperSuffix();
+                extension = page.getSuperExtension();
+                page = page.getSuperPage();
+            }
             variables = null;
         } while(page != null);
         ProcessStatus ret = null;

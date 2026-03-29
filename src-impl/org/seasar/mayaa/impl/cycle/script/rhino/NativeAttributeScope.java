@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.lc.type.TypeInfoFactory;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 
 /**
@@ -34,7 +35,7 @@ public class NativeAttributeScope extends NativeJavaObject {
     private AttributeScope _attrs;
 
     public NativeAttributeScope(Scriptable scope, AttributeScope attrs) {
-        super(scope, attrs, Map.class);
+        super(scope, attrs, TypeInfoFactory.GLOBAL.create(Map.class));
         if (attrs == null) {
             throw new IllegalArgumentException();
         }

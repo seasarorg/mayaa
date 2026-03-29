@@ -26,6 +26,7 @@ import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
+import org.mozilla.javascript.lc.type.TypeInfoFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
@@ -40,7 +41,7 @@ public class NativeServiceCycle extends NativeJavaObject {
     private ServiceCycle _cycle;
 
     public NativeServiceCycle(Scriptable scope, ServiceCycle cycle) {
-        super(scope, cycle, Map.class);
+        super(scope, cycle, TypeInfoFactory.GLOBAL.create(Map.class));
         if (cycle == null) {
             throw new IllegalArgumentException();
         }

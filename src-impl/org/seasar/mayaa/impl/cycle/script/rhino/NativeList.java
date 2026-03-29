@@ -20,6 +20,7 @@ import java.util.List;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
+import org.mozilla.javascript.lc.type.TypeInfoFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,7 +31,7 @@ public class NativeList extends NativeJavaObject {
     private List<Object> _list;
 
     public NativeList(Scriptable scope, List<Object> list) {
-        super(scope, list, List.class);
+        super(scope, list, TypeInfoFactory.GLOBAL.create(List.class));
         if (list == null) {
             throw new IllegalArgumentException();
         }

@@ -60,14 +60,14 @@ public class WrapFactoryImplTest {
      */
     @Test
     public void testWrapAsJavaObjectContextScriptableObjectClass() {
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new HashMap<Object,Object>(), null) instanceof NativeMap);
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ArrayList<Object>(), null) instanceof NativeList);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new HashMap<Object,Object>(), (Class<?>) null) instanceof NativeMap);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ArrayList<Object>(), (Class<?>) null) instanceof NativeList);
         assertTrue(
-                _factory.wrapAsJavaObject(_cx, _scope, new RequestScopeImpl(), null) instanceof NativeAttributeScope);
-        assertFalse(_factory.wrapAsJavaObject(_cx, _scope, _scope, null) instanceof NativeAttributeScope);
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ServiceCycleImpl(), null) instanceof NativeServiceCycle);
+            _factory.wrapAsJavaObject(_cx, _scope, new RequestScopeImpl(), (Class<?>) null) instanceof NativeAttributeScope);
+        assertFalse(_factory.wrapAsJavaObject(_cx, _scope, _scope, (Class<?>) null) instanceof NativeAttributeScope);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, new ServiceCycleImpl(), (Class<?>) null) instanceof NativeServiceCycle);
         DynaBean dynaBean = new BasicDynaBean(new BasicDynaClass());
-        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, dynaBean, null) instanceof NativeDynaBean);
+        assertTrue(_factory.wrapAsJavaObject(_cx, _scope, dynaBean, (Class<?>) null) instanceof NativeDynaBean);
     }
 
 }

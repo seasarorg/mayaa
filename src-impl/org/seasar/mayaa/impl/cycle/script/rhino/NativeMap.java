@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.lc.type.TypeInfoFactory;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -32,7 +33,7 @@ public class NativeMap extends NativeJavaObject {
     private Map<String, Object> _map;
 
     public NativeMap(Scriptable scope, Map<String, Object> map) {
-        super(scope, map, Map.class);
+        super(scope, map, TypeInfoFactory.GLOBAL.create(Map.class));
         if (map == null) {
             throw new IllegalArgumentException();
         }

@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.DynaProperty;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.lc.type.TypeInfoFactory;
 
 /**
  * DynaBeanに対してRhinoスクリプト中で、通常JSで用いられる記法
@@ -37,7 +38,7 @@ public class NativeDynaBean extends NativeJavaObject {
     private DynaBean _bean;
 
     public NativeDynaBean(Scriptable script, DynaBean bean) {
-        super(script, bean, DynaBean.class);
+        super(script, bean, TypeInfoFactory.GLOBAL.create(DynaBean.class));
         if(bean == null) {
             throw new IllegalArgumentException();
         }

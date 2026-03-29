@@ -6,6 +6,7 @@
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
   - [Java 21 / Jakarta EE 10 への移行（必須要件変更）](#java-21--jakarta-ee-10-への移行必須要件変更)
   - [依存ライブラリの変更](#依存ライブラリの変更)
+  - [JavaScript エンジン (Rhino) 1.7R2 → 1.9.1 へのアップグレード（動作変更）](#javascript-エンジン-rhino-17r2--191-へのアップグレード動作変更)
   - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
   - [`ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）](#parentspecificationresolver-の親仕様-beforerender--afterrender-実行サポート動作変更)
   - [自動エスケープ機能（Issue #110）導入時の互換性注意点](#自動エスケープ機能issue-110導入時の互換性注意点)
@@ -68,6 +69,12 @@ Tomcat 9 以下、WildFly 26 以下、Spring Boot 2.x は対象外です。
 | `com.github.ben-manes.caffeine:caffeine` | 2.9.3 | キャッシュ実装（commons-collections の代替） |
 | `jakarta.platform:jakarta.jakartaee-api` | 10.0.0 | Jakarta EE 10 API（provided） |
 
+#### 変更された依存
+
+| ライブラリ | 旧バージョン / artifact | 新バージョン / artifact |
+|---|---|---|
+| Rhino (JavaScript エンジン) | `rhino:js:1.7R2` | `org.mozilla:rhino:1.9.1` |
+
 #### 削除された依存
 
 | ライブラリ | 理由 |
@@ -85,6 +92,117 @@ PR #129 により、HTML テンプレートパーサーパイプラインから 
 > **今後の予定:** `HtmlStandardScanner` ベースの新パーサーへ完全移行後に Xerces 依存を完全除去する予定です。
 
 この変更は通常の利用では動作に影響しませんが、`TokenHandler` インターフェースを直接実装している場合は `errorReporter` 関連 API が削除されているため修正が必要です。
+
+---
+
+### JavaScript エンジン (Rhino) 1.7R2 → 1.9.1 へのアップグレード（動作変更）
+
+**影響範囲:** `.mayaa` ファイルの `beforeRender` / `afterRender` などで JavaScript を記述しているすべての利用者
+
+#### 変更の概要
+
+Rhino の Maven artifact が変更され、バージョンが大幅に上がりました。
+
+| 項目 | 旧 (1.3.x) | 新 (2.0.0) |
+|---|---|---|
+| groupId:artifactId | `rhino:js` | `org.mozilla:rhino` |
+| バージョン | 1.7R2 | **1.9.1** |
+
+#### スクリプトエンジンの Java API 変更（カスタム実装への影響）
+
+`WrapFactory` をサブクラス化している場合、`wrapAsJavaObject` の新しいオーバーロードへの対応が必要になります。
+
+```java
+// 旧: Class<?> 引数が唯一のオーバーロード
+public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
+        Object javaObject, Class<?> staticClass) { ... }
+
+// 新: TypeInfo を受け取るオーバーロードが追加された (Rhino 1.9.x)
+import org.mozilla.javascript.lc.type.TypeInfo;
+@Override
+public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
+        Object javaObject, TypeInfo staticType) { ... }
+```
+
+`WrapFactory` をサブクラス化していない標準利用では影響しません。
+
+#### JavaScript 動作の変更点
+
+##### 新たに利用可能になった ES6+ 機能
+
+以下の機能は Rhino 1.7R2 では利用できなかったか不完全でしたが、1.9.1 では利用可能です。
+
+| 機能 | 概要 |
+|---|---|
+| `let` / `const` | ブロックスコープ変数宣言 |
+| アロー関数 (`=>`) | `(x) => x * 2` |
+| テンプレートリテラル | バッククォート文字列 |
+| `for...of` | 配列・イテラブルの反復 |
+| 分割代入 | `var {a, b} = obj; var [x, y] = arr;` |
+| スプレッド演算子 | `[...[1,2,3]]` |
+| デフォルト引数 / 残余引数 | `function f(a = 10) {}` / `function f(...args) {}` |
+| ジェネレーター | `function* gen() { yield 1; }` |
+| `Promise` / `Symbol` | 非同期・シンボル型 |
+| `Map` / `Set` | コレクション型 |
+| `String` 拡張メソッド | `startsWith`, `endsWith`, `includes`, `repeat`, `padStart`, `padEnd` |
+| `Array` 拡張メソッド | `find`, `findIndex`, `includes`, `flat`, `flatMap` |
+| `Object.entries` / `Object.values` | ES2017 Object 静的メソッド |
+| `Number` 静的メソッド | `Number.isNaN`, `Number.isInteger`, `Number.isFinite` |
+| Optional chaining (`?.`) | `obj?.prop`, `obj?.method?.()` |
+| Nullish coalescing (`??`) | `value ?? defaultValue` |
+| Computed property names | `{ [key]: value }` |
+| Object shorthand | `{ x, y }` for `{ x: x, y: y }` |
+| RegExp フラグ `u` / `y` | Unicode モード / Sticky モード |
+
+##### 引き続き利用可能な Rhino 独自拡張
+
+以下は ES 標準外の Rhino 独自拡張ですが、1.9.1 でも引き続き利用できます。  
+将来的に GraalJS 等の別エンジンへ移行する場合は削除対象となる可能性があります。
+
+| 機能 | 概要 | 備考 |
+|---|---|---|
+| `for each (var x in arr)` | 配列値の反復（Rhino 独自構文） | ECMAScript 標準外。別エンジンでは構文エラーになる可能性大 |
+| Java 呼び出し | `new java.lang.String("hello")`、`obj.getClass()`、`obj['class']` | GraalJS 移行時は `['class']` の挙動が変わる可能性あり |
+
+##### 1.9.1 でも利用できない機能
+
+| 機能 | 備考 |
+|---|---|
+| `class` キーワード | Rhino 1.9.1 では構文エラー。GraalJS 等の別エンジンへ移行すれば利用可能 |
+
+#### 既存スクリプトへの影響
+
+- **既存の ES5/Rhino慣用コードはそのまま動作します。**  
+  `for each`、Java 呼び出し、`var` ベースのスクリプトは影響を受けません。
+- 新しい ES6+ 構文を使っていた場合、1.7R2 では実行エラーだったコードが正常に動作するようになります。
+- `class` キーワードは依然使用できません。プロトタイプベースの継承パターン (`function Foo() {}; Foo.prototype = ...`) を使用してください。
+
+#### 性能面の変化
+
+1.7R2 から 1.9.1 にかけて、複数バージョンにわたる累積改善があります。
+
+**改善幅の目安（公式ベンチマーク）**
+
+Rhino 1.9.0 のリリースノートでは、Delta Blue / Earley-Boyer / Crypto 等のベンチマークで
+インタープリタ・コンパイルモードともに **10〜30% の性能向上** が報告されました。
+
+**特に重要な修正**
+
+| バージョン | 変更内容 |
+|---|---|
+| 1.7.8 | デフォルトのスレッドセーフ機構（`synchronized`）を廃止。シングルスレッド処理が大幅改善 |
+| 1.7.8〜1.7.14 | 整数演算の最適化、auto-boxing の削減、プロパティアクセス（SlotMap）のリファクタリング |
+| 1.8.1 | 浮動小数点 → 文字列変換のバグ修正（特定条件でループが非常に長くなる最悪ケースが存在。1.7R2 はこのバグを含む） |
+| 1.9.0 | インタープリタのバイトコード全面刷新、組み込みオブジェクトのラムダアーキテクチャ移行 |
+| 1.9.1 | RegExp エンジンの性能リグレッション修正（1.9.0 で生じた劣化を解消） |
+
+**Mayaa との関係**
+
+- Mayaa は Java 21 上で動作するため、JIT の最適化をより多く受けられます（Rhino 公式も Java 17/21 を推奨）。
+- `beforeRender` でループ処理・配列演算・正規表現を多用しているページでは改善を実感しやすいと考えられます。
+- 浮動小数点を文字列化するスクリプト（`String(floatValue)` 等）で稀に発生していた極端な遅延が解消されます。
+
+> 性能改善はあくまでベンチマーク上の数値です。Mayaa のテンプレート処理全体に占めるスクリプト実行の割合はアプリケーションによって異なるため、実際の改善幅はワークロードに依存します。
 
 ---
 

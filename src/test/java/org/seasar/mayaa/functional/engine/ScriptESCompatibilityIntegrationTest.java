@@ -29,24 +29,24 @@ import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
  * JSエンジン互換性を検証するIT。
  *
  * <p>
- * 現行エンジン (Rhino 1.7R2, ES5相当) での動作を固定化し、
+ * 現行エンジン (Rhino 1.9.1) での動作を固定化し、
  * 別のJSのスクリプトエンジンに切り替えた時の差分を検出しやすくする。
  * </p>
  *
  * <h3>テスト分類と活用シーン</h3>
  * <ul>
- *   <li><strong>ES5回帰確認</strong>: Rhino 1.7R2 で動作し、移行後も継続すべき基本機能。
+ *   <li><strong>ES5回帰確認</strong>: Rhino 1.9.1 で動作し、移行後も継続すべき基本機能。
  *       新しいエンジンでも常に成功すべきテスト。</li>
- *   <li><strong>Rhino拡張</strong>: Rhino 1.7R2 固有の非標準機能。
+ *   <li><strong>Rhino拡張</strong>: Rhino 固有の非標準機能。
  *       GraalJS など別のエンジンでは失敗する可能性が高い。
  *       アップグレード時に「削除対象機能」を検出するテスト。</li>
- *   <li><strong>ES6+ 移行差分</strong>: Rhino 1.7R2 では非対応だが、GraalJS では対応する機能。
+ *   <li><strong>ES6+ 可用性確認</strong>: Rhino 1.9.1 でのサポート状況を固定化する機能。
  *       テスト期待値が変わる。新エンジンで期待値更新後は常に成功すべき。</li>
  * </ul>
  *
  * <h3>アップグレードシナリオ別の用途</h3>
  * <ol>
- *   <li><strong>Rhino アップグレード（1.7R2 → 新バージョン）</strong>:
+ *   <li><strong>Rhino アップグレード（旧バージョン → 1.9.1 以降）</strong>:
  *       全テストで期待値維持。新バージョンでの regression を検出。</li>
  *   <li><strong>エンジン切り替え（Rhino → GraalJS）</strong>:
  *       - ES5 テストは成功維持。
@@ -64,6 +64,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
     // ES5 — 移行後も継続動作すべき機能の回帰確認
     // -------------------------------------------------------------------------
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "4,8"  (推定) ES5: Array.prototype.map/filter はサポート済み
+     * org.mozilla:rhino:1.9.1 → "4,8"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void JS16_Arrayのmapとfilterが利用可能(boolean useNewParser) throws IOException {
@@ -80,7 +85,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // JS 1.6 (Rhino 1.7R2 で利用可能): map / filter。
+                        // JS 1.6 (Rhino 1.9.1 で利用可能): map / filter。
                         // 移行後エンジンでも継続動作すべき。
                         var even = [1, 2, 3, 4, 5].filter(function(x) { return x % 2 === 0; });
                         var doubled = even.map(function(x) { return x * 2; });
@@ -99,6 +104,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "6"  (推定) ES5: Array.prototype.forEach はサポート済み
+     * org.mozilla:rhino:1.9.1 → "6"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void JS16_ArrayのforEachが利用可能(boolean useNewParser) throws IOException {
@@ -115,7 +125,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // Array.prototype.forEach は現行 Rhino 1.7R2 でも利用可能。
+                        // Array.prototype.forEach は現行 Rhino 1.9.1 でも利用可能。
                         // Rhino 独自拡張の for each 構文とは別物で、こちらは標準メソッド側の確認。
                         var sum = 0;
                         [1, 2, 3].forEach(function(value) {
@@ -135,9 +145,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  JSON グローバルは 1.7R3 以降で追加。1.7R2 では非サポート
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 1.7R3 以降の JSON サポートを含むバージョンに更新
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES5_JSONは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES5_JSONは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -151,16 +166,13 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES5 の JSON グローバルは Rhino 1.7R2 には含まれていない (1.7R3 以降で追加)。
-                        // 別のJSのスクリプトエンジンに切り替えると "available" になる移行差分点。
+                        // ES5 の JSON グローバルは現行 Rhino 1.9.1 で利用可能。
                         request.message = (typeof JSON === "undefined") ? "not-available" : "available";
                     ]]></m:beforeRender>
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES5+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -169,9 +181,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  Object.keys / Array.prototype.reduce は 1.7R3 以降で追加。1.7R2 では非サポート
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES5 メソッド群を含むバージョンに更新
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES5_ObjectKeysとArrayReduceは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES5_ObjectKeysとArrayReduceは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -185,9 +202,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES5 の Object.keys / Array.prototype.reduce は Rhino 1.7R2 には含まれていない
-                        // (1.7R3 以降で追加)。
-                        // 別のJSのスクリプトエンジンに切り替えると "available" になる移行差分点。
+                        // ES5 の Object.keys / Array.prototype.reduce は現行 Rhino 1.9.1 で利用可能。
                         var hasKeys   = (typeof Object.keys            === "function");
                         var hasReduce = (typeof Array.prototype.reduce === "function");
                         request.message = (hasKeys || hasReduce) ? "available" : "not-available";
@@ -195,9 +210,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES5+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -206,6 +219,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "object"  (推定) ES3以降: typeof null === "object" は言語仕様として不変
+     * org.mozilla:rhino:1.9.1 → "object"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void ES5_typeofnullはobjectである(boolean useNewParser) throws IOException {
@@ -238,6 +256,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "true:true"  (推定) IEEE 754規定: エンジン非依存の言語仕様
+     * org.mozilla:rhino:1.9.1 → "true:true"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void ES5_NaNはNaN自身と等しくない(boolean useNewParser) throws IOException {
@@ -269,6 +292,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "true:2:hellO wOrld:3"  (推定) ES3/ES5: 正規表現基本機能はサポート済み
+     * org.mozilla:rhino:1.9.1 → "true:2:hellO wOrld:3"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void ES5_RegExpの基本機能が利用可能(boolean useNewParser) throws IOException {
@@ -286,7 +314,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES5 の正規表現: literal, constructor, match, replace, split, グローバルフラグ等は
-                        // 現行エンジン (Rhino 1.7R2) で継続動作すべき基本機能。
+                        // 現行エンジン (Rhino 1.9.1) で継続動作すべき基本機能。
                         var literal = /world/.test("hello world");
                         var match = "hello".match(/l/g);
                         var replace = "hello world".replace(/o/g, "O");
@@ -306,9 +334,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: startsWith/endsWith/includes 等は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6+ 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6Plus_String拡張メソッドstartsWithなどは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES6Plus_String拡張メソッドstartsWithなどは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -324,8 +357,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:beforeRender><![CDATA[
                         // ES6+ の String 拡張メソッド:
                         // startsWith, endsWith, includes, repeat, padStart, padEnd など
-                        // は現行エンジン (Rhino 1.7R2) では未提供。
-                        // 別のJSのスクリプトエンジンに切り替えると利用可能になる移行差分点。
+                        // は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasStartsWith = (typeof "".startsWith === "function");
                         var hasEndsWith = (typeof "".endsWith === "function");
                         var hasIncludes = (typeof "".includes === "function");
@@ -336,9 +368,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES6+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -347,9 +377,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: find/findIndex/includes/flat 等は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6+ 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6Plus_Array拡張メソッドfindなどは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES6Plus_Array拡張メソッドfindなどは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -365,8 +400,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:beforeRender><![CDATA[
                         // ES6+ の Array 拡張メソッド:
                         // find, findIndex, includes, flat, flatMap など
-                        // は現行エンジン (Rhino 1.7R2) では未提供。
-                        // 別のJSのスクリプトエンジンに切り替えると利用可能になる移行差分点。
+                        // は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasFind = (typeof [].find === "function");
                         var hasFindIndex = (typeof [].findIndex === "function");
                         var hasIncludes = (typeof [].includes === "function");
@@ -377,9 +411,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES6+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -388,9 +420,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Object.entries/values は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES2017 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES2017_Object_entriesとvaluesは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES2017_Object_entriesとvaluesは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -405,9 +442,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES2017 の Object 静的メソッド:
-                        // Object.entries, Object.values は現行エンジン (Rhino 1.7R2) では未提供。
-                        // (Object.keys も ES5 相当の Rhino 1.7R2 では未提供)
-                        // 別のJSのスクリプトエンジンに切り替えると利用可能になる移行差分点。
+                        // Object.entries, Object.values は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasEntries = (typeof Object.entries === "function");
                         var hasValues = (typeof Object.values === "function");
                         request.message = (hasEntries || hasValues) ? "available" : "not-available";
@@ -415,9 +450,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES6+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -430,6 +463,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
     // Rhino拡張 — 現行エンジンで利用可能だが標準外のため移行差分になりやすい観点
     // -------------------------------------------------------------------------
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "6"  (推定) Rhino独自拡張: for each (...) 構文はサポート済み
+     * org.mozilla:rhino:1.9.1 → "6"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void Rhino拡張_forEach構文が利用可能(boolean useNewParser) throws IOException {
@@ -458,7 +496,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: 6
+        // 現行 Rhino 1.9.1: 6
         // GraalJS など標準寄りエンジンでは構文エラーになる可能性が高い
         String expected = "6";
 
@@ -469,6 +507,11 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "class java.lang.String:true"  (推定) Rhino Java インターオップ: getClass()/['class']はサポート済み
+     * org.mozilla:rhino:1.9.1 → "class java.lang.String:true"  変化なし
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void Rhino拡張_JavaオブジェクトのgetClass取得が利用可能(boolean useNewParser) throws IOException {
@@ -487,7 +530,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:beforeRender><![CDATA[
                         // Rhino の Java インターオップ: obj.getClass() は利用可能。
                         // ブラケット記法 obj['class'] も Rhino が getClass() にマップするため同値になる。
-                        // ドット記法 obj.class は 'class' が予約語のため Rhino 1.7R2 でも構文エラー
+                        // ドット記法 obj.class は 'class' が予約語のため Rhino 1.9.1 でも構文エラー
                         // (ES3 時代から将来予約語扱い。ES6 class キーワードと競合するより前の問題)。
                         // GraalJS 等への移行後: getClass() は継続動作するが、
                         //   ['class'] マッピングの挙動は移行差分点になりうる。
@@ -499,7 +542,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: class java.lang.String:true
+        // 現行 Rhino 1.9.1: class java.lang.String:true
         // GraalJS など: getClass() の戻り値は同じだが ['class'] マッピングは未保証
         String expected = "class java.lang.String:true";
 
@@ -511,12 +554,17 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
     }
 
     // -------------------------------------------------------------------------
-    // ES6+ — 現行エンジン非対応。別エンジンに切り替えると期待値が変わる移行差分点
+    // ES6+ — 現行エンジンでの可用性確認
     // -------------------------------------------------------------------------
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  eval() 経由の let はサポートされていなかった
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 let として正式サポート
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_letは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_letは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -530,8 +578,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 let は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 let は現行エンジン (Rhino 1.9.1) で利用可能。
                         var result;
                         try {
                             eval("let x = 1; x;");
@@ -544,7 +591,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -553,9 +600,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  eval() 経由の const はサポートされていなかった
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 const として正式サポート
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_constは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_constは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -569,8 +621,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 const は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 const は現行エンジン (Rhino 1.9.1) で利用可能。
                         var result;
                         try {
                             eval("const x = 1; x;");
@@ -583,7 +634,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -592,9 +643,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Promise/Symbol は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_PromiseとSymbolは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES6_PromiseとSymbolは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -608,8 +664,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 の Promise / Symbol は現行エンジン (Rhino 1.7R2) では未提供。
-                        // 別のJSのスクリプトエンジンに切り替えると "available" になる移行差分点。
+                        // ES6 の Promise / Symbol は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasPromise = (typeof Promise === "function");
                         var hasSymbol = (typeof Symbol === "function");
                         request.message = (hasPromise || hasSymbol) ? "available" : "not-available";
@@ -617,7 +672,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -626,9 +681,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Map/Set は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_MapとSetは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES6_MapとSetは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -642,8 +702,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 の Map / Set は現行エンジン (Rhino 1.7R2) では未提供。
-                        // 別のJSのスクリプトエンジンに切り替えると "available" になる移行差分点。
+                        // ES6 の Map / Set は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasMap = (typeof Map === "function");
                         var hasSet = (typeof Set === "function");
                         request.message = (hasMap || hasSet) ? "available" : "not-available";
@@ -651,7 +710,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -660,9 +719,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: アロー関数は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_アロー関数は現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_アロー関数は現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -676,8 +740,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 アロー関数 (x => x) は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 アロー関数 (x => x) は現行エンジン (Rhino 1.9.1) で利用可能。
                         var result;
                         try {
                             eval("(x => x)(1)");
@@ -690,9 +753,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES6+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -701,9 +762,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: テンプレートリテラルは未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_テンプレートリテラルは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_テンプレートリテラルは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -717,8 +783,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 テンプレートリテラル (`...`) は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 テンプレートリテラル (`...`) は現行エンジン (Rhino 1.9.1) で利用可能。
                         // バッククォートは ES5 構文内に直接書けないため、文字コードから生成して eval に渡す。
                         var backtick = String.fromCharCode(96);
                         var result;
@@ -733,9 +798,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES6+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -744,9 +807,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: for...of は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_forOfは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_forOfは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -760,8 +828,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 for...of は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 for...of は現行エンジン (Rhino 1.9.1) で利用可能。
                         var result;
                         try {
                             eval("var s = 0; for (var x of [1, 2, 3]) { s += x; }");
@@ -774,9 +841,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES6+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -785,9 +850,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: RegExp u/y フラグはES6以降の機能
+     * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_RegExpフラグのuとyは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_RegExpフラグのuとyは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -802,8 +872,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES6 の RegExp フラグ u (unicode) と y (sticky) は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         var resultU;
                         try {
                             eval("/./u");
@@ -823,9 +892,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported:not-supported
-        // GraalJS など ES6+ エンジンでは: supported:supported
-        String expected = "not-supported:not-supported";
+        String expected = "supported:supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -834,6 +901,12 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: class は未サポート
+     * org.mozilla:rhino:1.9.1 → "not-supported"  変化なし（依然未対応）
+     * ※ GraalJS など ES6+ 対応エンジンでは "supported" になる移行差分点
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
     public void ES6_classキーワードは現行エンジンでは非対応(boolean useNewParser) throws IOException {
@@ -850,7 +923,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 class キーワードは現行エンジン (Rhino 1.7R2) では構文エラー。
+                        // ES6 class キーワードは現行エンジン (Rhino 1.9.1) では構文エラー。
                         // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var result;
                         try {
@@ -864,7 +937,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
+        // 現行 Rhino 1.9.1: not-supported
         // GraalJS など ES6+ エンジンでは: supported
         String expected = "not-supported";
 
@@ -875,9 +948,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported:supported"  配列分割のみ部分サポート、オブジェクト分割 ({a,b}=obj) は非サポート
+     * org.mozilla:rhino:1.9.1 → "supported:supported"      ★変更 オブジェクト分割も含め完全サポート
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_分割代入は現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_分割代入は現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -891,7 +969,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 の分割代入 (destructuring) は現行エンジン (Rhino 1.7R2) では非対応。
+                        // ES6 の分割代入 (destructuring) は現行エンジン (Rhino 1.9.1) で利用可能。
                         // オブジェクト分割 const {a, b} = obj と配列分割 const [x, y] = arr がある。
                         // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var resultObj;
@@ -913,9 +991,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported:supported (配列分割のみ部分的にサポート)
-        // GraalJS など ES6+ エンジンでは: supported:supported
-        String expected = "not-supported:supported";
+        String expected = "supported:supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -924,9 +1000,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: spread operator は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_SpreadOperatorは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_SpreadOperatorは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -940,9 +1021,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <?xml version="1.0" encoding="UTF-8"?>
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
-                        // ES6 Spread operator (...) は現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // [...arr] や {...obj} など複数の使用形式がある。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // ES6 Spread operator (...) は現行エンジン (Rhino 1.9.1) で利用可能。
                         var result;
                         try {
                             eval("[...[1,2,3]]");
@@ -955,9 +1034,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES6+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -966,9 +1043,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: default/rest parameters は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_DefaultParametersとRestParametersは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_DefaultParametersとRestParametersは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -983,7 +1065,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES6 の Default parameters と Rest parameters は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         // function(a = 10) と function(...args) が該当。
                         // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var resultDefault;
@@ -1005,9 +1087,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported:not-supported
-        // GraalJS など ES6+ エンジンでは: supported:supported
-        String expected = "not-supported:not-supported";
+        String expected = "supported:supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -1016,9 +1096,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: ES6 function* 構文は未サポート（JS1.7非標準 yield 構文は別途存在）
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により function* 構文が利用可能に
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_Generatorは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_Generatorは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -1033,7 +1118,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES6 の Generator (function* と yield) は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var result;
                         try {
@@ -1047,9 +1132,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES6+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -1058,9 +1141,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Number.isNaN/isInteger/isFinite は未実装
+     * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES2015 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES2015_NumberメソッドisNaNやisIntegerは現行エンジンでは未提供(boolean useNewParser) throws IOException {
+    public void ES2015_NumberメソッドisNaNやisIntegerは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -1076,8 +1164,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:beforeRender><![CDATA[
                         // ES2015 の Number 静的メソッド:
                         // Number.isNaN, Number.isInteger, Number.isFinite, Number.isSafeInteger
-                        // は現行エンジン (Rhino 1.7R2) では未提供。
-                        // 別のJSのスクリプトエンジンに切り替えると利用可能になる移行差分点。
+                        // は現行エンジン (Rhino 1.9.1) で利用可能。
                         var hasIsNaN = (typeof Number.isNaN === "function");
                         var hasIsInteger = (typeof Number.isInteger === "function");
                         var hasIsFinite = (typeof Number.isFinite === "function");
@@ -1086,9 +1173,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-available
-        // GraalJS など ES2015+ エンジンでは: available
-        String expected = "not-available";
+        String expected = "available";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -1097,9 +1182,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: Optional Chaining (?.) は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES2020 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES2020_OptionalChainingは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES2020_OptionalChainingは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -1114,9 +1204,8 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES2020 の Optional chaining (?.) は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         // obj?.prop や obj?.method?.() が該当。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var result;
                         try {
                             eval("var x = {}; x?.a?.b");
@@ -1129,9 +1218,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES2020+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -1140,9 +1227,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: Nullish Coalescing (??) は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES2020 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES2020_NullishCoalescingは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES2020_NullishCoalescingは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -1157,9 +1249,8 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                 <m:mayaa xmlns:m="http://mayaa.seasar.org">
                     <m:beforeRender><![CDATA[
                         // ES2020 の Nullish coalescing (??) は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         // value ?? defaultValue が該当。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
                         var result;
                         try {
                             eval("var x = null; var y = x ?? 10;");
@@ -1172,9 +1263,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported
-        // GraalJS など ES2020+ エンジンでは: supported
-        String expected = "not-supported";
+        String expected = "supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
@@ -1183,9 +1272,14 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: computed property names / object shorthand は未サポート
+     * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
+     */
     @ParameterizedTest(name = "useNewParser {0}")
     @ValueSource(booleans = { false, true })
-    public void ES6_ComputedPropertyNamesとObjectShorthandは現行エンジンでは非対応(boolean useNewParser) throws IOException {
+    public void ES6_ComputedPropertyNamesとObjectShorthandは現行エンジンで利用可能(boolean useNewParser) throws IOException {
         setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
@@ -1202,8 +1296,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                         // ES6 のオブジェクトリテラル拡張:
                         // Computed property names ({[key]: value}) と
                         // Object shorthand ({x, y} for {x: x, y: y}) は
-                        // 現行エンジン (Rhino 1.7R2) では構文エラー。
-                        // 別のJSのスクリプトエンジンに切り替えると "supported" になる移行差分点。
+                        // 現行エンジン (Rhino 1.9.1) で利用可能。
                         var resultComputed;
                         try {
                             eval("var k = 'x'; var obj = {[k]: 1};");
@@ -1223,9 +1316,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
                     <m:write id="msg" value="${request.message}" />
                 </m:mayaa>
                 """;
-        // 現行 Rhino 1.7R2: not-supported:not-supported
-        // GraalJS など ES6+ エンジンでは: supported:supported
-        String expected = "not-supported:not-supported";
+        String expected = "supported:supported";
 
         DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
         DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);

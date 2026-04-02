@@ -15,9 +15,11 @@
  */
 package org.seasar.mayaa.impl.engine;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -42,6 +44,9 @@ import org.seasar.mayaa.source.SourceDescriptor;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class RenderUtil implements CONST_IMPL {
+
+    private record SuperPageInfo(Page page, String suffix, String extension) {
+    }
 
     private static final ProcessStatus SKIP_BODY =
             ProcessStatus.SKIP_BODY;
@@ -330,22 +335,20 @@ public class RenderUtil implements CONST_IMPL {
                 SpecificationUtil.startScope(variables);
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
-            Template template =
-                getTemplate(requestedSuffix, page, suffix, extension);
+
+            SuperPageInfo superInfo = resolveSuperPageInfo(page);
+            if (fireEvent && superInfo.page == null) {
+                executeBeforeRenderOnAllParentSpecifications(page, pageStack);
+            }
+
+            Template template = getTemplate(requestedSuffix, page, suffix, extension);
             if (template != null) {
                 // LIFO access
                 templateStack.add(0, template);
             }
-            if (page instanceof PageImpl) {
-                PageImpl.SuperPageInfo superInfo = ((PageImpl) page).resolveSuperPageInfo();
-                suffix = superInfo.suffix;
-                extension = superInfo.extension;
-                page = superInfo.page;
-            } else {
-                suffix = page.getSuperSuffix();
-                extension = page.getSuperExtension();
-                page = page.getSuperPage();
-            }
+            suffix = superInfo.suffix;
+            extension = superInfo.extension;
+            page = superInfo.page;
             variables = null;
         } while(page != null);
         ProcessStatus ret = null;
@@ -357,13 +360,43 @@ public class RenderUtil implements CONST_IMPL {
         }
         if (fireEvent) {
             for (int i = 0; i < pageStack.size(); i++) {
-                page = (Page) pageStack.get(i);
-                saveToCycle(page);
-                SpecificationUtil.execEvent(page, QM_AFTER_RENDER);
+                Page p = pageStack.get(i);
+                saveToCycle(p);
+                SpecificationUtil.execEvent(p, QM_AFTER_RENDER);
                 SpecificationUtil.endScope();
             }
         }
         return ret;
+    }
+
+    private static SuperPageInfo resolveSuperPageInfo(Page page) {
+        if (page == null) {
+            throw new IllegalArgumentException();
+        }
+        if (page instanceof PageImpl) {
+            PageImpl.SuperPageInfo pageImplInfo = ((PageImpl) page).resolveSuperPageInfo();
+            return new SuperPageInfo(pageImplInfo.page, pageImplInfo.suffix, pageImplInfo.extension);
+        }
+        return new SuperPageInfo(page.getSuperPage(), page.getSuperSuffix(), page.getSuperExtension());
+    }
+
+    private static void executeBeforeRenderOnAllParentSpecifications(Page basePage, List<Page> pageStack) {
+        if (basePage == null || pageStack == null) {
+            throw new IllegalArgumentException();
+        }
+        Set<Specification> visited = new HashSet<>();
+        visited.add(basePage);
+        Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
+
+        Specification parent = EngineUtil.getParentSpecification(basePage);
+        while (parent != null && !parent.getSystemID().equals(defaultSpec.getSystemID()) && visited.add(parent)) {
+            if (parent instanceof Page) {
+                pageStack.add(0, (Page) parent);
+            }
+            SpecificationUtil.startScope(null);
+            SpecificationUtil.execEvent(parent, QM_BEFORE_RENDER);
+            parent = EngineUtil.getParentSpecification(parent);
+        }
     }
 
 }

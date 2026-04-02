@@ -336,16 +336,22 @@ public class RenderUtil implements CONST_IMPL {
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
 
-            SuperPageInfo superInfo = resolveSuperPageInfo(page);
-            if (fireEvent && superInfo.page == null) {
-                executeBeforeRenderOnAllParentSpecifications(page, pageStack);
-            }
-
             Template template = getTemplate(requestedSuffix, page, suffix, extension);
             if (template != null) {
                 // LIFO access
                 templateStack.add(0, template);
             }
+
+            // テンプレートビルド後に resolveSuperPageInfo を呼ぶ。
+            // setupExtends のオーバーライド等でテンプレートビルド中（afterBuild）に
+            // ページの mayaaNode へ m:extends 属性が追加される場合があるため、
+            // getTemplate の後に superPage 解決を行うことで
+            // 初回リクエスト時にも正しくレイアウトが適用される。
+            SuperPageInfo superInfo = resolveSuperPageInfo(page);
+            if (fireEvent && superInfo.page == null) {
+                executeBeforeRenderOnAllParentSpecifications(page, pageStack);
+            }
+
             suffix = superInfo.suffix;
             extension = superInfo.extension;
             page = superInfo.page;

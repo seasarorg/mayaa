@@ -2,13 +2,11 @@ package org.seasar.mayaa.impl.builder.parser;
 
 import java.util.Arrays;
 
-import org.apache.xerces.impl.XMLErrorReporter;
-import org.apache.xerces.xni.XNIException;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public abstract class HTMLErrorReporter extends XMLErrorReporter{
+public abstract class HTMLErrorReporter {
   ErrorHandler _errorHandler;
   HTMLErrorReporter(ErrorHandler errorHandler) {
     _errorHandler = errorHandler;
@@ -43,7 +41,7 @@ class DefaultHTMLErrorHandler extends HTMLErrorReporter {
           break;
         }
       } catch (SAXException e) {
-        throw new XNIException(e);
+        throw new RuntimeException(e);
       }
     }
   }

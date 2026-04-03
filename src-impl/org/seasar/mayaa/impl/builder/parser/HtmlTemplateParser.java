@@ -17,7 +17,6 @@ package org.seasar.mayaa.impl.builder.parser;
 
 import java.io.IOException;
 
-import org.apache.xerces.xni.parser.XMLInputSource;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.xml.sax.Attributes;
@@ -115,18 +114,9 @@ public class HtmlTemplateParser implements XMLReader, CONST_IMPL {
 
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
-        java.io.Reader charStream = input.getCharacterStream();
-        java.io.InputStream byteStream = input.getByteStream();
-        XMLInputSource xniSource;
-        if (charStream != null) {
-            xniSource = new XMLInputSource(input.getPublicId(), input.getSystemId(), null, charStream, input.getEncoding());
-        } else {
-            xniSource = new XMLInputSource(input.getPublicId(), input.getSystemId(), null, byteStream, input.getEncoding());
-        }
-
         scanner.reset(errorHandler);
         scanner.setDocumentHandler(new SaxBridgeHandler());
-        scanner.setInputSource(xniSource);
+        scanner.setInputSource(input);
         try {
             scanner.scanDocument(true);
         } finally {

@@ -24,30 +24,14 @@ import java.util.EmptyStackException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xerces.impl.Constants;
-import org.apache.xerces.util.ErrorHandlerWrapper;
-import org.apache.xerces.xni.Augmentations;
-import org.apache.xerces.xni.QName;
-import org.apache.xerces.xni.XMLAttributes;
-import org.apache.xerces.xni.XMLDocumentHandler;
-import org.apache.xerces.xni.XMLLocator;
-import org.apache.xerces.xni.XMLString;
-import org.apache.xerces.xni.XNIException;
-import org.apache.xerces.xni.parser.XMLComponent;
-import org.apache.xerces.xni.parser.XMLComponentManager;
-import org.apache.xerces.xni.parser.XMLConfigurationException;
-import org.apache.xerces.xni.parser.XMLDocumentScanner;
-import org.apache.xerces.xni.parser.XMLErrorHandler;
-import org.apache.xerces.xni.parser.XMLInputSource;
 import org.seasar.mayaa.impl.builder.parser.HtmlTokenizer.TagToken;
+import org.xml.sax.InputSource;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.Locator;
 
 /**
@@ -56,7 +40,7 @@ import org.xml.sax.Locator;
  * フォーマル公開識別子については妥当性の検証を行わない。
  * HTML文字参照以外は解決しない
  */
-public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
+public class HtmlStandardScanner {
     static final Log LOG = LogFactory.getLog(HtmlStandardScanner.class);
     static final Log LOG_TOKENHANDLER = LogFactory.getLog(HtmlStandardScanner.class.getName() + ".TokenHandler");
     static final Log LOG_TOKENIZER = LogFactory.getLog(HtmlStandardScanner.class.getName() + ".Tokenizer");
@@ -73,40 +57,33 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
     static final String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
 
-    static final Attributes EMPTY_ATTRIBUTES = new Attributes();
+    static final HtmlAttributesImpl EMPTY_ATTRIBUTES = new HtmlAttributesImpl();
 
     static final Pattern REGEX_WHITESPACE_ONLY = Pattern.compile("\\s+");
 
-    static final QName QN_HTML = new QName(null, "html", "html", NS_URI_HTML);
-    static final QName QN_HEAD = new QName(null, "head", "head", NS_URI_HTML);
-    static final QName QN_BODY = new QName(null, "body", "body", NS_URI_HTML);
-    static final QName QN_TEMPLATE = new QName(null, "template", "template", NS_URI_HTML);
-
-    static {
-        QN_HEAD.hashCode();
-    }
+    static final ElemName QN_HTML = new ElemName(null, "html", "html", NS_URI_HTML);
+    static final ElemName QN_HEAD = new ElemName(null, "head", "head", NS_URI_HTML);
+    static final ElemName QN_BODY = new ElemName(null, "body", "body", NS_URI_HTML);
+    static final ElemName QN_TEMPLATE = new ElemName(null, "template", "template", NS_URI_HTML);
     /**  */
-    XMLDocumentHandler documentHandler = null;
+    HtmlDocumentHandler documentHandler = null;
 
     HtmlTokenizer tokenizer;
 
     //ByteBuffer buffer = ByteBuffer.allocate(8 * 1024);
     // CharBuffer buffer = CharBuffer.allocate(8 * 1024);
-    XMLInputSource inputSource;
+    InputSource inputSource;
 
-    @Override
-    public void setInputSource(XMLInputSource inputSource) throws IOException {
+    public void setInputSource(InputSource inputSource) throws IOException {
         tokenizer.setInputSource(inputSource);
         this.inputSource = inputSource;
     }
 
-    @Override
-    public void setDocumentHandler(XMLDocumentHandler handler) {
+    public void setDocumentHandler(HtmlDocumentHandler handler) {
         this.documentHandler = handler;
     }
 
-    @Override
-    public XMLDocumentHandler getDocumentHandler() {
+    public HtmlDocumentHandler getDocumentHandler() {
         return documentHandler;
     }
 
@@ -120,7 +97,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
     boolean featureDeleteUnexpectedElement = false;
     boolean featureDocumentFragment = true;
     
-    @Override
     public String[] getRecognizedFeatures() {
         return new String[] {
             FEATURE_DELETE_UNEXPECTED_ELEMENT,
@@ -129,7 +105,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         };
     }
 
-    @Override
     public Boolean getFeatureDefault(String featureId) {
         switch (featureId) {
             case FEATURE_DELETE_UNEXPECTED_ELEMENT: return Boolean.FALSE;
@@ -139,8 +114,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
     }
 
-    @Override
-    public void setFeature(String featureId, boolean state) throws XMLConfigurationException {
+    public void setFeature(String featureId, boolean state) {
         switch (featureId) {
             case FEATURE_DELETE_UNEXPECTED_ELEMENT:
                 featureDeleteUnexpectedElement = state;
@@ -160,20 +134,6 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
     HTMLErrorReporter errorReporter = new DefaultHTMLErrorHandler(null);
 
-    @Override
-    public String[] getRecognizedProperties() {
-        return new String[] {
-        };
-    }
-
-    @Override
-    public Object getPropertyDefault(String propertyId) {
-        return null;
-    }
-
-    @Override
-    public void setProperty(String propertyId, Object value) throws XMLConfigurationException {
-    }
     // PROPERTEIS:END
 
     // INTERNAL UTILS
@@ -186,86 +146,86 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         return false;
     }
 
-    QName createHtmlQName(String tagName) {
-        return new QName(null, tagName, tagName, NS_URI_HTML);
+    ElemName createHtmlElemName(String tagName) {
+        return new ElemName(null, tagName, tagName, NS_URI_HTML);
     }
 
-    void insertStartTag(TagToken tagToken, XMLAttributes attributes) {
-        QName qName = createHtmlQName(tagToken.nameBuilder.toString());
-        insertStartTag(qName, attributes);
+    void insertStartTag(TagToken tagToken, HtmlAttributesImpl attributes) {
+        ElemName elemName = createHtmlElemName(tagToken.nameBuilder.toString());
+        insertStartTag(elemName, attributes);
     }
 
-    void insertStartTag(QName qName, XMLAttributes attributes) {
-        if (HTMLKnowledge.isVoidElementLocalPart(qName.localpart)) {
+    void insertStartTag(ElemName elemName, HtmlAttributesImpl attributes) {
+        if (HTMLKnowledge.isVoidElementLocalPart(elemName.localName())) {
             if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                LOG_TOKENHANDLER.trace(String.format("%s: Insert void tag: <%s>", insertionMode, qName.localpart));
+                LOG_TOKENHANDLER.trace(String.format("%s: Insert void tag: <%s>", insertionMode, elemName.localName()));
             }
-            documentHandler.emptyElement(qName, attributes, null);
+            documentHandler.emptyElement(elemName, attributes);
         } else {
             if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                LOG_TOKENHANDLER.trace(String.format("%s: Insert start tag: <%s>", insertionMode, qName.localpart));
+                LOG_TOKENHANDLER.trace(String.format("%s: Insert start tag: <%s>", insertionMode, elemName.localName()));
             }
-            unclosedElementStack.push(qName);
-            documentHandler.startElement(qName, attributes, null);
+            unclosedElementStack.push(elemName);
+            documentHandler.startElement(elemName, attributes);
         }
     }
 
     void insertEndTag(TagToken tagToken) {
-        QName qName = createHtmlQName(tagToken.nameBuilder.toString());
-        insertEndTag(qName);
+        ElemName elemName = createHtmlElemName(tagToken.nameBuilder.toString());
+        insertEndTag(elemName);
     }
 
-    void insertEndTag(final QName qName) {
+    void insertEndTag(final ElemName elemName) {
         try {
             do {
-                QName qn = unclosedElementStack.peek();
-                if (qName.localpart.equals(qn.localpart)) {
+                ElemName top = unclosedElementStack.peek();
+                if (elemName.localName().equals(top.localName())) {
                     break;
                 }
                 if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                    LOG_TOKENHANDLER.trace(String.format("%s: Insert implied end tag: </%s>", insertionMode, qn.localpart));
+                    LOG_TOKENHANDLER.trace(String.format("%s: Insert implied end tag: </%s>", insertionMode, top.localName()));
                 }
                 unclosedElementStack.pop();
-                documentHandler.endElement(qn, null);
+                documentHandler.endElement(top);
             } while(true);
 
             if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                LOG_TOKENHANDLER.trace(String.format("%s: Insert end tag: </%s>", insertionMode, qName.localpart));
+                LOG_TOKENHANDLER.trace(String.format("%s: Insert end tag: </%s>", insertionMode, elemName.localName()));
             }
             unclosedElementStack.pop();
-            documentHandler.endElement(qName, null);
+            documentHandler.endElement(elemName);
         } catch (EmptyStackException e) {
             // An appropriate end tag token is an end tag token whose tag name matches the tag name of the last start tag 
             // to have been emitted from this tokenizer, if any. If no start tag has been emitted from this tokenizer,
             // then no end tag token is appropriate.
         }
     }
-    void insertImpliedStartTag(QName qName) {
-        if (HTMLKnowledge.isVoidElementLocalPart(qName.localpart)) {
+    void insertImpliedStartTag(ElemName elemName) {
+        if (HTMLKnowledge.isVoidElementLocalPart(elemName.localName())) {
             if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                LOG_TOKENHANDLER.trace(String.format("%s: Insert implied void tag: <%s>", insertionMode, qName.localpart));
+                LOG_TOKENHANDLER.trace(String.format("%s: Insert implied void tag: <%s>", insertionMode, elemName.localName()));
             }
-            documentHandler.emptyElement(qName, EMPTY_ATTRIBUTES, null);
+            documentHandler.emptyElement(elemName, EMPTY_ATTRIBUTES);
         } else {
             if (LOG_TOKENHANDLER.isTraceEnabled()) {
-                LOG_TOKENHANDLER.trace(String.format("%s: Insert implied start tag: <%s>", insertionMode, qName.localpart));
+                LOG_TOKENHANDLER.trace(String.format("%s: Insert implied start tag: <%s>", insertionMode, elemName.localName()));
             }
-            unclosedElementStack.push(qName);
-            documentHandler.startElement(qName, EMPTY_ATTRIBUTES, null);
+            unclosedElementStack.push(elemName);
+            documentHandler.startElement(elemName, EMPTY_ATTRIBUTES);
         }
     }
-    void insertImpliedEndTag(QName qName) {
+    void insertImpliedEndTag(ElemName elemName) {
         if (LOG_TOKENHANDLER.isTraceEnabled()) {
-            LOG_TOKENHANDLER.trace(String.format("%s: Insert implied end tag: </%s>", insertionMode, qName.localpart));
+            LOG_TOKENHANDLER.trace(String.format("%s: Insert implied end tag: </%s>", insertionMode, elemName.localName()));
         }
         unclosedElementStack.pop();
-        documentHandler.endElement(qName, null);
+        documentHandler.endElement(elemName);
     }
 
-    void insertImpliedEndTagIfOpened(final QName qName) {
-        for (QName qn : unclosedElementStack) {
-            if (qn.localpart.equalsIgnoreCase(qName.localpart)) {
-                insertEndTag(qName);
+    void insertImpliedEndTagIfOpened(final ElemName elemName) {
+        for (ElemName en : unclosedElementStack) {
+            if (en.localName().equalsIgnoreCase(elemName.localName())) {
+                insertEndTag(elemName);
                 break;
             }
         }
@@ -303,7 +263,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
      * Initially, the stack of open elements is empty.
      * https://html.spec.whatwg.org/multipage/parsing.html#the-stack-of-open-elements
      */
-    Stack<QName> unclosedElementStack = new Stack<>();
+    Stack<ElemName> unclosedElementStack = new Stack<>();
     /*
      * Document Handler
      */
@@ -376,7 +336,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         @Override
         public void emitDoctype(HtmlTokenizer tokenizer, HtmlLocation location, String doctypeName, String publicId, String systemId) {
             if (documentHandler != null) {
-                documentHandler.doctypeDecl(doctypeName, publicId, systemId, null);
+                documentHandler.doctypeDecl(doctypeName, publicId, systemId);
             }
             fragmentCase = false;
             setInsertionMode(InsertionMode.BeforeHtml);
@@ -384,11 +344,11 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
         @Override
         public void emitXmlDecl(HtmlTokenizer tokenizer, HtmlLocation location, String version, String encoding, String standalone) {
-            documentHandler.xmlDecl(version, encoding, standalone, null);
+            documentHandler.xmlDecl(version, encoding, standalone);
         }
 
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             setInsertionMode(InsertionMode.BeforeHtml);
             handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
         }
@@ -416,7 +376,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
 
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             final String tagName = tagToken.nameBuilder.toString();
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
                 // AND IGNORE THIS TOKEN
@@ -434,6 +394,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
     }
 
+
     /**
      * Handle tokens in "before head" insertion mode.
      * https://html.spec.whatwg.org/multipage/parsing.html#the-before-head-insertion-mode
@@ -445,7 +406,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
 
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             final String tagName = tagToken.nameBuilder.toString();
             if (tagToken.isEndTag && !matchOneOfThese(tagName, "head", "body", "html", "br")) {
                 // AND IGNORE THIS TOKEN
@@ -458,7 +419,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                     // present on the top element of the stack of open elements. If it is not, add the attribute
                     // and its corresponding value to that element.
                 }
-                documentHandler.startElement(QN_HEAD, attributes, null);
+                documentHandler.startElement(QN_HEAD, EMPTY_ATTRIBUTES);
                 setInsertionMode(InsertionMode.InHead);
             } else if (isStartTagOf(tagToken, "head")) {
                 insertStartTag(tagToken, attributes);
@@ -484,7 +445,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
      */
     class TokenHandlerInHead extends TokenHandlerBase {
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             if (isStartTagOf(tagToken, "meta", "base", "basefont", "bgsound", "link", "title", "template", "script", "noscript", "noframe", "style")) {
                 insertStartTag(tagToken, attributes);
             } else if (isEndTagOf(tagToken, "template")) {
@@ -509,7 +470,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
      */
     class TokenHandlerAfterHead extends TokenHandlerBase {
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             if (isStartTagOf(tagToken, "head", "meta", "base", "basefont", "bgsound", "link", "title", "template", "script", "noscript", "noframe", "style")) {
                 insertStartTag(tagToken, attributes);
             } else if (isStartTagOf(tagToken, "body")) {
@@ -534,7 +495,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
      */
     class TokenHandlerInBody extends TokenHandlerBase {
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {
             if (isStartTagOf(tagToken, "html")) {
                 // Parse error.
                 if (unclosedElementStack.contains(QN_TEMPLATE)) {
@@ -589,25 +550,23 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
     
         @Override
         public void emitComment(HtmlTokenizer tokenizer, HtmlLocation location, String comment) {
-            char[] ch = comment.toCharArray();
-            documentHandler.comment(new XMLString(ch, 0, ch.length), null);
+            documentHandler.comment(comment);
         }
     
         @Override
         public void emitText(HtmlTokenizer tokenizer, HtmlLocation location, String text) {
-            char[] ch = text.toCharArray();
-            documentHandler.characters(new XMLString(ch, 0, ch.length), null);
+            documentHandler.characters(text);
         }
     
         @Override
-        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {        
+        public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes) {        
             final String tagName = tagToken.nameBuilder.toString();
             if (tagToken.isSelfClosingTag) {
-                documentHandler.emptyElement(createHtmlQName(tagName), attributes, null);
+                documentHandler.emptyElement(createHtmlElemName(tagName), attributes);
             } else if (tagToken.isEndTag) {
-                insertEndTag(createHtmlQName(tagName));
+                insertEndTag(createHtmlElemName(tagName));
             } else {
-                insertStartTag(createHtmlQName(tagName), attributes);
+                insertStartTag(createHtmlElemName(tagName), attributes);
             }
         }
 
@@ -626,13 +585,8 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         }
     }
 
-    @Override
-    public void reset(XMLComponentManager componentManager) throws XMLConfigurationException {
-        XMLErrorHandler errorHandler = (XMLErrorHandler) componentManager.getProperty(Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_HANDLER_PROPERTY);
-        if (errorHandler instanceof ErrorHandlerWrapper) {
-            Object a = ((ErrorHandlerWrapper) errorHandler).getErrorHandler();
-            errorReporter.setErrorHandler((ErrorHandler) a);
-        }
+    public void reset(org.xml.sax.ErrorHandler errorHandler) {
+        errorReporter.setErrorHandler(errorHandler);
 
         for (TokenHandler h : handlers.values()) {
             h.setErrorReporter(errorReporter);
@@ -647,11 +601,10 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         fragmentCase = featureDocumentFragment;
     }
 
-    @Override
-    public boolean scanDocument(boolean complete) throws IOException, XNIException {
+    public boolean scanDocument(boolean complete) throws IOException {
         try {
-            XMLLocator locator = tokenizer.getLocator();
-            documentHandler.startDocument(locator, inputSource.getEncoding(), null, null);
+            Locator locator = tokenizer.getLocator();
+            documentHandler.startDocument(locator, inputSource.getEncoding());
 
             tokenizer.runTokenizer(handlers.get(insertionMode));
             // return success
@@ -663,6 +616,26 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
 }
 
+/**
+ * Represents an XML/HTML element name (prefix, localName, rawName, uri).
+ * Replaces Xerces QName within the HTML parser pipeline.
+ */
+record ElemName(String prefix, String localName, String rawName, String uri) {}
+
+/**
+ * Document event receiver for the HTML parser pipeline.
+ * Replaces Xerces XMLDocumentHandler with a SAX-aligned interface.
+ */
+interface HtmlDocumentHandler {
+    void startDocument(org.xml.sax.Locator locator, String encoding) throws java.io.IOException;
+    void xmlDecl(String version, String encoding, String standalone);
+    void doctypeDecl(String name, String publicId, String systemId);
+    void startElement(ElemName elemName, org.xml.sax.Attributes attributes);
+    void endElement(ElemName elemName);
+    void emptyElement(ElemName elemName, org.xml.sax.Attributes attributes);
+    void characters(String text);
+    void comment(String text);
+}
 
 class ScanningInterruptedExeption extends Exception {
     private static final long serialVersionUID = -592372281502837246L;
@@ -676,7 +649,7 @@ class ScanningInterruptedExeption extends Exception {
     }
 }
 
-class HtmlLocation implements Locator, XMLLocator, Cloneable {
+class HtmlLocation implements Locator, Cloneable {
     int line = 1;
     int column = 1;
     int offset = 0;
@@ -709,7 +682,6 @@ class HtmlLocation implements Locator, XMLLocator, Cloneable {
         return column;
     }
 
-    @Override
     public int getCharacterOffset() {
         return offset;
     }
@@ -724,27 +696,22 @@ class HtmlLocation implements Locator, XMLLocator, Cloneable {
         return systemId;
     }
 
-    @Override
     public String getLiteralSystemId() {
         return getSystemId();
     }
 
-    @Override
     public String getBaseSystemId() {
         return getSystemId();
     }
 
-    @Override
     public String getExpandedSystemId() {
         return getSystemId();
     }
 
-    @Override
     public String getEncoding() {
         return null;
     }
 
-    @Override
     public String getXMLVersion() {
         return null;
     }
@@ -776,272 +743,124 @@ class HtmlLocation implements Locator, XMLLocator, Cloneable {
     }
 }
 
-class Attributes implements XMLAttributes {
-    class Attribute {
-        QName attrName;
-        String attrType;
-        String attrValue;
-        Attribute(QName attrName, String attrType, String attrValue) {
-            this.attrName = attrName;
-            this.attrType = attrType;
-            this.attrValue = attrValue;
+/**
+ * Mutable SAX Attributes implementation used internally by the HTML parser.
+ */
+class HtmlAttributesImpl implements org.xml.sax.Attributes {
+    private static final String ATTR_TYPE_CDATA = "CDATA";
+
+    static class Attr {
+        final String prefix;
+        final String localName;
+        final String rawName;
+        final String uri;
+        final String type;
+        String value;
+
+        Attr(String prefix, String localName, String rawName, String uri, String type, String value) {
+            this.prefix = prefix;
+            this.localName = localName;
+            this.rawName = rawName != null ? rawName : localName;
+            this.uri = uri != null ? uri : "";
+            this.type = type != null ? type : ATTR_TYPE_CDATA;
+            this.value = value != null ? value : "";
         }
 
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getEnclosingInstance().hashCode();
-            result = prime * result + Objects.hash(attrName, attrType, attrValue);
-            return result;
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!(obj instanceof Attribute))
-                return false;
-            Attribute other = (Attribute) obj;
-            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
-                return false;
-            return Objects.equals(attrName, other.attrName) && Objects.equals(attrType, other.attrType)
-                    && Objects.equals(attrValue, other.attrValue);
-        }
-        
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        
         @Override
         public String toString() {
-            return attrName.rawname + "=\"" + attrValue.toString() + "\"";
+            return rawName + "=\"" + value + "\"";
         }
-
-        private Attributes getEnclosingInstance() {
-            return Attributes.this;
-        }
-        
     }
-    ArrayList<Attribute> attributes = new ArrayList<>();
 
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    
+    private final ArrayList<Attr> attrs = new ArrayList<>();
+
+    void addAttribute(String prefix, String localName, String value) {
+        attrs.add(new Attr(prefix, localName, localName, null, ATTR_TYPE_CDATA, value));
+    }
+
+    void clear() {
+        attrs.clear();
+    }
+
     @Override
     public String toString() {
-        return attributes.toString();
-    }
-
-    @Override
-    public int addAttribute(QName attrName, String attrType, String attrValue) {
-        attributes.add(new Attribute(attrName, attrType, attrValue));
-        return attributes.size() - 1;
-    }
-
-    @Override
-    public void removeAllAttributes() {
-        attributes.clear();
-    }
-
-    @Override
-    public void removeAttributeAt(int attrIndex) {
-        attributes.remove(attrIndex);
+        return attrs.toString();
     }
 
     @Override
     public int getLength() {
-        return attributes.size();
-    }
-
-    @Override
-    public int getIndex(String qName) {
-        int idx = qName.indexOf(':');
-        QName nm = null;
-        if (idx == -1) {
-            nm = new QName(null, qName, qName, null);
-        } else {
-            nm = new QName(qName.substring(0, idx), qName.substring(idx + 1), qName, null);
-        }
-        return attributes.indexOf(new Attribute(nm, null, null));
-    }
-
-    @Override
-    public int getIndex(String uri, String localPart) {
-        QName nm = new QName(null, localPart, localPart, uri);
-        return attributes.indexOf(new Attribute(nm, null, null));
-    }
-
-    @Override
-    public void setName(int attrIndex, QName attrName) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            a.attrName = attrName;
-        }
-    }
-
-    @Override
-    public void getName(int attrIndex, QName attrName) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            attrName.setValues(a.attrName);
-        }
-    }
-
-    @Override
-    public String getPrefix(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrName.prefix;
-        }
-        return null;
+        return attrs.size();
     }
 
     @Override
     public String getURI(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrName.uri;
-        }
-        return null;
+        if (index < 0 || index >= attrs.size()) return null;
+        return attrs.get(index).uri;
     }
 
     @Override
     public String getLocalName(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrName.localpart;
-        }
-        return null;
+        if (index < 0 || index >= attrs.size()) return null;
+        return attrs.get(index).localName;
     }
 
     @Override
     public String getQName(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrName.rawname;
-        }
-        return null;
-    }
-
-    @Override
-    public void setType(int attrIndex, String attrType) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            a.attrType = attrType;
-        }
+        if (index < 0 || index >= attrs.size()) return null;
+        return attrs.get(index).rawName;
     }
 
     @Override
     public String getType(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrType;
-        }
-        return null;
-    }
-
-    @Override
-    public String getType(String qName) {
-        int index = getIndex(qName);
-        if (index != -1) {
-            return attributes.get(index).attrType;
-        }
-        return null;
-    }
-
-    @Override
-    public String getType(String uri, String localName) {
-        int index = getIndex(uri, localName);
-        if (index != -1) {
-            return attributes.get(index).attrType;
-        }
-        return null;
-    }
-
-    @Override
-    public void setValue(int attrIndex, String attrValue) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            a.attrValue = attrValue;
-        }
+        if (index < 0 || index >= attrs.size()) return null;
+        return attrs.get(index).type;
     }
 
     @Override
     public String getValue(int index) {
-        Attribute a = attributes.get(index);
-        if (a != null) {
-            return a.attrValue;
-        }
-        return null;
+        if (index < 0 || index >= attrs.size()) return null;
+        return attrs.get(index).value;
     }
 
     @Override
-    public String getValue(String qName) {
-        int attrIndex = getIndex(qName);
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            return a.attrValue;
+    public int getIndex(String uri, String localName) {
+        for (int i = 0; i < attrs.size(); i++) {
+            Attr a = attrs.get(i);
+            if (a.localName.equals(localName) && a.uri.equals(uri)) return i;
         }
-        return null;
+        return -1;
+    }
+
+    @Override
+    public int getIndex(String qName) {
+        for (int i = 0; i < attrs.size(); i++) {
+            if (attrs.get(i).rawName.equals(qName)) return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public String getType(String uri, String localName) {
+        int i = getIndex(uri, localName);
+        return i >= 0 ? attrs.get(i).type : null;
+    }
+
+    @Override
+    public String getType(String qName) {
+        int i = getIndex(qName);
+        return i >= 0 ? attrs.get(i).type : null;
     }
 
     @Override
     public String getValue(String uri, String localName) {
-        int attrIndex = getIndex(uri, localName);
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            return a.attrValue;
-        }
-        return null;
+        int i = getIndex(uri, localName);
+        return i >= 0 ? attrs.get(i).value : null;
     }
 
     @Override
-    public void setNonNormalizedValue(int attrIndex, String attrValue) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            a.attrValue = attrValue;
-        }
-    }
-
-    @Override
-    public String getNonNormalizedValue(int attrIndex) {
-        Attribute a = attributes.get(attrIndex);
-        if (a != null) {
-            return a.attrValue;
-        }
-        return null;
-    }
-
-    @Override
-    public void setSpecified(int attrIndex, boolean specified) {
-    }
-
-    @Override
-    public boolean isSpecified(int attrIndex) {
-        return false;
-    }
-
-    @Override
-    public Augmentations getAugmentations(int attributeIndex) {
-        return null;
-    }
-
-    @Override
-    public Augmentations getAugmentations(String uri, String localPart) {
-        return null;
-    }
-
-    @Override
-    public Augmentations getAugmentations(String qName) {
-        return null;
-    }
-
-    @Override
-    public void setAugmentations(int attrIndex, Augmentations augs) {
+    public String getValue(String qName) {
+        int i = getIndex(qName);
+        return i >= 0 ? attrs.get(i).value : null;
     }
 }
 
@@ -1058,7 +877,7 @@ interface TokenHandler {
 
     void emitComment(HtmlTokenizer tokenizer, HtmlLocation location, String comment);
 
-    void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes);
+    void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, HtmlAttributesImpl attributes);
 
     TokenHandler getNextHandler();
 
@@ -1069,13 +888,13 @@ class HtmlTokenizer {
     // Represent EOF
     private static final char CHAR_SUB = 0x1A;
 
-    private XMLInputSource inputSource;
+    private InputSource inputSource;
     CharBuffer cbuf;
 
     private int pushedBack = CHAR_SUB;
     private int lastChar = CHAR_SUB;
     private StringBuilder characterBuilder = new StringBuilder();
-    private Attributes attributes = new Attributes();
+    private HtmlAttributesImpl attributes = new HtmlAttributesImpl();
     private HtmlLocation location = new HtmlLocation();
     private HtmlLocation currentLocation = new HtmlLocation();
 
@@ -1181,13 +1000,13 @@ class HtmlTokenizer {
         this.tokenizeState = state;
     }
 
-    public XMLLocator getLocator() {
+    public Locator getLocator() {
         return location;
     }
 
     public void reset() {
         // RESET PARSING STATES
-        attributes.removeAllAttributes();
+        attributes.clear();
         lastStartTagToken = null;
         location.column = 1;
         location.line = 1;
@@ -1208,7 +1027,7 @@ class HtmlTokenizer {
 
     }
 
-    public void setInputSource(XMLInputSource inputSource) {
+    public void setInputSource(InputSource inputSource) {
         this.inputSource = inputSource;
         reset();
     }
@@ -1330,7 +1149,7 @@ class HtmlTokenizer {
             return;
         }
         // add to current attribute list.
-        attributes.addAttribute(new QName(prefix, name, name, null), name, value);
+        attributes.addAttribute(prefix, name, value);
     }
 
     private void emitEof() throws ScanningInterruptedExeption {
@@ -1483,7 +1302,7 @@ class HtmlTokenizer {
                 default:
                     break;
             }
-            attributes.removeAllAttributes();
+            attributes.clear();
         }
         currentLocation.copyPositionTo(location);
     }
@@ -1501,7 +1320,7 @@ class HtmlTokenizer {
             lastStartTagToken = null;
         }
         handler.emitTag(this, location, tagToken, attributes);
-        attributes.removeAllAttributes();
+        attributes.clear();
         currentLocation.copyPositionTo(location);
     }
 

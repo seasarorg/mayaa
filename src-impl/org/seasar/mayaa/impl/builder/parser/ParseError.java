@@ -1,7 +1,5 @@
 package org.seasar.mayaa.impl.builder.parser;
 
-import org.apache.xerces.impl.XMLErrorReporter;
-
 /**
  * HtmlStadaardScannerで発生するエラーの種類を定義する列挙型。
  * 各エラーの詳細はWHATWGのHTML Living Standardを参照。
@@ -57,9 +55,9 @@ enum ParseError {
     ABRUPT_DOCTYPE_SYSTEM_IDENTIFIER,
     UNEXPECTED_CHARACTER_AFTER_DOCTYPE_SYSTEM_IDENTIFIER;
 
-    static final short SEVERITY_ERROR = XMLErrorReporter.SEVERITY_ERROR;
-    static final short SEVERITY_FATAL_ERROR = XMLErrorReporter.SEVERITY_FATAL_ERROR;
-    static final short SEVERITY_WARNING = XMLErrorReporter.SEVERITY_WARNING;
+    static final short SEVERITY_WARNING     = 0;
+    static final short SEVERITY_ERROR       = 1;
+    static final short SEVERITY_FATAL_ERROR = 2;
 
     short severity;
 

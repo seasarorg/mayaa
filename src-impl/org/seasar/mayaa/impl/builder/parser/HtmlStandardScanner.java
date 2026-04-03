@@ -16,12 +16,12 @@
 package org.seasar.mayaa.impl.builder.parser;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.BufferUnderflowException;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EmptyStackException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -308,36 +308,45 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
      * Document Handler
      */
     enum InsertionMode {
-        Initial(TokenHandlerInitial.class),
-        BeforeHtml(TokenHandlerBeforeHtml.class),
-        BeforeHead(TokenHandlerBeforeHead.class),
-        InHead(TokenHandlerInHead.class),
-        InHeadNoScript(TokenHandlerBase.class),
-        AfterHead(TokenHandlerAfterHead.class),
-        InBody(TokenHandlerInBody.class),
-        Text(TokenHandlerBase.class),
-        InTable(TokenHandlerBase.class),
-        InTableText(TokenHandlerBase.class),
-        InCaption(TokenHandlerBase.class),
-        InColumnGroup(TokenHandlerBase.class),
-        InTableBody(TokenHandlerBase.class),
-        InRow(TokenHandlerBase.class),
-        InCell(TokenHandlerBase.class),
-        InSelect(TokenHandlerBase.class),
-        InSelectInTable(TokenHandlerBase.class),
-        InTemplate(TokenHandlerBase.class),
-        AfterBody(TokenHandlerAfterBody.class),
-        InFrameset(TokenHandlerBase.class),
-        AfterFrameset(TokenHandlerBase.class),
-        AfterAfterBody(TokenHandlerBase.class),
-        AfterAfterFrameset(TokenHandlerBase.class);
+        Initial,
+        BeforeHtml,
+        BeforeHead,
+        InHead,
+        InHeadNoScript,
+        AfterHead,
+        InBody,
+        Text,
+        InTable,
+        InTableText,
+        InCaption,
+        InColumnGroup,
+        InTableBody,
+        InRow,
+        InCell,
+        InSelect,
+        InSelectInTable,
+        InTemplate,
+        AfterBody,
+        InFrameset,
+        AfterFrameset,
+        AfterAfterBody,
+        AfterAfterFrameset;
+    }
 
-        Class<? extends TokenHandler> handlerClass;
-        TokenHandler handler;
+    private final EnumMap<InsertionMode, TokenHandler> handlers = new EnumMap<>(InsertionMode.class);
 
-        InsertionMode(Class<? extends TokenHandler> handlerClass) {
-            this.handlerClass = handlerClass;
+    HtmlStandardScanner() {
+        TokenHandlerBase fallback = new TokenHandlerBase();
+        for (InsertionMode m : InsertionMode.values()) {
+            handlers.put(m, fallback);
         }
+        handlers.put(InsertionMode.Initial,     new TokenHandlerInitial());
+        handlers.put(InsertionMode.BeforeHtml,  new TokenHandlerBeforeHtml());
+        handlers.put(InsertionMode.BeforeHead,  new TokenHandlerBeforeHead());
+        handlers.put(InsertionMode.InHead,      new TokenHandlerInHead());
+        handlers.put(InsertionMode.AfterHead,   new TokenHandlerAfterHead());
+        handlers.put(InsertionMode.InBody,      new TokenHandlerInBody());
+        handlers.put(InsertionMode.AfterBody,   new TokenHandlerAfterBody());
     }
 
     public boolean fragmentCase = false;
@@ -360,7 +369,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                 super.emitText(tokenizer, location, text);
             } else {
                 setInsertionMode(InsertionMode.BeforeHtml);
-                insertionMode.handler.emitText(tokenizer, location, text);
+                handlers.get(insertionMode).emitText(tokenizer, location, text);
             }
         }
 
@@ -381,7 +390,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
         @Override
         public void emitTag(HtmlTokenizer tokenizer, HtmlLocation location, TagToken tagToken, Attributes attributes) {
             setInsertionMode(InsertionMode.BeforeHtml);
-            insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
+            handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
         }
     }
 
@@ -420,7 +429,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                 }
                 setInsertionMode(InsertionMode.BeforeHead);
 
-                insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
+                handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
             }
         }
     }
@@ -464,7 +473,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                     setInsertionMode(InsertionMode.InHead);
                 }
 
-                insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
+                handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
             }
         }
     }
@@ -489,7 +498,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                 // headがすでに閉じている状態でbody以外のタグが検出されたとき
                 insertImpliedEndTagIfOpened(QN_HEAD);
                 setInsertionMode(InsertionMode.AfterHead);
-                insertionMode.handler.emitTag(tokenizer, location, tagToken, attributes);
+                handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
             }
         }
     }
@@ -514,7 +523,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
                     insertImpliedStartTag(QN_BODY);
                 }
                 setInsertionMode(InsertionMode.InBody);
-                super.emitTag(tokenizer, location, tagToken, attributes);
+                handlers.get(insertionMode).emitTag(tokenizer, location, tagToken, attributes);
             }
         }
     }
@@ -613,7 +622,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
 
         @Override
         public TokenHandler getNextHandler() {
-            return insertionMode.handler;
+            return handlers.get(insertionMode);
         }
     }
 
@@ -625,14 +634,8 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
             errorReporter.setErrorHandler((ErrorHandler) a);
         }
 
-        for (InsertionMode m: InsertionMode.values()) {
-            try {
-                m.handler = m.handlerClass.getDeclaredConstructor(this.getClass()).newInstance(this);
-                m.handler.setErrorReporter(errorReporter);
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                 | SecurityException | InvocationTargetException | NoSuchMethodException e) {
-                    throw new IllegalStateException(e);
-            }
+        for (TokenHandler h : handlers.values()) {
+            h.setErrorReporter(errorReporter);
         }
 
         tokenizer = new HtmlTokenizer();
@@ -650,7 +653,7 @@ public class HtmlStandardScanner implements XMLComponent, XMLDocumentScanner {
             XMLLocator locator = tokenizer.getLocator();
             documentHandler.startDocument(locator, inputSource.getEncoding(), null, null);
 
-            tokenizer.runTokenizer(insertionMode.handler);
+            tokenizer.runTokenizer(handlers.get(insertionMode));
             // return success
             return true;
         } catch (BufferUnderflowException e) {

@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.util.xml;
 
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,7 +131,8 @@ public class XMLHandler extends DefaultHandler {
                     XMLHandler.class, 0, publicId, systemId);
             log.warn(message);
         }
-        return null;
+        // 未知のエンティティへのネットワークアクセスをブロック (XXE対策)
+        return new InputSource(new StringReader(""));
     }
 
     public void startDocument() {

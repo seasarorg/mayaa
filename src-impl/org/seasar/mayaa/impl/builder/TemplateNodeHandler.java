@@ -17,6 +17,7 @@ package org.seasar.mayaa.impl.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -321,7 +322,8 @@ public class TemplateNodeHandler extends SpecificationNodeHandler implements Ent
             InputStream is = getClass().getResourceAsStream(path);
             return new InputSource(is);
         }
-        return null;
+        // 未知のエンティティへのネットワークアクセスをブロック (XXE対策)
+        return new InputSource(new StringReader(""));
     }
 
 

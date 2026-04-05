@@ -18,7 +18,6 @@ package org.seasar.mayaa.impl.builder.parser;
 import java.io.IOException;
 
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.builder.parser.AdditionalHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;

@@ -53,6 +53,8 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.SerializeExecutor;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.management.EngineRegistory;
+import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
+import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.DateFormatPool;
 import org.seasar.mayaa.impl.util.IOUtil;
@@ -151,7 +153,13 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     }
 
     public Specification findSpecificationFromCache(String systemID) {
-        return findValidSpecificationFromCache(systemID);
+        try {
+            return findValidSpecificationFromCache(systemID);
+        } catch (IllegalStateException | NullPointerException e) {
+            // Called outside of Mayaa's ServiceCycle (e.g. admin servlet):
+            // isDeprecated() requires a live cycle; fall back to direct cache lookup.
+            return _specCache.getIfPresent(systemID);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -160,13 +168,20 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         if (request == null) {
             return null;
         }
-        Object cached = request.getAttribute(REQUEST_VALID_SPEC_CACHE_KEY);
-        if (cached instanceof Map<?, ?>) {
-            return (Map<String, Specification>) cached;
+        try {
+            Object cached = request.getAttribute(REQUEST_VALID_SPEC_CACHE_KEY);
+            if (cached instanceof Map<?, ?>) {
+                return (Map<String, Specification>) cached;
+            }
+            Map<String, Specification> map = new HashMap<>();
+            request.setAttribute(REQUEST_VALID_SPEC_CACHE_KEY, map);
+            return map;
+        } catch (IllegalStateException e) {
+            // RequestScopeImpl が存在するが HTTP リクエストに未バインド
+            // (管理APIなどリクエストスコープ外からの呼び出し時)。
+            // リクエストスコープキャッシュをスキップしてグローバルキャッシュのみ使用する。
+            return null;
         }
-        Map<String, Specification> map = new HashMap<>();
-        request.setAttribute(REQUEST_VALID_SPEC_CACHE_KEY, map);
-        return map;
     }
 
     protected void clearRequestValidSpecCache(String systemID) {
@@ -550,6 +565,19 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         generator.initialize(spec);
         spec.setSource(source);
         spec.setSystemID(systemID);
+        final String specProfileType = (spec instanceof Page) ? SpecificationStats.TYPE_PAGE
+                : (spec instanceof Template) ? SpecificationStats.TYPE_TEMPLATE
+                : null;
+        // DiagnosticEventBuffer がビルド中にイベントを発行できるよう、
+        // spec.build() を呼ぶ前にプロファイリングエントリを作成しておく。
+        final SpecificationStats profileStats = specProfileType != null
+                ? SpecificationProfileRegistry.getInstance().getOrCreate(systemID, specProfileType)
+                : null;
+        if (profileStats != null) {
+            SpecificationProfileRegistry.beginBuildScope(systemID);
+        }
+        final long buildStartMs = profileStats != null ? System.currentTimeMillis() : 0L;
+        boolean buildError = false;
         try {
             SpecificationUtil.startScope(null);
             try {
@@ -561,7 +589,16 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 SpecificationUtil.endScope();
             }
         } catch(RuntimeException e) {
+            buildError = true;
             throw e;
+        } finally {
+            if (profileStats != null) {
+                SpecificationProfileRegistry.endBuildScope();
+                profileStats.recordBuild(System.currentTimeMillis() - buildStartMs);
+                if (buildError) {
+                    profileStats.recordBuildError();
+                }
+            }
         }
         if (registerCache) {
             // Pageの.mayaaが存在しない場合でもSpecificationをキャッシュする。

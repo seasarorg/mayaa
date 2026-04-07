@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
+import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
@@ -36,6 +37,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.processor.DirectiveProcessor;
 import org.seasar.mayaa.impl.engine.processor.ElementProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -72,15 +74,42 @@ public class ProcessorDump extends ElementProcessor {
     }
 
     /**
-     * 最上位のダンプメソッド
+     * 最上位のダンプメソッド（リクエスト処理中から呼ぶ場合）
      * @param topLevelPage
      */
     public void printSource(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         RequestScope request = cycle.getRequestScope();
-        String requestedSuffix = request.getRequestedSuffix();
-        String extension = request.getExtension();
+        printSource(topLevelPage, request.getRequestedSuffix(), request.getExtension());
+    }
 
+    /**
+     * 最上位のダンプメソッド（管理APIなどServiceCycleなしで呼ぶ場合）。
+     * templateSystemID からキャッシュ上のテンプレートを探してダンプする。
+     * テンプレートがキャッシュに存在しない場合はその旨を出力する。
+     *
+     * @param templateSystemID ダンプ対象テンプレートのシステムID（例: "/path/to/page.html"）
+     */
+    public void printSource(String templateSystemID) {
+        Engine engine = ProviderUtil.getEngine();
+        Template template = (Template) engine.findSpecificationFromCache(templateSystemID);
+        if (template == null) {
+            print(_headerLine);
+            print("Template not found in cache: " + templateSystemID);
+            print(_footerLine);
+            return;
+        }
+        printSource(template.getPage(), template.getSuffix(), template.getExtension());
+    }
+
+    /**
+     * 最上位のダンプメソッド（コア実装）
+     *
+     * @param topLevelPage ダンプ対象のトップレベルページ
+     * @param requestedSuffix リクエストされたsuffix
+     * @param extension リクエストされた拡張子
+     */
+    public void printSource(Page topLevelPage, String requestedSuffix, String extension) {
         Template template = topLevelPage.getTemplate(requestedSuffix, extension);
 
         print(_headerLine);
@@ -91,6 +120,43 @@ public class ProcessorDump extends ElementProcessor {
         printSpecificationNodeTree(0, template);
         print("PAGE NODE TREE --------------------------------");
         printSpecificationNodeTree(0, topLevelPage);
+
+        // レイアウト共有が設定されている場合、レイアウトページのチェーンもダンプする
+        Page page = topLevelPage;
+        String superSuffix = null;
+        String superExtension = extension;
+        while (true) {
+            Page superPage;
+            if (page instanceof PageImpl) {
+                PageImpl.SuperPageInfo superInfo = ((PageImpl) page).resolveSuperPageInfo();
+                if (superInfo.page == null) {
+                    break;
+                }
+                superPage = superInfo.page;
+                superSuffix = superInfo.suffix;
+                superExtension = superInfo.extension;
+            } else {
+                superPage = page.getSuperPage();
+                if (superPage == null) {
+                    break;
+                }
+                superSuffix = page.getSuperSuffix();
+                superExtension = page.getSuperExtension();
+            }
+            Template layoutTemplate = RenderUtil.getTemplate(
+                    requestedSuffix, superPage, superSuffix, superExtension);
+            if (layoutTemplate != null) {
+                print("LAYOUT TEMPLATE [" + layoutTemplate.getSystemID() + "] --------------------------------");
+                print("LAYOUT PROCESSOR TREE --------------------------------");
+                printProcessorTree(0, layoutTemplate);
+                print("LAYOUT ORIGINAL NODE TREE --------------------------------");
+                printSpecificationNodeTree(0, layoutTemplate);
+                print("LAYOUT PAGE NODE TREE --------------------------------");
+                printSpecificationNodeTree(0, superPage);
+            }
+            page = superPage;
+        }
+
         print(_footerLine);
     }
 
@@ -247,62 +313,6 @@ public class ProcessorDump extends ElementProcessor {
             final String name = prefixedQName(node, propName);
             writeProcessorAttributeString(sb, name, prop.getValue());
         }
-    }
-
-
-    protected void appendAttributeString(
-            StringBuilder buffer, PrefixAwareName propName, Object value) {
-        QName qName = propName.getQName();
-        if (URI_MAYAA.equals(qName.getNamespaceURI())) {
-            return;
-        }
-        // TODO 正しく描画する
-//        if (getInjectedNode().getQName().equals(QM_DUPLECATED)) {
-//            if (getChildProcessorSize() > 0
-//                    && getChildProcessor(0) instanceof JspProcessor) {
-//                JspProcessor processor = (JspProcessor)getChildProcessor(0);
-//                URI injectNS = processor.getInjectedNode().getQName().getNamespaceURI();
-//                if (injectNS == qName.getNamespaceURI()) {
-//                    return;
-//                }
-//            }
-//        }
-
-        String attrPrefix = propName.getPrefix();
-        if (StringUtil.hasValue(attrPrefix)) {
-//            attrPrefix = getResolvedPrefix(propName);
-            if (StringUtil.hasValue(attrPrefix)) {
-                attrPrefix = attrPrefix + ":";
-            }
-        }
-        StringBuilder temp = new StringBuilder();
-        temp.append(" ");
-        temp.append(attrPrefix);
-        temp.append(qName.getLocalName());
-        /* 2007.03.15 valueがnullの場合を許容する(値なしを作成可能に) */
-        if (value != null) {
-	        temp.append("=\"");
-	        if (value instanceof CompiledScript) {
-	            CompiledScript script = (CompiledScript) value;
-	            if (CycleUtil.isDraftWriting()) {
-	                temp.append(script.getScriptText());
-	            } else {
-try { // TODO 修正する [JIRA: MAYAA-5]
-	                Object result = script.execute(String.class, null);
-	                if (StringUtil.isEmpty(result)) {
-	                    return;
-	                }
-	                temp.append(result);
-} catch (Throwable ignore) {
-	    // no-op
-}
-	            }
-	        } else {
-	            temp.append(value.toString());
-	        }
-	        temp.append("\"");
-        }
-        buffer.append(temp.toString());
     }
 
     protected void writeProcessorAttributeString(

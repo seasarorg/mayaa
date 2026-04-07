@@ -283,7 +283,7 @@ public class RenderUtil implements CONST_IMPL {
         cycle.setInjectedNode(page);
     }
 
-    protected static Template getTemplate(String requestedSuffix,
+    public static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
         if (EngineUtil.getMayaaExtensionName().equals(extension)) {
             SourceDescriptor source = page.getSource();

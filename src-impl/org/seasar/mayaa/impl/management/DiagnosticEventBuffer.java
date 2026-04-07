@@ -15,15 +15,15 @@
  */
 package org.seasar.mayaa.impl.management;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.seasar.mayaa.PositionAware;
 
 /**
- * 管理画面向けに、各フェーズの警告・エラーをリングバッファで保持する。
+ * パース・ビルド・レンダリング各フェーズの診断イベントを配信するイベントバス。
+ * イベントデータは保管しない。受信・保管・ログ出力はリスナー側で行う。
  */
 public final class DiagnosticEventBuffer {
 
@@ -54,11 +54,23 @@ public final class DiagnosticEventBuffer {
 
     public static final int UNKNOWN_POSITION_LINE = -1;
 
-    private static final int DEFAULT_CAPACITY = 512;
-    private static final Deque<Event> _events = new ArrayDeque<Event>(DEFAULT_CAPACITY);
+    private static final List<Consumer<Event>> _listeners = new ArrayList<>();
 
     private DiagnosticEventBuffer() {
         // no instantiation
+    }
+
+    /**
+     * イベント発行時に呼び出されるリスナーを登録する。
+     * リスナー内で例外が発生してもイベント記録は妨げない。
+     */
+    public static synchronized void addListener(Consumer<Event> listener) {
+        _listeners.add(listener);
+    }
+
+    /** 登録済みリスナーを解除する。未登録の場合は何もしない。 */
+    public static synchronized void removeListener(Consumer<Event> listener) {
+        _listeners.remove(listener);
     }
 
     public static synchronized void recordWarn(Phase phase,
@@ -106,21 +118,12 @@ public final class DiagnosticEventBuffer {
     }
 
     private static void record(Event event) {
-        while (_events.size() >= DEFAULT_CAPACITY) {
-            _events.removeFirst();
+        for (Consumer<Event> listener : _listeners) {
+            try {
+                listener.accept(event);
+            } catch (Exception ignored) {
+                // リスナーの失敗でイベント配信自体を妨げない
+            }
         }
-        _events.addLast(event);
-    }
-
-    public static synchronized List<Event> snapshot() {
-        return new ArrayList<Event>(_events);
-    }
-
-    public static synchronized int size() {
-        return _events.size();
-    }
-
-    public static synchronized void clear() {
-        _events.clear();
     }
 }

@@ -136,8 +136,18 @@ def col(s, width: int, align: str = "left") -> str:
 # Spec table
 # ──────────────────────────────────────────────────────────────────
 
-# Column widths: TYPE, SYSTEMID, B-cnt, B-avg, B-max, R-cnt, R-avg, R-max, W, E
-_W = [8, 34, 5, 6, 6, 5, 6, 6, 3, 3]
+# Column widths: TYPE, SYSTEMID, B-cnt, B-avg, B-max, R-cnt, R-avg, R-max, W, E, W+E
+_W = [8, 34, 5, 6, 6, 5, 6, 6, 3, 3, 5]
+
+# Fixed overhead per row (excluding SYSTEM-ID col itself):
+#   mark+" "(2) + TYPE+sep(10) + SID_sep(2) + rest columns(65) = 79
+_SID_FIXED_OVERHEAD = 79
+_SID_WIDTH_MIN      = 14
+
+
+def _calc_sid_width(term_w: int) -> int:
+    """Return SYSTEM-ID column width that fills the terminal."""
+    return max(_SID_WIDTH_MIN, term_w - _SID_FIXED_OVERHEAD - 1)
 
 
 def _spec_header() -> str:
@@ -151,7 +161,8 @@ def _spec_header() -> str:
         col("AVG",   _W[6], "right") + " " +
         col("MAX",   _W[7], "right") + " ms  " +
         col("W",     _W[8], "right") + " " +
-        col("E",     _W[9], "right")
+        col("E",     _W[9], "right") + "  " +
+        col("W+E",   _W[10], "right")
     )
     return _c(BOLD + REVERSE, h) if _ansi() else h
 
@@ -178,7 +189,8 @@ def _spec_row(spec: dict) -> str:
         col(ms_str(rend.get("avgMs")),     _W[6], "right") + " " +
         col(ms_str(rend.get("maxMs")),     _W[7], "right") + "     " +
         col(dw,                            _W[8], "right") + " " +
-        col(de,                            _W[9], "right")
+        col(de,                            _W[9], "right") + "  " +
+        col(dw + de,                       _W[10], "right")
     )
     if de > 0 or re > 0 or be > 0:
         row = _c(RED, row)
@@ -194,10 +206,70 @@ def _print_spec_table(specs: list) -> None:
 
 
 # ──────────────────────────────────────────────────────────────────
+# Cause (exception) formatter
+# ──────────────────────────────────────────────────────────────────
+
+_CAUSE_HEAD = 3   # collapsed 表示で先頭に見せるフレーム数
+_CAUSE_TAIL = 2   # collapsed 表示で末尾に見せるフレーム数
+
+
+def _format_cause_lines(cause: dict, expand: bool = False, indent: str = "      ",
+                        prefix: str = "cause") -> list:
+    """
+    cause フィールド (throwableToJson) をテキスト行リストに変換する。
+    expand=False のとき先頭 _CAUSE_HEAD + 末尾 _CAUSE_TAIL フレームだけ表示し、
+    それ以外は省略行にまとめる。cause チェーンは再帰的に追記する。
+    """
+    if cause is None:
+        return []
+    ctype   = cause.get("type", "?")
+    cmsg    = cause.get("message") or ""
+    frames  = cause.get("stackTrace") or []
+
+    lines = []
+    lines.append(f"{indent}{prefix}: {ctype}: {cmsg}")
+
+    total = len(frames)
+    if expand or total <= _CAUSE_HEAD + _CAUSE_TAIL + 1:
+        show = frames
+        hidden = 0
+    else:
+        show   = None   # sentinel — rendered below
+        hidden = total - _CAUSE_HEAD - _CAUSE_TAIL
+
+    if show is not None:
+        for f in show:
+            cls    = f.get("class",  "?")
+            method = f.get("method", "?")
+            file_  = f.get("file",   "?")
+            line   = f.get("line",   "?")
+            lines.append(f"{indent}  at {cls}.{method}({file_}:{line})")
+    else:
+        for f in frames[:_CAUSE_HEAD]:
+            cls    = f.get("class",  "?")
+            method = f.get("method", "?")
+            file_  = f.get("file",   "?")
+            line   = f.get("line",   "?")
+            lines.append(f"{indent}  at {cls}.{method}({file_}:{line})")
+        lines.append(f"{indent}  ... [{hidden} frames hidden]")
+        for f in frames[-_CAUSE_TAIL:]:
+            cls    = f.get("class",  "?")
+            method = f.get("method", "?")
+            file_  = f.get("file",   "?")
+            line   = f.get("line",   "?")
+            lines.append(f"{indent}  at {cls}.{method}({file_}:{line})")
+
+    if cause.get("cause"):
+        lines += _format_cause_lines(cause["cause"], expand=expand,
+                                     indent=indent, prefix="caused by")
+    return lines
+
+
+# ──────────────────────────────────────────────────────────────────
 # Event formatter
 # ──────────────────────────────────────────────────────────────────
 
-def _print_event(e: dict) -> None:
+def _print_event(e: dict, expand_cause: bool = False) -> None:
     ts_ms = e.get("ts", 0)
     ts    = datetime.fromtimestamp(ts_ms / 1000).strftime("%H:%M:%S.%f")[:-3]
     phase = e.get("phase", "?")
@@ -225,9 +297,19 @@ def _print_event(e: dict) -> None:
         print(f"      sample: {e['sample']}")
     if e.get("scriptText"):
         print(f"      script: {e['scriptText']}")
+    if e.get("cause"):
+        cause_lines = _format_cause_lines(e["cause"], expand=expand_cause)
+        frames = (e["cause"].get("stackTrace") or [])
+        if not expand_cause and len(frames) > _CAUSE_HEAD + _CAUSE_TAIL + 1:
+            cause_lines.append(
+                f"      {_c(DIM, '(--expand-cause で全フレーム表示)')}"
+            )
+        for ln in cause_lines:
+            print(_c(DIM, ln) if not ln.startswith("      cause") else ln)
 
 
-def _print_events_result(data: dict, label: str, as_json: bool) -> None:
+def _print_events_result(data: dict, label: str, as_json: bool,
+                         expand_cause: bool = False) -> None:
     if as_json:
         print(json.dumps(data, ensure_ascii=False, indent=2))
         return
@@ -240,7 +322,7 @@ def _print_events_result(data: dict, label: str, as_json: bool) -> None:
         return
     print()
     for e in events:
-        _print_event(e)
+        _print_event(e, expand_cause=expand_cause)
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -372,11 +454,13 @@ def cmd_spec(args) -> None:
 def cmd_events(args, kind: str) -> None:
     """kind: 'errors' or 'warnings'"""
     path = f"/list-{kind}"
+    expand_cause = getattr(args, "expand_cause", False)
 
     if not args.follow:
         since = args.since if args.since is not None else 0
         data  = fetch(args.url, f"{path}?since={since}")
-        _print_events_result(data, f"{kind.upper()}", args.json)
+        _print_events_result(data, f"{kind.upper()}", args.json,
+                             expand_cause=expand_cause)
         return
 
     # follow / tail -f mode
@@ -388,7 +472,7 @@ def cmd_events(args, kind: str) -> None:
             events = data.get("events", [])
             if events:
                 for e in events:
-                    _print_event(e)
+                    _print_event(e, expand_cause=expand_cause)
                 since = data.get("nextSince", since)
             time.sleep(args.interval)
     except KeyboardInterrupt:
@@ -515,11 +599,14 @@ def _spec_header_plain() -> str:
         col("AVG",   _W[6], "right") + " " +
         col("MAX",   _W[7], "right") + " ms  " +
         col("W",     _W[8], "right") + " " +
-        col("E",     _W[9], "right")
+        col("E",     _W[9], "right") + "  " +
+        col("W+E",   _W[10], "right")
     )
 
 
-def _spec_row_plain(spec: dict) -> str:
+def _spec_row_plain(spec: dict, sid_w: int = None) -> str:
+    if sid_w is None:
+        sid_w = _W[1]
     sid   = spec.get("systemID", "")
     typ   = spec.get("type", "")
     build = spec.get("build", {})
@@ -529,7 +616,7 @@ def _spec_row_plain(spec: dict) -> str:
     de = sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
     return (
         col(typ, _W[0]) + "  " +
-        col(sid, _W[1]) + "  " +
+        col(sid, sid_w) + "  " +
         col(build.get("count", 0),         _W[2], "right") + "  " +
         col(ms_str(build.get("avgMs")),    _W[3], "right") + " " +
         col(ms_str(build.get("maxMs")),    _W[4], "right") + "     " +
@@ -537,7 +624,8 @@ def _spec_row_plain(spec: dict) -> str:
         col(ms_str(rend.get("avgMs")),     _W[6], "right") + " " +
         col(ms_str(rend.get("maxMs")),     _W[7], "right") + "     " +
         col(dw,                            _W[8], "right") + " " +
-        col(de,                            _W[9], "right")
+        col(de,                            _W[9], "right") + "  " +
+        col(dw + de,                       _W[10], "right")
     )
 
 
@@ -565,7 +653,7 @@ def _format_spec_detail_lines(data: dict) -> list:
     return lines
 
 
-def _format_events_lines(events: list) -> list:
+def _format_events_lines(events: list, expand_cause: bool = False) -> list:
     if not events:
         return ["(no events)"]
     lines = []
@@ -588,8 +676,72 @@ def _format_events_lines(events: list) -> list:
             lines.append(f"  sample  : {e['sample']}")
         if e.get("scriptText"):
             lines.append(f"  script  : {e['scriptText']}")
+        if e.get("cause"):
+            for ln in _format_cause_lines(e["cause"], expand=expand_cause):
+                lines.append(ln)
+            frames = (e["cause"].get("stackTrace") or [])
+            if not expand_cause and len(frames) > _CAUSE_HEAD + _CAUSE_TAIL + 1:
+                lines.append("      (x: expand cause frames)")
         lines.append("")
     return lines
+
+
+# ──────────────────────────────────────────────────────────────────
+# TUI sort / filter helpers
+# ──────────────────────────────────────────────────────────────────
+
+_SORT_KEYS = {
+    "type":    lambda s: s.get("type", ""),
+    "sid":     lambda s: s.get("systemID", ""),
+    "b_cnt":   lambda s: s.get("build", {}).get("count", 0),
+    "b_avg":   lambda s: float(s.get("build", {}).get("avgMs") or 0),
+    "r_cnt":   lambda s: s.get("render", {}).get("count", 0),
+    "r_avg":   lambda s: float(s.get("render", {}).get("avgMs") or 0),
+    "d_warn":  lambda s: sum(s.get("diag", {}).get(p, {}).get("warn", 0)
+                             for p in ("parse", "build", "render")),
+    "d_err":   lambda s: sum(s.get("diag", {}).get(p, {}).get("error", 0)
+                             for p in ("parse", "build", "render")),
+    "d_total": lambda s: sum(s.get("diag", {}).get(p, {}).get("warn", 0)
+                             + s.get("diag", {}).get(p, {}).get("error", 0)
+                             for p in ("parse", "build", "render")),
+}
+
+# number key (ord) → sort column identifier
+_SORT_KEY_MAP = {
+    ord('1'): "type",
+    ord('2'): "sid",
+    ord('3'): "b_cnt",
+    ord('4'): "b_avg",
+    ord('5'): "r_cnt",
+    ord('6'): "r_avg",
+    ord('7'): "d_warn",
+    ord('8'): "d_err",
+    ord('9'): "d_total",
+}
+
+_SORT_COL_NAMES = {
+    "type":    "TYPE",
+    "sid":     "SYSTEM-ID",
+    "b_cnt":   "B-CNT",
+    "b_avg":   "B-AVG",
+    "r_cnt":   "R-CNT",
+    "r_avg":   "R-AVG",
+    "d_warn":  "W",
+    "d_err":   "E",
+    "d_total": "W+E",
+}
+
+
+def _col_s(s, width: int, align: str = "left", ind: str = "") -> str:
+    """Like col() but appends a 1-char sort indicator, shrinking the text area by 1."""
+    if not ind:
+        return col(s, width, align)
+    return col(s, width - 1, align) + ind
+
+
+def _diag_errors(spec: dict) -> int:
+    diag = spec.get("diag", {})
+    return sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -608,34 +760,83 @@ class TUI:
     """Full-screen interactive spec list with keyboard navigation and detail overlays."""
 
     _HINTS_MAIN = (" ↑↓/j/k:move  PgUp/PgDn:page  Home/End"
-                   "  p:proc-dump  s:spec  e:errors  w:warnings  r:refresh  q:quit")
+                   "  p:proc-dump  s:spec  e:errors  w:warnings"
+                   "  1-8:sort  /:filter  E:err-filter  r:refresh  q:quit")
     _HINTS_OVER = " ↑↓/j/k:scroll  PgUp/PgDn:page  Home/End  q/Esc:close"
 
     def __init__(self, base_url: str, interval: float = 3.0) -> None:
-        self.base_url   = base_url
-        self.interval   = interval
-        self.specs      : list  = []
-        self.aggregate  : dict  = {}
-        self.cursor     : int   = 0
-        self.scroll_top : int   = 0
-        self.status     : str   = "initializing..."
-        self.last_fetch : float = 0.0
+        self.base_url    = base_url
+        self.interval    = interval
+        self.specs       : list  = []
+        self.aggregate   : dict  = {}
+        self.cursor      : int   = 0
+        self.scroll_top  : int   = 0
+        self.status      : str   = "initializing..."
+        self.last_fetch  : float = 0.0
+        # ── sort / filter state ─────────────────────────────────────────
+        self.sort_col     : str  = "r_avg"
+        self.sort_asc     : bool = False
+        self._all_specs   : list = []
+        self.filter_text  : str  = ""
+        self.filter_mode  : bool = False
+        self.filter_errors: bool = False
 
     # ── data ────────────────────────────────────────────────────────
 
     def _fetch(self) -> None:
         try:
-            data           = fetch(self.base_url, "/summary")
-            self.specs     = sorted(
-                data.get("specifications", []),
-                key=lambda s: float(s.get("render", {}).get("avgMs") or 0),
-                reverse=True,
-            )
-            self.aggregate = data.get("aggregate", {})
-            self.status    = f"updated {now_str()}"
+            data             = fetch(self.base_url, "/summary")
+            self._all_specs  = data.get("specifications", [])
+            self.aggregate   = data.get("aggregate", {})
+            self.status      = f"updated {now_str()}"
         except Exception as exc:
             self.status = f"error: {exc}"
         self.last_fetch = time.time()
+        self._apply_view()
+
+    def _apply_view(self) -> None:
+        """Recompute self.specs from _all_specs applying current sort + filter."""
+        specs = self._all_specs
+        if self.filter_text:
+            ft = self.filter_text.lower()
+            specs = [s for s in specs if ft in s.get("systemID", "").lower()]
+        if self.filter_errors:
+            specs = [s for s in specs if _diag_errors(s) > 0]
+        key_fn = _SORT_KEYS.get(self.sort_col, lambda s: 0)
+        self.specs = sorted(specs, key=key_fn, reverse=not self.sort_asc)
+
+    def _toggle_sort(self, col_key: str) -> None:
+        if self.sort_col == col_key:
+            self.sort_asc = not self.sort_asc
+        else:
+            self.sort_col = col_key
+            # string columns default ascending; numeric columns default descending
+            self.sort_asc = col_key in ("type", "sid")
+        self.cursor = 0
+        self.scroll_top = 0
+        self._apply_view()
+
+    def _spec_header_tui(self, sid_w: int = None) -> str:
+        if sid_w is None:
+            sid_w = _W[1]
+
+        def si(key: str) -> str:
+            if self.sort_col != key:
+                return ""
+            return "▲" if self.sort_asc else "▼"
+        return (
+            _col_s("TYPE",      _W[0],  "left",  si("type"))  + "  " +
+            _col_s("SYSTEM-ID", sid_w,  "left",  si("sid"))   + "  " +
+            _col_s("B-CNT",     _W[2], "right", si("b_cnt"))  + "  " +
+            _col_s("AVG",       _W[3], "right", si("b_avg"))  + " " +
+            col("MAX",          _W[4], "right")               + " ms  " +
+            _col_s("R-CNT",     _W[5], "right", si("r_cnt"))  + "  " +
+            _col_s("AVG",       _W[6], "right", si("r_avg"))  + " " +
+            col("MAX",          _W[7], "right")               + " ms  " +
+            _col_s("W",         _W[8], "right", si("d_warn"))  + " " +
+            _col_s("E",         _W[9], "right", si("d_err"))   + "  " +
+            _col_s("W+E",       _W[10], "right", si("d_total"))
+        )
 
     # ── main loop ───────────────────────────────────────────────────
 
@@ -665,6 +866,28 @@ class TUI:
             if n:
                 self.cursor = max(0, min(self.cursor, n - 1))
 
+            # ── filter mode: consume keys for text input ─────────────
+            if self.filter_mode:
+                if key in (10, 13, 27):               # Enter / Esc → exit input mode
+                    self.filter_mode = False
+                elif key in (_c.KEY_BACKSPACE, 127, 8):
+                    self.filter_text = self.filter_text[:-1]
+                    self.cursor = 0
+                    self.scroll_top = 0
+                    self._apply_view()
+                elif key == 21:                       # Ctrl+U → clear filter
+                    self.filter_text = ""
+                    self.cursor = 0
+                    self.scroll_top = 0
+                    self._apply_view()
+                elif 32 <= key <= 126:                # printable ASCII
+                    self.filter_text += chr(key)
+                    self.cursor = 0
+                    self.scroll_top = 0
+                    self._apply_view()
+                continue
+
+            # ── normal mode ──────────────────────────────────────────
             if key in (ord('q'), 27):                              # q / Esc
                 break
             elif key in (_c.KEY_UP,   ord('k')) and n:
@@ -683,6 +906,15 @@ class TUI:
                 self.cursor = max(0, n - 1)
             elif key == ord('r'):
                 self._fetch()
+            elif key == ord('/'):                                   # enter filter mode
+                self.filter_mode = True
+            elif key == ord('E'):                                   # uppercase E: toggle err-filter
+                self.filter_errors = not self.filter_errors
+                self.cursor = 0
+                self.scroll_top = 0
+                self._apply_view()
+            elif key in _SORT_KEY_MAP:                             # 1-8: sort
+                self._toggle_sort(_SORT_KEY_MAP[key])
             elif key in (ord('p'), ord('d')) and n:
                 self._open_proc_dump(stdscr, self.specs[self.cursor])
             elif key in (ord('s'), ord('i'), 10, 13) and n:       # s / i / Enter
@@ -697,8 +929,20 @@ class TUI:
     def _draw_main(self, stdscr, h: int, w: int) -> None:
         import curses as _c
         stdscr.erase()
-        n      = len(self.specs)
-        list_h = max(1, h - 6)          # body rows available for the spec list
+        n = len(self.specs)
+
+        # Fixed rows layout:
+        #   0 : title bar
+        #   1 : aggregate stats
+        #   2 : sort/filter status (replaces old separator)
+        #   3 : column header
+        #   4 : filter input bar  (only when filter is active/in-progress)
+        #   4 or 5+ : spec rows
+        #   h-2 : separator
+        #   h-1 : footer hints
+        filter_bar_shown = self.filter_mode or bool(self.filter_text)
+        data_start = 5 if filter_bar_shown else 4
+        list_h = max(1, h - data_start - 2)
 
         if n:
             self.cursor = max(0, min(self.cursor, n - 1))
@@ -724,20 +968,44 @@ class TUI:
         )
         _s(stdscr, 1, 0, agg_line[:w-1])
 
-        # row 2 — separator
-        _s(stdscr, 2, 0, ("─" * w)[:w-1])
+        # row 2 — sort/filter status line
+        sort_name = _SORT_COL_NAMES.get(self.sort_col, self.sort_col)
+        sort_dir  = "▲" if self.sort_asc else "▼"
+        status_parts = [f" sort:{sort_name}{sort_dir}"]
+        if self.filter_errors:
+            status_parts.append("[E:err-only]")
+        if self.filter_text and not self.filter_mode:
+            status_parts.append(f"filter:/{self.filter_text}")
+        all_count = len(self._all_specs)
+        shown = len(self.specs)
+        if all_count != shown:
+            status_parts.append(f"({shown}/{all_count} shown)")
+        _s(stdscr, 2, 0, ("  ".join(status_parts))[:w-1], _c.A_DIM)
 
-        # row 3 — column header
-        _s(stdscr, 3, 0, ("  " + _spec_header_plain())[:w-1], _c.A_REVERSE)
+        # dynamic SYSTEM-ID column width
+        sid_w = _calc_sid_width(w)
 
-        # rows 4… — spec rows
+        # row 3 — column header (with sort indicators)
+        _s(stdscr, 3, 0, ("  " + self._spec_header_tui(sid_w))[:w-1], _c.A_REVERSE)
+
+        # row 4 (optional) — filter input bar
+        if filter_bar_shown:
+            cursor_char = "█" if self.filter_mode else ""
+            filter_line = f" Filter: /{self.filter_text}{cursor_char}"
+            if self.filter_mode:
+                filter_line += "  [Enter/Esc: done  Ctrl+U: clear]"
+            else:
+                filter_line += "  [/: edit  Ctrl+U: clear]"
+            _s(stdscr, 4, 0, filter_line[:w-1], _c.color_pair(5))
+
+        # spec rows
         for idx in range(self.scroll_top, min(self.scroll_top + list_h, n)):
             spec  = self.specs[idx]
             diag  = spec.get("diag", {})
-            de_c  = sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
+            de_c  = _diag_errors(spec)
             dw_c  = sum(diag.get(p, {}).get("warn",  0) for p in ("parse", "build", "render"))
             mark  = ">" if idx == self.cursor else " "
-            row_t = mark + " " + _spec_row_plain(spec)
+            row_t = mark + " " + _spec_row_plain(spec, sid_w)
             if idx == self.cursor:
                 attr = _c.A_REVERSE
             elif de_c > 0:
@@ -746,7 +1014,7 @@ class TUI:
                 attr = _c.color_pair(4)
             else:
                 attr = 0
-            _s(stdscr, 4 + idx - self.scroll_top, 0, row_t[:w-1], attr)
+            _s(stdscr, data_start + idx - self.scroll_top, 0, row_t[:w-1], attr)
 
         # scroll bar (rightmost column)
         if n > list_h:
@@ -756,7 +1024,7 @@ class TUI:
             for r in range(list_h):
                 ch = "\u2588" if bar_top <= r < bar_top + bar_len else "\u2591"
                 try:
-                    stdscr.addstr(4 + r, w - 1, ch)
+                    stdscr.addstr(data_start + r, w - 1, ch)
                 except _c.error:
                     pass
 
@@ -767,7 +1035,8 @@ class TUI:
 
     # ── overlay viewer ──────────────────────────────────────────────
 
-    def _show_overlay(self, stdscr, title: str, lines: list) -> None:
+    def _show_overlay(self, stdscr, title: str, lines: list,
+                      *, extra_hints: str = "", on_key=None) -> None:
         import curses as _c
         scroll = 0
         _c.curs_set(0)
@@ -786,7 +1055,8 @@ class TUI:
 
             # footer
             pct  = f"[{scroll+1}-{min(scroll+visible, max(1,total))}/{max(1,total)}]"
-            foot = f"{self._HINTS_OVER}  {pct}"
+            hints_base = self._HINTS_OVER
+            foot = f"{hints_base}{extra_hints}  {pct}"
             _s(stdscr, h - 2, 0, ("─" * w)[:w-1])
             _s(stdscr, h - 1, 0, foot[:w-1], _c.color_pair(5))
             stdscr.refresh()
@@ -808,6 +1078,11 @@ class TUI:
                 scroll = 0
             elif key == _c.KEY_END:
                 scroll = max_scroll
+            elif on_key:
+                result = on_key(key)
+                if result is not None:
+                    lines, extra_hints = result
+                    scroll = 0  # 内容が変わったらスクロールをリセット
 
     # ── detail openers ──────────────────────────────────────────────
 
@@ -843,11 +1118,31 @@ class TUI:
             with urllib.request.urlopen(url, timeout=10) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
             spec_events = data.get("events", [])
-            header = f"count:{len(spec_events)}"
-            lines  = [header, ""] + _format_events_lines(spec_events)
         except Exception as exc:
-            lines = [f"Error: {exc}"]
-        self._show_overlay(stdscr, f"{kind.upper()}  {sid}", lines)
+            self._show_overlay(stdscr, f"{kind.upper()}  {sid}",
+                               [f"Error: {exc}"])
+            return
+
+        expand = [False]
+
+        def build(exp: bool):
+            header   = f"count:{len(spec_events)}"
+            ev_lines = _format_events_lines(spec_events, expand_cause=exp)
+            return [header, ""] + ev_lines
+
+        def hints(exp: bool) -> str:
+            return "  x:expand-cause" if not exp else "  x:collapse-cause"
+
+        def on_key(key):
+            if key == ord('x'):
+                expand[0] = not expand[0]
+                return (build(expand[0]), hints(expand[0]))
+            return None
+
+        self._show_overlay(stdscr, f"{kind.upper()}  {sid}",
+                           build(expand[0]),
+                           extra_hints=hints(expand[0]),
+                           on_key=on_key)
 
 
 def cmd_tui(args) -> None:
@@ -924,6 +1219,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Poll continuously (like tail -f)")
     p.add_argument("--interval", "-i", type=float, default=2.0, metavar="SEC",
                    help="Polling interval for --follow (default: 2)")
+    p.add_argument("--expand-cause", action="store_true", default=False,
+                   help="Show full exception stack traces (default: folded)")
     _common(p)
 
     # warnings
@@ -931,6 +1228,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--since", type=int, default=None, metavar="TS")
     p.add_argument("--follow", "-f", action="store_true")
     p.add_argument("--interval", "-i", type=float, default=2.0, metavar="SEC")
+    p.add_argument("--expand-cause", action="store_true", default=False,
+                   help="Show full exception stack traces (default: folded)")
     _common(p)
 
     # dump — always JSON, no --json flag needed

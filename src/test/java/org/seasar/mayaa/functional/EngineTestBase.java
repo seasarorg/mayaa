@@ -44,8 +44,10 @@ import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.seasar.mayaa.impl.engine.ProcessorDump;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
+import org.seasar.mayaa.impl.management.DiagnosticEventCapture;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.SourceHolderFactory;
 import org.seasar.mayaa.impl.source.SourceUtil;
@@ -58,6 +60,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
 public class EngineTestBase {
+
+    protected final DiagnosticEventCapture capture = new DiagnosticEventCapture();
 
     private MockServletContext servletContext;
     private Engine engine;
@@ -138,11 +142,16 @@ public class EngineTestBase {
         printTree(page);
     }
 
+    @AfterEach
+    public void teardownCapture() {
+        capture.stop();
+    }
+
     public void printDiagnosticEvents() {
         if (!isDumpEnabled()) {
             return;
         }
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         System.out.println("DIAGNOSTIC EVENTS (" + events.size() + ") ==============");
         for (int i = 0; i < events.size(); i++) {
             DiagnosticEventBuffer.Event e = events.get(i);
@@ -247,6 +256,7 @@ public class EngineTestBase {
 
     @BeforeEach
     public void setup() throws SecurityException, IOException {
+        capture.start();
         servletContext = new TestingMockServletContext(this);
 
         FactoryFactory.setContext(servletContext);

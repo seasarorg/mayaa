@@ -1,0 +1,1009 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+mayaa-profile — Mayaa SpecificationProfile API CLI
+
+SYNOPSIS
+    mayaa-profile [--url URL] COMMAND [OPTIONS]
+
+COMMANDS (human-readable, ANSI-colored)
+    top        Real-time top-like display (refreshes periodically)
+    summary    One-shot aggregate + spec table
+    slow       Top N specs by avg render time
+    diag       Top N specs by diagnostic event count
+    spec ID    Detail view for a single specification
+    errors     Recent ERROR events  (supports --since, --follow)
+    warnings   Recent WARN events   (supports --since, --follow)
+
+COMMANDS (machine-readable JSON — for AI tool calls)
+    dump       Dump all data as a single JSON object
+    slow   --json  / diag --json / summary --json / spec ID --json
+    errors --json  / warnings --json [--since TS]
+
+MANAGEMENT
+    reset           Reset all profiling counters
+    reset --id ID   Reset a single specification's counters
+"""
+
+import argparse
+import json
+import os
+import shutil
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime
+
+__version__ = "0.1.0"
+
+
+# ──────────────────────────────────────────────────────────────────
+# HTTP helpers
+# ──────────────────────────────────────────────────────────────────
+
+def _profile_url(base: str, path: str) -> str:
+    return base.rstrip("/") + "/mayaa-admin/profile" + path
+
+
+def fetch(base: str, path: str) -> object:
+    url = _profile_url(base, path)
+    try:
+        with urllib.request.urlopen(url, timeout=10) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        sys.exit(f"HTTP {e.code} {e.reason}: {url}")
+    except urllib.error.URLError as e:
+        sys.exit(f"Connection error ({url}): {e.reason}")
+    except json.JSONDecodeError as e:
+        sys.exit(f"Invalid JSON from {url}: {e}")
+
+
+def post(base: str, path: str) -> object:
+    url = _profile_url(base, path)
+    req = urllib.request.Request(url, method="POST", data=b"")
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        sys.exit(f"HTTP {e.code} {e.reason}: {url}")
+    except urllib.error.URLError as e:
+        sys.exit(f"Connection error ({url}): {e.reason}")
+
+
+# ──────────────────────────────────────────────────────────────────
+# Terminal / ANSI helpers
+# ──────────────────────────────────────────────────────────────────
+
+def _ansi() -> bool:
+    return sys.stdout.isatty() and os.environ.get("NO_COLOR") is None
+
+
+def _c(codes: str, text: str) -> str:
+    return (codes + text + "\033[0m") if _ansi() else text
+
+
+BOLD    = "\033[1m"
+DIM     = "\033[2m"
+RED     = "\033[31m"
+YELLOW  = "\033[33m"
+CYAN    = "\033[36m"
+GREEN   = "\033[32m"
+REVERSE = "\033[7m"
+
+CLEAR_HOME = "\033[H\033[J"  # cursor home + clear to end (less flicker than \033[2J)
+
+
+def term_width() -> int:
+    try:
+        return shutil.get_terminal_size().columns
+    except Exception:
+        return 80
+
+
+# ──────────────────────────────────────────────────────────────────
+# Formatting helpers
+# ──────────────────────────────────────────────────────────────────
+
+def ms_str(ms) -> str:
+    if ms is None:
+        return "-"
+    ms = float(ms)
+    if ms < 1000:
+        return f"{ms:.0f}"
+    return f"{ms/1000:.1f}s"
+
+
+def ts_str(ts_millis) -> str:
+    if not ts_millis:
+        return "-"
+    return datetime.fromtimestamp(ts_millis / 1000).strftime("%H:%M:%S")
+
+
+def now_str() -> str:
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def col(s, width: int, align: str = "left") -> str:
+    s = str(s) if s is not None else ""
+    if align == "right":
+        return s.rjust(width)[:width]
+    return s.ljust(width)[:width]
+
+
+# ──────────────────────────────────────────────────────────────────
+# Spec table
+# ──────────────────────────────────────────────────────────────────
+
+# Column widths: TYPE, SYSTEMID, B-cnt, B-avg, B-max, R-cnt, R-avg, R-max, W, E
+_W = [8, 34, 5, 6, 6, 5, 6, 6, 3, 3]
+
+
+def _spec_header() -> str:
+    h = (
+        col("TYPE",   _W[0]) + "  " +
+        col("SYSTEM-ID", _W[1]) + "  " +
+        col("B-CNT", _W[2], "right") + "  " +
+        col("AVG",   _W[3], "right") + " " +
+        col("MAX",   _W[4], "right") + " ms  " +
+        col("R-CNT", _W[5], "right") + "  " +
+        col("AVG",   _W[6], "right") + " " +
+        col("MAX",   _W[7], "right") + " ms  " +
+        col("W",     _W[8], "right") + " " +
+        col("E",     _W[9], "right")
+    )
+    return _c(BOLD + REVERSE, h) if _ansi() else h
+
+
+def _spec_row(spec: dict) -> str:
+    sid   = spec.get("systemID", "")
+    typ   = spec.get("type", "")
+    build = spec.get("build", {})
+    rend  = spec.get("render", {})
+    diag  = spec.get("diag", {})
+
+    dw = sum(diag.get(p, {}).get("warn",  0) for p in ("parse", "build", "render"))
+    de = sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
+    be = build.get("errorCount", 0)
+    re = rend.get("errorCount", 0)
+
+    row = (
+        col(typ, _W[0]) + "  " +
+        col(sid, _W[1]) + "  " +
+        col(build.get("count", 0),         _W[2], "right") + "  " +
+        col(ms_str(build.get("avgMs")),    _W[3], "right") + " " +
+        col(ms_str(build.get("maxMs")),    _W[4], "right") + "     " +
+        col(rend.get("count", 0),          _W[5], "right") + "  " +
+        col(ms_str(rend.get("avgMs")),     _W[6], "right") + " " +
+        col(ms_str(rend.get("maxMs")),     _W[7], "right") + "     " +
+        col(dw,                            _W[8], "right") + " " +
+        col(de,                            _W[9], "right")
+    )
+    if de > 0 or re > 0 or be > 0:
+        row = _c(RED, row)
+    elif dw > 0:
+        row = _c(YELLOW, row)
+    return row
+
+
+def _print_spec_table(specs: list) -> None:
+    print("  " + _spec_header())
+    for spec in specs:
+        print("  " + _spec_row(spec))
+
+
+# ──────────────────────────────────────────────────────────────────
+# Event formatter
+# ──────────────────────────────────────────────────────────────────
+
+def _print_event(e: dict) -> None:
+    ts_ms = e.get("ts", 0)
+    ts    = datetime.fromtimestamp(ts_ms / 1000).strftime("%H:%M:%S.%f")[:-3]
+    phase = e.get("phase", "?")
+    level = e.get("level", "?")
+    lbl   = e.get("label", "")
+    src   = e.get("source", "")
+    msg   = e.get("message", "")
+    pos   = e.get("position")
+
+    color = RED if level == "ERROR" else YELLOW
+    pos_s = ""
+    if pos and pos.get("systemID"):
+        pos_s = f"  @ {pos['systemID']}:{pos.get('line', '-')}"
+
+    print(
+        "  " +
+        _c(BOLD, ts) + "  " +
+        _c(color, f"[{phase}/{level}]") + "  " +
+        (_c(CYAN, lbl) + "  " if lbl else "") +
+        (src + "  " if src else "") +
+        msg +
+        pos_s
+    )
+    if e.get("sample"):
+        print(f"      sample: {e['sample']}")
+    if e.get("scriptText"):
+        print(f"      script: {e['scriptText']}")
+
+
+def _print_events_result(data: dict, label: str, as_json: bool) -> None:
+    if as_json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    count = data.get("count", 0)
+    next_since = data.get("nextSince", 0)
+    events = data.get("events", [])
+    print(f"{_c(BOLD, label)}  count={count}  nextSince={next_since}")
+    if not events:
+        print("  (no events)")
+        return
+    print()
+    for e in events:
+        _print_event(e)
+
+
+# ──────────────────────────────────────────────────────────────────
+# Commands
+# ──────────────────────────────────────────────────────────────────
+
+def cmd_top(args) -> None:
+    try:
+        while True:
+            data  = fetch(args.url, "/summary")
+            agg   = data.get("aggregate", {})
+            specs = sorted(
+                data.get("specifications", []),
+                key=lambda s: float(s.get("render", {}).get("avgMs") or 0),
+                reverse=True,
+            )[:args.n]
+
+            if _ansi():
+                print(CLEAR_HOME, end="")
+
+            w = term_width()
+            # ── header ──────────────────────────────────────────
+            print(_c(BOLD, "MAYAA PROFILE") +
+                  f"  {now_str()}  {_c(CYAN, args.url)}"
+                  f"  (top={args.n}, interval={args.interval}s)")
+            print(_c(DIM, "─" * min(w, 100)))
+
+            # ── aggregate ───────────────────────────────────────
+            tb  = agg.get("totalBuildCount",       0)
+            ebe = agg.get("totalBuildErrorCount",  0)
+            tr  = agg.get("totalRenderCount",      0)
+            ere = agg.get("totalRenderErrorCount", 0)
+            dw  = agg.get("totalDiagWarnCount",    0)
+            de  = agg.get("totalDiagErrorCount",   0)
+            print(
+                f"  tracked: {_c(BOLD, str(agg.get('trackedCount', 0)))}  "
+                f"build: {tb}({_c(RED, str(ebe))} err)  "
+                f"render: {tr}({_c(RED, str(ere))} err)  "
+                f"diag warn: {_c(YELLOW, str(dw))}  "
+                f"diag error: {_c(RED, str(de))}"
+            )
+            print()
+
+            # ── spec table ──────────────────────────────────────
+            sub_hdr = "── slowest by avg render (ms) ──"
+            print(f"  {_c(BOLD, sub_hdr)}")
+            print()
+            _print_spec_table(specs)
+            print()
+            print(f"  {_c(DIM, 'columns: BUILD(cnt avg max)  RENDER(cnt avg max)  DIAG(W E)')}")
+            print()
+            print(f"  {_c(CYAN, 'Ctrl+C')} to quit  |  refreshing in {args.interval}s ...")
+
+            time.sleep(args.interval)
+
+    except KeyboardInterrupt:
+        print("\nExiting.")
+
+
+def cmd_summary(args) -> None:
+    data  = fetch(args.url, "/summary")
+    if args.json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    agg   = data.get("aggregate", {})
+    specs = sorted(
+        data.get("specifications", []),
+        key=lambda s: float(s.get("render", {}).get("avgMs") or 0),
+        reverse=True,
+    )
+    print(f"{_c(BOLD, 'MAYAA PROFILE SUMMARY')}  {now_str()}  {args.url}")
+    print()
+    print(f"  tracked={agg.get('trackedCount', 0)}"
+          f"  build={agg.get('totalBuildCount', 0)}(err={agg.get('totalBuildErrorCount', 0)})"
+          f"  render={agg.get('totalRenderCount', 0)}(err={agg.get('totalRenderErrorCount', 0)})"
+          f"  diagWarn={agg.get('totalDiagWarnCount', 0)}"
+          f"  diagError={agg.get('totalDiagErrorCount', 0)}")
+    print()
+    _print_spec_table(specs)
+
+
+def cmd_slow(args) -> None:
+    data = fetch(args.url, f"/top-slow?n={args.n}")
+    if args.json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    print(f"{_c(BOLD, f'TOP {args.n} SLOW RENDERS')}  {now_str()}")
+    print()
+    _print_spec_table(data)
+
+
+def cmd_diag(args) -> None:
+    data = fetch(args.url, f"/top-diag?n={args.n}")
+    if args.json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    print(f"{_c(BOLD, f'TOP {args.n} BY DIAG EVENTS')}  {now_str()}")
+    print()
+    _print_spec_table(data)
+
+
+def cmd_spec(args) -> None:
+    sid = urllib.parse.quote(args.id, safe="")
+    data = fetch(args.url, f"/spec?id={sid}")
+    if args.json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    print(f"{_c(BOLD, 'SPEC')}  {_c(CYAN, data.get('systemID', ''))}  "
+          f"[{data.get('type', '')}]")
+    print()
+    for section in ("build", "render"):
+        s = data.get(section, {})
+        last_key = "lastBuiltAt" if section == "build" else "lastRenderedAt"
+        print(f"  {_c(BOLD, section.upper())}")
+        print(f"    count={s.get('count', 0)}"
+              f"  avg={ms_str(s.get('avgMs'))} ms"
+              f"  max={ms_str(s.get('maxMs'))} ms"
+              f"  last={ms_str(s.get('lastMs'))} ms"
+              f"  err={s.get('errorCount', 0)}"
+              f"  lastAt={ts_str(s.get(last_key))}")
+    print()
+    diag = data.get("diag", {})
+    print(f"  {_c(BOLD, 'DIAG')}")
+    for ph in ("parse", "build", "render"):
+        pd = diag.get(ph, {})
+        print(f"    {ph}: warn={pd.get('warn', 0)}  error={pd.get('error', 0)}")
+
+
+def cmd_events(args, kind: str) -> None:
+    """kind: 'errors' or 'warnings'"""
+    path = f"/list-{kind}"
+
+    if not args.follow:
+        since = args.since if args.since is not None else 0
+        data  = fetch(args.url, f"{path}?since={since}")
+        _print_events_result(data, f"{kind.upper()}", args.json)
+        return
+
+    # follow / tail -f mode
+    since = args.since if args.since is not None else 0
+    print(f"Following {kind} from {args.url}{path}  (Ctrl+C to stop)\n")
+    try:
+        while True:
+            data   = fetch(args.url, f"{path}?since={since}")
+            events = data.get("events", [])
+            if events:
+                for e in events:
+                    _print_event(e)
+                since = data.get("nextSince", since)
+            time.sleep(args.interval)
+    except KeyboardInterrupt:
+        print("\nStopped.")
+
+
+def cmd_dump(args) -> None:
+    """Comprehensive JSON dump — designed for AI tool consumption."""
+    now_ms   = int(time.time() * 1000)
+    summary  = fetch(args.url, "/summary")
+    top_slow = fetch(args.url, f"/top-slow?n={args.n}")
+    top_diag = fetch(args.url, f"/top-diag?n={args.n}")
+    errors   = fetch(args.url, "/list-errors")
+    warnings = fetch(args.url, "/list-warnings")
+
+    dump = {
+        "meta": {
+            "tool": "mayaa-profile",
+            "version": __version__,
+            "url": args.url,
+            "timestamp": now_str(),
+            "timestampMillis": now_ms,
+            "description": (
+                "Snapshot of Mayaa SpecificationProfile data. "
+                "Use top_slow/top_diag to identify hot specs. "
+                "Use recent_errors/recent_warnings for diagnostic events. "
+                "Pass nextSince from events response as ?since= to fetch incremental updates."
+            ),
+            "endpoints": {
+                "summary":       f"{args.url}/mayaa-admin/profile/summary",
+                "top_slow":      f"{args.url}/mayaa-admin/profile/top-slow?n={args.n}",
+                "top_diag":      f"{args.url}/mayaa-admin/profile/top-diag?n={args.n}",
+                "list_errors":   f"{args.url}/mayaa-admin/profile/list-errors",
+                "list_warnings": f"{args.url}/mayaa-admin/profile/list-warnings",
+                "spec":          f"{args.url}/mayaa-admin/profile/spec?id=SYSTEM_ID",
+                "reset_all":     f"POST {args.url}/mayaa-admin/profile/reset",
+                "reset_spec":    f"POST {args.url}/mayaa-admin/profile/reset?id=SYSTEM_ID",
+            },
+        },
+        "summary":          summary,
+        "top_slow":         top_slow,
+        "top_diag":         top_diag,
+        "recent_errors":    errors,
+        "recent_warnings":  warnings,
+    }
+    print(json.dumps(dump, ensure_ascii=False, indent=2))
+
+
+def cmd_reset(args) -> None:
+    path = "/reset"
+    if args.id:
+        path += "?" + urllib.parse.urlencode({"id": args.id})
+    result = post(args.url, path)
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        if result.get("reset") == "all":
+            print("Reset: all counters cleared.")
+        else:
+            print(f"Reset: {result.get('id', '')} cleared.")
+
+
+def cmd_proc_dump(args) -> None:
+    sid = urllib.parse.quote(args.id, safe="")
+    contents_param = "true" if args.contents else "false"
+
+    if args.json:
+        # JSON ツリー構造 — AI ツール返却向け
+        url = _profile_url(args.url, f"/proc-dump?id={sid}&format=json&contents={contents_param}")
+        try:
+            with urllib.request.urlopen(url, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            print(json.dumps(data, ensure_ascii=False, indent=2))
+        except urllib.error.HTTPError as e:
+            sys.exit(f"HTTP {e.code} {e.reason}: {url}")
+        except urllib.error.URLError as e:
+            sys.exit(f"Connection error: {e.reason}")
+        return
+
+    # テキスト形式 (ANSI 色付き)
+    url = _profile_url(args.url, f"/proc-dump?id={sid}&format=text&contents={contents_param}")
+    try:
+        with urllib.request.urlopen(url, timeout=15) as resp:
+            text = resp.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        sys.exit(f"HTTP {e.code} {e.reason}: {url}")
+    except urllib.error.URLError as e:
+        sys.exit(f"Connection error: {e.reason}")
+
+    for line in text.splitlines():
+        # セクションヘッダをボールド、ノード行にはインデントに応じた色付け
+        if line.startswith("SYSTEM-ID:") or line.startswith("TYPE:"):
+            print(_c(BOLD, line))
+        elif "-----" in line:
+            print(_c(CYAN, line))
+        elif "LiteralCharacters" in line:
+            print(_c(DIM, line))
+        elif "Directive" in line:
+            print(_c(YELLOW, line))
+        else:
+            # インデント深さに応じてグラデーション
+            depth = len(line) - len(line.lstrip())
+            if depth == 0:
+                print(line)
+            elif depth <= 4:
+                print(_c(GREEN, line))
+            else:
+                print(line)
+
+
+
+# ──────────────────────────────────────────────────────────────────
+# TUI — plain-text formatters (no ANSI; curses handles attributes)
+# ──────────────────────────────────────────────────────────────────
+
+def _spec_header_plain() -> str:
+    return (
+        col("TYPE",      _W[0]) + "  " +
+        col("SYSTEM-ID", _W[1]) + "  " +
+        col("B-CNT", _W[2], "right") + "  " +
+        col("AVG",   _W[3], "right") + " " +
+        col("MAX",   _W[4], "right") + " ms  " +
+        col("R-CNT", _W[5], "right") + "  " +
+        col("AVG",   _W[6], "right") + " " +
+        col("MAX",   _W[7], "right") + " ms  " +
+        col("W",     _W[8], "right") + " " +
+        col("E",     _W[9], "right")
+    )
+
+
+def _spec_row_plain(spec: dict) -> str:
+    sid   = spec.get("systemID", "")
+    typ   = spec.get("type", "")
+    build = spec.get("build", {})
+    rend  = spec.get("render", {})
+    diag  = spec.get("diag", {})
+    dw = sum(diag.get(p, {}).get("warn",  0) for p in ("parse", "build", "render"))
+    de = sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
+    return (
+        col(typ, _W[0]) + "  " +
+        col(sid, _W[1]) + "  " +
+        col(build.get("count", 0),         _W[2], "right") + "  " +
+        col(ms_str(build.get("avgMs")),    _W[3], "right") + " " +
+        col(ms_str(build.get("maxMs")),    _W[4], "right") + "     " +
+        col(rend.get("count", 0),          _W[5], "right") + "  " +
+        col(ms_str(rend.get("avgMs")),     _W[6], "right") + " " +
+        col(ms_str(rend.get("maxMs")),     _W[7], "right") + "     " +
+        col(dw,                            _W[8], "right") + " " +
+        col(de,                            _W[9], "right")
+    )
+
+
+def _format_spec_detail_lines(data: dict) -> list:
+    lines = []
+    lines.append(f"SYSTEM-ID : {data.get('systemID', '')}")
+    lines.append(f"TYPE      : {data.get('type', '')}")
+    lines.append("")
+    for section in ("build", "render"):
+        s        = data.get(section, {})
+        last_key = "lastBuiltAt" if section == "build" else "lastRenderedAt"
+        lines.append(f"[ {section.upper()} ]")
+        lines.append(f"  count    : {s.get('count', 0)}")
+        lines.append(f"  avg      : {ms_str(s.get('avgMs'))} ms")
+        lines.append(f"  max      : {ms_str(s.get('maxMs'))} ms")
+        lines.append(f"  last     : {ms_str(s.get('lastMs'))} ms")
+        lines.append(f"  errors   : {s.get('errorCount', 0)}")
+        lines.append(f"  lastAt   : {ts_str(s.get(last_key))}")
+        lines.append("")
+    diag = data.get("diag", {})
+    lines.append("[ DIAG ]")
+    for ph in ("parse", "build", "render"):
+        pd = diag.get(ph, {})
+        lines.append(f"  {ph:6s}: warn={pd.get('warn', 0)}  error={pd.get('error', 0)}")
+    return lines
+
+
+def _format_events_lines(events: list) -> list:
+    if not events:
+        return ["(no events)"]
+    lines = []
+    for e in events:
+        ts_ms = e.get("ts", 0)
+        ts    = datetime.fromtimestamp(ts_ms / 1000).strftime("%H:%M:%S.%f")[:-3]
+        phase = e.get("phase", "?")
+        level = e.get("level", "?")
+        lbl   = e.get("label", "")
+        src   = e.get("source", "")
+        msg   = e.get("message", "")
+        pos   = e.get("position") or {}
+        pos_s = (f"  @ {pos['systemID']}:{pos.get('line', '-')}"
+                 if pos.get("systemID") else "")
+        lines.append(f"[{ts}] [{phase}/{level}] {lbl}")
+        if src:
+            lines.append(f"  source  : {src}")
+        lines.append(f"  message : {msg}{pos_s}")
+        if e.get("sample"):
+            lines.append(f"  sample  : {e['sample']}")
+        if e.get("scriptText"):
+            lines.append(f"  script  : {e['scriptText']}")
+        lines.append("")
+    return lines
+
+
+# ──────────────────────────────────────────────────────────────────
+# TUI class  (curses-based interactive viewer)
+# ──────────────────────────────────────────────────────────────────
+
+def _s(stdscr, row: int, col_: int, text: str, attr: int = 0) -> None:
+    """Safe curses addstr — silently ignores boundary writes."""
+    try:
+        stdscr.addstr(row, col_, text, attr)
+    except Exception:
+        pass
+
+
+class TUI:
+    """Full-screen interactive spec list with keyboard navigation and detail overlays."""
+
+    _HINTS_MAIN = (" ↑↓/j/k:move  PgUp/PgDn:page  Home/End"
+                   "  p:proc-dump  s:spec  e:errors  w:warnings  r:refresh  q:quit")
+    _HINTS_OVER = " ↑↓/j/k:scroll  PgUp/PgDn:page  Home/End  q/Esc:close"
+
+    def __init__(self, base_url: str, interval: float = 3.0) -> None:
+        self.base_url   = base_url
+        self.interval   = interval
+        self.specs      : list  = []
+        self.aggregate  : dict  = {}
+        self.cursor     : int   = 0
+        self.scroll_top : int   = 0
+        self.status     : str   = "initializing..."
+        self.last_fetch : float = 0.0
+
+    # ── data ────────────────────────────────────────────────────────
+
+    def _fetch(self) -> None:
+        try:
+            data           = fetch(self.base_url, "/summary")
+            self.specs     = sorted(
+                data.get("specifications", []),
+                key=lambda s: float(s.get("render", {}).get("avgMs") or 0),
+                reverse=True,
+            )
+            self.aggregate = data.get("aggregate", {})
+            self.status    = f"updated {now_str()}"
+        except Exception as exc:
+            self.status = f"error: {exc}"
+        self.last_fetch = time.time()
+
+    # ── main loop ───────────────────────────────────────────────────
+
+    def run(self, stdscr) -> None:
+        import curses as _c
+        _c.curs_set(0)
+        _c.start_color()
+        _c.use_default_colors()
+        _c.init_pair(1, _c.COLOR_WHITE,  _c.COLOR_BLUE)   # title / overlay header
+        _c.init_pair(3, _c.COLOR_RED,    -1)              # error row
+        _c.init_pair(4, _c.COLOR_YELLOW, -1)              # warn row
+        _c.init_pair(5, _c.COLOR_CYAN,   -1)              # footer hints
+        self._fetch()
+
+        while True:
+            if time.time() - self.last_fetch >= self.interval:
+                self._fetch()
+
+            h, w = stdscr.getmaxyx()
+            self._draw_main(stdscr, h, w)
+            stdscr.timeout(200)
+            key = stdscr.getch()
+            if key == -1:
+                continue
+
+            n = len(self.specs)
+            if n:
+                self.cursor = max(0, min(self.cursor, n - 1))
+
+            if key in (ord('q'), 27):                              # q / Esc
+                break
+            elif key in (_c.KEY_UP,   ord('k')) and n:
+                self.cursor = max(0, self.cursor - 1)
+            elif key in (_c.KEY_DOWN, ord('j')) and n:
+                self.cursor = min(n - 1, self.cursor + 1)
+            elif key == _c.KEY_PPAGE and n:
+                hh, _ = stdscr.getmaxyx()
+                self.cursor = max(0, self.cursor - max(1, hh - 7))
+            elif key == _c.KEY_NPAGE and n:
+                hh, _ = stdscr.getmaxyx()
+                self.cursor = min(n - 1, self.cursor + max(1, hh - 7))
+            elif key == _c.KEY_HOME:
+                self.cursor = 0
+            elif key == _c.KEY_END:
+                self.cursor = max(0, n - 1)
+            elif key == ord('r'):
+                self._fetch()
+            elif key in (ord('p'), ord('d')) and n:
+                self._open_proc_dump(stdscr, self.specs[self.cursor])
+            elif key in (ord('s'), ord('i'), 10, 13) and n:       # s / i / Enter
+                self._open_spec_detail(stdscr, self.specs[self.cursor])
+            elif key == ord('e') and n:
+                self._open_events(stdscr, self.specs[self.cursor], "errors")
+            elif key == ord('w') and n:
+                self._open_events(stdscr, self.specs[self.cursor], "warnings")
+
+    # ── draw main screen ────────────────────────────────────────────
+
+    def _draw_main(self, stdscr, h: int, w: int) -> None:
+        import curses as _c
+        stdscr.erase()
+        n      = len(self.specs)
+        list_h = max(1, h - 6)          # body rows available for the spec list
+
+        if n:
+            self.cursor = max(0, min(self.cursor, n - 1))
+        if self.cursor < self.scroll_top:
+            self.scroll_top = self.cursor
+        elif self.cursor >= self.scroll_top + list_h:
+            self.scroll_top = self.cursor - list_h + 1
+
+        # row 0 — title bar (full width, colour_pair 1)
+        title = f" MAYAA PROFILE  {now_str()}  {self.base_url}  [{self.status}]"
+        _s(stdscr, 0, 0, title.ljust(w)[:w], _c.color_pair(1) | _c.A_BOLD)
+
+        # row 1 — aggregate stats
+        agg = self.aggregate
+        agg_line = (
+            f" tracked:{agg.get('trackedCount', 0)}  "
+            f"build:{agg.get('totalBuildCount', 0)}"
+            f"(err:{agg.get('totalBuildErrorCount', 0)})  "
+            f"render:{agg.get('totalRenderCount', 0)}"
+            f"(err:{agg.get('totalRenderErrorCount', 0)})  "
+            f"warn:{agg.get('totalDiagWarnCount', 0)}  "
+            f"error:{agg.get('totalDiagErrorCount', 0)}"
+        )
+        _s(stdscr, 1, 0, agg_line[:w-1])
+
+        # row 2 — separator
+        _s(stdscr, 2, 0, ("─" * w)[:w-1])
+
+        # row 3 — column header
+        _s(stdscr, 3, 0, ("  " + _spec_header_plain())[:w-1], _c.A_REVERSE)
+
+        # rows 4… — spec rows
+        for idx in range(self.scroll_top, min(self.scroll_top + list_h, n)):
+            spec  = self.specs[idx]
+            diag  = spec.get("diag", {})
+            de_c  = sum(diag.get(p, {}).get("error", 0) for p in ("parse", "build", "render"))
+            dw_c  = sum(diag.get(p, {}).get("warn",  0) for p in ("parse", "build", "render"))
+            mark  = ">" if idx == self.cursor else " "
+            row_t = mark + " " + _spec_row_plain(spec)
+            if idx == self.cursor:
+                attr = _c.A_REVERSE
+            elif de_c > 0:
+                attr = _c.color_pair(3)
+            elif dw_c > 0:
+                attr = _c.color_pair(4)
+            else:
+                attr = 0
+            _s(stdscr, 4 + idx - self.scroll_top, 0, row_t[:w-1], attr)
+
+        # scroll bar (rightmost column)
+        if n > list_h:
+            ratio   = list_h / n
+            bar_top = int(self.scroll_top * ratio)
+            bar_len = max(1, int(list_h * ratio))
+            for r in range(list_h):
+                ch = "\u2588" if bar_top <= r < bar_top + bar_len else "\u2591"
+                try:
+                    stdscr.addstr(4 + r, w - 1, ch)
+                except _c.error:
+                    pass
+
+        # footer
+        _s(stdscr, h - 2, 0, ("─" * w)[:w-1])
+        _s(stdscr, h - 1, 0, self._HINTS_MAIN[:w-1], _c.color_pair(5))
+        stdscr.refresh()
+
+    # ── overlay viewer ──────────────────────────────────────────────
+
+    def _show_overlay(self, stdscr, title: str, lines: list) -> None:
+        import curses as _c
+        scroll = 0
+        _c.curs_set(0)
+        while True:
+            h, w    = stdscr.getmaxyx()
+            visible = max(1, h - 3)
+            total   = len(lines)
+            stdscr.erase()
+
+            # title bar
+            _s(stdscr, 0, 0, f" {title}".ljust(w)[:w], _c.color_pair(1) | _c.A_BOLD)
+
+            # content
+            for i, line in enumerate(lines[scroll:scroll + visible]):
+                _s(stdscr, i + 1, 0, line[:w-1])
+
+            # footer
+            pct  = f"[{scroll+1}-{min(scroll+visible, max(1,total))}/{max(1,total)}]"
+            foot = f"{self._HINTS_OVER}  {pct}"
+            _s(stdscr, h - 2, 0, ("─" * w)[:w-1])
+            _s(stdscr, h - 1, 0, foot[:w-1], _c.color_pair(5))
+            stdscr.refresh()
+
+            stdscr.timeout(-1)
+            key        = stdscr.getch()
+            max_scroll = max(0, total - visible)
+            if key in (ord('q'), 27):
+                break
+            elif key in (_c.KEY_UP,   ord('k')):
+                scroll = max(0, scroll - 1)
+            elif key in (_c.KEY_DOWN, ord('j')):
+                scroll = min(max_scroll, scroll + 1)
+            elif key == _c.KEY_PPAGE:
+                scroll = max(0, scroll - visible)
+            elif key == _c.KEY_NPAGE:
+                scroll = min(max_scroll, scroll + visible)
+            elif key == _c.KEY_HOME:
+                scroll = 0
+            elif key == _c.KEY_END:
+                scroll = max_scroll
+
+    # ── detail openers ──────────────────────────────────────────────
+
+    def _open_proc_dump(self, stdscr, spec: dict) -> None:
+        sid = spec.get("systemID", "")
+        url = _profile_url(
+            self.base_url,
+            f"/proc-dump?id={urllib.parse.quote(sid, safe='')}&format=text",
+        )
+        try:
+            with urllib.request.urlopen(url, timeout=15) as resp:
+                lines = resp.read().decode("utf-8").splitlines()
+        except Exception as exc:
+            lines = [f"Error: {exc}"]
+        self._show_overlay(stdscr, f"PROC DUMP  {sid}", lines)
+
+    def _open_spec_detail(self, stdscr, spec: dict) -> None:
+        sid = spec.get("systemID", "")
+        url = _profile_url(self.base_url, f"/spec?id={urllib.parse.quote(sid, safe='')}")
+        try:
+            with urllib.request.urlopen(url, timeout=10) as resp:
+                data  = json.loads(resp.read().decode("utf-8"))
+            lines = _format_spec_detail_lines(data)
+        except Exception as exc:
+            lines = [f"Error: {exc}"]
+        self._show_overlay(stdscr, f"SPEC DETAIL  {sid}", lines)
+
+    def _open_events(self, stdscr, spec: dict, kind: str) -> None:
+        sid = spec.get("systemID", "")
+        url = _profile_url(self.base_url, f"/list-{kind}?since=0")
+        try:
+            with urllib.request.urlopen(url, timeout=10) as resp:
+                data       = json.loads(resp.read().decode("utf-8"))
+            all_events  = data.get("events", [])
+            spec_events = [
+                e for e in all_events
+                if (e.get("position") or {}).get("systemID") == sid
+            ]
+            extra = ""
+            if not spec_events:
+                spec_events = all_events
+                extra       = "  [no position match — showing all]"
+            header = f"total:{len(all_events)}  this-spec:{len(spec_events)}{extra}"
+            lines  = [header, ""] + _format_events_lines(spec_events)
+        except Exception as exc:
+            lines = [f"Error: {exc}"]
+        self._show_overlay(stdscr, f"{kind.upper()}  {sid}", lines)
+
+
+def cmd_tui(args) -> None:
+    """Launch interactive full-screen TUI."""
+    import curses as _c
+    tui = TUI(base_url=args.url, interval=getattr(args, "interval", 3.0))
+    try:
+        _c.wrapper(tui.run)
+    except KeyboardInterrupt:
+        pass
+
+
+# ──────────────────────────────────────────────────────────────────
+# argparse
+# ──────────────────────────────────────────────────────────────────
+
+def _common(sub, with_json: bool = True, with_n: bool = False) -> argparse.ArgumentParser:
+    """Add common flags to a subparser."""
+    if with_json:
+        sub.add_argument("--json", action="store_true",
+                         help="Output raw JSON (for AI tool use / piping)")
+    if with_n:
+        sub.add_argument("--n", type=int, default=10, metavar="N",
+                         help="Number of results (default: 10)")
+    return sub
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="mayaa-profile",
+        description="Mayaa SpecificationProfile API CLI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
+    )
+    parser.add_argument(
+        "--url", default="http://localhost:8080", metavar="URL",
+        help="Base URL of the Mayaa app (default: http://localhost:8080)",
+    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+
+    sub = parser.add_subparsers(dest="command", metavar="COMMAND")
+
+    # tui  (default command — interactive full-screen viewer)
+    p = sub.add_parser("tui", help="Interactive full-screen TUI (default)")
+    p.add_argument("--interval", "-i", type=float, default=3.0, metavar="SEC",
+                   help="Auto-refresh interval in seconds (default: 3)")
+
+    # top
+    p = sub.add_parser("top", help="Real-time top-like display")
+    p.add_argument("--n", type=int, default=10, metavar="N",
+                   help="Number of specs to display (default: 10)")
+    p.add_argument("--interval", "-i", type=float, default=3.0, metavar="SEC",
+                   help="Refresh interval in seconds (default: 3)")
+
+    # summary
+    _common(sub.add_parser("summary", help="One-shot aggregate + spec list"))
+
+    # slow
+    _common(sub.add_parser("slow", help="Top N specs by avg render time"), with_n=True)
+
+    # diag
+    _common(sub.add_parser("diag", help="Top N specs by diagnostic event count"), with_n=True)
+
+    # spec
+    p = sub.add_parser("spec", help="Detail for a single specification")
+    p.add_argument("id", help="systemID, e.g. /index.html")
+    _common(p)
+
+    # errors
+    p = sub.add_parser("errors", help="ERROR events from DiagnosticEventBuffer")
+    p.add_argument("--since", type=int, default=None, metavar="TS",
+                   help="Only events after this epoch-millis (0 = all, default: 0)")
+    p.add_argument("--follow", "-f", action="store_true",
+                   help="Poll continuously (like tail -f)")
+    p.add_argument("--interval", "-i", type=float, default=2.0, metavar="SEC",
+                   help="Polling interval for --follow (default: 2)")
+    _common(p)
+
+    # warnings
+    p = sub.add_parser("warnings", help="WARN events from DiagnosticEventBuffer")
+    p.add_argument("--since", type=int, default=None, metavar="TS")
+    p.add_argument("--follow", "-f", action="store_true")
+    p.add_argument("--interval", "-i", type=float, default=2.0, metavar="SEC")
+    _common(p)
+
+    # dump — always JSON, no --json flag needed
+    p = sub.add_parser("dump",
+                       help="Dump all data as a single JSON object (AI analysis)")
+    p.add_argument("--n", type=int, default=20, metavar="N",
+                   help="top-N for slow/diag (default: 20)")
+
+    # proc-dump
+    p = sub.add_parser("proc-dump",
+                       help="Dump ProcessorTree/NodeTree for a cached specification")
+    p.add_argument("id", help="systemID, e.g. /index.html")
+    p.add_argument("--contents", action="store_true",
+                   help="Include literal text content (default: omit)")
+    _common(p)
+
+    # reset
+    p = sub.add_parser("reset", help="Reset profiling counters")
+    p.add_argument("--id", default=None, metavar="SYSTEM_ID",
+                   help="Reset a single spec (omit to reset all)")
+    _common(p)
+
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args   = parser.parse_args()
+
+    # Default --json=False for commands that don't define it
+    if not hasattr(args, "json"):
+        args.json = False
+
+    command = args.command
+    if command is None or command == "tui":
+        if not hasattr(args, "interval"):
+            args.interval = 3.0
+        cmd_tui(args)
+    elif command == "top":
+        if not hasattr(args, "n"):
+            args.n = 10
+        if not hasattr(args, "interval"):
+            args.interval = 3.0
+        cmd_top(args)
+    elif command == "summary":
+        cmd_summary(args)
+    elif command == "slow":
+        cmd_slow(args)
+    elif command == "diag":
+        cmd_diag(args)
+    elif command == "spec":
+        cmd_spec(args)
+    elif command == "errors":
+        cmd_events(args, "errors")
+    elif command == "warnings":
+        cmd_events(args, "warnings")
+    elif command == "dump":
+        cmd_dump(args)
+    elif command == "proc-dump":
+        cmd_proc_dump(args)
+    elif command == "reset":
+        cmd_reset(args)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

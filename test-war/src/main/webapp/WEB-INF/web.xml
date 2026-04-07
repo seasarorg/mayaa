@@ -25,6 +25,17 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+	<servlet>
+		<servlet-name>MayaaProfileServlet</servlet-name>
+		<servlet-class>org.seasar.mayaa.impl.management.servlet.MayaaProfileServlet</servlet-class>
+		<init-param>
+			<!-- ローカル + イントラネットから許可。本番では nginx 等でさらに制限すること -->
+			<param-name>allowedCidr</param-name>
+			<param-value>127.0.0.0/8,::1/128</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
     <!--
     <filter-mapping>
         <filter-name>mayaaFilter</filter-name>
@@ -35,6 +46,11 @@
 	<servlet-mapping>
 		<servlet-name>MayaaServlet</servlet-name>
 		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>MayaaProfileServlet</servlet-name>
+		<url-pattern>/mayaa-admin/profile/*</url-pattern>
 	</servlet-mapping>
 
     <!-- auto doRender file extension.(SSI Include replacement)

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.seasar.mayaa.impl.MayaaServlet;
+import org.seasar.mayaa.impl.management.servlet.MayaaProfileServlet;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,18 @@ public class WebConfig {
 		bean.setLoadOnStartup(1);
 		bean.setInitParameters(Map.of(
 			"enableBackwardOrderLoading", "true"
+		));
+		return bean;
+	}
+
+	@Bean
+	public ServletRegistrationBean<?> mayaaProfileServlet() {
+		MayaaProfileServlet servlet = new MayaaProfileServlet();
+		ServletRegistrationBean<?> bean = new ServletRegistrationBean<>(servlet, "/mayaa-admin/profile/*");
+		bean.setName("MayaaProfileServlet");
+		bean.setLoadOnStartup(2);
+		bean.setInitParameters(Map.of(
+			"allowedCidr", "127.0.0.0/8,::1/128"
 		));
 		return bean;
 	}

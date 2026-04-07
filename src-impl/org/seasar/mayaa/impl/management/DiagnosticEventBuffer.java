@@ -49,15 +49,39 @@ public final class DiagnosticEventBuffer {
             String sample,
             String positionSystemID,
             int positionLineNumber,
-            boolean positionOnTemplate) {
+            boolean positionOnTemplate,
+            /** 記録時点でのスコープ systemID (ビルド中の spec など)。null 可。 */
+            String ownerSystemID) {
     }
 
     public static final int UNKNOWN_POSITION_LINE = -1;
 
     private static final List<Consumer<Event>> _listeners = new ArrayList<>();
 
+    /**
+     * 現在のスレッドで処理中の Specification の systemID を保持するスコープ。
+     * ビルド・レンダリングフェーズの開始時に {@link #beginScope(String)} で設定し、
+     * 終了時に {@link #endScope()} でクリアする。
+     * この値は {@link Event#ownerSystemID()} として記録時にキャプチャされる。
+     */
+    private static final ThreadLocal<String> _scopeSystemID = new ThreadLocal<>();
+
     private DiagnosticEventBuffer() {
         // no instantiation
+    }
+
+    /**
+     * 現在のスレッドで処理中の Specification のスコープを開始する。
+     * 診断イベント記録時に {@link Event#ownerSystemID()} としてキャプチャされる。
+     * 必ず対応する {@link #endScope()} を finally で呼び出すこと。
+     */
+    public static void beginScope(String systemID) {
+        _scopeSystemID.set(systemID);
+    }
+
+    /** 現在スレッドのスコープを終了し、スレッドローカルをクリアする。 */
+    public static void endScope() {
+        _scopeSystemID.remove();
     }
 
     /**
@@ -92,7 +116,8 @@ public final class DiagnosticEventBuffer {
                 label, source, message, scriptText, sample,
                 position != null ? position.getSystemID() : null,
                 position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
-                position != null && position.isOnTemplate()));
+                position != null && position.isOnTemplate(),
+                _scopeSystemID.get()));
     }
 
     public static synchronized void recordError(Phase phase,
@@ -114,7 +139,8 @@ public final class DiagnosticEventBuffer {
                 label, source, message, scriptText, sample,
                 position != null ? position.getSystemID() : null,
                 position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
-                position != null && position.isOnTemplate()));
+                position != null && position.isOnTemplate(),
+                _scopeSystemID.get()));
     }
 
     private static void record(Event event) {

@@ -837,20 +837,13 @@ class TUI:
 
     def _open_events(self, stdscr, spec: dict, kind: str) -> None:
         sid = spec.get("systemID", "")
-        url = _profile_url(self.base_url, f"/list-{kind}?since=0")
+        url = _profile_url(self.base_url,
+                f"/spec-events?id={urllib.parse.quote(sid, safe='')}&kind={kind}")
         try:
             with urllib.request.urlopen(url, timeout=10) as resp:
-                data       = json.loads(resp.read().decode("utf-8"))
-            all_events  = data.get("events", [])
-            spec_events = [
-                e for e in all_events
-                if (e.get("position") or {}).get("systemID") == sid
-            ]
-            extra = ""
-            if not spec_events:
-                spec_events = all_events
-                extra       = "  [no position match — showing all]"
-            header = f"total:{len(all_events)}  this-spec:{len(spec_events)}{extra}"
+                data = json.loads(resp.read().decode("utf-8"))
+            spec_events = data.get("events", [])
+            header = f"count:{len(spec_events)}"
             lines  = [header, ""] + _format_events_lines(spec_events)
         except Exception as exc:
             lines = [f"Error: {exc}"]

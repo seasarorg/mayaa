@@ -54,12 +54,6 @@ public class SpecificationProfileRegistry {
      */
     public static final int MAX_TRACKED = 10_000;
 
-    /**
-     * パース・ビルドフェーズで現在処理中の spec の systemID を保持するスレッドローカル。
-     * position 情報のない診断イベントを現在ビルド中の spec に紐づける際のフォールバックとして使用する。
-     */
-    private static final ThreadLocal<String> _buildingSystemID = new ThreadLocal<>();
-
     private static final SpecificationProfileRegistry INSTANCE =
             new SpecificationProfileRegistry();
 
@@ -95,16 +89,16 @@ public class SpecificationProfileRegistry {
             }
         });
 
-        // DiagnosticEventBuffer のイベントを受け取り、positionSystemID に紐づく
-        // SpecificationStats の per-spec バッファに格納する。
-        // position がない場合は _buildingSystemID (パース/ビルドスコープ) をフォールバックとして使用する。
+        // DiagnosticEventBuffer のイベントを受け取り、ownerSystemID (記録時点のスコープ) に
+        // 紐づく SpecificationStats の per-spec バッファに格納する。
+        // ownerSystemID がない場合は positionSystemID にフォールバックする。
         DiagnosticEventBuffer.addListener(event -> {
-            String posSystemID = event.positionSystemID();
-            if (posSystemID == null) {
-                posSystemID = _buildingSystemID.get();
+            String routeID = event.ownerSystemID();
+            if (routeID == null) {
+                routeID = event.positionSystemID();
             }
-            if (posSystemID == null) return;
-            SpecificationStats stats = _statsMap.getIfPresent(posSystemID);
+            if (routeID == null) return;
+            SpecificationStats stats = _statsMap.getIfPresent(routeID);
             if (stats != null) {
                 stats.recordDiagEventFull(event);
             }
@@ -132,17 +126,18 @@ public class SpecificationProfileRegistry {
     // ----------------------------------------------------------------
 
     /**
-     * パース・ビルドフェーズの開始をスレッドローカルに記録する。
-     * position 情報のない診断イベントを指定の spec に紐づけるために使用する。
+     * パース・ビルドフェーズの開始を {@link DiagnosticEventBuffer} のスコープに記録する。
+     * 発行された診断イベントは {@link DiagnosticEventBuffer.Event#ownerSystemID()} として
+     * 記録時にキャプチャされ、この spec の統計に紐づけられる。
      * 必ず対応する {@link #endBuildScope()} を finally ブロックで呼び出すこと。
      */
     public static void beginBuildScope(String systemID) {
-        _buildingSystemID.set(systemID);
+        DiagnosticEventBuffer.beginScope(systemID);
     }
 
-    /** パース・ビルドフェーズのスコープを終了し、スレッドローカルをクリアする。 */
+    /** パース・ビルドフェーズのスコープを終了し、DiagnosticEventBuffer のスコープをクリアする。 */
     public static void endBuildScope() {
-        _buildingSystemID.remove();
+        DiagnosticEventBuffer.endScope();
     }
 
     // ----------------------------------------------------------------

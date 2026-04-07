@@ -48,6 +48,7 @@ import org.seasar.mayaa.impl.engine.processor.DirectiveProcessor;
 import org.seasar.mayaa.impl.engine.processor.LiteralCharactersProcessor;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
+import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.management.SpecificationProfileMXBean;
 
@@ -189,6 +190,26 @@ public class MayaaProfileServlet extends HttpServlet {
                     return;
                 }
                 json = mxBean.getSpecificationAsJson(id);
+                break;
+            }
+            case "/spec-events": {
+                String id = req.getParameter("id");
+                if (id == null || id.isEmpty()) {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                            "Missing required parameter: id");
+                    return;
+                }
+                String kind = req.getParameter("kind"); // "errors", "warnings", or null (all)
+                SpecificationStats specStats =
+                        SpecificationProfileRegistry.getInstance().get(id);
+                List<DiagnosticEventBuffer.Event> specEvts = specStats != null
+                        ? specStats.snapshotEvents() : new ArrayList<>();
+                if ("errors".equals(kind)) {
+                    specEvts.removeIf(e -> e.level() != DiagnosticEventBuffer.Level.ERROR);
+                } else if ("warnings".equals(kind)) {
+                    specEvts.removeIf(e -> e.level() != DiagnosticEventBuffer.Level.WARN);
+                }
+                json = buildEventsJson(specEvts, 0L);
                 break;
             }
             case "/list-errors": {
@@ -363,10 +384,11 @@ public class MayaaProfileServlet extends HttpServlet {
             sb.append("\"systemID\":").append(quoteJson(e.positionSystemID())).append(",");
             sb.append("\"line\":").append(e.positionLineNumber()).append(",");
             sb.append("\"onTemplate\":").append(e.positionOnTemplate());
-            sb.append("}");
+            sb.append("},");
         } else {
-            sb.append("\"position\":null");
+            sb.append("\"position\":null,");
         }
+        sb.append("\"ownerSystemID\":").append(quoteJson(e.ownerSystemID()));
         sb.append("}");
         return sb.toString();
     }

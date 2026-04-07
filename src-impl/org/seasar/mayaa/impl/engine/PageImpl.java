@@ -32,6 +32,8 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
+import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -167,6 +169,11 @@ public class PageImpl extends SpecificationImpl implements Page {
 
     public ProcessStatus doPageRender(
             String requestedSuffix, String extension) {
+        final SpecificationStats profileStats = SpecificationProfileRegistry.getInstance()
+                .getOrCreate(getSystemID(), SpecificationStats.TYPE_PAGE);
+        final long startMs = System.currentTimeMillis();
+        boolean renderError = false;
+        try {
         Page prevPage = getCurrentPage();
         setCurrentPage(this);
         Specification defaultSpec = SpecificationUtil.getDefaultSpecification(); 
@@ -197,6 +204,15 @@ public class PageImpl extends SpecificationImpl implements Page {
                 SpecificationUtil.execEvent(defaultSpec, CONST_IMPL.QM_AFTER_RENDER_PAGE);
             } finally {
                 setCurrentPage(prevPage);
+            }
+        }
+        } catch (RuntimeException e) {
+            renderError = true;
+            throw e;
+        } finally {
+            profileStats.recordRender(System.currentTimeMillis() - startMs);
+            if (renderError) {
+                profileStats.recordRenderError();
             }
         }
     }

@@ -18,6 +18,8 @@ package org.seasar.mayaa.impl.engine.processor;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
@@ -42,8 +44,20 @@ public class IfProcessor extends TemplateProcessorSupport {
         if (_test == null) {
             throw new IllegalStateException();
         }
-        boolean test = ObjectUtil.booleanValue(_test.getExecutedValue(null), false);
-        return test ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
+        try {
+            boolean test = ObjectUtil.booleanValue(_test.getExecutedValue(null), false);
+            return test ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    IfProcessor.class.getName(),
+                    e.getMessage(),
+                    _test.getValue().getScriptText(), null, getOriginalNode(), e);
+            throw e;
+        }
     }
 
 }

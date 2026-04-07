@@ -27,7 +27,9 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.EscapeUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -141,10 +143,23 @@ public class WriteProcessor extends AbstractAttributableProcessor {
      */
     @Override
     protected ProcessStatus processStart(Page topLevelPage) {
-        if (isChildEvaluation()) {
-            AutoEscapeContext.pushSuppressAutoEscape();
+        try {
+            if (isChildEvaluation()) {
+                AutoEscapeContext.pushSuppressAutoEscape();
+            }
+            return super.processStart(topLevelPage);
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    WriteProcessor.class.getName(),
+                    e.getMessage(),
+                    _value != null ? _value.getValue().getScriptText() : null,
+                    null, getOriginalNode(), e);
+            throw e;
         }
-        return super.processStart(topLevelPage);
     }
 
     /**

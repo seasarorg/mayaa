@@ -39,9 +39,8 @@ import jakarta.servlet.jsp.tagext.Tag;
 import jakarta.servlet.jsp.tagext.TryCatchFinally;
 import jakarta.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.CycleWriter;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
@@ -667,8 +666,12 @@ public class JspProcessor extends TemplateProcessorSupport
             try {
                 _simpleTag.doTag();
             } catch (IOException e) {
-                Log log = LogFactory.getLog(SimpleTagWrapper.class);
-                log.warn(e.getMessage(), e);
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.RENDER,
+                        "jspSimpleTagError",
+                        _simpleTag.getClass().getName(),
+                        e.getMessage(),
+                        e.getClass().getSimpleName());
             }
             return Tag.SKIP_BODY;
         }

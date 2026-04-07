@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.engine.specification.Specification;
+
 import org.seasar.mayaa.builder.injection.InjectionChain;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
 import org.seasar.mayaa.engine.specification.Namespace;
@@ -29,7 +30,6 @@ import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
@@ -49,8 +49,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class XPathMatchesInjectionResolver extends NonSerializableParameterAwareImpl
         implements InjectionResolver {
 
-    private static final Log LOG =
-        LogFactory.getLog(XPathMatchesInjectionResolver.class);
     protected static final QName QM_XPATH =
         SpecificationUtil.createQName("xpath");
 
@@ -77,10 +75,9 @@ public class XPathMatchesInjectionResolver extends NonSerializableParameterAware
             if (StringUtil.hasValue(xpath)) {
                 if (CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
                     specificationNodes.add(child);
-                } else {
-                    // m:mayaa直下でなければ警告し、利用しない
-                    logWarnning(xpath, child, 1);
                 }
+                // m:mayaa直下でない要素は injection に使われない（仕様）。
+                // 警告は .mayaa ファイルのパース時に SpecificationBuilderImpl.afterBuild() で一度だけ出力する。
             }
             getXPathNodes(child, specificationNodes);
         }
@@ -120,15 +117,56 @@ public class XPathMatchesInjectionResolver extends NonSerializableParameterAware
         return chain.getNode(original);
     }
 
-    protected void logWarnning(String xpath, SpecificationNode node, int number) {
-        if (LOG.isWarnEnabled()) {
-            String systemID = node.getSystemID();
-            String lineNumber = Integer.toString(node.getLineNumber());
-            String msg = StringUtil.getMessage(
-                    XPathMatchesInjectionResolver.class, number,
-                    xpath, systemID, lineNumber);
-            LOG.warn(msg);
+    /**
+     * .mayaaファイルパース後に呼び出す。m:mayaa直下でないノードにxpath属性がある場合、
+     * 警告を一度だけ記録する。{@link SpecificationBuilderImpl#afterBuild} から呼ばれる。
+     *
+     * @param specification パース済みの .mayaa Specification
+     */
+    public static void warnInvalidXPathNodes(Specification specification) {
+        SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(specification);
+        if (mayaaNode == null) {
+            return;
         }
+        warnInvalidXPathNodesRecursive(mayaaNode);
+    }
+
+    private static void warnInvalidXPathNodesRecursive(SpecificationNode node) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
+            String xpath = SpecificationUtil.getAttributeValue(child, QM_XPATH);
+            if (StringUtil.hasValue(xpath) && !CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
+                // m:mayaa直下でない要素のxpath属性はinjectionに使われない（仕様）
+                // ユーザーに意図しない無効化を気づかせるために警告する
+                String systemID = child.getSystemID();
+                String lineNumber = Integer.toString(child.getLineNumber());
+                String msg = StringUtil.getMessage(
+                        XPathMatchesInjectionResolver.class, 1,
+                        xpath, systemID, lineNumber);
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "parseXPathInjection",
+                        child.getSystemID(),
+                        msg, null, xpath, child);
+            }
+            warnInvalidXPathNodesRecursive(child);
+        }
+    }
+
+    protected void logWarnning(String xpath, SpecificationNode node, int number) {
+        String systemID = node.getSystemID();
+        String lineNumber = Integer.toString(node.getLineNumber());
+        String msg = StringUtil.getMessage(
+                XPathMatchesInjectionResolver.class, number,
+                xpath, systemID, lineNumber);
+        DiagnosticEventBuffer.recordWarn(
+                DiagnosticEventBuffer.Phase.BUILD,
+                "resolveXPathInjection",
+                node.getSystemID(),
+                msg,
+                null,
+                xpath,
+                node);
     }
 
     // support class -------------------------------------------------

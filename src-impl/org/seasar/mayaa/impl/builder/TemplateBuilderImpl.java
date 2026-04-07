@@ -30,6 +30,7 @@ import java.util.Stack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.builder.TemplateBuilder;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
@@ -593,6 +594,12 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 child = (SpecificationNode) it.next();
             } catch(ConcurrentModificationException e) {
                 LOG.error("original.childNodes をイテレート中に更新されてしまった。", e);
+                DiagnosticEventBuffer.recordError(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "concurrentModification",
+                        TemplateBuilderImpl.class.getName(),
+                        "original.childNodes をイテレート中に更新されてしまった。",
+                        null, null, original);
                 throw e;
             }
             saveToCycle(child, child);
@@ -663,6 +670,12 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
                 String message =
                     StringUtil.getMessage(TemplateBuilderImpl.class, 0, value);
                 LOG.warn(message, e);
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "invalidCharset",
+                        TemplateBuilderImpl.class.getName(),
+                        message,
+                        value);
             }
         } else if (BALANCE_TAG.equals(name)) {
             if (_htmlReaderPool instanceof NekoHtmlReaderPool) {

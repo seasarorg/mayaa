@@ -35,6 +35,7 @@ import jakarta.servlet.ServletContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.Namespace;
@@ -315,6 +316,12 @@ public class SpecificationUtil implements CONST_IMPL {
             }
             else {
                 LOG.error("Cannot mkdir serialize directory. " + cacheDir.getAbsolutePath());
+                DiagnosticEventBuffer.recordError(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "serializeDirCreateFailed",
+                        cacheDir.getAbsolutePath(),
+                        "Cannot mkdir serialize directory. " + cacheDir.getAbsolutePath(),
+                        cacheDir.getAbsolutePath());
                 return false;
             }
         } catch (SecurityException e) {
@@ -389,10 +396,28 @@ public class SpecificationUtil implements CONST_IMPL {
             }
         } catch (FileNotFoundException e) {
             LOG.error("page serialize failed.", e);
+            DiagnosticEventBuffer.recordError(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "pageSerializeFailed",
+                    spec.getSystemID(),
+                    "page serialize failed.",
+                    null, null, spec);
         } catch (IOException e) {
             LOG.error("page serialize failed.", e);
+            DiagnosticEventBuffer.recordError(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "pageSerializeFailed",
+                    spec.getSystemID(),
+                    "page serialize failed.",
+                    null, null, spec);
         } catch (IllegalStateException e) {
             LOG.error("page serialize failed.", e);
+            DiagnosticEventBuffer.recordError(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "pageSerializeFailed",
+                    spec.getSystemID(),
+                    "page serialize failed.",
+                    null, null, spec);
         }
     }
 

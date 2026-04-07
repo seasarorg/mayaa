@@ -19,13 +19,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
+import org.seasar.mayaa.impl.management.DiagnosticEventCapture;
 
 public class CharactersProcessorTest {
+
+    private final DiagnosticEventCapture capture = new DiagnosticEventCapture();
+
+    @BeforeEach
+    public void setUp() {
+        capture.start();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        capture.stop();
+        capture.clear();
+    }
 
     @Test
     public void testApplyHtmlBodyAutoEscape_dynamicHtmlBody() {
@@ -146,14 +162,12 @@ public class CharactersProcessorTest {
 
     @Test
     public void testApplyHtmlBodyAutoEscape_htmlCommentIsNotEscapedOrWarned() {
-        DiagnosticEventBuffer.clear();
-
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom & Jerry</b>", new NonLiteralScript(), true,
                 OutputContext.HTML_COMMENT);
 
         assertEquals("<b>Tom & Jerry</b>", output);
-        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+        assertEquals(0, capture.size());
     }
 
     // ---- HTML_ATTRIBUTE ----
@@ -211,15 +225,13 @@ public class CharactersProcessorTest {
 
     @Test
     public void testApplyHtmlBodyAutoEscape_autoEscapeDisabled_recordsRenderWarningEvent() {
-        DiagnosticEventBuffer.clear();
-
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "<b>Tom</b>", new NonLiteralScript(), false,
                 OutputContext.HTML_BODY);
 
         assertEquals("<b>Tom</b>", output);
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         assertEquals(1, events.size());
         DiagnosticEventBuffer.Event event = events.get(0);
         assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());
@@ -235,14 +247,12 @@ public class CharactersProcessorTest {
 
     @Test
     public void testApplyHtmlBodyAutoEscape_autoEscapeDisabled_alreadyEscapedDoesNotRecordWarning() {
-        DiagnosticEventBuffer.clear();
-
         String output = CharactersProcessor.applyHtmlBodyAutoEscape(
                 "&lt;b&gt;Tom&lt;/b&gt;", new NonLiteralScript(), false,
                 OutputContext.HTML_BODY);
 
         assertEquals("&lt;b&gt;Tom&lt;/b&gt;", output);
-        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+        assertEquals(0, capture.size());
     }
 
     static class NonLiteralScript implements CompiledScript {

@@ -25,8 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.URI;
@@ -39,8 +38,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class NamespaceImpl implements Namespace {
 
     private static final long serialVersionUID = -3738362040016319461L;
-
-    private static final Log LOG = LogFactory.getLog(NamespaceImpl.class);
 
     public static Namespace copyOf(Namespace namespace) {
         if (namespace == null) {
@@ -103,10 +100,14 @@ public class NamespaceImpl implements Namespace {
                 _mappings.add(mapping);
                 _serializeKey = null;
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn(StringUtil.getMessage(NamespaceImpl.class, 0,
-                            mapping.toString()));
-                }
+                String msg = StringUtil.getMessage(NamespaceImpl.class, 0,
+                        mapping.toString());
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "duplicatePrefixMapping",
+                        null,
+                        msg,
+                        mapping.toString());
             }
         }
     }

@@ -21,9 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.library.LibraryDefinition;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.builder.library.PropertyDefinition;
 import org.seasar.mayaa.builder.library.PropertySet;
@@ -48,9 +47,6 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         implements ProcessorDefinition, CONST_IMPL {
 
     private static final long serialVersionUID = -9158405427849768423L;
-    private static final Log LOG =
-        LogFactory.getLog(ProcessorDefinitionImpl.class);
-
     private Class<?> _processorClass;
     private List<PropertySetRef> _propertySetRefs;
 
@@ -80,11 +76,14 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
         for (PropertySetRef ref :_propertySetRefs) {
             if (name.equals(ref.getName())) {
                 alreadyDefined = true;
-                if (LOG.isWarnEnabled()) {
-                    String line = Integer.toString(lineNumber);
-                    LOG.warn(StringUtil.getMessage(
-                            ProcessorDefinitionImpl.class, 1, name, systemID, line));
-                }
+                String line = Integer.toString(lineNumber);
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "duplicatePropertySetRef",
+                        systemID,
+                        StringUtil.getMessage(
+                                ProcessorDefinitionImpl.class, 1, name, systemID, line),
+                        name);
             }
         }
         if (!alreadyDefined) {
@@ -119,8 +118,18 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
     protected void settingProperty(
             SpecificationNode original, SpecificationNode injected,
             TemplateProcessor processor, PropertyDefinition property) {
-        Object value =
-            property.createProcessorProperty(this, processor, original, injected);
+        Object value;
+        try {
+            value = property.createProcessorProperty(this, processor, original, injected);
+        } catch (NoRequiredPropertyException e) {
+            DiagnosticEventBuffer.recordError(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "noRequiredProperty",
+                    original.getSystemID(),
+                    e.getMessage(),
+                    property.getName(), null, original);
+            throw e;
+        }
         if (value != null) {
             String propertyImplName = property.getImplName();
             Class<?> processorClass = getProcessorClass();
@@ -139,19 +148,29 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
                         getPrefixAwareName(injected, property.getName());
                     acceptable.addVirtualProperty(name, (Serializable) value);
                 } else {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn(StringUtil.getMessage(
-                                ProcessorDefinitionImpl.class, 3,
-                                processorClass.getName(), propertyImplName,
-                                value.getClass().getName()));
-                    }
+                    DiagnosticEventBuffer.recordWarn(
+                            DiagnosticEventBuffer.Phase.BUILD,
+                            "nonSerializableVirtualProperty",
+                            original.getSystemID(),
+                            StringUtil.getMessage(
+                                    ProcessorDefinitionImpl.class, 3,
+                                    processorClass.getName(), propertyImplName,
+                                    value.getClass().getName()),
+                            propertyImplName,
+                            null,
+                            original);
                 }
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn(StringUtil.getMessage(
-                            ProcessorDefinitionImpl.class, 2,
-                            processorClass.getName(), propertyImplName));
-                }
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "noMatchingProperty",
+                        original.getSystemID(),
+                        StringUtil.getMessage(
+                                ProcessorDefinitionImpl.class, 2,
+                                processorClass.getName(), propertyImplName),
+                        propertyImplName,
+                        null,
+                        original);
             }
         }
     }

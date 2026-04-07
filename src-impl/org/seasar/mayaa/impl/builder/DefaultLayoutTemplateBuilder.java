@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.engine.Page;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -198,6 +199,12 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
         if (pageName.charAt(0) != '/' || pageName.indexOf("/../") != -1) {
             LOG.warn(StringUtil.getMessage(
                     DefaultLayoutTemplateBuilder.class, 1, pageName));
+            DiagnosticEventBuffer.recordWarn(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "invalidPageName",
+                    DefaultLayoutTemplateBuilder.class.getName(),
+                    StringUtil.getMessage(DefaultLayoutTemplateBuilder.class, 1, pageName),
+                    pageName);
             return false;
         }
 
@@ -205,6 +212,12 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
         if (source == null || source.exists() == false) {
             LOG.warn(StringUtil.getMessage(
                     DefaultLayoutTemplateBuilder.class, 2, pageName));
+            DiagnosticEventBuffer.recordWarn(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "invalidPageName",
+                    DefaultLayoutTemplateBuilder.class.getName(),
+                    StringUtil.getMessage(DefaultLayoutTemplateBuilder.class, 2, pageName),
+                    pageName);
             return false;
         }
 

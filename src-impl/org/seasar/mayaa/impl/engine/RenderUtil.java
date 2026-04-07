@@ -131,9 +131,9 @@ public class RenderUtil implements CONST_IMPL {
 
         setCurrentProcessor(current);
         Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
-        SpecificationUtil.execEvent(defaultSpec, QM_BEFORE_RENDER_PROCESSOR);
         try {
             SpecificationUtil.startScope(current.getVariables());
+            SpecificationUtil.execEvent(defaultSpec, QM_BEFORE_RENDER_PROCESSOR);
             ProcessStatus startRet = EVAL_BODY_INCLUDE;
             startRet = current.doStartProcess(topLevelPage);
             if (startRet == SKIP_PAGE) {
@@ -283,7 +283,7 @@ public class RenderUtil implements CONST_IMPL {
         cycle.setInjectedNode(page);
     }
 
-    protected static Template getTemplate(String requestedSuffix,
+    public static Template getTemplate(String requestedSuffix,
             Page page, String suffix, String extension) {
         if (EngineUtil.getMayaaExtensionName().equals(extension)) {
             SourceDescriptor source = page.getSource();

@@ -302,7 +302,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
     @AfterEach
     void cleanup() {
         DynamicRegisteredSourceHolder.unregisterAll();
-        DiagnosticEventBuffer.clear();
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
@@ -430,7 +429,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-realistic", target, expected, vars);
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         assertTrue(events.size() >= 3,
                 "autoEscape=false で差分が出る箇所の診断イベントが蓄積されること");
         for (DiagnosticEventBuffer.Event event : events) {
@@ -467,7 +466,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("already-escaped", target, expected, vars);
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         assertEquals(1, events.size());
         assertEquals("auto-escape", events.get(0).label());
     }
@@ -498,7 +497,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-already-escaped", target, expected, vars);
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         assertEquals(0, events.size());
     }
 
@@ -528,7 +527,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-already-escaped-attribute", target, expected, vars);
 
-        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+        assertEquals(0, capture.size());
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
@@ -557,7 +556,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-already-escaped-script", target, expected, vars);
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         for (DiagnosticEventBuffer.Event event : events) {
             assertTrue(event.scriptText() == null || event.scriptText().contains("safeJs") == false,
                     "safeJs に起因する警告は記録されないこと");
@@ -586,7 +585,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-already-escaped-style", target, expected, vars);
 
-        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+        assertEquals(0, capture.size());
     }
 
     @ParameterizedTest(name = "useNewParser {0}")
@@ -615,7 +614,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
         registerAndVerify("disabled-already-escaped-textarea", target, expected, vars);
 
-        assertEquals(0, DiagnosticEventBuffer.snapshot().size());
+        assertEquals(0, capture.size());
     }
 
     @ParameterizedTest(name = "useNewParser {0}")

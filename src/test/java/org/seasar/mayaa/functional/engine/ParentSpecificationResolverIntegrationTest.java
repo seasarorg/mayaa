@@ -35,7 +35,6 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
@@ -178,7 +177,6 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
         // Ensure next tests rebuild global default from regular resources.
         SpecificationUtil.getDefaultSpecification().deprecate();
         DynamicRegisteredSourceHolder.unregisterAll();
-        DiagnosticEventBuffer.clear();
     }
 
     private static final class ChainParentSpecificationResolver extends ParameterAwareImpl

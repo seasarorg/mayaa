@@ -37,9 +37,12 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.engine.PageImpl;
+import org.seasar.mayaa.impl.engine.PageNotFoundException;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.engine.RenderNotCompletedException;
 import org.seasar.mayaa.impl.engine.RenderUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -312,9 +315,9 @@ public class InsertProcessor
         params.putAll(properties);
         properties.clear();
 
-        invokeBeforeRenderComponent(renderPage);
         Boolean previousAutoEscapeOverride = AutoEscapeContext.getPageAutoEscapeEnabled();
         try {
+            invokeBeforeRenderComponent(renderPage);
             ProcessStatus ret;
             getRenderingInsertChain().push(this);
             try {
@@ -342,6 +345,22 @@ public class InsertProcessor
             }
             return ret;
         } catch(RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            if (e instanceof PageNotFoundException) {
+                DiagnosticEventBuffer.recordWarn(DiagnosticEventBuffer.Phase.RENDER,
+                        "pageNotFound",
+                        getOriginalNode() != null ? getOriginalNode().getSystemID().toString() : null,
+                        e.getMessage(),
+                        null, null, getOriginalNode(), e);
+            } else {
+                DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                        "scriptError",
+                        getOriginalNode() != null ? getOriginalNode().getSystemID().toString() : null,
+                        e.getMessage(),
+                        null, null, getOriginalNode(), e);
+            }
             invokeAfterRenderComponent();
             throw e;
         } finally {

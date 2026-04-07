@@ -29,7 +29,9 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -66,7 +68,21 @@ public class CommentProcessor extends CharactersProcessor {
     public ProcessStatus doStartProcess(Page topLevelPage) {
         ServiceCycle cycle = CycleUtil.getServiceCycle();
         StringBuilder buffer = new StringBuilder();
-        writePart1(buffer);
+        try {
+            writePart1(buffer);
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            ProcessorProperty text = getText();
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    CommentProcessor.class.getName(),
+                    e.getMessage(),
+                    text != null && text.getValue() != null ? text.getValue().getScriptText() : null,
+                    null, getOriginalNode(), e);
+            throw e;
+        }
         Boolean pageAutoEscape = parseAutoEscapeDirective(buffer.substring(COMMENTIN.length()));
         if (pageAutoEscape != null) {
             AutoEscapeContext.setPageAutoEscapeEnabled(pageAutoEscape);

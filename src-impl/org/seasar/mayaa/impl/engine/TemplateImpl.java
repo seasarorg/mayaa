@@ -37,6 +37,8 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
+import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
+import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -195,11 +197,23 @@ public class TemplateImpl
     }
 
     public ProcessStatus doTemplateRender(Page topLevelPage) {
-        RenderUtil.saveToCycle(this);
-        prepareCycle(topLevelPage);
-        ProcessStatus ret =
-            RenderUtil.renderProcessorTree(topLevelPage, this);
-        return ret;
+        final SpecificationStats profileStats = SpecificationProfileRegistry.getInstance()
+                .getOrCreate(getSystemID(), SpecificationStats.TYPE_TEMPLATE);
+        final long startMs = System.currentTimeMillis();
+        boolean renderError = false;
+        try {
+            RenderUtil.saveToCycle(this);
+            prepareCycle(topLevelPage);
+            return RenderUtil.renderProcessorTree(topLevelPage, this);
+        } catch (RuntimeException e) {
+            renderError = true;
+            throw e;
+        } finally {
+            profileStats.recordRender(System.currentTimeMillis() - startMs);
+            if (renderError) {
+                profileStats.recordRenderError();
+            }
+        }
     }
 
     protected void replaceProcessors(List<ProcessorTreeWalker> processors) {
@@ -238,9 +252,17 @@ public class TemplateImpl
             if (pageTime != null && pageTime.after(templateTime)) {
                 return true;
             }
-            Date engineTime = SpecificationUtil.getDefaultSpecification().getTimestamp();
-            if (engineTime != null && engineTime.after(templateTime)) {
-                return true;
+            try {
+                Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
+                if (defaultSpec != null) {
+                    Date engineTime = defaultSpec.getTimestamp();
+                    if (engineTime != null && engineTime.after(templateTime)) {
+                        return true;
+                    }
+                }
+            } catch (NullPointerException | IllegalStateException e) {
+                // Called outside of Mayaa's ServiceCycle (e.g. admin/management servlet):
+                // cycle thread-local is not initialized. Skip engine timestamp check.
             }
         }
         return super.isDeprecated();

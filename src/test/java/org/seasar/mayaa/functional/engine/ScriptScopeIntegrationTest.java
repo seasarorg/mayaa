@@ -23,7 +23,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
-import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -1319,6 +1318,5 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
     @AfterEach
     void cleanup() {
         DynamicRegisteredSourceHolder.unregisterAll();
-        DiagnosticEventBuffer.clear();
     }
 }

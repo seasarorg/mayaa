@@ -25,14 +25,17 @@ import org.junit.jupiter.api.Test;
 
 public class DiagnosticEventBufferTest {
 
+    private final DiagnosticEventCapture capture = new DiagnosticEventCapture();
+
     @BeforeEach
     public void setUp() {
-        DiagnosticEventBuffer.clear();
+        capture.start();
     }
 
     @AfterEach
     public void tearDown() {
-        DiagnosticEventBuffer.clear();
+        capture.stop();
+        capture.clear();
     }
 
     @Test
@@ -41,7 +44,7 @@ public class DiagnosticEventBufferTest {
                 "auto-escape",
                 "test.Source", "warn message", "sample value");
 
-        List<DiagnosticEventBuffer.Event> events = DiagnosticEventBuffer.snapshot();
+        List<DiagnosticEventBuffer.Event> events = capture.snapshot();
         assertEquals(1, events.size());
         DiagnosticEventBuffer.Event event = events.get(0);
         assertEquals(DiagnosticEventBuffer.Phase.RENDER, event.phase());

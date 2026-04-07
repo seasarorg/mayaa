@@ -52,7 +52,7 @@ public class SpecificationProfileRegistry {
     /**
      * _statsCache の保管上限。LRU 退去の上限値として使用する。
      */
-    public static final int MAX_TRACKED = 10_000;
+    public static final int MAX_TRACKED = 2_000;
 
     private static final SpecificationProfileRegistry INSTANCE =
             new SpecificationProfileRegistry();

@@ -69,7 +69,7 @@ public class SpecificationStats {
 
     // ---- 診断イベントカウンタ + per-spec イベントバッファ ----
     // インデックス: PHASE_PARSE=0, PHASE_BUILD=1, PHASE_RENDER=2
-    private static final int EVENT_BUFFER_CAPACITY = 100;
+    private static final int EVENT_BUFFER_CAPACITY = 20;
     private final AtomicLong[] _diagWarnCounts  = {
             new AtomicLong(), new AtomicLong(), new AtomicLong() };
     private final AtomicLong[] _diagErrorCounts = {

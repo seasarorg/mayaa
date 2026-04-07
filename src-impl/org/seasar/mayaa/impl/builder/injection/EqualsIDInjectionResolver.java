@@ -19,20 +19,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
+import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -42,9 +41,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
         implements InjectionResolver {
-
-    private static final Log LOG =
-        LogFactory.getLog(EqualsIDInjectionResolver.class);
 
     private static final CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private List<QName> _additionalIds = new ArrayList<>();
@@ -99,10 +95,9 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
             if (id.equals(SpecificationUtil.getAttributeValue(child, CONST_IMPL.QM_ID))) {
                 if (CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
                     specificationNodes.add(child);
-                } else {
-                    // m:mayaa直下でなければ警告し、利用しない
-                    logWarnning(id, child, 3);
                 }
+                // m:mayaa直下でない要素のid属性はinjectionに使われない（仕様）。
+                // 警告は .mayaa ファイルのパース時に warnInvalidIdNodes() で一度だけ出す。
             }
             getEqualsIDNodes(child, id, specificationNodes);
         }
@@ -145,15 +140,52 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
         return chain.getNode(original);
     }
 
-    protected void logWarnning(String id, SpecificationNode node, int number) {
-        if (LOG.isWarnEnabled()) {
-            String systemID = node.getSystemID();
-            String lineNumber = Integer.toString(node.getLineNumber());
-            String msg = StringUtil.getMessage(
-                    EqualsIDInjectionResolver.class, number,
-                    id, systemID, lineNumber);
-            LOG.warn(msg);
+    /**
+     * .mayaaファイルパース後に呼び出す。m:mayaa直下でないノードにid属性がある場合、
+     * 警告を一度だけ記録する。{@link SpecificationBuilderImpl#afterBuild} から呼ばれる。
+     *
+     * @param specification パース済みの .mayaa Specification
+     */
+    public static void warnInvalidIdNodes(Specification specification) {
+        SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(specification);
+        if (mayaaNode == null) {
+            return;
         }
+        warnInvalidIdNodesRecursive(mayaaNode);
+    }
+
+    private static void warnInvalidIdNodesRecursive(SpecificationNode node) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
+            String id = SpecificationUtil.getAttributeValue(child, CONST_IMPL.QM_ID);
+            if (StringUtil.hasValue(id) && !CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
+                // m:mayaa直下でない要素のid属性はinjectionに使われない（仕様）
+                // ユーザーに意図しない無効化を気づかせるために警告する
+                String msg = StringUtil.getMessage(
+                        EqualsIDInjectionResolver.class, 3,
+                        id, child.getSystemID(), Integer.toString(child.getLineNumber()));
+                DiagnosticEventBuffer.recordWarn(
+                        DiagnosticEventBuffer.Phase.BUILD,
+                        "parseInjectionID",
+                        child.getSystemID(),
+                        msg, null, id, child);
+            }
+            warnInvalidIdNodesRecursive(child);
+        }
+    }
+
+    protected void logWarnning(String id, SpecificationNode node, int number) {
+        String msg = StringUtil.getMessage(
+                EqualsIDInjectionResolver.class, number,
+                id, node.getSystemID(), Integer.toString(node.getLineNumber()));
+        DiagnosticEventBuffer.recordWarn(
+                DiagnosticEventBuffer.Phase.BUILD,
+                "resolveInjectionID",
+                node.getSystemID(),
+                msg,
+                null,
+                id,
+                node);
     }
 
     // Parameterizable implements ------------------------------------

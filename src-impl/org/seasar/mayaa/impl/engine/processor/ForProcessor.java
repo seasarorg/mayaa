@@ -21,6 +21,8 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 
 /**
@@ -98,17 +100,41 @@ public class ForProcessor extends TemplateProcessorSupport
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
         CycleUtil.clearLocalVariable(COUNTER_KEY, this);
-        if (_init != null) {
-            _init.getValue().execute(Void.class, null);
+        try {
+            if (_init != null) {
+                _init.getValue().execute(Void.class, null);
+            }
+            return execTest() ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    ForProcessor.class.getName(),
+                    e.getMessage(),
+                    _test != null ? _test.getValue().getScriptText() : null, null, getOriginalNode(), e);
+            throw e;
         }
-        return execTest() ? ProcessStatus.EVAL_BODY_INCLUDE : ProcessStatus.SKIP_BODY;
     }
 
     public ProcessStatus doAfterChildProcess() {
-        if (_after != null) {
-            _after.getValue().execute(Void.class, null);
+        try {
+            if (_after != null) {
+                _after.getValue().execute(Void.class, null);
+            }
+            return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    ForProcessor.class.getName(),
+                    e.getMessage(),
+                    _test != null ? _test.getValue().getScriptText() : null, null, getOriginalNode(), e);
+            throw e;
         }
-        return execTest() ? ProcessStatus.EVAL_BODY_AGAIN : ProcessStatus.SKIP_BODY;
     }
 
     // for serialize

@@ -19,8 +19,7 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.seasar.mayaa.PositionAware;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.engine.specification.Namespace;
@@ -40,6 +39,7 @@ import org.seasar.mayaa.impl.engine.specification.NamespaceImpl;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.URIImpl;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -53,9 +53,6 @@ import org.xml.sax.SAXParseException;
 public abstract class SpecificationNodeHandler
         implements ContentHandler,
         ErrorHandler, AdditionalHandler, CONST_IMPL {
-
-    private static final Log LOG =
-        LogFactory.getLog(SpecificationNodeHandler.class);
 
     protected static final QName QM_DATA =
         SpecificationUtil.createQName("data");
@@ -441,26 +438,56 @@ public abstract class SpecificationNodeHandler
             ((e.getMessage() != null) ? " - " + e.getMessage(): "");
     }
 
+    private PositionAware exceptionPosition(SAXParseException e) {
+        final String sid = e.getSystemId() != null
+                ? StringUtil.removeFileProtocol(e.getSystemId())
+                : _specification.getSystemID();
+        final int line = e.getLineNumber();
+        return new PositionAware() {
+            public String getSystemID()           { return sid; }
+            public void   setSystemID(String s)   { /* no-op */ }
+            public int    getLineNumber()          { return line; }
+            public void   setLineNumber(int n)     { /* no-op */ }
+            public boolean isOnTemplate()          { return false; }
+            public void   setOnTemplate(boolean b) { /* no-op */ }
+        };
+    }
+
     @Override
     public void warning(SAXParseException e) {
-        if (LOG.isWarnEnabled()) {
-            LOG.warn(exceptionMessage(e));
-        }
+        DiagnosticEventBuffer.recordWarn(
+                DiagnosticEventBuffer.Phase.PARSE,
+                "saxParseWarning",
+                _specification.getSystemID(),
+                exceptionMessage(e),
+                null,
+                null,
+                exceptionPosition(e));
     }
 
     @Override
     public void fatalError(SAXParseException e) {
-        if (LOG.isFatalEnabled()) {
-            LOG.fatal(exceptionMessage(e));
-        }
+        DiagnosticEventBuffer.recordError(
+                DiagnosticEventBuffer.Phase.PARSE,
+                "saxFatalError",
+                _specification.getSystemID(),
+                exceptionMessage(e),
+                null,
+                null,
+                exceptionPosition(e));
         throw new RuntimeException(exceptionMessage(e), e);
     }
 
     @Override
     public void error(SAXParseException e) {
-        if (LOG.isErrorEnabled()) {
-            LOG.error(exceptionMessage(e));
-        }
+        DiagnosticEventBuffer.recordError(
+                DiagnosticEventBuffer.Phase.PARSE,
+                "saxParseError",
+                _specification.getSystemID(),
+                exceptionMessage(e),
+                null,
+                null,
+                exceptionPosition(e));
         throw new RuntimeException(exceptionMessage(e), e);
     }
 

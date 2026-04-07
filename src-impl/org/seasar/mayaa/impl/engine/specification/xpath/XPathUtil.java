@@ -19,10 +19,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jaxen.Context;
 import org.jaxen.ContextSupport;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.jaxen.JaxenException;
 import org.jaxen.NamespaceContext;
 import org.jaxen.SimpleNamespaceContext;
@@ -43,7 +42,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class XPathUtil {
-    private static final Log LOG = LogFactory.getLog(XPathUtil.class);
 
     private XPathUtil() {
         // no instantiation.
@@ -80,7 +78,14 @@ public class XPathUtil {
             String xpathExpr, Namespace namespaceable, boolean cascade) {
         Specification specification = SpecificationUtil.findSpecification(node);
         if (specification == null) {
-            LOG.warn("node top is not specification." + node.toString());
+            DiagnosticEventBuffer.recordWarn(
+                    DiagnosticEventBuffer.Phase.BUILD,
+                    "nodeTopNotSpecification",
+                    node.getSystemID(),
+                    "node top is not specification." + node.toString(),
+                    null,
+                    null,
+                    node);
             return Collections.emptyIterator();
         }
         if (StringUtil.isEmpty(xpathExpr)) {

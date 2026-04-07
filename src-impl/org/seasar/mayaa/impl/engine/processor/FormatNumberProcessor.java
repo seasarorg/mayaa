@@ -22,6 +22,8 @@ import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.collection.AbstractSoftReferencePool;
 
@@ -66,11 +68,24 @@ public class FormatNumberProcessor extends TemplateProcessorSupport {
     }
 
     public ProcessStatus doStartProcess(Page topLevelPage) {
-        if (_value != null) {
-            ServiceCycle cycle = CycleUtil.getServiceCycle();
-            cycle.getResponse().write(format(_value));
+        try {
+            if (_value != null) {
+                ServiceCycle cycle = CycleUtil.getServiceCycle();
+                cycle.getResponse().write(format(_value));
+            }
+            return ProcessStatus.SKIP_BODY;
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    FormatNumberProcessor.class.getName(),
+                    e.getMessage(),
+                    _value != null ? _value.getValue().getScriptText() : null,
+                    null, getOriginalNode(), e);
+            throw e;
         }
-        return ProcessStatus.SKIP_BODY;
     }
 
     private String format(ProcessorProperty property) {

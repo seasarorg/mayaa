@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.impl.builder.parser.HtmlTokenizer.TagToken;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.xml.sax.InputSource;
 import org.seasar.mayaa.impl.knowledge.HTMLKnowledge;
 import org.xml.sax.Locator;
@@ -41,7 +42,6 @@ import org.xml.sax.Locator;
  * HTML文字参照以外は解決しない
  */
 public class HtmlStandardScanner {
-    static final Log LOG = LogFactory.getLog(HtmlStandardScanner.class);
     static final Log LOG_TOKENHANDLER = LogFactory.getLog(HtmlStandardScanner.class.getName() + ".TokenHandler");
     static final Log LOG_TOKENIZER = LogFactory.getLog(HtmlStandardScanner.class.getName() + ".Tokenizer");
 
@@ -2927,7 +2927,12 @@ class HtmlTokenizer {
             // EOF
             return;
         } catch (IOException e) {
-            HtmlStandardScanner.LOG.error("Parser error " + e.getMessage(), e);
+            DiagnosticEventBuffer.recordError(
+                    DiagnosticEventBuffer.Phase.PARSE,
+                    "htmlParserError",
+                    HtmlStandardScanner.class.getName(),
+                    "Parser error " + e.getMessage(),
+                    e.getClass().getSimpleName());
             return;
         }
     }

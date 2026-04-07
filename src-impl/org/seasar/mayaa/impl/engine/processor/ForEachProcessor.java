@@ -25,6 +25,8 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.IteratorUtil;
 
@@ -104,7 +106,19 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
         IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
                 PROCESS_TIME_INFO_KEY, this, null);
-        stack.pushOne();
+        try {
+            stack.pushOne();
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    ForEachProcessor.class.getName(),
+                    e.getMessage(),
+                    _items.getValue().getScriptText(), null, getOriginalNode(), e);
+            throw e;
+        }
 
         if (prepareEvalBody() == false) {
             stack.pop();
@@ -114,13 +128,25 @@ public class ForEachProcessor extends TemplateProcessorSupport
     }
 
     public ProcessStatus doAfterChildProcess() {
-        if (prepareEvalBody() == false) {
-            IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
-                    PROCESS_TIME_INFO_KEY, this, null);
-            stack.pop();
-            return ProcessStatus.SKIP_BODY;
+        try {
+            if (prepareEvalBody() == false) {
+                IndexIteratorStack stack = (IndexIteratorStack) CycleUtil.getLocalVariable(
+                        PROCESS_TIME_INFO_KEY, this, null);
+                stack.pop();
+                return ProcessStatus.SKIP_BODY;
+            }
+            return ProcessStatus.EVAL_BODY_AGAIN;
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    ForEachProcessor.class.getName(),
+                    e.getMessage(),
+                    _items.getValue().getScriptText(), null, getOriginalNode(), e);
+            throw e;
         }
-        return ProcessStatus.EVAL_BODY_AGAIN;
     }
 
     // for serialize

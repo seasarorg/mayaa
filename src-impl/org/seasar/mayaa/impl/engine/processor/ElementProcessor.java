@@ -39,6 +39,8 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.builder.BuilderUtil;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.engine.processor.AttributeProcessor.ProcessorPropertyWrapper;
@@ -503,8 +505,20 @@ public class ElementProcessor extends AbstractAttributableProcessor
     }
 
     public ProcessStatus processStart(Page topLevelPage) {
-        renderInit();
-        return super.processStart(topLevelPage);
+        try {
+            renderInit();
+            return super.processStart(topLevelPage);
+        } catch (RuntimeException e) {
+            if (e instanceof RenderingBrake) {
+                throw e;
+            }
+            DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                    "scriptError",
+                    ElementProcessor.class.getName(),
+                    e.getMessage(),
+                    null, null, getOriginalNode(), e);
+            throw e;
+        }
     }
 
     public ProcessStatus processEnd() {

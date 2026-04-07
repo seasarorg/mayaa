@@ -51,7 +51,9 @@ public final class DiagnosticEventBuffer {
             int positionLineNumber,
             boolean positionOnTemplate,
             /** 記録時点でのスコープ systemID (ビルド中の spec など)。null 可。 */
-            String ownerSystemID) {
+            String ownerSystemID,
+            /** 元となった例外オブジェクト。null 可。 */
+            Throwable cause) {
     }
 
     public static final int UNKNOWN_POSITION_LINE = -1;
@@ -102,7 +104,7 @@ public final class DiagnosticEventBuffer {
             String source,
             String message,
             String sample) {
-        recordWarn(phase, label, source, message, null, sample, null);
+        recordWarn(phase, label, source, message, null, sample, null, null);
     }
 
     public static synchronized void recordWarn(Phase phase,
@@ -112,12 +114,23 @@ public final class DiagnosticEventBuffer {
             String scriptText,
             String sample,
             PositionAware position) {
+        recordWarn(phase, label, source, message, scriptText, sample, position, null);
+    }
+
+    public static synchronized void recordWarn(Phase phase,
+            String label,
+            String source,
+            String message,
+            String scriptText,
+            String sample,
+            PositionAware position,
+            Throwable cause) {
         record(new Event(System.currentTimeMillis(), phase, Level.WARN,
                 label, source, message, scriptText, sample,
                 position != null ? position.getSystemID() : null,
                 position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
                 position != null && position.isOnTemplate(),
-                _scopeSystemID.get()));
+                _scopeSystemID.get(), cause));
     }
 
     public static synchronized void recordError(Phase phase,
@@ -125,7 +138,7 @@ public final class DiagnosticEventBuffer {
             String source,
             String message,
             String sample) {
-        recordError(phase, label, source, message, null, sample, null);
+        recordError(phase, label, source, message, null, sample, null, null);
     }
 
     public static synchronized void recordError(Phase phase,
@@ -135,12 +148,23 @@ public final class DiagnosticEventBuffer {
             String scriptText,
             String sample,
             PositionAware position) {
+        recordError(phase, label, source, message, scriptText, sample, position, null);
+    }
+
+    public static synchronized void recordError(Phase phase,
+            String label,
+            String source,
+            String message,
+            String scriptText,
+            String sample,
+            PositionAware position,
+            Throwable cause) {
         record(new Event(System.currentTimeMillis(), phase, Level.ERROR,
                 label, source, message, scriptText, sample,
                 position != null ? position.getSystemID() : null,
                 position != null ? position.getLineNumber() : UNKNOWN_POSITION_LINE,
                 position != null && position.isOnTemplate(),
-                _scopeSystemID.get()));
+                _scopeSystemID.get(), cause));
     }
 
     private static void record(Event event) {

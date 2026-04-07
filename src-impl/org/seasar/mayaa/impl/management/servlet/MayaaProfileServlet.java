@@ -388,7 +388,37 @@ public class MayaaProfileServlet extends HttpServlet {
         } else {
             sb.append("\"position\":null,");
         }
-        sb.append("\"ownerSystemID\":").append(quoteJson(e.ownerSystemID()));
+        sb.append("\"ownerSystemID\":").append(quoteJson(e.ownerSystemID())).append(",");
+        sb.append("\"cause\":").append(e.cause() != null ? throwableToJson(e.cause()) : "null");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * {@link Throwable} を JSON オブジェクトに変換する。
+     * cause チェーンを再帰的にシリアライズする。
+     */
+    private static String throwableToJson(Throwable t) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"type\":").append(quoteJson(t.getClass().getName())).append(",");
+        sb.append("\"message\":").append(quoteJson(t.getMessage())).append(",");
+        sb.append("\"stackTrace\":[");
+        StackTraceElement[] frames = t.getStackTrace();
+        for (int i = 0; i < frames.length; i++) {
+            if (i > 0) sb.append(",");
+            StackTraceElement f = frames[i];
+            sb.append("{");
+            sb.append("\"class\":").append(quoteJson(f.getClassName())).append(",");
+            sb.append("\"method\":").append(quoteJson(f.getMethodName())).append(",");
+            sb.append("\"file\":").append(quoteJson(f.getFileName())).append(",");
+            sb.append("\"line\":").append(f.getLineNumber());
+            sb.append("}");
+        }
+        sb.append("]");
+        if (t.getCause() != null) {
+            sb.append(",\"cause\":").append(throwableToJson(t.getCause()));
+        }
         sb.append("}");
         return sb.toString();
     }

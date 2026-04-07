@@ -23,6 +23,8 @@ import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
+import org.seasar.mayaa.impl.builder.injection.EqualsIDInjectionResolver;
+import org.seasar.mayaa.impl.builder.injection.XPathMatchesInjectionResolver;
 import org.seasar.mayaa.impl.builder.parser.ParserEncodingChangedException;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.xml.XMLReaderPool;
@@ -58,7 +60,9 @@ public class SpecificationBuilderImpl extends ParameterAwareImpl
     }
 
     protected void afterBuild(Specification specification) {
-        // for TemplateBuilderImpl
+        // .mayaaファイルのパース後、m:mayaa直下に置かれていないinjectionノードを一度だけ警告する
+        XPathMatchesInjectionResolver.warnInvalidXPathNodes(specification);
+        EqualsIDInjectionResolver.warnInvalidIdNodes(specification);
     }
 
     @Override

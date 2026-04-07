@@ -30,6 +30,7 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.ComplexScript;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.EscapeUtil;
@@ -91,19 +92,31 @@ public class CharactersProcessor extends TemplateProcessorSupport
             OutputContext outputContext = OutputContextStack.current();
             PositionAware position = resolveCurrentPositionAware();
 
-            if (script instanceof ComplexScript) {
-                output = applyHtmlBodyAutoEscapePerBlock(
-                        ((ComplexScript) script).getCompiledScripts(),
-                        text.getExpectedClass(), autoEscape,
-                        outputContext,
-                        position);
-            } else {
-                Object value = text.getExecutedValue(null);
-                if (value != null && value instanceof Undefined == false) {
-                    output = applyHtmlBodyAutoEscape(value.toString(),
-                            script, autoEscape,
-                            outputContext, position);
+            try {
+                if (script instanceof ComplexScript) {
+                    output = applyHtmlBodyAutoEscapePerBlock(
+                            ((ComplexScript) script).getCompiledScripts(),
+                            text.getExpectedClass(), autoEscape,
+                            outputContext,
+                            position);
+                } else {
+                    Object value = text.getExecutedValue(null);
+                    if (value != null && value instanceof Undefined == false) {
+                        output = applyHtmlBodyAutoEscape(value.toString(),
+                                script, autoEscape,
+                                outputContext, position);
+                    }
                 }
+            } catch (RuntimeException e) {
+                if (e instanceof RenderingBrake) {
+                    throw e;
+                }
+                DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                        "scriptError",
+                        CharactersProcessor.class.getName(),
+                        e.getMessage(),
+                        script.getScriptText(), null, position, e);
+                throw e;
             }
         } finally {
             SpecificationUtil.startScope(this.getVariables());

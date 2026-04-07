@@ -21,7 +21,9 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.RenderingBrake;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
+import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.util.StringUtil;
 
 /**
@@ -53,21 +55,33 @@ public class ExecProcessor extends TemplateProcessorSupport {
     public ProcessStatus doStartProcess(Page topLevelPage) {
         SpecificationUtil.endScope();
         try {
-            if (_src != null) {
-                ServiceCycle cycle = CycleUtil.getServiceCycle();
+            try {
+                if (_src != null) {
+                    ServiceCycle cycle = CycleUtil.getServiceCycle();
 
-                String srcValue = StringUtil.valueOf(_src.getExecutedValue(null));
-                String encValue = StringUtil.valueOf(_encoding.getExecutedValue(null));
+                    String srcValue = StringUtil.valueOf(_src.getExecutedValue(null));
+                    String encValue = StringUtil.valueOf(_encoding.getExecutedValue(null));
 
-                if (StringUtil.isRelativePath(srcValue)) {
-                    String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
-                    srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
+                    if (StringUtil.isRelativePath(srcValue)) {
+                        String sourcePath = EngineUtil.getSourcePath(getStaticParentProcessor());
+                        srcValue = StringUtil.adjustRelativePath(sourcePath, srcValue);
+                    }
+
+                    cycle.load(srcValue, encValue);
                 }
-
-                cycle.load(srcValue, encValue);
-            }
-            if (_script != null) {
-                _script.getExecutedValue(null);
+                if (_script != null) {
+                    _script.getExecutedValue(null);
+                }
+            } catch (RuntimeException e) {
+                if (e instanceof RenderingBrake) {
+                    throw e;
+                }
+                DiagnosticEventBuffer.recordError(DiagnosticEventBuffer.Phase.RENDER,
+                        "scriptError",
+                        ExecProcessor.class.getName(),
+                        e.getMessage(),
+                        null, null, getOriginalNode(), e);
+                throw e;
             }
         } finally {
             SpecificationUtil.startScope(getVariables());

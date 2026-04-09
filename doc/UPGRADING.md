@@ -4,6 +4,8 @@
 
 ## 目次
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
+  - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
+  - [自動エスケープ機能（Issue #110）導入時の互換性注意点](#自動エスケープ機能issue-110導入時の互換性注意点)
 - [1.2.x から 1.3.0 へのアップグレード](#12x-から-130-へのアップグレード)
 - [1.1.x から 1.2 へのアップグレード](#11x-から-12-へのアップグレード)
 - [1.1.32 以前から 1.1.33 以降へのアップグレード](#1132-以前から-1133-以降へのアップグレード)
@@ -11,6 +13,67 @@
 ---
 
 ## 1.3.x から 2.0.0 へのアップグレード
+
+### `DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）
+
+**影響範囲:** `DefaultLayoutTemplateBuilder` をサブクラス化して `setupExtends` または
+`getMayaaNode` / `createMayaaNode` / `addExtends` をオーバーライドしている実装。
+
+#### 変更の背景
+
+旧実装では `setupExtends` がキャッシュ済みの `Page` インスタンスに
+`m:extends` 属性を持つ mayaaNode を直接追加（ミューテート）していました。
+Caffeine キャッシュ移行後、Page と Template のエビクションタイミングが独立したことで
+「Page だけエビクションされた後に Template が再ビルドされず、mayaaNode が失われる」
+問題が発生したため、設計を変更しました。
+
+#### 新設計の概要
+
+- **キャッシュ済みの `Page` インスタンスはイミュータブルとして扱う。**
+  `setupExtends` は `Page` を直接ミューテートしなくなりました。
+- デフォルトレイアウトのページ名は `TemplateImpl.setDynamicSuperPagePath(String)` を
+  呼び出して **Template 自身** に保持します。
+- 描画時に `RenderUtil` が Page の `.mayaa` 定義（`m:extends`）を優先し、
+  定義がない場合のみ Template の動的設定を参照します。
+
+#### サブクラスへの影響と対応方法
+
+```java
+// 旧: Page をミューテートして mayaaNode に m:extends を追加していた
+@Override
+protected void setupExtends(Template template) {
+    Page page = template.getPage();
+    SpecificationNode mayaaNode = getMayaaNode(page);
+    if (isGenerateMayaaNode() && mayaaNode == null) {
+        mayaaNode = createMayaaNode(page, template);   // Page に子ノード追加
+        page.addChildNode(mayaaNode);
+    }
+    if (mayaaNode != null) {
+        addExtends(page, mayaaNode);                   // Page の属性を書き換え
+    }
+}
+
+// 新: Template に動的パスを設定する。Page は読み取り専用
+@Override
+protected void setupExtends(Template template) {
+    // Page の .mayaa に m:extends が既にある場合は何もしない
+    Page page = template.getPage();
+    SpecificationNode mayaaNode = getMayaaNode(page);
+    if (mayaaNode != null &&
+            !StringUtil.isEmpty(SpecificationUtil.getAttributeValue(mayaaNode, QM_EXTENDS))) {
+        return;  // .mayaa で明示定義済み → 優先される
+    }
+
+    // 動的なレイアウトパスを Template 側に設定
+    String layoutPageName = resolveLayoutPageName(template);  // サブクラスで決定
+    if (StringUtil.hasValue(layoutPageName) && template instanceof TemplateImpl) {
+        ((TemplateImpl) template).setDynamicSuperPagePath(layoutPageName);
+    }
+}
+```
+
+`getMayaaNode(Page)` / `createMayaaNode(Page, Specification)` / `addExtends(Page, SpecificationNode)` は
+`@Deprecated` になりました。新実装では使用しないでください。
 
 ### 自動エスケープ機能（Issue #110）導入時の互換性注意点
 

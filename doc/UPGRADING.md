@@ -5,6 +5,7 @@
 ## 目次
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
   - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
+  - [`ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）](#parentspecificationresolver-の親仕様-beforerender--afterrender-実行サポート動作変更)
   - [自動エスケープ機能（Issue #110）導入時の互換性注意点](#自動エスケープ機能issue-110導入時の互換性注意点)
 - [1.2.x から 1.3.0 へのアップグレード](#12x-から-130-へのアップグレード)
 - [1.1.x から 1.2 へのアップグレード](#11x-から-12-へのアップグレード)
@@ -74,6 +75,35 @@ protected void setupExtends(Template template) {
 
 `getMayaaNode(Page)` / `createMayaaNode(Page, Specification)` / `addExtends(Page, SpecificationNode)` は
 `@Deprecated` になりました。新実装では使用しないでください。
+
+---
+
+### `ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）
+
+**影響範囲:** `ParentSpecificationResolver` を実装・使用しているアプリケーション
+
+#### 1.3.x までの動き
+
+`ParentSpecificationResolver` が親仕様チェーンを返す場合、返された親仕様の `beforeRender` / `afterRender` は**実行されていませんでした**。
+
+#### 2.0.0 での変更
+
+親仕様チェーンの `beforeRender` / `afterRender` が実行されるようになりました（PR #127 #131）。
+
+実行順序は次のとおりです。
+
+```
+beforeRender: parent2（最外側）→ parent1 → page 自身（最内側）
+afterRender:  page 自身（最内側）→ parent1 → parent2（最外側）
+※ default.mayaa の beforeRender/afterRender はページ処理ごとではなく、リクエスト処理ごとに最外の一回のみ
+```
+
+この順序により、Rhino のスコープチェーン（内→外方向で変数を検索）に沿って、
+`beforeRender` 内で宣言した変数を内側の仕様から外側の仕様の変数として参照できます。
+
+> **注意:** 1.3.x では実行されていなかった `beforeRender` / `afterRender` が新たに呼ばれるようになります。`ParentSpecificationResolver` が返す親仕様に `beforeRender` / `afterRender` の処理が定義されている場合、動作が変わります。
+
+---
 
 ### 自動エスケープ機能（Issue #110）導入時の互換性注意点
 

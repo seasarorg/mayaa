@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -329,12 +330,18 @@ public class RenderUtil implements CONST_IMPL {
         List<Page> pageStack = new LinkedList<>();
         List<Template> templateStack = new LinkedList<>();
         do {
-            // stack for afterRender event.
-            pageStack.add(0, page);
             if (fireEvent) {
+                // 親仕様の beforeRender を外→内の順で実行する。
+                // 末端仕様のスコープが最も外側に置かれることで、
+                // 子仕様の beforeRender から親仕様の変数を参照できるスコープチェーンが構成される。
+                executeBeforeRenderOnAllParentSpecifications(page, pageStack);
+                // page 自身のスコープを最内側に積んでから beforeRender を実行する。
+                // これにより page は親仕様が宣言した変数を参照できる。
                 SpecificationUtil.startScope(variables);
                 SpecificationUtil.execEvent(page, QM_BEFORE_RENDER);
             }
+            // stack for afterRender event.
+            pageStack.add(0, page);
 
             Template template = getTemplate(requestedSuffix, page, suffix, extension);
             if (template != null) {
@@ -347,9 +354,6 @@ public class RenderUtil implements CONST_IMPL {
             // Page（キャッシュ済みイミュータブルインスタンス）には書き込まれないため、
             // getTemplate の後で template を渡して解決することで正しくレイアウトが適用される。
             SuperPageInfo superInfo = resolveSuperPageInfo(page, template);
-            if (fireEvent && superInfo.page == null) {
-                executeBeforeRenderOnAllParentSpecifications(page, pageStack);
-            }
 
             suffix = superInfo.suffix;
             extension = superInfo.extension;
@@ -411,14 +415,24 @@ public class RenderUtil implements CONST_IMPL {
         visited.add(basePage);
         Specification defaultSpec = SpecificationUtil.getDefaultSpecification();
 
+        // まず全親 Specification を内→外の順で収集する（チェーン順 = basePage に近い順）
+        List<Specification> parentChain = new ArrayList<>();
         Specification parent = EngineUtil.getParentSpecification(basePage);
         while (parent != null && !parent.getSystemID().equals(defaultSpec.getSystemID()) && visited.add(parent)) {
-            if (parent instanceof Page) {
-                pageStack.add(0, (Page) parent);
+            parentChain.add(parent);
+            parent = EngineUtil.getParentSpecification(parent);
+        }
+
+        // 末端から basePage 側に向けて（外→内の順）startScope + execEvent を実行する。
+        // これにより末端仕様のスコープが最も外側に置かれ、
+        // 子仕様の beforeRender から親仕様の変数を参照できるスコープチェーンが構成される。
+        for (int i = parentChain.size() - 1; i >= 0; i--) {
+            Specification spec = parentChain.get(i);
+            if (spec instanceof Page) {
+                pageStack.add(0, (Page) spec);
             }
             SpecificationUtil.startScope(null);
-            SpecificationUtil.execEvent(parent, QM_BEFORE_RENDER);
-            parent = EngineUtil.getParentSpecification(parent);
+            SpecificationUtil.execEvent(spec, QM_BEFORE_RENDER);
         }
     }
 

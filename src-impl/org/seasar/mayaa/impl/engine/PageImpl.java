@@ -82,10 +82,20 @@ public class PageImpl extends SpecificationImpl implements Page {
         if (StringUtil.isEmpty(extendsPath)) {
             return new SuperPageInfo(null, null, null);
         }
+        return resolveExtendsPath(extendsPath);
+    }
+
+    /**
+     * 指定した m:extends パス文字列を解決して SuperPageInfo を返します。
+     * Page 自身の .mayaa 定義によらず、動的に渡されたパスを解決する際に使います。
+     *
+     * @param path m:extends パス（例: "/layout.html"）
+     * @return 解決された SuperPageInfo
+     */
+    SuperPageInfo resolveExtendsPath(String path) {
         Engine engine = ProviderUtil.getEngine();
         String suffixSeparator = engine.getParameter(CONST_IMPL.SUFFIX_SEPARATOR);
-        String[] pagePath = StringUtil.parsePath(extendsPath, suffixSeparator);
-
+        String[] pagePath = StringUtil.parsePath(path, suffixSeparator);
         Page superPage = engine.getPage(
                 StringUtil.adjustRelativePath(_pageName, pagePath[0]));
         return new SuperPageInfo(superPage, pagePath[1], pagePath[2]);

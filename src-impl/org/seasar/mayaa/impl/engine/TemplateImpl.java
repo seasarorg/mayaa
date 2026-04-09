@@ -56,6 +56,13 @@ public class TemplateImpl
     private String _suffix;
     private String _extension;
     private List<ProcessorTreeWalker> _childProcessors = new ArrayList<>();
+    /**
+     * DefaultLayoutTemplateBuilder.setupExtends がデフォルトレイアウトを設定する際、
+     * Page（キャッシュ済みイミュータブルインスタンス）を直接ミューテートせずに
+     * Template 自身がデフォルト拡張先ページ名を保持するためのフィールド。
+     * Page の .mayaa ファイルに m:extends が定義されていない場合に設定される。
+     */
+    private String _dynamicSuperPagePath;
 
     public void initialize(Page page, String suffix, String extension) {
         if (page == null || suffix == null || extension == null) {
@@ -80,6 +87,25 @@ public class TemplateImpl
 
     public String getExtension() {
         return _extension;
+    }
+
+    /**
+     * DefaultLayoutTemplateBuilder がデフォルトレイアウトのページ名を設定します。
+     * Page の .mayaa ファイルに m:extends 定義が存在しない場合に使用されます。
+     * Page インスタンスを直接ミューテートする代わりに Template 側で保持します。
+     *
+     * @param defaultLayoutPageName デフォルトレイアウトのページ名（例: "/layout.html"）
+     */
+    public void setDynamicSuperPagePath(String defaultLayoutPageName) {
+        _dynamicSuperPagePath = defaultLayoutPageName;
+    }
+
+    /**
+     * setDynamicSuperPagePath で設定されたデフォルトレイアウトのページ名を返します。
+     * 設定されていない場合は null を返します。
+     */
+    public String getDynamicSuperPagePath() {
+        return _dynamicSuperPagePath;
     }
 
     protected String getMayaaAttribute(Specification spec, QName qname) {

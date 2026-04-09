@@ -22,6 +22,7 @@ import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
+import org.seasar.mayaa.impl.engine.TemplateImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.SourceUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
@@ -44,8 +45,6 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
 
     private static final long serialVersionUID = 6472968108941224353L;
 
-    private static final String SYSTEM_ID_SUFFIX = ".mayaa/(auto)";
-
     private String _defaultLayoutPageName;
     private boolean _generateMayaaNode;
 
@@ -57,7 +56,11 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
 
     /**
      * TemplateBuilderImplの{@link #afterBuild(Specification)}を実行する前に、
-     * 必要ならm:extendsを自動生成します。
+     * 必要ならデフォルトレイアウトの適用設定をします。
+     * <p>
+     * キャッシュ済みの Page インスタンスはイミュータブルとして扱い、直接ミューテートは行いません。
+     * デフォルトレイアウトのページ名は Template 側（{@link TemplateImpl#setDynamicSuperPagePath}）
+     * に保持し、描画時に {@code RenderUtil} が参照します。
      *
      * @param template 処理対象のテンプレート
      */
@@ -70,73 +73,70 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
         }
 
         Page page = template.getPage();
-        SpecificationNode mayaaNode = getMayaaNode(page);
+        SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(page);
 
-        if (_generateMayaaNode && mayaaNode == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("default layout - generate mayaa: " + page.getPageName());
-            }
-            mayaaNode = createMayaaNode(page, template);
-            if (template.getParentNode() != null) {
-                mayaaNode.setParentNode(template.getParentNode());
-                template.setParentNode(mayaaNode);
-            }
-            page.addChildNode(mayaaNode);
+        boolean shouldApplyDefault;
+        if (mayaaNode == null) {
+            // .mayaaファイルなし — generateMayaaNode=true の場合のみデフォルトレイアウトを適用
+            shouldApplyDefault = _generateMayaaNode;
+        } else {
+            // .mayaaファイルあり — m:extends が未定義の場合にデフォルトレイアウトを適用
+            shouldApplyDefault = StringUtil.isEmpty(
+                    SpecificationUtil.getAttributeValue(mayaaNode, QM_EXTENDS));
         }
-        if (mayaaNode != null) {
-            addExtends(page, mayaaNode);
+
+        if (shouldApplyDefault && template instanceof TemplateImpl) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("default layout - set extends: " + page.getPageName()
+                        + " m:extends=\"" + _defaultLayoutPageName + "\"");
+            }
+            ((TemplateImpl) template).setDynamicSuperPagePath(_defaultLayoutPageName);
         }
     }
 
     /**
-     * PageのMayaaノードを取得します。
-     * createMayaaNodeで自動生成したノードだった場合、そのノードは削除して
-     * 再度Mayaaノードを取得します。
+     * PageのMayaaノードを取得します（.mayaaファイルに定義されたノードのみ返します）。
      *
      * @param page ビルド対象のページ
-     * @return 自動生成でないMayaaノード。無ければnullを返します。
+     * @return .mayaaファイルに定義されたMayaaノード。無ければnullを返します。
      */
     protected SpecificationNode getMayaaNode(Page page) {
-        SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(page);
-        if (mayaaNode != null && mayaaNode.getSystemID().endsWith(SYSTEM_ID_SUFFIX)) {
-            page.removeChildNode(mayaaNode);
-            mayaaNode = SpecificationUtil.getMayaaNode(page);
-        }
-        return mayaaNode;
+        return SpecificationUtil.getMayaaNode(page);
     }
 
     /**
      * ページ名に対応したMayaaファイルの代わりを作成します。
      *
-     * @param page Mayaaノードを作成するページ
-     * @param specification sequenceIDを取得するためのspec
-     * @return Mayaaノード
+     * @deprecated Mayaa 2.0 で廃止。Page をミューテートする方式は廃止されました。
+     *             デフォルトレイアウトは {@link TemplateImpl#setDynamicSuperPagePath} で
+     *             Template 側に設定してください。
+     *             詳細は UPGRADING.md の「setupExtends のシグネチャ変更」を参照してください。
+     * @throws UnsupportedOperationException 常にスローされます
      */
+    @Deprecated
     protected SpecificationNode createMayaaNode(
             Page page, Specification specification) {
-        String systemID = page.getPageName() + SYSTEM_ID_SUFFIX;
-
-        return SpecificationUtil.createSpecificationNode(
-                    QM_MAYAA, systemID,
-                    0, false, specification.nextSequenceID());
+        throw new UnsupportedOperationException(
+            "DefaultLayoutTemplateBuilder.createMayaaNode() is removed in Mayaa 2.0. "
+            + "Override setupExtends() and call TemplateImpl.setDynamicSuperPagePath() instead. "
+            + "See UPGRADING.md for migration details.");
     }
 
     /**
      * m:mayaa要素にm:extends属性を追加します。
      *
-     * @param page 処理中のページ
-     * @param mayaaNode 属性を追加するm:mayaa要素
+     * @deprecated Mayaa 2.0 で廃止。Page の属性を直接ミューテートする方式は廃止されました。
+     *             デフォルトレイアウトは {@link TemplateImpl#setDynamicSuperPagePath} で
+     *             Template 側に設定してください。
+     *             詳細は UPGRADING.md の「setupExtends のシグネチャ変更」を参照してください。
+     * @throws UnsupportedOperationException 常にスローされます
      */
+    @Deprecated
     protected void addExtends(Page page, SpecificationNode mayaaNode) {
-        String extendsValue = SpecificationUtil.getAttributeValue(
-                mayaaNode, QM_EXTENDS);
-        if (StringUtil.isEmpty(extendsValue)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("default layout - set extends: " + page.getPageName()
-                        + " m:extends=\"" + _defaultLayoutPageName + "\"");
-            }
-            mayaaNode.addAttribute(QM_EXTENDS, _defaultLayoutPageName);
-        }
+        throw new UnsupportedOperationException(
+            "DefaultLayoutTemplateBuilder.addExtends() is removed in Mayaa 2.0. "
+            + "Override setupExtends() and call TemplateImpl.setDynamicSuperPagePath() instead. "
+            + "See UPGRADING.md for migration details.");
     }
 
     // Parameterizable implements ------------------------------------

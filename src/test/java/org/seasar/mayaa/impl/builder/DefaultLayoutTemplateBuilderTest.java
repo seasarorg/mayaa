@@ -19,18 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.engine.Page;
-import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.engine.PageImpl;
 import org.seasar.mayaa.impl.engine.TemplateImpl;
-import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationNodeImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.source.FileSourceDescriptor;
@@ -47,7 +44,6 @@ public class DefaultLayoutTemplateBuilderTest {
     private static final String VALID_SYSTEM_ID = "/defaultlayout.html";
     private static final String INVALID_SYSTEM_ID_1 = "defaultlayout.html";
     private static final String INVALID_SYSTEM_ID_2 = "/foo/../defaultlayout.html";
-    private static final String SYSTEM_ID_SUFFIX = ".mayaa/(auto)";
 
     private DefaultLayoutTemplateBuilder _builder;
     
@@ -73,7 +69,8 @@ public class DefaultLayoutTemplateBuilderTest {
     }
 
     /**
-     * Test method for {@link org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder#setupExtends(org.seasar.mayaa.engine.Template)}.
+     * .mayaa ファイルなし（mayaaNode=null）かつ generateMayaaNode=true の場合、
+     * Page はミューテートされず、template の dynamicSuperPagePath にデフォルトレイアウトが設定される。
      */
     @Test
     public void testSetupExtends() {
@@ -82,40 +79,94 @@ public class DefaultLayoutTemplateBuilderTest {
         PageImpl page = new PageImpl();
         page.initialize("/test");
         template.setPage(page);
-
         template.initialize(page, "", "html");
 
         assertNull(SpecificationUtil.getMayaaNode(page));
 
         _builder.setupExtends(template);
 
-        SpecificationNode mayaaNode = SpecificationUtil.getMayaaNode(page);
-
-        assertNotNull(mayaaNode);
-        assertEquals(VALID_SYSTEM_ID,
-                SpecificationUtil.getAttributeValue(mayaaNode, CONST_IMPL.QM_EXTENDS));
+        // Page はミューテートされない
+        assertNull(SpecificationUtil.getMayaaNode(page));
+        // Template に dynamicSuperPagePath が設定される
+        assertEquals(VALID_SYSTEM_ID, template.getDynamicSuperPagePath());
     }
 
-    // TODO generateMayaaNode が false の場合のテスト
-    // TODO mayaaがある場合のテスト
-    // TODO defaultlaytout なら追加しないテスト
-
     /**
-     * Test method for {@link org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder#createMayaaNode(org.seasar.mayaa.engine.Page, org.seasar.mayaa.engine.specification.Specification)}.
+     * generateMayaaNode=false の場合、.mayaa ファイルがなくても dynamicSuperPagePath は設定されない。
      */
     @Test
-    public void testCreateMayaaNode() {
+    public void testSetupExtends_generateMayaaNodeFalse() {
+        DefaultLayoutTemplateBuilder builder = new DefaultLayoutTemplateBuilder();
+        builder.setParameter("generateMayaaNode", "false");
+        builder.setParameter("defaultLayoutPageName", VALID_SYSTEM_ID);
+
+        MockTemplateImpl template = new MockTemplateImpl();
         PageImpl page = new PageImpl();
         page.initialize("/test");
-        SpecificationImpl spec = new SpecificationImpl();
+        template.setPage(page);
+        template.initialize(page, "", "html");
 
-        SpecificationNode mayaaNode = _builder.createMayaaNode(page, spec);
+        builder.setupExtends(template);
 
-        assertTrue(mayaaNode.getSystemID().endsWith(SYSTEM_ID_SUFFIX), mayaaNode.getSystemID());
+        assertNull(template.getDynamicSuperPagePath());
     }
 
     /**
-     * Test method for {@link org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder#createMayaaNode(org.seasar.mayaa.engine.Page, org.seasar.mayaa.engine.specification.Specification)}.
+     * .mayaa ファイルがあり m:extends が設定済みの場合、
+     * dynamicSuperPagePath は設定されない（.mayaa 定義が優先される）。
+     */
+    @Test
+    public void testSetupExtends_mayaaNodeWithExtends() {
+        MockTemplateImpl template = new MockTemplateImpl();
+        PageImpl page = new PageImpl();
+        page.initialize("/test");
+        template.setPage(page);
+        template.initialize(page, "", "html");
+
+        SpecificationNodeImpl mayaaNode = new SpecificationNodeImpl(CONST_IMPL.QM_MAYAA);
+        mayaaNode.setSystemID("/test.mayaa");
+        mayaaNode.addAttribute(CONST_IMPL.QM_EXTENDS, "/other-layout.html");
+        page.addChildNode(mayaaNode);
+
+        _builder.setupExtends(template);
+
+        assertNull(template.getDynamicSuperPagePath());
+    }
+
+    /**
+     * .mayaa ファイルはあるが m:extends が未設定の場合、デフォルトレイアウトが dynamicSuperPagePath に設定される。
+     */
+    @Test
+    public void testSetupExtends_mayaaNodeWithoutExtends() {
+        MockTemplateImpl template = new MockTemplateImpl();
+        PageImpl page = new PageImpl();
+        page.initialize("/test");
+        template.setPage(page);
+        template.initialize(page, "", "html");
+
+        SpecificationNodeImpl mayaaNode = new SpecificationNodeImpl(CONST_IMPL.QM_MAYAA);
+        mayaaNode.setSystemID("/test.mayaa");
+        page.addChildNode(mayaaNode);
+
+        _builder.setupExtends(template);
+
+        assertEquals(VALID_SYSTEM_ID, template.getDynamicSuperPagePath());
+    }
+
+    /**
+     * createMayaaNode は Mayaa 2.0 で廃止。{@link UnsupportedOperationException} がスローされる。
+     */
+    @Test
+    public void testCreateMayaaNode_throwsUnsupported() {
+        PageImpl page = new PageImpl();
+        page.initialize("/test");
+        assertThrows(UnsupportedOperationException.class,
+                () -> _builder.createMayaaNode(page, null));
+    }
+
+    /**
+     * {@link DefaultLayoutTemplateBuilder#getMayaaNode(Page)} は .mayaa ファイルに定義された
+     * mayaaNode を返す。
      */
     @Test
     public void testGetMayaaNode() {
@@ -133,37 +184,16 @@ public class DefaultLayoutTemplateBuilderTest {
     }
 
     /**
-     * Test method for {@link org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder#createMayaaNode(org.seasar.mayaa.engine.Page, org.seasar.mayaa.engine.specification.Specification)}.
+
+     * addExtends は Mayaa 2.0 で廃止。{@link UnsupportedOperationException} がスローされる。
      */
     @Test
-    public void testGetMayaaNode_auto() {
-        PageImpl page = new PageImpl();
-        page.initialize("/test");
-        SpecificationImpl spec = new SpecificationImpl();
-        page.addChildNode(_builder.createMayaaNode(page, spec));
-
-        assertNotNull(SpecificationUtil.getMayaaNode(page));
-
-        assertNull(_builder.getMayaaNode(page));
-
-        assertNull(SpecificationUtil.getMayaaNode(page));
-    }
-
-    /**
-     * Test method for {@link org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder#addExtends(org.seasar.mayaa.engine.Page, org.seasar.mayaa.engine.specification.SpecificationNode)}.
-     */
-    @Test
-    public void testAddExtends() {
+    public void testAddExtends_throwsUnsupported() {
         PageImpl page = new PageImpl();
         page.initialize("/test");
         SpecificationNodeImpl mayaaNode = new SpecificationNodeImpl(CONST_IMPL.QM_MAYAA);
-
-        assertNull(SpecificationUtil.getAttributeValue(mayaaNode, CONST_IMPL.QM_EXTENDS));
-
-        _builder.addExtends(page, mayaaNode);
-
-        assertEquals(VALID_SYSTEM_ID,
-                SpecificationUtil.getAttributeValue(mayaaNode, CONST_IMPL.QM_EXTENDS));
+        assertThrows(UnsupportedOperationException.class,
+                () -> _builder.addExtends(page, mayaaNode));
     }
 
     /**

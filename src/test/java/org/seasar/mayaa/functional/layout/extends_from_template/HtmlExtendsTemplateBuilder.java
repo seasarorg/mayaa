@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.functional.layout.extends_from_template;
 
-import static org.seasar.mayaa.impl.CONST_IMPL.QM_EXTENDS;
-
 import java.util.Iterator;
 
 import org.seasar.mayaa.engine.Page;
@@ -24,6 +22,7 @@ import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.builder.DefaultLayoutTemplateBuilder;
+import org.seasar.mayaa.impl.engine.TemplateImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -47,25 +46,19 @@ public class HtmlExtendsTemplateBuilder extends DefaultLayoutTemplateBuilder {
 
     @Override
     protected void setupExtends(Template template) {
+        // Page の .mayaa に m:extends が既に定義されている場合は何もしない（Page 定義優先）
+        Page page = template.getPage();
+        SpecificationNode mayaaNode = getMayaaNode(page);
+        if (mayaaNode != null && !StringUtil.isEmpty(
+                SpecificationUtil.getAttributeValue(mayaaNode, QM_EXTENDS))) {
+            return;
+        }
+
         String extendsValue = findExtendsFromHtml(template);
         if (!StringUtil.isEmpty(extendsValue)) {
-            Page page = template.getPage();
-            SpecificationNode mayaaNode = getMayaaNode(page);
-
-            if (isGenerateMayaaNode() && mayaaNode == null) {
-                mayaaNode = createMayaaNode(page, template);
-                if (template.getParentNode() != null) {
-                    mayaaNode.setParentNode(template.getParentNode());
-                    template.setParentNode(mayaaNode);
-                }
-                page.addChildNode(mayaaNode);
-            }
-
-            if (mayaaNode != null) {
-                String existing = SpecificationUtil.getAttributeValue(mayaaNode, QM_EXTENDS);
-                if (StringUtil.isEmpty(existing)) {
-                    mayaaNode.addAttribute(QM_EXTENDS, extendsValue);
-                }
+            // HTML から読み取った m:extends を Template 側に保持する（Page はミューテートしない）
+            if (template instanceof TemplateImpl) {
+                ((TemplateImpl) template).setDynamicSuperPagePath(extendsValue);
             }
         } else {
             // HTML に m:extends がなければデフォルト動作（defaultLayoutPageName を使う）

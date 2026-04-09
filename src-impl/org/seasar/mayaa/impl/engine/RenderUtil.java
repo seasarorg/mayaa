@@ -343,11 +343,10 @@ public class RenderUtil implements CONST_IMPL {
             }
 
             // テンプレートビルド後に resolveSuperPageInfo を呼ぶ。
-            // setupExtends のオーバーライド等でテンプレートビルド中（afterBuild）に
-            // ページの mayaaNode へ m:extends 属性が追加される場合があるため、
-            // getTemplate の後に superPage 解決を行うことで
-            // 初回リクエスト時にも正しくレイアウトが適用される。
-            SuperPageInfo superInfo = resolveSuperPageInfo(page);
+            // setupExtends が Template.setDynamicSuperPagePath で設定したデフォルトレイアウトは
+            // Page（キャッシュ済みイミュータブルインスタンス）には書き込まれないため、
+            // getTemplate の後で template を渡して解決することで正しくレイアウトが適用される。
+            SuperPageInfo superInfo = resolveSuperPageInfo(page, template);
             if (fireEvent && superInfo.page == null) {
                 executeBeforeRenderOnAllParentSpecifications(page, pageStack);
             }
@@ -375,13 +374,31 @@ public class RenderUtil implements CONST_IMPL {
         return ret;
     }
 
-    private static SuperPageInfo resolveSuperPageInfo(Page page) {
+    /**
+     * Page 展開chain を解決します。
+     * <p>
+     * 優先度: Page 自身の .mayaa ファイルの m:extends 属性 &gt; Templateの動的デフォルト設定。
+     * Page 自身に m:extends 定義があればそちらを使用し、
+     * なければ {@link TemplateImpl#getDynamicSuperPagePath()} を参照します。
+     */
+    private static SuperPageInfo resolveSuperPageInfo(Page page, Template template) {
         if (page == null) {
             throw new IllegalArgumentException();
         }
-        if (page instanceof PageImpl) {
-            PageImpl.SuperPageInfo pageImplInfo = ((PageImpl) page).resolveSuperPageInfo();
-            return new SuperPageInfo(pageImplInfo.page, pageImplInfo.suffix, pageImplInfo.extension);
+        if (page instanceof PageImpl pageImpl) {
+            PageImpl.SuperPageInfo pageInfo = pageImpl.resolveSuperPageInfo();
+            if (pageInfo.page != null) {
+                return new SuperPageInfo(pageInfo.page, pageInfo.suffix, pageInfo.extension);
+            }
+            // Pageに m:extends なし — Templateの動的設定をフォールバックとして使用
+            if (template instanceof TemplateImpl templateImpl) {
+                String dynamicPath = templateImpl.getDynamicSuperPagePath();
+                if (StringUtil.hasValue(dynamicPath)) {
+                    PageImpl.SuperPageInfo dynamicInfo = pageImpl.resolveExtendsPath(dynamicPath);
+                    return new SuperPageInfo(dynamicInfo.page, dynamicInfo.suffix, dynamicInfo.extension);
+                }
+            }
+            return new SuperPageInfo(null, null, null);
         }
         return new SuperPageInfo(page.getSuperPage(), page.getSuperSuffix(), page.getSuperExtension());
     }

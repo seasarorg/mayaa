@@ -295,6 +295,253 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
     }
 
     /**
+     * m:extends と ParentSpecificationResolver を組み合わせた状態で、
+     * 各 beforeRender で宣言した変数を targetHtml 内の {@code ${}} 式で直接参照できることを確認する。
+     *
+     * <p>{@link #m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数が子仕様から参照できる}
+     * と同じシナリオだが、テンプレートで変数を出力する手段として m:write ではなく
+     * HTML テンプレート内の {@code ${}} 直接参照を使用する点が異なる。</p>
+     *
+     * シナリオ:
+     *   ParentSpec chain: target → parentSpec1 → parentSpec2 → default
+     *   レイアウト継承 (m:extends): target → layout
+     *
+     * 期待するスコープ可視性:
+     *   parentSpec2.beforeRender が宣言した変数 → HTML 内 ${p2var} で参照可能
+     *   parentSpec1.beforeRender が宣言した変数 → HTML 内 ${p1var} で参照可能
+     *   target.beforeRender が宣言した変数    → HTML 内 ${tvar} で参照可能
+     */
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数がtargetHtml内から直接参照できる(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
+
+        String caseRoot = "/it-case/parent-specification-resolver/extends-with-parent-chain-direct-ref";
+
+        String targetHtmlPath       = caseRoot + "/target.html";
+        String targetMayaaPath      = caseRoot + "/target.mayaa";
+        String layoutHtmlPath       = caseRoot + "/layout.html";
+        String layoutMayaaPath      = caseRoot + "/layout.mayaa";
+        String parentSpec1MayaaPath = caseRoot + "/parent-spec1.mayaa";
+        String parentSpec2MayaaPath = caseRoot + "/parent-spec2.mayaa";
+        String defaultMayaaPath     = caseRoot + "/default.mayaa";
+        String expectedPath         = caseRoot + "/expected.html";
+
+        // target.html: m:write を使わず ${} で各変数を直接参照する
+        String targetHtml = "<div id=\"root\">${p2var}${p1var}${tvar}</div>";
+
+        // target.mayaa: m:extends でレイアウトを継承しつつ beforeRender で変数を宣言する。
+        //   変数出力は HTML 側の ${} に委ねるため m:write は不要。
+        String targetMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org"
+                         m:extends="%s">
+                    <m:beforeRender><![CDATA[
+                        var tvar = "from-target";
+                        application.scopeTrace = application.scopeTrace + ",B-target";
+                    ]]></m:beforeRender>
+                    <m:doRender id="root" name="rootContent" />
+                </m:mayaa>
+                """.formatted(layoutHtmlPath);
+
+        // layout.html: レイアウトのHTMLテンプレート（スロット役）
+        String layoutHtml = "<div id=\"layout\"><div id=\"root\">layout-slot</div></div>";
+
+        // layout.mayaa: rootContent を insert で受け取る
+        String layoutMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:insert id="root" name="rootContent" replace="false" />
+                </m:mayaa>
+                """;
+
+        // parent-spec1.mayaa: target の Parent として Resolver が返す親仕様。変数 p1var を宣言。
+        String parentSpec1Mayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        var p1var = "from-parent1(p2var=" + p2var + ")";
+                        application.scopeTrace = application.scopeTrace + ",B-p1";
+                    ]]></m:beforeRender>
+                </m:mayaa>
+                """;
+
+        // parent-spec2.mayaa: parent-spec1 の Parent として Resolver が返す仕様。変数 p2var を宣言。
+        String parentSpec2Mayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        var p2var = "from-parent2";
+                        application.scopeTrace = application.scopeTrace + ",B-p2";
+                    ]]></m:beforeRender>
+                </m:mayaa>
+                """;
+
+        // default.mayaa: チェーンの末端 Specification。scopeTrace の初期化も担う。
+        String defaultMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        application.scopeTrace = "B-default";
+                    ]]></m:beforeRender>
+                </m:mayaa>
+                """;
+
+        // 期待する出力: HTML 内 ${} から各 beforeRender 宣言変数が参照できていること
+        String expected = "<div id=\"layout\"><div id=\"root\">"
+                + "from-parent2"
+                + "from-parent1(p2var=from-parent2)"
+                + "from-target"
+                + "</div></div>";
+
+        DynamicRegisteredSourceHolder.registerContents(targetHtmlPath,       targetHtml);
+        DynamicRegisteredSourceHolder.registerContents(targetMayaaPath,      targetMayaa);
+        DynamicRegisteredSourceHolder.registerContents(layoutHtmlPath,       layoutHtml);
+        DynamicRegisteredSourceHolder.registerContents(layoutMayaaPath,      layoutMayaa);
+        DynamicRegisteredSourceHolder.registerContents(parentSpec1MayaaPath, parentSpec1Mayaa);
+        DynamicRegisteredSourceHolder.registerContents(parentSpec2MayaaPath, parentSpec2Mayaa);
+        DynamicRegisteredSourceHolder.registerContents(defaultMayaaPath,     defaultMayaa);
+        DynamicRegisteredSourceHolder.registerContents(expectedPath,         expected);
+
+        getServiceProvider().getEngine().setParameter("defaultSpecification", defaultMayaaPath);
+
+        // target → parent-spec1 → parent-spec2 → default という親仕様チェーンを構築するリゾルバ
+        originalResolver = getServiceProvider().getParentSpecificationResolver();
+        getServiceProvider().setParentSpecificationResolver(
+                new ExtendsWithChainParentSpecificationResolver(originalResolver, caseRoot));
+
+        execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<>());
+
+        // beforeRender 実行順序のトレース検証
+        //   期待順: default → p2 → p1 → target（外側スコープが先に実行される）
+        assertEquals("B-default,B-p2,B-p1,B-target",
+            CycleUtil.getServiceCycle().getApplicationScope().getAttribute("scopeTrace"));
+    }
+
+    /**
+     * レイアウト継承 (m:extends) とコンポーネント挿入 (m:insert) を併用した場合に、
+     * レイアウト (SuperPage) の beforeRender で宣言した変数を、ターゲット内に配置した
+     * コンポーネントから参照できることを確認する。
+     *
+     * <p>実行順序イメージ:</p>
+     * <pre>
+     *   default.beforeRender → target.beforeRender → layout.beforeRender
+     *   → (レンダリング開始) → m:insert 処理時に component.beforeRender
+     * </pre>
+     *
+     * <p>期待するスコープ可視性:</p>
+     * <ul>
+     *   <li>layout.beforeRender 宣言 layoutVar → component.beforeRender から参照可能</li>
+     *   <li>target.beforeRender 宣言 tvar       → component.beforeRender から参照可能</li>
+     * </ul>
+     */
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    public void レイアウトとコンポーネント併用時にレイアウトのbeforeRender宣言変数がコンポーネントから参照できる(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
+
+        String caseRoot = "/it-case/parent-specification-resolver/layout-and-component";
+
+        String targetHtmlPath     = caseRoot + "/target.html";
+        String targetMayaaPath    = caseRoot + "/target.mayaa";
+        String layoutHtmlPath     = caseRoot + "/layout.html";
+        String layoutMayaaPath    = caseRoot + "/layout.mayaa";
+        String componentHtmlPath  = caseRoot + "/component.html";
+        String componentMayaaPath = caseRoot + "/component.mayaa";
+        String defaultMayaaPath   = caseRoot + "/default.mayaa";
+        String expectedPath       = caseRoot + "/expected.html";
+
+        // target.html: comp-slot で component を受け取る
+        String targetHtml = "<div id=\"root\"><div id=\"comp-slot\">dummy</div></div>";
+
+        // target.mayaa: m:extends でレイアウト継承、tvar を宣言し component を挿入
+        String targetMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org"
+                         m:extends="%s">
+                    <m:beforeRender><![CDATA[
+                        var tvar = "from-target";
+                        application.scopeTrace = application.scopeTrace + ",B-T";
+                    ]]></m:beforeRender>
+                    <m:doRender id="root" name="rootContent" />
+                    <m:insert id="comp-slot" path="%s" replace="false" />
+                </m:mayaa>
+                """.formatted(layoutHtmlPath, componentHtmlPath);
+
+        // layout.html: レイアウトのHTMLテンプレート
+        String layoutHtml = "<div id=\"layout\"><div id=\"root\">layout-slot</div></div>";
+
+        // layout.mayaa: layoutVar を宣言し rootContent スロットを受け取る
+        String layoutMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        var layoutVar = "from-layout";
+                        application.scopeTrace = application.scopeTrace + ",B-L";
+                    ]]></m:beforeRender>
+                    <m:insert id="root" name="rootContent" replace="false" />
+                </m:mayaa>
+                """;
+
+        // component.html: layoutVar と tvar を参照して出力する
+        String componentHtml = "<div id=\"root\"><span id=\"cvar\">dummy</span></div>";
+
+        // component.mayaa: layoutVar (レイアウト) と tvar (ターゲット) の両方を参照して cvar を構築
+        String componentMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        var cvar = "comp(layoutVar=" + layoutVar + ",tvar=" + tvar + ")";
+                        application.scopeTrace = application.scopeTrace + ",B-C";
+                    ]]></m:beforeRender>
+                    <m:doRender id="root" />
+                    <m:write id="cvar" value="${cvar}" />
+                </m:mayaa>
+                """;
+
+        // default.mayaa: scopeTrace を初期化
+        String defaultMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        application.scopeTrace = "B-D";
+                    ]]></m:beforeRender>
+                </m:mayaa>
+                """;
+
+        // 期待する出力: layout 内の root slot にターゲット root の内容が挿入され、
+        //   comp-slot にコンポーネントが挿入される。
+        //   コンポーネントは layoutVar / tvar の両方を参照できている。
+        String expected = "<div id=\"layout\"><div id=\"root\">"
+                + "<div id=\"comp-slot\">"
+                + "comp(layoutVar=from-layout,tvar=from-target)"
+                + "</div>"
+                + "</div></div>";
+
+        DynamicRegisteredSourceHolder.registerContents(targetHtmlPath,     targetHtml);
+        DynamicRegisteredSourceHolder.registerContents(targetMayaaPath,    targetMayaa);
+        DynamicRegisteredSourceHolder.registerContents(layoutHtmlPath,     layoutHtml);
+        DynamicRegisteredSourceHolder.registerContents(layoutMayaaPath,    layoutMayaa);
+        DynamicRegisteredSourceHolder.registerContents(componentHtmlPath,  componentHtml);
+        DynamicRegisteredSourceHolder.registerContents(componentMayaaPath, componentMayaa);
+        DynamicRegisteredSourceHolder.registerContents(defaultMayaaPath,   defaultMayaa);
+        DynamicRegisteredSourceHolder.registerContents(expectedPath,       expected);
+
+        getServiceProvider().getEngine().setParameter("defaultSpecification", defaultMayaaPath);
+
+        execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<>());
+
+        // beforeRender 実行順序のトレース検証
+        //   期待順: D → T (target) → L (layout/SuperPage) → C (component, m:insert タイミング)
+        assertEquals("B-D,B-T,B-L,B-C",
+            CycleUtil.getServiceCycle().getApplicationScope().getAttribute("scopeTrace"));
+    }
+
+    /**
      * SuperPage (m:extends によって指定されるレイアウトページ) の親仕様チェーンで宣言した
      * 変数が、より具体的な仕様 (SuperPage 自身の beforeRender) から参照できることを確認する。
      *

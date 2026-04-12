@@ -4,6 +4,9 @@
 
 ## 目次
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
+  - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
+  - [`ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）](#parentspecificationresolver-の親仕様-beforerender--afterrender-実行サポート動作変更)
+  - [自動エスケープ機能（Issue #110）導入時の互換性注意点](#自動エスケープ機能issue-110導入時の互換性注意点)
 - [1.2.x から 1.3.0 へのアップグレード](#12x-から-130-へのアップグレード)
 - [1.1.x から 1.2 へのアップグレード](#11x-から-12-へのアップグレード)
 - [1.1.32 以前から 1.1.33 以降へのアップグレード](#1132-以前から-1133-以降へのアップグレード)
@@ -11,6 +14,96 @@
 ---
 
 ## 1.3.x から 2.0.0 へのアップグレード
+
+### `DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）
+
+**影響範囲:** `DefaultLayoutTemplateBuilder` をサブクラス化して `setupExtends` または
+`getMayaaNode` / `createMayaaNode` / `addExtends` をオーバーライドしている実装。
+
+#### 変更の背景
+
+旧実装では `setupExtends` がキャッシュ済みの `Page` インスタンスに
+`m:extends` 属性を持つ mayaaNode を直接追加（ミューテート）していました。
+Caffeine キャッシュ移行後、Page と Template のエビクションタイミングが独立したことで
+「Page だけエビクションされた後に Template が再ビルドされず、mayaaNode が失われる」
+問題が発生したため、設計を変更しました。
+
+#### 新設計の概要
+
+- **キャッシュ済みの `Page` インスタンスはイミュータブルとして扱う。**
+  `setupExtends` は `Page` を直接ミューテートしなくなりました。
+- デフォルトレイアウトのページ名は `TemplateImpl.setDynamicSuperPagePath(String)` を
+  呼び出して **Template 自身** に保持します。
+- 描画時に `RenderUtil` が Page の `.mayaa` 定義（`m:extends`）を優先し、
+  定義がない場合のみ Template の動的設定を参照します。
+
+#### サブクラスへの影響と対応方法
+
+```java
+// 旧: Page をミューテートして mayaaNode に m:extends を追加していた
+@Override
+protected void setupExtends(Template template) {
+    Page page = template.getPage();
+    SpecificationNode mayaaNode = getMayaaNode(page);
+    if (isGenerateMayaaNode() && mayaaNode == null) {
+        mayaaNode = createMayaaNode(page, template);   // Page に子ノード追加
+        page.addChildNode(mayaaNode);
+    }
+    if (mayaaNode != null) {
+        addExtends(page, mayaaNode);                   // Page の属性を書き換え
+    }
+}
+
+// 新: Template に動的パスを設定する。Page は読み取り専用
+@Override
+protected void setupExtends(Template template) {
+    // Page の .mayaa に m:extends が既にある場合は何もしない
+    Page page = template.getPage();
+    SpecificationNode mayaaNode = getMayaaNode(page);
+    if (mayaaNode != null &&
+            !StringUtil.isEmpty(SpecificationUtil.getAttributeValue(mayaaNode, QM_EXTENDS))) {
+        return;  // .mayaa で明示定義済み → 優先される
+    }
+
+    // 動的なレイアウトパスを Template 側に設定
+    String layoutPageName = resolveLayoutPageName(template);  // サブクラスで決定
+    if (StringUtil.hasValue(layoutPageName) && template instanceof TemplateImpl) {
+        ((TemplateImpl) template).setDynamicSuperPagePath(layoutPageName);
+    }
+}
+```
+
+`getMayaaNode(Page)` / `createMayaaNode(Page, Specification)` / `addExtends(Page, SpecificationNode)` は
+`@Deprecated` になりました。新実装では使用しないでください。
+
+---
+
+### `ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）
+
+**影響範囲:** `ParentSpecificationResolver` を実装・使用しているアプリケーション
+
+#### 1.3.x までの動き
+
+`ParentSpecificationResolver` が親仕様チェーンを返す場合、返された親仕様の `beforeRender` / `afterRender` は**実行されていませんでした**。
+
+#### 2.0.0 での変更
+
+親仕様チェーンの `beforeRender` / `afterRender` が実行されるようになりました（PR #127 #131）。
+
+実行順序は次のとおりです。
+
+```
+beforeRender: parent2（最外側）→ parent1 → page 自身（最内側）
+afterRender:  page 自身（最内側）→ parent1 → parent2（最外側）
+※ default.mayaa の beforeRender/afterRender はページ処理ごとではなく、リクエスト処理ごとに最外の一回のみ
+```
+
+この順序により、Rhino のスコープチェーン（内→外方向で変数を検索）に沿って、
+`beforeRender` 内で宣言した変数を内側の仕様から外側の仕様の変数として参照できます。
+
+> **注意:** 1.3.x では実行されていなかった `beforeRender` / `afterRender` が新たに呼ばれるようになります。`ParentSpecificationResolver` が返す親仕様に `beforeRender` / `afterRender` の処理が定義されている場合、動作が変わります。
+
+---
 
 ### 自動エスケープ機能（Issue #110）導入時の互換性注意点
 

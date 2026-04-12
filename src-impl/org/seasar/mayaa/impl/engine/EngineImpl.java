@@ -549,6 +549,10 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 if (spec.isDeprecated() == false) {
                     if (registerCache) {
                         _specCache.put(spec.getSystemID(), spec);
+                        // デシリアライズ成功時も requestValidSpecCache の null エントリを除去する。
+                        // 除去しないと findValidSpecificationFromCache が null を返し続け、
+                        // createPageInstance が再度呼び出されて別インスタンスが生まれる。
+                        clearRequestValidSpecCache(spec.getSystemID());
                     }
                     return spec;
                 }
@@ -631,7 +635,8 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
                 ((Page) instance).initialize(pageName);
             }
         };
-        return (Page) createSpecificationInstance(pageName + _mayaaExtension, true, generator);
+        Page page = (Page) createSpecificationInstance(pageName + _mayaaExtension, true, generator);
+        return page;
     }
 
     public Template createTemplateInstance(final Page page, final String suffix, final String extension) {
@@ -639,6 +644,16 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         Specification cached = findValidSpecificationFromCache(templateId);
         if (cached != null) {
             return (Template) cached;
+        }
+
+        // Templateビルド中に template.getPage() → engine.getPage() が呼ばれた際、
+        // requestValidSpecCache に page の null エントリが残っていると
+        // findValidSpecificationFromCache が null を返し createPageInstance が再呼び出しされ
+        // 呼び出し元が保持する page とは別のインスタンスが生成されてしまう。
+        // Templateビルド開始前に pageSystemID → page を requestCache へ確実に登録しておく。
+        final Map<String, Specification> requestCache = getRequestValidSpecCache();
+        if (requestCache != null) {
+            requestCache.put(page.getSystemID(), page);
         }
 
         final SpecificationGenerator generator = new SpecificationGenerator() {

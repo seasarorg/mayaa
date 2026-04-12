@@ -23,7 +23,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
+import org.seasar.mayaa.impl.engine.EngineImpl;
+import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * HTML テンプレートのノードに書かれた {@code m:extends} 属性を元に
@@ -205,6 +209,65 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
     void setAutoEscapeEnabled(boolean enabled) {
         getServiceProvider().getScriptEnvironment().setParameter(
                 "autoEscapeEnabled", Boolean.toString(enabled));
+    }
+
+    /**
+     * .mayaa ファイルが存在しないページで Caffeine の TTL エビクションにより
+     * Page がキャッシュから消えた後も、2回目以降のリクエストでレイアウトが
+     * 正しく適用されることを確認する。
+     *
+     * <p>デフォルトレイアウト情報（m:extends パス）は Template 自身が
+     * {@code _dynamicSuperPagePath} フィールドで保持するため、Page がエビクション
+     * されても Template がキャッシュに残っている限りレイアウトは維持される。
+     * Template の再ビルドは不要。
+     *
+     * <p>再現手順：
+     * <ol>
+     *   <li>1回目リクエスト: Page と Template の両方をビルド・キャッシュ</li>
+     *   <li>Page のみを deprecate（Caffeine TTL エビクション相当）</li>
+     *   <li>2回目リクエスト: Page は再生成されるが Template はキャッシュのまま再利用。
+     *       Template が持つ {@code _dynamicSuperPagePath} によりレイアウトが適用される。</li>
+     * </ol>
+     */
+    @ParameterizedTest(name = "useNewParser {0}")
+    @ValueSource(booleans = { false, true })
+    void Pageエビクション後も既存Templateのdynamic設定でレイアウトが適用される(boolean useNewParser)
+            throws IOException {
+        setUseNewParser(useNewParser);
+        setAutoEscapeEnabled(false);
+
+        String caseName = "html-extends-page-eviction";
+        String casePath = BASE + caseName + "/";
+        String layoutHtmlPath = casePath + "layout.html";
+        String targetHtmlPath = casePath + "target.html";
+        String expectedPath = casePath + "expected.html";
+
+        String layoutHtml = "<html><head></head><body><p id=\"marker\">LAYOUT-CONTENT</p></body></html>";
+        String targetHtml = "<html xmlns:m=\"http://mayaa.seasar.org\" m:extends=\"" + layoutHtmlPath + "\">"
+                + "<head></head><body><p id=\"content\">TARGET-CONTENT</p></body></html>";
+        // レイアウトに m:insert がないのでターゲットコンテンツは出力されない
+        String expected = "<html><head></head><body><p id=\"marker\">LAYOUT-CONTENT</p></body></html>";
+
+        DynamicRegisteredSourceHolder.registerContents(layoutHtmlPath, layoutHtml);
+        DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
+        DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
+
+        // 1回目: Page（target.mayaa）と Template（target.html）をビルド・キャッシュ
+        MockHttpServletRequest request = createRequest(targetHtmlPath);
+        MockHttpServletResponse response1 = exec(request, new LinkedHashMap<>());
+        verifyResponse(response1, expectedPath, "1回目リクエスト");
+
+        // Caffeine TTL エビクション相当: Pageのみを無効化（Template はキャッシュに残す）。
+        // PageのsystemIDはリクエストされたパスから拡張子と ".mayaa" で構成。
+        // /it-case/.../target.html → pageName = /it-case/.../target → pageSystemID = /it-case/.../target.mayaa
+        String pageSystemID = targetHtmlPath.substring(0, targetHtmlPath.lastIndexOf('.')) + ".mayaa";
+        ((EngineImpl) ProviderUtil.getEngine()).deprecateSpecification(pageSystemID, false);
+
+        // 2回目: Page が再生成される。この際、関連 Template も deprecate されて
+        // 再ビルドが起きることで mayaaNode が正しく付与され、レイアウトが適用されるはず。
+        MockHttpServletRequest request2 = createRequest(targetHtmlPath);
+        MockHttpServletResponse response2 = exec(request2, new LinkedHashMap<>());
+        verifyResponse(response2, expectedPath, "Pageエビクション後の2回目リクエスト");
     }
 
     @AfterEach

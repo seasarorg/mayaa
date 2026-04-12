@@ -4,9 +4,13 @@
 
 ## 目次
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
+  - [Java 21 / Jakarta EE 10 への移行（必須要件変更）](#java-21--jakarta-ee-10-への移行必須要件変更)
+  - [依存ライブラリの変更](#依存ライブラリの変更)
   - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
   - [`ParentSpecificationResolver` の親仕様 `beforeRender` / `afterRender` 実行サポート（動作変更）](#parentspecificationresolver-の親仕様-beforerender--afterrender-実行サポート動作変更)
   - [自動エスケープ機能（Issue #110）導入時の互換性注意点](#自動エスケープ機能issue-110導入時の互換性注意点)
+  - [Scope マクロの追加（`MAYAA_SCOPE` 等）](#scope-マクロの追加mayaa_scope-等)
+  - [診断・プロファイリング機能の追加（新機能）](#診断プロファイリング機能の追加新機能)
 - [1.2.x から 1.3.0 へのアップグレード](#12x-から-130-へのアップグレード)
 - [1.1.x から 1.2 へのアップグレード](#11x-から-12-へのアップグレード)
 - [1.1.32 以前から 1.1.33 以降へのアップグレード](#1132-以前から-1133-以降へのアップグレード)
@@ -14,6 +18,75 @@
 ---
 
 ## 1.3.x から 2.0.0 へのアップグレード
+
+### Java 21 / Jakarta EE 10 への移行（必須要件変更）
+
+**影響範囲:** すべての利用者
+
+#### Java バージョン要件
+
+| | 旧 (1.3.x) | 新 (2.0.0) |
+|---|---|---|
+| 最低必須 Java バージョン | Java 8 以上 | **Java 21 以上** |
+| ビルドターゲット | Java 8 | Java 21 |
+
+Java 21 未満の実行環境では動作しません。
+
+#### Jakarta パッケージへの移行（非互換）
+
+内部実装の `javax.*` パッケージ参照が `jakarta.*` に変更されました。
+
+| 変更前 | 変更後 |
+|---|---|
+| `javax.servlet.*` | `jakarta.servlet.*` |
+| `javax.servlet.jsp.*` | `jakarta.servlet.jsp.*` |
+
+**影響する実行環境:**
+
+| サーバー | 最低バージョン |
+|---|---|
+| Apache Tomcat | 10.x 以上 |
+| WildFly | 27 以上 |
+| Spring Boot | 3.x 以上 |
+
+Tomcat 9 以下、WildFly 26 以下、Spring Boot 2.x は対象外です。
+
+#### TLD / JSTL の移行
+
+- JSTL の名前空間が `jakarta.tags.*` に変更されました
+- TLD スキーマは Jakarta EE 9/10/11 向けのバンドルファイルを同梱しています
+- JSTL の実装ライブラリは `jakarta.servlet.jsp.jstl`（`org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.x`）が必要です
+
+---
+
+### 依存ライブラリの変更
+
+#### 追加された依存
+
+| ライブラリ | バージョン | 用途 |
+|---|---|---|
+| `com.github.ben-manes.caffeine:caffeine` | 2.9.3 | キャッシュ実装（commons-collections の代替） |
+| `jakarta.platform:jakarta.jakartaee-api` | 10.0.0 | Jakarta EE 10 API（provided） |
+
+#### 削除された依存
+
+| ライブラリ | 理由 |
+|---|---|
+| `commons-collections:commons-collections` | Caffeine に置換 |
+
+#### Xerces 依存の部分除去
+
+PR #129 により、HTML テンプレートパーサーパイプラインから NekoHTML 固有部分を除く Xerces 依存を排除しました。
+
+- `HtmlTemplateParser` は Xerces `AbstractSAXParser` の代わりに JDK SAX 標準実装を使用するよう変更
+- `AdditionalSAXParser` は JDK `SAXParserFactory` ベースに変更
+- **残存**: NekoHTML パーサースタック固有クラス（`NekoHtmlParser`, `TemplateScanner`, `AdditionalHandlerFilter`）は引き続き Xerces に依存しています
+
+> **今後の予定:** `HtmlStandardScanner` ベースの新パーサーへ完全移行後に Xerces 依存を完全除去する予定です。
+
+この変更は通常の利用では動作に影響しませんが、`TokenHandler` インターフェースを直接実装している場合は `errorReporter` 関連 API が削除されているため修正が必要です。
+
+---
 
 ### `DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）
 
@@ -154,6 +227,91 @@ afterRender:  page 自身（最内側）→ parent1 → parent2（最外側）
 **対応:**
 1. 本文ノード比較と属性値比較を分けて期待値を管理する
 2. `innerHTML` / `outerHTML` の厳密比較より、DOMの属性値取得やテキスト取得による比較を優先する
+
+---
+
+### Scope マクロの追加（`MAYAA_SCOPE` 等）
+
+**影響範囲:** Mayaa スクリプトをテンプレートの `<script>` タグ内で記述している場合
+
+PR #122 により、`<script>` タグ内での `${}` 記法の代替として Scope マクロが追加されました。
+スクリプト内での記述は、Scope マクロを使うことで IDE（ESLint 等）の構文チェックを通した状態で記述できます。
+
+#### 追加されたマクロ
+
+| マクロ | 説明 |
+|---|---|
+| `MAYAA_SCOPE(expr)` | 式を評価した値をそのまま出力 |
+| `MAYAA_SCOPE_AS_STRING(expr)` | 文字列として出力（クオート付き） |
+| `MAYAA_SCOPE_WITH_STRINGIFY(expr)` | JSON.stringify した値を出力（配列・オブジェクト向け） |
+| `MAYAA_SCOPE_RAW(expr)` | 非エスケープで出力（`${=...}` 相当） |
+
+#### 使用例
+
+```javascript
+/* global MAYAA_SCOPE, MAYAA_SCOPE_AS_STRING, MAYAA_SCOPE_WITH_STRINGIFY,
+   MAYAA_SCOPE_RAW: readonly */
+
+var data = MAYAA_SCOPE_WITH_STRINGIFY(users);
+var count = MAYAA_SCOPE(userList.length);
+var name = MAYAA_SCOPE_AS_STRING(user.getName());
+```
+
+これらのマクロはサーバーサイドレンダリング時に評価結果に置き換えられます。静的表示時は通常の JavaScript 関数呼び出しとして扱われます。
+
+> **破壊的変更はありません。** 既存の `${}` 記法は引き続き動作します。
+
+---
+
+### 診断・プロファイリング機能の追加（新機能）
+
+**影響範囲:** 運用監視・パフォーマンス調査を行う場合
+
+PR #130 により、Specification のビルド・レンダリング処理を計測・可視化するプロファイリング基盤が追加されました。
+
+#### `MayaaProfileServlet`（管理エンドポイント）
+
+デフォルトで `/mayaa-admin/profile` エンドポイントが追加されます。
+
+- JSON 形式でビルド・レンダリング時間、警告・エラーイベントを返します
+- デフォルトではループバックアドレス（127.0.0.1、::1）からのアクセスのみ許可されます
+- `allowedCidr` init-param で許可 IP 帯域を変更できます
+
+```xml
+<!-- web.xml への登録例（自動登録済み） -->
+<servlet>
+    <servlet-name>MayaaProfileServlet</servlet-name>
+    <servlet-class>org.seasar.mayaa.impl.management.MayaaProfileServlet</servlet-class>
+    <init-param>
+        <param-name>allowedCidr</param-name>
+        <param-value>127.0.0.1/8,::1/128,192.168.0.0/16</param-value>
+    </init-param>
+</servlet>
+```
+
+#### `mayaa-profile` CLI ツール
+
+`tools/mayaa-profile` コマンドで実行中の Mayaa サーバーに接続し、ビルド・レンダリング状況をリアルタイムで確認できます。
+
+```
+mayaa-profile [--url http://localhost:8080/mayaa-admin/profile]
+```
+
+- デフォルト接続先: `http://localhost:8080/mayaa-admin/profile`
+- キー操作: `1`–`9` でカラムソート、`/` でテキストフィルタ、`E` でエラーフィルタ
+
+#### メモリへの影響
+
+`SpecificationProfileRegistry` に計測データを保持します。
+
+- 最大 2,000 件を LRU で管理
+- 1件あたり約 1.1 KB（エラーなし）〜最大 9 KB（エラー 20 件上限時）
+- 最悪ケースで約 18 MB のヒープ増加
+
+#### ログ集約
+
+ビルド・レンダリング中の診断ログがロガー名 `org.seasar.mayaa.impl.management.SpecificationProfileRegistry` に集約されました。
+不要な場合はこのロガーのレベル設定で出力を制御してください。
 
 ## 1.2.x から 1.3.0 へのアップグレード
 

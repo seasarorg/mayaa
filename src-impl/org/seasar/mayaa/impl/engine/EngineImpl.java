@@ -81,6 +81,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     public static final String DUMP_ENABLED = "dumpEnabled";
     public static final String CONVERT_CHARSET = "convertCharset";
     public static final String NO_CACHE_VALUE = "noCacheValue";
+    public static final String AUTO_ESCAPE_ENABLED = "autoEscapeEnabled";
     private static final String REQUEST_VALID_SPEC_CACHE_KEY =
             EngineImpl.class.getName() + ".requestValidSpecCache";
 
@@ -106,6 +107,7 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
     private boolean _requestedSuffixEnabled = false;
     private boolean _dumpEnabled = false;
     private int _forwardLimit = 10;
+    private boolean _autoEscapeEnabled = false;
     private String _mayaaExtension = ".mayaa";
     private String _noCacheValue = "no-cache";
 
@@ -792,6 +794,8 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             _dumpEnabled = Boolean.valueOf(value).booleanValue();
         } else if (CONVERT_CHARSET.equals(name)) {
             CharsetConverter.setEnabled(Boolean.valueOf(value).booleanValue());
+        } else if (AUTO_ESCAPE_ENABLED.equals(name)) {
+            _autoEscapeEnabled = Boolean.parseBoolean(value);
         }
         super.setParameter(name, value);
     }
@@ -875,6 +879,8 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             return String.valueOf(_requestedSuffixEnabled);
         } else if (DUMP_ENABLED.equals(name)) {
             return String.valueOf(_dumpEnabled);
+        } else if (AUTO_ESCAPE_ENABLED.equals(name)) {
+            return String.valueOf(_autoEscapeEnabled);
         }
         return super.getParameter(name);
     }
@@ -888,6 +894,10 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             }
         }
         return sb.toString();
+    }
+
+    public boolean isAutoEscapeEnabled() {
+        return _autoEscapeEnabled;
     }
 
     protected Class<?> getPageClass() {

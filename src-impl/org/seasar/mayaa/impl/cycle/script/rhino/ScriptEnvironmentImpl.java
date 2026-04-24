@@ -34,7 +34,6 @@ import org.seasar.mayaa.impl.cycle.script.AbstractScriptEnvironment;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.RawOutputCompiledScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptBlock;
-import org.seasar.mayaa.impl.cycle.script.rhino.direct.GetterScriptFactory;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -68,9 +67,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         "_mayaa_scope", "_mayaa_scope_as_string", "_mayaa_scope_with_stringify"
     };
 
-    private boolean _useGetterScriptEmulation;
-    private boolean _autoEscapeEnabled;
-
     public ScriptEnvironmentImpl() {
         super();
         _scriptCache.invalidateAll();
@@ -89,13 +85,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
 	        return new LiteralScript(text);
         } else {
 	        CompiledScript script = (CompiledScript) _scriptCache.get(text, key -> {
-                CompiledScript s = null;
-                if (_useGetterScriptEmulation) {
-                    s = GetterScriptFactory.create(text, position, offsetLine);
-                }
-                if (s == null) {
-                    s = new TextCompiledScriptImpl(text, position, offsetLine);
-                }
+                CompiledScript s = new TextCompiledScriptImpl(text, position, offsetLine);
                 return s;
             });
 	        if (scriptBlock.isRawOutput()) {
@@ -306,10 +296,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
         return _wrap;
     }
 
-    public boolean isAutoEscapeEnabled() {
-        return _autoEscapeEnabled;
-    }
-
     // Parameterizable implements ------------------------------------
 
     public void setParameter(String name, String value) {
@@ -324,20 +310,6 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
                 throw new IllegalParameterValueException(getClass(), name);
             }
             setBlockSign(value);
-        } else if ("autoEscapeEnabled".equals(name)) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                _autoEscapeEnabled = ObjectUtil.booleanValue(value, false);
-            } else {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-        } else if ("useGetterScriptEmulation".equals("name")) {
-            if (StringUtil.isEmpty(value)) {
-                throw new IllegalParameterValueException(getClass(), name);
-            }
-            _useGetterScriptEmulation = ObjectUtil.booleanValue(value, false);
         }
         super.setParameter(name, value);
     }

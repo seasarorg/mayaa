@@ -111,4 +111,11 @@ public interface Engine extends ParameterAware {
      */
     void reset();
 
+    /**
+     * 自動エスケープが有効かどうかを返す。
+     * @return 自動エスケープが有効な場合は{@code true}
+     * @since 2.0
+     */
+    boolean isAutoEscapeEnabled();
+
 }

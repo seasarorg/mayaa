@@ -268,7 +268,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
     private static final String BASE = "/it-case/auto-escape/";
 
     void setAutoEscapeEnabled(boolean enabled) {
-        getServiceProvider().getScriptEnvironment().setParameter(
+                getServiceProvider().getEngine().setParameter(
                 "autoEscapeEnabled", Boolean.toString(enabled));
     }
 

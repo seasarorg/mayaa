@@ -106,4 +106,5 @@ public interface ScriptEnvironment extends ParameterAware {
      */
     boolean isEmpty(Object scriptResult);
 
+
 }

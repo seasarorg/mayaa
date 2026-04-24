@@ -15,10 +15,9 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import org.seasar.mayaa.cycle.script.ScriptEnvironment;
+import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.cycle.scope.RequestScope;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
-import org.seasar.mayaa.impl.cycle.script.rhino.ScriptEnvironmentImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
@@ -96,9 +95,9 @@ final class AutoEscapeContext {
     }
 
     private static boolean getConfiguredAutoEscapeEnabled() {
-        ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-        if (env instanceof ScriptEnvironmentImpl) {
-            return ((ScriptEnvironmentImpl) env).isAutoEscapeEnabled();
+        Engine engine = ProviderUtil.getEngine();
+        if (engine != null) {
+            return engine.isAutoEscapeEnabled();
         }
         return false;
     }

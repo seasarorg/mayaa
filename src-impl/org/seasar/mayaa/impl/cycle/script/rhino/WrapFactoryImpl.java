@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.DynaBean;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.WrapFactory;
+import org.mozilla.javascript.lc.type.TypeInfo;
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.cycle.scope.AttributeScope;
 
@@ -33,9 +34,28 @@ public class WrapFactoryImpl extends WrapFactory implements Serializable {
 
     private static final long serialVersionUID = -8130663823197873722L;
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
             Object javaObject, Class<?> staticClass) {
+        Scriptable wrapped = wrapAsJavaObjectInternal(scope, javaObject);
+        if (wrapped != null) {
+            return wrapped;
+        }
+        return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);
+    }
+
+    @Override
+    public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
+            Object javaObject, TypeInfo staticType) {
+        Scriptable wrapped = wrapAsJavaObjectInternal(scope, javaObject);
+        if (wrapped != null) {
+            return wrapped;
+        }
+        return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Scriptable wrapAsJavaObjectInternal(Scriptable scope, Object javaObject) {
         if (javaObject instanceof Map) {
             return new NativeMap(scope, (Map) javaObject);
         } else if (javaObject instanceof List) {
@@ -51,7 +71,7 @@ public class WrapFactoryImpl extends WrapFactory implements Serializable {
             DynaBean dynaBean = (DynaBean) javaObject;
             return new NativeDynaBean(scope, dynaBean);
         }
-        return super.wrapAsJavaObject(cx, scope, javaObject, staticClass);
+        return null;
     }
 
 }

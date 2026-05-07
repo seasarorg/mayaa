@@ -141,7 +141,7 @@ public class NativeServiceCycle extends NativeJavaObject {
             	scope = CycleUtil.findStandardAttributeScope(name);
             }
             if (scope != null) {
-            	scope.setAttribute(name, value);
+	            scope.setAttribute(name, RhinoUtil.normalizeScriptValue(value));
             } else {
             	super.put(name, start, value);
             }

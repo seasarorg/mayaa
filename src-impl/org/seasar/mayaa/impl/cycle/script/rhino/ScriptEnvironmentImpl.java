@@ -272,6 +272,7 @@ public class ScriptEnvironmentImpl extends AbstractScriptEnvironment {
     }
 
     public Object convertFromScriptObject(Object scriptObject, Class<?> expectedClass) {
+        scriptObject = RhinoUtil.normalizeScriptValue(scriptObject);
         if (scriptObject != null && conversionRequires(scriptObject, expectedClass)) {
             Object result = RhinoUtil.convertResult(null, expectedClass, scriptObject);
             if (result instanceof NativeArray) {

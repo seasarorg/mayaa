@@ -156,7 +156,8 @@ public class PageAttributeScope extends ScriptableObject
         Scriptable scope = findScope(name);
         if (scope != null) {
             ScriptEnvironment env = ProviderUtil.getScriptEnvironment();
-            return env.convertFromScriptObject(scope.get(name, this));
+            Object value = env.convertFromScriptObject(scope.get(name, this));
+            return RhinoUtil.normalizeScriptValue(value);
         }
         return null;
     }
@@ -167,7 +168,7 @@ public class PageAttributeScope extends ScriptableObject
 
     public void put(String name, Scriptable start, Object value) {
         if (KEY_CURRENT.equals(name) == false) {
-            super.put(name, start, value);
+            super.put(name, start, RhinoUtil.normalizeScriptValue(value));
         }
     }
 

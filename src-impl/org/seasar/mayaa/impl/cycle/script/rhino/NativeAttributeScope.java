@@ -57,7 +57,7 @@ public class NativeAttributeScope extends NativeJavaObject {
     }
 
     public void put(String name, Scriptable start, Object value) {
-        _attrs.setAttribute(name, value);
+        _attrs.setAttribute(name, RhinoUtil.normalizeScriptValue(value));
     }
 
     public void delete(String name) {

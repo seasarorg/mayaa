@@ -102,6 +102,7 @@ public class RhinoUtil {
      */
     public static Object convertResult(
             Context cx, Class<?> expectedClass, Object jsRet) {
+        jsRet = normalizeScriptValue(jsRet);
         Object ret;
         if (expectedClass.equals(Boolean.TYPE)) {
             // workaround to ECMA1.3
@@ -119,6 +120,17 @@ public class RhinoUtil {
         }
 
         return ret;
+    }
+
+    /**
+     * Rhino 1.9.1+ で文字列連結結果が ConsString になることがあるため、
+     * Java 側境界では String に正規化する。
+     */
+    public static Object normalizeScriptValue(Object value) {
+        if (value instanceof org.mozilla.javascript.ConsString) {
+            return value.toString();
+        }
+        return value;
     }
 
     /**

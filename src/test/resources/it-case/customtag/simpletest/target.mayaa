@@ -12,13 +12,17 @@
 		<mt:simpleTest simpleName="${ 'TestTag' }" />
 	</m:echo>
 
+	<!-- __parent__ プロパティとして廃止となったためこの参照は非互換となる -->
+	<!-- <m:write value="${ page.__parent__['class']; }"/> -->
 	<m:echo m:id="hello2">
-		[<m:write value="${ page.__parent__['class']; }"/>]
+		[NOT SUPPORTED __parent__ REFERENCE]
 	</m:echo>
 
+	<!-- __parent__ プロパティとして廃止となったためこの参照は非互換となる -->
+	<!-- <m:write value="${ this.__parent__.__parent__['class']; }"/> -->
 	<m:echo m:id="hello3">
 		<m:with>
-			[<m:write value="${ this.__parent__.__parent__['class']; }"/>]
+			[NOT SUPPORTED __parent__ REFERENCE]
 		</m:with>
 	</m:echo>
 

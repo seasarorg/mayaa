@@ -553,6 +553,97 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
+    /*
+     * m:for と m:forEach では var に値が代入される経路が異なり、Rhino の WrapFactory を経由するかどうかが変わる。
+     * src/test/resources/it-case/engine/script/expected.html のケースの挙動変更を切り離して検証。
+     * 
+     * - m:for  : `var key = numberKeys.get(i)` を JS 式として評価する。
+     *            Rhino が Java メソッドの戻り値を WrapFactory でラップするため、
+     *            key は NativeJavaObject(BigInteger) としてスコープに入る。
+     * - m:forEach : Java 側で iterator.next() を呼び setAttribute() で直接スコープに書き込む。
+     *              WrapFactory を経由しないため、key は生の Java BigInteger/BigDecimal としてスコープに入る。
+     *
+     * [確認手段]
+     *   WrapFactory 経由かどうかは JS から直接観察できないため、
+     *   Java Map への get() 可否を代理指標として使う。
+     *   WrapFactory 経由 (NativeJavaObject) → Rhino がメソッド引数へ正しくアンラップ → Map.get() 成功
+     *   生 Java オブジェクト直接代入 → Rhino がスコープ値を Double 等に変換してからメソッド引数に渡す
+     *   → Map.get(Double) でキー不一致 (BigInteger/BigDecimal の equals は型が違えば false)
+     *
+     * [エンジン別動作履歴]
+     * rhino:js:1.7R2          → m:forEach 側で BigInteger/BigDecimal とも Double 変換されキー不一致
+     * org.mozilla:rhino:1.9.1 → ★変更 m:forEach 側でも BigInteger(整数型) は Double 変換されなくなりキー一致するようになった。
+     *                           BigDecimal(非整数) は依然 Double 変換されるためキー不一致のまま。
+     */
+    public void Rhino拡張_mForとmForEachは変数への代入経路の差異でWrapFactory経由の有無が変わる() throws IOException {
+        setAutoEscapeEnabled(false);
+
+        String casePath = BASE + "rhino-number-key-resolution/";
+        String targetHtmlPath = casePath + "target.html";
+        String targetMayaaPath = casePath + "target.mayaa";
+        String expectedPath    = casePath + "expected.html";
+
+        String targetHtml = """
+                <div id="numberList1">
+                    <span id="numberValue">dummy</span>
+                </div>
+                <div id="numberList2">
+                    <span id="numberValue">dummy</span>
+                </div>
+                """;
+        String targetMayaa = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <m:mayaa xmlns:m="http://mayaa.seasar.org">
+                    <m:beforeRender><![CDATA[
+                        var numberKeys = new java.util.ArrayList();
+                        numberKeys.add(java.math.BigInteger.valueOf(20));
+                        numberKeys.add(new java.math.BigDecimal("20.1"));
+                        var numberMap = Packages.org.seasar.mayaa.test.util.TestObjectFactory.createNumberKeyMap();
+                    ]]></m:beforeRender>
+
+                    <m:echo m:id="numberList1">
+                        <m:exec script="${ var listName = 'numberList1'; }" />
+                        <m:for init="${ var i = 0 }" test="${ i &lt; numberKeys.size() }" after="${ i++ }">${ var key = numberKeys.get(i); }<m:doBody /></m:for>
+                    </m:echo>
+
+                    <m:echo m:id="numberList2">
+                        <m:exec script="${ var listName = 'numberList2'; }" />
+                        <m:forEach items="${ numberKeys }" var="key" index="i"><m:doBody /></m:forEach>
+                    </m:echo>
+
+                    <m:echo m:id="numberValue">
+                        <m:attribute name="id" value="${ listName }${ i }" />
+                        <m:write value="${ numberMap.get(key) }" />
+                    </m:echo>
+                </m:mayaa>
+                """;
+        // numberList1 (m:for)    : key は JS 式評価→WrapFactory 経由のため NativeJavaObject として代入される
+        //                          → BigInteger/BigDecimal ともに Map.get() 成功
+        // numberList2 (m:forEach): key は iterator.next() を Java 側から setAttribute() で直接代入するため
+        //                          WrapFactory を経由せず生 Java オブジェクトのままスコープに入る
+        //                          → Rhino がメソッド引数変換時に Double に変換するためキー不一致が発生する
+        //                          Rhino 1.9.1: BigInteger(整数型) の変換が改善されキー一致するようになった
+        //                                       BigDecimal(非整数) は依然 Double 変換されるためキー不一致のまま
+        String expected = """
+                <div id="numberList1">
+                    <span id="numberList10">bar_i</span>
+
+                    <span id="numberList11">bar_d</span>
+                </div>
+                <div id="numberList2">
+                    <span id="numberList20">bar_i</span>
+
+                    <span id="numberList21"></span>
+                </div>
+                """;
+
+        DynamicRegisteredSourceHolder.registerContents(targetHtmlPath, targetHtml);
+        DynamicRegisteredSourceHolder.registerContents(targetMayaaPath, targetMayaa);
+        DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
+
+        execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
+    }
+
     // -------------------------------------------------------------------------
     // ES6+ — 現行エンジンでの可用性確認
     // -------------------------------------------------------------------------

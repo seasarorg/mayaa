@@ -221,7 +221,7 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//dl[@id=\"numberList1\"]/dd[@id=\"numberList1numberValue6\"]", "bar_i"),
                 verifyText("//dl[@id=\"numberList1\"]/dt[@id=\"numberList1numberKey7\"]", "20.1"),
                 verifyText("//dl[@id=\"numberList1\"]/dd[@id=\"numberList1numberValue7\"]", "bar_d"),
-                /* 10.2のみFloatなので、Rhinoのnumberと互換性があり拾える。 */
+                /* Rhino 1.9.1 では BigInteger(20) も forEach 側で一致する。 */
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey0\"]", "10"),
                 verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue0\"]", ""),
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey1\"]", "11"),
@@ -235,7 +235,7 @@ public class RenderITCase extends WebDriverBase {
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey5\"]", "10.2"),
                 verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue5\"]", "foo_d"),
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey6\"]", "20"),
-                verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue6\"]", ""),
+                verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue6\"]", "bar_i"),
                 verifyText("//dl[@id=\"numberList2\"]/dt[@id=\"numberList2numberKey7\"]", "20.1"),
                 verifyText("//dl[@id=\"numberList2\"]/dd[@id=\"numberList2numberValue7\"]", "")
             }

@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -717,15 +715,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
-    }
-
-
-    // deserialization
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        _chain = new DefaultInjectionChain();
     }
 
     // support class --------------------------------------------------

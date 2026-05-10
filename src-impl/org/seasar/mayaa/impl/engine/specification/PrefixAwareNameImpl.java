@@ -46,10 +46,6 @@ public class PrefixAwareNameImpl implements PrefixAwareName {
     private QName _qName;
     private String _prefix;
 
-    private PrefixAwareNameImpl() {
-        // for serialize
-    }
-
     private PrefixAwareNameImpl(QName qName, String prefix) {
         if (qName == null || prefix == null) {
             throw new IllegalArgumentException();
@@ -85,10 +81,6 @@ public class PrefixAwareNameImpl implements PrefixAwareName {
         }
         buffer.append(qName.toString());
         return buffer.toString();
-    }
-
-    private Object readResolve() {
-        return getInstance(_qName, _prefix);
     }
 
 }

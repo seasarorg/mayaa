@@ -121,8 +121,4 @@ public class PrefixMappingImpl implements PrefixMapping, Serializable {
         return toString().hashCode();
     }
 
-    private Object readResolve() {
-        return getInstance(_prefix, _namespaceURI);
-    }
-
 }

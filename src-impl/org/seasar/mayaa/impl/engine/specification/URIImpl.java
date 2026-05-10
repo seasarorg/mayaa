@@ -41,10 +41,6 @@ public final class URIImpl implements URI {
 
     private String _value;
 
-    private URIImpl() {
-        // for serialize
-    }
-
     private URIImpl(String uri) {
         _value = uri;
     }
@@ -73,12 +69,6 @@ public final class URIImpl implements URI {
     public int hashCode() {
         return _value.hashCode();
     }
-
-    // serializable
-    private Object readResolve() {
-        return getInstance(_value);
-    }
-
     public int compareTo(URI o) {
         if (o instanceof URI) {
             URI other = (URI)o;

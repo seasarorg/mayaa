@@ -53,10 +53,6 @@ public final class QNameImpl implements QName, CONST_IMPL, Serializable {
     private URI _namespaceURI;
     private String _localName;
 
-    private QNameImpl() {
-        // for serialize
-    }
-
     private QNameImpl(URI namespaceURI, String localName) {
         if (namespaceURI == null || localName == null || localName.isEmpty()) {
             throw new IllegalArgumentException();
@@ -109,9 +105,4 @@ public final class QNameImpl implements QName, CONST_IMPL, Serializable {
     public int hashCode() {
         return Objects.hash(_localName, _namespaceURI);
     }
-
-    private Object readResolve() {
-        return getInstance(_namespaceURI, _localName);
-    }
-
 }

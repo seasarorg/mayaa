@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -333,14 +332,6 @@ public class NamespaceImpl implements Namespace {
 
     // TODO hashCodeを実装する
 
-    private void writeObject(java.io.ObjectOutputStream out)
-        throws IOException {
-        if (getClass() == NamespaceImpl.class) {
-            getSerializeKey();
-            out.defaultWriteObject();
-        }
-    }
-
     protected void doDeserialize() {
         if (_needDeserialize == false) {
             return;
@@ -360,14 +351,6 @@ public class NamespaceImpl implements Namespace {
                 _mappings.add(it.next());
             }
             _needDeserialize = false;
-        }
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-        throws IOException, ClassNotFoundException {
-        if (getClass() == NamespaceImpl.class) {
-            in.defaultReadObject();
-            _needDeserialize = true;
         }
     }
 

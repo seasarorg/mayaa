@@ -15,9 +15,6 @@
  */
 package org.seasar.mayaa.impl;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +31,7 @@ public class ParameterAwareImpl implements ParameterAware, Serializable {
 
     private static final long serialVersionUID = 7520826050429074016L;
 
-    private transient Map<String, String> _parameters;
+    private Map<String, String> _parameters;
     private String _systemID = "";
     private int _lineNumber;
     private boolean _onTemplate;
@@ -98,27 +95,6 @@ public class ParameterAwareImpl implements ParameterAware, Serializable {
 
     public boolean isOnTemplate() {
         return _onTemplate;
-    }
-
-    // for serialize
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeObject(_parameters);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        @SuppressWarnings("unchecked")
-        Map<String,String> map = (Map<String, String>) in.readObject();
-
-        if (map != null) {
-            for (Map.Entry<String,String> entry : map.entrySet()){
-                // for override method
-                setParameter(entry.getKey(), entry.getValue());
-            }
-        }
     }
 
 }

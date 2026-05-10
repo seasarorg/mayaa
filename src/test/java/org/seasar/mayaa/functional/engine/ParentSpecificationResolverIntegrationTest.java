@@ -24,8 +24,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.engine.Engine;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.Template;
@@ -33,7 +31,6 @@ import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -66,11 +63,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
         assertSame(SpecificationUtil.getDefaultSpecification(), resolver.getParentSpecification(page));
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void 親仕様を複数段返し最後にケース専用defaultページを返す場合にbeforeAfterRenderが親連鎖順で実行される(boolean useNewParser)
+    public void 親仕様を複数段返し最後にケース専用defaultページを返す場合にbeforeAfterRenderが親連鎖順で実行される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/multi-parent-chain";
@@ -173,11 +167,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
      *   parentSpec1.beforeRender が宣言した変数 → target.beforeRender から参照可能
      *   target.beforeRender が宣言した変数    → テンプレート内 m:write から参照可能
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数が子仕様から参照できる(boolean useNewParser)
+    public void m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数が子仕様から参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/extends-with-parent-chain";
@@ -311,11 +302,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
      *   parentSpec1.beforeRender が宣言した変数 → HTML 内 ${p1var} で参照可能
      *   target.beforeRender が宣言した変数    → HTML 内 ${tvar} で参照可能
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数がtargetHtml内から直接参照できる(boolean useNewParser)
+    public void m_extendsとParentSpecResolver共存時に各beforeRenderで宣言した変数がtargetHtml内から直接参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/extends-with-parent-chain-direct-ref";
@@ -437,11 +425,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
      *   <li>target.beforeRender 宣言 tvar       → component.beforeRender から参照可能</li>
      * </ul>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void レイアウトとコンポーネント併用時にレイアウトのbeforeRender宣言変数がコンポーネントから参照できる(boolean useNewParser)
+    public void レイアウトとコンポーネント併用時にレイアウトのbeforeRender宣言変数がコンポーネントから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/layout-and-component";
@@ -561,11 +546,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
      *   <li>layout-parent1.beforeRender 宣言 lp1var → layout から参照可能</li>
      * </ul>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void SuperPageの親仕様チェーンの各beforeRenderで宣言した変数がSuperPage自身のbeforeRenderから参照できる(boolean useNewParser)
+    public void SuperPageの親仕様チェーンの各beforeRenderで宣言した変数がSuperPage自身のbeforeRenderから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/super-page-parent-chain";
@@ -686,11 +668,8 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
      *
      * <p>Component の beforeRender は m:insert の処理タイミングでインラインに実行される。</p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Componentの親仕様チェーンの各beforeRenderで宣言した変数がComponent自身のbeforeRenderから参照できる(boolean useNewParser)
+    public void Componentの親仕様チェーンの各beforeRenderで宣言した変数がComponent自身のbeforeRenderから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseRoot = "/it-case/parent-specification-resolver/component-parent-chain";
@@ -780,11 +759,6 @@ public class ParentSpecificationResolverIntegrationTest extends EngineTestBase {
         //   期待順: D → T → CP1 → C（Component の親チェーンは m:insert 処理タイミングでインラインに実行）
         assertEquals("B-D,B-T,B-CP1,B-C",
             CycleUtil.getServiceCycle().getApplicationScope().getAttribute("scopeTrace"));
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

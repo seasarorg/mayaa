@@ -24,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
@@ -35,10 +32,8 @@ import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
  * 実運用に近いHTMLを使って自動エスケープの主要パターンを検証するIT。
  */
 public class AutoEscapeIntegrationTest extends EngineTestBase {
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ページ単位でautoEscape有効_グローバルOFFページON(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+
+    public void ページ単位でautoEscape有効_グローバルOFFページON() throws IOException {
         setAutoEscapeEnabled(false); // グローバルOFF
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -65,10 +60,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("page-override-on", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ページ単位でautoEscape無効_グローバルONページOFF(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ページ単位でautoEscape無効_グローバルONページOFF() throws IOException {
         setAutoEscapeEnabled(true); // グローバルON
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -95,10 +87,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("page-override-off", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ページ単位でautoEscape有効_引用符なし_グローバルOFFページON(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ページ単位でautoEscape有効_引用符なし_グローバルOFFページON() throws IOException {
         setAutoEscapeEnabled(false); // グローバルOFF
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -123,10 +112,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("page-override-on-unquoted", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ページ単位でautoEscape無効_引用符なし_グローバルONページOFF(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ページ単位でautoEscape無効_引用符なし_グローバルONページOFF() throws IOException {
         setAutoEscapeEnabled(true); // グローバルON
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -151,11 +137,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("page-override-off-unquoted", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-        public void 共有レイアウト利用時にページ単位autoEscape有効はページ描画部分へ適用される(boolean useNewParser)
-            throws IOException {
-        setUseNewParser(useNewParser);
+    public void 共有レイアウト利用時にページ単位autoEscape有効はページ描画部分へ適用される() throws IOException {
         setAutoEscapeEnabled(false); // グローバルOFF
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -219,11 +201,7 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
                 vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-        public void 共有レイアウト利用時にページ単位autoEscape無効はページ描画部分へ適用される(boolean useNewParser)
-            throws IOException {
-        setUseNewParser(useNewParser);
+    public void 共有レイアウト利用時にページ単位autoEscape無効はページ描画部分へ適用される() throws IOException {
         setAutoEscapeEnabled(true); // グローバルON
 
         Map<String, Object> vars = new LinkedHashMap<>();
@@ -289,11 +267,6 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/auto-escape/";
 
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
-    }
-
     void setAutoEscapeEnabled(boolean enabled) {
         getServiceProvider().getScriptEnvironment().setParameter(
                 "autoEscapeEnabled", Boolean.toString(enabled));
@@ -304,11 +277,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.unregisterAll();
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape有効時に主要コンテキストが安全に出力される(boolean useNewParser)
+    public void autoEscape有効時に主要コンテキストが安全に出力される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
 
         Map<String, Object> vars = createPageScope();
@@ -366,11 +336,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("enabled-realistic", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時にHTML本文SCRIPTSTYLEは未エスケープで出力される(boolean useNewParser)
+    public void autoEscape無効時にHTML本文SCRIPTSTYLEは未エスケープで出力される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = createPageScope();
@@ -440,11 +407,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         }
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape有効でも既エスケープ値は二重エスケープしない(boolean useNewParser)
+    public void autoEscape有効でも既エスケープ値は二重エスケープしない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -471,11 +435,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals("auto-escape", events.get(0).label());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時に既エスケープ値では警告を出さない(boolean useNewParser)
+    public void autoEscape無効時に既エスケープ値では警告を出さない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -501,11 +462,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals(0, events.size());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時にHTML_ATTRIBUTEの既エスケープ値では警告を出さない(boolean useNewParser)
+    public void autoEscape無効時にHTML_ATTRIBUTEの既エスケープ値では警告を出さない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -530,11 +488,9 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals(0, capture.size());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時にSCRIPTの既エスケープ値では警告を出さない(boolean useNewParser)
+
+    public void autoEscape無効時にSCRIPTの既エスケープ値では警告を出さない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -563,11 +519,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         }
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時にSTYLEの既エスケープ値では警告を出さない(boolean useNewParser)
+    public void autoEscape無効時にSTYLEの既エスケープ値では警告を出さない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -588,11 +541,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals(0, capture.size());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void autoEscape無効時にTEXTAREA_PREの既エスケープ値では警告を出さない(boolean useNewParser)
+    public void autoEscape無効時にTEXTAREA_PREの既エスケープ値では警告を出さない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -617,11 +567,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         assertEquals(0, capture.size());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void RAW出力マーカーはautoEscape有効時でも生出力される(boolean useNewParser)
+    public void RAW出力マーカーはautoEscape有効時でも生出力される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -646,11 +593,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("raw-marker", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void MAYAA_SCOPEマクロはscriptコンテキストで_ドル括弧なしでもJSリテラル展開される(boolean useNewParser)
+    public void MAYAA_SCOPEマクロはscriptコンテキストで_ドル括弧なしでもJSリテラル展開される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
 
         Map<String, Object> vars = new LinkedHashMap<String, Object>();
@@ -688,11 +632,8 @@ public class AutoEscapeIntegrationTest extends EngineTestBase {
         registerAndVerify("scope-macro-script", target, expected, vars);
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void MAYAA_SCOPE_WITH_STRINGIFYはscriptコンテキストで_ドル括弧なしでもJSON展開される(boolean useNewParser)
+    public void MAYAA_SCOPE_WITH_STRINGIFYはscriptコンテキストで_ドル括弧なしでもJSON展開される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(true);
 
         Map<String, Object> profile = new LinkedHashMap<String, Object>();

@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -38,10 +35,7 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/script-error-handling/";
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS無限ループ時にエラーが発生(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS無限ループ時にエラーが発生() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "js-infinite-loop";
@@ -74,10 +68,7 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS型エラーが発生(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS型エラーが発生() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "js-type-error";
@@ -110,10 +101,7 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void 未解決識別子の直接参照はundefinedとして扱う(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void 未解決識別子の直接参照はundefinedとして扱う() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "unresolved-identifier-is-undefined";
@@ -148,10 +136,7 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Java例外がJSで捕捉できる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void Java例外がJSで捕捉できる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "java-exception-in-js";
@@ -184,10 +169,7 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS文法エラーが発生(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS文法エラーが発生() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "js-syntax-error";
@@ -218,11 +200,6 @@ public class ScriptErrorHandlingIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

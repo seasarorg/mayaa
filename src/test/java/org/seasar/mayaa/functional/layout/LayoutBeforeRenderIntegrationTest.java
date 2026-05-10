@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -37,11 +34,8 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
      * レンダリング前に実行され、スクリプト内で設定した変数が
      * レイアウトテンプレート内の m:write から参照できることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void レイアウトページのbeforeRenderスクリプトが実行される(boolean useNewParser)
+    public void レイアウトページのbeforeRenderスクリプトが実行される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -100,11 +94,8 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
      * beforeRender スクリプトが定義されている場合に、どちらも実行されることを確認する。
      * ターゲットの beforeRender で設定した変数はレイアウトの m:write から参照できる。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ターゲットとレイアウト両方のbeforeRenderが実行される(boolean useNewParser)
+    public void ターゲットとレイアウト両方のbeforeRenderが実行される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -167,11 +158,8 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
     /**
      * target/layout の beforeRender 実行順序が target → layout であることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void beforeRenderの実行順序がtarget先layout後である(boolean useNewParser)
+    public void beforeRenderの実行順序がtarget先layout後である()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -238,11 +226,8 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
      * target/layout が同じ request キーへ代入した場合、
      * 後から実行される layout 側の値で上書きされることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetとlayoutで同名requestキーに代入した場合layoutが優先される(boolean useNewParser)
+    public void targetとlayoutで同名requestキーに代入した場合layoutが優先される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -303,11 +288,8 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
      * request 以外のスコープ（target の var 変数）も、
      * レイアウトテンプレートから参照できることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetのvar変数をlayoutから参照できる(boolean useNewParser)
+    public void targetのvar変数をlayoutから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -359,11 +341,6 @@ public class LayoutBeforeRenderIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

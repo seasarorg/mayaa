@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -32,11 +29,8 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/specification-life-cycle/";
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void レイアウトinsertで再入レンダリングするコンポーネントは次リクエストで更新を反映する(boolean useNewParser)
+    public void レイアウトinsertで再入レンダリングするコンポーネントは次リクエストで更新を反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-insert-reentry-consistency";
@@ -112,11 +106,8 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expected2Path, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void 共有レイアウトのHTML自体が更新された場合に次リクエストで変更を反映する(boolean useNewParser)
+    public void 共有レイアウトのHTML自体が更新された場合に次リクエストで変更を反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-html-update-detection";
@@ -186,11 +177,9 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expected2Path, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetMayaaのextends先変更を次リクエストで反映する(boolean useNewParser)
+
+    public void targetMayaaのextends先変更を次リクエストで反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "target-mayaa-extends-switch";
@@ -271,11 +260,9 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expected2Path, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void layoutMayaaのinsert定義変更を次リクエストで反映する(boolean useNewParser)
+
+    public void layoutMayaaのinsert定義変更を次リクエストで反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-mayaa-update-detection";
@@ -342,11 +329,8 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expected2Path, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void componentMayaaのdoRender定義変更を次リクエストで反映する(boolean useNewParser)
+    public void componentMayaaのdoRender定義変更を次リクエストで反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "component-mayaa-update-detection";
@@ -427,11 +411,8 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expected2Path, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetMayaaのextends有無の遷移を次リクエストで反映する(boolean useNewParser)
+    public void targetMayaaのextends有無の遷移を次リクエストで反映する()
             throws IOException, InterruptedException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "target-mayaa-extends-toggle";
@@ -499,11 +480,6 @@ public class SpecificationLifeCycleIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expected3Path, expected3);
 
         execAndVerify(targetHtmlPath, expected3Path, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

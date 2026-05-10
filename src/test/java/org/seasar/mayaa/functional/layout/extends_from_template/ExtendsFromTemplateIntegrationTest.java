@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.engine.EngineImpl;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
@@ -54,11 +51,8 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
      * 存在しなくても mayaaNode を自動生成し、HTML から読み取った {@code m:extends}
      * が初回リクエスト時に正しく参照されることを検証する。</p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    void htmlノードのm_extends属性で初回リクエストでレイアウトが適用される(boolean useNewParser)
+    void htmlノードのm_extends属性で初回リクエストでレイアウトが適用される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "html-extends-first-request";
@@ -86,11 +80,8 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
      * 2 回目のリクエストでもレイアウトが適用されることを確認する。
      * （初回後にテンプレートキャッシュが効いている状態）
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    void htmlノードのm_extends属性で2回目のリクエストでもレイアウトが適用される(boolean useNewParser)
+    void htmlノードのm_extends属性で2回目のリクエストでもレイアウトが適用される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "html-extends-second-request";
@@ -118,11 +109,8 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
      * HTML の {@code m:extends} と .mayaa ファイルの {@code m:doRender} を組み合わせて、
      * コンテンツがレイアウトのスロットへ正しく挿入されることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    void htmlのm_extendsとmayaaのm_doRenderでコンテンツをレイアウトへ挿入できる(boolean useNewParser)
+    void htmlのm_extendsとmayaaのm_doRenderでコンテンツをレイアウトへ挿入できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
         enableDump();
 
@@ -175,11 +163,8 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
      * レイアウトページ自身へのリクエストには {@code m:extends} が適用されず
      * そのままレンダリングされることを確認する。（自己参照防止）
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    void レイアウトページ自身へのリクエストにはレイアウトが適用されない(boolean useNewParser)
+    void レイアウトページ自身へのリクエストにはレイアウトが適用されない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "html-extends-layout-self";
@@ -199,11 +184,6 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(layoutHtmlPath, expectedPath, new LinkedHashMap<>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {
@@ -229,11 +209,8 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
      *       Template が持つ {@code _dynamicSuperPagePath} によりレイアウトが適用される。</li>
      * </ol>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    void Pageエビクション後も既存Templateのdynamic設定でレイアウトが適用される(boolean useNewParser)
+    void Pageエビクション後も既存Templateのdynamic設定でレイアウトが適用される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "html-extends-page-eviction";

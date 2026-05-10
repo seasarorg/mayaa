@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -32,10 +29,7 @@ public class ScriptJavaInteropIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/script-java-interop/";
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void パッケージ参照でJava静的メソッドを呼び出せる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void パッケージ参照でJava静的メソッドを呼び出せる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "java-package-static-call";
@@ -64,10 +58,7 @@ public class ScriptJavaInteropIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Javaオブジェクトを生成してインスタンスメソッドを呼び出せる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void Javaオブジェクトを生成してインスタンスメソッドを呼び出せる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "java-object-instance-call";
@@ -98,10 +89,7 @@ public class ScriptJavaInteropIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void requestオブジェクト参照でJavaメソッドを呼び出せる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void requestオブジェクト参照でJavaメソッドを呼び出せる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "java-request-object-reference";
@@ -129,11 +117,6 @@ public class ScriptJavaInteropIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

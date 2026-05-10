@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -76,11 +73,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *                beforeRenderScope の scriptVar を参照できる
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void beforeRenderで宣言した変数がm_insertコンポーネント内で参照できる(boolean useNewParser)
+    public void beforeRenderで宣言した変数がm_insertコンポーネント内で参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-propagate-to-insert";
@@ -149,11 +143,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * プロトタイプチェーンをたどって両方から参照できる。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void beforeRenderで宣言した変数が複数の兄弟m_insertコンポーネントからも参照できる(boolean useNewParser)
+    public void beforeRenderで宣言した変数が複数の兄弟m_insertコンポーネントからも参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-propagate-to-sibling-inserts";
@@ -223,11 +214,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * {@code "undefined"} 文字列を返すため、表明として安全に使用できる。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void コンポーネントAのbeforeRenderで宣言した変数はコンポーネントBから参照できない(boolean useNewParser)
+    public void コンポーネントAのbeforeRenderで宣言した変数はコンポーネントBから参照できない()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-isolation-between-sibling-inserts";
@@ -325,11 +313,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * S2 に layoutVar が存在するため参照できる。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_extendsレイアウトのbeforeRender変数がコンテンツテンプレートから参照できる(boolean useNewParser)
+    public void m_extendsレイアウトのbeforeRender変数がコンテンツテンプレートから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-layout-var-to-content";
@@ -405,11 +390,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *   layout テンプレートで ${targetVar} → S2 になし → S1 で発見 → "from-target"
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_extendsターゲットのbeforeRender変数がレイアウトテンプレートから参照できる(boolean useNewParser)
+    public void m_extendsターゲットのbeforeRender変数がレイアウトテンプレートから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-target-var-to-layout";
@@ -490,11 +472,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * layout テンプレート・content テンプレート双方から lib.js の変数を参照できることも確認する。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_extendsのbeforeRender内でload関数で読み込んだJSが同スコープに展開される(boolean useNewParser)
+    public void m_extendsのbeforeRender内でload関数で読み込んだJSが同スコープに展開される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-with-load";
@@ -592,11 +571,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *   レンダリング時カレント = S2 → ${myVar} は S2 で発見 → "from-layout" が優先
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetとlayoutで同名変数を定義した場合layoutの値が優先される(boolean useNewParser)
+    public void targetとlayoutで同名変数を定義した場合layoutの値が優先される()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-shadow-target-vs-layout";
@@ -673,11 +649,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *         ${rootVar} → S2 → S1 → S0 で発見 → "from-root"
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void targetのbeforeRender変数が3段ネストコンポーネントから参照できる(boolean useNewParser)
+    public void targetのbeforeRender変数が3段ネストコンポーネントから参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-propagate-3-level-nest";
@@ -763,11 +736,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *   comp-b : ${sharedVar} → S0 → "mutated-by-a" (変更が見える)
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void コンポーネントAがvar無しで祖先変数を書き換えると兄弟Bにも変更が見える(boolean useNewParser)
+    public void コンポーネントAがvar無しで祖先変数を書き換えると兄弟Bにも変更が見える()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-mutation-by-component";
@@ -851,11 +821,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * コンポーネント内では {@code ${binding.propName}} で値を取得できる。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_insertのインフォーマルプロパティがbindingスコープで参照できる(boolean useNewParser)
+    public void m_insertのインフォーマルプロパティがbindingスコープで参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-insert-informal-property";
@@ -913,11 +880,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * binding スコープ利用時の境界条件をカバーする。
      * </p>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void m_insertの未定義インフォーマルプロパティ参照でフォールバックできる(boolean useNewParser)
+    public void m_insertの未定義インフォーマルプロパティ参照でフォールバックできる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-insert-informal-property-missing";
@@ -988,10 +952,7 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *   ${l2Var} → S3 → "L2"
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void _3段m_extendsチェーンで全階層のbeforeRender変数が参照できる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void _3段m_extendsチェーンで全階層のbeforeRender変数が参照できる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-3level-chain";
@@ -1070,11 +1031,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * 3 段 m:extends チェーンで layout1 の beforeRender 変数が未定義でも、
      * target/layout2 の変数は参照でき、未定義変数だけフォールバックできることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void _3段m_extendsチェーンで中間階層変数が未定義でも他階層は参照できる(boolean useNewParser)
+    public void _3段m_extendsチェーンで中間階層変数が未定義でも他階層は参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-3level-chain-missing-l1";
@@ -1146,11 +1104,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      * 3 段 m:extends チェーンで layout2 の beforeRender 変数が未定義でも、
      * target/layout1 の変数は参照でき、未定義変数だけフォールバックできることを確認する。
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void _3段m_extendsチェーンで最上位階層変数が未定義でも他階層は参照できる(boolean useNewParser)
+    public void _3段m_extendsチェーンで最上位階層変数が未定義でも他階層は参照できる()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "layout-extends-3level-chain-missing-l2";
@@ -1239,11 +1194,8 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
      *   comp 終了後 target の ${myVar} → S0 で発見 → "from-target" (不変)
      * </pre>
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void コンポーネントがvar宣言で同名変数をシャドウしても親スコープは不変(boolean useNewParser)
+    public void コンポーネントがvar宣言で同名変数をシャドウしても親スコープは不変()
             throws IOException {
-        setUseNewParser(useNewParser);
         setAutoEscapeEnabled(false);
 
         String caseName = "scope-component-local-shadow";
@@ -1303,11 +1255,6 @@ public class ScriptScopeIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

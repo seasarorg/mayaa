@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -69,10 +66,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "4,8"  (推定) ES5: Array.prototype.map/filter はサポート済み
      * org.mozilla:rhino:1.9.1 → "4,8"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS16_Arrayのmapとfilterが利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS16_Arrayのmapとfilterが利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "array-map-filter/";
@@ -109,10 +103,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "6"  (推定) ES5: Array.prototype.forEach はサポート済み
      * org.mozilla:rhino:1.9.1 → "6"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS16_ArrayのforEachが利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS16_ArrayのforEachが利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "array-foreach/";
@@ -150,10 +141,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  JSON グローバルは 1.7R3 以降で追加。1.7R2 では非サポート
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 1.7R3 以降の JSON サポートを含むバージョンに更新
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES5_JSONは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES5_JSONは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es5-json/";
@@ -186,10 +174,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  Object.keys / Array.prototype.reduce は 1.7R3 以降で追加。1.7R2 では非サポート
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES5 メソッド群を含むバージョンに更新
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES5_ObjectKeysとArrayReduceは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES5_ObjectKeysとArrayReduceは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es5-object-keys-reduce/";
@@ -224,10 +209,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "object"  (推定) ES3以降: typeof null === "object" は言語仕様として不変
      * org.mozilla:rhino:1.9.1 → "object"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES5_typeofnullはobjectである(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES5_typeofnullはobjectである() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "typeof-null-is-object/";
@@ -261,10 +243,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "true:true"  (推定) IEEE 754規定: エンジン非依存の言語仕様
      * org.mozilla:rhino:1.9.1 → "true:true"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES5_NaNはNaN自身と等しくない(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES5_NaNはNaN自身と等しくない() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "nan-not-equal-nan/";
@@ -297,10 +276,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "true:2:hellO wOrld:3"  (推定) ES3/ES5: 正規表現基本機能はサポート済み
      * org.mozilla:rhino:1.9.1 → "true:2:hellO wOrld:3"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES5_RegExpの基本機能が利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES5_RegExpの基本機能が利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es5-regexp-basic/";
@@ -339,10 +315,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: startsWith/endsWith/includes 等は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6+ 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6Plus_String拡張メソッドstartsWithなどは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6Plus_String拡張メソッドstartsWithなどは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-string-methods/";
@@ -382,10 +355,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: find/findIndex/includes/flat 等は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6+ 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6Plus_Array拡張メソッドfindなどは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6Plus_Array拡張メソッドfindなどは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-array-methods/";
@@ -425,10 +395,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Object.entries/values は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES2017 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES2017_Object_entriesとvaluesは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES2017_Object_entriesとvaluesは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es2017-object-methods/";
@@ -468,10 +435,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "6"  (推定) Rhino独自拡張: for each (...) 構文はサポート済み
      * org.mozilla:rhino:1.9.1 → "6"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Rhino拡張_forEach構文が利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void Rhino拡張_forEach構文が利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "rhino-for-each-syntax/";
@@ -512,10 +476,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "class java.lang.String:true"  (推定) Rhino Java インターオップ: getClass()/['class']はサポート済み
      * org.mozilla:rhino:1.9.1 → "class java.lang.String:true"  変化なし
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Rhino拡張_JavaオブジェクトのgetClass取得が利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void Rhino拡張_JavaオブジェクトのgetClass取得が利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "rhino-java-class-ref/";
@@ -653,10 +614,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  eval() 経由の let はサポートされていなかった
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 let として正式サポート
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_letは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_letは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-let/";
@@ -696,10 +654,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  eval() 経由の const はサポートされていなかった
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 const として正式サポート
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_constは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_constは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-const/";
@@ -739,10 +694,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Promise/Symbol は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_PromiseとSymbolは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_PromiseとSymbolは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-promise-symbol/";
@@ -777,10 +729,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Map/Set は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_MapとSetは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_MapとSetは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-map-set/";
@@ -815,10 +764,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: アロー関数は未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_アロー関数は現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_アロー関数は現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-arrow-function/";
@@ -858,10 +804,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: テンプレートリテラルは未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_テンプレートリテラルは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_テンプレートリテラルは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-template-literal/";
@@ -903,10 +846,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: for...of は未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_forOfは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_forOfは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-for-of/";
@@ -946,10 +886,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: RegExp u/y フラグはES6以降の機能
      * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_RegExpフラグのuとyは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_RegExpフラグのuとyは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-regexp-flags/";
@@ -998,10 +935,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * org.mozilla:rhino:1.9.1 → "not-supported"  変化なし（依然未対応）
      * ※ GraalJS など ES6+ 対応エンジンでは "supported" になる移行差分点
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_classキーワードは現行エンジンでは非対応(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_classキーワードは現行エンジンでは非対応() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-class/";
@@ -1044,10 +978,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported:supported"  配列分割のみ部分サポート、オブジェクト分割 ({a,b}=obj) は非サポート
      * org.mozilla:rhino:1.9.1 → "supported:supported"      ★変更 オブジェクト分割も含め完全サポート
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_分割代入は現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_分割代入は現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-destructuring/";
@@ -1096,10 +1027,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: spread operator は未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_SpreadOperatorは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_SpreadOperatorは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-spread-operator/";
@@ -1139,10 +1067,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: default/rest parameters は未サポート
      * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_DefaultParametersとRestParametersは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_DefaultParametersとRestParametersは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-function-params/";
@@ -1192,10 +1117,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: ES6 function* 構文は未サポート（JS1.7非標準 yield 構文は別途存在）
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES6 対応により function* 構文が利用可能に
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_Generatorは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_Generatorは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-generators/";
@@ -1237,10 +1159,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-available"  (推定) ES5世代: Number.isNaN/isInteger/isFinite は未実装
      * org.mozilla:rhino:1.9.1 → "available"      ★変更 ES2015 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES2015_NumberメソッドisNaNやisIntegerは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES2015_NumberメソッドisNaNやisIntegerは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es2015-number-methods/";
@@ -1278,10 +1197,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: Optional Chaining (?.) は未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES2020 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES2020_OptionalChainingは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES2020_OptionalChainingは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es2020-optional-chaining/";
@@ -1323,10 +1239,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported"  (推定) ES5世代: Nullish Coalescing (??) は未サポート
      * org.mozilla:rhino:1.9.1 → "supported"      ★変更 ES2020 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES2020_NullishCoalescingは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES2020_NullishCoalescingは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es2020-nullish-coalescing/";
@@ -1368,10 +1281,7 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
      * rhino:js:1.7R2          → "not-supported:not-supported"  (推定) ES5世代: computed property names / object shorthand は未サポート
      * org.mozilla:rhino:1.9.1 → "supported:supported"          ★変更 ES6 対応により追加
      */
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void ES6_ComputedPropertyNamesとObjectShorthandは現行エンジンで利用可能(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void ES6_ComputedPropertyNamesとObjectShorthandは現行エンジンで利用可能() throws IOException {
         setAutoEscapeEnabled(false);
 
         String casePath = BASE + "es6-object-literals/";
@@ -1419,11 +1329,6 @@ public class ScriptESCompatibilityIntegrationTest extends EngineTestBase {
     // -------------------------------------------------------------------------
     // helpers
     // -------------------------------------------------------------------------
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
-    }
 
     void setAutoEscapeEnabled(boolean enabled) {
         getServiceProvider().getScriptEnvironment().setParameter(

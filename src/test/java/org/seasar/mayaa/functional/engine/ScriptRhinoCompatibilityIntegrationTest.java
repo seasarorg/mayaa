@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -33,10 +30,7 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/script-rhino-compatibility/";
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void javaとPackagesの両方でJava型参照できる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void javaとPackagesの両方でJava型参照できる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "java-and-packages-global";
@@ -66,10 +60,7 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void importPackageは未提供である(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void importPackageは未提供である() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "import-package-function";
@@ -100,10 +91,7 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void typeofで未解決識別子を安全に判定できる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void typeofで未解決識別子を安全に判定できる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "typeof-unresolved-identifier";
@@ -131,10 +119,7 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void Intlオブジェクトは未提供である(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void Intlオブジェクトは未提供である() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "intl-not-provided";
@@ -167,10 +152,7 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void 数値の文字列変換はロケール非依存である(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void 数値の文字列変換はロケール非依存である() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "number-to-string-locale-independent";
@@ -200,11 +182,6 @@ public class ScriptRhinoCompatibilityIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

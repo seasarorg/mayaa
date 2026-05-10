@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.seasar.mayaa.functional.EngineTestBase;
-import org.seasar.mayaa.impl.builder.TemplateBuilderImpl;
 import org.seasar.mayaa.impl.source.DynamicRegisteredSourceHolder;
 
 /**
@@ -32,10 +29,7 @@ public class ScriptTypeConversionIntegrationTest extends EngineTestBase {
 
     private static final String BASE = "/it-case/script-type-conversion/";
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS数値をJavaメソッド引数に渡せる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS数値をJavaメソッド引数に渡せる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "number-to-java-int";
@@ -64,10 +58,7 @@ public class ScriptTypeConversionIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JS真偽値をJavaBooleanへ変換できる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JS真偽値をJavaBooleanへ変換できる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "boolean-to-java-boolean";
@@ -97,10 +88,7 @@ public class ScriptTypeConversionIntegrationTest extends EngineTestBase {
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
     }
 
-    @ParameterizedTest(name = "useNewParser {0}")
-    @ValueSource(booleans = { false, true })
-    public void JSのnullをJavaメソッドへ渡せる(boolean useNewParser) throws IOException {
-        setUseNewParser(useNewParser);
+    public void JSのnullをJavaメソッドへ渡せる() throws IOException {
         setAutoEscapeEnabled(false);
 
         String caseName = "null-to-java-object";
@@ -128,11 +116,6 @@ public class ScriptTypeConversionIntegrationTest extends EngineTestBase {
         DynamicRegisteredSourceHolder.registerContents(expectedPath, expected);
 
         execAndVerify(targetHtmlPath, expectedPath, new LinkedHashMap<String, Object>());
-    }
-
-    void setUseNewParser(boolean useNewParser) {
-        getServiceProvider().getTemplateBuilder().setParameter(
-                TemplateBuilderImpl.USE_NEW_PARSER, Boolean.toString(useNewParser));
     }
 
     void setAutoEscapeEnabled(boolean enabled) {

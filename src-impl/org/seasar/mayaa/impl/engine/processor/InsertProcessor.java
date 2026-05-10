@@ -386,16 +386,4 @@ public class InsertProcessor
         return super.doEndProcess();
     }
 
-    // for serialize
-
-    private void writeObject(java.io.ObjectOutputStream out)
-            throws java.io.IOException {
-        out.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-    }
-
 }

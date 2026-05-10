@@ -238,7 +238,7 @@ public class ExtendsFromTemplateIntegrationTest extends EngineTestBase {
         // PageのsystemIDはリクエストされたパスから拡張子と ".mayaa" で構成。
         // /it-case/.../target.html → pageName = /it-case/.../target → pageSystemID = /it-case/.../target.mayaa
         String pageSystemID = targetHtmlPath.substring(0, targetHtmlPath.lastIndexOf('.')) + ".mayaa";
-        ((EngineImpl) ProviderUtil.getEngine()).deprecateSpecification(pageSystemID, false);
+        ((EngineImpl) ProviderUtil.getEngine()).deprecateSpecification(pageSystemID);
 
         // 2回目: Page が再生成される。この際、関連 Template も deprecate されて
         // 再ビルドが起きることで mayaaNode が正しく付与され、レイアウトが適用されるはず。

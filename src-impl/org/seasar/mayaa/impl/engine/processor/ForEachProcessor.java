@@ -149,13 +149,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
         }
     }
 
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-    }
-
     // support class
 
     /**

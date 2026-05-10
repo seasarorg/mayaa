@@ -352,20 +352,6 @@ public class TemplateImpl
         return (ProcessorTreeWalker) _childProcessors.get(index);
     }
 
-    // for serialize
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        if (_childProcessors != null) {
-            for (int i = _childProcessors.size() - 1; i >= 0 ; i--) {
-                ProcessorTreeWalker child =
-                    (ProcessorTreeWalker) _childProcessors.get(i);
-                child.setParentProcessor(this);
-            }
-        }
-    }
-
     // PositionAware implements ------------------------------------
 
     public boolean isOnTemplate() {

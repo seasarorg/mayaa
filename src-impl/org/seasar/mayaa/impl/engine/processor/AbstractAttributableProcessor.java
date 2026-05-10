@@ -250,14 +250,6 @@ public abstract class AbstractAttributableProcessor
         return ProcessStatus.EVAL_PAGE;
     }
 
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        clearProcesstimeInfo();
-    }
-
     //helper class, methods ----------------------------------------
 
     protected static class ProcesstimeInfo {

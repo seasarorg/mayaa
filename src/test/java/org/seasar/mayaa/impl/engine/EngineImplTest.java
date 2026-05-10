@@ -127,7 +127,7 @@ public class EngineImplTest {
         engine.createPageInstance(pageName);
         assertNotNull(engine.findSpecificationFromCache(systemID));
 
-        engine.deprecateSpecification(systemID, false);
+        engine.deprecateSpecification(systemID);
         assertNull(engine.findSpecificationFromCache(systemID));
 
         assertNotNull(engine.getPage(pageName));

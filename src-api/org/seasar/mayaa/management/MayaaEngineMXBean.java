@@ -37,5 +37,5 @@ public interface MayaaEngineMXBean {
     boolean isDumpEnabled();
     void setDumpEnabled(boolean dumpEnabled);
 
-    void deprecateSpecification(String systemID, boolean withSerialized);
+    void deprecateSpecification(String systemID);
 }

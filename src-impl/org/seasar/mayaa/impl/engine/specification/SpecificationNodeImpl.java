@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,7 +23,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.engine.specification.CopyToFilter;
-import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
 import org.seasar.mayaa.engine.specification.NodeObject;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
@@ -291,56 +289,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
 
     public boolean isOnTemplate() {
         return getNodeTreeWalker().isOnTemplate();
-    }
-
-    // for serialize
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        out.defaultWriteObject();
-        // namespace
-        out.writeUTF(super.toString());
-        if (getParentSpace() != null
-                && getParentSpace().getClass() == NamespaceImpl.class) {
-            out.writeObject(getParentSpace());
-        } else {
-            out.writeObject(new Serializable() {
-                private static final long serialVersionUID = 1L;
-            });
-        }
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        // namespace
-        String currentMappingInfo = in.readUTF();
-        NamespaceImpl namespace = deserialize(currentMappingInfo);
-        setDefaultNamespaceMapping(namespace.getDefaultNamespaceMapping());
-        for (Iterator<PrefixMapping> it = namespace.iteratePrefixMapping(false)
-                ; it.hasNext(); ) {
-            PrefixMapping mapping = it.next();
-            addPrefixMapping(mapping.getPrefix(), mapping.getNamespaceURI());
-        }
-        // parent namespace
-        Object nscheck = in.readObject();
-        if (nscheck instanceof NamespaceImpl) {
-            setParentSpace((Namespace)nscheck);
-        }
-    }
-
-    private Object readResolve() {
-        for (Iterator<NodeTreeWalker> it = iterateChildNode(); it.hasNext(); ) {
-            NodeTreeWalker child = it.next();
-            child.setParentNode(this);
-            if (child instanceof Namespace) {
-                ((Namespace)child).setParentSpace(this);
-            }
-        }
-        for (Iterator<NodeAttribute> it =  iterateAttribute(); it.hasNext(); ) {
-            NodeAttributeImpl attr = (NodeAttributeImpl) it.next();
-            attr.setNode(this);
-        }
-        return this;
     }
 
     public String getId() {

@@ -244,13 +244,6 @@ public class PageImpl extends SpecificationImpl implements Page {
         CycleUtil.getRequestScope().setAttribute(CURRENT_COMPONENT_KEY, component);
     }
 
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-    }
-
     // TemplateRenderer implements ----------------------------------
 
     public ProcessStatus renderTemplate(

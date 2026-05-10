@@ -10,6 +10,11 @@
   * HTML属性（HTML_ATTRIBUTE）では `"` と `'` をそれぞれ `&quot;` / `&#39;` にエスケープします。
 - `m:write` の `escapeXml=true` は、`script` / `style` / `textarea` を含む現在の出力コンテキストを判定してエスケープ方式を自動選択するようにしました。
 
+#### システム環境・運用関連
+- Specification の `.ser` キャッシュ（`pageSerialize`）機能を削除しました。
+- `org.seasar.mayaa.engine.specification.serialize` 配下のAPI/実装を削除しました。
+- JMXの `isSerializingEnabled` / `setSerializingEnabled` を削除しました。
+
 ## Mayaa 1.3.0 : 2026-02-22
 
 ### Changes

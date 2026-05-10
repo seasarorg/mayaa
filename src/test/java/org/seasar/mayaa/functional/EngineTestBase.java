@@ -269,7 +269,6 @@ public class EngineTestBase {
         engine.setErrorHandler(new NullErrorHandler());
 
         disableDump();
-        // engine.setParameter(EngineImpl.PAGE_SERIALIZE, "true");
     }
 
     /**

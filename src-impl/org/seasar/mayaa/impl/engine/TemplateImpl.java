@@ -36,7 +36,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
 import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -365,7 +364,6 @@ public class TemplateImpl
                 child.setParentProcessor(this);
             }
         }
-        NodeSerializeController.currentInstance().specLoaded(this);
     }
 
     // PositionAware implements ------------------------------------

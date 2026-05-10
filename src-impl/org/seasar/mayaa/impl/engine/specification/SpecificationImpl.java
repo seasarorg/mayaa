@@ -26,11 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.SpecificationBuilder;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.Specification;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.source.NullSourceDescriptor;
 import org.seasar.mayaa.impl.source.SourceUtil;
@@ -217,12 +215,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
         return getNodeTreeWalker().getChildNodeSize();
     }
 
-    // NodeReferenceResolverFinder implements --------------------------------------
-
-    public NodeReferenceResolver findNodeResolver() {
-        return getNodeTreeWalker().findNodeResolver();
-    }
-
     // PositionAware overrides ------------------------------------
 
     public String getSystemID() {
@@ -253,7 +245,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
             SourceDescriptor sourceDescriptor = SourceUtil.getSourceDescriptor(super.getSystemID());
             setSource(sourceDescriptor);
         }
-        NodeSerializeController.currentInstance().specLoaded(this);
     }
 
 

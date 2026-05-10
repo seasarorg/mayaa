@@ -19,12 +19,11 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.PositionAware;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolverFinder;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeTreeWalker extends PositionAware, Serializable, NodeReferenceResolverFinder {
+public interface NodeTreeWalker extends PositionAware, Serializable {
 
     /**
      * 親ノードの設定をセットする。

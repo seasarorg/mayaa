@@ -15,14 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,13 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import jakarta.servlet.ServletContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.cycle.ServiceCycle;
-import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
-import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.Namespace;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -51,8 +37,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.script.LiteralScript;
 import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
-import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -66,8 +50,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  */
 public class SpecificationUtil implements CONST_IMPL {
 
-    private static final Log LOG = LogFactory.getLog(SpecificationUtil.class);
-
     private static EventScriptEnvironment _eventScripts =
         new EventScriptEnvironment();
 
@@ -79,8 +61,6 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static final PrefixMapping XHTML_DEFAULT_PREFIX_MAPPING =
         PrefixMappingImpl.getInstance("", CONST_IMPL.URI_XHTML);
-
-    public static File _serializeDirFile;
 
     private SpecificationUtil() {
         // no instantiation.
@@ -295,168 +275,6 @@ public class SpecificationUtil implements CONST_IMPL {
 
     public static URI createURI(String uri) {
         return URIImpl.getInstance(uri);
-    }
-
-    /**
-     * {@link Specification} のシリアライズを有効にするための準備を行う。
-     * シリアライズ後のファイル保管ディレクトリが作成できないなどの理由で失敗した場合はfalseを返す。
-     * @return シリアライズを有効にするための準備が整わないときに false を返す。
-     */
-    public static boolean prepareSerialize() {
-        try {
-            ApplicationScope scope = CycleUtil.getServiceCycle().getApplicationScope();
-            ServletContext context = (ServletContext) scope.getUnderlyingContext();
-            File baseDir = (File) context.getAttribute("javax.servlet.context.tempdir");
-            if (baseDir == null || !baseDir.exists()) {
-                return false; // cannot resolve spec cache directory.
-            }
-            File cacheDir = new File(baseDir, ".mayaaSpecCache");
-            if (cacheDir.exists() || cacheDir.mkdirs()) {
-                _serializeDirFile = cacheDir;
-            }
-            else {
-                LOG.error("Cannot mkdir serialize directory. " + cacheDir.getAbsolutePath());
-                DiagnosticEventBuffer.recordError(
-                        DiagnosticEventBuffer.Phase.BUILD,
-                        "serializeDirCreateFailed",
-                        cacheDir.getAbsolutePath(),
-                        "Cannot mkdir serialize directory. " + cacheDir.getAbsolutePath(),
-                        cacheDir.getAbsolutePath());
-                return false;
-            }
-        } catch (SecurityException e) {
-            return false;
-        }
-
-        // すべて問題がなければ true
-        return true;
-    }
-
-    public static void cleanupSerialize() {
-        if (_serializeDirFile != null) {
-            try {
-                Files.deleteIfExists(_serializeDirFile.toPath());
-            } catch (IOException e) {
-            }
-        }
-    }
-
-    /**
-     * キャッシュ用にシリアライズするディレクトリのファイルオブジェクトを取得する。
-     * @return Fileオブジェクト
-     */
-    protected static File getSerializeDirectory() {
-        if (_serializeDirFile == null || !_serializeDirFile.exists()) {
-            prepareSerialize();
-        }
-
-        return _serializeDirFile;
-    }
-
-    /**
-     * システムID指定したシリアライズされたファイルを削除する。
-     * 存在していない場合も失敗しない。
-     * @param systemID システムID
-     */
-    public static void purgeSerializedFile(String systemID) {
-        File cacheDir = getSerializeDirectory();
-        String filename = getSerializedFilename(systemID);
-        File cacheFile = new File(cacheDir, filename);
-        if (cacheFile.exists()) {
-            cacheFile.delete();
-        }
-    }
-
-    /**
-     * システムIDからキャッシュ用にシリアライズするファイル名を生成する。
-     * @param systemID システムID
-     * @return シリアライズ用ファイル名
-     */
-    protected static String getSerializedFilename(String systemID) {
-        return systemID.substring("/".length()).replace('/', '#') + ".ser";
-    }
-
-    public static void serialize(Specification spec) {
-        File cacheDir = getSerializeDirectory();
-        serialize(spec, cacheDir);
-    }
-
-    public static void serialize(Specification spec, File cacheDir) {
-        try {
-            String filename = getSerializedFilename(spec.getSystemID());
-
-            synchronized(spec) {
-                File file = new File(cacheDir, filename);
-                try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file))){
-                    NodeSerializeController.currentInstance().init();
-                    stream.writeObject(spec);
-                } finally {
-                    NodeSerializeController.currentInstance().release();
-                }
-            }
-        } catch (FileNotFoundException e) {
-            LOG.error("page serialize failed.", e);
-            DiagnosticEventBuffer.recordError(
-                    DiagnosticEventBuffer.Phase.BUILD,
-                    "pageSerializeFailed",
-                    spec.getSystemID(),
-                    "page serialize failed.",
-                    null, null, spec);
-        } catch (IOException e) {
-            LOG.error("page serialize failed.", e);
-            DiagnosticEventBuffer.recordError(
-                    DiagnosticEventBuffer.Phase.BUILD,
-                    "pageSerializeFailed",
-                    spec.getSystemID(),
-                    "page serialize failed.",
-                    null, null, spec);
-        } catch (IllegalStateException e) {
-            LOG.error("page serialize failed.", e);
-            DiagnosticEventBuffer.recordError(
-                    DiagnosticEventBuffer.Phase.BUILD,
-                    "pageSerializeFailed",
-                    spec.getSystemID(),
-                    "page serialize failed.",
-                    null, null, spec);
-        }
-    }
-
-    public static Specification deserialize(String systemID) {
-        File cacheDir = getSerializeDirectory();
-        return deserialize(systemID, cacheDir);
-    }
-
-    public static Specification deserialize(String systemID, File cacheDir) {
-        File cacheFile = null;
-        try {
-            String filename = getSerializedFilename(systemID);
-            cacheFile = new File(cacheDir, filename);
-            if (cacheFile.exists() == false) {
-                return null;
-            }
-        } catch (IllegalStateException e) {
-            return null;
-        }
-
-        NodeSerializeController.currentInstance().init();
-        ProcessorSerializeController.currentInstance().init();
-
-        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(cacheFile))) {
-            Specification result = (Specification) stream.readObject();
-            return result;
-        } catch(Throwable e) {
-            String message = systemID + " specification deserialize failed.";
-            if (e.getMessage() != null) {
-                message += " " + e.getMessage();
-            }
-            LOG.info(message);
-            cacheFile.delete();
-            return null;
-        } finally {
-            ProcessorSerializeController.currentInstance().release();
-            NodeSerializeController.currentInstance().release();
-        }
-
     }
 
     // script cache ----------------------------------------------

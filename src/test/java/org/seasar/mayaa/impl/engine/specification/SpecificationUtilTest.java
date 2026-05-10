@@ -16,45 +16,12 @@
 package org.seasar.mayaa.impl.engine.specification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
-import java.net.URISyntaxException;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.seasar.mayaa.engine.Page;
-import org.seasar.mayaa.engine.Template;
 import org.seasar.mayaa.engine.specification.QName;
-import org.seasar.mayaa.engine.specification.Specification;
-import org.seasar.mayaa.impl.engine.PageImpl;
-import org.seasar.mayaa.impl.engine.TemplateImpl;
-import org.seasar.mayaa.impl.source.SourceUtil;
-import org.seasar.mayaa.test.util.ManualProviderFactory;
 
 public class SpecificationUtilTest {
-
-    private PageImpl _page;
-    private TemplateImpl _template;
-
-    @BeforeEach
-    public void setUp() {
-        ManualProviderFactory.setUp(this);
-
-        _page = new PageImpl();
-
-        _page.setSource(SourceUtil.getSourceDescriptor("/tests/page.mayaa"));
-        _page.initialize("/page");
-        _page.build();
-
-        _template = new TemplateImpl();
-        _template.setSource(SourceUtil.getSourceDescriptor("/tests/page.html"));
-        _template.initialize(_page, "ja", "html");
-        _template.build();
-
-    }
 
     /*
      * Test method for
@@ -98,50 +65,6 @@ public class SpecificationUtilTest {
         } catch (IllegalArgumentException e) {
             assertEquals("bar}id", e.getMessage());
         }
-    }
-
-    @Test
-    public void testSerializeTemplate() throws URISyntaxException {
-        File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
-        File expectedFile = new File(cacheDir, "tests#page.html.ser");
-        expectedFile.delete();
-
-        assertFalse(_template.isDeprecated());
-
-        SpecificationUtil.serialize(_template, cacheDir);
-
-        // シリアル化したファイルが存在する。
-        assertTrue(expectedFile.exists());
-
-        Specification actual = SpecificationUtil.deserialize(_template.getSystemID(), cacheDir);
-
-        assertTrue(actual instanceof Template, "Instance must be of Template");
-        assertEquals(_template, actual);
-
-        assertFalse(actual.isDeprecated());
-
-        expectedFile.delete();
-    }
-
-    @Test
-    public void testSerializePage() throws URISyntaxException {
-        File cacheDir = new File(getClass().getResource("WEB-INF").toURI());
-        File expectedFile = new File(cacheDir, "tests#page.mayaa.ser");
-        assertFalse(_page.isDeprecated());
-
-        SpecificationUtil.serialize(_page, cacheDir);
-
-        // シリアル化したファイルが存在する。
-        assertTrue(expectedFile.exists());
-
-        Specification actual = SpecificationUtil.deserialize(_page.getSystemID(), cacheDir);
-
-        assertTrue(actual instanceof Page, "Instance must be of Page");
-        assertEquals(_page, actual);
-
-        assertFalse(actual.isDeprecated());
-
-        expectedFile.delete();
     }
 
 }

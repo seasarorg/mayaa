@@ -50,7 +50,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.DefaultCycleLocalInstantiator;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.SerializeExecutor;
 import org.seasar.mayaa.impl.management.CacheControllerRegistry;
 import org.seasar.mayaa.impl.management.EngineRegistory;
 import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
@@ -74,7 +73,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public static final String PAGE_CLASS = "pageClass";
     public static final String TEMPLATE_CLASS = "templateClass";
-    public static final String PAGE_SERIALIZE = "pageSerialize";
     public static final String SURVIVE_LIMIT = "surviveLimit";
     public static final String FORWARD_LIMIT = "forwardLimit";
     public static final String REQUESTED_SUFFIX_ENABLED = "requestedSuffixEnabled";
@@ -93,8 +91,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
         .maximumSize(10_000)
         .recordStats()
         .build();
-
-    private transient SerializeExecutor _serializeExecutor;
     /** Engineが破棄されていればtrue。破棄後はサービスを保証しない。 */
     private volatile boolean _destroyed = false;
 
@@ -228,9 +224,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             spec.deprecate();
         }
         clearRequestValidSpecCache(systemID);
-        if (withSerialized) {
-            SpecificationUtil.purgeSerializedFile(systemID);
-        }
 
         if (_defaultSpecificationID.equals(systemID)) {
             // デフォルトのSpecificationなら直接的に無効化する
@@ -545,22 +538,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             SpecificationGenerator generator) {
         boolean rebuild = false;
         Specification spec;
-        if (isSerializeEnabled()) {
-            spec = SpecificationUtil.deserialize(systemID);
-            if (spec != null) {
-                if (spec.isDeprecated() == false) {
-                    if (registerCache) {
-                        _specCache.put(spec.getSystemID(), spec);
-                        // デシリアライズ成功時も requestValidSpecCache の null エントリを除去する。
-                        // 除去しないと findValidSpecificationFromCache が null を返し続け、
-                        // createPageInstance が再度呼び出されて別インスタンスが生まれる。
-                        clearRequestValidSpecCache(spec.getSystemID());
-                    }
-                    return spec;
-                }
-                rebuild = true;
-            }
-        }
         SourceDescriptor source =
             SourceUtil.getSourceDescriptor(systemID);
         Class<?> specClass = generator.getInstantiator(source);
@@ -588,9 +565,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             SpecificationUtil.startScope(null);
             try {
                 spec.build(rebuild);
-                if (isSerializeEnabled()) {
-                    submitSerialize(spec);
-                }
             } finally {
                 SpecificationUtil.endScope();
             }
@@ -699,7 +673,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
 
     public void destroy() {
         _destroyed = true;
-        disableSerialize();
     }
 
     public void reset() {
@@ -771,19 +744,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             }
         } else if (NO_CACHE_VALUE.equals(name)) {
             _noCacheValue = value;
-        } else if (PAGE_SERIALIZE.equals(name)) {
-            boolean booleanValue = Boolean.valueOf(value).booleanValue();
-            if (booleanValue) {
-                boolean result = enableSerialize();
-                if (!result) {
-                    // 準備に失敗した場合はシリアライズは有効にしない。
-                    value = "false"; // superの呼び出しに対して "false" を渡す
-                }
-            }
-            else {
-                // シリアライズを無効にした場合は後片付けをする。
-                disableSerialize();
-            }
         } else if (SURVIVE_LIMIT.equals(name)) {
             _surviveLimit = Integer.parseInt(value);
         } else if (FORWARD_LIMIT.equals(name)) {
@@ -798,46 +758,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             _autoEscapeEnabled = Boolean.parseBoolean(value);
         }
         super.setParameter(name, value);
-    }
-
-    /**
-     * Specificationのシリアライズを行うかどうかを返却する。
-     * 
-     * @return 有効な場合は true
-     */
-    boolean isSerializeEnabled() {
-        return _serializeExecutor != null;
-    }
-
-    /**
-     * シリアライズ処理を実行する。
-     * @param spec シリアライズ対象のSpecification
-     */
-    void submitSerialize(final Specification spec) {
-        final SerializeExecutor executor = _serializeExecutor;
-        if (executor != null) {
-            executor.submit(spec);
-        }
-    }
-
-    /**
-     * シリアライズ処理を有効にする
-     * @return 有効化が成功したらtrue
-     */
-    synchronized boolean enableSerialize() {
-        final boolean result = SpecificationUtil.prepareSerialize();
-        if (result && _serializeExecutor == null) {
-            _serializeExecutor = new SerializeExecutor();
-        }
-        return result;
-    }
-
-    /**
-     * シリアライズ処理を無効にする
-     */
-    synchronized void disableSerialize() {
-        _serializeExecutor = null;
-        SpecificationUtil.cleanupSerialize();
     }
 
     private void setupDefaultIsMayaa() {
@@ -869,8 +789,6 @@ public class EngineImpl extends NonSerializableParameterAwareImpl implements Eng
             return _templateClass.getName();
         } else if (NO_CACHE_VALUE.equals(name)) {
             return _noCacheValue;
-        } else if (PAGE_SERIALIZE.equals(name)) {
-            return String.valueOf(isSerializeEnabled());
         } else if (SURVIVE_LIMIT.equals(name)) {
             return String.valueOf(_surviveLimit);
         } else if (FORWARD_LIMIT.equals(name)) {

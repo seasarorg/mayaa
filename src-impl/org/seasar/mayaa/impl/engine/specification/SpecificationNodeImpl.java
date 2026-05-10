@@ -33,7 +33,6 @@ import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.Specification;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -294,12 +293,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
         return getNodeTreeWalker().isOnTemplate();
     }
 
-    // NodeReferenceResolverFinder implements ------------------------------------
-
-    public NodeReferenceResolver findNodeResolver() {
-        return getNodeTreeWalker().findNodeResolver();
-    }
-
     // for serialize
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -333,7 +326,6 @@ public class SpecificationNodeImpl extends NamespaceImpl
         if (nscheck instanceof NamespaceImpl) {
             setParentSpace((Namespace)nscheck);
         }
-        findNodeResolver().nodeLoaded(this);
     }
 
     private Object readResolve() {

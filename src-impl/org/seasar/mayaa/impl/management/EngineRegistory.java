@@ -77,29 +77,6 @@ public class EngineRegistory {
             }
 
             @Override
-            public boolean isSerializingEnabled() {
-                if (engine instanceof EngineImpl) {
-                    String serialingEnabled = ((EngineImpl) engine).getParameter(EngineImpl.PAGE_SERIALIZE);
-                    if (serialingEnabled != null && "true".equals(serialingEnabled)) {
-                        return true;
-                    }
-                    return false;
-                } else {
-                    throw new UnsupportedOperationException("Serializing specs is not supported");
-                }
-            }
-
-            @Override
-            public void setSerializingEnabled(boolean serializatingEnabled) {
-                if (engine instanceof EngineImpl) {
-                    String value = serializatingEnabled ? "true": "false";
-                    ((EngineImpl) engine).setParameter(EngineImpl.PAGE_SERIALIZE, value);
-                } else {
-                    throw new UnsupportedOperationException("Serializing spec is not supported");
-                }
-            }
-
-            @Override
             public void deprecateSpecification(String systemID, boolean withSerialized) {
                 if (engine instanceof EngineImpl) {
                     ((EngineImpl) engine).deprecateSpecification(systemID, withSerialized);

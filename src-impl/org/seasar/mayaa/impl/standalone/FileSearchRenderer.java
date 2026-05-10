@@ -148,7 +148,6 @@ public class FileSearchRenderer {
         // 不要な設定を強制的に止める
         Engine engine = ProviderUtil.getEngine();
         engine.setParameter(EngineImpl.SURVIVE_LIMIT, "1");
-        engine.setParameter(EngineImpl.PAGE_SERIALIZE, "false");
 
         LOG.info("init end");
     }

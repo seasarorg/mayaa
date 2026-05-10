@@ -38,7 +38,6 @@ import org.seasar.mayaa.source.SourceHolder;
 public class PageSourceFactoryImpl extends ParameterAwareImpl
         implements PageSourceFactory {
 
-    private static final long serialVersionUID = 3334813227060846723L;
     private static final Log LOG = LogFactory.getLog(PageSourceFactoryImpl.class);
 
     private Object _context;

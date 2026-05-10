@@ -27,7 +27,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class PrefixAwareNameImpl implements PrefixAwareName {
-    private static final long serialVersionUID = -8898891078217203404L;
 
     private static final Cache<String, PrefixAwareName> _cache = Caffeine.newBuilder()
         .softValues()

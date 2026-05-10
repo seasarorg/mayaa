@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.Serializable;
 import org.seasar.mayaa.engine.specification.PrefixMapping;
 import org.seasar.mayaa.engine.specification.URI;
 
@@ -25,8 +24,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PrefixMappingImpl implements PrefixMapping, Serializable {
-    private static final long serialVersionUID = -7627574345551562433L;
+public class PrefixMappingImpl implements PrefixMapping {
 
     private static final Cache<String, PrefixMapping> _cache = Caffeine.newBuilder()
             .softValues()

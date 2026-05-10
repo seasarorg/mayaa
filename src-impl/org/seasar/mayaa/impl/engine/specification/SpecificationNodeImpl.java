@@ -40,7 +40,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class SpecificationNodeImpl extends NamespaceImpl
         implements SpecificationNode, CONST_IMPL {
 
-    private static final long serialVersionUID = 7084397580802643259L;
     private static final Log LOG = LogFactory.getLog(SpecificationNodeImpl.class);
     private static final CopyToFilter FILTER_ALL = new AllCopyToFilter();
 

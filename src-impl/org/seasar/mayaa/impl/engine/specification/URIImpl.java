@@ -23,7 +23,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public final class URIImpl implements URI {
-    private static final long serialVersionUID = 7985133276316017754L;
 
     private static final Cache<String, URIImpl> _cache = Caffeine.newBuilder()
         .softValues()

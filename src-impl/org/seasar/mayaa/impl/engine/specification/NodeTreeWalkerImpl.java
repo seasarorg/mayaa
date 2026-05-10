@@ -28,7 +28,6 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
  */
 public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
-    private static final long serialVersionUID = 2482332186727952663L;
 
     private transient NodeTreeWalker _parent;
     private List<NodeTreeWalker> _childNodes;

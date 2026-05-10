@@ -15,16 +15,12 @@
  */
 package org.seasar.mayaa.engine.processor;
 
-import java.io.Serializable;
-
 /**
  * プロセッサ動作にて状態遷移を示すステータス。
  *
  * @author Koji Suga (Gluegent Inc.)
  */
-public class ProcessStatus implements Serializable {
-
-    private static final long serialVersionUID = 473586899180314059L;
+public class ProcessStatus {
 
     private String _status;
 

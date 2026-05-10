@@ -38,7 +38,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 public class TemplateProcessorSupport
         implements TemplateProcessor, OptimizableProcessor {
 
-    private static final long serialVersionUID = -2563169515122616036L;
     private static final String PREFIX_UNIQUE_ID = "_m";
 
     private transient ProcessorTreeWalker _parent;

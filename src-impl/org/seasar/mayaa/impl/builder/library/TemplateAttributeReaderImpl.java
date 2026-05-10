@@ -37,7 +37,6 @@ public class TemplateAttributeReaderImpl
         extends ParameterAwareImpl
         implements TemplateAttributeReader {
 
-    private static final long serialVersionUID = -7340519771743083660L;
 
     private Set<AttributeKey> _ignoreAttributes;
     private Map<AttributeKey, String> _aliasAttributes;

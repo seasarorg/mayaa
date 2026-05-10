@@ -31,7 +31,6 @@ import org.seasar.mayaa.impl.util.collection.EnumerationIterator;
 public class HeaderValuesScope
         extends AbstractReadOnlyAttributeScope {
 
-    private static final long serialVersionUID = -7755074034945921281L;
 
     private transient HttpServletRequest _request;
 

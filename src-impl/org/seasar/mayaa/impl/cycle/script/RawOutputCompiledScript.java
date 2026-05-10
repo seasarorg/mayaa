@@ -22,7 +22,6 @@ import org.seasar.mayaa.cycle.script.CompiledScript;
  */
 public class RawOutputCompiledScript implements CompiledScript {
 
-    private static final long serialVersionUID = -4216755215482335032L;
 
     private final CompiledScript _delegate;
 

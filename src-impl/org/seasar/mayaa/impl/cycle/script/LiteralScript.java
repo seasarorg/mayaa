@@ -26,7 +26,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class LiteralScript implements CompiledScript {
 
-    private static final long serialVersionUID = 5290750739909753829L;
 
     public static final LiteralScript NULL_LITERAL_SCRIPT = new LiteralScript("");
 

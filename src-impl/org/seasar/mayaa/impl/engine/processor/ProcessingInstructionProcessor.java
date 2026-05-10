@@ -27,7 +27,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ProcessingInstructionProcessor
         extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 6717263251948534639L;
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 

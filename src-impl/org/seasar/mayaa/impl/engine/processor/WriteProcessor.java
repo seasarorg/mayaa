@@ -38,7 +38,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class WriteProcessor extends AbstractAttributableProcessor {
 
-    private static final long serialVersionUID = -3040062846167228914L;
     private static final String BODY_VARIABLE_NAME = "bodyText";
     private boolean _forHTML;
     private boolean _forHyperText;

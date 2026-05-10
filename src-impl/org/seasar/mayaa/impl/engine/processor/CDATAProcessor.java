@@ -30,7 +30,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
 public class CDATAProcessor extends TemplateProcessorSupport
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = -4267623139201513906L;
     private static final String CDATAIN = "<![CDATA[";
     private static final String CDATAOUT = "]]>";
 

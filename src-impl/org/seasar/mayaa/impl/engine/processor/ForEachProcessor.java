@@ -36,7 +36,6 @@ import org.seasar.mayaa.impl.util.IteratorUtil;
 public class ForEachProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = -7637319706130893009L;
 
     private static final String PROCESS_TIME_INFO_KEY =
             ForEachProcessor.class.getName() + "#processTimeInfo";

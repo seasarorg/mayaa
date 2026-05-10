@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.engine.specification;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.PositionAware;
@@ -23,7 +22,7 @@ import org.seasar.mayaa.PositionAware;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface NodeTreeWalker extends PositionAware, Serializable {
+public interface NodeTreeWalker extends PositionAware {
 
     /**
      * 親ノードの設定をセットする。

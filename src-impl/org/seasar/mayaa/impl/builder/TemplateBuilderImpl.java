@@ -81,7 +81,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
 
     private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
-    private static final long serialVersionUID = -1031702086020145692L;
 
     private List<InjectionResolver> _resolvers = new ArrayList<>();
     private List<InjectionResolver> _unmodifiableResolvers = Collections.unmodifiableList(_resolvers);

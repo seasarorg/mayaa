@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,7 +52,6 @@ public class InsertProcessor
         extends TemplateProcessorSupport
         implements CONST_IMPL, InformalPropertyAcceptable, VirtualPropertyAcceptable {
 
-    private static final long serialVersionUID = -8902501079316706769L;
 
     private static final String RENDERING_INSERT_CHAIN =
         InsertProcessor.class.getName() + "#renderingInsertChain";
@@ -84,7 +82,7 @@ public class InsertProcessor
     private ProcessorProperty _name;
     private transient PathPart _pathPart;
 
-    private List<Serializable> _attributes;
+    private List<Object> _attributes;
 
     /**
      * 相対パスを解決、分解して拡張子などをあらかじめ取得する。
@@ -138,7 +136,7 @@ public class InsertProcessor
     }
 
     // MLD method
-    public void addInformalProperty(PrefixAwareName name, Serializable attr) {
+    public void addInformalProperty(PrefixAwareName name, Object attr) {
         if (_attributes == null) {
             _attributes = new ArrayList<>();
         }
@@ -172,7 +170,7 @@ public class InsertProcessor
      * @param name プロパティ名。
      * @param attr プロパティ値。
      */
-    public void addVirtualProperty(PrefixAwareName name, Serializable attr) {
+    public void addVirtualProperty(PrefixAwareName name, Object attr) {
         addInformalProperty(name, attr);
     }
 
@@ -190,7 +188,7 @@ public class InsertProcessor
         return getInformalExpectedClass();
     }
 
-    public List<Serializable> getInformalProperties() {
+    public List<Object> getInformalProperties() {
         if (_attributes == null) {
             _attributes = new ArrayList<>();
         }

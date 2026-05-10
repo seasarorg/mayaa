@@ -8,7 +8,6 @@ import org.seasar.mayaa.impl.ParameterAwareImpl;
 
 public class ParentSpecificationResolverImpl extends ParameterAwareImpl implements ParentSpecificationResolver {
 
-    private static final long serialVersionUID = 8831606528015900173L;
 
     public Specification getParentSpecification(Specification spec) {
         if (spec instanceof Page) {

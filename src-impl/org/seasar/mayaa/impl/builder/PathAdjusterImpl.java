@@ -62,7 +62,6 @@ public class PathAdjusterImpl
         extends ParameterAwareImpl
         implements PathAdjuster, CONST_IMPL {
 
-    private static final long serialVersionUID = -6683061623840171581L;
 
     private String[][] _adjustTarget;
 

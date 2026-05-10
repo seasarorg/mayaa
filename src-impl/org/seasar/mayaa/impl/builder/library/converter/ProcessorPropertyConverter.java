@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder.library.converter;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.builder.library.converter.PropertyConverter;
 import org.seasar.mayaa.engine.processor.ProcessorProperty;
 import org.seasar.mayaa.engine.specification.NodeAttribute;
@@ -31,13 +29,12 @@ import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 public class ProcessorPropertyConverter
         extends ParameterAwareImpl implements PropertyConverter {
 
-    private static final long serialVersionUID = -6093527316881781459L;
 
     public Class<?> getPropetyClass() {
         return ProcessorProperty.class;
     }
 
-    public Serializable convert(
+    public Object convert(
             NodeAttribute attribute, String value, Class<?> expectedClass) {
         if (attribute == null || expectedClass == null) {
             throw new IllegalArgumentException();

@@ -36,7 +36,6 @@ public class MetaInfSourceScanner extends ParameterAwareImpl
     
     private static final Log LOG = LogFactory.getLog(MetaInfSourceScanner.class.getName());
 
-    private static final long serialVersionUID = -7285416169718204350L;
 
     private FolderSourceScanner _folderScanner = new FolderSourceScanner();
     private Set<String> _ignores = new HashSet<>();

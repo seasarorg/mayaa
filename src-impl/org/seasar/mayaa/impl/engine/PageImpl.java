@@ -42,7 +42,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class PageImpl extends SpecificationImpl implements Page {
 
-    private static final long serialVersionUID = -4473136348846078029L;
     static final Log LOG = LogFactory.getLog(PageImpl.class);
     private static final String CURRENT_PAGE_KEY = "__currentPage__";
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";

@@ -20,6 +20,5 @@ package org.seasar.mayaa.impl.engine.processor;
  */
 public class DoBodyProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -5462533588574819934L;
 
 }

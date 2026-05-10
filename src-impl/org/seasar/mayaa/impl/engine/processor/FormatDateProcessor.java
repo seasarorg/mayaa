@@ -36,7 +36,6 @@ import org.seasar.mayaa.impl.util.DateFormatPool;
  */
 public class FormatDateProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -2331626109260967664L;
 
     private ProcessorProperty _value;
     private ProcessorProperty _default;

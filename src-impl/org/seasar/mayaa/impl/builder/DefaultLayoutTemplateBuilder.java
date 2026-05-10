@@ -43,7 +43,6 @@ public class DefaultLayoutTemplateBuilder extends TemplateBuilderImpl {
 
     private static final Log LOG = LogFactory.getLog(DefaultLayoutTemplateBuilder.class);
 
-    private static final long serialVersionUID = 6472968108941224353L;
 
     private String _defaultLayoutPageName;
     private boolean _generateMayaaNode;

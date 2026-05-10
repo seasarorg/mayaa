@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder.library;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,7 +45,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ProcessorDefinitionImpl extends PropertySetImpl
         implements ProcessorDefinition, CONST_IMPL {
 
-    private static final long serialVersionUID = -9158405427849768423L;
     private Class<?> _processorClass;
     private List<PropertySetRef> _propertySetRefs;
 
@@ -143,23 +141,9 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             } else if (processor instanceof VirtualPropertyAcceptable) {
                 VirtualPropertyAcceptable acceptable =
                     (VirtualPropertyAcceptable) processor;
-                if (value instanceof Serializable) {
-                    PrefixAwareName name =
-                        getPrefixAwareName(injected, property.getName());
-                    acceptable.addVirtualProperty(name, (Serializable) value);
-                } else {
-                    DiagnosticEventBuffer.recordWarn(
-                            DiagnosticEventBuffer.Phase.BUILD,
-                            "nonSerializableVirtualProperty",
-                            original.getSystemID(),
-                            StringUtil.getMessage(
-                                    ProcessorDefinitionImpl.class, 3,
-                                    processorClass.getName(), propertyImplName,
-                                    value.getClass().getName()),
-                            propertyImplName,
-                            null,
-                            original);
-                }
+                PrefixAwareName name =
+                    getPrefixAwareName(injected, property.getName());
+                acceptable.addVirtualProperty(name, value);
             } else {
                 DiagnosticEventBuffer.recordWarn(
                         DiagnosticEventBuffer.Phase.BUILD,
@@ -216,7 +200,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
             }
             Class<?> expectedClass = acceptable.getInformalExpectedClass();
             String value = attr.getValue();
-            Serializable property = converter.convert(attr, value, expectedClass);
+            Object property = converter.convert(attr, value, expectedClass);
             if (property == null) {
                 throw new ConverterOperationException(converter, value);
             }
@@ -248,9 +232,7 @@ public class ProcessorDefinitionImpl extends PropertySetImpl
 
     // support class ------------------------------------------------
 
-    protected static class PropertySetRef implements Serializable {
-
-        private static final long serialVersionUID = -3425332447146558868L;
+    protected static class PropertySetRef {
 
         private String _name;
         private String _systemID;

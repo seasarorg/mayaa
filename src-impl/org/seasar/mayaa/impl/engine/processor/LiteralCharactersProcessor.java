@@ -27,7 +27,6 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class LiteralCharactersProcessor extends TemplateProcessorSupport implements CONST_IMPL {
-    private static final long serialVersionUID = -9037177269127933225L;
 
     private String _text;
 

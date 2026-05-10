@@ -40,7 +40,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class TextCompiledScriptImpl extends AbstractTextCompiledScript {
 
-    private static final long serialVersionUID = 5513642435649631129L;
 
     private final String _sourceName;
     private final int _lineNumber;

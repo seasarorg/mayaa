@@ -27,7 +27,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class IfProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -4914634098254767485L;
 
     private ProcessorProperty _test;
 

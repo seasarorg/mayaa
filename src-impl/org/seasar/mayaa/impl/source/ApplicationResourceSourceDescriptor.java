@@ -39,7 +39,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
         implements ChangeableRootSourceDescriptor {
 
-    private static final long serialVersionUID = -2775274363708858237L;
     static final Log LOG = LogFactory.getLog(ApplicationResourceSourceDescriptor.class);
 
     private transient ApplicationScope _application;

@@ -25,7 +25,6 @@ import org.seasar.mayaa.impl.engine.RenderUtil;
  */
 public class DoBaseProcessor extends DoBodyProcessor {
 
-    private static final long serialVersionUID = 6825307534213593235L;
 
     protected InsertProcessor getInsertProcessor() {
         for (ProcessorTreeWalker current = this;

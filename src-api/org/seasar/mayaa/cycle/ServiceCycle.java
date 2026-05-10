@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.cycle;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.seasar.mayaa.ParameterAware;
@@ -32,7 +31,7 @@ import org.seasar.mayaa.engine.specification.NodeTreeWalker;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ServiceCycle
-        extends ParameterAware, Serializable {
+        extends ParameterAware {
 
     /**
      * アプリケーションレベルスコープ。

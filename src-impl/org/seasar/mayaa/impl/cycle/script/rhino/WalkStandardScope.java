@@ -38,7 +38,6 @@ import org.seasar.mayaa.impl.cycle.scope.ScopeNotWritableException;
  */
 public class WalkStandardScope extends ParameterAwareImpl implements AttributeScope {
 
-    private static final long serialVersionUID = -2952128451664421957L;
 
     public static final String SCOPE_NAME = "_";
 

@@ -81,7 +81,6 @@ public class JspProcessor extends TemplateProcessorSupport
             TryCatchFinallyProcessor,
             CONST_IMPL {
 
-    private static final long serialVersionUID = 7946370958046466257L;
 
     private static final PageContext _pageContext = new PageContextImpl();
 

@@ -45,7 +45,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public abstract class AbstractGetterScript extends AbstractTextCompiledScript {
 
-    private static final long serialVersionUID = 1L;
 
     private static final Log LOG = LogFactory.getLog(AbstractGetterScript.class);
 

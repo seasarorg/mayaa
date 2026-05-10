@@ -39,7 +39,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class CycleFactoryImpl
         extends ParameterAwareImpl implements CycleFactory {
 
-    private static final long serialVersionUID = 6930908159752133949L;
     private static final Log LOG = LogFactory.getLog(CycleFactoryImpl.class);
 
     private static ThreadLocal<Object[]> _currentCycle = new ThreadLocal<>();

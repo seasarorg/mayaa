@@ -49,7 +49,6 @@ public class TemplateImpl
         extends SpecificationImpl
         implements Template {
 
-    private static final long serialVersionUID = 2126209350220642842L;
 
     private String _pageName;
     private String _suffix;

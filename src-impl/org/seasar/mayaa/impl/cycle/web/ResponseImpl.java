@@ -30,7 +30,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class ResponseImpl extends AbstractResponse {
 
-    private static final long serialVersionUID = -4653384671998376182L;
 
     private HttpServletResponse _httpServletResponse;
     private transient ResponseHeaderCache _headers = new ResponseHeaderCache();

@@ -37,7 +37,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class SpecificationImpl extends ParameterAwareImpl implements Specification {
 
-    private static final long serialVersionUID = -7503898036935182468L;
 
     private static final Log LOG =
         LogFactory.getLog(SpecificationImpl.class);

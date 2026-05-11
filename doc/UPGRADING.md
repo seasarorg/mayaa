@@ -5,6 +5,7 @@
 ## 目次
 - [1.3.x から 2.0.0 へのアップグレード](#13x-から-200-へのアップグレード)
   - [Java 21 / Jakarta EE 10 への移行（必須要件変更）](#java-21--jakarta-ee-10-への移行必須要件変更)
+  - [シリアライズ機能の廃止](#シリアライズ機能の廃止)
   - [依存ライブラリの変更](#依存ライブラリの変更)
   - [JavaScript エンジン (Rhino) 1.7R2 → 1.9.1 へのアップグレード（動作変更）](#javascript-エンジン-rhino-17r2--191-へのアップグレード動作変更)
   - [`DefaultLayoutTemplateBuilder.setupExtends` のシグネチャ変更（非互換）](#defaultlayouttemplatebuildersetupextends-のシグネチャ変更非互換)
@@ -59,6 +60,23 @@ Tomcat 9 以下、WildFly 26 以下、Spring Boot 2.x は対象外です。
 - JSTL の実装ライブラリは `jakarta.servlet.jsp.jstl`（`org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.x`）が必要です
 
 ---
+
+### シリアライズ機能の廃止
+Mayaaのテンプレート構造シリアライズ機能は、サーバ性能やメモリ制約が厳しかった時代の名残です。現代のサーバ・コンテナ環境ではテンプレートの都度ビルドが十分高速であり、ファイル永続化は推奨されません。今後は全てメモリキャッシュ運用が前提となります。
+
+- **内部API メソッドシグネチャ変更**
+
+  （継承して拡張クラスを開発されている場合は非互換となります）
+    - `Serializable` 型を引数・戻り値に持つAPI（addInformalProperty, addVirtualProperty, PropertyConverter.convert など）は、すべて `Object` 型に変更されました。
+    - 既存の実装クラス・呼び出しコードで `Serializable` 型を前提としている場合は `Object` への修正が必要です。
+
+- **設定項目 `pageSerialize` の廃止:**
+    - `ServiceProvider` 設定や mayaa.xml で利用されていた `pageSerialize` オプションは廃止されました。
+    - テンプレート構造の永続化（シリアライズ保存）は今後サポートされません。
+
+- **JMXインタフェースからシリアライズ関連メソッドの廃止:**
+    - JMX経由でテンプレートやSpecificationをシリアライズ/デシリアライズする操作は削除されました。
+    - 監視・管理用途でJMXを利用している場合、該当メソッド呼び出しは削除してください。
 
 ### 依存ライブラリの変更
 

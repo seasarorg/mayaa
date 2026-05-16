@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.script.rhino;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +29,7 @@ import org.seasar.mayaa.cycle.scope.AttributeScope;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class WrapFactoryImpl extends WrapFactory implements Serializable {
-
-    private static final long serialVersionUID = -8130663823197873722L;
+public class WrapFactoryImpl extends WrapFactory {
 
     @Override
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,

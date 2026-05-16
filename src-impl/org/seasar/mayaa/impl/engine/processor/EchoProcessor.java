@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,7 +42,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class EchoProcessor extends ElementProcessor {
 
-    private static final long serialVersionUID = -3474634644850330323L;
 
     private PrefixAwareName _customName;
     public void setOriginalNode(SpecificationNode originalNode) {
@@ -106,7 +104,7 @@ public class EchoProcessor extends ElementProcessor {
             NodeAttribute attribute = it.next();
             String value = getAdjustedValue(adjuster, originalNode, attribute);
             Class<?> expectedClass = getExpectedClass();
-            Serializable property = converter.convert(attribute, value, expectedClass);
+            Object property = converter.convert(attribute, value, expectedClass);
             PrefixAwareName propName = SpecificationUtil.createPrefixAwareName(
                     attribute.getQName(), attribute.getPrefix());
             super.addInformalProperty(propName, property);
@@ -125,7 +123,7 @@ public class EchoProcessor extends ElementProcessor {
 
     // ProcessorTreeWalker implements --------------------------------
     public Map<String, Object> getVariables() {
-        Iterator<Serializable> it = iterateInformalProperties();
+        Iterator<Object> it = iterateInformalProperties();
         if (it.hasNext()) {
             Map<String, Object> attributeMap = new HashMap<>();
             while (it.hasNext()) {

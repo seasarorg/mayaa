@@ -28,7 +28,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class DoRenderProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -4923388726582458101L;
 
     private transient String _stackKey;
     private boolean _replace = true;

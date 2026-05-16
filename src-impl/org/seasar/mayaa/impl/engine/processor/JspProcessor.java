@@ -81,7 +81,6 @@ public class JspProcessor extends TemplateProcessorSupport
             TryCatchFinallyProcessor,
             CONST_IMPL {
 
-    private static final long serialVersionUID = 7946370958046466257L;
 
     private static final PageContext _pageContext = new PageContextImpl();
 
@@ -557,14 +556,6 @@ public class JspProcessor extends TemplateProcessorSupport
         } else {
             throw new IllegalStateException();
         }
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        _variableInfo = new TLDScriptingVariableInfo();
     }
 
     // support class

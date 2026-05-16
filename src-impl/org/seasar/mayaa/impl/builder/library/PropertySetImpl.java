@@ -38,7 +38,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PropertySetImpl extends ParameterAwareImpl
         implements PropertySet {
 
-    private static final long serialVersionUID = 6254708300179494624L;
     private static final Log LOG =
         LogFactory.getLog(PropertySetImpl.class);
 

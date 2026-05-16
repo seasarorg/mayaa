@@ -51,7 +51,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class PathRelativeAdjusterImpl extends PathAdjusterImpl {
 
-    private static final long serialVersionUID = -1408738254857321372L;
 
     /**
      * @see PathAdjusterImpl#PathAdjusterImpl()

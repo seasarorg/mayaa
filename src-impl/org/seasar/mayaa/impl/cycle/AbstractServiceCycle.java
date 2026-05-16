@@ -41,7 +41,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractServiceCycle
         extends ParameterAwareImpl implements ServiceCycle, CONST_IMPL {
 
-    private static final long serialVersionUID = -4084527796306356704L;
 
     private AttributeScope _page;
     private NodeTreeWalker _originalNode;

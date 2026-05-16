@@ -24,7 +24,6 @@ import org.seasar.mayaa.impl.cycle.script.ScriptUtil;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProcessorPropertyImpl implements ProcessorProperty {
-    private static final long serialVersionUID = -3871000102668243504L;
 
     private PrefixAwareName _name;
     private CompiledScript _compiled;

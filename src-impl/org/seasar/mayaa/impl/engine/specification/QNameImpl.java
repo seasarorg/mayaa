@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.Serializable;
 import java.util.Objects;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.URI;
@@ -29,8 +28,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Taro Kato (Gluegent, Inc.)
  */
-public final class QNameImpl implements QName, CONST_IMPL, Serializable {
-    private static final long serialVersionUID = 2143966034062341815L;
+public final class QNameImpl implements QName, CONST_IMPL {
 
     private static final Cache<String, QName> _cache = Caffeine.newBuilder()
         .softValues()
@@ -52,10 +50,6 @@ public final class QNameImpl implements QName, CONST_IMPL, Serializable {
 
     private URI _namespaceURI;
     private String _localName;
-
-    private QNameImpl() {
-        // for serialize
-    }
 
     private QNameImpl(URI namespaceURI, String localName) {
         if (namespaceURI == null || localName == null || localName.isEmpty()) {
@@ -109,9 +103,4 @@ public final class QNameImpl implements QName, CONST_IMPL, Serializable {
     public int hashCode() {
         return Objects.hash(_localName, _namespaceURI);
     }
-
-    private Object readResolve() {
-        return getInstance(_namespaceURI, _localName);
-    }
-
 }

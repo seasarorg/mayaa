@@ -35,7 +35,6 @@ import org.seasar.mayaa.provider.ServiceProvider;
 public class ServiceProviderImpl extends ParameterAwareImpl
         implements ServiceProvider, CONST_IMPL {
 
-    private static final long serialVersionUID = -8659297907641816962L;
 
     private Engine _engine;
     private ScriptEnvironment _scriptEnvironment;

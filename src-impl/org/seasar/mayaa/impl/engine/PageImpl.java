@@ -42,7 +42,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class PageImpl extends SpecificationImpl implements Page {
 
-    private static final long serialVersionUID = -4473136348846078029L;
     static final Log LOG = LogFactory.getLog(PageImpl.class);
     private static final String CURRENT_PAGE_KEY = "__currentPage__";
     private static final String CURRENT_COMPONENT_KEY = "__currentComponent__";
@@ -242,13 +241,6 @@ public class PageImpl extends SpecificationImpl implements Page {
 
     public static void setCurrentComponent(Page component) {
         CycleUtil.getRequestScope().setAttribute(CURRENT_COMPONENT_KEY, component);
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
     }
 
     // TemplateRenderer implements ----------------------------------

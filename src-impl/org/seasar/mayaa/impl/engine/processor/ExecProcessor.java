@@ -31,7 +31,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class ExecProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -1721362692638672941L;
 
     private ProcessorProperty _script;
     private ProcessorProperty _src;

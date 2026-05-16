@@ -36,7 +36,6 @@ import org.seasar.mayaa.impl.util.IteratorUtil;
 public class ForEachProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = -7637319706130893009L;
 
     private static final String PROCESS_TIME_INFO_KEY =
             ForEachProcessor.class.getName() + "#processTimeInfo";
@@ -147,13 +146,6 @@ public class ForEachProcessor extends TemplateProcessorSupport
                     _items.getValue().getScriptText(), null, getOriginalNode(), e);
             throw e;
         }
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
     }
 
     // support class

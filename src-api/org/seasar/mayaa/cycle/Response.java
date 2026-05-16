@@ -16,7 +16,6 @@
 package org.seasar.mayaa.cycle;
 
 import java.io.OutputStream;
-import java.io.Serializable;
 
 import org.seasar.mayaa.ContextAware;
 
@@ -25,7 +24,7 @@ import org.seasar.mayaa.ContextAware;
  * レスポンスのインターフェイス。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface Response extends Serializable, ContextAware  {
+public interface Response extends ContextAware {
 
     /**
      * コンテンツタイプの指定を行う。

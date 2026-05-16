@@ -24,7 +24,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class DirectiveProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -5887789605135227245L;
 
     private static final String AUTO_ESCAPE_DIRECTIVE_NAME = "autoEscape";
 

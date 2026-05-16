@@ -31,7 +31,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
 public class ForProcessor extends TemplateProcessorSupport
         implements IterationProcessor {
 
-    private static final long serialVersionUID = 109332595431942951L;
 
     private static final int DEFAULT_MAX = 256;
     private static final String COUNTER_KEY = ForProcessor.class.getName() + "#counter";
@@ -135,13 +134,6 @@ public class ForProcessor extends TemplateProcessorSupport
                     _test != null ? _test.getValue().getScriptText() : null, null, getOriginalNode(), e);
             throw e;
         }
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
     }
 
 }

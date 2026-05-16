@@ -15,38 +15,22 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.builder.SequenceIDGenerator;
-import org.seasar.mayaa.builder.library.LibraryManager;
 import org.seasar.mayaa.builder.library.ProcessorDefinition;
 import org.seasar.mayaa.engine.Page;
 import org.seasar.mayaa.engine.processor.OptimizableProcessor;
 import org.seasar.mayaa.engine.processor.ProcessStatus;
 import org.seasar.mayaa.engine.processor.ProcessorTreeWalker;
 import org.seasar.mayaa.engine.processor.TemplateProcessor;
-import org.seasar.mayaa.engine.specification.Namespace;
-import org.seasar.mayaa.engine.specification.NodeTreeWalker;
 import org.seasar.mayaa.engine.specification.QName;
 import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.engine.specification.URI;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
-import org.seasar.mayaa.engine.specification.serialize.NodeResolveListener;
-import org.seasar.mayaa.engine.specification.serialize.ProcessorReferenceResolver;
 import org.seasar.mayaa.impl.CONST_IMPL;
-import org.seasar.mayaa.impl.engine.specification.QNameImpl;
-import org.seasar.mayaa.impl.engine.specification.URIImpl;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
-import org.seasar.mayaa.impl.engine.specification.serialize.ProcessorSerializeController;
-import org.seasar.mayaa.impl.provider.ProviderUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -54,8 +38,6 @@ import org.seasar.mayaa.impl.provider.ProviderUtil;
 public class TemplateProcessorSupport
         implements TemplateProcessor, OptimizableProcessor {
 
-    private static final long serialVersionUID = -2563169515122616036L;
-    private static final Log LOG = LogFactory.getLog(TemplateProcessorSupport.class);
     private static final String PREFIX_UNIQUE_ID = "_m";
 
     private transient ProcessorTreeWalker _parent;
@@ -252,154 +234,6 @@ public class TemplateProcessorSupport
 
     public void kill() {
         // TODO deprecated のため削除予定
-    }
-
-    // for serialize
-    private static final String UNIQUENESS_MARK = "<<root>>";
-
-    /**
-     * Serializable用の読込みメソッド。
-     * プロセッサのインスタンス情報を書き込んだ後に参照先のノードのIDを書き込む。
-     */
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        String originalNodeID = NodeSerializeController.makeKey(_originalNode);
-        String uniqueID = getUniqueID();
-        out.writeUTF(originalNodeID);
-        out.writeUTF(uniqueID);
-        out.writeUTF(_definition.getLibraryDefinition().getNamespaceURI().getValue());
-        out.writeUTF(_definition.getName());
-
-        NodeSerializeController controller = NodeSerializeController.currentInstance();
-        if (controller.collectNode(_injectedNode)) {
-        	// オリジナルの保存
-        	out.writeUTF(UNIQUENESS_MARK);
-        	out.writeObject(_injectedNode);
-        } else {
-        	// 参照の保存
-        	out.writeUTF(NodeSerializeController.makeKey(_injectedNode));
-        }
-        /*
-        if (_injectedNode.getParentNode() != null && !(getParentProcessor() instanceof Template)) {
-            String injectedNodeID = NodeSerializeController.makeKey(_injectedNode);
-            out.writeUTF(injectedNodeID);
-        } else {
-            out.writeUTF(DUPLICATE_ROOT_MARK);
-            out.writeObject(_injectedNode);
-        }
-       	*/
-    }
-
-    /**
-     * Serializable用の読込みメソッド。
-     * プロセッサのインスタンス情報を読み込んだ後に参照先のノードの参照関係を復元する。
-     */
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        String originalNodeID = in.readUTF();
-        String processorUniqueID = in.readUTF();
-        String processorNamespaceURI = in.readUTF();
-        String processorLocalName = in.readUTF();
-
-        // 本プロセッサの定義情報への参照を再設定
-        final QName qName = QNameImpl.getInstance(URIImpl.getInstance(processorNamespaceURI), processorLocalName);
-        final LibraryManager libraryManager = ProviderUtil.getLibraryManager();
-        setProcessorDefinition(libraryManager.getProcessorDefinition(qName));
-
-        // 本プロセッサが参照しているオリジナルノードがデシリアライズされた際に通知を受けるリスナを登録する。
-        // リスナが呼び出されるのは、NodeSerializerがでシリアライズ過程でcollectNodeメソッドで収集したノード群を
-        // デシリアライズ完了時に検査して、指定したノードIDのノードが含まれていたとき。
-        NodeResolveListener listener = new TemplateProcessorSupportOriginalNodeListener(this);
-        findNodeResolver().registResolveNodeListener(originalNodeID, listener);
-
-        String injectedNodeID = in.readUTF();
-        if (UNIQUENESS_MARK.equals(injectedNodeID)) {
-            _injectedNode = (SpecificationNode) in.readObject();
-        } else {
-            listener = new TemplateProcessorSupportInjectedNodeListener(this);
-            findNodeResolver().registResolveNodeListener(injectedNodeID, listener);
-        }
-
-        ProcessorReferenceResolver resolver = findProcessorResolver();
-        resolver.processorLoaded(processorUniqueID, this);
-
-        // readResolveはextendsした最終クラスでしか発生しないので、ここで解決
-        if (_children != null) {
-            for (int i = _children.size() - 1; i >= 0 ; i--) {
-                ProcessorTreeWalker child =
-                    (ProcessorTreeWalker) _children.get(i);
-                child.setParentProcessor(this);
-            }
-        }
-        LOG.debug("templateProcessorSupport loaded");
-    }
-
-    protected void nodeLoadAfter() {
-        if (_originalNode != null && _injectedNode != null) {
-            Namespace parentSpace = getOriginalNode().getParentSpace();
-            if (parentSpace != null
-                    && getInjectedNode().getParentSpace() == null) {
-                getInjectedNode().setParentSpace(parentSpace);
-            }
-        }
-    }
-
-    private static class TemplateProcessorSupportOriginalNodeListener
-            implements NodeResolveListener {
-
-        private TemplateProcessorSupport _target;
-
-        public TemplateProcessorSupportOriginalNodeListener(
-                TemplateProcessorSupport target) {
-            _target = target;
-        }
-
-        public void notify(
-                String uniqueID, NodeTreeWalker loadedInstance) {
-            if (loadedInstance instanceof SpecificationNode) {
-                SpecificationNode specNode =
-                    (SpecificationNode)loadedInstance;
-                _target._originalNode = specNode;
-                _target.nodeLoadAfter();
-            }
-        }
-
-        public void release() {
-            _target = null;
-        }
-    }
-
-    private static class TemplateProcessorSupportInjectedNodeListener
-            implements NodeResolveListener {
-
-        private TemplateProcessorSupport _target;
-
-        public TemplateProcessorSupportInjectedNodeListener(
-                TemplateProcessorSupport target) {
-            _target = target;
-        }
-
-        public void notify(
-                String uniqueID, NodeTreeWalker loadedInstance) {
-            if (loadedInstance instanceof SpecificationNode) {
-                SpecificationNode specNode =
-                    (SpecificationNode)loadedInstance;
-                _target._injectedNode = specNode;
-                _target.nodeLoadAfter();
-            }
-        }
-
-        public void release() {
-            _target = null;
-        }
-    }
-
-    public ProcessorReferenceResolver findProcessorResolver() {
-        return ProcessorSerializeController.currentInstance();
-    }
-
-    public NodeReferenceResolver findNodeResolver() {
-        return NodeSerializeController.currentInstance();
     }
 
     /* (non-Javadoc)

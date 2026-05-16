@@ -15,13 +15,12 @@
  */
 package org.seasar.mayaa.cycle.script;
 
-import java.io.Serializable;
 
 /**
  * コンパイル済みのスクリプトオブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface CompiledScript extends Serializable {
+public interface CompiledScript {
 
     /**
      * コンパイル可能およびリテラルを問わず、入力テキストを取得する。

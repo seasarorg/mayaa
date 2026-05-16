@@ -25,7 +25,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public abstract class AbstractSourceCompiledScript
         extends AbstractCompiledScript implements CONST_IMPL {
 
-    private static final long serialVersionUID = -585846992294307594L;
 
     private SourceDescriptor _source;
     private String _encoding;

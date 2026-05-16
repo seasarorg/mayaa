@@ -31,7 +31,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class NodeAttributeImpl implements NodeAttribute {
 
-    private static final long serialVersionUID = -1384526104972846069L;
 
     private transient SpecificationNode _node;
     private QName _qName;

@@ -1,7 +1,5 @@
 package org.seasar.mayaa.impl.cycle;
 
-import java.io.Serializable;
-
 import org.seasar.mayaa.cycle.ServiceCycle;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -12,9 +10,7 @@ import org.seasar.mayaa.impl.util.StringUtil;
  *
  * @author Koji Suga (Gluegent, Inc.)
  */
-public class StandardScope implements Serializable {
-
-    private static final long serialVersionUID = -291469372635600135L;
+public class StandardScope {
 
     private String[] _scopeNames = new String[] {
         ServiceCycle.SCOPE_PAGE,

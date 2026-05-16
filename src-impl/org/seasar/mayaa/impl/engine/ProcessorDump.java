@@ -47,7 +47,6 @@ public class ProcessorDump extends ElementProcessor {
     // TODO EchoProcessorを継承して使っている部分をまとめる
     // TODO ServiceProviderで差し替え可能にする
 
-    private static final long serialVersionUID = 7884837912520558752L;
 
     private static final PrintStream DEFAULT_OUT = System.out;
 

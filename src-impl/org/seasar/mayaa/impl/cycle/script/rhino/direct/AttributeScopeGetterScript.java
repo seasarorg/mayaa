@@ -30,7 +30,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class AttributeScopeGetterScript extends AbstractGetterScript {
 
-    private static final long serialVersionUID = 1L;
 
     private static final String[] PROPERTY_NAMES =
         ObjectUtil.getPropertyNames(AttributeScope.class);

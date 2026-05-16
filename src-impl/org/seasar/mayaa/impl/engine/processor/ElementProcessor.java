@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +54,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ElementProcessor extends AbstractAttributableProcessor
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = 5281080116712303012L;
 
     private static final String SUFFIX_DUPLICATED = "_d";
     private static final String RENDERED_NS_STACK_KEY =
@@ -186,7 +184,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
             ProcessorProperty prop = it.next();
             resolvePrefix(prop.getName(), currentNS);
         }
-        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Object> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             resolvePrefix(prop.getName(), currentNS);
         }
@@ -397,7 +395,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 appendAttributeString(buffer, prop.getName(), prop.getValue());
             }
         }
-        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Object> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral() == false) {
@@ -412,7 +410,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
      * @param buffer 書き出す対象
      */
     protected void writePart3(StringBuilder buffer) {
-        for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
+        for (Iterator<Object> it = iterateInformalProperties(); it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (hasProcesstimeProperty(prop) == false
                     && prop.getValue().isLiteral()) {
@@ -578,7 +576,7 @@ public class ElementProcessor extends AbstractAttributableProcessor
                 attrScope.addChildProcessor(part2);
                 list.add(attrScope);
             }
-            for (Iterator<Serializable> it = iterateInformalProperties(); it.hasNext();) {
+            for (Iterator<Object> it = iterateInformalProperties(); it.hasNext();) {
                 ProcessorProperty prop = (ProcessorProperty) it.next();
                 if (hasProcesstimeProperty(prop) == false
                         && prop.getValue().isLiteral() == false) {

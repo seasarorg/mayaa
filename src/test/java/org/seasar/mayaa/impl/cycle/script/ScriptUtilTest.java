@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Undefined;
 import org.seasar.mayaa.cycle.script.CompiledScript;
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.cycle.scope.ParamScope;
 import org.seasar.mayaa.impl.engine.specification.QNameImpl;
@@ -101,9 +100,6 @@ public class ScriptUtilTest {
             public void setParentNode(NodeTreeWalker parentNode) {
                 throw new UnsupportedOperationException();
 
-            }
-            public NodeReferenceResolver findNodeResolver() {
-                throw new UnsupportedOperationException();
             }
         };
 

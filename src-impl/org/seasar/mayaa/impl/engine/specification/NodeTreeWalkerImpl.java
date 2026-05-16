@@ -22,15 +22,12 @@ import java.util.List;
 import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.NodeTreeWalker;
-import org.seasar.mayaa.engine.specification.serialize.NodeReferenceResolver;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 
 /**
  * @author Taro Kato (Gluegent, Inc.)
  */
 public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
-    private static final long serialVersionUID = 2482332186727952663L;
 
     private transient NodeTreeWalker _parent;
     private List<NodeTreeWalker> _childNodes;
@@ -148,10 +145,6 @@ public class NodeTreeWalkerImpl implements NodeTreeWalker {
 
     public boolean isOnTemplate() {
         return _onTemplate;
-    }
-
-    public NodeReferenceResolver findNodeResolver() {
-        return NodeSerializeController.currentInstance();
     }
 
     /* (non-Javadoc)

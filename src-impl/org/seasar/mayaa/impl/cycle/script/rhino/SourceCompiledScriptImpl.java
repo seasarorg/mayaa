@@ -36,7 +36,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
 public class SourceCompiledScriptImpl
 extends AbstractSourceCompiledScript {
 
-    private static final long serialVersionUID = 1886623299725569857L;
 
     private transient Script _rhinoScript;
     private Date _compiledTimestamp;

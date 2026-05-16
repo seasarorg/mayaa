@@ -34,7 +34,6 @@ public class DefaultSourceScanner extends ParameterAwareImpl
         implements SourceScanner {
     private static final Log LOG = LogFactory.getLog(DefaultSourceScanner.class.getName());
 
-    private static final long serialVersionUID = 690422240376318319L;
 
     private Set<SourceDescriptor> _sources;
 

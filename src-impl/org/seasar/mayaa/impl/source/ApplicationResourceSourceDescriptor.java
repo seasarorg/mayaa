@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.seasar.mayaa.FactoryFactory;
 import org.seasar.mayaa.cycle.scope.ApplicationScope;
 import org.seasar.mayaa.impl.ParameterAwareImpl;
-import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.util.IOUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
 
@@ -40,7 +39,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
         implements ChangeableRootSourceDescriptor {
 
-    private static final long serialVersionUID = -2775274363708858237L;
     static final Log LOG = LogFactory.getLog(ApplicationResourceSourceDescriptor.class);
 
     private transient ApplicationScope _application;
@@ -154,14 +152,6 @@ public class ApplicationResourceSourceDescriptor extends ParameterAwareImpl
      */
     public String getSystemID() {
         return _systemID;
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        _application = CycleUtil.getServiceCycle().getApplicationScope();
     }
 
 }

@@ -38,7 +38,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
  */
 public class FormatNumberProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 5513075315121041838L;
 
     private static final Cache<String, NumberFormatPool> _formatPools = Caffeine.newBuilder()
             .softValues()

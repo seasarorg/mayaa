@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.processor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,9 +38,8 @@ public abstract class AbstractAttributableProcessor
         extends TemplateProcessorSupport
         implements ChildEvaluationProcessor, InformalPropertyAcceptable {
 
-    private static final long serialVersionUID = -1406205460425148574L;
     private boolean _childEvaluation;
-    private List<Serializable> _attributes;
+    private List<Object> _attributes;
 
     private static final String PROCESS_TIME_INFO_KEY =
         AbstractAttributableProcessor.class.getName() + "#processTimeInfo";
@@ -95,7 +93,7 @@ public abstract class AbstractAttributableProcessor
     }
 
     // MLD method
-    public void addInformalProperty(PrefixAwareName name, Serializable attr) {
+    public void addInformalProperty(PrefixAwareName name, Object attr) {
         if (_attributes == null) {
             _attributes = new ArrayList<>();
         }
@@ -124,7 +122,7 @@ public abstract class AbstractAttributableProcessor
         return Object.class;
     }
 
-    public Iterator<Serializable> iterateInformalProperties() {
+    public Iterator<Object> iterateInformalProperties() {
         if (_attributes == null) {
             return Collections.emptyIterator();
         }
@@ -248,14 +246,6 @@ public abstract class AbstractAttributableProcessor
         }
         writeEndElement();
         return ProcessStatus.EVAL_PAGE;
-    }
-
-    // for serialize
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        clearProcesstimeInfo();
     }
 
     //helper class, methods ----------------------------------------

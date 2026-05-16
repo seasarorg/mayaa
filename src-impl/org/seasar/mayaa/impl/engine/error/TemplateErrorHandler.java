@@ -35,7 +35,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class TemplateErrorHandler extends ParameterAwareImpl
         implements ErrorHandler {
 
-    private static final long serialVersionUID = -6643723526947091557L;
 
     private static final Log LOG =
         LogFactory.getLog(TemplateErrorHandler.class);

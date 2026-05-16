@@ -31,7 +31,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class DOCTYPEProcessor extends TemplateProcessorSupport
             implements CONST_IMPL {
 
-    private static final long serialVersionUID = 8518993579074245108L;
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
 

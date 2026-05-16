@@ -23,7 +23,6 @@ import org.seasar.mayaa.engine.processor.ProcessStatus;
  */
 public class OutputContextScopeProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = 1L;
 
     private final OutputContext _context;
 

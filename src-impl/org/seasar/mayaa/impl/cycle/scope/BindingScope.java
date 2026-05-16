@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.cycle.scope;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -30,11 +29,10 @@ import org.seasar.mayaa.impl.engine.processor.InsertProcessor;
  */
 public class BindingScope extends AbstractReadOnlyAttributeScope {
 
-    private static final long serialVersionUID = 5954219830862345209L;
 
     protected ProcessorProperty getTargetAttribute(
             InsertProcessor processor, String name) {
-        for (Iterator<Serializable> it = processor.getInformalProperties().iterator();
+        for (Iterator<Object> it = processor.getInformalProperties().iterator();
                 it.hasNext();) {
             ProcessorProperty prop = (ProcessorProperty) it.next();
             if (prop.getName().getQName().getLocalName().equals(name)) {

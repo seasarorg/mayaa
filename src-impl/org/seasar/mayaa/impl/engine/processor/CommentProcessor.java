@@ -38,7 +38,6 @@ import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
  */
 public class CommentProcessor extends CharactersProcessor {
 
-    private static final long serialVersionUID = 2105316300125388274L;
 
     private static final String COMMENTIN = "<!--";
     private static final String COMMENTOUT = "-->";

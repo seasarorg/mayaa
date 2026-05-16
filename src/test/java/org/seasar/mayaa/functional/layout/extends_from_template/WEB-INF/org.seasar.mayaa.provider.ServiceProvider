@@ -13,7 +13,6 @@
         <parameter name="requestedSuffixEnabled" value="false" />
         <parameter name="welcomeFileName" value="index.html"/>
         <parameter name="requestCharacterEncoding" value="UTF-8"/>
-        <parameter name="pageSerialize" value="false"/>
         <parameter name="surviveLimit" value="5"/>
         <parameter name="forwardLimit" value="10"/>
         <parameter name="noCacheValue" value="no-cache"/>

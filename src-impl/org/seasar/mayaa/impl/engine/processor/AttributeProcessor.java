@@ -34,7 +34,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class AttributeProcessor extends TemplateProcessorSupport {
 
-    private static final long serialVersionUID = -3393961364808306951L;
 
     private PrefixAwareName _name;
     private ProcessorProperty _value;
@@ -142,7 +141,6 @@ public class AttributeProcessor extends TemplateProcessorSupport {
 
     protected class ProcessorPropertyWrapper implements ProcessorProperty {
 
-        private static final long serialVersionUID = 8190328285510500572L;
 
         private PrefixAwareName _attrName;
         private ProcessorProperty _attrValue;

@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.provider;
 
-import java.io.Serializable;
 
 import org.seasar.mayaa.ParameterAware;
 import org.seasar.mayaa.builder.PathAdjuster;
@@ -31,7 +30,7 @@ import org.seasar.mayaa.engine.specification.ParentSpecificationResolver;
  * アプリケーションスコープでのサービス提供オブジェクト。
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface ServiceProvider extends ParameterAware, Serializable {
+public interface ServiceProvider extends ParameterAware {
 
     /**
      * エンジンを設定する。

@@ -15,8 +15,6 @@
  */
 package org.seasar.mayaa.impl.builder;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +81,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
     public static final String OUTPUT_TEMPLATE_WHITESPACE = "outputTemplateWhitespace";
 
     private static final Log LOG = LogFactory.getLog(TemplateBuilderImpl.class);
-    private static final long serialVersionUID = -1031702086020145692L;
 
     private List<InjectionResolver> _resolvers = new ArrayList<>();
     private List<InjectionResolver> _unmodifiableResolvers = Collections.unmodifiableList(_resolvers);
@@ -717,15 +714,6 @@ public class TemplateBuilderImpl extends SpecificationBuilderImpl
             throw new IllegalStateException();
         }
         saveToCycle(template, template);
-    }
-
-
-    // deserialization
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        _chain = new DefaultInjectionChain();
     }
 
     // support class --------------------------------------------------

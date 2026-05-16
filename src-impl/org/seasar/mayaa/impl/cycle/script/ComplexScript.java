@@ -23,7 +23,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class ComplexScript implements CompiledScript {
 
-    private static final long serialVersionUID = -4686149451300693410L;
 
     private CompiledScript[] _compiled;
 

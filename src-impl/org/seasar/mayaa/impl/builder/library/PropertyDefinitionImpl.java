@@ -43,7 +43,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
 public class PropertyDefinitionImpl extends ParameterAwareImpl
         implements PropertyDefinition, CONST_IMPL {
 
-	private static final long serialVersionUID = -9121229054380668801L;
 	private static final Log LOG =
 		LogFactory.getLog(PropertyDefinitionImpl.class);
 

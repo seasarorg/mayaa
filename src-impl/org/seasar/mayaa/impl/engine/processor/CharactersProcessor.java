@@ -41,7 +41,6 @@ import org.seasar.mayaa.impl.util.EscapeUtil;
 public class CharactersProcessor extends TemplateProcessorSupport
         implements CONST_IMPL {
 
-    private static final long serialVersionUID = -6762409726256198534L;
     private static final String FEATURE_LABEL_AUTO_ESCAPE = "auto-escape";
 
     private ProcessorProperty _text;

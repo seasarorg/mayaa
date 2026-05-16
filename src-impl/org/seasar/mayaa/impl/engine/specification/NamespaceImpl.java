@@ -15,7 +15,6 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +36,6 @@ import org.seasar.mayaa.impl.util.StringUtil;
  */
 public class NamespaceImpl implements Namespace {
 
-    private static final long serialVersionUID = -3738362040016319461L;
 
     public static Namespace copyOf(Namespace namespace) {
         if (namespace == null) {
@@ -52,7 +50,7 @@ public class NamespaceImpl implements Namespace {
         }
         result.setDefaultNamespaceURI(namespace.getDefaultNamespaceURI());
         if (namespace instanceof NamespaceImpl) {
-            result._serializeKey = ((NamespaceImpl)namespace)._serializeKey;
+            result._cacheKey = ((NamespaceImpl)namespace)._cacheKey;
         }
         return result;
     }
@@ -60,8 +58,7 @@ public class NamespaceImpl implements Namespace {
     private transient Namespace _parentSpace;
     private transient Set<PrefixMapping> _mappings;
     private transient PrefixMapping _defaultNamespaceMapping;
-    private String _serializeKey;
-    private transient volatile boolean _needDeserialize;
+    private String _cacheKey;
 
     public void setParentSpace(Namespace parent) {
         /*
@@ -75,11 +72,10 @@ public class NamespaceImpl implements Namespace {
             }
         }
         _parentSpace = parent;
-        _serializeKey = null;
+        _cacheKey = null;
     }
 
     public Namespace getParentSpace() {
-        doDeserialize();
         return _parentSpace;
     }
 
@@ -88,7 +84,6 @@ public class NamespaceImpl implements Namespace {
             throw new IllegalArgumentException();
         }
         synchronized (this) {
-            doDeserialize();
             if (_mappings == null) {
                 // テンプレートによってxmlnsの記述順が異なったとしても、
                 // 同一のものを保証するためにソートする
@@ -98,7 +93,7 @@ public class NamespaceImpl implements Namespace {
                 SpecificationUtil.createPrefixMapping(prefix, namespaceURI);
             if (_mappings.contains(mapping) == false) {
                 _mappings.add(mapping);
-                _serializeKey = null;
+                _cacheKey = null;
             } else {
                 String msg = StringUtil.getMessage(NamespaceImpl.class, 0,
                         mapping.toString());
@@ -113,11 +108,10 @@ public class NamespaceImpl implements Namespace {
     }
 
     public void setDefaultNamespaceURI(URI namespaceURI) {
-        doDeserialize();
         if (namespaceURI == null) {
             if (_defaultNamespaceMapping != null) {
                 _defaultNamespaceMapping = null;
-                _serializeKey = null;
+                _cacheKey = null;
             }
             return;
         }
@@ -126,7 +120,7 @@ public class NamespaceImpl implements Namespace {
             if (mapping.getNamespaceURI().equals(namespaceURI)) {
                 if (mapping.equals(_defaultNamespaceMapping) == false) {
                     _defaultNamespaceMapping = mapping;
-                    _serializeKey = null;
+                    _cacheKey = null;
                 }
                 return;
             }
@@ -136,7 +130,7 @@ public class NamespaceImpl implements Namespace {
                     _defaultNamespaceMapping) == false) {
                 _defaultNamespaceMapping =
                     SpecificationUtil.HTML_DEFAULT_PREFIX_MAPPING;
-                _serializeKey = null;
+                _cacheKey = null;
             }
             return;
         }
@@ -145,14 +139,14 @@ public class NamespaceImpl implements Namespace {
                     _defaultNamespaceMapping) == false) {
                 _defaultNamespaceMapping =
                     SpecificationUtil.XHTML_DEFAULT_PREFIX_MAPPING;
-                _serializeKey = null;
+                _cacheKey = null;
             }
             return;
         }
 
         _defaultNamespaceMapping =
             SpecificationUtil.createPrefixMapping("", namespaceURI);
-        _serializeKey = null;
+        _cacheKey = null;
     }
 
     protected void setDefaultNamespaceMapping(
@@ -161,12 +155,10 @@ public class NamespaceImpl implements Namespace {
     }
 
     protected PrefixMapping getDefaultNamespaceMapping() {
-        doDeserialize();
         return _defaultNamespaceMapping;
     }
 
     public URI getDefaultNamespaceURI() {
-        doDeserialize();
         if (_defaultNamespaceMapping == null) {
             return null;
         }
@@ -178,7 +170,6 @@ public class NamespaceImpl implements Namespace {
         if (test == null) {
             throw new IllegalArgumentException();
         }
-        doDeserialize();
         if (_defaultNamespaceMapping != null) {
             if (fromPrefix) {
                 if ("".equals(test) || _defaultNamespaceMapping.getPrefix().equals(test)) {
@@ -223,7 +214,6 @@ public class NamespaceImpl implements Namespace {
         if (all && getParentSpace() != null) {
             return new AllNamespaceIterator(this);
         }
-        doDeserialize();
         if (_mappings != null) {
             return _mappings.iterator();
         }
@@ -231,7 +221,6 @@ public class NamespaceImpl implements Namespace {
     }
 
     public boolean addedMapping() {
-        doDeserialize();
         if (_mappings == null) {
             return false;
         }
@@ -240,19 +229,18 @@ public class NamespaceImpl implements Namespace {
         }
     }
 
-    protected String getSerializeKey() {
-        doDeserialize();
-        serialize(this);
-        return _serializeKey;
+    protected String getCacheKey() {
+        buildCacheKey(this);
+        return _cacheKey;
     }
 
-    protected static String serialize(Namespace instance) {
+    protected static String buildCacheKey(Namespace instance) {
         if (instance instanceof NamespaceImpl == false) {
             throw new IllegalStateException();
         }
         NamespaceImpl impl = (NamespaceImpl)instance;
-        if (impl._serializeKey != null) {
-            return impl._serializeKey;
+        if (impl._cacheKey != null) {
+            return impl._cacheKey;
         }
 
         List<Namespace> spaces = new ArrayList<>();
@@ -273,40 +261,8 @@ public class NamespaceImpl implements Namespace {
         }
         buffer.append(impl.namespaceToString());
         String result = buffer.toString();
-        impl._serializeKey = result;
+        impl._cacheKey = result;
         return result;
-    }
-
-    protected static NamespaceImpl deserialize(String serializeData) {
-        String[] lines = serializeData.split("\n");
-        Namespace parent = null;
-        NamespaceImpl current = null;
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.startsWith("/")) {
-                line = line.substring("/".length());
-                if (current != null) {
-                    parent = current;
-                }
-                current = new NamespaceImpl();
-
-                if (String.valueOf((Object)null).equals(line) == false) {
-                    current._defaultNamespaceMapping =
-                        SpecificationUtil.createPrefixMapping(line);
-                }
-                if (parent != null) {
-                    current.setParentSpace(parent);
-                }
-            } else if (line.startsWith("\t") && current != null) {
-                line = line.substring("\t".length());
-                // パフォーマンス重視のためにaddPrefixMappingを呼ばない
-                if (current._mappings == null) {
-                    current._mappings = new TreeSet<>(_prefixMappingComparator);
-                }
-                current._mappings.add(SpecificationUtil.createPrefixMapping(line));
-            }
-        }
-        return current;
     }
 
     private String namespaceToString() {
@@ -325,52 +281,13 @@ public class NamespaceImpl implements Namespace {
     public boolean equals(Object obj) {
         if (obj != null && obj.getClass().equals(NamespaceImpl.class)) {
             NamespaceImpl other = (NamespaceImpl)obj;
-            String otherKey = other.getSerializeKey();
-            return getSerializeKey().equals(otherKey);
+            String otherKey = other.getCacheKey();
+            return getCacheKey().equals(otherKey);
         }
         return false;
     }
 
     // TODO hashCodeを実装する
-
-    private void writeObject(java.io.ObjectOutputStream out)
-        throws IOException {
-        if (getClass() == NamespaceImpl.class) {
-            getSerializeKey();
-            out.defaultWriteObject();
-        }
-    }
-
-    protected void doDeserialize() {
-        if (_needDeserialize == false) {
-            return;
-        }
-        synchronized (this) {
-            if (_needDeserialize == false) {
-                return;
-            }
-
-            NamespaceImpl current = deserialize(getSerializeKey());
-
-            _parentSpace = current._parentSpace;
-            _defaultNamespaceMapping = current._defaultNamespaceMapping;
-            _mappings = new TreeSet<>(_prefixMappingComparator);
-            for (Iterator<PrefixMapping> it = current.iteratePrefixMapping(false)
-                    ; it.hasNext(); ) {
-                _mappings.add(it.next());
-            }
-            _needDeserialize = false;
-        }
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-        throws IOException, ClassNotFoundException {
-        if (getClass() == NamespaceImpl.class) {
-            in.defaultReadObject();
-            _needDeserialize = true;
-        }
-    }
-
 
     // support class -------------------------------------------------
 

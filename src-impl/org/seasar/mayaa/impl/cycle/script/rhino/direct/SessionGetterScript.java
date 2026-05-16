@@ -28,7 +28,6 @@ import org.seasar.mayaa.impl.util.ObjectUtil;
  */
 public class SessionGetterScript extends AbstractGetterScript {
 
-    private static final long serialVersionUID = 1L;
 
     private static final String[] PROPERTY_NAMES =
         ObjectUtil.getPropertyNames(SessionScope.class);

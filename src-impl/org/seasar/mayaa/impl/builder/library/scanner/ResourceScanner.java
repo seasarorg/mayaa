@@ -39,7 +39,6 @@ import org.seasar.mayaa.source.SourceDescriptor;
  */
 public class ResourceScanner extends ParameterAwareImpl implements SourceScanner {
 
-    private static final long serialVersionUID = 9001235862576049476L;
     private static final Log LOG = LogFactory.getLog(ResourceScanner.class);
 
     private String _root;

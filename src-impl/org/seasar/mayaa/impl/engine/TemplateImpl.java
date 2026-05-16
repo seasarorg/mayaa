@@ -36,7 +36,6 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.cycle.CycleUtil;
 import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
-import org.seasar.mayaa.impl.engine.specification.serialize.NodeSerializeController;
 import org.seasar.mayaa.impl.management.SpecificationProfileRegistry;
 import org.seasar.mayaa.impl.management.SpecificationStats;
 import org.seasar.mayaa.impl.provider.ProviderUtil;
@@ -50,7 +49,6 @@ public class TemplateImpl
         extends SpecificationImpl
         implements Template {
 
-    private static final long serialVersionUID = 2126209350220642842L;
 
     private String _pageName;
     private String _suffix;
@@ -351,21 +349,6 @@ public class TemplateImpl
 
     public ProcessorTreeWalker getChildProcessor(int index) {
         return (ProcessorTreeWalker) _childProcessors.get(index);
-    }
-
-    // for serialize
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        if (_childProcessors != null) {
-            for (int i = _childProcessors.size() - 1; i >= 0 ; i--) {
-                ProcessorTreeWalker child =
-                    (ProcessorTreeWalker) _childProcessors.get(i);
-                child.setParentProcessor(this);
-            }
-        }
-        NodeSerializeController.currentInstance().specLoaded(this);
     }
 
     // PositionAware implements ------------------------------------

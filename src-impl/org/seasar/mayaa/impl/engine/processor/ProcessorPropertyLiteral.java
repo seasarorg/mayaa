@@ -26,7 +26,6 @@ import org.seasar.mayaa.impl.cycle.script.LiteralScript;
  */
 public class ProcessorPropertyLiteral implements ProcessorProperty {
 
-    private static final long serialVersionUID = -86193232420982992L;
 
     private PrefixAwareName _name;
     private CompiledScript _compiled;

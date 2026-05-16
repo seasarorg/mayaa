@@ -38,7 +38,6 @@ import org.xml.sax.XMLReader;
 public class SpecificationBuilderImpl extends ParameterAwareImpl
         implements SpecificationBuilder, CONST_IMPL {
 
-    private static final long serialVersionUID = -1272395705148798946L;
 
     private boolean _outputMayaaWhitespace = false;
 

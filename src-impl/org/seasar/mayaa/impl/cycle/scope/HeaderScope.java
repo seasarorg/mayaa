@@ -25,7 +25,6 @@ import org.seasar.mayaa.impl.cycle.CycleUtil;
  */
 public class HeaderScope extends AbstractReadOnlyAttributeScope {
 
-    private static final long serialVersionUID = 5356393611509751716L;
 
     // AttributeScope implements -------------------------------------
 

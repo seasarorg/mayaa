@@ -27,7 +27,6 @@ import java.util.List;
  */
 public class EnvScope extends AbstractReadOnlyAttributeScope {
 
-    private static final long serialVersionUID = -7066469372221202023L;
 
     // AttributeScope implements -------------------------------------
 

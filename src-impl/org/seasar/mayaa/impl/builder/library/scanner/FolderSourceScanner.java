@@ -45,7 +45,6 @@ public class FolderSourceScanner extends ParameterAwareImpl
 
     private static final Log LOG = LogFactory.getLog(FolderSourceScanner.class.getName());
 
-    private static final long serialVersionUID = 2888604805693825909L;
 
     private FileSourceDescriptor _source;
 

@@ -16,8 +16,10 @@
 package org.seasar.mayaa.impl.builder.injection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.seasar.mayaa.builder.injection.InjectionChain;
 import org.seasar.mayaa.builder.injection.InjectionResolver;
@@ -32,6 +34,7 @@ import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
 import org.seasar.mayaa.impl.management.DiagnosticEventBuffer;
+import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.util.ObjectUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -45,7 +48,6 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
     private static final CopyToFilter _idFilter = new CheckIDCopyToFilter();
     private List<QName> _additionalIds = new ArrayList<>();
     private boolean _reportResolvedID = true;
-    private boolean _reportDuplicatedID = true;
 
     public EqualsIDInjectionResolver() {
         _additionalIds.add(CONST_IMPL.QM_ID);
@@ -57,10 +59,6 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
 
     protected boolean isReportResolvedID() {
         return _reportResolvedID;
-    }
-
-    protected boolean isReportDuplicatedID() {
-        return _reportDuplicatedID;
     }
 
     protected NodeAttribute getAttribute(SpecificationNode node) {
@@ -110,28 +108,27 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
         }
         String id = getID(original);
         if (StringUtil.hasValue(id)) {
+            // spec 階層を上向きに辿り、より具体的な spec を優先して id を解決する
             Specification spec = SpecificationUtil.findSpecification(original);
-            SpecificationNode injected = null;
             while (spec != null) {
-                SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
-                if (mayaa != null) {
-                    List<SpecificationNode> injectNodes = new ArrayList<>();
-                    getEqualsIDNodes(mayaa, id, injectNodes);
-                    if (injectNodes.size() > 0) {
-                        injected = injectNodes.get(0);
-                        if (isReportDuplicatedID() && injectNodes.size() > 1) {
-                            logWarnning(id, original, 2);
-                        }
-                        break;
+                Map<String, SpecificationNode> localMap = null;
+                if (spec instanceof SpecificationImpl) {
+                    localMap = ((SpecificationImpl) spec).getCachedIdNodeMap();
+                    if (localMap == null) {
+                        localMap = buildLocalIdMap(spec);
+                        ((SpecificationImpl) spec).setCachedIdNodeMap(localMap);
                     }
+                } else {
+                    localMap = buildLocalIdMap(spec);
+                }
+                SpecificationNode injected = localMap.get(id);
+                if (injected != null) {
+                    if (CONST_IMPL.QM_IGNORE.equals(injected.getQName())) {
+                        return chain.getNode(original);
+                    }
+                    return injected.copyTo(getCopyToFilter());
                 }
                 spec = EngineUtil.getParentSpecification(spec);
-            }
-            if (injected != null) {
-                if (CONST_IMPL.QM_IGNORE.equals(injected.getQName())) {
-                    return chain.getNode(original);
-                }
-                return injected.copyTo(getCopyToFilter());
             }
             if (isReportResolvedID()) {
                 logWarnning(id, original, 1);
@@ -141,8 +138,46 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
     }
 
     /**
-     * .mayaaファイルパース後に呼び出す。m:mayaa直下でないノードにid属性がある場合、
-     * 警告を一度だけ記録する。{@link SpecificationBuilderImpl#afterBuild} から呼ばれる。
+     * 1つの spec の .mayaa ノードだけを走査し、id → node のマップを構築する。
+     * 同一 spec 内で重複する id がある場合は警告を記録する。
+     *
+     * @param spec 対象の spec
+     * @return id → injection ノードのマップ（この spec のみ）
+     */
+    protected Map<String, SpecificationNode> buildLocalIdMap(Specification spec) {
+        Map<String, SpecificationNode> localMap = new HashMap<>();
+        SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
+        if (mayaa != null) {
+            collectIdNodesForSpec(mayaa, localMap);
+        }
+        return localMap;
+    }
+
+    /**
+     * 1つの spec 内のノードツリーを走査し、id → node を {@code localMap} に収集する。
+     * 重複チェックは行わない（{@link #warnInvalidIdNodes} が afterBuild 時に一度だけ実施する）。
+     *
+     * @param node     走査対象のノード（m:mayaa またはその子孫）
+     * @param localMap id → SpecificationNode（この spec だけの一時マップ）
+     */
+    private void collectIdNodesForSpec(SpecificationNode node, Map<String, SpecificationNode> localMap) {
+        for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
+            SpecificationNode child = (SpecificationNode) it.next();
+            String id = SpecificationUtil.getAttributeValue(child, CONST_IMPL.QM_ID);
+            if (StringUtil.hasValue(id) && CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
+                localMap.putIfAbsent(id, child);
+            }
+            collectIdNodesForSpec(child, localMap);
+        }
+    }
+
+    /**
+     * .mayaaファイルパース後に呼び出す。以下の問題を一度だけ報告する:
+     * <ol>
+     *   <li>m:mayaa直下でないノードに id 属性がある（injection に使われない）</li>
+     *   <li>m:mayaa直下に同じ id を持つノードが複数ある（重複 id）</li>
+     * </ol>
+     * {@link SpecificationBuilderImpl#afterBuild} から呼ばれる。
      *
      * @param specification パース済みの .mayaa Specification
      */
@@ -151,26 +186,43 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
         if (mayaaNode == null) {
             return;
         }
-        warnInvalidIdNodesRecursive(mayaaNode);
+        Map<String, SpecificationNode> seenIds = new HashMap<>();
+        warnInvalidIdNodesRecursive(mayaaNode, seenIds);
     }
 
-    private static void warnInvalidIdNodesRecursive(SpecificationNode node) {
+    private static void warnInvalidIdNodesRecursive(
+            SpecificationNode node, Map<String, SpecificationNode> seenIds) {
         for (Iterator<NodeTreeWalker> it = node.iterateChildNode(); it.hasNext();) {
             SpecificationNode child = (SpecificationNode) it.next();
             String id = SpecificationUtil.getAttributeValue(child, CONST_IMPL.QM_ID);
-            if (StringUtil.hasValue(id) && !CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
-                // m:mayaa直下でない要素のid属性はinjectionに使われない（仕様）
-                // ユーザーに意図しない無効化を気づかせるために警告する
-                String msg = StringUtil.getMessage(
-                        EqualsIDInjectionResolver.class, 3,
-                        id, child.getSystemID(), Integer.toString(child.getLineNumber()));
-                DiagnosticEventBuffer.recordWarn(
-                        DiagnosticEventBuffer.Phase.BUILD,
-                        "parseInjectionID",
-                        child.getSystemID(),
-                        msg, null, id, child);
+            if (StringUtil.hasValue(id)) {
+                if (CONST_IMPL.QM_MAYAA.equals(node.getQName())) {
+                    // m:mayaa直下: 重複チェック
+                    if (seenIds.containsKey(id)) {
+                        String msg = StringUtil.getMessage(
+                                EqualsIDInjectionResolver.class, 2,
+                                id, child.getSystemID(), Integer.toString(child.getLineNumber()));
+                        DiagnosticEventBuffer.recordWarn(
+                                DiagnosticEventBuffer.Phase.BUILD,
+                                "parseInjectionID",
+                                child.getSystemID(),
+                                msg, null, id, child);
+                    } else {
+                        seenIds.put(id, child);
+                    }
+                } else {
+                    // m:mayaa直下でない: 無効な id 属性
+                    String msg = StringUtil.getMessage(
+                            EqualsIDInjectionResolver.class, 3,
+                            id, child.getSystemID(), Integer.toString(child.getLineNumber()));
+                    DiagnosticEventBuffer.recordWarn(
+                            DiagnosticEventBuffer.Phase.BUILD,
+                            "parseInjectionID",
+                            child.getSystemID(),
+                            msg, null, id, child);
+                }
             }
-            warnInvalidIdNodesRecursive(child);
+            warnInvalidIdNodesRecursive(child, seenIds);
         }
     }
 
@@ -193,9 +245,6 @@ public class EqualsIDInjectionResolver extends NonSerializableParameterAwareImpl
     public void setParameter(String name, String value) {
         if ("reportUnresolvedID".equals(name)) {
             _reportResolvedID = ObjectUtil.booleanValue(value, true);
-        }
-        if ("reportDuplicatedID".equals(name)) {
-            _reportDuplicatedID = ObjectUtil.booleanValue(value, true);
         }
         if ("addAttribute".equals(name)) {
             _additionalIds.add(SpecificationUtil.parseQName(value));

@@ -37,6 +37,7 @@ public interface CONST_IMPL {
     String DEBUG = "org.seasar.mayaa.debug";
 
     String CHECK_TIMESTAMP = "checkTimestamp";
+    String CHECK_TIMESTAMP_INTERVAL = "checkTimestampInterval";
     String DEFAULT_SPECIFICATION = "defaultSpecification";
     String SUFFIX_SEPARATOR = "suffixSeparator";
     String WELCOME_FILE_NAME = "welcomeFileName";

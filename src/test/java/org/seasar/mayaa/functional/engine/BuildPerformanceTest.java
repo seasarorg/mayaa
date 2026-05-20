@@ -27,7 +27,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * テンプレートビルド（injection フェーズ）の性能測定。
  * キャッシュ最適化の効果を確認するための簡易ベンチマーク。
- */
  * <p>
  * 通常の CI では実行されない。{@code mvn test -P withPerformanceTest} で実行する。
  */

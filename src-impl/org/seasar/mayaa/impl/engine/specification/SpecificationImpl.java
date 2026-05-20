@@ -162,6 +162,7 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     public void deprecate() {
         _deprecated = true;
         _idNodeMap = null;
+        _xpathInjectNodes = null;
     }
 
     /**
@@ -178,7 +179,6 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
      */
     public void setCachedIdNodeMap(Map<String, SpecificationNode> map) {
         _idNodeMap = map;
-        _xpathInjectNodes = null;
     }
 
     /**

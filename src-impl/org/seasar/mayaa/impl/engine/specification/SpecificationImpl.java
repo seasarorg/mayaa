@@ -15,6 +15,7 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,7 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     private transient SourceDescriptor _source;
     private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
-    private boolean _deprecated = true;
+    private volatile boolean _deprecated = true;
     private int _lastSequenceID;
     private volatile long _lastExistsCheckMillis = 0;
     private volatile long _existsCheckIntervalMillis = -1L;
@@ -165,9 +166,10 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     /**
      * この spec の XPath injection ノードリストをセットする。
      * 複数スレッドが同時に呼んでも内容は等価なので、上書きは許容する。
+     * リストは変更不可ラッパーで保護して格納する。
      */
     public void setCachedXpathInjectNodes(List<SpecificationNode> nodes) {
-        _xpathInjectNodes = nodes;
+        _xpathInjectNodes = Collections.unmodifiableList(nodes);
     }
 
     public void build() {

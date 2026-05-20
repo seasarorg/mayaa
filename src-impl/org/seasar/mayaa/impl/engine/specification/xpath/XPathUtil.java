@@ -18,7 +18,10 @@ package org.seasar.mayaa.impl.engine.specification.xpath;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import org.jaxen.Context;
 import org.jaxen.ContextSupport;
@@ -48,9 +51,14 @@ public class XPathUtil {
         // no instantiation.
     }
 
-    /** XPath パターン文字列 → コンパイル済み Pattern のキャッシュ（スレッドセーフ）。 */
-    private static final ConcurrentHashMap<String, Pattern> _patternCache =
-            new ConcurrentHashMap<>();
+    /** XPath パターン文字列 → コンパイル済み Pattern のキャッシュ（スレッドセーフ）。
+     *  XPath 式はアプリ起動後に原則変わらないが、最大 10,000 エントリを上限とし
+     *  メモリ圧迫を防ぐ。 */
+    private static final Cache<String, Pattern> _patternCache =
+            Caffeine.newBuilder()
+                .maximumSize(10_000)
+                .expireAfterAccess(30, TimeUnit.MINUTES)
+                .build();
 
     public static boolean matches(SpecificationNode test,
             String xpathExpr, Namespace namespace) {
@@ -70,7 +78,7 @@ public class XPathUtil {
                 SpecificationNavigator.getInstance());
         Context context = new Context(support);
         try {
-            Pattern pattern = _patternCache.computeIfAbsent(xpathExpr, expr -> {
+            Pattern pattern = _patternCache.get(xpathExpr, expr -> {
                 try {
                     return PatternParser.parse(expr);
                 } catch (SAXPathException e) {

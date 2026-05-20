@@ -17,7 +17,10 @@ package org.seasar.mayaa.impl.engine.specification;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+
+import org.seasar.mayaa.engine.specification.SpecificationNode;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +51,15 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     private boolean _hasSource;
     private boolean _deprecated = true;
     private int _lastSequenceID;
+    private volatile long _lastExistsCheckMillis = 0;
+    private volatile long _existsCheckIntervalMillis = -1L;
+
+
+    /**
+     * XPath injection ノードキャッシュ（この spec の .mayaa に含まれる m:xpath ノード一覧）。
+     * {@code deprecate()} 呼び出し時にクリアされ、次のビルド時に再構築される。
+     */
+    private volatile List<SpecificationNode> _xpathInjectNodes;
 
     protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CONST_IMPL.CHECK_TIMESTAMP, true);
@@ -55,6 +67,22 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
 
     protected boolean isSourceExists() {
         return getSource().exists();
+    }
+
+    /**
+     * ソース存在チェック間隔（ミリ秒）を返します。
+     * 設定値は初回呼び出し時にのみ取得し、インスタンスフィールドにキャッシュします。
+     */
+    protected long getExistsCheckIntervalMillis() {
+        if (_existsCheckIntervalMillis < 0) {
+            String val = EngineUtil.getEngineSetting(CONST_IMPL.CHECK_TIMESTAMP_INTERVAL, "500");
+            try {
+                _existsCheckIntervalMillis = Long.parseLong(val);
+            } catch (NumberFormatException e) {
+                _existsCheckIntervalMillis = 500L;
+            }
+        }
+        return _existsCheckIntervalMillis;
     }
 
     protected SpecificationBuilder getBuilder() {
@@ -94,6 +122,12 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     // TODO isDeprecatedの高速化
     public boolean isDeprecated() {
         if (_deprecated == false) {
+            long intervalMillis = getExistsCheckIntervalMillis();
+            long now = System.currentTimeMillis();
+            if (intervalMillis > 0 && (now - _lastExistsCheckMillis) < intervalMillis) {
+                return false;
+            }
+            _lastExistsCheckMillis = now;
             _deprecated = _hasSource != isSourceExists();
             if (_deprecated == false) {
                 if (_hasSource == false) {
@@ -117,6 +151,23 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     @Override
     public void deprecate() {
         _deprecated = true;
+        _xpathInjectNodes = null;
+    }
+
+    /**
+     * この spec の XPath injection ノードリストを返す。
+     * まだ構築されていない場合は {@code null} を返す。
+     */
+    public List<SpecificationNode> getCachedXpathInjectNodes() {
+        return _xpathInjectNodes;
+    }
+
+    /**
+     * この spec の XPath injection ノードリストをセットする。
+     * 複数スレッドが同時に呼んでも内容は等価なので、上書きは許容する。
+     */
+    public void setCachedXpathInjectNodes(List<SpecificationNode> nodes) {
+        _xpathInjectNodes = nodes;
     }
 
     public void build() {

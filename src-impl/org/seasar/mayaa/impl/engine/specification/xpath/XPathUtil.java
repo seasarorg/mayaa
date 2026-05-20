@@ -18,6 +18,7 @@ package org.seasar.mayaa.impl.engine.specification.xpath;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxen.Context;
 import org.jaxen.ContextSupport;
@@ -47,6 +48,10 @@ public class XPathUtil {
         // no instantiation.
     }
 
+    /** XPath パターン文字列 → コンパイル済み Pattern のキャッシュ（スレッドセーフ）。 */
+    private static final ConcurrentHashMap<String, Pattern> _patternCache =
+            new ConcurrentHashMap<>();
+
     public static boolean matches(SpecificationNode test,
             String xpathExpr, Namespace namespace) {
         if (StringUtil.isEmpty(xpathExpr)) {
@@ -65,11 +70,15 @@ public class XPathUtil {
                 SpecificationNavigator.getInstance());
         Context context = new Context(support);
         try {
-            Pattern pattern = PatternParser.parse(xpathExpr);
+            Pattern pattern = _patternCache.computeIfAbsent(xpathExpr, expr -> {
+                try {
+                    return PatternParser.parse(expr);
+                } catch (SAXPathException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             return pattern.matches(test, context);
         } catch (JaxenException e) {
-            throw new RuntimeException(e);
-        } catch (SAXPathException e) {
             throw new RuntimeException(e);
         }
     }

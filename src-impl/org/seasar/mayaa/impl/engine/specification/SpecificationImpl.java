@@ -15,9 +15,11 @@
  */
 package org.seasar.mayaa.impl.engine.specification;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 import org.seasar.mayaa.engine.specification.SpecificationNode;
@@ -49,7 +51,7 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
     private transient SourceDescriptor _source;
     private volatile NodeTreeWalkerImpl _delegateNodeTreeWalker;
     private boolean _hasSource;
-    private boolean _deprecated = true;
+    private volatile boolean _deprecated = true;
     private int _lastSequenceID;
     private volatile long _lastExistsCheckMillis = 0;
     private volatile long _existsCheckIntervalMillis = -1L;
@@ -62,6 +64,12 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
      */
     private volatile Map<String, SpecificationNode> _idNodeMap;
 
+
+    /**
+     * XPath injection ノードキャッシュ（この spec の .mayaa に含まれる m:xpath ノード一覧）。
+     * {@code deprecate()} 呼び出し時にクリアされ、次のビルド時に再構築される。
+     */
+    private volatile List<SpecificationNode> _xpathInjectNodes;
 
     protected boolean needCheckTimestamp() {
         return EngineUtil.getEngineSettingBoolean(CONST_IMPL.CHECK_TIMESTAMP, true);
@@ -170,6 +178,24 @@ public class SpecificationImpl extends ParameterAwareImpl implements Specificati
      */
     public void setCachedIdNodeMap(Map<String, SpecificationNode> map) {
         _idNodeMap = map;
+        _xpathInjectNodes = null;
+    }
+
+    /**
+     * この spec の XPath injection ノードリストを返す。
+     * まだ構築されていない場合は {@code null} を返す。
+     */
+    public List<SpecificationNode> getCachedXpathInjectNodes() {
+        return _xpathInjectNodes;
+    }
+
+    /**
+     * この spec の XPath injection ノードリストをセットする。
+     * 複数スレッドが同時に呼んでも内容は等価なので、上書きは許容する。
+     * リストは変更不可ラッパーで保護して格納する。
+     */
+    public void setCachedXpathInjectNodes(List<SpecificationNode> nodes) {
+        _xpathInjectNodes = Collections.unmodifiableList(nodes);
     }
 
     public void build() {

@@ -34,6 +34,7 @@ import org.seasar.mayaa.engine.specification.SpecificationNode;
 import org.seasar.mayaa.impl.CONST_IMPL;
 import org.seasar.mayaa.impl.NonSerializableParameterAwareImpl;
 import org.seasar.mayaa.impl.engine.EngineUtil;
+import org.seasar.mayaa.impl.engine.specification.SpecificationImpl;
 import org.seasar.mayaa.impl.engine.specification.SpecificationUtil;
 import org.seasar.mayaa.impl.engine.specification.xpath.XPathUtil;
 import org.seasar.mayaa.impl.util.StringUtil;
@@ -53,6 +54,13 @@ public class XPathMatchesInjectionResolver extends NonSerializableParameterAware
         SpecificationUtil.createQName("xpath");
 
     private static final CopyToFilter _xpathFilter = new CheckXPathCopyToFilter();
+
+    // TODO テンプレートのprefix定義、Mayaaファイルのを反映させる
+    private static final Namespace XPATH_NAMESPACE;
+    static {
+        XPATH_NAMESPACE = SpecificationUtil.createNamespace();
+        XPATH_NAMESPACE.addPrefixMapping("m", CONST_IMPL.URI_MAYAA);
+    }
 
     protected CopyToFilter getCopyToFilter() {
         return _xpathFilter;
@@ -89,32 +97,52 @@ public class XPathMatchesInjectionResolver extends NonSerializableParameterAware
             throw new IllegalArgumentException();
         }
 
-        // TODO テンプレートのprefix定義、Mayaaファイルのを反映させる
-        Namespace namespace = SpecificationUtil.createNamespace();
-        namespace.addPrefixMapping("m", CONST_IMPL.URI_MAYAA);
-
-        // mayaaファイル内のm:xpathを持つすべてのノードを対象とする
         Specification spec = SpecificationUtil.findSpecification(original);
-        List<SpecificationNode> injectNodes = new ArrayList<>();
-        while (spec != null) {
-            SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
-            if (mayaa != null) {
-                getXPathNodes(mayaa, injectNodes);
-            }
-            spec = EngineUtil.getParentSpecification(spec);
+        if (spec == null) {
+            // original がどの spec にも属さない場合は injection 不可
+            return chain.getNode(original);
         }
 
-        for (Iterator<SpecificationNode> it = injectNodes.iterator(); it.hasNext();) {
-            SpecificationNode injected = it.next();
-            String mayaaPath = SpecificationUtil.getAttributeValue(
-                    injected, QM_XPATH);
-            // injectedをnamespaceとして渡すとfunctionのデフォルトnamesapceが
-            // URI_MAYAAになってしまうため、デフォルトnamespaceのないものを渡す
-            if (XPathUtil.matches(original, mayaaPath, namespace)) {
-                return injected.copyTo(getCopyToFilter());
+        // spec 階層を上向きに辿り、各 spec の xpath inject ノードを順に試す
+        Specification cur = spec;
+        while (cur != null) {
+            List<SpecificationNode> injectNodes = null;
+            if (cur instanceof SpecificationImpl) {
+                injectNodes = ((SpecificationImpl) cur).getCachedXpathInjectNodes();
+                if (injectNodes == null) {
+                    injectNodes = buildXpathInjectNodes(cur);
+                    ((SpecificationImpl) cur).setCachedXpathInjectNodes(injectNodes);
+                }
+            } else {
+                injectNodes = buildXpathInjectNodes(cur);
             }
+            for (Iterator<SpecificationNode> it = injectNodes.iterator(); it.hasNext();) {
+                SpecificationNode injected = it.next();
+                String mayaaPath = SpecificationUtil.getAttributeValue(injected, QM_XPATH);
+                // injectedをnamespaceとして渡すとfunctionのデフォルトnamesapceが
+                // URI_MAYAAになってしまうため、デフォルトnamespaceのないものを渡す
+                if (XPathUtil.matches(original, mayaaPath, XPATH_NAMESPACE)) {
+                    return injected.copyTo(getCopyToFilter());
+                }
+            }
+            cur = EngineUtil.getParentSpecification(cur);
         }
         return chain.getNode(original);
+    }
+
+    /**
+     * 1つの spec の .mayaa ノードだけを走査し、m:xpath ノードのリストを構築する。
+     *
+     * @param spec 対象の spec
+     * @return m:xpath を持つ injection ノードのリスト（この spec のみ）
+     */
+    protected List<SpecificationNode> buildXpathInjectNodes(Specification spec) {
+        List<SpecificationNode> nodes = new ArrayList<>();
+        SpecificationNode mayaa = SpecificationUtil.getMayaaNode(spec);
+        if (mayaa != null) {
+            getXPathNodes(mayaa, nodes);
+        }
+        return nodes;
     }
 
     /**

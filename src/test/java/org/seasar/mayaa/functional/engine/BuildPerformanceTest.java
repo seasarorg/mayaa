@@ -17,6 +17,7 @@ package org.seasar.mayaa.functional.engine;
 
 import java.io.IOException;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.seasar.mayaa.functional.EngineTestBase;
 import org.seasar.mayaa.impl.engine.EngineImpl;
@@ -27,6 +28,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * テンプレートビルド（injection フェーズ）の性能測定。
  * キャッシュ最適化の効果を確認するための簡易ベンチマーク。
  */
+ * <p>
+ * 通常の CI では実行されない。{@code mvn test -P withPerformanceTest} で実行する。
+ */
+@Tag("test.PerformanceTest")
 public class BuildPerformanceTest extends EngineTestBase {
 
     private static final int WARMUP = 100;
